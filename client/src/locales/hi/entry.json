@@ -1,0 +1,36 @@
+{
+    "entry": {
+        "title": "प्रविष्टी",
+        "management": {
+            "title": "प्रबंधन",
+            "addParty": "पार्टी जोड़ें",
+            "addTransporter": "परिवहनकर्ता जोड़ें",
+            "addWorker": "नोकर जोड़ें",
+            "propertyManagement": "संपत्ति प्रबंधन जोड़ें",
+            "doEntry": "DO प्रविष्टि"
+        },
+        "purchaseDeals": {
+            "title": "खरीदी सौदा",
+            "paddyPurchase": "धान खरीदी सौदा",
+            "ricePurchase": "चावल खरीदी सौदा",
+            "paddySales": "धान बिक्री सौदा"
+        },
+        "inward": {
+            "title": "आवक",
+            "govtPaddy": "शासकीय धान आवक",
+            "privatePaddy": "निजी धान आवक",
+            "riceInward": "चावल आवक/ LOT जमा"
+        }
+    },
+    "nav": {
+        "entry": "प्रविष्टी",
+        "reports": "रिपोर्ट",
+        "purchase": "खरीदी सौदा",
+        "sales": "बिक्री सौदा",
+        "inward": "आवक"
+    },
+    "dashboard": {
+        "entry": "प्रविष्टि",
+        "reports": "रिपोर्ट"
+    }
+}

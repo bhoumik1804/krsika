@@ -1,0 +1,36 @@
+{
+    "entry": {
+        "title": "Entry",
+        "management": {
+            "title": "Management",
+            "addParty": "Add Party",
+            "addTransporter": "Add Transporter",
+            "addWorker": "Add Worker",
+            "propertyManagement": "Property Management",
+            "doEntry": "DO Entry"
+        },
+        "purchaseDeals": {
+            "title": "Purchase Deals",
+            "paddyPurchase": "Paddy Purchase Deal",
+            "ricePurchase": "Rice Purchase Deal",
+            "paddySales": "Paddy Sales Deal"
+        },
+        "inward": {
+            "title": "Inward",
+            "govtPaddy": "Government Paddy Inward",
+            "privatePaddy": "Private Paddy Inward",
+            "riceInward": "Rice Inward/LOT Deposit"
+        }
+    },
+    "nav": {
+        "entry": "Entry",
+        "reports": "Reports",
+        "purchase": "Purchase Deals",
+        "sales": "Sales Deals",
+        "inward": "Inward"
+    },
+    "dashboard": {
+        "entry": "Entry",
+        "reports": "Reports"
+    }
+}

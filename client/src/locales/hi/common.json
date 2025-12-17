@@ -1,0 +1,33 @@
+{
+    "buttons": {
+        "save": "सहेजें",
+        "cancel": "रद्द करें",
+        "delete": "हटाएं",
+        "edit": "संपादित करें",
+        "view": "देखें",
+        "retry": "पुनः प्रयास करें",
+        "search": "खोजें"
+    },
+    "pagination": {
+        "page": "पृष्ठ",
+        "of": "का",
+        "perPage": "/ पृष्ठ",
+        "rowsPerPage": "प्रति पृष्ठ पंक्तियाँ"
+    },
+    "status": {
+        "loading": "लोड हो रहा है...",
+        "error": "त्रुटि",
+        "success": "सफलता",
+        "noResults": "कोई परिणाम नहीं मिला"
+    },
+    "messages": {
+        "tryAdjustingSearch": "अपनी खोज को समायोजित करने का प्रयास करें"
+    },
+    "languages": {
+        "english": "English",
+        "hindi": "हिंदी"
+    },
+    "uiGuide": "UI गाइड",
+    "profile": "प्रोफ़ाइल",
+    "settings": "सेटिंग्स"
+}

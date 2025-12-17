@@ -1,0 +1,24 @@
+{
+    "title": "Student Enrollments",
+    "description": "Manage and view all enrolled students",
+    "columns": {
+        "fullName": "Full Name",
+        "email": "Email",
+        "course": "Course",
+        "college": "College",
+        "year": "Year",
+        "enrolledDate": "Enrolled Date",
+        "actions": "Actions"
+    },
+    "actions": {
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete",
+        "viewStudent": "Viewing {{name}}",
+        "editStudent": "Editing {{name}}",
+        "deleteStudent": "Deleting {{name}}"
+    },
+    "loadingMessage": "Loading students...",
+    "errorMessage": "Error loading students",
+    "somethingWentWrong": "Something went wrong"
+}

@@ -1,1 +1,352 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ========================================
+   THEME TOKENS (Tailwind v4)
+======================================== */
+@theme inline {
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --radius-2xl: calc(var(--radius) + 8px);
+    --radius-3xl: calc(var(--radius) + 12px);
+    --radius-4xl: calc(var(--radius) + 16px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* ========================================
+   ROOT COLORS
+======================================== */
+:root {
+    --radius: 0.5rem;
+
+    /* Background & Foreground */
+    --background: oklch(0.99 0 0);
+    /* Slightly off-white for less eye strain */
+    --foreground: oklch(0.18 0.04 250);
+    /* Rich dark blue-gray */
+
+    /* Card */
+    --card: oklch(1 0 0);
+    /* Pure white for contrast */
+    --card-foreground: oklch(0.18 0.04 250);
+    /* Rich dark blue-gray */
+
+    /* Popover */
+    --popover: oklch(1 0 0);
+    /* Pure white */
+    --popover-foreground: oklch(0.18 0.04 250);
+    /* Rich dark blue-gray */
+
+    /* Primary - Vibrant Professional Blue */
+    --primary: oklch(0.58 0.25 260);
+    /* Richer, more vibrant blue */
+    --primary-foreground: oklch(0.99 0 0);
+    /* White */
+
+    /* Secondary - Soft Blue Tint */
+    --secondary: oklch(0.95 0.03 250);
+    /* Soft blue background */
+    --secondary-foreground: oklch(0.35 0.15 250);
+    /* Deep blue text */
+
+    /* Muted - Sophisticated Blue-Gray */
+    --muted: oklch(0.96 0.015 240);
+    /* Very subtle blue tint */
+    --muted-foreground: oklch(0.48 0.06 245);
+    /* Medium blue-gray */
+
+    /* Accent - Bright Sky Blue */
+    --accent: oklch(0.94 0.04 245);
+    /* Light vibrant blue */
+    --accent-foreground: oklch(0.28 0.14 250);
+    /* Deep blue */
+
+    /* Destructive - Vibrant Red */
+    --destructive: oklch(0.58 0.24 25);
+    /* Rich red */
+    --destructive-foreground: oklch(0.99 0 0);
+    /* White */
+
+    /* Success - Fresh Green */
+    --success: oklch(0.62 0.19 145);
+    /* Fresh green */
+    --success-foreground: oklch(0.99 0 0);
+    /* White */
+
+    /* Warning - Warm Orange */
+    --warning: oklch(0.72 0.18 65);
+    /* Warm orange */
+    --warning-foreground: oklch(0.15 0.02 65);
+    /* Dark text */
+
+    /* Borders & Inputs - Refined Blue-Gray */
+    --border: oklch(0.88 0.015 240);
+    /* Subtle blue-gray */
+    --input: oklch(0.88 0.015 240);
+    /* Subtle blue-gray */
+    --ring: oklch(0.58 0.25 260);
+    /* Vibrant blue focus ring */
+
+    /* Charts - Harmonious Blue Palette */
+    --chart-1: oklch(0.58 0.25 260);
+    /* Primary blue */
+    --chart-2: oklch(0.62 0.20 200);
+    /* Cyan */
+    --chart-3: oklch(0.55 0.18 280);
+    /* Purple-blue */
+    --chart-4: oklch(0.68 0.22 185);
+    /* Light cyan */
+    --chart-5: oklch(0.48 0.20 290);
+    /* Deep purple-blue */
+
+    /* Sidebar - Rich Dark Blue */
+    --sidebar: oklch(0.18 0.06 245);
+    /* Rich dark blue */
+    --sidebar-foreground: oklch(0.96 0.01 240);
+    /* Almost white with blue tint */
+    --sidebar-primary: oklch(0.58 0.25 260);
+    /* Vibrant blue for active items */
+    --sidebar-primary-foreground: oklch(0.99 0 0);
+    /* White */
+    --sidebar-accent: oklch(0.26 0.08 250);
+    /* Lighter dark blue for hover */
+    --sidebar-accent-foreground: oklch(0.96 0.01 240);
+    /* Almost white */
+    --sidebar-border: oklch(0.25 0.05 245);
+    /* Subtle border */
+    --sidebar-ring: oklch(0.58 0.25 260);
+    /* Blue ring */
+}
+
+/* ========================================
+   BASE LAYER
+======================================== */
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-background text-foreground antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        @apply font-semibold tracking-tight;
+    }
+}
+
+/* ========================================
+   COMPONENTS
+======================================== */
+@layer components {
+
+    /* Cards - Enhanced with Shadow */
+    .card-elevated {
+        @apply shadow-sm hover:shadow-md transition-shadow duration-200;
+    }
+
+    /* Tables - Refined Styling */
+    .data-table {
+        @apply w-full rounded-lg border border-border bg-card overflow-hidden shadow-sm;
+    }
+
+    .data-table thead {
+        @apply bg-muted/70;
+    }
+
+    .data-table th {
+        @apply px-4 py-3.5 text-xs font-semibold text-muted-foreground border-b border-border whitespace-nowrap text-left uppercase tracking-wider;
+    }
+
+    .data-table td {
+        @apply px-4 py-3 text-sm border-b border-border/50 whitespace-nowrap;
+    }
+
+    .data-table tbody tr {
+        @apply hover:bg-accent/50 transition-colors duration-150;
+    }
+
+    .data-table tbody tr:last-child td {
+        @apply border-b-0;
+    }
+
+    /* Empty State - Enhanced */
+    .empty-state {
+        @apply flex flex-col items-center justify-center py-20 text-center gap-3;
+    }
+
+    .empty-state-title {
+        @apply text-base font-semibold text-foreground;
+    }
+
+    .empty-state-desc {
+        @apply text-sm text-muted-foreground max-w-sm leading-relaxed;
+    }
+
+    /* Sidebar - Rich Styling */
+    .sidebar {
+        @apply bg-sidebar text-sidebar-foreground border-r border-sidebar-border;
+    }
+
+    .sidebar-item {
+        @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-150 cursor-pointer;
+    }
+
+    .sidebar-item-active {
+        @apply bg-sidebar-primary text-sidebar-primary-foreground shadow-sm;
+    }
+
+    /* Action Buttons - Polished */
+    .action-button {
+        @apply inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-input bg-background text-sm font-medium hover:bg-accent hover:border-accent-foreground/20 transition-all duration-150 shadow-xs hover:shadow-sm;
+    }
+
+    /* Badge Components */
+    .badge {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    }
+
+    .badge-primary {
+        @apply bg-primary/10 text-primary border border-primary/20;
+    }
+
+    .badge-success {
+        @apply bg-success/10 text-success border border-success/20;
+    }
+
+    .badge-warning {
+        @apply bg-warning/10 text-warning border border-warning/20;
+    }
+
+    .badge-destructive {
+        @apply bg-destructive/10 text-destructive border border-destructive/20;
+    }
+}
+
+/* ========================================
+   UTILITIES
+======================================== */
+@layer utilities {
+
+    /* Scrollbar Styling */
+    .thin-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: oklch(0.9 0.01 240) transparent;
+    }
+
+    .thin-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .thin-scrollbar::-webkit-scrollbar-thumb {
+        @apply bg-muted/80 rounded-full hover:bg-muted;
+        transition: background 150ms;
+    }
+
+    .thin-scrollbar::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+
+    /* Focus Visible States */
+    .focus-ring {
+        @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+    }
+
+    /* Glass Effect */
+    .glass {
+        @apply bg-white/80 backdrop-blur-sm border border-border/50;
+    }
+
+    /* Gradient Text */
+    .gradient-text {
+        @apply bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent;
+    }
+
+    /* Shadow Utilities */
+    .shadow-xs {
+        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    }
+
+    .shadow-brand {
+        box-shadow: 0 4px 12px -2px oklch(0.58 0.25 260 / 0.15);
+    }
+}
+
+/* ========================================
+   FONT FAMILY - Roboto for English & Hindi
+======================================== */
+@layer base {
+    body {
+        font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+}
+
+.dark {
+    --sidebar: hsl(240 5.9% 10%);
+    --sidebar-foreground: hsl(240 4.8% 95.9%);
+    --sidebar-primary: hsl(224.3 76.3% 48%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-accent: hsl(240 3.7% 15.9%);
+    --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+    --sidebar-border: hsl(240 3.7% 15.9%);
+    --sidebar-ring: hsl(217.2 91.2% 59.8%);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+}
