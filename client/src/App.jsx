@@ -1,16 +1,19 @@
-import { Routes, Route } from 'react-router-dom'
+import React from 'react'
+import { BrowserRouter, Routes } from 'react-router-dom'
+import { Toaster } from 'sonner'
+import AppLayout from './components/layout/AppLayout'
+import { routes } from './config/routes'
+import { generateRoutes } from './utils/routeUtils'
 
-function App() {
+export default function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold underline text-center pt-10">
-        Hello MERN + Tailwind!
-      </h1>
-      <Routes>
-        {/* <Route path="/" element={<Home />} /> */}
-      </Routes>
-    </div>
+    <BrowserRouter>
+      <Toaster position="top-right" richColors />
+      <AppLayout>
+        <Routes>
+          {generateRoutes(routes)}
+        </Routes>
+      </AppLayout>
+    </BrowserRouter>
   )
 }
-
-export default App
