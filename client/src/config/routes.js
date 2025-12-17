@@ -3,6 +3,7 @@ import UIGuide from '@/pages/UIGuide';
 import StudentEnrollments from '@/pages/StudentEnrollments';
 import Entry from '@/pages/Entry';
 import Reports from '@/pages/Reports';
+import AddParty from '@/pages/AddParty';
 import {
     HomeIcon,
     UsersIcon,
@@ -34,15 +35,6 @@ export const routes = [
         view: 'entry', // Which view this belongs to
     },
     {
-        path: '/demo',
-        component: Reports,
-        title: 'Entry',
-        titleKey: 'entry:nav.entry',
-        icon: DocumentTextIcon,
-        showInSidebar: false,
-        view: 'entry', // Which view this belongs to
-    },
-    {
         path: '/entry',
         component: Entry,
         title: 'Entry',
@@ -53,7 +45,7 @@ export const routes = [
         children: [
             {
                 path: '/entry/party',
-                component: Home,
+                component: AddParty,
                 title: 'Add Party',
                 titleKey: 'entry:sections.entry.addParty',
                 showInSidebar: true,
