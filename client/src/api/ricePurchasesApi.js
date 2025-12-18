@@ -1,0 +1,39 @@
+/**
+ * API service for rice purchase deal-related endpoints
+ */
+import apiClient from '@/lib/apiClient';
+
+const DUMMY_RICE_PURCHASES = [
+    { _id: '1', dealNumber: 'RD-2024-001', partyName: 'Ram Janki', dealDate: '2024-02-10', quantity: '300', rate: '4000', totalAmount: 1200000, status: 'active', createdAt: '2024-02-10T10:30:00.000Z' },
+    { _id: '2', dealNumber: 'RD-2024-002', partyName: 'sarguni industries', dealDate: '2024-03-05', quantity: '450', rate: '4200', totalAmount: 1890000, status: 'pending', createdAt: '2024-03-05T10:30:00.000Z' },
+];
+
+const generateDummyResponse = ({ page = 1, pageSize = 10 }) => {
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedData = DUMMY_RICE_PURCHASES.slice(startIndex, endIndex);
+    const total = DUMMY_RICE_PURCHASES.length;
+    const totalPages = Math.ceil(total / pageSize);
+
+    return {
+        success: true,
+        message: 'Rice purchases retrieved successfully (DUMMY DATA)',
+        data: { ricePurchases: paginatedData, totalRicePurchases: total, pageSize, currentPage: page, totalPages, hasPrev: page > 1, hasNext: page < totalPages },
+    };
+};
+
+export const fetchRicePurchases = async ({ page = 1, pageSize = 10, filters = [], sorting = [] }) => {
+    const params = { page: page.toString(), pageSize: pageSize.toString() };
+    filters.forEach(filter => { if (filter.value) params[`filter[${filter.id}]`] = filter.value; });
+    if (sorting.length > 0) { params.sortBy = sorting[0].id; params.sortOrder = sorting[0].desc ? 'desc' : 'asc'; }
+
+    try {
+        return await apiClient.get('/purchases/rice', { params });
+    } catch (error) {
+        console.warn('⚠️ API not available, using dummy data');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return generateDummyResponse({ page, pageSize });
+    }
+};
+
+export default { fetchRicePurchases };

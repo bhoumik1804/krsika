@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -15,74 +17,15 @@ import { toast } from 'sonner';
 import { setPageIndex, setPageSize } from '@/store/slices/tableSlice';
 import TablePagination from '@/components/ui/table-pagination';
 import EmptyState from '@/components/EmptyState';
+import { useParties } from '@/hooks/useParties';
 
 export default function PartyInfo() {
     const dispatch = useDispatch();
     const { pageIndex, pageSize } = useSelector(state => state.table);
     const { t } = useTranslation(['reports', 'common']);
 
-    // Mock data for party information
-    const [parties, setParties] = React.useState([
-        {
-            id: '1',
-            partyName: 'Xyz',
-            phone: '+919894397029',
-            email: '',
-            address: 'Quzi',
-            gstn: '',
-        },
-        {
-            id: '2',
-            partyName: 'Ram Janki',
-            phone: '+919990759995',
-            email: '',
-            address: 'utai',
-            gstn: '',
-        },
-        {
-            id: '3',
-            partyName: 'sarguni industries',
-            phone: '+919188398154B4',
-            email: '',
-            address: 'utai, india',
-            gstn: '',
-        },
-        {
-            id: '4',
-            partyName: 'PARTY 3',
-            phone: '',
-            email: '',
-            address: '',
-            gstn: '',
-        },
-        {
-            id: '5',
-            partyName: 'PARTY 2',
-            phone: '',
-            email: '',
-            address: '',
-            gstn: '',
-        },
-        {
-            id: '6',
-            partyName: 'PARTY 1',
-            phone: '',
-            email: '',
-            address: '',
-            gstn: '',
-        },
-    ]);
-
-    const [isLoading, setIsLoading] = React.useState(false);
-    const totalPages = Math.ceil(parties.length / pageSize);
-    const currentPage = pageIndex + 1;
-
-    // Paginated data
-    const paginatedParties = React.useMemo(() => {
-        const startIdx = pageIndex * pageSize;
-        const endIdx = startIdx + pageSize;
-        return parties.slice(startIdx, endIdx);
-    }, [parties, pageIndex, pageSize]);
+    // Use the useParties hook to fetch data
+    const { parties, totalPages, currentPage, isLoading, isError, error } = useParties();
 
     // Table column definitions with translations
     const columns = [
@@ -215,6 +158,23 @@ export default function PartyInfo() {
         );
     }
 
+    // Error state
+    if (isError) {
+        return (
+            <div className="flex flex-col items-center justify-center h-64 bg-card rounded-xl border">
+                <p className="text-destructive mb-2 font-semibold">Error loading parties</p>
+                <p className="text-muted-foreground text-sm">{error?.message || 'Something went wrong'}</p>
+                <Button
+                    onClick={() => window.location.reload()}
+                    className="mt-4"
+                    variant="outline"
+                >
+                    Retry
+                </Button>
+            </div>
+        );
+    }
+
     // Empty state - no parties
     if (!isLoading && parties.length === 0) {
         return (
@@ -234,7 +194,7 @@ export default function PartyInfo() {
                 <CardContent className="p-6">
                     <DataTable
                         columns={columns}
-                        data={paginatedParties}
+                        data={parties}
                         showFilters={true}
                     />
 
