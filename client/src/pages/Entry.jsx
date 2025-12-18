@@ -1,5 +1,3 @@
-"use client";
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -24,35 +22,35 @@ export default function EntryPage() {
         {
             icon: UserPlusIcon,
             title: t('entry:entry.management.addParty'),
-            onClick: () => navigate('/party/add'),
+            onClick: () => navigate('/entry/party'),
             iconBg: 'bg-purple-100',
             iconColor: 'text-purple-600',
         },
         {
             icon: TruckIcon,
             title: t('entry:entry.management.addTransporter'),
-            onClick: () => navigate('/transporter/add'),
+            onClick: () => navigate('/entry/transporters'),
             iconBg: 'bg-purple-100',
             iconColor: 'text-purple-600',
         },
         {
             icon: UserGroupIcon,
             title: t('entry:entry.management.addWorker'),
-            onClick: () => navigate('/worker/add'),
+            onClick: () => navigate('/entry/brokers'),
             iconBg: 'bg-purple-100',
             iconColor: 'text-purple-600',
         },
         {
             icon: BuildingOffice2Icon,
             title: t('entry:entry.management.propertyManagement'),
-            onClick: () => navigate('/property'),
+            onClick: () => navigate('/entry/committee'),
             iconBg: 'bg-purple-100',
             iconColor: 'text-purple-600',
         },
         {
             icon: DocumentTextIcon,
             title: t('entry:entry.management.doEntry'),
-            onClick: () => navigate('/do-entry'),
+            onClick: () => navigate('/entry/do'),
             iconBg: 'bg-purple-100',
             iconColor: 'text-purple-600',
         },

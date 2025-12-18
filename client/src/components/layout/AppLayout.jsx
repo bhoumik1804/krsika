@@ -1,8 +1,11 @@
-import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+"use client";
+
+import React, { useEffect, useMemo } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { setActiveView } from '@/store/slices/sidebarSlice';
+import { PaintBrushIcon } from '@heroicons/react/24/outline';
 import {
     SidebarInset,
     SidebarProvider,
@@ -17,11 +20,13 @@ import {
     BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 import AppSidebar from './AppSidebar';
 import LanguageToggle from '../LanguageToggle';
 import { routes } from '@/config/routes';
+import { getBreadcrumbs } from '@/utils/routeUtils';
 
-export default function AppLayout({ children }) {
+export default function AppLayout() {
     const location = useLocation();
     const { t } = useTranslation(['entry', 'common', 'reports']);
     const dispatch = useDispatch();
@@ -35,50 +40,11 @@ export default function AppLayout({ children }) {
         }
     }, [location.pathname, dispatch]);
 
-    // Function to get translated breadcrumbs
-    const getBreadcrumbs = () => {
-        const breadcrumbs = [];
-
-        // Add dashboard breadcrumb based on current view
-        if (location.pathname.startsWith('/reports')) {
-            breadcrumbs.push({ label: t('entry:dashboard.reports'), path: '/reports' });
-        } else {
-            breadcrumbs.push({ label: t('entry:dashboard.entry'), path: '/' });
-        }
-
-        // Skip if we're on a dashboard root
-        if (location.pathname === '/' || location.pathname === '/reports') {
-            return breadcrumbs;
-        }
-
-        // Find matching route for breadcrumbs
-        for (const route of routes) {
-            if (route.path === location.pathname && route.titleKey) {
-                const label = t(route.titleKey);
-                breadcrumbs.push({ label, path: route.path });
-                return breadcrumbs;
-            }
-
-            // Check children
-            if (route.children) {
-                for (const child of route.children) {
-                    if (child.path === location.pathname && child.titleKey) {
-                        // Add parent
-                        if (route.titleKey) {
-                            breadcrumbs.push({ label: t(route.titleKey), path: route.path });
-                        }
-                        // Add child
-                        breadcrumbs.push({ label: t(child.titleKey), path: child.path });
-                        return breadcrumbs;
-                    }
-                }
-            }
-        }
-
-        return breadcrumbs;
-    };
-
-    const breadcrumbs = getBreadcrumbs();
+    // Memoized breadcrumbs - only recalculate when pathname changes
+    const breadcrumbs = useMemo(
+        () => getBreadcrumbs(location.pathname, routes, t),
+        [location.pathname, t]
+    );
 
     return (
         <SidebarProvider>
@@ -107,15 +73,29 @@ export default function AppLayout({ children }) {
                         </BreadcrumbList>
                     </Breadcrumb>
 
-                    {/* Language Toggle - Right side */}
-                    <div className="ml-auto">
+                    {/* Right side actions */}
+                    <div className="ml-auto flex items-center gap-2">
+                        {/* UI Guide - Only in Development */}
+                        {import.meta.env.DEV && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => window.location.href = '/ui/guide'}
+                                className="hidden md:flex"
+                            >
+                                <PaintBrushIcon className="h-4 w-4 mr-2" />
+                                UI Guide
+                            </Button>
+                        )}
+
+                        {/* Language Toggle */}
                         <LanguageToggle />
                     </div>
                 </header>
 
                 {/* Main Content */}
                 <main className="flex flex-1 flex-col gap-4 p-4">
-                    {children}
+                    <Outlet />
                 </main>
             </SidebarInset>
         </SidebarProvider>

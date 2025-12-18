@@ -12,11 +12,16 @@ import {
 export default function LanguageToggle() {
     const { i18n, t } = useTranslation('common');
 
+    // Hide in production
+    if (!import.meta.env.DEV) {
+        return null;
+    }
+
     const changeLanguage = (lng) => {
         i18n.changeLanguage(lng);
     };
 
-    const currentLanguage = i18n.language || 'en';
+    const currentLanguage = i18n.language || 'hi';
     const languageLabel = currentLanguage === 'hi' ? 'हिंदी' : 'EN';
 
     return (
@@ -34,7 +39,7 @@ export default function LanguageToggle() {
                 >
                     <span className="flex items-center gap-2">
                         {currentLanguage === 'en' && <span>✓</span>}
-                        {t('language.english')}
+                        {t('languages.english')}
                     </span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -43,7 +48,7 @@ export default function LanguageToggle() {
                 >
                     <span className="flex items-center gap-2">
                         {currentLanguage === 'hi' && <span>✓</span>}
-                        {t('language.hindi')}
+                        {t('languages.hindi')}
                     </span>
                 </DropdownMenuItem>
             </DropdownMenuContent>

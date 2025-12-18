@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
@@ -32,6 +32,9 @@ import { routes } from '@/config/routes';
 import { generateNavItems } from '@/utils/routeUtils';
 import { cn } from '@/lib/utils';
 
+// Generate nav items once - outside component for better performance
+const allNavItems = generateNavItems(routes);
+
 export default function AppSidebar() {
     const location = useLocation();
     const navigate = useNavigate();
@@ -41,20 +44,18 @@ export default function AppSidebar() {
     // Get active view from Redux store
     const activeView = useSelector((state) => state.sidebar.activeView);
 
-    // Auto-generate nav items from route config
-    const allNavItems = generateNavItems(routes);
-
     // Handle toggle change - navigate and update Redux state
-    const handleToggleChange = (view) => {
+    const handleToggleChange = useCallback((view) => {
         dispatch(setActiveView(view));
         if (view === 'reports') {
             navigate('/reports');
         } else {
-            navigate('/');
+            navigate('/entry');
         }
-    };
+    }, [dispatch, navigate]);
 
-    const renderMenuItem = (item) => {
+    // Memoized render function for menu items
+    const renderMenuItem = useCallback((item) => {
         const isActive = location.pathname === item.url;
         const hasChildren = item.children && item.children.length > 0;
         const isChildActive = hasChildren && item.children.some(child => location.pathname === child.url);
@@ -105,7 +106,7 @@ export default function AppSidebar() {
                 </SidebarMenuButton>
             </SidebarMenuItem>
         );
-    };
+    }, [location.pathname, t]);
 
     // Filter menu items based on active view from Redux
     const getMenuItems = () => {

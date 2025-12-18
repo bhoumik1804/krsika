@@ -36,8 +36,9 @@ i18n
             },
         },
 
-        // Default language
-        fallbackLng: 'en',
+        // Default language - Hindi
+        fallbackLng: 'hi',
+        lng: 'hi', // Force Hindi as default
 
         // Debug mode (only in development)
         debug: import.meta.env.DEV,

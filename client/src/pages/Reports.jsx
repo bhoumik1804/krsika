@@ -3,43 +3,163 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent } from '@/components/ui/card';
+import {
+    UserGroupIcon,
+    TruckIcon,
+    BuildingOffice2Icon,
+    DocumentTextIcon,
+    ShoppingBagIcon,
+    CurrencyDollarIcon,
+    ArrowDownTrayIcon,
+    ClipboardDocumentListIcon,
+} from '@heroicons/react/24/outline';
+import DashboardCard from '@/components/DashboardCard';
 
 export default function ReportsPage() {
-    const { t } = useTranslation(['entry']);
+    const { t } = useTranslation(['reports']);
     const navigate = useNavigate();
 
+    // Entry Reports cards configuration
+    const entryReportCards = [
+        {
+            icon: UserGroupIcon,
+            title: t('reports:sections.entry.partyInfo'),
+            onClick: () => navigate('/reports/entry/party-info'),
+            iconBg: 'bg-purple-100',
+            iconColor: 'text-purple-600',
+        },
+        {
+            icon: TruckIcon,
+            title: t('reports:sections.entry.transporters'),
+            onClick: () => navigate('/reports/entry/transporters'),
+            iconBg: 'bg-purple-100',
+            iconColor: 'text-purple-600',
+        },
+        {
+            icon: UserGroupIcon,
+            title: t('reports:sections.entry.brokers'),
+            onClick: () => navigate('/reports/entry/brokers'),
+            iconBg: 'bg-purple-100',
+            iconColor: 'text-purple-600',
+        },
+        {
+            icon: BuildingOffice2Icon,
+            title: t('reports:sections.entry.committee'),
+            onClick: () => navigate('/reports/entry/committee'),
+            iconBg: 'bg-purple-100',
+            iconColor: 'text-purple-600',
+        },
+        {
+            icon: DocumentTextIcon,
+            title: t('reports:sections.entry.doReport'),
+            onClick: () => navigate('/reports/entry/do'),
+            iconBg: 'bg-purple-100',
+            iconColor: 'text-purple-600',
+        },
+        {
+            icon: ClipboardDocumentListIcon,
+            title: t('reports:sections.entry.remainingDO'),
+            onClick: () => navigate('/reports/entry/remaining-do'),
+            iconBg: 'bg-purple-100',
+            iconColor: 'text-purple-600',
+        },
+    ];
+
+    // Purchase Deal Reports cards configuration
+    const purchaseReportCards = [
+        {
+            icon: ShoppingBagIcon,
+            title: t('reports:sections.purchase.paddy'),
+            onClick: () => navigate('/reports/purchase/paddy'),
+            iconBg: 'bg-green-100',
+            iconColor: 'text-green-600',
+        },
+        {
+            icon: ShoppingBagIcon,
+            title: t('reports:sections.purchase.rice'),
+            onClick: () => navigate('/reports/purchase/rice'),
+            iconBg: 'bg-green-100',
+            iconColor: 'text-green-600',
+        },
+    ];
+
+    // Sales Deal Reports cards configuration
+    const salesReportCards = [
+        {
+            icon: CurrencyDollarIcon,
+            title: t('reports:sections.sales.paddy'),
+            onClick: () => navigate('/reports/sales/paddy'),
+            iconBg: 'bg-green-100',
+            iconColor: 'text-green-600',
+        },
+    ];
+
+    // Inward Reports cards configuration
+    const inwardReportCards = [
+        {
+            icon: ArrowDownTrayIcon,
+            title: t('reports:sections.inward.paddy'),
+            onClick: () => navigate('/reports/inward/paddy'),
+            iconBg: 'bg-blue-100',
+            iconColor: 'text-blue-600',
+        },
+        {
+            icon: ArrowDownTrayIcon,
+            title: t('reports:sections.inward.private'),
+            onClick: () => navigate('/reports/inward/private'),
+            iconBg: 'bg-blue-100',
+            iconColor: 'text-blue-600',
+        },
+        {
+            icon: ArrowDownTrayIcon,
+            title: t('reports:sections.inward.rice'),
+            onClick: () => navigate('/reports/inward/rice'),
+            iconBg: 'bg-blue-100',
+            iconColor: 'text-blue-600',
+        },
+    ];
+
     return (
-        <div className="space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold">{t('entry:nav.reports')}</h1>
-                <p className="text-muted-foreground mt-2">
-                    Reports dashboard - Coming soon
-                </p>
-            </div>
+        <div className="space-y-8">
+            {/* Entry Reports Section */}
+            <section>
+                <h2 className="text-2xl font-bold mb-4">{t('reports:sections.entry.title')}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    {entryReportCards.map((card, index) => (
+                        <DashboardCard key={index} {...card} />
+                    ))}
+                </div>
+            </section>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Card>
-                    <CardContent className="p-6">
-                        <h3 className="font-semibold">Daily Reports</h3>
-                        <p className="text-sm text-muted-foreground mt-2">View daily transaction reports</p>
-                    </CardContent>
-                </Card>
+            {/* Purchase Deal Reports Section */}
+            <section>
+                <h2 className="text-2xl font-bold mb-4">{t('reports:sections.purchase.title')}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {purchaseReportCards.map((card, index) => (
+                        <DashboardCard key={index} {...card} />
+                    ))}
+                </div>
+            </section>
 
-                <Card>
-                    <CardContent className="p-6">
-                        <h3 className="font-semibold">Inventory Reports</h3>
-                        <p className="text-sm text-muted-foreground mt-2">Check stock and inventory status</p>
-                    </CardContent>
-                </Card>
+            {/* Sales Deal Reports Section */}
+            <section>
+                <h2 className="text-2xl font-bold mb-4">{t('reports:sections.sales.title')}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                    {salesReportCards.map((card, index) => (
+                        <DashboardCard key={index} {...card} />
+                    ))}
+                </div>
+            </section>
 
-                <Card>
-                    <CardContent className="p-6">
-                        <h3 className="font-semibold">Financial Reports</h3>
-                        <p className="text-sm text-muted-foreground mt-2">View financial summaries</p>
-                    </CardContent>
-                </Card>
-            </div>
+            {/* Inward Reports Section */}
+            <section>
+                <h2 className="text-2xl font-bold mb-4">{t('reports:sections.inward.title')}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {inwardReportCards.map((card, index) => (
+                        <DashboardCard key={index} {...card} />
+                    ))}
+                </div>
+            </section>
         </div>
     );
 }

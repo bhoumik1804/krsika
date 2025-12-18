@@ -42,15 +42,6 @@ import ReportsPage from '@/pages/Reports';
 export const routes = [
     // ===== ENTRY VIEW ROUTES =====
     {
-        path: '/',
-        component: Entry,
-        title: 'Entry',
-        titleKey: 'entry:nav.entry',
-        icon: DocumentTextIcon,
-        showInSidebar: false,
-        view: 'entry', // Which view this belongs to
-    },
-    {
         path: '/entry',
         component: Entry,
         title: 'Entry',
@@ -319,6 +310,7 @@ export const routes = [
         titleKey: 'common:uiGuide',
         icon: PaintBrushIcon,
         showInSidebar: false,
+        view: 'utility',
     },
     {
         path: '/profile',

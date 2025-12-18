@@ -2,38 +2,88 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 
 /**
- * Generate React Router Route components from route config
+ * Find route by path (including children)
+ * Single source of truth for route lookups
  * @param {Array} routes - Route configuration array
- * @returns {Array} Array of Route components
+ * @param {string} pathname - Path to search for
+ * @returns {Object|null} Route object or {parent, route} for child routes
  */
-export const generateRoutes = (routes) => {
-    const routeElements = [];
+export const findRouteByPath = (routes, pathname) => {
+    for (const route of routes) {
+        if (route.path === pathname) {
+            return route;
+        }
 
-    routes.forEach((route) => {
-        // Add parent route
-        routeElements.push(
-            React.createElement(Route, {
-                key: route.path,
-                path: route.path,
-                element: React.createElement(route.component),
-            })
-        );
+        // Check children
+        if (route.children) {
+            const child = route.children.find(c => c.path === pathname);
+            if (child) {
+                return { parent: route, route: child };
+            }
+        }
+    }
+    return null;
+};
 
-        // Add child routes if any
-        if (route.children && route.children.length > 0) {
-            route.children.forEach((child) => {
-                routeElements.push(
-                    React.createElement(Route, {
-                        key: child.path,
-                        path: child.path,
-                        element: React.createElement(child.component),
-                    })
-                );
+/**
+ * Generate breadcrumbs for current path
+ * Handles Entry, Reports, and Utility views
+ * @param {string} pathname - Current pathname
+ * @param {Array} routes - Route configuration array
+ * @param {Function} t - Translation function
+ * @returns {Array} Breadcrumb array with label and path
+ */
+export const getBreadcrumbs = (pathname, routes, t) => {
+    const breadcrumbs = [];
+    const found = findRouteByPath(routes, pathname);
+
+    // Utility routes (UI Guide) - standalone, no parent breadcrumb
+    if (found?.route?.view === 'utility' || found?.view === 'utility') {
+        const route = found.route || found;
+        if (route.titleKey) {
+            breadcrumbs.push({
+                label: t(route.titleKey),
+                path: route.path
             });
         }
-    });
+        return breadcrumbs;
+    }
 
-    return routeElements;
+    // Add dashboard breadcrumb based on current view
+    if (pathname.startsWith('/reports')) {
+        breadcrumbs.push({ label: t('entry:dashboard.reports'), path: '/reports' });
+    } else if (!pathname.startsWith('/ui/')) {
+        breadcrumbs.push({ label: t('entry:dashboard.entry'), path: '/entry' });
+    }
+
+    // Dashboard roots - return early
+    if (pathname === '/' || pathname === '/entry' || pathname === '/reports') {
+        return breadcrumbs;
+    }
+
+    // Add current page breadcrumb
+    if (found) {
+        const route = found.route || found;
+        const parentRoute = found.parent;
+
+        // Add parent breadcrumb if exists
+        if (parentRoute && parentRoute.titleKey) {
+            breadcrumbs.push({
+                label: t(parentRoute.titleKey),
+                path: parentRoute.path
+            });
+        }
+
+        // Add current page
+        if (route.titleKey) {
+            breadcrumbs.push({
+                label: t(route.titleKey),
+                path: route.path
+            });
+        }
+    }
+
+    return breadcrumbs;
 };
 
 /**
@@ -46,7 +96,7 @@ export const generateNavItems = (routes) => {
         .filter((route) => route.showInSidebar)
         .map((route) => ({
             title: route.title,
-            titleKey: route.titleKey, // Pass titleKey for translation
+            titleKey: route.titleKey,
             url: route.path,
             icon: route.icon,
             children: route.children
@@ -54,7 +104,7 @@ export const generateNavItems = (routes) => {
                     .filter((child) => child.showInSidebar)
                     .map((child) => ({
                         title: child.title,
-                        titleKey: child.titleKey, // Pass titleKey for translation
+                        titleKey: child.titleKey,
                         url: child.path,
                     }))
                 : undefined,
@@ -62,50 +112,17 @@ export const generateNavItems = (routes) => {
 };
 
 /**
- * Build breadcrumb trail for current path
- * @param {string} pathname - Current pathname
- * @param {Array} routes - Route configuration array
- * @returns {Array} Breadcrumb labels
- */
-export const generateBreadcrumbs = (pathname, routes) => {
-    const breadcrumbs = ['Dashboard'];
-
-    // Find matching route
-    for (const route of routes) {
-        if (route.path === pathname && route.path !== '/') {
-            breadcrumbs.push(route.title);
-            break;
-        }
-
-        // Check children
-        if (route.children) {
-            for (const child of route.children) {
-                if (child.path === pathname) {
-                    breadcrumbs.push(route.title);
-                    breadcrumbs.push(child.title);
-                    return breadcrumbs;
-                }
-            }
-        }
-    }
-
-    return breadcrumbs;
-};
-
-/**
- * Get all routes (including children) as flat array for routing
+ * Get all routes (including children) as flat array
  * @param {Array} routes - Route configuration array
  * @returns {Array} Flat array of all routes
  */
 export const flattenRoutes = (routes) => {
     const flat = [];
-
     routes.forEach((route) => {
         flat.push(route);
         if (route.children) {
             flat.push(...route.children);
         }
     });
-
     return flat;
 };
