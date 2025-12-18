@@ -29,7 +29,16 @@ import {
     BuildingOfficeIcon,
     ClipboardDocumentListIcon,
 } from '@heroicons/react/24/outline';
-import EntryReportPage from '@/pages/EntryReportPage';
+import AddTransporters from '@/pages/AddTransporters';
+import AddBroker from '@/pages/AddBroker';
+import AddCommitteeStructure from '@/pages/AddCommitteeStructure';
+import AddDOEntry from '@/pages/AddDOEntry';
+import AddPaddyPurchase from '@/pages/AddPaddyPurchase';
+import AddRicePurchase from '@/pages/AddRicePurchase';
+import AddPaddySalesDeal from '@/pages/AddPaddySalesDeal';
+import AddGovPaddyInward from '@/pages/AddGovPaddyInward';
+import AddPrivatePaddyInward from '@/pages/AddPrivatePaddyInward';
+import AddRiceInward from '@/pages/AddRiceInward';
 
 /**
 * Centralized route configuration
@@ -64,28 +73,28 @@ export const routes = [
             },
             {
                 path: '/entry/transporters',
-                component: Home,
+                component: AddTransporters,
                 title: 'Add Transporters',
                 titleKey: 'entry:sections.entry.addTransporters',
                 showInSidebar: true,
             },
             {
                 path: '/entry/brokers',
-                component: Home,
+                component: AddBroker,
                 title: 'Add Brokers',
                 titleKey: 'entry:sections.entry.addBrokers',
                 showInSidebar: true,
             },
             {
                 path: '/entry/committee',
-                component: Home,
+                component: AddCommitteeStructure,
                 title: 'Add Committee Structure',
                 titleKey: 'entry:sections.entry.addCommittee',
                 showInSidebar: true,
             },
             {
                 path: '/entry/do',
-                component: Home,
+                component: AddDOEntry,
                 title: 'DO Entry',
                 titleKey: 'entry:sections.entry.doEntry',
                 showInSidebar: true,
@@ -103,14 +112,14 @@ export const routes = [
         children: [
             {
                 path: '/purchase/paddy',
-                component: Home,
+                component: AddPaddyPurchase,
                 title: 'Paddy Purchase Deal',
                 titleKey: 'entry:sections.purchase.paddy',
                 showInSidebar: true,
             },
             {
                 path: '/purchase/rice',
-                component: Home,
+                component: AddRicePurchase,
                 title: 'Rice Purchase Deal',
                 titleKey: 'entry:sections.purchase.rice',
                 showInSidebar: true,
@@ -128,7 +137,7 @@ export const routes = [
         children: [
             {
                 path: '/sales/paddy',
-                component: Home,
+                component: AddPaddySalesDeal,
                 title: 'Paddy Deals',
                 titleKey: 'entry:sections.sales.paddy',
                 showInSidebar: true,
@@ -146,21 +155,21 @@ export const routes = [
         children: [
             {
                 path: '/inward/govt-paddy',
-                component: Home,
+                component: AddGovPaddyInward,
                 title: 'Government Paddy Inward',
                 titleKey: 'entry:sections.inward.govtPaddy',
                 showInSidebar: true,
             },
             {
                 path: '/inward/private-paddy',
-                component: Home,
+                component: AddPrivatePaddyInward,
                 title: 'Private Paddy Inward',
                 titleKey: 'entry:sections.inward.privatePaddy',
                 showInSidebar: true,
             },
             {
                 path: '/inward/rice',
-                component: Home,
+                component: AddRiceInward,
                 title: 'Rice Inward / Lot Deposit',
                 titleKey: 'entry:sections.inward.rice',
                 showInSidebar: true,
@@ -171,7 +180,7 @@ export const routes = [
     // ===== REPORTS VIEW ROUTES =====
     {
         path: '/reports',
-        component: EntryReportPage,
+        component: Entry,
         title: 'Reports',
         titleKey: 'entry:nav.reports',
         icon: DocumentTextIcon,
@@ -180,7 +189,7 @@ export const routes = [
     },
     {
         path: '/reports/entry',
-        component: EntryReportPage,
+        component: Entry,
         title: 'Entry Report',
         titleKey: 'reports:sections.entry.title',
         icon: DocumentTextIcon,
@@ -233,7 +242,7 @@ export const routes = [
     },
     {
         path: '/reports/purchase',
-        component: EntryReportPage,
+        component: Entry,
         title: 'Purchase Deals Report',
         titleKey: 'reports:sections.purchase.title',
         icon: ShoppingBagIcon,
@@ -258,7 +267,7 @@ export const routes = [
     },
     {
         path: '/reports/sales',
-        component: EntryReportPage,
+        component: Entry,
         title: 'Sales Deals Report',
         titleKey: 'reports:sections.sales.title',
         icon: ShoppingBagIcon,
@@ -276,7 +285,7 @@ export const routes = [
     },
     {
         path: '/reports/inward',
-        component: EntryReportPage,
+        component: Entry,
         title: 'Inward Report',
         titleKey: 'reports:sections.inward.title',
         icon: ArrowDownTrayIcon,
