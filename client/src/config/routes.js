@@ -15,13 +15,13 @@ import PaddyInwardReport from '@/pages/PaddyInwardReport';
 import PrivateInwardReport from '@/pages/PrivateInwardReport';
 import RiceInwardReport from '@/pages/RiceInwardReport';
 import {
-    UsersIcon,
     PaintBrushIcon,
     Cog6ToothIcon,
     UserIcon,
     DocumentTextIcon,
     ShoppingBagIcon,
     ArrowDownTrayIcon,
+    CurrencyDollarIcon
 } from '@heroicons/react/24/outline';
 import AddTransporters from '@/pages/AddTransporters';
 import AddBroker from '@/pages/AddBroker';
@@ -117,7 +117,7 @@ export const routes = [
         component: Entry,
         title: 'Sales Deals',
         titleKey: 'entry:sections.sales.title',
-        icon: ShoppingBagIcon,
+        icon: CurrencyDollarIcon,
         showInSidebar: true,
         view: 'entry',
         children: [
@@ -256,7 +256,7 @@ export const routes = [
         component: ReportsPage,
         title: 'Sales Deals Report',
         titleKey: 'reports:sections.sales.title',
-        icon: ShoppingBagIcon,
+        icon: CurrencyDollarIcon,
         showInSidebar: true,
         view: 'reports',
         children: [

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useMemo } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import React, { useEffect, useMemo, useCallback, memo } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { setActiveView } from '@/store/slices/sidebarSlice';
@@ -26,18 +26,44 @@ import LanguageToggle from '../LanguageToggle';
 import { routes } from '@/config/routes';
 import { getBreadcrumbs } from '@/utils/routeUtils';
 
+// Dev mode check - evaluated once at module load
+const IS_DEV = import.meta.env.DEV;
+
+// Memoized Header Actions Component
+const HeaderActions = memo(function HeaderActions({ onNavigateToGuide }) {
+    if (!IS_DEV) return null;
+
+    return (
+        <>
+            <Button
+                variant="outline"
+                size="sm"
+                onClick={onNavigateToGuide}
+                className="hidden md:flex"
+            >
+                <PaintBrushIcon className="h-4 w-4 mr-2" />
+                UI Guide
+            </Button>
+            <LanguageToggle />
+        </>
+    );
+});
+
 export default function AppLayout() {
     const location = useLocation();
+    const navigate = useNavigate();
     const { t } = useTranslation(['entry', 'common', 'reports']);
     const dispatch = useDispatch();
 
+    // Memoized navigation handler
+    const handleNavigateToGuide = useCallback(() => {
+        navigate('/ui/guide');
+    }, [navigate]);
+
     // Sync Redux state with current route on navigation
     useEffect(() => {
-        if (location.pathname.startsWith('/reports')) {
-            dispatch(setActiveView('reports'));
-        } else {
-            dispatch(setActiveView('entry'));
-        }
+        const view = location.pathname.startsWith('/reports') ? 'reports' : 'entry';
+        dispatch(setActiveView(view));
     }, [location.pathname, dispatch]);
 
     // Memoized breadcrumbs - only recalculate when pathname changes
@@ -59,7 +85,7 @@ export default function AppLayout() {
                     <Breadcrumb>
                         <BreadcrumbList>
                             {breadcrumbs.map((crumb, index) => (
-                                <React.Fragment key={index}>
+                                <React.Fragment key={crumb.path || index}>
                                     {index > 0 && <BreadcrumbSeparator className="hidden md:block" />}
                                     <BreadcrumbItem className={index === 0 ? "hidden md:block" : ""}>
                                         {index === breadcrumbs.length - 1 ? (
@@ -75,21 +101,7 @@ export default function AppLayout() {
 
                     {/* Right side actions */}
                     <div className="ml-auto flex items-center gap-2">
-                        {/* UI Guide - Only in Development */}
-                        {import.meta.env.DEV && (
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => window.location.href = '/ui/guide'}
-                                className="hidden md:flex"
-                            >
-                                <PaintBrushIcon className="h-4 w-4 mr-2" />
-                                UI Guide
-                            </Button>
-                        )}
-
-                        {/* Language Toggle */}
-                        <LanguageToggle />
+                        <HeaderActions onNavigateToGuide={handleNavigateToGuide} />
                     </div>
                 </header>
 
@@ -101,3 +113,4 @@ export default function AppLayout() {
         </SidebarProvider>
     );
 }
+

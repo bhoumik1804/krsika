@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import { LanguageIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,20 +9,25 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { setLanguage, selectCurrentLanguage } from '@/store/slices/languageSlice';
 
 export default function LanguageToggle() {
     const { i18n, t } = useTranslation('common');
+    const dispatch = useDispatch();
+    const currentLanguage = useSelector(selectCurrentLanguage);
 
-    // Hide in production
-    if (!import.meta.env.DEV) {
-        return null;
-    }
+    // Sync i18n with Redux state on mount and when language changes
+    useEffect(() => {
+        if (i18n.language !== currentLanguage) {
+            i18n.changeLanguage(currentLanguage);
+        }
+    }, [currentLanguage, i18n]);
 
     const changeLanguage = (lng) => {
+        dispatch(setLanguage(lng));
         i18n.changeLanguage(lng);
     };
 
-    const currentLanguage = i18n.language || 'hi';
     const languageLabel = currentLanguage === 'hi' ? 'हिंदी' : 'EN';
 
     return (
