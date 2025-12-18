@@ -2,8 +2,19 @@ import Home from '@/pages/Home';
 import UIGuide from '@/pages/UIGuide';
 import StudentEnrollments from '@/pages/StudentEnrollments';
 import Entry from '@/pages/Entry';
-import Reports from '@/pages/Reports';
 import AddParty from '@/pages/AddParty';
+import PartyInfo from '@/pages/PartyInfo';
+import TransportersInfo from '@/pages/TransportersInfo';
+import BrokerInfo from '@/pages/BrokerInfo';
+import CommitteeStructureInfo from '@/pages/CommitteeStructureInfo';
+import DOEntryReport from '@/pages/DOEntryReport';
+import RemainingDOInfo from '@/pages/RemainingDOInfo';
+import PaddyPurchaseDealReport from '@/pages/PaddyPurchaseDealReport';
+import RicePurchaseDealReport from '@/pages/RicePurchaseDealReport';
+import PaddySalesDealReport from '@/pages/PaddySalesDealReport';
+import PaddyInwardReport from '@/pages/PaddyInwardReport';
+import PrivateInwardReport from '@/pages/PrivateInwardReport';
+import RiceInwardReport from '@/pages/RiceInwardReport';
 import {
     HomeIcon,
     UsersIcon,
@@ -30,9 +41,9 @@ import AddPrivatePaddyInward from '@/pages/AddPrivatePaddyInward';
 import AddRiceInward from '@/pages/AddRiceInward';
 
 /**
- * Centralized route configuration
- * Automatically syncs across App.jsx, AppSidebar.jsx, and AppLayout.jsx
- */
+* Centralized route configuration
+* Automatically syncs across App.jsx, AppSidebar.jsx, and AppLayout.jsx
+*/
 export const routes = [
     // ===== ENTRY VIEW ROUTES =====
     {
@@ -169,7 +180,7 @@ export const routes = [
     // ===== REPORTS VIEW ROUTES =====
     {
         path: '/reports',
-        component: Reports,
+        component: Entry,
         title: 'Reports',
         titleKey: 'entry:nav.reports',
         icon: DocumentTextIcon,
@@ -178,7 +189,7 @@ export const routes = [
     },
     {
         path: '/reports/entry',
-        component: Reports,
+        component: Entry,
         title: 'Entry Report',
         titleKey: 'reports:sections.entry.title',
         icon: DocumentTextIcon,
@@ -187,42 +198,42 @@ export const routes = [
         children: [
             {
                 path: '/reports/entry/party-info',
-                component: Reports,
+                component: PartyInfo,
                 title: 'Information of Party',
                 titleKey: 'reports:sections.entry.partyInfo',
                 showInSidebar: true,
             },
             {
                 path: '/reports/entry/transporters',
-                component: Reports,
+                component: TransportersInfo,
                 title: 'Transporters',
                 titleKey: 'reports:sections.entry.transporters',
                 showInSidebar: true,
             },
             {
                 path: '/reports/entry/brokers',
-                component: Reports,
+                component: BrokerInfo,
                 title: 'Brokers',
                 titleKey: 'reports:sections.entry.brokers',
                 showInSidebar: true,
             },
             {
                 path: '/reports/entry/committee',
-                component: Reports,
+                component: CommitteeStructureInfo,
                 title: 'Committee Structure',
                 titleKey: 'reports:sections.entry.committee',
                 showInSidebar: true,
             },
             {
                 path: '/reports/entry/do',
-                component: Reports,
+                component: DOEntryReport,
                 title: 'DO Entry Report',
                 titleKey: 'reports:sections.entry.doReport',
                 showInSidebar: true,
             },
             {
                 path: '/reports/entry/remaining-do',
-                component: Reports,
+                component: RemainingDOInfo,
                 title: 'Details of Remaining DO Lifting',
                 titleKey: 'reports:sections.entry.remainingDO',
                 showInSidebar: true,
@@ -231,7 +242,7 @@ export const routes = [
     },
     {
         path: '/reports/purchase',
-        component: Reports,
+        component: Entry,
         title: 'Purchase Deals Report',
         titleKey: 'reports:sections.purchase.title',
         icon: ShoppingBagIcon,
@@ -240,14 +251,14 @@ export const routes = [
         children: [
             {
                 path: '/reports/purchase/paddy',
-                component: Reports,
+                component: PaddyPurchaseDealReport,
                 title: 'Paddy Purchase Deal Report',
                 titleKey: 'reports:sections.purchase.paddy',
                 showInSidebar: true,
             },
             {
                 path: '/reports/purchase/rice',
-                component: Reports,
+                component: RicePurchaseDealReport,
                 title: 'Rice Purchase Deal Report',
                 titleKey: 'reports:sections.purchase.rice',
                 showInSidebar: true,
@@ -256,7 +267,7 @@ export const routes = [
     },
     {
         path: '/reports/sales',
-        component: Reports,
+        component: Entry,
         title: 'Sales Deals Report',
         titleKey: 'reports:sections.sales.title',
         icon: ShoppingBagIcon,
@@ -265,7 +276,7 @@ export const routes = [
         children: [
             {
                 path: '/reports/sales/paddy',
-                component: Reports,
+                component: PaddySalesDealReport,
                 title: 'Paddy Deals Report',
                 titleKey: 'reports:sections.sales.paddy',
                 showInSidebar: true,
@@ -274,7 +285,7 @@ export const routes = [
     },
     {
         path: '/reports/inward',
-        component: Reports,
+        component: Entry,
         title: 'Inward Report',
         titleKey: 'reports:sections.inward.title',
         icon: ArrowDownTrayIcon,
@@ -283,21 +294,21 @@ export const routes = [
         children: [
             {
                 path: '/reports/inward/paddy',
-                component: Reports,
+                component: PaddyInwardReport,
                 title: 'Paddy Inward Report',
                 titleKey: 'reports:sections.inward.paddy',
                 showInSidebar: true,
             },
             {
                 path: '/reports/inward/private',
-                component: Reports,
+                component: PrivateInwardReport,
                 title: 'Private Inward Report',
                 titleKey: 'reports:sections.inward.private',
                 showInSidebar: true,
             },
             {
                 path: '/reports/inward/rice',
-                component: Reports,
+                component: RiceInwardReport,
                 title: 'Rice Inward / Lot Deposit Report',
                 titleKey: 'reports:sections.inward.rice',
                 showInSidebar: true,
