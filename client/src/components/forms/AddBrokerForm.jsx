@@ -15,14 +15,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { ChevronDown } from 'lucide-react';
+import { PhoneInputField } from '@/components/ui/phone-input-field';
 
 // Form validation schema
 const brokerFormSchema = z.object({
@@ -54,7 +55,7 @@ const brokerFormSchema = z.object({
 });
 
 export default function AddBrokerForm() {
-  const { t } = useTranslation(['entry', 'common']);
+  const { t } = useTranslation(['forms', 'entry', 'common']);
   const [isLoading, setIsLoading] = React.useState(false);
 
   // Initialize form with react-hook-form and zod validation
@@ -91,9 +92,9 @@ export default function AddBrokerForm() {
   return (
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
-        <CardTitle>Add Broker</CardTitle>
+        <CardTitle>{t('forms.broker.title')}</CardTitle>
         <CardDescription>
-          Enter broker details to add them to the system
+          {t('forms.broker.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -105,11 +106,11 @@ export default function AddBrokerForm() {
               name="brokerName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>ब्रोकर का नाम *</FormLabel>
+                  <FormLabel className="text-base">{t('forms.broker.brokerName')} *</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Name" 
-                      {...field} 
+                    <Input
+                      placeholder="Name"
+                      {...field}
                       className="placeholder:text-gray-400"
                     />
                   </FormControl>
@@ -119,29 +120,9 @@ export default function AddBrokerForm() {
             />
 
             {/* Phone Number */}
-            <FormField
-              control={form.control}
+            <PhoneInputField
               name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>फोन न.</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 text-sm">
-                        <span>🇮🇳</span>
-                        <span className="text-gray-600">+91</span>
-                        <ChevronDown className="h-4 w-4 text-gray-400" />
-                      </div>
-                      <Input 
-                        placeholder="81234 56789" 
-                        {...field}
-                        className="pl-24 placeholder:text-gray-400"
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t('forms.broker.phone')}
             />
 
             {/* Email */}
@@ -150,12 +131,12 @@ export default function AddBrokerForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-base">{t('forms.broker.email')}</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="" 
+                    <Input
+                      placeholder=""
                       type="email"
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -165,8 +146,8 @@ export default function AddBrokerForm() {
 
             {/* Address Section */}
             <div className="space-y-4">
-              <h3 className="text-sm font-medium">पता</h3>
-              
+              <h3 className="text-sm font-medium">{t('forms.broker.address')}</h3>
+
               {/* Address Line 1 */}
               <FormField
                 control={form.control}
@@ -174,8 +155,8 @@ export default function AddBrokerForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input 
-                        placeholder="Address Line 1" 
+                      <Input
+                        placeholder="Address Line 1"
                         {...field}
                         className="placeholder:text-gray-400"
                       />
@@ -192,8 +173,8 @@ export default function AddBrokerForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input 
-                        placeholder="Address Line 2" 
+                      <Input
+                        placeholder="Address Line 2"
                         {...field}
                         className="placeholder:text-gray-400"
                       />
@@ -211,8 +192,8 @@ export default function AddBrokerForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input 
-                          placeholder="City / District" 
+                        <Input
+                          placeholder="City / District"
                           {...field}
                           className="placeholder:text-gray-400"
                         />
@@ -228,8 +209,8 @@ export default function AddBrokerForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input 
-                          placeholder="State / Province" 
+                        <Input
+                          placeholder="State / Province"
                           {...field}
                           className="placeholder:text-gray-400"
                         />
@@ -248,8 +229,8 @@ export default function AddBrokerForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input 
-                          placeholder="Postal Code" 
+                        <Input
+                          placeholder="Postal Code"
                           {...field}
                           className="placeholder:text-gray-400"
                         />
@@ -264,36 +245,20 @@ export default function AddBrokerForm() {
                   name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <FormControl>
-                            <Button 
-                              variant="outline" 
-                              className="w-full justify-between font-normal text-gray-500"
-                            >
-                              {field.value || '-Select-'}
-                              <ChevronDown className="h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-full">
-                          <DropdownMenuItem onClick={() => field.onChange('India')}>
-                            India
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => field.onChange('USA')}>
-                            USA
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => field.onChange('UK')}>
-                            UK
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => field.onChange('Canada')}>
-                            Canada
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => field.onChange('Australia')}>
-                            Australia
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="India">India</SelectItem>
+                          <SelectItem value="USA">USA</SelectItem>
+                          <SelectItem value="UK">UK</SelectItem>
+                          <SelectItem value="Canada">Canada</SelectItem>
+                          <SelectItem value="Australia">Australia</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -302,8 +267,8 @@ export default function AddBrokerForm() {
             </div>
 
             {/* Submit Button */}
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full md:w-auto"
               disabled={isLoading}
             >

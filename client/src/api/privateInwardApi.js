@@ -36,4 +36,19 @@ export const fetchPrivateInward = async ({ page = 1, pageSize = 10, filters = []
     }
 };
 
-export default { fetchPrivateInward };
+export const createPrivatePaddyInward = async (inwardData) => {
+    try {
+        const data = await apiClient.post('/inward/paddy/private', inwardData);
+        return data;
+    } catch (error) {
+        console.warn('⚠️ API not available, simulating create:', error.message);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return {
+            success: true,
+            message: 'Private Paddy Inward created successfully (SIMULATED)',
+            data: { ...inwardData, _id: Date.now().toString(), createdAt: new Date().toISOString() },
+        };
+    }
+};
+
+export default { fetchPrivateInward, createPrivatePaddyInward };

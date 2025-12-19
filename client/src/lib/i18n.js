@@ -11,6 +11,10 @@ import entryEN from '@/locales/en/entry.json';
 import entryHI from '@/locales/hi/entry.json';
 import reportsEN from '@/locales/en/reports.json';
 import reportsHI from '@/locales/hi/reports.json';
+import formsEN from '@/locales/en/forms.json';
+import formsHI from '@/locales/hi/forms.json';
+import tablesEN from '@/locales/en/tables.json';
+import tablesHI from '@/locales/hi/tables.json';
 
 // Configure i18n
 i18n
@@ -27,12 +31,16 @@ i18n
                 students: studentsEN,
                 entry: entryEN,
                 reports: reportsEN,
+                forms: formsEN,
+                tables: tablesEN,
             },
             hi: {
                 common: commonHI,
                 students: studentsHI,
                 entry: entryHI,
                 reports: reportsHI,
+                forms: formsHI,
+                tables: tablesHI,
             },
         },
 

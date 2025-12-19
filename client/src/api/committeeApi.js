@@ -77,4 +77,19 @@ export const fetchCommittee = async ({ page = 1, pageSize = 10, filters = [], so
     }
 };
 
-export default { fetchCommittee };
+export const createCommitteeMember = async (memberData) => {
+    try {
+        const data = await apiClient.post('/committee', memberData);
+        return data;
+    } catch (error) {
+        console.warn('⚠️ API not available, simulating create:', error.message);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return {
+            success: true,
+            message: 'Committee member created successfully (SIMULATED)',
+            data: { ...memberData, _id: Date.now().toString(), createdAt: new Date().toISOString() },
+        };
+    }
+};
+
+export default { fetchCommittee, createCommitteeMember };

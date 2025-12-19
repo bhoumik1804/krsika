@@ -1,0 +1,233 @@
+{
+    "forms": {
+        "common": {
+            "submit": "Submit",
+            "cancel": "Cancel",
+            "save": "Save",
+            "reset": "Reset",
+            "loading": "Loading...",
+            "saving": "Saving...",
+            "required": "Required",
+            "optional": "Optional",
+            "selectPlaceholder": "Select...",
+            "date": "Date",
+            "success": "Saved successfully!",
+            "error": "An error occurred"
+        },
+        "party": {
+            "title": "Add New Party",
+            "description": "Fill in the details for the new party",
+            "partyName": "Party Name",
+            "phone": "Phone No.",
+            "email": "Email",
+            "partyType": "Party Type",
+            "gstNumber": "GST Number",
+            "gstType": "GST Type",
+            "businessType": "Business Type",
+            "address": "Address",
+            "city": "City",
+            "state": "State",
+            "pincode": "PIN Code",
+            "types": {
+                "buyer": "Buyer",
+                "seller": "Seller",
+                "both": "Both"
+            },
+            "gstTypes": {
+                "registered": "Registered",
+                "unregistered": "Unregistered",
+                "composition": "Composition"
+            }
+        },
+        "broker": {
+            "title": "Add New Broker",
+            "description": "Fill in broker details",
+            "brokerName": "Broker Name",
+            "phone": "Phone No.",
+            "email": "Email",
+            "gstn": "GSTN",
+            "address": "Address",
+            "city": "City",
+            "state": "State",
+            "pincode": "PIN Code"
+        },
+        "transporter": {
+            "title": "Add New Transporter",
+            "description": "Fill in transporter details",
+            "transporterName": "Transporter Name",
+            "phone": "Phone No.",
+            "email": "Email",
+            "gstn": "GSTN",
+            "vehicleNumber": "Vehicle Number",
+            "address": "Address",
+            "city": "City",
+            "state": "State",
+            "pincode": "PIN Code"
+        },
+        "committee": {
+            "title": "Add Committee Structure",
+            "description": "Committee/Procurement center details",
+            "type": "Select",
+            "name": "Committee-Procurement Center / Storage Name",
+            "types": {
+                "committee": "Committee",
+                "center": "Procurement Center",
+                "storage": "Storage Center"
+            }
+        },
+        "doEntry": {
+            "title": "DO Entry",
+            "description": "Fill in DO details",
+            "date": "Date",
+            "committeeCenter": "Committee / Storage Center",
+            "doNumber": "DO Number",
+            "grainCoarse": "Paddy (Coarse)",
+            "grainFine": "Paddy (Fine)",
+            "grainCommon": "Paddy (Common)"
+        },
+        "govPaddyInward": {
+            "title": "Government Paddy Inward",
+            "description": "Government paddy inward details",
+            "date": "Date",
+            "committeeCenter": "Committee / Storage Center",
+            "doNumber": "DO Number",
+            "packagingNew": "Packaging (New)",
+            "packagingOld": "Packaging (Old)",
+            "packagingPlastic": "Packaging (Plastic)",
+            "totalPackaging": "Jute Packaging Weight",
+            "plasticPackagingWeight": "Plastic Packaging Weight",
+            "packagingWeightQuintal": "Packaging Weight (in Quintal)",
+            "vehicleNumber": "Vehicle Number",
+            "rstNumber": "RST No.",
+            "vehicleWeightQuintal": "Vehicle Weight (in Quintal)",
+            "grainType": "Inward Paddy Type",
+            "grainTypes": {
+                "coarse": "Coarse",
+                "fine": "Fine",
+                "common": "Common"
+            }
+        },
+        "privatePaddyInward": {
+            "title": "Private Paddy Inward",
+            "description": "Private paddy inward details",
+            "date": "Date",
+            "partyName": "Party Name",
+            "purchaseSource": "Paddy Purchase Source Number",
+            "purchaseType": "Purchase Type",
+            "packagingNew": "Packaging (New)",
+            "packagingOld": "Packaging (Old)",
+            "packagingPlastic": "Packaging (Plastic)",
+            "totalPackaging": "Jute Packaging Weight",
+            "plasticPackagingWeight": "Plastic Packaging Weight",
+            "packagingWeightQuintal": "Packaging Weight",
+            "vehicleNumber": "Vehicle Number",
+            "rstNumber": "RST No.",
+            "vehicleWeightQuintal": "Vehicle Weight",
+            "grainType": "Paddy Type",
+            "purchaseTypes": {
+                "advance": "Advance",
+                "cash": "Cash",
+                "credit": "Credit"
+            }
+        },
+        "riceInward": {
+            "title": "Rice Inward / LOT Deposit",
+            "description": "Rice inward details",
+            "date": "Date",
+            "partyName": "Party Name",
+            "purchaseSource": "Rice Purchase Source Number",
+            "fciNan": "FCI/NAN",
+            "packaging": "Packaging",
+            "packagingNew": "Packaging (New)",
+            "packagingOld": "Packaging (Old)",
+            "packagingPlastic": "Packaging (Plastic)",
+            "totalPackaging": "Jute Packaging Weight",
+            "plasticPackagingWeight": "Plastic Packaging Weight",
+            "packagingWeight": "Packaging Weight",
+            "vehicleNumber": "Vehicle Number",
+            "rstNumber": "RST No.",
+            "vehicleWeight": "Vehicle Weight",
+            "riceCoarseNetWeight": "Rice (Coarse) Net Weight",
+            "riceFineNetWeight": "Rice (Fine) Net Weight",
+            "packagingOptions": {
+                "new": "New",
+                "old": "Old",
+                "plastic": "Plastic"
+            }
+        },
+        "paddyPurchase": {
+            "title": "Paddy Purchase Deal",
+            "description": "Paddy purchase deal details",
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "delivery": "Delivery",
+            "grainType": "Paddy Type",
+            "quantity": "Rate",
+            "wastagePercent": "Wastage %",
+            "brokerage": "Brokerage",
+            "includeCertificate": "Packaging Include/Return",
+            "purchaseType": "Purchase Type",
+            "grainQuantity": "Paddy Quantity",
+            "deliveryOptions": {
+                "mill": "Mill Delivery",
+                "party": "Party Delivery"
+            },
+            "grainTypes": {
+                "coarse": "Coarse",
+                "fine": "Fine",
+                "common": "Common"
+            },
+            "certificateOptions": {
+                "with": "Included",
+                "return": "Return"
+            },
+            "purchaseTypes": {
+                "advance": "Advance",
+                "cash": "Cash"
+            }
+        },
+        "paddySales": {
+            "title": "Paddy Sales Deal",
+            "description": "Paddy sales deal details",
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "salesType": "Type",
+            "rate": "Rate",
+            "wastagePercent": "Wastage %",
+            "brokerage": "Brokerage (per Quintal)",
+            "packaging": "Packaging Include/Return",
+            "salesTypes": {
+                "mill": "Mill",
+                "party": "Party"
+            }
+        },
+        "ricePurchase": {
+            "title": "Rice Purchase Deal",
+            "description": "Rice purchase deal details",
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "purchaseType": "LOT/Other",
+            "riceType": "Rice Type",
+            "quantity": "Quantity (in Quintal)",
+            "rate": "Rate",
+            "wastagePercent": "Wastage %",
+            "brokerage": "Brokerage (per Quintal)",
+            "packaging": "Packaging",
+            "purchaseTypes": {
+                "lot": "LOT",
+                "other": "Other"
+            },
+            "riceTypes": {
+                "coarse": "Coarse",
+                "fine": "Fine"
+            },
+            "packagingOptions": {
+                "with": "Included",
+                "return": "Return"
+            }
+        }
+    }
+}

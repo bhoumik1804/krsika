@@ -83,7 +83,7 @@ export default function TransportersInfo() {
             cell: ({ row }) => {
                 const vehicleNumber = row.getValue('vehicleNumber');
                 return vehicleNumber ? (
-                    <div className="text-sm font-mono">{vehicleNumber}</div>
+                    <div className="text-sm ">{vehicleNumber}</div>
                 ) : (
                     <span className="text-muted-foreground">-</span>
                 );

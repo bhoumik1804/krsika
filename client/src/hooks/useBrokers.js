@@ -1,8 +1,8 @@
 "use client";
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { fetchBrokers } from '../api/brokersApi';
+import { fetchBrokers, createBroker, updateBroker, deleteBroker } from '../api/brokersApi';
 
 export const useBrokers = () => {
     const { pageIndex, pageSize, columnFilters, sorting } = useSelector(state => state.table);
@@ -24,6 +24,30 @@ export const useBrokers = () => {
         hasNext: query.data?.data?.hasNext || false,
         hasPrev: query.data?.data?.hasPrev || false,
     };
+};
+
+export const useCreateBroker = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: createBroker,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['brokers'] }),
+    });
+};
+
+export const useUpdateBroker = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, data }) => updateBroker(id, data),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['brokers'] }),
+    });
+};
+
+export const useDeleteBroker = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: deleteBroker,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['brokers'] }),
+    });
 };
 
 export default useBrokers;

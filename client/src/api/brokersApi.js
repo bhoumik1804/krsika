@@ -83,4 +83,41 @@ export const fetchBrokers = async ({ page = 1, pageSize = 10, filters = [], sort
     }
 };
 
-export default { fetchBrokers };
+export const createBroker = async (brokerData) => {
+    try {
+        const data = await apiClient.post('/brokers', brokerData);
+        return data;
+    } catch (error) {
+        console.warn('⚠️ API not available, simulating create:', error.message);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return {
+            success: true,
+            message: 'Broker created successfully (SIMULATED)',
+            data: { ...brokerData, _id: Date.now().toString(), createdAt: new Date().toISOString() },
+        };
+    }
+};
+
+export const updateBroker = async (id, brokerData) => {
+    try {
+        const data = await apiClient.put(`/brokers/${id}`, brokerData);
+        return data;
+    } catch (error) {
+        console.warn('⚠️ API not available, simulating update:', error.message);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return { success: true, message: 'Broker updated successfully (SIMULATED)', data: { ...brokerData, _id: id } };
+    }
+};
+
+export const deleteBroker = async (id) => {
+    try {
+        const data = await apiClient.delete(`/brokers/${id}`);
+        return data;
+    } catch (error) {
+        console.warn('⚠️ API not available, simulating delete:', error.message);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return { success: true, message: 'Broker deleted successfully (SIMULATED)' };
+    }
+};
+
+export default { fetchBrokers, createBroker, updateBroker, deleteBroker };

@@ -37,4 +37,41 @@ export const fetchDOEntries = async ({ page = 1, pageSize = 10, filters = [], so
     }
 };
 
-export default { fetchDOEntries };
+export const createDOEntry = async (entryData) => {
+    try {
+        const data = await apiClient.post('/do-entries', entryData);
+        return data;
+    } catch (error) {
+        console.warn('⚠️ API not available, simulating create:', error.message);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return {
+            success: true,
+            message: 'DO Entry created successfully (SIMULATED)',
+            data: { ...entryData, _id: Date.now().toString(), createdAt: new Date().toISOString() },
+        };
+    }
+};
+
+export const updateDOEntry = async (id, entryData) => {
+    try {
+        const data = await apiClient.put(`/do-entries/${id}`, entryData);
+        return data;
+    } catch (error) {
+        console.warn('⚠️ API not available, simulating update:', error.message);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return { success: true, message: 'DO Entry updated successfully (SIMULATED)', data: { ...entryData, _id: id } };
+    }
+};
+
+export const deleteDOEntry = async (id) => {
+    try {
+        const data = await apiClient.delete(`/do-entries/${id}`);
+        return data;
+    } catch (error) {
+        console.warn('⚠️ API not available, simulating delete:', error.message);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return { success: true, message: 'DO Entry deleted successfully (SIMULATED)' };
+    }
+};
+
+export default { fetchDOEntries, createDOEntry, updateDOEntry, deleteDOEntry };

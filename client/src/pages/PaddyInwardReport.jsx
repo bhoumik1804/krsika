@@ -44,7 +44,7 @@ export default function PaddyInwardReport() {
             header: 'आवक नंबर',
             meta: { filterVariant: 'text' },
             cell: ({ row }) => (
-                <div className="font-medium font-mono">{row.getValue('inwardNumber')}</div>
+                <div className="font-medium ">{row.getValue('inwardNumber')}</div>
             ),
         },
         {
@@ -73,7 +73,7 @@ export default function PaddyInwardReport() {
             cell: ({ row }) => {
                 const vehicleNumber = row.getValue('vehicleNumber');
                 return vehicleNumber ? (
-                    <div className="text-sm font-mono">{vehicleNumber}</div>
+                    <div className="text-sm ">{vehicleNumber}</div>
                 ) : (
                     <span className="text-muted-foreground">-</span>
                 );

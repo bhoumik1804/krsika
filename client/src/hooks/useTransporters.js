@@ -1,8 +1,8 @@
 "use client";
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { fetchTransporters } from '../api/transportersApi';
+import { fetchTransporters, createTransporter, updateTransporter, deleteTransporter } from '../api/transportersApi';
 
 export const useTransporters = () => {
     const { pageIndex, pageSize, columnFilters, sorting } = useSelector(state => state.table);
@@ -24,6 +24,30 @@ export const useTransporters = () => {
         hasNext: query.data?.data?.hasNext || false,
         hasPrev: query.data?.data?.hasPrev || false,
     };
+};
+
+export const useCreateTransporter = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: createTransporter,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['transporters'] }),
+    });
+};
+
+export const useUpdateTransporter = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, data }) => updateTransporter(id, data),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['transporters'] }),
+    });
+};
+
+export const useDeleteTransporter = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: deleteTransporter,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['transporters'] }),
+    });
 };
 
 export default useTransporters;

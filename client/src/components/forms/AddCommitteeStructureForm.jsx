@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -30,7 +29,7 @@ const committeeStructureFormSchema = z.object({
 });
 
 export default function AddCommitteeStructureForm() {
-  const { t } = useTranslation(['entry', 'common']);
+  const { t } = useTranslation(['forms', 'entry', 'common']);
   const [isLoading, setIsLoading] = React.useState(false);
 
   // Initialize form with react-hook-form and zod validation
@@ -61,9 +60,9 @@ export default function AddCommitteeStructureForm() {
   return (
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
-        <CardTitle>Add Committee Structure</CardTitle>
+        <CardTitle>{t('forms.committee.title')}</CardTitle>
         <CardDescription>
-          Enter committee structure details to add them to the system
+          {t('forms.committee.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -75,7 +74,7 @@ export default function AddCommitteeStructureForm() {
               name="type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>चुने</FormLabel>
+                  <FormLabel className="text-base">{t('forms.committee.type')}</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
@@ -85,13 +84,13 @@ export default function AddCommitteeStructureForm() {
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="committee-production" id="committee-production" />
                         <Label htmlFor="committee-production" className="font-normal cursor-pointer">
-                          समिति-उपार्जन केंद्र
+                          {t('forms.committee.types.center')}
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="storage" id="storage" />
                         <Label htmlFor="storage" className="font-normal cursor-pointer">
-                          संग्रहण केंद्र
+                          {t('forms.committee.types.storage')}
                         </Label>
                       </div>
                     </RadioGroup>
@@ -107,11 +106,11 @@ export default function AddCommitteeStructureForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>समिति-उपार्जन केंद्र / संग्रहण का नाम</FormLabel>
+                  <FormLabel className="text-base">{t('forms.committee.name')}</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="" 
-                      {...field} 
+                    <Input
+                      placeholder=""
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -121,12 +120,12 @@ export default function AddCommitteeStructureForm() {
 
             {/* Submit Button */}
             <div className="flex justify-center">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full md:w-auto px-8"
                 disabled={isLoading}
               >
-                {isLoading ? 'Submitting...' : 'Submit'}
+                {isLoading ? t('forms.common.saving') : t('forms.common.submit')}
               </Button>
             </div>
           </form>

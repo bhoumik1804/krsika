@@ -1,8 +1,8 @@
 "use client";
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { fetchPrivateInward } from '../api/privateInwardApi';
+import { fetchPrivateInward, createPrivatePaddyInward } from '../api/privateInwardApi';
 
 export const usePrivateInward = () => {
     const { pageIndex, pageSize, columnFilters, sorting } = useSelector(state => state.table);
@@ -24,6 +24,14 @@ export const usePrivateInward = () => {
         hasNext: query.data?.data?.hasNext || false,
         hasPrev: query.data?.data?.hasPrev || false,
     };
+};
+
+export const useCreatePrivatePaddyInward = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: createPrivatePaddyInward,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['privateInward'] }),
+    });
 };
 
 export default usePrivateInward;

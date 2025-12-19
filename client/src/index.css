@@ -141,23 +141,23 @@
     --chart-5: oklch(0.48 0.20 290);
     /* Deep purple-blue */
 
-    /* Sidebar - Rich Dark Blue */
+    /* Sidebar - Rich Dark Blue with IMPROVED VISIBILITY */
     --sidebar: oklch(0.18 0.06 245);
     /* Rich dark blue */
-    --sidebar-foreground: oklch(0.96 0.01 240);
-    /* Almost white with blue tint */
-    --sidebar-primary: oklch(0.58 0.25 260);
-    /* Vibrant blue for active items */
+    --sidebar-foreground: oklch(0.92 0.01 240);
+    /* BRIGHTER white for better visibility */
+    --sidebar-primary: oklch(0.62 0.22 260);
+    /* BRIGHTER blue for active items */
     --sidebar-primary-foreground: oklch(0.99 0 0);
     /* White */
-    --sidebar-accent: oklch(0.26 0.08 250);
-    /* Lighter dark blue for hover */
-    --sidebar-accent-foreground: oklch(0.96 0.01 240);
-    /* Almost white */
-    --sidebar-border: oklch(0.25 0.05 245);
+    --sidebar-accent: oklch(0.28 0.06 250);
+    /* Lighter for hover */
+    --sidebar-accent-foreground: oklch(0.95 0.01 240);
+    /* Very bright for hover text */
+    --sidebar-border: oklch(0.28 0.05 245);
     /* Subtle border */
-    --sidebar-ring: oklch(0.58 0.25 260);
-    /* Blue ring */
+    --sidebar-ring: oklch(0.62 0.22 260);
+    /* Bright blue ring */
 }
 
 /* ========================================
@@ -331,17 +331,6 @@
     }
 }
 
-.dark {
-    --sidebar: hsl(240 5.9% 10%);
-    --sidebar-foreground: hsl(240 4.8% 95.9%);
-    --sidebar-primary: hsl(224.3 76.3% 48%);
-    --sidebar-primary-foreground: hsl(0 0% 100%);
-    --sidebar-accent: hsl(240 3.7% 15.9%);
-    --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-    --sidebar-border: hsl(240 3.7% 15.9%);
-    --sidebar-ring: hsl(217.2 91.2% 59.8%);
-}
-
 @layer base {
     * {
         @apply border-border outline-ring/50;
@@ -444,5 +433,38 @@
     .font-extrabold {
         font-weight: 900;
         /* was 800 */
+    }
+}
+
+/* ========================================
+   PAGE LOADER ANIMATIONS
+======================================== */
+.loading-dot {
+    opacity: 0;
+    animation: progressiveDot 1.2s ease-in-out infinite;
+}
+
+.loading-dot-1 {
+    animation-delay: 0s;
+}
+
+.loading-dot-2 {
+    animation-delay: 0.2s;
+}
+
+.loading-dot-3 {
+    animation-delay: 0.4s;
+}
+
+@keyframes progressiveDot {
+
+    0%,
+    20% {
+        opacity: 0;
+    }
+
+    40%,
+    100% {
+        opacity: 1;
     }
 }

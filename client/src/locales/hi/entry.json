@@ -6,7 +6,7 @@
             "title": "प्रबंधन",
             "addParty": "पार्टी जोड़ें",
             "addTransporter": "परिवहनकर्ता जोड़ें",
-            "addWorker": "दलाल जोड़ें",
+            "addWorker": "ब्रोकर जोड़ें",
             "propertyManagement": "समिति संरचना",
             "doEntry": "DO प्रविष्टी"
         },
@@ -28,7 +28,7 @@
             "title": "प्रविष्टी",
             "addParty": "पार्टी जोड़ें",
             "addTransporters": "परिवहनकर्ता जोड़ें",
-            "addBrokers": "दलाल जोड़ें",
+            "addBrokers": "ब्रोकर जोड़ें",
             "addCommittee": "समिति संरचना जोड़ें",
             "doEntry": "DO प्रविष्टी"
         },

@@ -5,7 +5,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { setActiveView } from '@/store/slices/sidebarSlice';
-import { PaintBrushIcon } from '@heroicons/react/24/outline';
+import { PaintBrushIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 import {
     SidebarInset,
     SidebarProvider,
@@ -60,6 +60,11 @@ export default function AppLayout() {
         navigate('/ui/guide');
     }, [navigate]);
 
+    // Back button handler for mobile
+    const handleBack = useCallback(() => {
+        navigate(-1);
+    }, [navigate]);
+
     // Sync Redux state with current route on navigation
     useEffect(() => {
         const view = location.pathname.startsWith('/reports') ? 'reports' : 'entry';
@@ -72,22 +77,55 @@ export default function AppLayout() {
         [location.pathname, t]
     );
 
+    // Check if we can show back button (not on root routes)
+    const canGoBack = useMemo(() => {
+        const rootPaths = ['/', '/entry', '/reports', '/purchase', '/sales', '/inward'];
+        return !rootPaths.includes(location.pathname);
+    }, [location.pathname]);
+
+    // Get current page title for mobile display
+    const currentPageTitle = useMemo(() => {
+        if (breadcrumbs.length > 0) {
+            return breadcrumbs[breadcrumbs.length - 1].label;
+        }
+        return '';
+    }, [breadcrumbs]);
+
     return (
         <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
                 {/* Header with breadcrumbs */}
-                <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
-                    <SidebarTrigger className="-ml-1" />
-                    <Separator orientation="vertical" className="mr-2 h-4" />
+                <header className="sticky top-0 z-10 flex h-14 md:h-16 shrink-0 items-center gap-2 border-b bg-background px-3 md:px-4">
+                    {/* Mobile: Back button (when not on root) or Sidebar trigger */}
+                    <div className="flex items-center gap-1 md:gap-2">
+                        {canGoBack ? (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={handleBack}
+                                className="md:hidden h-8 w-8"
+                            >
+                                <ChevronLeftIcon className="h-5 w-5" />
+                            </Button>
+                        ) : null}
+                        <SidebarTrigger className="-ml-1" />
+                    </div>
 
-                    {/* Auto-generated Breadcrumbs */}
-                    <Breadcrumb>
+                    <Separator orientation="vertical" className="mr-2 h-4 hidden md:block" />
+
+                    {/* Mobile: Show current page title only */}
+                    <span className="md:hidden text-sm font-medium truncate max-w-[180px]">
+                        {currentPageTitle}
+                    </span>
+
+                    {/* Desktop: Full breadcrumb navigation */}
+                    <Breadcrumb className="hidden md:flex">
                         <BreadcrumbList>
                             {breadcrumbs.map((crumb, index) => (
-                                <React.Fragment key={crumb.path || index}>
-                                    {index > 0 && <BreadcrumbSeparator className="hidden md:block" />}
-                                    <BreadcrumbItem className={index === 0 ? "hidden md:block" : ""}>
+                                <React.Fragment key={`${crumb.path}-${index}`}>
+                                    {index > 0 && <BreadcrumbSeparator />}
+                                    <BreadcrumbItem>
                                         {index === breadcrumbs.length - 1 ? (
                                             <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
                                         ) : (
@@ -113,4 +151,3 @@ export default function AppLayout() {
         </SidebarProvider>
     );
 }
-
