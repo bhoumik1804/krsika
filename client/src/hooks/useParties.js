@@ -1,8 +1,8 @@
 "use client";
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { fetchParties } from '../api/partiesApi';
+import { fetchParties, createParty, updateParty, deleteParty } from '../api/partiesApi';
 
 /**
  * React Query hook for fetching parties with pagination
@@ -38,6 +38,48 @@ export const useParties = () => {
         hasNext: query.data?.data?.hasNext || false,
         hasPrev: query.data?.data?.hasPrev || false,
     };
+};
+
+/**
+ * Mutation hook for creating a new party
+ */
+export const useCreateParty = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: createParty,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['parties'] });
+        },
+    });
+};
+
+/**
+ * Mutation hook for updating a party
+ */
+export const useUpdateParty = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, data }) => updateParty(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['parties'] });
+        },
+    });
+};
+
+/**
+ * Mutation hook for deleting a party
+ */
+export const useDeleteParty = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: deleteParty,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['parties'] });
+        },
+    });
 };
 
 export default useParties;

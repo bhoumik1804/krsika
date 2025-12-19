@@ -44,7 +44,7 @@ export default function RemainingDOInfo() {
             header: 'DO नंबर',
             meta: { filterVariant: 'text' },
             cell: ({ row }) => (
-                <div className="font-medium font-mono">{row.getValue('doNumber')}</div>
+                <div className="font-medium ">{row.getValue('doNumber')}</div>
             ),
         },
         {

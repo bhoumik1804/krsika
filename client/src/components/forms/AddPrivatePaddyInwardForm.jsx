@@ -16,23 +16,17 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { ChevronDown, CalendarIcon } from 'lucide-react';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
+import { DatePickerField } from '@/components/ui/date-picker-field';
 
 // Form validation schema
 const privatePaddyInwardFormSchema = z.object({
@@ -76,7 +70,7 @@ const privatePaddyInwardFormSchema = z.object({
 });
 
 export default function AddPrivatePaddyInwardForm() {
-  const { t } = useTranslation(['entry', 'common']);
+  const { t } = useTranslation(['forms', 'entry', 'common']);
   const [isLoading, setIsLoading] = React.useState(false);
 
   // Sample purchase sources - Replace with actual data from API
@@ -119,7 +113,7 @@ export default function AddPrivatePaddyInwardForm() {
 
     // Formula: ((new + old) * totalWeight + plastic * plasticWeight) / 100
     const totalWeightQuintal = ((newBags + oldBags) * totalWeight + plasticBags * plasticWeight) / 100;
-    
+
     form.setValue('packagingWeightQuintal', totalWeightQuintal.toFixed(5));
   }, [packagingNew, packagingOld, packagingPlastic, totalPackaging, plasticPackagingWeight]);
 
@@ -144,52 +138,18 @@ export default function AddPrivatePaddyInwardForm() {
   return (
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
-        <CardTitle>Add Private Paddy Inward</CardTitle>
+        <CardTitle>{t('forms.privatePaddyInward.title')}</CardTitle>
         <CardDescription>
-          Enter private paddy inward details to add them to the system
+          {t('forms.privatePaddyInward.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Date with Calendar */}
-            <FormField
-              control={form.control}
+            <DatePickerField
               name="date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>दिनांक</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !field.value && "text-gray-400"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {field.value ? (
-                            format(field.value, "dd-MM-yy")
-                          ) : (
-                            <span>dd-MM-yy</span>
-                          )}
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t('forms.common.date')}
             />
 
             {/* Purchase Source Dropdown */}
@@ -198,30 +158,21 @@ export default function AddPrivatePaddyInwardForm() {
               name="purchaseSource"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>धान खरीदी स्रोत क्रमांक</FormLabel>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <FormControl>
-                        <Button 
-                          variant="outline" 
-                          className="w-full justify-between font-normal text-gray-500"
-                        >
-                          {field.value || '-Select-'}
-                          <ChevronDown className="h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-full">
+                  <FormLabel className="text-base">{t('forms.privatePaddyInward.purchaseSource')}</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
                       {purchaseSources.map((source) => (
-                        <DropdownMenuItem 
-                          key={source} 
-                          onClick={() => field.onChange(source)}
-                        >
+                        <SelectItem key={source} value={source}>
                           {source}
-                        </DropdownMenuItem>
+                        </SelectItem>
                       ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -233,7 +184,7 @@ export default function AddPrivatePaddyInwardForm() {
               name="purchaseType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>खरीदी प्रकार</FormLabel>
+                  <FormLabel className="text-base">{t('forms.privatePaddyInward.purchaseType')}</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
@@ -265,11 +216,11 @@ export default function AddPrivatePaddyInwardForm() {
               name="packagingNew"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>बारदाना (नया)</FormLabel>
+                  <FormLabel className="text-base">{t('forms.privatePaddyInward.packagingNew')}</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
-                      placeholder="0" 
+                      placeholder="0"
                       {...field}
                       className="placeholder:text-gray-400"
                     />
@@ -285,11 +236,11 @@ export default function AddPrivatePaddyInwardForm() {
               name="packagingOld"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>बारदाना (पुराना)</FormLabel>
+                  <FormLabel className="text-base">{t('forms.privatePaddyInward.packagingOld')}</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
-                      placeholder="0" 
+                      placeholder="0"
                       {...field}
                       className="placeholder:text-gray-400"
                     />
@@ -305,11 +256,11 @@ export default function AddPrivatePaddyInwardForm() {
               name="packagingPlastic"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>बारदाना (प्लास्टिक)</FormLabel>
+                  <FormLabel className="text-base">{t('forms.privatePaddyInward.packagingPlastic')}</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
-                      placeholder="0" 
+                      placeholder="0"
                       {...field}
                       className="placeholder:text-gray-400"
                     />
@@ -325,12 +276,12 @@ export default function AddPrivatePaddyInwardForm() {
               name="totalPackaging"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>जुट बारदाना वजन</FormLabel>
+                  <FormLabel className="text-base">{t('forms.privatePaddyInward.totalPackaging')}</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
                       step="0.01"
-                      placeholder=".58" 
+                      placeholder=".58"
                       {...field}
                       className="placeholder:text-gray-400"
                     />
@@ -349,12 +300,12 @@ export default function AddPrivatePaddyInwardForm() {
               name="plasticPackagingWeight"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>प्लास्टिक बारदाना वजन</FormLabel>
+                  <FormLabel className="text-base">{t('forms.privatePaddyInward.plasticPackagingWeight')}</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
                       step="0.01"
-                      placeholder=".2" 
+                      placeholder=".2"
                       {...field}
                       className="placeholder:text-gray-400"
                     />
@@ -373,11 +324,11 @@ export default function AddPrivatePaddyInwardForm() {
               name="packagingWeightQuintal"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>बारदाना वजन</FormLabel>
+                  <FormLabel className="text-base">{t('forms.privatePaddyInward.packagingWeightQuintal')}</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="text"
-                      placeholder="0.00000" 
+                      placeholder="0.00000"
                       {...field}
                       disabled
                       className="bg-gray-50 placeholder:text-gray-400"
@@ -394,10 +345,10 @@ export default function AddPrivatePaddyInwardForm() {
               name="vehicleNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>गाड़ी नंबर</FormLabel>
+                  <FormLabel className="text-base">{t('forms.privatePaddyInward.vehicleNumber')}</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="" 
+                    <Input
+                      placeholder=""
                       {...field}
                     />
                   </FormControl>
@@ -412,10 +363,10 @@ export default function AddPrivatePaddyInwardForm() {
               name="rstNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>RST No.</FormLabel>
+                  <FormLabel className="text-base">{t('forms.privatePaddyInward.rstNumber')}</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="" 
+                    <Input
+                      placeholder=""
                       {...field}
                     />
                   </FormControl>
@@ -430,11 +381,11 @@ export default function AddPrivatePaddyInwardForm() {
               name="vehicleWeightQuintal"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>गाड़ी वजन</FormLabel>
+                  <FormLabel className="text-base">{t('forms.privatePaddyInward.vehicleWeightQuintal')}</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
-                      placeholder="0" 
+                      placeholder="0"
                       {...field}
                       className="placeholder:text-gray-400"
                     />
@@ -453,7 +404,7 @@ export default function AddPrivatePaddyInwardForm() {
               name="grainType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>धान का प्रकार</FormLabel>
+                  <FormLabel className="text-base">{t('forms.privatePaddyInward.grainType')}</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
@@ -499,12 +450,12 @@ export default function AddPrivatePaddyInwardForm() {
 
             {/* Submit Button */}
             <div className="flex justify-center">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full md:w-auto px-8"
                 disabled={isLoading}
               >
-                {isLoading ? 'Submitting...' : 'Submit'}
+                {isLoading ? t('forms.common.saving') : t('forms.common.submit')}
               </Button>
             </div>
           </form>

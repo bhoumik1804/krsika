@@ -36,4 +36,19 @@ export const fetchPaddySales = async ({ page = 1, pageSize = 10, filters = [], s
     }
 };
 
-export default { fetchPaddySales };
+export const createPaddySale = async (saleData) => {
+    try {
+        const data = await apiClient.post('/sales/paddy', saleData);
+        return data;
+    } catch (error) {
+        console.warn('⚠️ API not available, simulating create:', error.message);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return {
+            success: true,
+            message: 'Paddy Sale created successfully (SIMULATED)',
+            data: { ...saleData, _id: Date.now().toString(), createdAt: new Date().toISOString() },
+        };
+    }
+};
+
+export default { fetchPaddySales, createPaddySale };

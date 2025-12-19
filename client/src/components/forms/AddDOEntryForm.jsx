@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslation } from 'react-i18next';
@@ -16,21 +16,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { ChevronDown, CalendarIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { DatePickerField } from '@/components/ui/date-picker-field';
 
 // Form validation schema
 const doEntryFormSchema = z.object({
@@ -55,7 +49,7 @@ const doEntryFormSchema = z.object({
 });
 
 export default function DOEntryForm() {
-  const { t } = useTranslation(['entry', 'common']);
+  const { t } = useTranslation(['forms', 'entry', 'common']);
   const [isLoading, setIsLoading] = React.useState(false);
 
   // Sample committee/storage centers - Replace with actual data from API
@@ -72,7 +66,7 @@ export default function DOEntryForm() {
     defaultValues: {
       committeeCenter: '',
       doNumber: '',
-      date: undefined,
+      date: new Date(),
       grainCoarse: '0',
       grainFine: '0',
       grainCommon: '0',
@@ -100,9 +94,9 @@ export default function DOEntryForm() {
   return (
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
-        <CardTitle>DO Entry Form</CardTitle>
+        <CardTitle>{t('forms.doEntry.title')}</CardTitle>
         <CardDescription>
-          Enter delivery order details to add them to the system
+          {t('forms.doEntry.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -114,30 +108,21 @@ export default function DOEntryForm() {
               name="committeeCenter"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>समिति / संग्रहण केंद्र</FormLabel>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <FormControl>
-                        <Button 
-                          variant="outline" 
-                          className="w-full justify-between font-normal text-gray-500"
-                        >
-                          {field.value || '-Select-'}
-                          <ChevronDown className="h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-full">
+                  <FormLabel className="text-base">{t('forms.doEntry.committeeCenter')}</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
                       {committeeCenters.map((center) => (
-                        <DropdownMenuItem 
-                          key={center} 
-                          onClick={() => field.onChange(center)}
-                        >
+                        <SelectItem key={center} value={center}>
                           {center}
-                        </DropdownMenuItem>
+                        </SelectItem>
                       ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -149,11 +134,11 @@ export default function DOEntryForm() {
               name="doNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>DO क्रमांक</FormLabel>
+                  <FormLabel className="text-base">{t('forms.doEntry.doNumber')}</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="" 
-                      {...field} 
+                    <Input
+                      placeholder=""
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -162,43 +147,9 @@ export default function DOEntryForm() {
             />
 
             {/* Date with Calendar */}
-            <FormField
-              control={form.control}
+            <DatePickerField
               name="date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>दिनांक</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !field.value && "text-gray-400"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {field.value ? (
-                            format(field.value, "dd-MM-yy")
-                          ) : (
-                            <span>dd-MM-yy</span>
-                          )}
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t('forms.doEntry.date')}
             />
 
             {/* Grain (Coarse) */}
@@ -207,11 +158,11 @@ export default function DOEntryForm() {
               name="grainCoarse"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>धान (मोटा)</FormLabel>
+                  <FormLabel className="text-base">{t('forms.doEntry.grainCoarse')}</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
-                      placeholder="0" 
+                      placeholder="0"
                       {...field}
                       className="placeholder:text-gray-400"
                     />
@@ -227,11 +178,11 @@ export default function DOEntryForm() {
               name="grainFine"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>धान (पतला)</FormLabel>
+                  <FormLabel className="text-base">{t('forms.doEntry.grainFine')}</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
-                      placeholder="0" 
+                      placeholder="0"
                       {...field}
                       className="placeholder:text-gray-400"
                     />
@@ -247,11 +198,11 @@ export default function DOEntryForm() {
               name="grainCommon"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>धान (सरना)</FormLabel>
+                  <FormLabel className="text-base">{t('forms.doEntry.grainCommon')}</FormLabel>
                   <FormControl>
-                    <Input 
+                    <Input
                       type="number"
-                      placeholder="0" 
+                      placeholder="0"
                       {...field}
                       className="placeholder:text-gray-400"
                     />
@@ -263,12 +214,12 @@ export default function DOEntryForm() {
 
             {/* Submit Button */}
             <div className="flex justify-center">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full md:w-auto px-8"
                 disabled={isLoading}
               >
-                {isLoading ? 'Submitting...' : 'Submit'}
+                {isLoading ? t('forms.common.saving') : t('forms.common.submit')}
               </Button>
             </div>
           </form>

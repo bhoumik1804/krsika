@@ -1,44 +1,42 @@
-import Home from '@/pages/Home';
-import UIGuide from '@/pages/UIGuide';
-import StudentEnrollments from '@/pages/StudentEnrollments';
-import Entry from '@/pages/Entry';
-import AddParty from '@/pages/AddParty';
-import PartyInfo from '@/pages/PartyInfo';
-import TransportersInfo from '@/pages/TransportersInfo';
-import BrokerInfo from '@/pages/BrokerInfo';
-import CommitteeStructureInfo from '@/pages/CommitteeStructureInfo';
-import DOEntryReport from '@/pages/DOEntryReport';
-import RemainingDOInfo from '@/pages/RemainingDOInfo';
-import PaddyPurchaseDealReport from '@/pages/PaddyPurchaseDealReport';
-import RicePurchaseDealReport from '@/pages/RicePurchaseDealReport';
-import PaddySalesDealReport from '@/pages/PaddySalesDealReport';
-import PaddyInwardReport from '@/pages/PaddyInwardReport';
-import PrivateInwardReport from '@/pages/PrivateInwardReport';
-import RiceInwardReport from '@/pages/RiceInwardReport';
+import { lazy } from 'react';
 import {
-    HomeIcon,
-    UsersIcon,
     PaintBrushIcon,
     Cog6ToothIcon,
     UserIcon,
     DocumentTextIcon,
     ShoppingBagIcon,
     ArrowDownTrayIcon,
-    UserGroupIcon,
-    TruckIcon,
-    BuildingOfficeIcon,
-    ClipboardDocumentListIcon,
+    CurrencyDollarIcon
 } from '@heroicons/react/24/outline';
-import AddTransporters from '@/pages/AddTransporters';
-import AddBroker from '@/pages/AddBroker';
-import AddCommitteeStructure from '@/pages/AddCommitteeStructure';
-import AddDOEntry from '@/pages/AddDOEntry';
-import AddPaddyPurchase from '@/pages/AddPaddyPurchase';
-import AddRicePurchase from '@/pages/AddRicePurchase';
-import AddPaddySalesDeal from '@/pages/AddPaddySalesDeal';
-import AddGovPaddyInward from '@/pages/AddGovPaddyInward';
-import AddPrivatePaddyInward from '@/pages/AddPrivatePaddyInward';
-import AddRiceInward from '@/pages/AddRiceInward';
+
+// Lazy load all page components for code splitting
+const Home = lazy(() => import('@/pages/Home'));
+const UIGuide = lazy(() => import('@/pages/UIGuide'));
+const Entry = lazy(() => import('@/pages/Entry'));
+const AddParty = lazy(() => import('@/pages/AddParty'));
+const PartyInfo = lazy(() => import('@/pages/PartyInfo'));
+const TransportersInfo = lazy(() => import('@/pages/TransportersInfo'));
+const BrokerInfo = lazy(() => import('@/pages/BrokerInfo'));
+const CommitteeStructureInfo = lazy(() => import('@/pages/CommitteeStructureInfo'));
+const DOEntryReport = lazy(() => import('@/pages/DOEntryReport'));
+const RemainingDOInfo = lazy(() => import('@/pages/RemainingDOInfo'));
+const PaddyPurchaseDealReport = lazy(() => import('@/pages/PaddyPurchaseDealReport'));
+const RicePurchaseDealReport = lazy(() => import('@/pages/RicePurchaseDealReport'));
+const PaddySalesDealReport = lazy(() => import('@/pages/PaddySalesDealReport'));
+const PaddyInwardReport = lazy(() => import('@/pages/PaddyInwardReport'));
+const PrivateInwardReport = lazy(() => import('@/pages/PrivateInwardReport'));
+const RiceInwardReport = lazy(() => import('@/pages/RiceInwardReport'));
+const AddTransporters = lazy(() => import('@/pages/AddTransporters'));
+const AddBroker = lazy(() => import('@/pages/AddBroker'));
+const AddCommitteeStructure = lazy(() => import('@/pages/AddCommitteeStructure'));
+const AddDOEntry = lazy(() => import('@/pages/AddDOEntry'));
+const AddPaddyPurchase = lazy(() => import('@/pages/AddPaddyPurchase'));
+const AddRicePurchase = lazy(() => import('@/pages/AddRicePurchase'));
+const AddPaddySalesDeal = lazy(() => import('@/pages/AddPaddySalesDeal'));
+const AddGovPaddyInward = lazy(() => import('@/pages/AddGovPaddyInward'));
+const AddPrivatePaddyInward = lazy(() => import('@/pages/AddPrivatePaddyInward'));
+const AddRiceInward = lazy(() => import('@/pages/AddRiceInward'));
+const ReportsPage = lazy(() => import('@/pages/Reports'));
 
 /**
 * Centralized route configuration
@@ -46,15 +44,6 @@ import AddRiceInward from '@/pages/AddRiceInward';
 */
 export const routes = [
     // ===== ENTRY VIEW ROUTES =====
-    {
-        path: '/',
-        component: Entry,
-        title: 'Entry',
-        titleKey: 'entry:nav.entry',
-        icon: DocumentTextIcon,
-        showInSidebar: false,
-        view: 'entry', // Which view this belongs to
-    },
     {
         path: '/entry',
         component: Entry,
@@ -103,7 +92,7 @@ export const routes = [
     },
     {
         path: '/purchase',
-        component: Home,
+        component: Entry,
         title: 'Purchase Deals',
         titleKey: 'entry:sections.purchase.title',
         icon: ShoppingBagIcon,
@@ -128,10 +117,10 @@ export const routes = [
     },
     {
         path: '/sales',
-        component: Home,
+        component: Entry,
         title: 'Sales Deals',
         titleKey: 'entry:sections.sales.title',
-        icon: ShoppingBagIcon,
+        icon: CurrencyDollarIcon,
         showInSidebar: true,
         view: 'entry',
         children: [
@@ -146,7 +135,7 @@ export const routes = [
     },
     {
         path: '/inward',
-        component: Home,
+        component: Entry,
         title: 'Inward',
         titleKey: 'entry:sections.inward.title',
         icon: ArrowDownTrayIcon,
@@ -180,7 +169,7 @@ export const routes = [
     // ===== REPORTS VIEW ROUTES =====
     {
         path: '/reports',
-        component: Entry,
+        component: ReportsPage,
         title: 'Reports',
         titleKey: 'entry:nav.reports',
         icon: DocumentTextIcon,
@@ -189,7 +178,7 @@ export const routes = [
     },
     {
         path: '/reports/entry',
-        component: Entry,
+        component: ReportsPage,
         title: 'Entry Report',
         titleKey: 'reports:sections.entry.title',
         icon: DocumentTextIcon,
@@ -242,7 +231,7 @@ export const routes = [
     },
     {
         path: '/reports/purchase',
-        component: Entry,
+        component: ReportsPage,
         title: 'Purchase Deals Report',
         titleKey: 'reports:sections.purchase.title',
         icon: ShoppingBagIcon,
@@ -267,10 +256,10 @@ export const routes = [
     },
     {
         path: '/reports/sales',
-        component: Entry,
+        component: ReportsPage,
         title: 'Sales Deals Report',
         titleKey: 'reports:sections.sales.title',
-        icon: ShoppingBagIcon,
+        icon: CurrencyDollarIcon,
         showInSidebar: true,
         view: 'reports',
         children: [
@@ -285,7 +274,7 @@ export const routes = [
     },
     {
         path: '/reports/inward',
-        component: Entry,
+        component: ReportsPage,
         title: 'Inward Report',
         titleKey: 'reports:sections.inward.title',
         icon: ArrowDownTrayIcon,
@@ -318,20 +307,13 @@ export const routes = [
 
     // ===== UTILITY ROUTES (hidden from sidebar) =====
     {
-        path: '/students',
-        component: StudentEnrollments,
-        title: 'Student Enrollments',
-        titleKey: 'students:title',
-        icon: UsersIcon,
-        showInSidebar: false,
-    },
-    {
         path: '/ui/guide',
         component: UIGuide,
         title: 'UI Guide',
         titleKey: 'common:uiGuide',
         icon: PaintBrushIcon,
         showInSidebar: false,
+        view: 'utility',
     },
     {
         path: '/profile',

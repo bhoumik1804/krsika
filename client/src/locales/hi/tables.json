@@ -1,0 +1,149 @@
+{
+    "tables": {
+        "common": {
+            "actions": "कार्रवाई",
+            "edit": "संपादित करें",
+            "delete": "हटाएं",
+            "view": "देखें",
+            "noData": "कोई डेटा नहीं",
+            "loading": "लोड हो रहा है...",
+            "search": "खोजें...",
+            "filter": "फ़िल्टर",
+            "export": "निर्यात",
+            "showing": "दिखा रहा है",
+            "of": "में से",
+            "entries": "प्रविष्टियां",
+            "previous": "पिछला",
+            "next": "अगला",
+            "first": "पहला",
+            "last": "अंतिम",
+            "rowsPerPage": "प्रति पृष्ठ पंक्तियां",
+            "serialNo": "क्र.सं.",
+            "createdAt": "बनाया गया",
+            "updatedAt": "अपडेट किया गया"
+        },
+        "parties": {
+            "title": "पार्टियां",
+            "partyName": "पार्टी का नाम",
+            "phone": "फोन",
+            "email": "ईमेल",
+            "partyType": "प्रकार",
+            "gstNumber": "GST नंबर",
+            "city": "शहर",
+            "state": "राज्य",
+            "address": "पता"
+        },
+        "brokers": {
+            "title": "ब्रोकर",
+            "brokerName": "ब्रोकर का नाम",
+            "phone": "फोन",
+            "email": "ईमेल",
+            "gstn": "GSTN",
+            "city": "शहर",
+            "state": "राज्य"
+        },
+        "transporters": {
+            "title": "परिवहनकर्ता",
+            "transporterName": "परिवहनकर्ता का नाम",
+            "phone": "फोन",
+            "email": "ईमेल",
+            "vehicleNumber": "गाड़ी नंबर",
+            "city": "शहर",
+            "state": "राज्य"
+        },
+        "doEntries": {
+            "title": "DO प्रविष्टियां",
+            "date": "दिनांक",
+            "doNumber": "DO क्रमांक",
+            "committeeCenter": "समिति/केंद्र",
+            "grainCoarse": "धान (मोटा)",
+            "grainFine": "धान (पतला)",
+            "grainCommon": "धान (सरना)",
+            "total": "कुल"
+        },
+        "paddyInward": {
+            "title": "शासकीय धान आवक",
+            "date": "दिनांक",
+            "inwardNumber": "आवक क्रमांक",
+            "doNumber": "DO क्रमांक",
+            "committeeCenter": "समिति/केंद्र",
+            "vehicleNumber": "गाड़ी नंबर",
+            "rstNumber": "RST No.",
+            "grainType": "धान प्रकार",
+            "netWeight": "नेट वजन",
+            "packaging": "बारदाना"
+        },
+        "privateInward": {
+            "title": "निजी धान आवक",
+            "date": "दिनांक",
+            "inwardNumber": "आवक क्रमांक",
+            "partyName": "पार्टी",
+            "purchaseSource": "खरीदी स्रोत",
+            "vehicleNumber": "गाड़ी नंबर",
+            "grainType": "धान प्रकार",
+            "netWeight": "नेट वजन",
+            "packaging": "बारदाना"
+        },
+        "riceInward": {
+            "title": "चावल आवक",
+            "date": "दिनांक",
+            "inwardNumber": "आवक क्रमांक",
+            "lotNumber": "LOT नंबर",
+            "partyName": "पार्टी",
+            "vehicleNumber": "गाड़ी नंबर",
+            "riceCoarse": "चावल (मोटा)",
+            "riceFine": "चावल (पतला)",
+            "totalWeight": "कुल वजन"
+        },
+        "paddyPurchases": {
+            "title": "धान खरीदी सौदे",
+            "date": "दिनांक",
+            "dealNumber": "सौदा क्रमांक",
+            "partyName": "पार्टी",
+            "brokerName": "ब्रोकर",
+            "grainType": "धान प्रकार",
+            "quantity": "मात्रा",
+            "rate": "दर",
+            "totalAmount": "कुल राशि",
+            "status": "स्थिति"
+        },
+        "paddySales": {
+            "title": "धान बिक्री सौदे",
+            "date": "दिनांक",
+            "dealNumber": "सौदा क्रमांक",
+            "partyName": "पार्टी",
+            "brokerName": "ब्रोकर",
+            "salesType": "प्रकार",
+            "rate": "दर",
+            "quantity": "मात्रा",
+            "totalAmount": "कुल राशि",
+            "status": "स्थिति"
+        },
+        "ricePurchases": {
+            "title": "चावल खरीदी सौदे",
+            "date": "दिनांक",
+            "dealNumber": "सौदा क्रमांक",
+            "partyName": "पार्टी",
+            "brokerName": "ब्रोकर",
+            "riceType": "चावल प्रकार",
+            "quantity": "मात्रा",
+            "rate": "दर",
+            "totalAmount": "कुल राशि",
+            "status": "स्थिति"
+        },
+        "committee": {
+            "title": "समिति संरचना",
+            "name": "नाम",
+            "type": "प्रकार",
+            "location": "स्थान",
+            "contact": "संपर्क"
+        },
+        "status": {
+            "active": "सक्रिय",
+            "inactive": "निष्क्रिय",
+            "pending": "लंबित",
+            "completed": "पूर्ण",
+            "cancelled": "रद्द"
+        }
+    }
+}

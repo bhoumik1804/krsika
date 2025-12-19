@@ -1,0 +1,149 @@
+{
+    "tables": {
+        "common": {
+            "actions": "Actions",
+            "edit": "Edit",
+            "delete": "Delete",
+            "view": "View",
+            "noData": "No data available",
+            "loading": "Loading...",
+            "search": "Search...",
+            "filter": "Filter",
+            "export": "Export",
+            "showing": "Showing",
+            "of": "of",
+            "entries": "entries",
+            "previous": "Previous",
+            "next": "Next",
+            "first": "First",
+            "last": "Last",
+            "rowsPerPage": "Rows per page",
+            "serialNo": "S.No.",
+            "createdAt": "Created At",
+            "updatedAt": "Updated At"
+        },
+        "parties": {
+            "title": "Parties",
+            "partyName": "Party Name",
+            "phone": "Phone",
+            "email": "Email",
+            "partyType": "Type",
+            "gstNumber": "GST Number",
+            "city": "City",
+            "state": "State",
+            "address": "Address"
+        },
+        "brokers": {
+            "title": "Brokers",
+            "brokerName": "Broker Name",
+            "phone": "Phone",
+            "email": "Email",
+            "gstn": "GSTN",
+            "city": "City",
+            "state": "State"
+        },
+        "transporters": {
+            "title": "Transporters",
+            "transporterName": "Transporter Name",
+            "phone": "Phone",
+            "email": "Email",
+            "vehicleNumber": "Vehicle Number",
+            "city": "City",
+            "state": "State"
+        },
+        "doEntries": {
+            "title": "DO Entries",
+            "date": "Date",
+            "doNumber": "DO Number",
+            "committeeCenter": "Committee/Center",
+            "grainCoarse": "Paddy (Coarse)",
+            "grainFine": "Paddy (Fine)",
+            "grainCommon": "Paddy (Common)",
+            "total": "Total"
+        },
+        "paddyInward": {
+            "title": "Government Paddy Inward",
+            "date": "Date",
+            "inwardNumber": "Inward Number",
+            "doNumber": "DO Number",
+            "committeeCenter": "Committee/Center",
+            "vehicleNumber": "Vehicle Number",
+            "rstNumber": "RST No.",
+            "grainType": "Paddy Type",
+            "netWeight": "Net Weight",
+            "packaging": "Packaging"
+        },
+        "privateInward": {
+            "title": "Private Paddy Inward",
+            "date": "Date",
+            "inwardNumber": "Inward Number",
+            "partyName": "Party",
+            "purchaseSource": "Purchase Source",
+            "vehicleNumber": "Vehicle Number",
+            "grainType": "Paddy Type",
+            "netWeight": "Net Weight",
+            "packaging": "Packaging"
+        },
+        "riceInward": {
+            "title": "Rice Inward",
+            "date": "Date",
+            "inwardNumber": "Inward Number",
+            "lotNumber": "LOT Number",
+            "partyName": "Party",
+            "vehicleNumber": "Vehicle Number",
+            "riceCoarse": "Rice (Coarse)",
+            "riceFine": "Rice (Fine)",
+            "totalWeight": "Total Weight"
+        },
+        "paddyPurchases": {
+            "title": "Paddy Purchase Deals",
+            "date": "Date",
+            "dealNumber": "Deal Number",
+            "partyName": "Party",
+            "brokerName": "Broker",
+            "grainType": "Paddy Type",
+            "quantity": "Quantity",
+            "rate": "Rate",
+            "totalAmount": "Total Amount",
+            "status": "Status"
+        },
+        "paddySales": {
+            "title": "Paddy Sales Deals",
+            "date": "Date",
+            "dealNumber": "Deal Number",
+            "partyName": "Party",
+            "brokerName": "Broker",
+            "salesType": "Type",
+            "rate": "Rate",
+            "quantity": "Quantity",
+            "totalAmount": "Total Amount",
+            "status": "Status"
+        },
+        "ricePurchases": {
+            "title": "Rice Purchase Deals",
+            "date": "Date",
+            "dealNumber": "Deal Number",
+            "partyName": "Party",
+            "brokerName": "Broker",
+            "riceType": "Rice Type",
+            "quantity": "Quantity",
+            "rate": "Rate",
+            "totalAmount": "Total Amount",
+            "status": "Status"
+        },
+        "committee": {
+            "title": "Committee Structure",
+            "name": "Name",
+            "type": "Type",
+            "location": "Location",
+            "contact": "Contact"
+        },
+        "status": {
+            "active": "Active",
+            "inactive": "Inactive",
+            "pending": "Pending",
+            "completed": "Completed",
+            "cancelled": "Cancelled"
+        }
+    }
+}

@@ -1,0 +1,233 @@
+{
+    "forms": {
+        "common": {
+            "submit": "जमा करें",
+            "cancel": "रद्द करें",
+            "save": "सेव करें",
+            "reset": "रीसेट",
+            "loading": "लोड हो रहा है...",
+            "saving": "सेव हो रहा है...",
+            "required": "आवश्यक",
+            "optional": "वैकल्पिक",
+            "selectPlaceholder": "चुनें...",
+            "date": "दिनांक",
+            "success": "सफलतापूर्वक सेव हो गया!",
+            "error": "कोई त्रुटि हुई"
+        },
+        "party": {
+            "title": "नई पार्टी जोड़ें",
+            "description": "नई पार्टी का विवरण भरें",
+            "partyName": "पार्टी का नाम",
+            "phone": "फोन न.",
+            "email": "ईमेल",
+            "partyType": "पार्टी का प्रकार",
+            "gstNumber": "GST नंबर",
+            "gstType": "GST प्रकार",
+            "businessType": "व्यापार का प्रकार",
+            "address": "पता",
+            "city": "शहर",
+            "state": "राज्य",
+            "pincode": "पिन कोड",
+            "types": {
+                "buyer": "खरीदार",
+                "seller": "विक्रेता",
+                "both": "दोनों"
+            },
+            "gstTypes": {
+                "registered": "पंजीकृत",
+                "unregistered": "अपंजीकृत",
+                "composition": "कंपोजीशन"
+            }
+        },
+        "broker": {
+            "title": "नया ब्रोकर जोड़ें",
+            "description": "ब्रोकर का विवरण भरें",
+            "brokerName": "ब्रोकर का नाम",
+            "phone": "फोन न.",
+            "email": "ईमेल",
+            "gstn": "GSTN",
+            "address": "पता",
+            "city": "शहर",
+            "state": "राज्य",
+            "pincode": "पिन कोड"
+        },
+        "transporter": {
+            "title": "नया परिवहनकर्ता जोड़ें",
+            "description": "परिवहनकर्ता का विवरण भरें",
+            "transporterName": "परिवहनकर्ता का नाम",
+            "phone": "फोन न.",
+            "email": "ईमेल",
+            "gstn": "GSTN",
+            "vehicleNumber": "गाड़ी नंबर",
+            "address": "पता",
+            "city": "शहर",
+            "state": "राज्य",
+            "pincode": "पिन कोड"
+        },
+        "committee": {
+            "title": "समिति संरचना जोड़ें",
+            "description": "समिति/उपार्जन केंद्र का विवरण",
+            "type": "चुनें",
+            "name": "समिति-उपार्जन केंद्र / संग्रहण का नाम",
+            "types": {
+                "committee": "समिति",
+                "center": "उपार्जन केंद्र",
+                "storage": "संग्रहण केंद्र"
+            }
+        },
+        "doEntry": {
+            "title": "DO प्रविष्टी",
+            "description": "DO का विवरण भरें",
+            "date": "दिनांक",
+            "committeeCenter": "समिति / संग्रहण केंद्र",
+            "doNumber": "DO क्रमांक",
+            "grainCoarse": "धान (मोटा)",
+            "grainFine": "धान (पतला)",
+            "grainCommon": "धान (सरना)"
+        },
+        "govPaddyInward": {
+            "title": "शासकीय धान आवक",
+            "description": "शासकीय धान आवक का विवरण",
+            "date": "दिनांक",
+            "committeeCenter": "समिति / संग्रहण केंद्र",
+            "doNumber": "DO क्रमांक",
+            "packagingNew": "बारदाना (नया)",
+            "packagingOld": "बारदाना (पुराना)",
+            "packagingPlastic": "बारदाना (प्लास्टिक)",
+            "totalPackaging": "जुट बारदाना वजन",
+            "plasticPackagingWeight": "प्लास्टिक बारदाना वजन",
+            "packagingWeightQuintal": "बारदाना वजन (क्विंटल में.)",
+            "vehicleNumber": "गाड़ी नंबर",
+            "rstNumber": "RST No.",
+            "vehicleWeightQuintal": "गाड़ी वजन (क्विंटल में.)",
+            "grainType": "आवक धान का प्रकार",
+            "grainTypes": {
+                "coarse": "मोटा",
+                "fine": "पतला",
+                "common": "सरना"
+            }
+        },
+        "privatePaddyInward": {
+            "title": "निजी धान आवक",
+            "description": "निजी धान आवक का विवरण",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "purchaseSource": "धान खरीदी स्रोत क्रमांक",
+            "purchaseType": "खरीदी प्रकार",
+            "packagingNew": "बारदाना (नया)",
+            "packagingOld": "बारदाना (पुराना)",
+            "packagingPlastic": "बारदाना (प्लास्टिक)",
+            "totalPackaging": "जुट बारदाना वजन",
+            "plasticPackagingWeight": "प्लास्टिक बारदाना वजन",
+            "packagingWeightQuintal": "बारदाना वजन",
+            "vehicleNumber": "गाड़ी नंबर",
+            "rstNumber": "RST No.",
+            "vehicleWeightQuintal": "गाड़ी वजन",
+            "grainType": "धान का प्रकार",
+            "purchaseTypes": {
+                "advance": "अग्रिम",
+                "cash": "नकद",
+                "credit": "उधार"
+            }
+        },
+        "riceInward": {
+            "title": "चावल आवक / LOT जमा",
+            "description": "चावल आवक का विवरण",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "purchaseSource": "चावल खरीदी स्रोत क्रमांक",
+            "fciNan": "FCI/NAN",
+            "packaging": "बारदाना",
+            "packagingNew": "बारदाना (नया)",
+            "packagingOld": "बारदाना (पुराना)",
+            "packagingPlastic": "बारदाना (प्लास्टिक)",
+            "totalPackaging": "जुट बारदाना वजन",
+            "plasticPackagingWeight": "प्लास्टिक बारदाना वजन",
+            "packagingWeight": "बारदाना वजन",
+            "vehicleNumber": "गाड़ी नंबर",
+            "rstNumber": "RST No.",
+            "vehicleWeight": "गाड़ी वजन",
+            "riceCoarseNetWeight": "चावल(मोटा) नेट वजन",
+            "riceFineNetWeight": "चावल(पतला) नेट वजन",
+            "packagingOptions": {
+                "new": "नया",
+                "old": "पुराना",
+                "plastic": "प्लास्टिक"
+            }
+        },
+        "paddyPurchase": {
+            "title": "धान खरीदी सौदा",
+            "description": "धान खरीदी सौदे का विवरण",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "delivery": "डिलीवरी",
+            "grainType": "धान का प्रकार",
+            "quantity": "भाव",
+            "wastagePercent": "बवाद %",
+            "brokerage": "दलाली",
+            "includeCertificate": "बारदाना सहित/वापसी",
+            "purchaseType": "खरीदी प्रकार",
+            "grainQuantity": "धान की मात्रा",
+            "deliveryOptions": {
+                "mill": "मिल डिलीवरी",
+                "party": "पार्टी डिलीवरी"
+            },
+            "grainTypes": {
+                "coarse": "मोटा",
+                "fine": "पतला",
+                "common": "सरना"
+            },
+            "certificateOptions": {
+                "with": "सहित",
+                "return": "वापसी"
+            },
+            "purchaseTypes": {
+                "advance": "अग्रिम",
+                "cash": "नकद"
+            }
+        },
+        "paddySales": {
+            "title": "धान बिक्री सौदा",
+            "description": "धान बिक्री सौदे का विवरण",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "salesType": "प्रकार",
+            "rate": "दर",
+            "wastagePercent": "बवाद %",
+            "brokerage": "दलाली (प्रति क्विंटल)",
+            "packaging": "बारदाना सहित/वापसी",
+            "salesTypes": {
+                "mill": "मिल",
+                "party": "पार्टी"
+            }
+        },
+        "ricePurchase": {
+            "title": "चावल खरीदी सौदा",
+            "description": "चावल खरीदी सौदे का विवरण",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "purchaseType": "LOT/अन्य",
+            "riceType": "चावल का प्रकार",
+            "quantity": "मात्रा (क्विंटल में.)",
+            "rate": "दर",
+            "wastagePercent": "बवाद %",
+            "brokerage": "दलाली (प्रति क्विंटल)",
+            "packaging": "बारदाना",
+            "purchaseTypes": {
+                "lot": "LOT",
+                "other": "अन्य"
+            },
+            "riceTypes": {
+                "coarse": "मोटा",
+                "fine": "पतला"
+            },
+            "packagingOptions": {
+                "with": "सहित",
+                "return": "वापसी"
+            }
+        }
+    }
+}

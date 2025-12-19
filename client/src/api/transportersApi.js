@@ -84,4 +84,41 @@ export const fetchTransporters = async ({ page = 1, pageSize = 10, filters = [],
     }
 };
 
-export default { fetchTransporters };
+export const createTransporter = async (transporterData) => {
+    try {
+        const data = await apiClient.post('/transporters', transporterData);
+        return data;
+    } catch (error) {
+        console.warn('⚠️ API not available, simulating create:', error.message);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return {
+            success: true,
+            message: 'Transporter created successfully (SIMULATED)',
+            data: { ...transporterData, _id: Date.now().toString(), createdAt: new Date().toISOString() },
+        };
+    }
+};
+
+export const updateTransporter = async (id, transporterData) => {
+    try {
+        const data = await apiClient.put(`/transporters/${id}`, transporterData);
+        return data;
+    } catch (error) {
+        console.warn('⚠️ API not available, simulating update:', error.message);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return { success: true, message: 'Transporter updated successfully (SIMULATED)', data: { ...transporterData, _id: id } };
+    }
+};
+
+export const deleteTransporter = async (id) => {
+    try {
+        const data = await apiClient.delete(`/transporters/${id}`);
+        return data;
+    } catch (error) {
+        console.warn('⚠️ API not available, simulating delete:', error.message);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return { success: true, message: 'Transporter deleted successfully (SIMULATED)' };
+    }
+};
+
+export default { fetchTransporters, createTransporter, updateTransporter, deleteTransporter };

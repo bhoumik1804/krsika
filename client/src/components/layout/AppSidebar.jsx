@@ -1,10 +1,11 @@
 "use client";
 
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { setActiveView } from '@/store/slices/sidebarSlice';
+import { routes } from '@/config/routes';
 import {
     Sidebar,
     SidebarContent,
@@ -16,6 +17,7 @@ import {
     SidebarMenuSub,
     SidebarMenuSubButton,
     SidebarMenuSubItem,
+    useSidebar,
 } from '@/components/ui/sidebar';
 import {
     UserIcon,
@@ -28,9 +30,10 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { routes } from '@/config/routes';
 import { generateNavItems } from '@/utils/routeUtils';
 import { cn } from '@/lib/utils';
+
+const allNavItems = generateNavItems(routes);
 
 export default function AppSidebar() {
     const location = useLocation();
@@ -38,28 +41,45 @@ export default function AppSidebar() {
     const dispatch = useDispatch();
     const { t } = useTranslation(['entry', 'common', 'reports']);
 
-    // Get active view from Redux store
+    // Get sidebar context for mobile close functionality
+    const { isMobile, setOpenMobile } = useSidebar();
+
     const activeView = useSelector((state) => state.sidebar.activeView);
 
-    // Auto-generate nav items from route config
-    const allNavItems = generateNavItems(routes);
+    useEffect(() => {
 
-    // Handle toggle change - navigate and update Redux state
-    const handleToggleChange = (view) => {
+        const currentRoute = routes.find(route => {
+            if (route.path === location.pathname) return true;
+            const routePath = route.path.replace(/\/$/, '');
+            return location.pathname.startsWith(routePath + '/');
+        });
+
+        if (currentRoute && currentRoute.view && currentRoute.view !== activeView) {
+            dispatch(setActiveView(currentRoute.view));
+        }
+    }, [location.pathname, activeView, dispatch]);
+
+    const handleToggleChange = useCallback((view) => {
         dispatch(setActiveView(view));
         if (view === 'reports') {
             navigate('/reports');
         } else {
-            navigate('/');
+            navigate('/entry');
         }
-    };
+    }, [dispatch, navigate]);
 
-    const renderMenuItem = (item) => {
+    // Close sidebar on mobile when navigating - industry best practice
+    const closeMobileSidebar = useCallback(() => {
+        if (isMobile) {
+            setOpenMobile(false);
+        }
+    }, [isMobile, setOpenMobile]);
+
+    const renderMenuItem = useCallback((item) => {
         const isActive = location.pathname === item.url;
         const hasChildren = item.children && item.children.length > 0;
         const isChildActive = hasChildren && item.children.some(child => location.pathname === child.url);
 
-        // Get translated title - use titleKey if available, otherwise use title
         const displayTitle = item.titleKey ? t(item.titleKey) : item.title;
 
         if (hasChildren) {
@@ -81,7 +101,7 @@ export default function AppSidebar() {
                                     return (
                                         <SidebarMenuSubItem key={child.title}>
                                             <SidebarMenuSubButton asChild isActive={isChildItemActive}>
-                                                <Link to={child.url}>
+                                                <Link to={child.url} onClick={closeMobileSidebar}>
                                                     <span>{childDisplayTitle}</span>
                                                 </Link>
                                             </SidebarMenuSubButton>
@@ -105,7 +125,7 @@ export default function AppSidebar() {
                 </SidebarMenuButton>
             </SidebarMenuItem>
         );
-    };
+    }, [location.pathname, t, closeMobileSidebar]);
 
     // Filter menu items based on active view from Redux
     const getMenuItems = () => {
@@ -137,25 +157,31 @@ export default function AppSidebar() {
 
                     {/* Entry/Reports Toggle - Enhanced UI */}
                     <SidebarMenuItem>
-                        <div className="flex gap-1 p-2 bg-muted/50 rounded-lg">
+                        <div className="flex gap-1 p-2 bg-sidebar-accent/50 rounded-lg">
                             <button
-                                onClick={() => handleToggleChange('entry')}
+                                onClick={() => {
+                                    handleToggleChange('entry');
+                                    closeMobileSidebar();
+                                }}
                                 className={cn(
                                     'flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200',
                                     activeView === 'entry'
-                                        ? 'bg-background text-foreground shadow-sm'
-                                        : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+                                        ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-md'
+                                        : 'text-sidebar-foreground/90 hover:text-sidebar-foreground hover:bg-sidebar-accent'
                                 )}
                             >
                                 {t('entry:dashboard.entry')}
                             </button>
                             <button
-                                onClick={() => handleToggleChange('reports')}
+                                onClick={() => {
+                                    handleToggleChange('reports');
+                                    closeMobileSidebar();
+                                }}
                                 className={cn(
                                     'flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200',
                                     activeView === 'reports'
-                                        ? 'bg-background text-foreground shadow-sm'
-                                        : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+                                        ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-md'
+                                        : 'text-sidebar-foreground/90 hover:text-sidebar-foreground hover:bg-sidebar-accent'
                                 )}
                             >
                                 {t('entry:dashboard.reports')}
@@ -177,18 +203,20 @@ export default function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link to="/profile" className="flex items-center gap-2">
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-muted">
-                                    <UserIcon className="size-4" />
-                                </div>
-                                <div className="flex flex-1 flex-col gap-0.5 leading-none text-left">
-                                    <span className="font-semibold text-sm">User Name</span>
-                                    <span className="text-xs text-muted-foreground">user@example.com</span>
-                                </div>
-                                <Link to="/settings" onClick={(e) => e.stopPropagation()} className="ml-auto">
+                            <div className="flex items-center gap-2 cursor-default">
+                                <Link to="/profile" onClick={closeMobileSidebar} className="flex items-center gap-2 flex-1">
+                                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-muted">
+                                        <UserIcon className="size-4" />
+                                    </div>
+                                    <div className="flex flex-1 flex-col gap-0.5 leading-none text-left">
+                                        <span className="font-semibold text-sm">User Name</span>
+                                        <span className="text-xs text-muted-foreground">user@example.com</span>
+                                    </div>
+                                </Link>
+                                <Link to="/settings" onClick={closeMobileSidebar} className="ml-auto p-1 rounded hover:bg-muted transition-colors">
                                     <Cog6ToothIcon className="size-5 text-muted-foreground hover:text-foreground transition-colors" />
                                 </Link>
-                            </Link>
+                            </div>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>

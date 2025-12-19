@@ -36,4 +36,19 @@ export const fetchRiceInward = async ({ page = 1, pageSize = 10, filters = [], s
     }
 };
 
-export default { fetchRiceInward };
+export const createRiceInward = async (inwardData) => {
+    try {
+        const data = await apiClient.post('/inward/rice', inwardData);
+        return data;
+    } catch (error) {
+        console.warn('⚠️ API not available, simulating create:', error.message);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return {
+            success: true,
+            message: 'Rice Inward created successfully (SIMULATED)',
+            data: { ...inwardData, _id: Date.now().toString(), createdAt: new Date().toISOString() },
+        };
+    }
+};
+
+export default { fetchRiceInward, createRiceInward };

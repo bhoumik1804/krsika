@@ -1,8 +1,8 @@
 "use client";
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { fetchRicePurchases } from '../api/ricePurchasesApi';
+import { fetchRicePurchases, createRicePurchase } from '../api/ricePurchasesApi';
 
 export const useRicePurchases = () => {
     const { pageIndex, pageSize, columnFilters, sorting } = useSelector(state => state.table);
@@ -24,6 +24,14 @@ export const useRicePurchases = () => {
         hasNext: query.data?.data?.hasNext || false,
         hasPrev: query.data?.data?.hasPrev || false,
     };
+};
+
+export const useCreateRicePurchase = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: createRicePurchase,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['ricePurchases'] }),
+    });
 };
 
 export default useRicePurchases;

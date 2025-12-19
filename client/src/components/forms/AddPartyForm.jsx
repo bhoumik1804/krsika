@@ -17,14 +17,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { ChevronDown } from 'lucide-react';
+import { PhoneInputField } from '@/components/ui/phone-input-field';
 
 // Form validation schema
 const partyFormSchema = z.object({
@@ -34,7 +35,7 @@ const partyFormSchema = z.object({
     phone: z.string().regex(/^[0-9]{10}$/, {
         message: 'Phone number must be 10 digits.',
     }),
-    email: z.string().email({
+    email: z.email({
         message: 'Please enter a valid email address.',
     }).optional().or(z.literal('')),
     gstn: z.string().regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/, {
@@ -59,7 +60,7 @@ const partyFormSchema = z.object({
 });
 
 export default function AddPartyForm() {
-    const { t } = useTranslation(['entry', 'common']);
+    const { t } = useTranslation(['forms', 'entry', 'common']);
     const [isLoading, setIsLoading] = React.useState(false);
 
     // Initialize form with react-hook-form and zod validation
@@ -97,9 +98,9 @@ export default function AddPartyForm() {
     return (
         <Card className="max-w-3xl mx-auto">
             <CardHeader>
-                <CardTitle>Add Party</CardTitle>
+                <CardTitle>{t('forms.party.title')}</CardTitle>
                 <CardDescription>
-                    Enter party details to add them to the system
+                    {t('forms.party.description')}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -112,7 +113,7 @@ export default function AddPartyForm() {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-base">
-                                        पार्टी का नाम <span className="text-red-500">*</span>
+                                        {t('forms.party.partyName')} <span className="text-red-500">*</span>
                                     </FormLabel>
                                     <FormControl>
                                         <Input placeholder="Name" {...field} />
@@ -123,29 +124,9 @@ export default function AddPartyForm() {
                         />
 
                         {/* Phone Number */}
-                        <FormField
-                            control={form.control}
+                        <PhoneInputField
                             name="phone"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-base">फोन न.</FormLabel>
-                                    <FormControl>
-                                        <div className="flex">
-                                            <div className="flex items-center gap-2 px-3 bg-muted border border-r-0 rounded-l-md">
-                                                <span className="text-2xl">🇮🇳</span>
-                                                <span className="text-sm font-medium">+91</span>
-                                            </div>
-                                            <Input
-                                                type="tel"
-                                                placeholder="81234 56789"
-                                                className="rounded-l-none"
-                                                {...field}
-                                            />
-                                        </div>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label={t('forms.party.phone')}
                         />
 
                         {/* Email */}
@@ -154,7 +135,7 @@ export default function AddPartyForm() {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-base">Email</FormLabel>
+                                    <FormLabel className="text-base">{t('forms.party.email')}</FormLabel>
                                     <FormControl>
                                         <Input type="email" placeholder="" {...field} />
                                     </FormControl>
@@ -169,7 +150,7 @@ export default function AddPartyForm() {
                             name="gstn"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-base">GSTN</FormLabel>
+                                    <FormLabel className="text-base">{t('forms.party.gstNumber')}</FormLabel>
                                     <FormControl>
                                         <Input placeholder="" {...field} />
                                     </FormControl>
@@ -180,7 +161,7 @@ export default function AddPartyForm() {
 
                         {/* Address Section */}
                         <div className="space-y-4">
-                            <FormLabel className="text-base">पता</FormLabel>
+                            <FormLabel className="text-base">{t('forms.party.address')}</FormLabel>
 
                             {/* Address Line 1 */}
                             <FormField
@@ -259,36 +240,20 @@ export default function AddPartyForm() {
                                     name="country"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormControl>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button
-                                                            variant="outline"
-                                                            className="w-full justify-between font-normal"
-                                                        >
-                                                            {field.value || '-Select-'}
-                                                            <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent className="w-full" align="start">
-                                                        <DropdownMenuItem onClick={() => field.onChange('India')}>
-                                                            India
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => field.onChange('USA')}>
-                                                            USA
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => field.onChange('UK')}>
-                                                            UK
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => field.onChange('Canada')}>
-                                                            Canada
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => field.onChange('Australia')}>
-                                                            Australia
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </FormControl>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Select" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="India">India</SelectItem>
+                                                    <SelectItem value="USA">USA</SelectItem>
+                                                    <SelectItem value="UK">UK</SelectItem>
+                                                    <SelectItem value="Canada">Canada</SelectItem>
+                                                    <SelectItem value="Australia">Australia</SelectItem>
+                                                </SelectContent>
+                                            </Select>
                                             <FormMessage />
                                         </FormItem>
                                     )}

@@ -86,7 +86,7 @@ export default function PartyInfo() {
             cell: ({ row }) => {
                 const gstn = row.getValue('gstn');
                 return gstn ? (
-                    <div className="text-sm font-mono">{gstn}</div>
+                    <div className="text-sm">{gstn}</div>
                 ) : (
                     <span className="text-muted-foreground">-</span>
                 );

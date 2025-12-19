@@ -44,7 +44,7 @@ export default function RiceInwardReport() {
             header: 'आवक नंबर',
             meta: { filterVariant: 'text' },
             cell: ({ row }) => (
-                <div className="font-medium font-mono">{row.getValue('inwardNumber')}</div>
+                <div className="font-medium ">{row.getValue('inwardNumber')}</div>
             ),
         },
         {
@@ -54,7 +54,7 @@ export default function RiceInwardReport() {
             cell: ({ row }) => {
                 const lotNumber = row.getValue('lotNumber');
                 return lotNumber ? (
-                    <div className="font-medium font-mono text-indigo-600">{lotNumber}</div>
+                    <div className="font-medium  text-indigo-600">{lotNumber}</div>
                 ) : (
                     <span className="text-muted-foreground">-</span>
                 );
@@ -86,7 +86,7 @@ export default function RiceInwardReport() {
             cell: ({ row }) => {
                 const vehicleNumber = row.getValue('vehicleNumber');
                 return vehicleNumber ? (
-                    <div className="text-sm font-mono">{vehicleNumber}</div>
+                    <div className="text-sm ">{vehicleNumber}</div>
                 ) : (
                     <span className="text-muted-foreground">-</span>
                 );

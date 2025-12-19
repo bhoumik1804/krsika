@@ -15,14 +15,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { ChevronDown } from 'lucide-react';
+import { PhoneInputField } from '@/components/ui/phone-input-field';
 
 // Form validation schema
 const transporterFormSchema = z.object({
@@ -57,7 +58,7 @@ const transporterFormSchema = z.object({
 });
 
 export default function AddTransportersForm() {
-  const { t } = useTranslation(['entry', 'common']);
+  const { t } = useTranslation(['forms', 'entry', 'common']);
   const [isLoading, setIsLoading] = React.useState(false);
 
   // Initialize form with react-hook-form and zod validation
@@ -95,9 +96,9 @@ export default function AddTransportersForm() {
   return (
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
-        <CardTitle>Add Transporter</CardTitle>
+        <CardTitle>{t('forms.transporter.title')}</CardTitle>
         <CardDescription>
-          Enter transporter details to add them to the system
+          {t('forms.transporter.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -109,11 +110,11 @@ export default function AddTransportersForm() {
               name="transporterName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>परिवहनकर्ता का नाम *</FormLabel>
+                  <FormLabel className="text-base">{t('forms.transporter.transporterName')} *</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Name" 
-                      {...field} 
+                    <Input
+                      placeholder="Name"
+                      {...field}
                       className="placeholder:text-gray-400"
                     />
                   </FormControl>
@@ -123,28 +124,9 @@ export default function AddTransportersForm() {
             />
 
             {/* Phone Number */}
-            <FormField
-              control={form.control}
+            <PhoneInputField
               name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>फोन न.</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 text-sm">
-                        <span>🇮🇳</span>
-                        <span className="text-gray-600">+91</span>
-                      </div>
-                      <Input 
-                        placeholder="81234 56789" 
-                        {...field}
-                        className="pl-20 placeholder:text-gray-400"
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t('forms.transporter.phone')}
             />
 
             {/* Email */}
@@ -153,12 +135,12 @@ export default function AddTransportersForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-base">{t('forms.transporter.email')}</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="" 
+                    <Input
+                      placeholder=""
                       type="email"
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -172,11 +154,11 @@ export default function AddTransportersForm() {
               name="gstn"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>GSTN</FormLabel>
+                  <FormLabel className="text-base">{t('forms.transporter.gstn')}</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="" 
-                      {...field} 
+                    <Input
+                      placeholder=""
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -186,8 +168,8 @@ export default function AddTransportersForm() {
 
             {/* Address Section */}
             <div className="space-y-4">
-              <h3 className="text-sm font-medium">पता</h3>
-              
+              <h3 className="text-sm font-medium">{t('forms.transporter.address')}</h3>
+
               {/* Address Line 1 */}
               <FormField
                 control={form.control}
@@ -195,8 +177,8 @@ export default function AddTransportersForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input 
-                        placeholder="Address Line 1" 
+                      <Input
+                        placeholder="Address Line 1"
                         {...field}
                         className="placeholder:text-gray-400"
                       />
@@ -213,8 +195,8 @@ export default function AddTransportersForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input 
-                        placeholder="Address Line 2" 
+                      <Input
+                        placeholder="Address Line 2"
                         {...field}
                         className="placeholder:text-gray-400"
                       />
@@ -232,8 +214,8 @@ export default function AddTransportersForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input 
-                          placeholder="City / District" 
+                        <Input
+                          placeholder="City / District"
                           {...field}
                           className="placeholder:text-gray-400"
                         />
@@ -249,8 +231,8 @@ export default function AddTransportersForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input 
-                          placeholder="State / Province" 
+                        <Input
+                          placeholder="State / Province"
                           {...field}
                           className="placeholder:text-gray-400"
                         />
@@ -269,8 +251,8 @@ export default function AddTransportersForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input 
-                          placeholder="Postal Code" 
+                        <Input
+                          placeholder="Postal Code"
                           {...field}
                           className="placeholder:text-gray-400"
                         />
@@ -285,36 +267,20 @@ export default function AddTransportersForm() {
                   name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <FormControl>
-                            <Button 
-                              variant="outline" 
-                              className="w-full justify-between font-normal text-gray-500"
-                            >
-                              {field.value || '-Select-'}
-                              <ChevronDown className="h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-full">
-                          <DropdownMenuItem onClick={() => field.onChange('India')}>
-                            India
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => field.onChange('USA')}>
-                            USA
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => field.onChange('UK')}>
-                            UK
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => field.onChange('Canada')}>
-                            Canada
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => field.onChange('Australia')}>
-                            Australia
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="India">India</SelectItem>
+                          <SelectItem value="USA">USA</SelectItem>
+                          <SelectItem value="UK">UK</SelectItem>
+                          <SelectItem value="Canada">Canada</SelectItem>
+                          <SelectItem value="Australia">Australia</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -323,8 +289,8 @@ export default function AddTransportersForm() {
             </div>
 
             {/* Submit Button */}
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full md:w-auto"
               disabled={isLoading}
             >

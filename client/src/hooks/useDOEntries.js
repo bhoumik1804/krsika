@@ -1,8 +1,8 @@
 "use client";
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { fetchDOEntries } from '../api/doEntriesApi';
+import { fetchDOEntries, createDOEntry, updateDOEntry, deleteDOEntry } from '../api/doEntriesApi';
 
 export const useDOEntries = () => {
     const { pageIndex, pageSize, columnFilters, sorting } = useSelector(state => state.table);
@@ -24,6 +24,30 @@ export const useDOEntries = () => {
         hasNext: query.data?.data?.hasNext || false,
         hasPrev: query.data?.data?.hasPrev || false,
     };
+};
+
+export const useCreateDOEntry = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: createDOEntry,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['doEntries'] }),
+    });
+};
+
+export const useUpdateDOEntry = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, data }) => updateDOEntry(id, data),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['doEntries'] }),
+    });
+};
+
+export const useDeleteDOEntry = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: deleteDOEntry,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['doEntries'] }),
+    });
 };
 
 export default useDOEntries;
