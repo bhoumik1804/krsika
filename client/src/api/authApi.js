@@ -18,10 +18,6 @@ export const login = async ({ email, password }) => {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // Check temporary credentials
-    console.log('email', email);
-    console.log('password', password);
-    console.log('TEMP_CREDENTIALS', TEMP_CREDENTIALS);
     if (email === TEMP_CREDENTIALS.email && password === TEMP_CREDENTIALS.password) {
         // Mock successful response
         const mockUser = {
