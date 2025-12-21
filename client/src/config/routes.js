@@ -32,6 +32,7 @@ const AddCommitteeProcurement = lazy(() => import('@/pages/AddCommitteeProcureme
 const AddDOEntry = lazy(() => import('@/pages/AddDOEntry'));
 const AddPaddyPurchase = lazy(() => import('@/pages/AddPaddyPurchase'));
 const AddRicePurchase = lazy(() => import('@/pages/AddRicePurchase'));
+const AddSackPurchase = lazy(() => import('@/pages/AddSackPurchase'));
 const AddPaddySalesDeal = lazy(() => import('@/pages/AddPaddySalesDeal'));
 const AddGovPaddyInward = lazy(() => import('@/pages/AddGovPaddyInward'));
 const AddPrivatePaddyInward = lazy(() => import('@/pages/AddPrivatePaddyInward'));
@@ -111,6 +112,13 @@ export const routes = [
                 component: AddRicePurchase,
                 title: 'Rice Purchase Deal',
                 titleKey: 'entry:sections.purchase.rice',
+                showInSidebar: true,
+            },
+            {
+                path: '/purchase/sack',
+                component: AddSackPurchase,
+                title: 'Sack Purchase',
+                titleKey: 'entry:sections.purchase.sack',
                 showInSidebar: true,
             },
         ],

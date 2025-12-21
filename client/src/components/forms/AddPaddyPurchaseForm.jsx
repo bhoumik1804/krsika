@@ -74,7 +74,21 @@ const paddyPurchaseFormSchema = z.object({
   grainQuantity: z.string().regex(/^\d+$/, {
     message: 'Must be a valid number.',
   }),
-  mention: z.string().optional(),
+  newPackagingRate: z.string().regex(/^\d*\.?\d*$/, {
+    message: 'Must be a valid number.',
+  }).optional(),
+  oldPackagingRate: z.string().regex(/^\d*\.?\d*$/, {
+    message: 'Must be a valid number.',
+  }).optional(),
+  plasticPackagingRate: z.string().regex(/^\d*\.?\d*$/, {
+    message: 'Must be a valid number.',
+  }).optional(),
+  lifting: z.string().regex(/^\d*$/, {
+    message: 'Must be a valid number.',
+  }).optional(),
+  liftingBalance: z.string().regex(/^\d*$/, {
+    message: 'Must be a valid number.',
+  }).optional(),
 });
 
 export default function AddPaddyPurchaseForm() {
@@ -103,7 +117,11 @@ export default function AddPaddyPurchaseForm() {
       purchaseType: 'do-purchase',
       doEntries: [{ doInfo: '', doNumber: '', committeeName: '', doPaddyQuantity: '0' }],
       grainQuantity: '0',
-      mention: '',
+      newPackagingRate: '',
+      oldPackagingRate: '',
+      plasticPackagingRate: '',
+      lifting: '',
+      liftingBalance: '',
     },
   });
 
@@ -226,138 +244,6 @@ export default function AddPaddyPurchaseForm() {
                         <RadioGroupItem value="delivery" id="delivery" />
                         <Label htmlFor="delivery" className="font-normal cursor-pointer">
                           पहुंचा कर
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Grain Type Dropdown */}
-            <FormField
-              control={form.control}
-              name="grainType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-base">{t('forms.paddyPurchase.grainType')}</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {grainTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Quantity */}
-            <FormField
-              control={form.control}
-              name="quantity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-base">{t('forms.paddyPurchase.quantity')}</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="0"
-                      {...field}
-                      className="placeholder:text-gray-400"
-                    />
-                  </FormControl>
-                  <FormDescription className="text-xs">
-                    प्रति किलो
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Wastage Percent */}
-            <FormField
-              control={form.control}
-              name="wastagePercent"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-base">{t('forms.paddyPurchase.wastagePercent')}</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="0"
-                      {...field}
-                      className="placeholder:text-gray-400"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Brokerage */}
-            <FormField
-              control={form.control}
-              name="brokerage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-base">{t('forms.paddyPurchase.brokerage')}</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="0"
-                      {...field}
-                      className="placeholder:text-gray-400"
-                    />
-                  </FormControl>
-                  <FormDescription className="text-xs">
-                    प्रति किलो
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Certificate Type Radio Buttons */}
-            <FormField
-              control={form.control}
-              name="includeCertificate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-base">{t('forms.paddyPurchase.includeCertificate')}</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="flex items-center gap-4"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="with-weight" id="with-weight" />
-                        <Label htmlFor="with-weight" className="font-normal cursor-pointer">
-                          सहित (वजन में)
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="with-quantity" id="with-quantity" />
-                        <Label htmlFor="with-quantity" className="font-normal cursor-pointer">
-                          सहित (भाव में)
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="return" id="return" />
-                        <Label htmlFor="return" className="font-normal cursor-pointer">
-                          वापसी
                         </Label>
                       </div>
                     </RadioGroup>
@@ -522,6 +408,32 @@ export default function AddPaddyPurchaseForm() {
               </div>
             )}
 
+            {/* Grain Type Dropdown */}
+            <FormField
+              control={form.control}
+              name="grainType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.paddyPurchase.grainType')}</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {grainTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             {/* Grain Quantity */}
             <FormField
               control={form.control}
@@ -542,16 +454,200 @@ export default function AddPaddyPurchaseForm() {
               )}
             />
 
-            {/* Mention/Remark Field */}
+            {/* Quantity */}
             <FormField
               control={form.control}
-              name="mention"
+              name="quantity"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base">टिप्पणी</FormLabel>
+                  <FormLabel className="text-base">{t('forms.paddyPurchase.quantity')}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="कोई टिप्पणी या रिमार्क दर्ज करें"
+                      type="number"
+                      placeholder="0"
+                      {...field}
+                      className="placeholder:text-gray-400"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Wastage Percent */}
+            <FormField
+              control={form.control}
+              name="wastagePercent"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.paddyPurchase.wastagePercent')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0"
+                      {...field}
+                      className="placeholder:text-gray-400"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Brokerage */}
+            <FormField
+              control={form.control}
+              name="brokerage"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.paddyPurchase.brokerage')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0"
+                      {...field}
+                      className="placeholder:text-gray-400"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Certificate Type Radio Buttons */}
+            <FormField
+              control={form.control}
+              name="includeCertificate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.paddyPurchase.includeCertificate')}</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex items-center gap-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="with-weight" id="with-weight" />
+                        <Label htmlFor="with-weight" className="font-normal cursor-pointer">
+                          सहित (वजन में)
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="with-quantity" id="with-quantity" />
+                        <Label htmlFor="with-quantity" className="font-normal cursor-pointer">
+                          सहित (भाव में)
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="return" id="return" />
+                        <Label htmlFor="return" className="font-normal cursor-pointer">
+                          वापसी
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* New Packaging Rate */}
+            <FormField
+              control={form.control}
+              name="newPackagingRate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.paddyPurchase.newPackagingRate')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0"
+                      {...field}
+                      className="placeholder:text-gray-400"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Old Packaging Rate */}
+            <FormField
+              control={form.control}
+              name="oldPackagingRate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.paddyPurchase.oldPackagingRate')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0"
+                      {...field}
+                      className="placeholder:text-gray-400"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Plastic Packaging Rate */}
+            <FormField
+              control={form.control}
+              name="plasticPackagingRate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.paddyPurchase.plasticPackagingRate')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0"
+                      {...field}
+                      className="placeholder:text-gray-400"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Lifting */}
+            <FormField
+              control={form.control}
+              name="lifting"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.paddyPurchase.lifting')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      {...field}
+                      className="placeholder:text-gray-400"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Lifting Balance */}
+            <FormField
+              control={form.control}
+              name="liftingBalance"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.paddyPurchase.liftingBalance')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="0"
                       {...field}
                       className="placeholder:text-gray-400"
                     />

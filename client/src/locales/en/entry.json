@@ -35,7 +35,8 @@
         "purchase": {
             "title": "Purchase Deals",
             "paddy": "Paddy Purchase Deal",
-            "rice": "Rice Purchase Deal"
+            "rice": "Rice Purchase Deal",
+            "sack": "Sack Purchase"
         },
         "sales": {
             "title": "Sales Deals",

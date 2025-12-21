@@ -164,12 +164,16 @@
             "delivery": "डिलीवरी",
             "grainType": "धान का प्रकार",
             "quantity": "धान का भाव/दर (प्रति क्विंटल)",
-            "wastagePercent": "बवाद %",
-            "brokerage": "दलाली",
+            "wastagePercent": "बटाव %",
+            "brokerage": "दलाली (प्रति क्विंटल)",
             "includeCertificate": "बारदाना सहित/वापसी",
             "purchaseType": "खरीदी प्रकार",
             "grainQuantity": "धान की मात्रा",
-            "mention": "टिप्पणी",
+            "newPackagingRate": "नया बारदाना दर",
+            "oldPackagingRate": "पुराना बारदाना दर",
+            "plasticPackagingRate": "प्लास्टिक बारदाना दर",
+            "lifting": "उठाव",
+            "liftingBalance": "उठाव शेष",
             "doSection": "DO की जानकारी",
             "doInfo": "DO की जानकारी",
             "doNumber": "DO क्रमांक",
@@ -220,9 +224,17 @@
             "riceType": "चावल का प्रकार",
             "quantity": "मात्रा (क्विंटल में.)",
             "rate": "दर",
-            "wastagePercent": "बवाद %",
+            "wastagePercent": "बटाव %",
             "brokerage": "दलाली (प्रति क्विंटल)",
             "packaging": "बारदाना",
+            "newPackagingRate": "नया बारदाना दर",
+            "oldPackagingRate": "पुराना बारदाना दर",
+            "plasticPackagingRate": "प्लास्टिक बारदाना दर",
+            "frk": "FRK",
+            "frkRate": "FRK दर (प्रति क्विंटल)",
+            "lotNumber": "LOT No.",
+            "riceInward": "चावल आवक",
+            "riceInwardBalance": "चावल आवक शेष",
             "purchaseTypes": {
                 "lot": "LOT",
                 "other": "अन्य"
@@ -234,7 +246,24 @@
             "packagingOptions": {
                 "with": "सहित",
                 "return": "वापसी"
+            },
+            "frkOptions": {
+                "included": "FRK सहित",
+                "give": "FRK देना है"
             }
+        },
+        "sackPurchase": {
+            "title": "बारदाना खरीदी",
+            "description": "बारदाना खरीदी सौदे का विवरण",
+            "partyName": "पार्टी का नाम",
+            "newPackagingCount": "नया बारदाना संख्या",
+            "newPackagingRate": "नया बारदाना दर",
+            "oldPackagingCount": "पुराना बारदाना संख्या",
+            "oldPackagingRate": "पुराना बारदाना दर",
+            "plasticPackagingCount": "प्लास्टिक बारदाना संख्या",
+            "plasticPackagingRate": "प्लास्टिक बारदाना दर",
+            "payableAmount": "भुगतान योग्य राशी",
+            "successMessage": "बारदाना खरीदी सफलतापूर्वक जोड़ी गई"
         }
     }
 }

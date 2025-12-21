@@ -62,6 +62,28 @@ const ricePurchaseFormSchema = z.object({
   packaging: z.enum(['with-packaging', 'without-packaging'], {
     required_error: 'Please select packaging option.',
   }),
+  newPackagingRate: z.string().regex(/^\d*\.?\d*$/, {
+    message: 'Must be a valid number.',
+  }).optional(),
+  oldPackagingRate: z.string().regex(/^\d*\.?\d*$/, {
+    message: 'Must be a valid number.',
+  }).optional(),
+  plasticPackagingRate: z.string().regex(/^\d*\.?\d*$/, {
+    message: 'Must be a valid number.',
+  }).optional(),
+  frk: z.enum(['frk-included', 'frk-give'], {
+    required_error: 'Please select FRK option.',
+  }),
+  frkRate: z.string().regex(/^\d*\.?\d*$/, {
+    message: 'Must be a valid number.',
+  }).optional(),
+  lotNumber: z.string().optional(),
+  riceInward: z.string().regex(/^\d*$/, {
+    message: 'Must be a valid number.',
+  }).optional(),
+  riceInwardBalance: z.string().regex(/^\d*$/, {
+    message: 'Must be a valid number.',
+  }).optional(),
 });
 
 export default function AddRicePurchaseForm() {
@@ -87,8 +109,19 @@ export default function AddRicePurchaseForm() {
       wastagePercent: '0',
       brokerage: '0',
       packaging: 'with-packaging',
+      newPackagingRate: '',
+      oldPackagingRate: '',
+      plasticPackagingRate: '',
+      frk: 'frk-included',
+      frkRate: '',
+      lotNumber: '',
+      riceInward: '',
+      riceInwardBalance: '',
     },
   });
+
+  // Watch purchaseType to conditionally show LOT No. field
+  const purchaseType = form.watch('purchaseType');
 
   // Form submission handler
   const onSubmit = async (data) => {
@@ -350,6 +383,184 @@ export default function AddRicePurchaseForm() {
                 </FormItem>
               )}
             />
+
+            {/* New Packaging Rate */}
+            <FormField
+              control={form.control}
+              name="newPackagingRate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.ricePurchase.newPackagingRate')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0"
+                      {...field}
+                      className="placeholder:text-gray-400"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Old Packaging Rate */}
+            <FormField
+              control={form.control}
+              name="oldPackagingRate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.ricePurchase.oldPackagingRate')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0"
+                      {...field}
+                      className="placeholder:text-gray-400"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Plastic Packaging Rate */}
+            <FormField
+              control={form.control}
+              name="plasticPackagingRate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.ricePurchase.plasticPackagingRate')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0"
+                      {...field}
+                      className="placeholder:text-gray-400"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* FRK Radio Buttons */}
+            <FormField
+              control={form.control}
+              name="frk"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.ricePurchase.frk')}</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex items-center gap-6"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="frk-included" id="frk-included" />
+                        <Label htmlFor="frk-included" className="font-normal cursor-pointer">
+                          FRK सहित
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="frk-give" id="frk-give" />
+                        <Label htmlFor="frk-give" className="font-normal cursor-pointer">
+                          FRK देना है
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* FRK Rate */}
+            <FormField
+              control={form.control}
+              name="frkRate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.ricePurchase.frkRate')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0"
+                      {...field}
+                      className="placeholder:text-gray-400"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* LOT No. - Conditional on purchaseType === 'lot-purchase' */}
+            {purchaseType === 'lot-purchase' && (
+              <FormField
+                control={form.control}
+                name="lotNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base">{t('forms.ricePurchase.lotNumber')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="LOT No. दर्ज करें"
+                        {...field}
+                        className="placeholder:text-gray-400"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            {/* Rice Inward */}
+            <FormField
+              control={form.control}
+              name="riceInward"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.ricePurchase.riceInward')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      {...field}
+                      className="placeholder:text-gray-400"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Rice Inward Balance */}
+            <FormField
+              control={form.control}
+              name="riceInwardBalance"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">{t('forms.ricePurchase.riceInwardBalance')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      {...field}
+                      className="placeholder:text-gray-400"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
 
             {/* Submit Button */}
             <div className="flex justify-center">

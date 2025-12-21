@@ -20,7 +20,11 @@ const DUMMY_PADDY_PURCHASES = [
             { doInfo: 'DO-INFO-001', doNumber: 'DN-001', committeeName: 'समिति 1', doPaddyQuantity: '200' },
             { doInfo: 'DO-INFO-002', doNumber: 'DN-002', committeeName: 'समिति 2', doPaddyQuantity: '300' }
         ],
-        mention: 'First purchase of the season',
+        newPackagingRate: '50',
+        oldPackagingRate: '30',
+        plasticPackagingRate: '25',
+        lifting: '100',
+        liftingBalance: '400',
         status: 'active',
         createdAt: '2024-01-15T10:30:00.000Z'
     },
@@ -37,7 +41,11 @@ const DUMMY_PADDY_PURCHASES = [
         totalAmount: 1950000,
         purchaseType: 'other-purchase',
         doEntries: [],
-        mention: '',
+        newPackagingRate: '55',
+        oldPackagingRate: '35',
+        plasticPackagingRate: '28',
+        lifting: '200',
+        liftingBalance: '550',
         status: 'completed',
         createdAt: '2024-02-10T10:30:00.000Z'
     },

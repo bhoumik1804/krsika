@@ -169,7 +169,11 @@
             "includeCertificate": "Packaging Include/Return",
             "purchaseType": "Purchase Type",
             "grainQuantity": "Paddy Quantity",
-            "mention": "Remarks",
+            "newPackagingRate": "New Packaging Rate",
+            "oldPackagingRate": "Old Packaging Rate",
+            "plasticPackagingRate": "Plastic Packaging Rate",
+            "lifting": "Lifting",
+            "liftingBalance": "Lifting Balance",
             "doSection": "DO Information",
             "doInfo": "DO Information",
             "doNumber": "DO Number",
@@ -223,6 +227,14 @@
             "wastagePercent": "Wastage %",
             "brokerage": "Brokerage (per Quintal)",
             "packaging": "Packaging",
+            "newPackagingRate": "New Packaging Rate",
+            "oldPackagingRate": "Old Packaging Rate",
+            "plasticPackagingRate": "Plastic Packaging Rate",
+            "frk": "FRK",
+            "frkRate": "FRK Rate (per kg)",
+            "lotNumber": "LOT No.",
+            "riceInward": "Rice Inward",
+            "riceInwardBalance": "Rice Inward Balance",
             "purchaseTypes": {
                 "lot": "LOT",
                 "other": "Other"
@@ -234,7 +246,24 @@
             "packagingOptions": {
                 "with": "Included",
                 "return": "Return"
+            },
+            "frkOptions": {
+                "included": "FRK Included",
+                "give": "FRK to Give"
             }
+        },
+        "sackPurchase": {
+            "title": "Sack Purchase",
+            "description": "Sack purchase deal details",
+            "partyName": "Party Name",
+            "newPackagingCount": "New Packaging Count",
+            "newPackagingRate": "New Packaging Rate",
+            "oldPackagingCount": "Old Packaging Count",
+            "oldPackagingRate": "Old Packaging Rate",
+            "plasticPackagingCount": "Plastic Packaging Count",
+            "plasticPackagingRate": "Plastic Packaging Rate",
+            "payableAmount": "Payable Amount",
+            "successMessage": "Sack Purchase Added Successfully"
         }
     }
 }
