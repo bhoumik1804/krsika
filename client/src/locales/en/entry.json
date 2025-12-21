@@ -36,17 +36,31 @@
             "title": "Purchase Deals",
             "paddy": "Paddy Purchase Deal",
             "rice": "Rice Purchase Deal",
-            "sack": "Sack Purchase"
+            "sack": "Sack Purchase Deal",
+            "frk": "FRK Purchase Deal",
+            "other": "Other Purchase Deal"
         },
         "sales": {
             "title": "Sales Deals",
-            "paddy": "Paddy Deals"
+            "paddy": "Paddy Deals",
+            "rice": "Rice Sales Deal",
+            "sack": "Sack Sales Deal",
+            "frk": "FRK Sales Deal",
+            "brokens": "Brokens Sales Deal",
+            "brewers": "Brewers Sales Deal",
+            "husk": "Husk Sales Deal",
+            "ricebran": "Rice Bran Sales Deal",
+            "whitebran": "White Bran Sales Deal",
+            "other": "Other Sales Deal"
         },
         "inward": {
             "title": "Inward",
             "govtPaddy": "Government Paddy Inward",
             "privatePaddy": "Private Paddy Inward",
-            "rice": "Rice Inward / Lot Deposit"
+            "rice": "Rice Inward / Lot Deposit",
+            "sack": "Sack Inward",
+            "frk": "FRK Inward",
+            "other": "Other Inward"
         }
     },
     "nav": {

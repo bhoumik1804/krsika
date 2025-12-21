@@ -1,58 +1,54 @@
 /**
- * API service for rice inward/lot deposit-related endpoints
+ * API service for other inward-related endpoints
  */
 import apiClient from '@/lib/apiClient';
 
-const DUMMY_RICE_INWARD = [
+const DUMMY_OTHER_INWARD = [
     {
         _id: '1',
-        inwardNumber: 'IN-R-001',
-        ricePurchaseNumber: 'RP-001',
+        inwardNumber: 'OI-001',
+        otherPurchaseNumber: 'OP-001',
+        itemName: 'अन्य वस्तु 1',
+        quantity: '100',
+        quantityType: 'quintal',
         partyName: 'पार्टी 1',
         brokerName: 'ब्रोकर 1',
-        riceType: 'mota',
-        awakBalance: '500',
-        lotType: 'lot-purchase',
-        lotNo: 'LOT-2024-001',
-        frkNon: 'frk',
-        gunnyOption: 'with-sack',
-        gunnyNew: '100',
-        gunnyOld: '50',
-        gunnyPlastic: '30',
-        juteWeight: '5',
-        plasticWeight: '3',
-        gunnyWeight: '8',
+        gunnyNew: '50',
+        gunnyOld: '30',
+        gunnyPlastic: '20',
+        juteWeight: '3',
+        plasticWeight: '1.5',
         truckNo: 'MH12AB1234',
         rstNo: 'RST-001',
         truckLoadWeight: '200',
-        riceMota: '150',
-        ricePatla: '0',
+        truckEmptyWeight: '50',
+        truckNetWeight: '150',
+        gunnyWeight: '4.5',
+        finalWeight: '145.5',
         inwardDate: '2024-03-10',
         createdAt: '2024-03-10T10:30:00.000Z'
     },
     {
         _id: '2',
-        inwardNumber: 'IN-R-002',
-        ricePurchaseNumber: 'RP-002',
+        inwardNumber: 'OI-002',
+        otherPurchaseNumber: 'OP-002',
+        itemName: 'अन्य वस्तु 2',
+        quantity: '150',
+        quantityType: 'kg',
         partyName: 'पार्टी 2',
         brokerName: 'ब्रोकर 2',
-        riceType: 'patla',
-        awakBalance: '600',
-        lotType: 'rice-purchase',
-        lotNo: 'LOT-2024-002',
-        frkNon: 'non-frk',
-        gunnyOption: 'give-sack',
-        gunnyNew: '120',
-        gunnyOld: '60',
-        gunnyPlastic: '40',
-        juteWeight: '6',
-        plasticWeight: '4',
-        gunnyWeight: '10',
+        gunnyNew: '60',
+        gunnyOld: '40',
+        gunnyPlastic: '25',
+        juteWeight: '4',
+        plasticWeight: '2',
         truckNo: 'UP16CD5678',
         rstNo: 'RST-002',
         truckLoadWeight: '250',
-        riceMota: '0',
-        ricePatla: '180',
+        truckEmptyWeight: '60',
+        truckNetWeight: '190',
+        gunnyWeight: '6',
+        finalWeight: '184',
         inwardDate: '2024-04-05',
         createdAt: '2024-04-05T10:30:00.000Z'
     },
@@ -61,24 +57,24 @@ const DUMMY_RICE_INWARD = [
 const generateDummyResponse = ({ page = 1, pageSize = 10 }) => {
     const startIndex = (page - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    const paginatedData = DUMMY_RICE_INWARD.slice(startIndex, endIndex);
-    const total = DUMMY_RICE_INWARD.length;
+    const paginatedData = DUMMY_OTHER_INWARD.slice(startIndex, endIndex);
+    const total = DUMMY_OTHER_INWARD.length;
     const totalPages = Math.ceil(total / pageSize);
 
     return {
         success: true,
-        message: 'Rice inward retrieved successfully (DUMMY DATA)',
-        data: { riceInward: paginatedData, totalRiceInward: total, pageSize, currentPage: page, totalPages, hasPrev: page > 1, hasNext: page < totalPages },
+        message: 'Other inward retrieved successfully (DUMMY DATA)',
+        data: { otherInward: paginatedData, totalOtherInward: total, pageSize, currentPage: page, totalPages, hasPrev: page > 1, hasNext: page < totalPages },
     };
 };
 
-export const fetchRiceInward = async ({ page = 1, pageSize = 10, filters = [], sorting = [] }) => {
+export const fetchOtherInward = async ({ page = 1, pageSize = 10, filters = [], sorting = [] }) => {
     const params = { page: page.toString(), pageSize: pageSize.toString() };
     filters.forEach(filter => { if (filter.value) params[`filter[${filter.id}]`] = filter.value; });
     if (sorting.length > 0) { params.sortBy = sorting[0].id; params.sortOrder = sorting[0].desc ? 'desc' : 'asc'; }
 
     try {
-        return await apiClient.get('/inward/rice', { params });
+        return await apiClient.get('/inward/other', { params });
     } catch (error) {
         console.warn('⚠️ API not available, using dummy data');
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -86,19 +82,19 @@ export const fetchRiceInward = async ({ page = 1, pageSize = 10, filters = [], s
     }
 };
 
-export const createRiceInward = async (inwardData) => {
+export const createOtherInward = async (inwardData) => {
     try {
-        const data = await apiClient.post('/inward/rice', inwardData);
+        const data = await apiClient.post('/inward/other', inwardData);
         return data;
     } catch (error) {
         console.warn('⚠️ API not available, simulating create:', error.message);
         await new Promise(resolve => setTimeout(resolve, 500));
         return {
             success: true,
-            message: 'Rice Inward created successfully (SIMULATED)',
+            message: 'Other Inward created successfully (SIMULATED)',
             data: { ...inwardData, _id: Date.now().toString(), createdAt: new Date().toISOString() },
         };
     }
 };
 
-export default { fetchRiceInward, createRiceInward };
+export default { fetchOtherInward, createOtherInward };

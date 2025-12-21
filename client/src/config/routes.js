@@ -33,10 +33,24 @@ const AddDOEntry = lazy(() => import('@/pages/AddDOEntry'));
 const AddPaddyPurchase = lazy(() => import('@/pages/AddPaddyPurchase'));
 const AddRicePurchase = lazy(() => import('@/pages/AddRicePurchase'));
 const AddSackPurchase = lazy(() => import('@/pages/AddSackPurchase'));
+const AddFRKPurchase = lazy(() => import('@/pages/AddFRKPurchase'));
+const AddOtherPurchase = lazy(() => import('@/pages/AddOtherPurchase'));
 const AddPaddySalesDeal = lazy(() => import('@/pages/AddPaddySalesDeal'));
+const AddRiceSales = lazy(() => import('@/pages/AddRiceSales'));
+const AddSackSales = lazy(() => import('@/pages/AddSackSales'));
+const AddFRKSales = lazy(() => import('@/pages/AddFRKSales'));
+const AddBrokensSales = lazy(() => import('@/pages/AddBrokensSales'));
+const AddBrewersSales = lazy(() => import('@/pages/AddBrewersSales'));
+const AddHuskSales = lazy(() => import('@/pages/AddHuskSales'));
+const AddRiceBranSales = lazy(() => import('@/pages/AddRiceBranSales'));
+const AddWhiteBranSales = lazy(() => import('@/pages/AddWhiteBranSales'));
+const AddOtherSales = lazy(() => import('@/pages/AddOtherSales'));
 const AddGovPaddyInward = lazy(() => import('@/pages/AddGovPaddyInward'));
 const AddPrivatePaddyInward = lazy(() => import('@/pages/AddPrivatePaddyInward'));
 const AddRiceInward = lazy(() => import('@/pages/AddRiceInward'));
+const AddSackInward = lazy(() => import('@/pages/AddSackInward'));
+const AddFrkInward = lazy(() => import('@/pages/AddFrkInward'));
+const AddOtherInward = lazy(() => import('@/pages/AddOtherInward'));
 const ReportsPage = lazy(() => import('@/pages/Reports'));
 
 /**
@@ -121,6 +135,20 @@ export const routes = [
                 titleKey: 'entry:sections.purchase.sack',
                 showInSidebar: true,
             },
+            {
+                path: '/purchase/frk',
+                component: AddFRKPurchase,
+                title: 'FRK Purchase',
+                titleKey: 'entry:sections.purchase.frk',
+                showInSidebar: true,
+            },
+            {
+                path: '/purchase/other',
+                component: AddOtherPurchase,
+                title: 'Other Purchase',
+                titleKey: 'entry:sections.purchase.other',
+                showInSidebar: true,
+            },
         ],
     },
     {
@@ -137,6 +165,69 @@ export const routes = [
                 component: AddPaddySalesDeal,
                 title: 'Paddy Deals',
                 titleKey: 'entry:sections.sales.paddy',
+                showInSidebar: true,
+            },
+            {
+                path: '/sales/rice',
+                component: AddRiceSales,
+                title: 'Rice Sales Deal',
+                titleKey: 'entry:sections.sales.rice',
+                showInSidebar: true,
+            },
+            {
+                path: '/sales/sack',
+                component: AddSackSales,
+                title: 'Sack Sales Deal',
+                titleKey: 'entry:sections.sales.sack',
+                showInSidebar: true,
+            },
+            {
+                path: '/sales/frk',
+                component: AddFRKSales,
+                title: 'FRK Sales Deal',
+                titleKey: 'entry:sections.sales.frk',
+                showInSidebar: true,
+            },
+            {
+                path: '/sales/brokens',
+                component: AddBrokensSales,
+                title: 'Brokens Sales Deal',
+                titleKey: 'entry:sections.sales.brokens',
+                showInSidebar: true,
+            },
+            {
+                path: '/sales/brewers',
+                component: AddBrewersSales,
+                title: 'Brewers Sales Deal',
+                titleKey: 'entry:sections.sales.brewers',
+                showInSidebar: true,
+            },
+            {
+                path: '/sales/husk',
+                component: AddHuskSales,
+                title: 'Husk Sales Deal',
+                titleKey: 'entry:sections.sales.husk',
+                showInSidebar: true,
+            },
+            {
+                path: '/sales/ricebran',
+                component: AddRiceBranSales,
+                title: 'Rice Bran Sales Deal',
+                titleKey: 'entry:sections.sales.ricebran',
+                showInSidebar: true,
+            },
+            {
+                path: '/sales/whitebran',
+                component: AddWhiteBranSales,
+                title: 'White Bran Sales Deal',
+                titleKey: 'entry:sections.sales.whitebran',
+                showInSidebar: true,
+            },
+            {
+                path: '/sales/other',
+                component: AddOtherSales,
+                title: 'Other Sales Deal',
+                titleKey: 'entry:sections.sales.other',
                 showInSidebar: true,
             },
         ],
@@ -169,6 +260,27 @@ export const routes = [
                 component: AddRiceInward,
                 title: 'Rice Inward / Lot Deposit',
                 titleKey: 'entry:sections.inward.rice',
+                showInSidebar: true,
+            },
+            {
+                path: '/inward/sack',
+                component: AddSackInward,
+                title: 'Sack Inward',
+                titleKey: 'entry:sections.inward.sack',
+                showInSidebar: true,
+            },
+            {
+                path: '/inward/frk',
+                component: AddFrkInward,
+                title: 'FRK Inward',
+                titleKey: 'entry:sections.inward.frk',
+                showInSidebar: true,
+            },
+            {
+                path: '/inward/other',
+                component: AddOtherInward,
+                title: 'Other Inward',
+                titleKey: 'entry:sections.inward.other',
                 showInSidebar: true,
             },
         ],

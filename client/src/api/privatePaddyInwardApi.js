@@ -1,15 +1,21 @@
 /**
- * API service for paddy inward-related endpoints
+ * API service for private paddy inward-related endpoints
  */
 import apiClient from '@/lib/apiClient';
 
-const DUMMY_PADDY_INWARD = [
+const DUMMY_PRIVATE_PADDY_INWARD = [
     {
         _id: '1',
-        inwardNumber: 'IN-P-001',
-        doNumber: 'DO-001',
-        samitiSangrahan: 'samiti1',
+        inwardNumber: 'PVT-IN-001',
+        paddyPurchaseNumber: 'PP-001',
+        partyName: 'पार्टी 1',
+        brokerName: 'ब्रोकर 1',
         balDo: '500',
+        purchaseType: 'do-purchase',
+        doEntries: [
+            { doNumber: 'DO-001', samitiSangrahan: 'समिति 1' }
+        ],
+        gunnyOption: 'with-weight',
         gunnyNew: '100',
         gunnyOld: '50',
         gunnyPlastic: '30',
@@ -30,10 +36,14 @@ const DUMMY_PADDY_INWARD = [
     },
     {
         _id: '2',
-        inwardNumber: 'IN-P-002',
-        doNumber: 'DO-002',
-        samitiSangrahan: 'samiti2',
+        inwardNumber: 'PVT-IN-002',
+        paddyPurchaseNumber: 'PP-002',
+        partyName: 'पार्टी 2',
+        brokerName: 'ब्रोकर 2',
         balDo: '600',
+        purchaseType: 'other-purchase',
+        doEntries: [],
+        gunnyOption: 'with-price',
         gunnyNew: '120',
         gunnyOld: '60',
         gunnyPlastic: '40',
@@ -57,24 +67,24 @@ const DUMMY_PADDY_INWARD = [
 const generateDummyResponse = ({ page = 1, pageSize = 10 }) => {
     const startIndex = (page - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    const paginatedData = DUMMY_PADDY_INWARD.slice(startIndex, endIndex);
-    const total = DUMMY_PADDY_INWARD.length;
+    const paginatedData = DUMMY_PRIVATE_PADDY_INWARD.slice(startIndex, endIndex);
+    const total = DUMMY_PRIVATE_PADDY_INWARD.length;
     const totalPages = Math.ceil(total / pageSize);
 
     return {
         success: true,
-        message: 'Paddy inward retrieved successfully (DUMMY DATA)',
-        data: { paddyInward: paginatedData, totalPaddyInward: total, pageSize, currentPage: page, totalPages, hasPrev: page > 1, hasNext: page < totalPages },
+        message: 'Private Paddy inward retrieved successfully (DUMMY DATA)',
+        data: { privatePaddyInward: paginatedData, totalPrivatePaddyInward: total, pageSize, currentPage: page, totalPages, hasPrev: page > 1, hasNext: page < totalPages },
     };
 };
 
-export const fetchPaddyInward = async ({ page = 1, pageSize = 10, filters = [], sorting = [] }) => {
+export const fetchPrivatePaddyInward = async ({ page = 1, pageSize = 10, filters = [], sorting = [] }) => {
     const params = { page: page.toString(), pageSize: pageSize.toString() };
     filters.forEach(filter => { if (filter.value) params[`filter[${filter.id}]`] = filter.value; });
     if (sorting.length > 0) { params.sortBy = sorting[0].id; params.sortOrder = sorting[0].desc ? 'desc' : 'asc'; }
 
     try {
-        return await apiClient.get('/inward/paddy', { params });
+        return await apiClient.get('/inward/paddy/private', { params });
     } catch (error) {
         console.warn('⚠️ API not available, using dummy data');
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -82,19 +92,19 @@ export const fetchPaddyInward = async ({ page = 1, pageSize = 10, filters = [], 
     }
 };
 
-export const createGovPaddyInward = async (inwardData) => {
+export const createPrivatePaddyInward = async (inwardData) => {
     try {
-        const data = await apiClient.post('/inward/paddy/gov', inwardData);
+        const data = await apiClient.post('/inward/paddy/private', inwardData);
         return data;
     } catch (error) {
         console.warn('⚠️ API not available, simulating create:', error.message);
         await new Promise(resolve => setTimeout(resolve, 500));
         return {
             success: true,
-            message: 'Government Paddy Inward created successfully (SIMULATED)',
+            message: 'Private Paddy Inward created successfully (SIMULATED)',
             data: { ...inwardData, _id: Date.now().toString(), createdAt: new Date().toISOString() },
         };
     }
 };
 
-export default { fetchPaddyInward, createGovPaddyInward };
+export default { fetchPrivatePaddyInward, createPrivatePaddyInward };
