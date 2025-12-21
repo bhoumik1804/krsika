@@ -61,14 +61,36 @@
             "sack": "बारदाना आवक",
             "frk": "FRK आवक",
             "other": "अन्य आवक"
+        },
+        "outward": {
+            "title": "जावक",
+            "privatePaddy": "निजी धान जावक",
+            "govtRice": "शासकीय चावल जावक",
+            "privateRice": "निजी चावल जावक",
+            "govtSack": "शासकीय बारदाना जावक",
+            "privateSack": "निजी बारदाना जावक",
+            "frk": "FRK जावक",
+            "brokens": "खंडा जावक",
+            "brewers": "नक्खी जावक",
+            "husk": "भूसा जावक",
+            "riceBran": "कोढा जावक",
+            "whiteBran": "सिल्की कोढा जावक",
+            "other": "अन्य जावक"
+        },
+        "milling": {
+            "title": "मिलिंग",
+            "paddy": "धान मिलिंग",
+            "rice": "चावल मिलिंग"
         }
     },
     "nav": {
         "entry": "प्रविष्टी",
-        "reports": "रिपोर्ट",
+        "reports": "रिपोर्ट्स",
         "purchase": "खरीदी सौदा",
         "sales": "बिक्री सौदा",
-        "inward": "आवक"
+        "inward": "आवक",
+        "outward": "जावक",
+        "milling": "मिलिंग"
     },
     "dashboard": {
         "entry": "प्रविष्टि",

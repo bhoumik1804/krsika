@@ -6,7 +6,8 @@ import {
     DocumentTextIcon,
     ShoppingBagIcon,
     ArrowDownTrayIcon,
-    CurrencyDollarIcon
+    CurrencyDollarIcon,
+    CogIcon
 } from '@heroicons/react/24/outline';
 
 // Lazy load all page components for code splitting
@@ -51,6 +52,20 @@ const AddRiceInward = lazy(() => import('@/pages/AddRiceInward'));
 const AddSackInward = lazy(() => import('@/pages/AddSackInward'));
 const AddFrkInward = lazy(() => import('@/pages/AddFrkInward'));
 const AddOtherInward = lazy(() => import('@/pages/AddOtherInward'));
+const AddPrivatePaddyOutward = lazy(() => import('@/pages/AddPrivatePaddyOutward'));
+const AddGovtRiceOutward = lazy(() => import('@/pages/AddGovtRiceOutward'));
+const AddPrivateRiceOutward = lazy(() => import('@/pages/AddPrivateRiceOutward'));
+const AddGovtSackOutward = lazy(() => import('@/pages/AddGovtSackOutward'));
+const AddPrivateSackOutward = lazy(() => import('@/pages/AddPrivateSackOutward'));
+const AddFrkOutward = lazy(() => import('@/pages/AddFrkOutward'));
+const AddBrokensOutward = lazy(() => import('@/pages/AddBrokensOutward'));
+const AddBrewersOutward = lazy(() => import('@/pages/AddBrewersOutward'));
+const AddHuskOutward = lazy(() => import('@/pages/AddHuskOutward'));
+const AddRiceBranOutward = lazy(() => import('@/pages/AddRiceBranOutward'));
+const AddWhiteBranOutward = lazy(() => import('@/pages/AddWhiteBranOutward'));
+const AddOtherOutward = lazy(() => import('@/pages/AddOtherOutward'));
+const AddPaddyMilling = lazy(() => import('@/pages/AddPaddyMilling'));
+const AddRiceMilling = lazy(() => import('@/pages/AddRiceMilling'));
 const ReportsPage = lazy(() => import('@/pages/Reports'));
 
 /**
@@ -281,6 +296,130 @@ export const routes = [
                 component: AddOtherInward,
                 title: 'Other Inward',
                 titleKey: 'entry:sections.inward.other',
+                showInSidebar: true,
+            },
+        ],
+    },
+
+    // ===== OUTWARD VIEW ROUTES =====
+    {
+        path: '/outward',
+        component: Entry,
+        title: 'Outward',
+        titleKey: 'entry:nav.outward',
+        icon: ArrowDownTrayIcon,
+        showInSidebar: true,
+        view: 'entry',
+        children: [
+            {
+                path: '/outward/private-paddy',
+                component: AddPrivatePaddyOutward,
+                title: 'Private Paddy Outward',
+                titleKey: 'entry:sections.outward.privatePaddy',
+                showInSidebar: true,
+            },
+            {
+                path: '/outward/govt-rice',
+                component: AddGovtRiceOutward,
+                title: 'Govt Rice Outward',
+                titleKey: 'entry:sections.outward.govtRice',
+                showInSidebar: true,
+            },
+            {
+                path: '/outward/private-rice',
+                component: AddPrivateRiceOutward,
+                title: 'Private Rice Outward',
+                titleKey: 'entry:sections.outward.privateRice',
+                showInSidebar: true,
+            },
+            {
+                path: '/outward/govt-sack',
+                component: AddGovtSackOutward,
+                title: 'Govt Sack Outward',
+                titleKey: 'entry:sections.outward.govtSack',
+                showInSidebar: true,
+            },
+            {
+                path: '/outward/private-sack',
+                component: AddPrivateSackOutward,
+                title: 'Private Sack Outward',
+                titleKey: 'entry:sections.outward.privateSack',
+                showInSidebar: true,
+            },
+            {
+                path: '/outward/frk',
+                component: AddFrkOutward,
+                title: 'FRK Outward',
+                titleKey: 'entry:sections.outward.frk',
+                showInSidebar: true,
+            },
+            {
+                path: '/outward/brokens',
+                component: AddBrokensOutward,
+                title: 'Brokens Outward',
+                titleKey: 'entry:sections.outward.brokens',
+                showInSidebar: true,
+            },
+            {
+                path: '/outward/brewers',
+                component: AddBrewersOutward,
+                title: 'Brewers Outward',
+                titleKey: 'entry:sections.outward.brewers',
+                showInSidebar: true,
+            },
+            {
+                path: '/outward/husk',
+                component: AddHuskOutward,
+                title: 'Husk Outward',
+                titleKey: 'entry:sections.outward.husk',
+                showInSidebar: true,
+            },
+            {
+                path: '/outward/rice-bran',
+                component: AddRiceBranOutward,
+                title: 'Rice Bran Outward',
+                titleKey: 'entry:sections.outward.riceBran',
+                showInSidebar: true,
+            },
+            {
+                path: '/outward/white-bran',
+                component: AddWhiteBranOutward,
+                title: 'White Bran Outward',
+                titleKey: 'entry:sections.outward.whiteBran',
+                showInSidebar: true,
+            },
+            {
+                path: '/outward/other',
+                component: AddOtherOutward,
+                title: 'Other Outward',
+                titleKey: 'entry:sections.outward.other',
+                showInSidebar: true,
+            },
+        ],
+    },
+
+    // ===== MILLING VIEW ROUTES =====
+    {
+        path: '/milling',
+        component: Entry,
+        title: 'Milling',
+        titleKey: 'entry:nav.milling',
+        icon: CogIcon,
+        showInSidebar: true,
+        view: 'entry',
+        children: [
+            {
+                path: '/milling/paddy',
+                component: AddPaddyMilling,
+                title: 'Paddy Milling',
+                titleKey: 'entry:sections.milling.paddy',
+                showInSidebar: true,
+            },
+            {
+                path: '/milling/rice',
+                component: AddRiceMilling,
+                title: 'Rice Milling',
+                titleKey: 'entry:sections.milling.rice',
                 showInSidebar: true,
             },
         ],

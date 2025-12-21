@@ -61,6 +61,26 @@
             "sack": "Sack Inward",
             "frk": "FRK Inward",
             "other": "Other Inward"
+        },
+        "outward": {
+            "title": "Outward",
+            "privatePaddy": "Private Paddy Outward",
+            "govtRice": "Govt Rice Outward",
+            "privateRice": "Private Rice Outward",
+            "govtSack": "Govt Sack Outward",
+            "privateSack": "Private Sack Outward",
+            "frk": "FRK Outward",
+            "brokens": "Brokens Outward",
+            "brewers": "Brewers Outward",
+            "husk": "Husk Outward",
+            "riceBran": "Rice Bran Outward",
+            "whiteBran": "White Bran Outward",
+            "other": "Other Outward"
+        },
+        "milling": {
+            "title": "Milling",
+            "paddy": "Paddy Milling",
+            "rice": "Rice Milling"
         }
     },
     "nav": {
@@ -68,7 +88,9 @@
         "reports": "Reports",
         "purchase": "Purchase Deals",
         "sales": "Sales Deals",
-        "inward": "Inward"
+        "inward": "Inward",
+        "outward": "Outward",
+        "milling": "Milling"
     },
     "dashboard": {
         "entry": "Entry",
