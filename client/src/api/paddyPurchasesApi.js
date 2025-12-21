@@ -4,8 +4,43 @@
 import apiClient from '@/lib/apiClient';
 
 const DUMMY_PADDY_PURCHASES = [
-    { _id: '1', dealNumber: 'PD-2024-001', partyName: 'Xyz', dealDate: '2024-01-15', quantity: '500', rate: '2500', totalAmount: 1250000, status: 'active', createdAt: '2024-01-15T10:30:00.000Z' },
-    { _id: '2', dealNumber: 'PD-2024-002', partyName: 'Ram Janki', dealDate: '2024-02-10', quantity: '750', rate: '2600', totalAmount: 1950000, status: 'completed', createdAt: '2024-02-10T10:30:00.000Z' },
+    {
+        _id: '1',
+        dealNumber: 'PD-2024-001',
+        partyName: 'Xyz',
+        brokerName: 'ब्रोकर 1',
+        dealDate: '2024-01-15',
+        quantity: '500',
+        rate: '2500',
+        wastagePercent: '2',
+        brokerage: '10',
+        totalAmount: 1250000,
+        purchaseType: 'do-purchase',
+        doEntries: [
+            { doInfo: 'DO-INFO-001', doNumber: 'DN-001', committeeName: 'समिति 1', doPaddyQuantity: '200' },
+            { doInfo: 'DO-INFO-002', doNumber: 'DN-002', committeeName: 'समिति 2', doPaddyQuantity: '300' }
+        ],
+        mention: 'First purchase of the season',
+        status: 'active',
+        createdAt: '2024-01-15T10:30:00.000Z'
+    },
+    {
+        _id: '2',
+        dealNumber: 'PD-2024-002',
+        partyName: 'Ram Janki',
+        brokerName: 'ब्रोकर 2',
+        dealDate: '2024-02-10',
+        quantity: '750',
+        rate: '2600',
+        wastagePercent: '1.5',
+        brokerage: '12',
+        totalAmount: 1950000,
+        purchaseType: 'other-purchase',
+        doEntries: [],
+        mention: '',
+        status: 'completed',
+        createdAt: '2024-02-10T10:30:00.000Z'
+    },
 ];
 
 const generateDummyResponse = ({ page = 1, pageSize = 10 }) => {

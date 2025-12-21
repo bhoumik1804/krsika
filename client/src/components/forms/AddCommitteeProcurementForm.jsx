@@ -19,7 +19,7 @@ import { toast } from 'sonner';
 import { Label } from '@/components/ui/label';
 
 // Form validation schema
-const committeeStructureFormSchema = z.object({
+const committeeProcurementFormSchema = z.object({
   type: z.enum(['committee-production', 'storage'], {
     required_error: 'Please select a type.',
   }),
@@ -28,13 +28,13 @@ const committeeStructureFormSchema = z.object({
   }),
 });
 
-export default function AddCommitteeStructureForm() {
+export default function AddCommitteeProcurementForm() {
   const { t } = useTranslation(['forms', 'entry', 'common']);
   const [isLoading, setIsLoading] = React.useState(false);
 
   // Initialize form with react-hook-form and zod validation
   const form = useForm({
-    resolver: zodResolver(committeeStructureFormSchema),
+    resolver: zodResolver(committeeProcurementFormSchema),
     defaultValues: {
       type: 'committee-production',
       name: '',
@@ -44,12 +44,12 @@ export default function AddCommitteeStructureForm() {
   // Form submission handler
   const onSubmit = async (data) => {
     setIsLoading(true);
-    console.log('Committee Structure Form Data:', data);
+    console.log('Committee Procurement Form Data:', data);
 
     // Simulate API call
     setTimeout(() => {
       const typeLabel = data.type === 'committee-production' ? 'समिति-उपार्जन केंद्र' : 'संग्रहण केंद्र';
-      toast.success('Committee Structure Added Successfully', {
+      toast.success('Committee Procurement Added Successfully', {
         description: `${data.name} (${typeLabel}) has been added to the system.`,
       });
       setIsLoading(false);
