@@ -17,7 +17,7 @@ const AddParty = lazy(() => import('@/pages/AddParty'));
 const PartyInfo = lazy(() => import('@/pages/PartyInfo'));
 const TransportersInfo = lazy(() => import('@/pages/TransportersInfo'));
 const BrokerInfo = lazy(() => import('@/pages/BrokerInfo'));
-const CommitteeStructureInfo = lazy(() => import('@/pages/CommitteeStructureInfo'));
+const CommitteeProcurementInfo = lazy(() => import('@/pages/CommitteeProcurementInfo'));
 const DOEntryReport = lazy(() => import('@/pages/DOEntryReport'));
 const RemainingDOInfo = lazy(() => import('@/pages/RemainingDOInfo'));
 const PaddyPurchaseDealReport = lazy(() => import('@/pages/PaddyPurchaseDealReport'));
@@ -28,7 +28,7 @@ const PrivateInwardReport = lazy(() => import('@/pages/PrivateInwardReport'));
 const RiceInwardReport = lazy(() => import('@/pages/RiceInwardReport'));
 const AddTransporters = lazy(() => import('@/pages/AddTransporters'));
 const AddBroker = lazy(() => import('@/pages/AddBroker'));
-const AddCommitteeStructure = lazy(() => import('@/pages/AddCommitteeStructure'));
+const AddCommitteeProcurement = lazy(() => import('@/pages/AddCommitteeProcurement'));
 const AddDOEntry = lazy(() => import('@/pages/AddDOEntry'));
 const AddPaddyPurchase = lazy(() => import('@/pages/AddPaddyPurchase'));
 const AddRicePurchase = lazy(() => import('@/pages/AddRicePurchase'));
@@ -76,8 +76,8 @@ export const routes = [
             },
             {
                 path: '/entry/committee',
-                component: AddCommitteeStructure,
-                title: 'Add Committee Structure',
+                component: AddCommitteeProcurement,
+                title: 'Add Committee Procurement',
                 titleKey: 'entry:sections.entry.addCommittee',
                 showInSidebar: true,
             },
@@ -208,8 +208,8 @@ export const routes = [
             },
             {
                 path: '/reports/entry/committee',
-                component: CommitteeStructureInfo,
-                title: 'Committee Structure',
+                component: CommitteeProcurementInfo,
+                title: 'Committee Procurement',
                 titleKey: 'reports:sections.entry.committee',
                 showInSidebar: true,
             },

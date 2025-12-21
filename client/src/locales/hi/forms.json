@@ -19,9 +19,9 @@
             "description": "नई पार्टी का विवरण भरें",
             "partyName": "पार्टी का नाम",
             "phone": "फोन न.",
-            "email": "ईमेल",
+            "email": "Email",
             "partyType": "पार्टी का प्रकार",
-            "gstNumber": "GST नंबर",
+            "gstNumber": "GSTN",
             "gstType": "GST प्रकार",
             "businessType": "व्यापार का प्रकार",
             "address": "पता",
@@ -44,7 +44,7 @@
             "description": "ब्रोकर का विवरण भरें",
             "brokerName": "ब्रोकर का नाम",
             "phone": "फोन न.",
-            "email": "ईमेल",
+            "email": "Email",
             "gstn": "GSTN",
             "address": "पता",
             "city": "शहर",
@@ -56,7 +56,7 @@
             "description": "परिवहनकर्ता का विवरण भरें",
             "transporterName": "परिवहनकर्ता का नाम",
             "phone": "फोन न.",
-            "email": "ईमेल",
+            "email": "Email",
             "gstn": "GSTN",
             "vehicleNumber": "गाड़ी नंबर",
             "address": "पता",
@@ -65,7 +65,7 @@
             "pincode": "पिन कोड"
         },
         "committee": {
-            "title": "समिति संरचना जोड़ें",
+            "title": "समिति संग्रहण जोड़ें",
             "description": "समिति/उपार्जन केंद्र का विवरण",
             "type": "चुनें",
             "name": "समिति-उपार्जन केंद्र / संग्रहण का नाम",
@@ -163,12 +163,19 @@
             "brokerName": "ब्रोकर का नाम",
             "delivery": "डिलीवरी",
             "grainType": "धान का प्रकार",
-            "quantity": "भाव",
+            "quantity": "धान का भाव/दर (प्रति क्विंटल)",
             "wastagePercent": "बवाद %",
             "brokerage": "दलाली",
             "includeCertificate": "बारदाना सहित/वापसी",
             "purchaseType": "खरीदी प्रकार",
             "grainQuantity": "धान की मात्रा",
+            "mention": "टिप्पणी",
+            "doSection": "DO की जानकारी",
+            "doInfo": "DO की जानकारी",
+            "doNumber": "DO क्रमांक",
+            "committeeName": "समिति/संग्रहण का नाम",
+            "doPaddyQuantity": "DO में धान की मात्रा",
+            "addDo": "DO जोड़ें",
             "deliveryOptions": {
                 "mill": "मिल डिलीवरी",
                 "party": "पार्टी डिलीवरी"
@@ -183,8 +190,8 @@
                 "return": "वापसी"
             },
             "purchaseTypes": {
-                "advance": "अग्रिम",
-                "cash": "नकद"
+                "do": "DO खरीदी",
+                "other": "अन्य खरीदी"
             }
         },
         "paddySales": {

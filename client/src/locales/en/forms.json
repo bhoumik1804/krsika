@@ -21,7 +21,7 @@
             "phone": "Phone No.",
             "email": "Email",
             "partyType": "Party Type",
-            "gstNumber": "GST Number",
+            "gstNumber": "GSTN",
             "gstType": "GST Type",
             "businessType": "Business Type",
             "address": "Address",
@@ -65,7 +65,7 @@
             "pincode": "PIN Code"
         },
         "committee": {
-            "title": "Add Committee Structure",
+            "title": "Add Committee Procurement",
             "description": "Committee/Procurement center details",
             "type": "Select",
             "name": "Committee-Procurement Center / Storage Name",
@@ -169,6 +169,13 @@
             "includeCertificate": "Packaging Include/Return",
             "purchaseType": "Purchase Type",
             "grainQuantity": "Paddy Quantity",
+            "mention": "Remarks",
+            "doSection": "DO Information",
+            "doInfo": "DO Information",
+            "doNumber": "DO Number",
+            "committeeName": "Committee/Storage Name",
+            "doPaddyQuantity": "Paddy Quantity in DO",
+            "addDo": "Add DO",
             "deliveryOptions": {
                 "mill": "Mill Delivery",
                 "party": "Party Delivery"
@@ -183,8 +190,8 @@
                 "return": "Return"
             },
             "purchaseTypes": {
-                "advance": "Advance",
-                "cash": "Cash"
+                "do": "DO Purchase",
+                "other": "Other Purchase"
             }
         },
         "paddySales": {

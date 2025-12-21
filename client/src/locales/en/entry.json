@@ -7,7 +7,7 @@
             "addParty": "Add Party",
             "addTransporter": "Add Transporters",
             "addWorker": "Add Brokers",
-            "propertyManagement": "Committee Structure",
+            "propertyManagement": "Committee Procurement",
             "doEntry": "DO Entry"
         },
         "purchaseDeals": {
@@ -29,7 +29,7 @@
             "addParty": "Add Party",
             "addTransporters": "Add Transporters",
             "addBrokers": "Add Brokers",
-            "addCommittee": "Add Committee Structure",
+            "addCommittee": "Add Committee Procurement",
             "doEntry": "DO Entry"
         },
         "purchase": {
