@@ -126,11 +126,7 @@ export default function AppLayout() {
                                 <React.Fragment key={`${crumb.path}-${index}`}>
                                     {index > 0 && <BreadcrumbSeparator />}
                                     <BreadcrumbItem>
-                                        {index === breadcrumbs.length - 1 ? (
-                                            <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
-                                        ) : (
-                                            <BreadcrumbLink href={crumb.path}>{crumb.label}</BreadcrumbLink>
-                                        )}
+                                        <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
                                     </BreadcrumbItem>
                                 </React.Fragment>
                             ))}

@@ -44,9 +44,6 @@ const AddSackSales = lazy(() => import('@/pages/AddSackSales'));
 const AddFRKSales = lazy(() => import('@/pages/AddFRKSales'));
 const AddBrokensSales = lazy(() => import('@/pages/AddBrokensSales'));
 const AddBrewersSales = lazy(() => import('@/pages/AddBrewersSales'));
-const AddHuskSales = lazy(() => import('@/pages/AddHuskSales'));
-const AddRiceBranSales = lazy(() => import('@/pages/AddRiceBranSales'));
-const AddWhiteBranSales = lazy(() => import('@/pages/AddWhiteBranSales'));
 const AddOtherSales = lazy(() => import('@/pages/AddOtherSales'));
 const AddGovPaddyInward = lazy(() => import('@/pages/AddGovPaddyInward'));
 const AddPrivatePaddyInward = lazy(() => import('@/pages/AddPrivatePaddyInward'));
@@ -79,6 +76,14 @@ export const routes = [
     {
         path: '/entry',
         component: Entry,
+        title: 'Entry',
+        titleKey: 'entry:nav.entry',
+        icon: DocumentTextIcon,
+        showInSidebar: false,
+        view: 'entry',
+    },
+    {
+        path: '/entry',
         title: 'Entry',
         titleKey: 'entry:sections.entry.title',
         icon: DocumentTextIcon,
@@ -231,27 +236,6 @@ export const routes = [
                 component: AddBrewersSales,
                 title: 'Brewers Sales Deal',
                 titleKey: 'entry:sections.sales.brewers',
-                showInSidebar: true,
-            },
-            {
-                path: '/sales/husk',
-                component: AddHuskSales,
-                title: 'Husk Sales Deal',
-                titleKey: 'entry:sections.sales.husk',
-                showInSidebar: true,
-            },
-            {
-                path: '/sales/ricebran',
-                component: AddRiceBranSales,
-                title: 'Rice Bran Sales Deal',
-                titleKey: 'entry:sections.sales.ricebran',
-                showInSidebar: true,
-            },
-            {
-                path: '/sales/whitebran',
-                component: AddWhiteBranSales,
-                title: 'White Bran Sales Deal',
-                titleKey: 'entry:sections.sales.whitebran',
                 showInSidebar: true,
             },
             {
@@ -453,7 +437,7 @@ export const routes = [
     },
     {
         path: '/reports/entry',
-        component: ReportsPage,
+        // component: ReportsPage, // Parent nav item - no component rendering
         title: 'Entry Report',
         titleKey: 'reports:sections.entry.title',
         icon: DocumentTextIcon,
@@ -506,7 +490,7 @@ export const routes = [
     },
     {
         path: '/reports/purchase',
-        component: ReportsPage,
+        // component: ReportsPage, // Parent nav item - no component rendering
         title: 'Purchase Deals Report',
         titleKey: 'reports:sections.purchase.title',
         icon: ShoppingBagIcon,
@@ -531,7 +515,7 @@ export const routes = [
     },
     {
         path: '/reports/sales',
-        component: ReportsPage,
+        // component: ReportsPage, // Parent nav item - no component rendering
         title: 'Sales Deals Report',
         titleKey: 'reports:sections.sales.title',
         icon: CurrencyDollarIcon,
@@ -549,7 +533,7 @@ export const routes = [
     },
     {
         path: '/reports/inward',
-        component: ReportsPage,
+        // component: ReportsPage, // Parent nav item - no component rendering
         title: 'Inward Report',
         titleKey: 'reports:sections.inward.title',
         icon: ArrowDownTrayIcon,
