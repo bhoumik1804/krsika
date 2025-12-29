@@ -54,8 +54,7 @@ export default function AppLayout() {
     const location = useLocation();
     const navigate = useNavigate();
     const { t } = useTranslation(['entry', 'common', 'reports']);
-    const dispatch = useDispatch();
-    const isAuthenticated = useSelector(selectIsAuthenticated);
+    const dispatch = useDispatch()
 
     // Memoized navigation handler
     const handleNavigateToGuide = useCallback(() => {
