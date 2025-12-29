@@ -13,6 +13,7 @@ import {
 
 // Lazy load all page components for code splitting
 const Home = lazy(() => import('@/pages/Home'));
+const Profile = lazy(() => import('@/pages/Profile'));
 const UIGuide = lazy(() => import('@/pages/UIGuide'));
 const Entry = lazy(() => import('@/pages/Entry'));
 const AddParty = lazy(() => import('@/pages/AddParty'));
@@ -673,7 +674,7 @@ export const routes = [
     },
     {
         path: '/profile',
-        component: Home,
+        component: Profile,
         title: 'Profile',
         titleKey: 'common:profile',
         icon: UserIcon,
