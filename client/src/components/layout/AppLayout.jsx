@@ -3,8 +3,9 @@
 import React, { useEffect, useMemo, useCallback, memo } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setActiveView } from '@/store/slices/sidebarSlice';
+
 import { PaintBrushIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 import {
     SidebarInset,
@@ -54,6 +55,7 @@ export default function AppLayout() {
     const navigate = useNavigate();
     const { t } = useTranslation(['entry', 'common', 'reports']);
     const dispatch = useDispatch();
+    const isAuthenticated = useSelector(selectIsAuthenticated);
 
     // Memoized navigation handler
     const handleNavigateToGuide = useCallback(() => {
@@ -90,6 +92,8 @@ export default function AppLayout() {
         }
         return '';
     }, [breadcrumbs]);
+
+
 
     return (
         <SidebarProvider>
