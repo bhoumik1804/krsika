@@ -3,8 +3,9 @@
 import React, { useEffect, useMemo, useCallback, memo } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setActiveView } from '@/store/slices/sidebarSlice';
+
 import { PaintBrushIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 import {
     SidebarInset,
@@ -53,7 +54,7 @@ export default function AppLayout() {
     const location = useLocation();
     const navigate = useNavigate();
     const { t } = useTranslation(['entry', 'common', 'reports']);
-    const dispatch = useDispatch();
+    const dispatch = useDispatch()
 
     // Memoized navigation handler
     const handleNavigateToGuide = useCallback(() => {
@@ -91,6 +92,8 @@ export default function AppLayout() {
         return '';
     }, [breadcrumbs]);
 
+
+
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -126,11 +129,7 @@ export default function AppLayout() {
                                 <React.Fragment key={`${crumb.path}-${index}`}>
                                     {index > 0 && <BreadcrumbSeparator />}
                                     <BreadcrumbItem>
-                                        {index === breadcrumbs.length - 1 ? (
-                                            <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
-                                        ) : (
-                                            <BreadcrumbLink href={crumb.path}>{crumb.label}</BreadcrumbLink>
-                                        )}
+                                        <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
                                     </BreadcrumbItem>
                                 </React.Fragment>
                             ))}
@@ -144,7 +143,7 @@ export default function AppLayout() {
                 </header>
 
                 {/* Main Content */}
-                <main className="flex flex-1 flex-col gap-4 p-4">
+                <main className="flex flex-1 flex-col gap-4 p-4 overflow-x-hidden">
                     <Outlet />
                 </main>
             </SidebarInset>

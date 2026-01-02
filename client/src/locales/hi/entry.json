@@ -23,6 +23,16 @@
             "govtPaddy": "शासकीय धान आवक",
             "privatePaddy": "निजी धान आवक",
             "riceInward": "चावल आवक / LOT जमा"
+        },
+        "laborCost": {
+            "title": "हमाली लागत",
+            "inward": "जावक हमाली",
+            "milling": "मिलिंग हमाली",
+            "other": "अन्य हमाली"
+        },
+        "attendance": {
+            "title": "उपस्थिति",
+            "markAttendance": "उपस्थिति दर्ज करें"
         }
     },
     "sections": {
@@ -34,7 +44,8 @@
             "addCommittee": "समिति संग्रहण जोड़ें",
             "addTruck": "स्वयं के वाहन जोड़ें",
             "addStaff": "मिल स्टाफ जोड़ें",
-            "doEntry": "DO प्रविष्टी"
+            "doEntry": "DO जोड़ें ",
+            "laborTeam": "हमाल/रेजा टोली जोड़ें"
         },
         "purchase": {
             "title": "खरीदी सौदा",
@@ -85,6 +96,22 @@
             "title": "मिलिंग",
             "paddy": "धान मिलिंग",
             "rice": "चावल मिलिंग"
+        },
+        "laborCost": {
+            "title": "हमाली लागत",
+            "inward": "आवक हमाली",
+            "outward": "जावक हमाली",
+            "milling": "मिलिंग हमाली",
+            "other": "अन्य हमाली"
+        },
+        "financial": {
+            "title": "प्रप्ति/भुगतान",
+            "receiving": "प्रप्ति",
+            "payment": "भुगतान"
+        },
+        "attendance": {
+            "title": "उपस्थिति",
+            "markAttendance": "उपस्थिति दर्ज करें"
         }
     },
     "nav": {
@@ -94,7 +121,9 @@
         "sales": "बिक्री सौदा",
         "inward": "आवक",
         "outward": "जावक",
-        "milling": "मिलिंग"
+        "milling": "मिलिंग",
+        "laborCost": "हमाली लागत",
+        "attendance": "उपस्थिति"
     },
     "dashboard": {
         "entry": "प्रविष्टि",
