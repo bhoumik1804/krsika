@@ -14,61 +14,61 @@ import {
 } from '@heroicons/react/24/outline';
 
 // Lazy load all page components for code splitting
-const Home = lazy(() => import('@/pages/Home'));
-const Profile = lazy(() => import('@/pages/Profile'));
-const UIGuide = lazy(() => import('@/pages/UIGuide'));
-const Entry = lazy(() => import('@/pages/Entry'));
-const AddParty = lazy(() => import('@/pages/AddParty'));
-const PartyInfo = lazy(() => import('@/pages/PartyInfo'));
-const TransportersInfo = lazy(() => import('@/pages/TransportersInfo'));
-const BrokerInfo = lazy(() => import('@/pages/BrokerInfo'));
-const CommitteeProcurementInfo = lazy(() => import('@/pages/CommitteeProcurementInfo'));
-const DOEntryReport = lazy(() => import('@/pages/DOEntryReport'));
-const RemainingDOInfo = lazy(() => import('@/pages/RemainingDOInfo'));
-const PaddyPurchaseDealReport = lazy(() => import('@/pages/PaddyPurchaseDealReport'));
-const RicePurchaseDealReport = lazy(() => import('@/pages/RicePurchaseDealReport'));
-const PaddySalesDealReport = lazy(() => import('@/pages/PaddySalesDealReport'));
-const PaddyInwardReport = lazy(() => import('@/pages/PaddyInwardReport'));
-const PrivateInwardReport = lazy(() => import('@/pages/PrivateInwardReport'));
-const RiceInwardReport = lazy(() => import('@/pages/RiceInwardReport'));
-const AddTransporters = lazy(() => import('@/pages/AddTransporters'));
-const AddBroker = lazy(() => import('@/pages/AddBroker'));
-const AddCommitteeProcurement = lazy(() => import('@/pages/AddCommitteeProcurement'));
-const AddDOEntry = lazy(() => import('@/pages/AddDOEntry'));
-const AddTruckForm = lazy(() => import('@/components/forms/AddTruckForm'));
-const AddStaffForm = lazy(() => import('@/components/forms/AddStaffForm'));
-const AddPaddyPurchase = lazy(() => import('@/pages/AddPaddyPurchase'));
-const AddRicePurchase = lazy(() => import('@/pages/AddRicePurchase'));
-const AddSackPurchase = lazy(() => import('@/pages/AddSackPurchase'));
-const AddFRKPurchase = lazy(() => import('@/pages/AddFRKPurchase'));
-const AddOtherPurchase = lazy(() => import('@/pages/AddOtherPurchase'));
-const AddPaddySalesDeal = lazy(() => import('@/pages/AddPaddySalesDeal'));
-const AddRiceSales = lazy(() => import('@/pages/AddRiceSales'));
-const AddSackSales = lazy(() => import('@/pages/AddSackSales'));
-const AddFRKSales = lazy(() => import('@/pages/AddFRKSales'));
-const AddBrokensSales = lazy(() => import('@/pages/AddBrokensSales'));
-const AddBrewersSales = lazy(() => import('@/pages/AddBrewersSales'));
-const AddOtherSales = lazy(() => import('@/pages/AddOtherSales'));
-const AddGovPaddyInward = lazy(() => import('@/pages/AddGovPaddyInward'));
-const AddPrivatePaddyInward = lazy(() => import('@/pages/AddPrivatePaddyInward'));
-const AddRiceInward = lazy(() => import('@/pages/AddRiceInward'));
-const AddSackInward = lazy(() => import('@/pages/AddSackInward'));
-const AddFrkInward = lazy(() => import('@/pages/AddFrkInward'));
-const AddOtherInward = lazy(() => import('@/pages/AddOtherInward'));
-const AddPrivatePaddyOutward = lazy(() => import('@/pages/AddPrivatePaddyOutward'));
-const AddGovtRiceOutward = lazy(() => import('@/pages/AddGovtRiceOutward'));
-const AddPrivateRiceOutward = lazy(() => import('@/pages/AddPrivateRiceOutward'));
-const AddGovtSackOutward = lazy(() => import('@/pages/AddGovtSackOutward'));
-const AddPrivateSackOutward = lazy(() => import('@/pages/AddPrivateSackOutward'));
-const AddFrkOutward = lazy(() => import('@/pages/AddFrkOutward'));
-const AddBrokensOutward = lazy(() => import('@/pages/AddBrokensOutward'));
-const AddBrewersOutward = lazy(() => import('@/pages/AddBrewersOutward'));
-const AddHuskOutward = lazy(() => import('@/pages/AddHuskOutward'));
-const AddRiceBranOutward = lazy(() => import('@/pages/AddRiceBranOutward'));
-const AddWhiteBranOutward = lazy(() => import('@/pages/AddWhiteBranOutward'));
-const AddOtherOutward = lazy(() => import('@/pages/AddOtherOutward'));
-const AddPaddyMilling = lazy(() => import('@/pages/AddPaddyMilling'));
-const AddRiceMilling = lazy(() => import('@/pages/AddRiceMilling'));
+const Home = lazy(() => import('@/pages/Core/Home'));
+const Profile = lazy(() => import('@/pages/Core/Profile'));
+const UIGuide = lazy(() => import('@/pages/Core/UIGuide'));
+const Entry = lazy(() => import('@/pages/Core/Entry'));
+const AddParty = lazy(() => import('@/pages/Entry/AddParty'));
+const PartyInfo = lazy(() => import('@/pages/EntryReports/PartyInfo'));
+const TransportersInfo = lazy(() => import('@/pages/EntryReports/TransportersInfo'));
+const BrokerInfo = lazy(() => import('@/pages/EntryReports/BrokerInfo'));
+const CommitteeProcurementInfo = lazy(() => import('@/pages/EntryReports/CommitteeProcurementInfo'));
+const DOEntryReport = lazy(() => import('@/pages/EntryReports/DOEntryReport'));
+const RemainingDOInfo = lazy(() => import('@/pages/EntryReports/RemainingDOInfo'));
+const PaddyPurchaseDealReport = lazy(() => import('@/pages/Deal/PaddyPurchaseDealReport'));
+const RicePurchaseDealReport = lazy(() => import('@/pages/Deal/RicePurchaseDealReport'));
+const PaddySalesDealReport = lazy(() => import('@/pages/Deal/PaddySalesDealReport'));
+const PaddyInwardReport = lazy(() => import('@/pages/Inward/PaddyInwardReport'));
+const PrivateInwardReport = lazy(() => import('@/pages/Inward/PrivateInwardReport'));
+const RiceInwardReport = lazy(() => import('@/pages/Inward/RiceInwardReport'));
+const AddTransporters = lazy(() => import('@/pages/Entry/AddTransporters'));
+const AddBroker = lazy(() => import('@/pages/Entry/AddBroker'));
+const AddCommitteeProcurement = lazy(() => import('@/pages/Entry/AddCommitteeProcurement'));
+const AddDOEntry = lazy(() => import('@/pages/Entry/AddDOEntry'));
+const AddTruckEntry = lazy(() => import('@/pages/Entry/AddTruckEntry'));
+const AddStaffEntry = lazy(() => import('@/pages/Entry/AddStaffEntry'));
+const AddPaddyPurchase = lazy(() => import('@/pages/Purchase/AddPaddyPurchase'));
+const AddRicePurchase = lazy(() => import('@/pages/Purchase/AddRicePurchase'));
+const AddSackPurchase = lazy(() => import('@/pages/Purchase/AddSackPurchase'));
+const AddFRKPurchase = lazy(() => import('@/pages/Purchase/AddFRKPurchase'));
+const AddOtherPurchase = lazy(() => import('@/pages/Purchase/AddOtherPurchase'));
+const AddPaddySalesDeal = lazy(() => import('@/pages/Deal/AddPaddySalesDeal'));
+const AddRiceSales = lazy(() => import('@/pages/Sales/AddRiceSales'));
+const AddSackSales = lazy(() => import('@/pages/Sales/AddSackSales'));
+const AddFRKSales = lazy(() => import('@/pages/Sales/AddFRKSales'));
+const AddBrokensSales = lazy(() => import('@/pages/Sales/AddBrokensSales'));
+const AddBrewersSales = lazy(() => import('@/pages/Sales/AddBrewersSales'));
+const AddOtherSales = lazy(() => import('@/pages/Sales/AddOtherSales'));
+const AddGovPaddyInward = lazy(() => import('@/pages/Inward/AddGovPaddyInward'));
+const AddPrivatePaddyInward = lazy(() => import('@/pages/Inward/AddPrivatePaddyInward'));
+const AddRiceInward = lazy(() => import('@/pages/Inward/AddRiceInward'));
+const AddSackInward = lazy(() => import('@/pages/Inward/AddSackInward'));
+const AddFrkInward = lazy(() => import('@/pages/Inward/AddFrkInward'));
+const AddOtherInward = lazy(() => import('@/pages/Inward/AddOtherInward'));
+const AddPrivatePaddyOutward = lazy(() => import('@/pages/Outward/AddPrivatePaddyOutward'));
+const AddGovtRiceOutward = lazy(() => import('@/pages/Outward/AddGovtRiceOutward'));
+const AddPrivateRiceOutward = lazy(() => import('@/pages/Outward/AddPrivateRiceOutward'));
+const AddGovtSackOutward = lazy(() => import('@/pages/Outward/AddGovtSackOutward'));
+const AddPrivateSackOutward = lazy(() => import('@/pages/Outward/AddPrivateSackOutward'));
+const AddFrkOutward = lazy(() => import('@/pages/Outward/AddFrkOutward'));
+const AddBrokensOutward = lazy(() => import('@/pages/Outward/AddBrokensOutward'));
+const AddBrewersOutward = lazy(() => import('@/pages/Outward/AddBrewersOutward'));
+const AddHuskOutward = lazy(() => import('@/pages/Outward/AddHuskOutward'));
+const AddRiceBranOutward = lazy(() => import('@/pages/Outward/AddRiceBranOutward'));
+const AddWhiteBranOutward = lazy(() => import('@/pages/Outward/AddWhiteBranOutward'));
+const AddOtherOutward = lazy(() => import('@/pages/Outward/AddOtherOutward'));
+const AddPaddyMilling = lazy(() => import('@/pages/Milling/AddPaddyMilling'));
+const AddRiceMilling = lazy(() => import('@/pages/Milling/AddRiceMilling'));
 const AddOutwardLaborEntry = lazy(() => import('@/pages/LaborCost/AddOutwardLaborEntry'));
 const OutwardLaborReport = lazy(() => import('@/pages/LaborCost/OutwardLaborReport'));
 const AddInwardLaborEntry = lazy(() => import('@/pages/LaborCost/AddInwardLaborEntry'));
@@ -77,38 +77,38 @@ const AddOtherLaborEntry = lazy(() => import('@/pages/LaborCost/AddOtherLaborEnt
 const InwardLaborReport = lazy(() => import('@/pages/LaborCost/InwardLaborReport'));
 const MillingLaborReport = lazy(() => import('@/pages/LaborCost/MillingLaborReport'));
 const OtherLaborReport = lazy(() => import('@/pages/LaborCost/OtherLaborReport'));
-const OtherPurchaseDealReport = lazy(() => import('@/pages/OtherPurchaseDealReport'));
-const OtherSalesDealReport = lazy(() => import('@/pages/OtherSalesDealReport'));
-const OtherInwardReport = lazy(() => import('@/pages/OtherInwardReport'));
-const OtherOutwardReport = lazy(() => import('@/pages/OtherOutwardReport'));
-const SackPurchaseDealReport = lazy(() => import('@/pages/SackPurchaseDealReport'));
-const FRKPurchaseDealReport = lazy(() => import('@/pages/FRKPurchaseDealReport'));
-const RiceSalesDealReport = lazy(() => import('@/pages/RiceSalesDealReport'));
-const SackSalesDealReport = lazy(() => import('@/pages/SackSalesDealReport'));
-const FRKSalesDealReport = lazy(() => import('@/pages/FRKSalesDealReport'));
-const BrokensSalesDealReport = lazy(() => import('@/pages/BrokensSalesDealReport'));
-const BrewersSalesDealReport = lazy(() => import('@/pages/BrewersSalesDealReport'));
-const HuskSalesDealReport = lazy(() => import('@/pages/HuskSalesDealReport'));
-const RiceBranSalesDealReport = lazy(() => import('@/pages/RiceBranSalesDealReport'));
-const WhiteBranSalesDealReport = lazy(() => import('@/pages/WhiteBranSalesDealReport'));
-const SackInwardReport = lazy(() => import('@/pages/SackInwardReport'));
-const FrkInwardReport = lazy(() => import('@/pages/FrkInwardReport'));
-const PrivatePaddyOutwardReport = lazy(() => import('@/pages/PrivatePaddyOutwardReport'));
-const GovtRiceOutwardReport = lazy(() => import('@/pages/GovtRiceOutwardReport'));
-const PrivateRiceOutwardReport = lazy(() => import('@/pages/PrivateRiceOutwardReport'));
-const GovtSackOutwardReport = lazy(() => import('@/pages/GovtSackOutwardReport'));
-const PrivateSackOutwardReport = lazy(() => import('@/pages/PrivateSackOutwardReport'));
-const FrkOutwardReport = lazy(() => import('@/pages/FrkOutwardReport'));
-const BrokensOutwardReport = lazy(() => import('@/pages/BrokensOutwardReport'));
-const BrewersOutwardReport = lazy(() => import('@/pages/BrewersOutwardReport'));
-const HuskOutwardReport = lazy(() => import('@/pages/HuskOutwardReport'));
-const RiceBranOutwardReport = lazy(() => import('@/pages/RiceBranOutwardReport'));
-const WhiteBranOutwardReport = lazy(() => import('@/pages/WhiteBranOutwardReport'));
-const PaddyMillingReport = lazy(() => import('@/pages/PaddyMillingReport'));
-const RiceMillingReport = lazy(() => import('@/pages/RiceMillingReport'));
+const OtherPurchaseDealReport = lazy(() => import('@/pages/Deal/OtherPurchaseDealReport'));
+const OtherSalesDealReport = lazy(() => import('@/pages/Deal/OtherSalesDealReport'));
+const OtherInwardReport = lazy(() => import('@/pages/Inward/OtherInwardReport'));
+const OtherOutwardReport = lazy(() => import('@/pages/Outward/OtherOutwardReport'));
+const SackPurchaseDealReport = lazy(() => import('@/pages/Deal/SackPurchaseDealReport'));
+const FRKPurchaseDealReport = lazy(() => import('@/pages/Deal/FRKPurchaseDealReport'));
+const RiceSalesDealReport = lazy(() => import('@/pages/Deal/RiceSalesDealReport'));
+const SackSalesDealReport = lazy(() => import('@/pages/Deal/SackSalesDealReport'));
+const FRKSalesDealReport = lazy(() => import('@/pages/Deal/FRKSalesDealReport'));
+const BrokensSalesDealReport = lazy(() => import('@/pages/Deal/BrokensSalesDealReport'));
+const BrewersSalesDealReport = lazy(() => import('@/pages/Deal/BrewersSalesDealReport'));
+const HuskSalesDealReport = lazy(() => import('@/pages/Deal/HuskSalesDealReport'));
+const RiceBranSalesDealReport = lazy(() => import('@/pages/Deal/RiceBranSalesDealReport'));
+const WhiteBranSalesDealReport = lazy(() => import('@/pages/Deal/WhiteBranSalesDealReport'));
+const SackInwardReport = lazy(() => import('@/pages/Inward/SackInwardReport'));
+const FrkInwardReport = lazy(() => import('@/pages/Inward/FrkInwardReport'));
+const PrivatePaddyOutwardReport = lazy(() => import('@/pages/Outward/PrivatePaddyOutwardReport'));
+const GovtRiceOutwardReport = lazy(() => import('@/pages/Outward/GovtRiceOutwardReport'));
+const PrivateRiceOutwardReport = lazy(() => import('@/pages/Outward/PrivateRiceOutwardReport'));
+const GovtSackOutwardReport = lazy(() => import('@/pages/Outward/GovtSackOutwardReport'));
+const PrivateSackOutwardReport = lazy(() => import('@/pages/Outward/PrivateSackOutwardReport'));
+const FrkOutwardReport = lazy(() => import('@/pages/Outward/FrkOutwardReport'));
+const BrokensOutwardReport = lazy(() => import('@/pages/Outward/BrokensOutwardReport'));
+const BrewersOutwardReport = lazy(() => import('@/pages/Outward/BrewersOutwardReport'));
+const HuskOutwardReport = lazy(() => import('@/pages/Outward/HuskOutwardReport'));
+const RiceBranOutwardReport = lazy(() => import('@/pages/Outward/RiceBranOutwardReport'));
+const WhiteBranOutwardReport = lazy(() => import('@/pages/Outward/WhiteBranOutwardReport'));
+const PaddyMillingReport = lazy(() => import('@/pages/Milling/PaddyMillingReport'));
+const RiceMillingReport = lazy(() => import('@/pages/Milling/RiceMillingReport'));
 const AddAttendanceEntry = lazy(() => import('@/pages/Attendance/AddAttendanceEntry'));
 const AttendanceReport = lazy(() => import('@/pages/Attendance/AttendanceReport'));
-const ReportsPage = lazy(() => import('@/pages/Reports'));
+const ReportsPage = lazy(() => import('@/pages/Core/Reports'));
 const ReceivingReport = lazy(() => import('@/pages/Financial/ReceivingReport'));
 const PaymentReport = lazy(() => import('@/pages/Financial/PaymentReport'));
 const AddReceivingEntry = lazy(() => import('@/pages/Financial/AddReceivingEntry'));
@@ -175,14 +175,14 @@ export const routes = [
             },
             {
                 path: '/entry/trucks',
-                component: AddTruckForm,
+                component: AddTruckEntry,
                 title: 'Add Truck',
                 titleKey: 'entry:sections.entry.addTruck',
                 showInSidebar: true,
             },
             {
                 path: '/entry/staff',
-                component: AddStaffForm,
+                component: AddStaffEntry,
                 title: 'Add Staff',
                 titleKey: 'entry:sections.entry.addStaff',
                 showInSidebar: true,

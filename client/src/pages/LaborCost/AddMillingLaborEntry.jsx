@@ -1,5 +1,5 @@
 import React from 'react';
-import AddMillingLaborForm from '@/components/forms/AddMillingLaborForm';
+import AddMillingLaborForm from '@/components/forms/LaborCost/AddMillingLaborForm';
 
 export default function AddMillingLaborEntry() {
     return (

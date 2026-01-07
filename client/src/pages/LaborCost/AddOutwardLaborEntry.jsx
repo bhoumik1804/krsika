@@ -1,5 +1,5 @@
 import React from 'react';
-import AddOutwardLaborForm from '@/components/forms/AddOutwardLaborForm';
+import AddOutwardLaborForm from '@/components/forms/LaborCost/AddOutwardLaborForm';
 
 export default function AddOutwardLaborEntry() {
     return (

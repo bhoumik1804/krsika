@@ -1,5 +1,5 @@
 import React from 'react';
-import AddInwardLaborForm from '@/components/forms/AddInwardLaborForm';
+import AddInwardLaborForm from '@/components/forms/Inward/AddInwardLaborForm';
 
 export default function AddInwardLaborEntry() {
     return (
