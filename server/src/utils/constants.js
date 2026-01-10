@@ -32,37 +32,53 @@ export const RICE_TYPE_VALUES = Object.values(RICE_TYPES);
 
 // Delivery Options
 export const DELIVERY_OPTIONS = {
-  PICKUP: "pickup",
-  DELIVERY: "delivery",
+  PICKUP: "पड़े में",
+  DELIVERY: "पहुंचा कर",
 };
 
 export const DELIVERY_OPTION_VALUES = Object.values(DELIVERY_OPTIONS);
 
 // Purchase Types
 export const PURCHASE_TYPES = {
-  DO_PURCHASE: "do-purchase",
-  OTHER_PURCHASE: "other-purchase",
-  LOT_PURCHASE: "lot-purchase",
+  DO_PURCHASE: "DO खरीदी",
+  OTHER_PURCHASE: "अन्य खरीदी",
 };
 
 export const PURCHASE_TYPE_VALUES = Object.values(PURCHASE_TYPES);
 
 // Gunny/Packaging Options
 export const GUNNY_OPTIONS = {
-  WITH_WEIGHT: "with-weight",
-  WITH_QUANTITY: "with-quantity",
-  RETURN: "return",
+  WITH_WEIGHT: "सहित (वजन में)",
+  WITH_RATE: "सहित (भाव में)",
+  RETURN: "वापसी",
 };
 
 export const GUNNY_OPTION_VALUES = Object.values(GUNNY_OPTIONS);
 
 // FRK Options
 export const FRK_OPTIONS = {
-  FRK_INCLUDED: "frk-included",
-  FRK_GIVE: "frk-give",
+  FRK_INCLUDED: "FRK सहित",
+  FRK_GIVE: "FRK देना है",
+  NON_FRK: "NON FRK",
 };
 
 export const FRK_OPTION_VALUES = Object.values(FRK_OPTIONS);
+
+// Lot Options
+export const LOT_OPTIONS = {
+  LOT_PURCHASE: "LOT खरीदी",
+  OTHER_PURCHASE: "अन्य खरीदी",
+};
+
+export const LOT_OPTION_VALUES = Object.values(LOT_OPTIONS);
+
+// FCI Options
+export const FCI_OPTIONS = {
+  FCI: "FCI",
+  NAN: "NAN",
+};
+
+export const FCI_OPTION_VALUES = Object.values(FCI_OPTIONS);
 
 // Payment Modes
 export const PAYMENT_MODES = {
@@ -110,3 +126,13 @@ export const SALE_DEAL_TYPES = {
 };
 
 export const SALE_DEAL_TYPE_VALUES = Object.values(SALE_DEAL_TYPES);
+
+// Gunny Delivery Options
+export const GUNNY_DELIVERY_OPTIONS = {
+  MILL: "मिल में",
+  COMMITTEE: "समिति / संग्रहण केंद्र में",
+};
+
+export const GUNNY_DELIVERY_OPTION_VALUES = Object.values(
+  GUNNY_DELIVERY_OPTIONS
+);

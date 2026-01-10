@@ -26,6 +26,45 @@ export const riceTypeOptions = [
 // Alias for backward compatibility
 export const grainTypeOptions = paddyTypeOptions;
 
+// Delevery options for dropdowns
+export const deliveryOptions = [
+  { value: "पड़े में", label: "Pickup", labelHi: "पड़े में" },
+  { value: "पहुंचा कर", label: "Delivery", labelHi: "पहुंचा कर" },
+];
+
+export const gunnyDeliveryOptions = [
+  { value: "मिल में", label: "in Mill", labelHi: "मिल में" },
+  {
+    value: "समिति / संग्रहण केंद्र में",
+    label: "in Committee / Collection Center",
+    labelHi: "समिति / संग्रहण केंद्र में",
+  },
+];
+
+// Purchase Type options for dropdowns
+export const purchaseTypeOptions = [
+  { value: "DO खरीदी", label: "DO Purchase", labelHi: "DO खरीदी" },
+  { value: "अन्य खरीदी", label: "Other Purchase", labelHi: "अन्य खरीदी" },
+];
+
+// Gunny Options for dropdowns
+export const gunnyOptions = [
+  { value: "सहित (वजन में)", label: "With Weight", labelHi: "सहित (वजन में)" },
+  { value: "सहित (भाव में)", label: "With Rate", labelHi: "सहित (भाव में)" },
+  { value: "वापसी", label: "Return", labelHi: "वापसी" },
+];
+
+export const lotOptions = [
+  { value: "LOT खरीदी", label: "LOT Purchase", labelHi: "LOT खरीदी" },
+  { value: "अन्य खरीदी", label: "Other Purchase", labelHi: "अन्य खरीदी" },
+];
+
+export const frkOptions = [
+  { value: "FRK सहित", label: "with FRK", labelHi: "FRK सहित" },
+  { value: "FRK देना है", label: "FRK to be provided", labelHi: "FRK देना है" },
+  { value: "NON FRK", label: "Non FRK", labelHi: "NON FRK" },
+];
+
 // Purchase Deal Types
 export const purchaseDealTypes = [
   { value: "PADDY", label: "Paddy Purchase", labelHi: "धान खरीदी" },

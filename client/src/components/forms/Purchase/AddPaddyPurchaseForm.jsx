@@ -1,11 +1,12 @@
 import React, { useMemo, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Plus, Trash2, ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
+import { useDebounce } from "use-debounce";
 import {
   Form,
   FormControl,
@@ -34,7 +35,12 @@ import { useAllParties } from "@/hooks/useParties";
 import { useAllBrokers } from "@/hooks/useBrokers";
 import { useAllCommittees } from "@/hooks/useCommittee";
 import { useAllDOEntries } from "@/hooks/useDOEntries";
-import { paddyTypeOptions } from "@/lib/constants";
+import {
+  paddyTypeOptions,
+  deliveryOptions,
+  purchaseTypeOptions,
+  gunnyOptions,
+} from "@/lib/constants";
 import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 import {
   AlertDialog,
@@ -48,84 +54,98 @@ import {
 } from "@/components/ui/alert-dialog";
 
 // Form validation schema
-const paddyPurchaseFormSchema = z
-  .object({
-    date: z.date({
-      required_error: "Date is required.",
-    }),
-    partyName: z.string().min(1, {
+const paddyPurchaseFormSchema = z.object({
+  date: z.date({
+    required_error: "Date is required.",
+  }),
+  partyName: z
+    .string()
+    .min(1, {
       message: "Please select a party.",
-    }),
-    brokerName: z.string().min(1, {
+    })
+    .optional(),
+  brokerName: z
+    .string()
+    .min(1, {
       message: "Please select a broker.",
-    }),
-    delivery: z.enum(["pickup", "delivery"], {
+    })
+    .optional(),
+  delivery: z
+    .enum([deliveryOptions[0].value, deliveryOptions[1].value], {
       required_error: "Please select delivery option.",
-    }),
-    paddyType: z.string().optional(),
-    paddyRatePerQuintal: z
-      .string()
-      .regex(/^\d*\.?\d*$/, {
-        message: "Must be a valid number.",
-      })
-      .optional(),
-    wastagePercent: z.string().regex(/^\d+(\.\d+)?$/, {
+    })
+    .optional(),
+  paddyType: z.string().optional(),
+  paddyRatePerQuintal: z
+    .string()
+    .regex(/^\d*\.?\d*$/, {
       message: "Must be a valid number.",
-    }),
-    brokerage: z.string().regex(/^\d+(\.\d+)?$/, {
+    })
+    .optional(),
+  wastagePercent: z
+    .string()
+    .regex(/^\d+(\.\d+)?$/, {
       message: "Must be a valid number.",
-    }),
-    gunnyOption: z.enum(["with-weight", "with-quantity", "return"], {
-      required_error: "Please select certificate option.",
-    }),
-    purchaseType: z.enum(["do-purchase", "other-purchase"], {
+    })
+    .optional(),
+  brokerage: z
+    .string()
+    .regex(/^\d+(\.\d+)?$/, {
+      message: "Must be a valid number.",
+    })
+    .optional(),
+  gunnyOption: z
+    .enum(
+      [gunnyOptions[0].value, gunnyOptions[1].value, gunnyOptions[2].value],
+      {
+        required_error: "Please select gunny option.",
+      }
+    )
+    .optional(),
+  purchaseType: z
+    .enum([purchaseTypeOptions[0].value, purchaseTypeOptions[1].value], {
       required_error: "Please select purchase type.",
-    }),
-    doEntries: z
-      .array(
-        z.object({
-          doNumber: z.string().optional(),
-          committeeName: z.string().optional(),
-          doPaddyQuantity: z
-            .string()
-            .regex(/^\d*$/, {
-              message: "Must be a valid number.",
-            })
-            .optional(),
-        })
-      )
-      .optional(),
-    paddyQuantity: z.string().regex(/^\d+$/, {
+    })
+    .optional(),
+  doEntries: z
+    .array(
+      z.object({
+        doNumber: z.string().optional(),
+        committeeName: z.string().optional(),
+        doPaddyQuantity: z
+          .string()
+          .regex(/^\d*$/, {
+            message: "Must be a valid number.",
+          })
+          .optional(),
+      })
+    )
+    .optional(),
+  paddyQuantity: z
+    .string()
+    .regex(/^\d+$/, {
       message: "Must be a valid number.",
-    }),
-    newPackagingRate: z
-      .string()
-      .regex(/^\d*\.?\d*$/, {
-        message: "Must be a valid number.",
-      })
-      .optional(),
-    oldPackagingRate: z
-      .string()
-      .regex(/^\d*\.?\d*$/, {
-        message: "Must be a valid number.",
-      })
-      .optional(),
-    plasticPackagingRate: z
-      .string()
-      .regex(/^\d*\.?\d*$/, {
-        message: "Must be a valid number.",
-      })
-      .optional(),
-  })
-  .superRefine((data, ctx) => {
-    if (data.purchaseType === "other-purchase" && !data.paddyType) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Please select grain type.",
-        path: ["paddyType"],
-      });
-    }
-  });
+    })
+    .optional(),
+  newGunnyRate: z
+    .string()
+    .regex(/^\d*\.?\d*$/, {
+      message: "Must be a valid number.",
+    })
+    .optional(),
+  oldGunnyRate: z
+    .string()
+    .regex(/^\d*\.?\d*$/, {
+      message: "Must be a valid number.",
+    })
+    .optional(),
+  plasticGunnyRate: z
+    .string()
+    .regex(/^\d*\.?\d*$/, {
+      message: "Must be a valid number.",
+    })
+    .optional(),
+});
 
 export default function AddPaddyPurchaseForm() {
   const navigate = useNavigate();
@@ -197,9 +217,9 @@ export default function AddPaddyPurchaseForm() {
       purchaseType: "",
       doEntries: [{ doNumber: "", committeeName: "", doPaddyQuantity: "" }],
       paddyQuantity: "",
-      newPackagingRate: "",
-      oldPackagingRate: "",
-      plasticPackagingRate: "",
+      newGunnyRate: "",
+      oldGunnyRate: "",
+      plasticGunnyRate: "",
     },
   });
 
@@ -216,18 +236,38 @@ export default function AddPaddyPurchaseForm() {
   const gunnyOption = form.watch("gunnyOption");
 
   // Watch doEntries to calculate total DO paddy quantity
-  const doEntries = form.watch("doEntries");
+  const doEntries = useWatch({
+    control: form.control,
+    name: "doEntries",
+    defaultValue: fields, // Forces re-render on array field changes
+  });
 
-  // Auto-calculate paddyQuantity from DO entries when purchaseType is 'do-purchase'
+  // Debounce doEntries to avoid excessive recalculations
+  const [debouncedDoEntries] = useDebounce(doEntries, 300);
+
+  // Auto-calculate paddyQuantity from DO entries when purchaseType is 'DO खरीदी'
   useEffect(() => {
-    if (purchaseType === "do-purchase" && doEntries && doEntries.length > 0) {
-      const total = doEntries.reduce((sum, entry) => {
-        const qty = parseFloat(entry?.doPaddyQuantity) || 0;
-        return sum + qty;
+    if (
+      purchaseType === purchaseTypeOptions[0].value &&
+      debouncedDoEntries &&
+      debouncedDoEntries.length > 0
+    ) {
+      const total = debouncedDoEntries.reduce((sum, entry) => {
+        // Handle empty/non-numeric gracefully
+        const qty = parseFloat(entry?.doPaddyQuantity);
+        return sum + (isNaN(qty) ? 0 : qty);
       }, 0);
-      form.setValue("paddyQuantity", total.toString());
+      form.setValue("paddyQuantity", total > 0 ? total.toString() : "");
     }
-  }, [purchaseType, JSON.stringify(doEntries)]);
+  }, [purchaseType, debouncedDoEntries, form]);
+
+  // Clear paddyQuantity when switching from DO purchase to other purchase
+  useEffect(() => {
+    if (purchaseType === purchaseTypeOptions[1].value) {
+      // Clear paddyQuantity when switching to "अन्य खरीदी"
+      form.setValue("paddyQuantity", "");
+    }
+  }, [purchaseType, form]);
 
   // Auto-fill form when in edit mode
   useEffect(() => {
@@ -248,9 +288,9 @@ export default function AddPaddyPurchaseForm() {
             ? editData.doEntries
             : [{ doNumber: "", committeeName: "", doPaddyQuantity: "" }],
         paddyQuantity: editData.paddyQuantity || "",
-        newPackagingRate: editData.newPackagingRate || "",
-        oldPackagingRate: editData.oldPackagingRate || "",
-        plasticPackagingRate: editData.plasticPackagingRate || "",
+        newGunnyRate: editData.newGunnyRate || "",
+        oldGunnyRate: editData.oldGunnyRate || "",
+        plasticGunnyRate: editData.plasticGunnyRate || "",
       });
     }
   }, [isEditMode, editData, form]);
@@ -258,7 +298,7 @@ export default function AddPaddyPurchaseForm() {
   // Form submission handler - actual submission after confirmation
   const handleConfirmedSubmit = async (data) => {
     try {
-      const submitData = { ...data, date: data.date.toISOString() };
+      const submitData = { ...data, date: format(data.date, "MM-dd-yy") };
       await createPaddyPurchaseMutation.mutateAsync(submitData);
       toast.success("Paddy Purchase Added Successfully", {
         description: `Purchase for ${data.partyName} has been recorded.`,
@@ -373,21 +413,27 @@ export default function AddPaddyPurchaseForm() {
                       className="flex items-center gap-6"
                     >
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="pickup" id="pickup" />
+                        <RadioGroupItem
+                          value={deliveryOptions[0].value}
+                          id="delivery-pickup"
+                        />
                         <Label
-                          htmlFor="pickup"
+                          htmlFor="delivery-pickup"
                           className="font-normal cursor-pointer"
                         >
-                          पड़े में
+                          {deliveryOptions[0].labelHi}
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="delivery" id="delivery" />
+                        <RadioGroupItem
+                          value={deliveryOptions[1].value}
+                          id="delivery-delivery"
+                        />
                         <Label
-                          htmlFor="delivery"
+                          htmlFor="delivery-delivery"
                           className="font-normal cursor-pointer"
                         >
-                          पहुंचा कर
+                          {deliveryOptions[1].labelHi}
                         </Label>
                       </div>
                     </RadioGroup>
@@ -413,24 +459,27 @@ export default function AddPaddyPurchaseForm() {
                       className="flex items-center gap-6"
                     >
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="do-purchase" id="do-purchase" />
+                        <RadioGroupItem
+                          value={purchaseTypeOptions[0].value}
+                          id="purchase-do"
+                        />
                         <Label
-                          htmlFor="do-purchase"
+                          htmlFor="purchase-do"
                           className="font-normal cursor-pointer"
                         >
-                          DO खरीदी
+                          {purchaseTypeOptions[0].labelHi}
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem
-                          value="other-purchase"
-                          id="other-purchase"
+                          value={purchaseTypeOptions[1].value}
+                          id="purchase-other"
                         />
                         <Label
-                          htmlFor="other-purchase"
+                          htmlFor="purchase-other"
                           className="font-normal cursor-pointer"
                         >
-                          अन्य खरीदी
+                          {purchaseTypeOptions[1].labelHi}
                         </Label>
                       </div>
                     </RadioGroup>
@@ -440,8 +489,8 @@ export default function AddPaddyPurchaseForm() {
               )}
             />
 
-            {/* DO Fields - Conditional on purchaseType === 'do-purchase' */}
-            {purchaseType === "do-purchase" && (
+            {/* DO Fields - Conditional on purchaseType === 'DO खरीदी' */}
+            {purchaseType === purchaseTypeOptions[0].value && (
               <div className="space-y-4 p-4 border border-success/30 rounded-lg bg-success/5">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium text-success">DO की जानकारी</h4>
@@ -588,7 +637,7 @@ export default function AddPaddyPurchaseForm() {
                 <FormItem>
                   <FormLabel className="text-base">
                     {t("forms.paddyPurchase.paddyQuantity")}
-                    {purchaseType === "do-purchase" && (
+                    {purchaseType === purchaseTypeOptions[0].value && (
                       <span className="text-sm text-muted-foreground ml-2">
                         (DO की कुल मात्रा)
                       </span>
@@ -599,9 +648,9 @@ export default function AddPaddyPurchaseForm() {
                       type="number"
                       placeholder="0"
                       {...field}
-                      readOnly={purchaseType === "do-purchase"}
+                      readOnly={purchaseType === purchaseTypeOptions[0].value}
                       className={`placeholder:text-gray-400 ${
-                        purchaseType === "do-purchase"
+                        purchaseType === purchaseTypeOptions[0].value
                           ? "bg-muted cursor-not-allowed"
                           : ""
                       }`}
@@ -696,33 +745,39 @@ export default function AddPaddyPurchaseForm() {
                       className="flex items-center gap-4"
                     >
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="with-weight" id="with-weight" />
+                        <RadioGroupItem
+                          value={gunnyOptions[0].value}
+                          id="gunny-weight"
+                        />
                         <Label
-                          htmlFor="with-weight"
+                          htmlFor="gunny-weight"
                           className="font-normal cursor-pointer"
                         >
-                          सहित (वजन में)
+                          {gunnyOptions[0].labelHi}
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem
-                          value="with-quantity"
-                          id="with-quantity"
+                          value={gunnyOptions[1].value}
+                          id="gunny-rate"
                         />
                         <Label
-                          htmlFor="with-quantity"
+                          htmlFor="gunny-rate"
                           className="font-normal cursor-pointer"
                         >
-                          सहित (भाव में)
+                          {gunnyOptions[1].labelHi}
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="return" id="return" />
+                        <RadioGroupItem
+                          value={gunnyOptions[2].value}
+                          id="gunny-return"
+                        />
                         <Label
-                          htmlFor="return"
+                          htmlFor="gunny-return"
                           className="font-normal cursor-pointer"
                         >
-                          वापसी
+                          {gunnyOptions[2].labelHi}
                         </Label>
                       </div>
                     </RadioGroup>
@@ -732,17 +787,17 @@ export default function AddPaddyPurchaseForm() {
               )}
             />
 
-            {/* Packaging Rate Fields - Only show when 'with-quantity' (सहित भाव में) is selected */}
-            {gunnyOption === "with-quantity" && (
+            {/* Packaging Rate Fields - Only show when 'सहित (भाव में)' is selected */}
+            {gunnyOption === gunnyOptions[1].value && (
               <>
                 {/* New Packaging Rate */}
                 <FormField
                   control={form.control}
-                  name="newPackagingRate"
+                  name="newGunnyRate"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base">
-                        {t("forms.paddyPurchase.newPackagingRate")}
+                        {t("forms.paddyPurchase.newGunnyRate")}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -761,11 +816,11 @@ export default function AddPaddyPurchaseForm() {
                 {/* Old Packaging Rate */}
                 <FormField
                   control={form.control}
-                  name="oldPackagingRate"
+                  name="oldGunnyRate"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base">
-                        {t("forms.paddyPurchase.oldPackagingRate")}
+                        {t("forms.paddyPurchase.oldGunnyRate")}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -784,11 +839,11 @@ export default function AddPaddyPurchaseForm() {
                 {/* Plastic Packaging Rate */}
                 <FormField
                   control={form.control}
-                  name="plasticPackagingRate"
+                  name="plasticGunnyRate"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-base">
-                        {t("forms.paddyPurchase.plasticPackagingRate")}
+                        {t("forms.paddyPurchase.plasticGunnyRate")}
                       </FormLabel>
                       <FormControl>
                         <Input

@@ -82,20 +82,25 @@ export default function PaddyPurchaseDealReport() {
       header: "सौदा नंबर",
       meta: { filterVariant: "text" },
       cell: ({ row }) => (
-        <div className="font-medium whitespace-nowrap">
+        <div className="font-medium whitespace-nowrap text-center">
           {row.getValue("paddyPurchaseNumber") || "-"}
         </div>
       ),
     },
     {
       accessorKey: "date",
-      header: "सौदा दिनांक",
+      header: "दिनांक",
       meta: { filterVariant: "date" },
       cell: ({ row }) => {
         const date = row.getValue("date");
-        if (!date) return <span className="text-muted-foreground">-</span>;
+        if (!date)
+          return <span className="text-muted-foreground text-center">-</span>;
         const formattedDate = format(new Date(date), "dd MMM yyyy");
-        return <div className="text-sm whitespace-nowrap">{formattedDate}</div>;
+        return (
+          <div className="text-sm whitespace-nowrap text-center">
+            {formattedDate}
+          </div>
+        );
       },
     },
     {
@@ -103,33 +108,19 @@ export default function PaddyPurchaseDealReport() {
       header: "पार्टी का नाम",
       meta: { filterVariant: "text" },
       cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("partyName")}</div>
+        <div className="font-medium text-center">
+          {row.getValue("partyName")}
+        </div>
       ),
     },
     {
       accessorKey: "brokerName",
-      header: "ब्रोकर",
+      header: "ब्रोकर का नाम",
       meta: { filterVariant: "text" },
       cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("brokerName") || "-"}</div>
-      ),
-    },
-    {
-      accessorKey: "purchaseType",
-      header: "खरीदी प्रकार",
-      meta: { filterVariant: "text" },
-      cell: ({ row }) => {
-        const type = row.getValue("purchaseType");
-        const label = type === "do-purchase" ? "DO खरीदी" : "अन्य खरीदी";
-        return <div className="text-sm">{label}</div>;
-      },
-    },
-    {
-      accessorKey: "paddyType",
-      header: "धान का प्रकार",
-      meta: { filterVariant: "text" },
-      cell: ({ row }) => (
-        <div className="text-sm">{row.getValue("paddyType") || "-"}</div>
+        <div className="font-medium text-center">
+          {row.getValue("brokerName") || "-"}
+        </div>
       ),
     },
     {
@@ -138,14 +129,53 @@ export default function PaddyPurchaseDealReport() {
       meta: { filterVariant: "text" },
       cell: ({ row }) => {
         const delivery = row.getValue("delivery");
-        const label =
-          delivery === "pickup"
-            ? "पड़े में"
-            : delivery === "delivery"
-            ? "पहुंचा कर"
-            : "-";
-        return <div className="text-sm">{label}</div>;
+        return <div className="text-sm text-center">{delivery}</div>;
       },
+    },
+    {
+      accessorKey: "purchaseType",
+      header: "खरीदी प्रकार",
+      meta: { filterVariant: "text" },
+      cell: ({ row }) => {
+        return (
+          <div className="text-sm text-center">
+            {row.getValue("purchaseType")}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "doNumber",
+      header: "DO क्रमांक",
+      meta: { filterVariant: "text" },
+      cell: ({ row }) => {
+        const doEntries = row.original.doEntries;
+        const doNumbers =
+          doEntries?.map((entry) => entry.doNumber).join(", ") || "-";
+        return <div className="text-sm text-center">{doNumbers}</div>;
+      },
+    },
+    {
+      accessorKey: "committeeName",
+      header: "समिति/संग्रहण का नाम",
+      meta: { filterVariant: "text" },
+      cell: ({ row }) => {
+        const doEntries = row.original.doEntries;
+        const committeeNames =
+          doEntries?.map((entry) => entry.committeeName).join(", ") || "-";
+        return <div className="text-sm text-center">{committeeNames}</div>;
+      },
+    },
+
+    {
+      accessorKey: "paddyType",
+      header: "धान का प्रकार",
+      meta: { filterVariant: "text" },
+      cell: ({ row }) => (
+        <div className="text-sm text-center">
+          {row.getValue("paddyType") || "-"}
+        </div>
+      ),
     },
     {
       accessorKey: "paddyQuantity",
@@ -154,22 +184,22 @@ export default function PaddyPurchaseDealReport() {
       cell: ({ row }) => {
         const quantity = row.getValue("paddyQuantity");
         return quantity ? (
-          <div className="text-sm font-medium">{quantity} क्विंटल</div>
+          <div className="text-sm font-medium text-center">{quantity}</div>
         ) : (
-          <span className="text-muted-foreground">-</span>
+          <span className="text-muted-foreground text-center">-</span>
         );
       },
     },
     {
       accessorKey: "paddyRatePerQuintal",
-      header: "दर (₹)",
+      header: "धान का भाव/दर (प्रति क्विंटल)",
       meta: { filterVariant: "text" },
       cell: ({ row }) => {
         const rate = row.getValue("paddyRatePerQuintal");
         return rate ? (
-          <div className="text-sm font-medium">₹{rate}</div>
+          <div className="text-sm font-medium text-center">₹{rate}</div>
         ) : (
-          <span className="text-muted-foreground">-</span>
+          <span className="text-muted-foreground text-center">-</span>
         );
       },
     },
@@ -178,7 +208,7 @@ export default function PaddyPurchaseDealReport() {
       header: "बटाव (%)",
       meta: { filterVariant: "text" },
       cell: ({ row }) => (
-        <div className="text-sm text-right">
+        <div className="text-sm text-center">
           {row.getValue("wastagePercent") || "-"}
         </div>
       ),
@@ -188,8 +218,48 @@ export default function PaddyPurchaseDealReport() {
       header: "दलाली",
       meta: { filterVariant: "text" },
       cell: ({ row }) => (
-        <div className="text-sm text-right">
+        <div className="text-sm text-center">
           {row.getValue("brokerage") || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "gunnyOption",
+      header: "बारदाना सहित/वापसी",
+      meta: { filterVariant: "text" },
+      cell: ({ row }) => (
+        <div className="text-sm text-center">
+          {row.getValue("gunnyOption") || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "newGunnyRate",
+      header: "नया बारदाना दर",
+      meta: { filterVariant: "text" },
+      cell: ({ row }) => (
+        <div className="text-sm text-center">
+          {row.getValue("newGunnyRate") || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "oldGunnyRate",
+      header: "पुराना बारदाना दर",
+      meta: { filterVariant: "text" },
+      cell: ({ row }) => (
+        <div className="text-sm text-center">
+          {row.getValue("oldGunnyRate") || "-"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "plasticGunnyRate",
+      header: "प्लास्टिक बारदाना दर",
+      meta: { filterVariant: "text" },
+      cell: ({ row }) => (
+        <div className="text-sm text-center">
+          {row.getValue("plasticGunnyRate") || "-"}
         </div>
       ),
     },
@@ -426,14 +496,10 @@ export default function PaddyPurchaseDealReport() {
                   <span
                     className={cn(
                       "shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 mt-3 rounded-full text-xs font-medium",
-                      selectedDeal.purchaseType === "do-purchase"
-                        ? "bg-blue-500/10 text-blue-600"
-                        : "bg-amber-500/10 text-amber-600"
+                      "bg-blue-500/10 text-blue-600"
                     )}
                   >
-                    {selectedDeal.purchaseType === "do-purchase"
-                      ? "DO खरीदी"
-                      : "अन्य खरीदी"}
+                    {selectedDeal.purchaseType}
                   </span>
                 </div>
               </div>
