@@ -1,36 +1,36 @@
-import mongoose from 'mongoose';
-import aggregatePaginate from 'mongoose-aggregate-paginate-v2';
-import { createNumberGeneratorMiddleware } from '../../utils/numberGenerator.js';
+import mongoose from "mongoose";
+import aggregatePaginate from "mongoose-aggregate-paginate-v2";
+import { createNumberGeneratorMiddleware } from "../../utils/numberGenerator.js";
+import { GUNNY_DELIVERY_OPTION_VALUES } from "../../utils/constants.js";
 
-const sackPurchaseSchema = new mongoose.Schema({
+const sackPurchaseSchema = new mongoose.Schema(
+  {
     date: { type: Date, default: Date.now },
     sackPurchaseNumber: { type: String, trim: true, unique: true },
     partyName: { type: String, required: true, trim: true },
-    party: { type: mongoose.Schema.Types.ObjectId, ref: 'Party' },
-    delivery: { type: String, enum: ['mill', 'samiti-sangrahan'], trim: true },
-    samitiSangrahan: { type: String, trim: true },
-
-    newPackagingCount: { type: String, trim: true },
-    newPackagingRate: { type: String, trim: true },
-    oldPackagingCount: { type: String, trim: true },
-    oldPackagingRate: { type: String, trim: true },
-    plasticPackagingCount: { type: String, trim: true },
-    plasticPackagingRate: { type: String, trim: true },
-
-    payableAmount: { type: String, trim: true },
-
-    sackType: { type: String, trim: true },
-    quantity: { type: String, trim: true },
-    rate: { type: String, trim: true },
-    amount: { type: String, trim: true },
-
-    remarks: { type: String, trim: true },
+    party: { type: mongoose.Schema.Types.ObjectId, ref: "Party" },
+    deliveryOptions: {
+      type: String,
+      enum: GUNNY_DELIVERY_OPTION_VALUES,
+      trim: true,
+    },
+    newGunnyCount: { type: String, trim: true },
+    newGunnyRate: { type: String, trim: true },
+    oldGunnyCount: { type: String, trim: true },
+    oldGunnyRate: { type: String, trim: true },
+    plasticGunnyCount: { type: String, trim: true },
+    plasticGunnyRate: { type: String, trim: true },
     isActive: { type: Boolean, default: true },
-}, { timestamps: true });
+  },
+  { timestamps: true }
+);
 
 // Auto-generate sackPurchaseNumber: SP-DDMMYY-N
-sackPurchaseSchema.pre('save', createNumberGeneratorMiddleware('sackPurchaseNumber', 'SP'));
+sackPurchaseSchema.pre(
+  "save",
+  createNumberGeneratorMiddleware("sackPurchaseNumber", "SP")
+);
 
 sackPurchaseSchema.plugin(aggregatePaginate);
 
-export default mongoose.model('SackPurchase', sackPurchaseSchema);
+export default mongoose.model("SackPurchase", sackPurchaseSchema);
