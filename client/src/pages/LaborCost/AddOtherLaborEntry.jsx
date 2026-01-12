@@ -1,5 +1,5 @@
 import React from 'react';
-import AddOtherLaborForm from '@/components/forms/AddOtherLaborForm';
+import AddOtherLaborForm from '@/components/forms/LaborCost/AddOtherLaborForm';
 
 export default function AddOtherLaborEntry() {
     return (

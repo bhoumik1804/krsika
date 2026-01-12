@@ -1,5 +1,5 @@
 import React from 'react';
-import AddAttendanceForm from '@/components/forms/AddAttendanceForm';
+import AddAttendanceForm from '@/components/forms/Attendance/AddAttendanceForm';
 
 export default function AddAttendanceEntry() {
     return (

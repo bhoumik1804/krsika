@@ -1,5 +1,5 @@
 import React from 'react';
-import AddLaborTeamForm from '@/components/forms/AddLaborTeamForm';
+import AddLaborTeamForm from '@/components/forms/Entry/AddLaborTeamForm';
 
 export default function AddLaborTeamEntry() {
     return (

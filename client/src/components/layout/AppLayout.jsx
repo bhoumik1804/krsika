@@ -97,7 +97,7 @@ export default function AppLayout() {
     return (
         <SidebarProvider>
             <AppSidebar />
-            <SidebarInset className="overflow-x-hidden">
+            <SidebarInset className="flex flex-col h-screen overflow-hidden">
                 {/* Header with breadcrumbs */}
                 <header className="sticky top-0 z-10 flex h-14 md:h-16 shrink-0 items-center gap-2 border-b bg-background px-3 md:px-4">
                     {/* Mobile: Back button (when not on root) or Sidebar trigger */}
@@ -143,7 +143,7 @@ export default function AppLayout() {
                 </header>
 
                 {/* Main Content */}
-                <main className="flex flex-1 flex-col gap-4 p-4 overflow-x-hidden">
+                <main className="flex-1 flex flex-col gap-4 p-4 overflow-x-hidden overflow-y-auto">
                     <Outlet />
                 </main>
             </SidebarInset>

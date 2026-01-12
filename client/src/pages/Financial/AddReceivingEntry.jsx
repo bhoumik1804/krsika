@@ -1,5 +1,5 @@
 import React from 'react';
-import AddReceivingForm from '@/components/forms/AddReceivingForm';
+import AddReceivingForm from '@/components/forms/Financial/AddReceivingForm';
 
 export default function AddReceivingEntry() {
     return (

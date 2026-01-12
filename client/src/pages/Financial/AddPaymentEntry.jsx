@@ -1,5 +1,5 @@
 import React from 'react';
-import AddPaymentForm from '@/components/forms/AddPaymentForm';
+import AddPaymentForm from '@/components/forms/Financial/AddPaymentForm';
 
 export default function AddPaymentEntry() {
     return (

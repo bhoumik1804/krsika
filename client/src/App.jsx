@@ -8,7 +8,7 @@ import RouteLoader from './components/RouteLoader'
 
 // Lazy load layout and login for better initial load
 const AppLayout = lazy(() => import('./components/layout/AppLayout'))
-const Login = lazy(() => import('./pages/Login'))
+const Login = lazy(() => import('./pages/Core/Login'))
 const ProtectedRoute = lazy(() => import('./components/auth/ProtectedRoute'))
 
 export default function App() {
