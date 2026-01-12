@@ -62,6 +62,11 @@ export const frkOptions = [
   { value: "NON FRK", label: "Non FRK", labelHi: "NON FRK" },
 ];
 
+export const fciOptions = [
+  { value: "FCI", label: "FCI", labelHi: "FCI" },
+  { value: "NON FCI", label: "Non FCI", labelHi: "NON FCI" },
+];
+
 export const salesTypeOptions = [
   { value: "DO बिक्री", label: "DO Sales", labelHi: "DO बिक्री" },
   {
