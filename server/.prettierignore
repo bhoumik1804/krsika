@@ -1,0 +1,22 @@
+# Ignore everything
+/*
+
+# Except these files & folders
+!/src
+!package.json
+!package-lock.json
+!yarn.lock
+!.prettierrc
+!README.md
+!eslint.config.js
+!.env.example
+
+# If your entry point is in the root (not inside /src), uncomment these:
+# !app.js
+# !server.js
+# !index.js
+
+# Ignore build/dist folders if you are transpiling (e.g., Babel)
+/dist
+/build
+/coverage

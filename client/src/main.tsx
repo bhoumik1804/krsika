@@ -1,0 +1,89 @@
+import { StrictMode } from 'react'
+import ReactDOM from 'react-dom/client'
+import { AxiosError } from 'axios'
+import {
+    QueryCache,
+    QueryClient,
+    QueryClientProvider,
+} from '@tanstack/react-query'
+import { RouterProvider } from 'react-router'
+import { toast } from 'sonner'
+import { useUIAuthStore, initializeAuthState } from '@/stores/auth-store'
+import { handleServerError } from '@/lib/handle-server-error'
+import { DirectionProvider } from './context/direction-provider'
+import { FontProvider } from './context/font-provider'
+import { ThemeProvider } from './context/theme-provider'
+import { router } from './routes/app-routes'
+// Styles
+import './styles/index.css'
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            retry: (failureCount, error) => {
+                // eslint-disable-next-line no-console
+                if (import.meta.env.DEV) console.log({ failureCount, error })
+
+                if (failureCount >= 0 && import.meta.env.DEV) return false
+                if (failureCount > 3 && import.meta.env.PROD) return false
+
+                return !(
+                    error instanceof AxiosError &&
+                    [401, 403].includes(error.response?.status ?? 0)
+                )
+            },
+            refetchOnWindowFocus: import.meta.env.PROD,
+            staleTime: 10 * 1000, // 10s
+        },
+        mutations: {
+            onError: (error) => {
+                handleServerError(error)
+
+                if (error instanceof AxiosError) {
+                    if (error.response?.status === 304) {
+                        toast.error('Content not modified!')
+                    }
+                }
+            },
+        },
+    },
+    queryCache: new QueryCache({
+        onError: (error) => {
+            if (error instanceof AxiosError) {
+                if (error.response?.status === 401) {
+                    toast.error('Session expired!')
+                    useUIAuthStore.getState().logout()
+                    // Navigate will be handled by error boundary since we don't have router context here
+                }
+                if (error.response?.status === 500) {
+                    toast.error('Internal Server Error!')
+                }
+                if (error.response?.status === 403) {
+                    // Handle forbidden
+                }
+            }
+        },
+    }),
+})
+
+// Initialize auth state from storage
+initializeAuthState()
+
+// Render the app
+const rootElement = document.getElementById('root')!
+if (!rootElement.innerHTML) {
+    const root = ReactDOM.createRoot(rootElement)
+    root.render(
+        <StrictMode>
+            <QueryClientProvider client={queryClient}>
+                <ThemeProvider>
+                    <FontProvider>
+                        <DirectionProvider>
+                            <RouterProvider router={router} />
+                        </DirectionProvider>
+                    </FontProvider>
+                </ThemeProvider>
+            </QueryClientProvider>
+        </StrictMode>
+    )
+}

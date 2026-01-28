@@ -1,0 +1,7 @@
+export * from './navbar-data'
+export * from './features-data'
+export * from './how-it-works-data'
+export * from './pricing-data'
+export * from './testimonials-data'
+export * from './footer-data'
+export * from './cta-data'

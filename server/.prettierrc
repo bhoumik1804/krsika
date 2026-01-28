@@ -1,0 +1,33 @@
+{
+    "arrowParens": "always",
+    "semi": false,
+    "tabWidth": 4,
+    "printWidth": 80,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "bracketSpacing": true,
+    "endOfLine": "lf",
+    "plugins": ["@trivago/prettier-plugin-sort-imports"],
+    "importOrder": [
+        "^node:(.*)$",
+        "^fs$",
+        "^path$",
+        "^os$",
+        "^http$",
+        "^express$",
+        "^dotenv$",
+        "^cors$",
+        "^mongoose$",
+        "<THIRD_PARTY_MODULES>",
+        "^@/config/(.*)$",
+        "^@/models/(.*)$",
+        "^@/schemas/(.*)$",
+        "^@/controllers/(.*)$",
+        "^@/routes/(.*)$",
+        "^@/middlewares/(.*)$",
+        "^@/services/(.*)$",
+        "^@/utils/(.*)$",
+        "^@/helpers/(.*)$",
+        "^[./]"
+    ]
+}

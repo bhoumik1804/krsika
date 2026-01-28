@@ -1,0 +1,8 @@
+import { z } from 'zod'
+
+// Schema for LabourGroupReport records
+export const labourGroupReportSchema = z.object({
+    labourTeamName: z.string().min(1, 'Labour team name is required'),
+})
+
+export type LabourGroupReportData = z.infer<typeof labourGroupReportSchema>
