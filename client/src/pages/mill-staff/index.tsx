@@ -8,7 +8,6 @@ import {
     Calendar as CalendarIcon,
 } from 'lucide-react'
 import { useParams } from 'react-router'
-import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {

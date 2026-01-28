@@ -1,44 +1,26 @@
 import { faker } from '@faker-js/faker'
-import { type TransactionBroker } from './schema'
+import { type BrokerTransaction } from './schema'
 
 // Set a fixed seed for consistent data generation
 faker.seed(54321)
 
-export const paddyPurchases: TransactionBroker[] = Array.from(
+export const paddyPurchases: BrokerTransaction[] = Array.from(
     { length: 50 },
-    (): TransactionBroker => {
-        const bags = faker.number.int({ min: 10, max: 500 })
-        const weight = faker.number.float({
-            min: bags * 45,
-            max: bags * 55,
-            fractionDigits: 2,
-        })
-        const moisture = faker.number.float({
-            min: 10,
-            max: 20,
-            fractionDigits: 1,
-        })
-        const rate = faker.number.int({ min: 1800, max: 2500 })
-        const amount = Math.floor(weight * rate)
-
+    (): BrokerTransaction => {
         return {
-            id: faker.string.uuid(),
-            date: faker.date.recent({ days: 60 }).toISOString().split('T')[0],
+            brokerName: faker.person.fullName(),
             partyName: faker.person.fullName(),
-            vehicleNumber: `${faker.location.state({ abbreviated: true })}-${faker.number.int({ min: 10, max: 99 })}-${faker.string.alpha({ length: 2, casing: 'upper' })}-${faker.number.int({ min: 1000, max: 9999 })}`,
-            bags,
-            weight,
-            moisture,
-            rate,
-            amount,
-            status: faker.helpers.arrayElement([
-                'pending',
-                'completed',
-                'cancelled',
-            ]),
-            remarks: faker.helpers.maybe(() => faker.lorem.sentence(), {
-                probability: 0.3,
-            }),
+            date: faker.date.recent().toISOString().split('T')[0],
+            purchaseDeal: faker.number.int({ min: 100, max: 1000 }),
+            salesDeal: faker.number.int({ min: 100, max: 1000 }),
+            inward: faker.number.int({ min: 50, max: 500 }),
+            outward: faker.number.int({ min: 50, max: 500 }),
+            accountReceipt: faker.number.int({ min: 10000, max: 50000 }),
+            accountPayment: faker.number.int({ min: 10000, max: 50000 }),
+            accountBrokerage: faker.number.int({ min: 1000, max: 5000 }),
+            receipt: faker.number.int({ min: 10000, max: 50000 }),
+            payment: faker.number.int({ min: 10000, max: 50000 }),
+            brokerage: faker.number.int({ min: 1000, max: 5000 }),
         }
     }
 )

@@ -363,31 +363,6 @@ const StockOverviewReport = lazy(() =>
         default: m.StockOverviewReport,
     }))
 )
-const StockPaddyReport = lazy(() =>
-    import('@/pages/mill-admin/stock/stock-paddy').then((m) => ({
-        default: m.StockPaddyReport,
-    }))
-)
-const StockRiceReport = lazy(() =>
-    import('@/pages/mill-admin/stock/stock-rice').then((m) => ({
-        default: m.StockRiceReport,
-    }))
-)
-const StockByProductsReport = lazy(() =>
-    import('@/pages/mill-admin/stock/stock-by-products').then((m) => ({
-        default: m.StockByProductsReport,
-    }))
-)
-const StockGunnyReport = lazy(() =>
-    import('@/pages/mill-admin/stock/stock-gunny').then((m) => ({
-        default: m.StockGunnyReport,
-    }))
-)
-const StockOtherReport = lazy(() =>
-    import('@/pages/mill-admin/stock/stock-other').then((m) => ({
-        default: m.StockOtherReport,
-    }))
-)
 
 // Daily Reports
 const PurchaseDealsReport = lazy(() =>
@@ -897,28 +872,6 @@ export const router = createBrowserRouter([
                     {
                         path: 'stock/overview/report',
                         element: <LazyRoute Component={StockOverviewReport} />,
-                    },
-                    {
-                        path: 'stock/paddy/report',
-                        element: <LazyRoute Component={StockPaddyReport} />,
-                    },
-                    {
-                        path: 'stock/rice/report',
-                        element: <LazyRoute Component={StockRiceReport} />,
-                    },
-                    {
-                        path: 'stock/by-products/report',
-                        element: (
-                            <LazyRoute Component={StockByProductsReport} />
-                        ),
-                    },
-                    {
-                        path: 'stock/gunny/report',
-                        element: <LazyRoute Component={StockGunnyReport} />,
-                    },
-                    {
-                        path: 'stock/other/report',
-                        element: <LazyRoute Component={StockOtherReport} />,
                     },
                     {
                         path: 'daily/reports/purchase',

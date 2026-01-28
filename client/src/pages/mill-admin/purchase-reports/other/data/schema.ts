@@ -5,10 +5,10 @@ export const otherPurchaseSchema = z.object({
     date: z.string().min(1, 'Date is required'),
     partyName: z.string().optional(),
     brokerName: z.string().optional(),
-    anyaName: z.string().optional(),
-    anyaQty: z.number().optional(),
+    otherPurchaseName: z.string().optional(),
+    otherPurchaseQty: z.number().optional(),
     qtyType: z.string().optional(),
-    anyaRate: z.number().optional(),
+    rate: z.number().optional(),
     discountPercent: z.number().optional(),
     gst: z.number().optional(),
 })

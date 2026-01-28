@@ -23,12 +23,12 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
-import { type VehicleReport } from '../data/schema'
+import { type VehicleReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { vehicleReportColumns as columns } from './vehicle-report-columns'
 
 type DataTableProps = {
-    data: VehicleReport[]
+    data: VehicleReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
 }

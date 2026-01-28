@@ -11,27 +11,35 @@ type FinancialPaymentContextType = {
     setCurrentRow: React.Dispatch<React.SetStateAction<FinancialPayment | null>>
 }
 
-const FinancialPaymentContext = React.createContext<FinancialPaymentContextType | null>(null)
+const FinancialPaymentContext =
+    React.createContext<FinancialPaymentContextType | null>(null)
 
-export function FinancialPaymentProvider({ children }: { children: React.ReactNode }) {
+export function FinancialPaymentProvider({
+    children,
+}: {
+    children: React.ReactNode
+}) {
     const [open, setOpen] = useDialogState<FinancialPaymentDialogType>(null)
     const [currentRow, setCurrentRow] = useState<FinancialPayment | null>(null)
 
     return (
-        <FinancialPaymentContext value={ { open, setOpen, currentRow, setCurrentRow } }>
+        <FinancialPaymentContext
+            value={{ open, setOpen, currentRow, setCurrentRow }}
+        >
             {children}
         </FinancialPaymentContext>
     )
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const FinancialPayment = () => {
+export const useFinancialPayment = () => {
     const context = React.useContext(FinancialPaymentContext)
 
     if (!context) {
-        throw new Error('FinancialPayment has to be used within <FinancialPaymentContext>')
+        throw new Error(
+            'useFinancialPayment has to be used within <FinancialPaymentContext>'
+        )
     }
 
     return context
 }
-

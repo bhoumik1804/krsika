@@ -10,15 +10,15 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type PrivateRiceOutward } from '../data/schema'
-import { PrivateRiceOutward } from './private-rice-outward-provider'
+import { type PrivateRiceOutward as PrivateRiceOutwardType } from '../data/schema'
+import { usePrivateRiceOutward } from './private-rice-outward-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<PrivateRiceOutward>
+    row: Row<PrivateRiceOutwardType>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = PrivateRiceOutward()
+    const { setOpen, setCurrentRow } = usePrivateRiceOutward()
     return (
         <>
             <DropdownMenu modal={false}>

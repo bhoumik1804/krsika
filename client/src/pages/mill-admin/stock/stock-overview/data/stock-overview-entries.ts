@@ -17,7 +17,6 @@ export const stockOverviewEntries: StockOverview[] = Array.from(
         const amount = Math.floor(weight * rate)
 
         return {
-            id: faker.string.uuid(),
             date: faker.date.recent({ days: 60 }).toISOString().split('T')[0],
             partyName: faker.person.fullName(),
             vehicleNumber: `${faker.location.state({ abbreviated: true })}-${faker.number.int({ min: 10, max: 99 })}-${faker.string.alpha({ length: 2, casing: 'upper' })}-${faker.number.int({ min: 1000, max: 9999 })}`,

@@ -28,7 +28,7 @@ import { DataTableBulkActions } from './data-table-bulk-actions'
 import { partyReportColumns as columns } from './party-report-columns'
 
 type DataTableProps = {
-    data: PartyReport[]
+    data: PartyReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
 }

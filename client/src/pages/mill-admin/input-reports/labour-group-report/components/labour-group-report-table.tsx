@@ -23,17 +23,21 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
-import { type LabourGroupReport } from '../data/schema'
+import { type LabourGroupReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { labourGroupReportColumns as columns } from './labour-group-report-columns'
 
 type DataTableProps = {
-    data: LabourGroupReport[]
+    data: LabourGroupReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
 }
 
-export function LabourGroupReportTable({ data, search, navigate }: DataTableProps) {
+export function LabourGroupReportTable({
+    data,
+    search,
+    navigate,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

@@ -10,11 +10,11 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type FinancialReceipt } from '../data/schema'
+import { type FinancialReceipt as FinancialReceiptType } from '../data/schema'
 import { FinancialReceipt } from './financial-receipt-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<FinancialReceipt>
+    row: Row<FinancialReceiptType>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
@@ -61,4 +61,3 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         </>
     )
 }
-

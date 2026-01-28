@@ -10,7 +10,7 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
-import { type LabourGroupReport } from '../data/schema'
+import { type LabourGroupReportData } from '../data/schema'
 import { LabourGroupReportMultiDeleteDialog } from './labour-group-report-multi-delete-dialog'
 
 type DataTableBulkActionsProps<TData> = {
@@ -25,7 +25,7 @@ export function DataTableBulkActions<TData>({
 
     const handleBulkStatusChange = (status: 'completed' | 'cancelled') => {
         const selectedRecords = selectedRows.map(
-            (row) => row.original as LabourGroupReport
+            (row) => row.original as LabourGroupReportData
         )
         toast.promise(sleep(2000), {
             loading: `Marking as ${status}...`,

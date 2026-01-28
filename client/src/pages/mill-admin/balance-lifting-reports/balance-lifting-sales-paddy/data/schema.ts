@@ -19,10 +19,12 @@ export const balanceLiftingSalesPaddySchema = z.object({
     discountPercent: z.number().optional(),
     brokerage: z.number().optional(),
     // Gunny fields
-    gunnyOption: z.string().optional(),
+    gunnyType: z.string().optional(),
     newGunnyRate: z.number().optional(),
     oldGunnyRate: z.number().optional(),
     plasticGunnyRate: z.number().optional(),
 })
 
-export type BalanceLiftingSalesPaddy = z.infer<typeof balanceLiftingSalesPaddySchema>
+export type BalanceLiftingSalesPaddy = z.infer<
+    typeof balanceLiftingSalesPaddySchema
+>

@@ -29,13 +29,6 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select'
 import { gunnySalesSchema, type GunnySales } from '../data/schema'
 
 type GunnySalesActionDialogProps = {
@@ -84,9 +77,7 @@ export function GunnySalesActionDialog({
                     ? 'Gunny sale updated successfully'
                     : 'Gunny sale added successfully'
             },
-            error: isEditing
-                ? 'Failed to update sale'
-                : 'Failed to add sale',
+            error: isEditing ? 'Failed to update sale' : 'Failed to add sale',
         })
     }
 
@@ -117,7 +108,9 @@ export function GunnySalesActionDialog({
                                             <FormLabel>Date</FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
-                                                onOpenChange={setDatePopoverOpen}
+                                                onOpenChange={
+                                                    setDatePopoverOpen
+                                                }
                                             >
                                                 <PopoverTrigger asChild>
                                                     <FormControl>
@@ -186,214 +179,208 @@ export function GunnySalesActionDialog({
                                         </FormItem>
                                     )}
                                 />
-                                
-                            
-                                    <FormField
-                                        control={form.control}
-                                        name='newGunnyQty'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                   New Gunny Quantity
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        placeholder='0.00'
-                                                        {...field}
-                                                        onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name='newGunnyRate'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                   New Gunny Rate
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        placeholder='0.00'
-                                                        {...field}
-                                                        onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                               
 
-                            
-                                    <FormField
-                                        control={form.control}
-                                        name='oldGunnyQty'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                   Old Gunny Quantity
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        placeholder='0.00'
-                                                        {...field}
-                                                        onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name='oldGunnyRate'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                   Old Gunny Rate 
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        placeholder='0.00'
-                                                        {...field}
-                                                       onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                               
+                                <FormField
+                                    control={form.control}
+                                    name='newGunnyQty'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                New Gunny Quantity
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type='number'
+                                                    step='0.01'
+                                                    placeholder='0.00'
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
+                                                    onWheel={(e) =>
+                                                        e.currentTarget.blur()
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name='newGunnyRate'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                New Gunny Rate
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type='number'
+                                                    step='0.01'
+                                                    placeholder='0.00'
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
+                                                    onWheel={(e) =>
+                                                        e.currentTarget.blur()
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            
-                                    <FormField
-                                        control={form.control}
-                                        name='plasticGunnyQty'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Plastic Gunny Quantity 
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        placeholder='0.00'
-                                                        {...field}
-                                                       onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name='plasticGunnyRate'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Plastic Gunny Rate  
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        placeholder='0.00'
-                                                        {...field}
-                                                        onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                             </div>   
-                            
+                                <FormField
+                                    control={form.control}
+                                    name='oldGunnyQty'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Old Gunny Quantity
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type='number'
+                                                    step='0.01'
+                                                    placeholder='0.00'
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
+                                                    onWheel={(e) =>
+                                                        e.currentTarget.blur()
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name='oldGunnyRate'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Old Gunny Rate
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type='number'
+                                                    step='0.01'
+                                                    placeholder='0.00'
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
+                                                    onWheel={(e) =>
+                                                        e.currentTarget.blur()
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name='plasticGunnyQty'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Plastic Gunny Quantity
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type='number'
+                                                    step='0.01'
+                                                    placeholder='0.00'
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
+                                                    onWheel={(e) =>
+                                                        e.currentTarget.blur()
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name='plasticGunnyRate'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Plastic Gunny Rate
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type='number'
+                                                    step='0.01'
+                                                    placeholder='0.00'
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
+                                                    onWheel={(e) =>
+                                                        e.currentTarget.blur()
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                         </div>
                         <DialogFooter>
                             <Button

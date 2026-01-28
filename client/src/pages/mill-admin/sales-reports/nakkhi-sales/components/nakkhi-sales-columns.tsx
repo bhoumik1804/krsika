@@ -57,7 +57,9 @@ export const nakkhiSalesColumns: ColumnDef<NakkhiSales>[] = [
             <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('partyName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('partyName') || '-'}
+            </div>
         ),
     },
     {
@@ -66,7 +68,9 @@ export const nakkhiSalesColumns: ColumnDef<NakkhiSales>[] = [
             <DataTableColumnHeader column={column} title='Broker Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('brokerName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('brokerName') || '-'}
+            </div>
         ),
     },
     {
@@ -88,12 +92,14 @@ export const nakkhiSalesColumns: ColumnDef<NakkhiSales>[] = [
         ),
     },
     {
-        accessorKey: 'batavPercent',
+        accessorKey: 'discountPercent',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Batav %' />
+            <DataTableColumnHeader column={column} title='Discount %' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.batavPercent || 0}%</div>
+            <div className='text-right'>
+                {row.original.discountPercent || '-'}%
+            </div>
         ),
     },
     {
@@ -102,7 +108,9 @@ export const nakkhiSalesColumns: ColumnDef<NakkhiSales>[] = [
             <DataTableColumnHeader column={column} title='Brokerage' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.brokeragePerQuintal|| 0}</div>
+            <div className='text-right'>
+                ₹{row.original.brokeragePerQuintal || '-'}
+            </div>
         ),
     },
     {

@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { PrivateRiceOutward } from './private-rice-outward-provider'
+import { usePrivateRiceOutward } from './private-rice-outward-provider'
 
 export function PrivateRiceOutwardPrimaryButtons() {
-    const { setOpen } = PrivateRiceOutward()
+    const { setOpen } = usePrivateRiceOutward()
 
     return (
         <Button onClick={() => setOpen('add')}>

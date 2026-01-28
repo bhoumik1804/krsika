@@ -14,7 +14,7 @@ import { type PartyReportData } from '../data/schema'
 import { partyReport } from './party-report-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<PartyReport>
+    row: Row<PartyReportData>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {

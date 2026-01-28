@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from 'react-router'
+import { useParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
@@ -14,21 +14,7 @@ import { privateGunnyOutwardEntries } from './data/private-gunny-outward-entries
 
 export function PrivateGunnyOutwardReport() {
     const { millId } = useParams<{ millId: string }>()
-    const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
-
-    const search = Object.fromEntries(searchParams.entries())
-
-    const navigate = (opts: { search: unknown; replace?: boolean }) => {
-        if (typeof opts.search === 'function') {
-            const newSearch = opts.search(search)
-            setSearchParams(newSearch as Record<string, string>)
-        } else if (opts.search === true) {
-            // Keep current params
-        } else {
-            setSearchParams(opts.search as Record<string, string>)
-        }
-    }
 
     return (
         <PrivateGunnyOutwardProvider>
@@ -56,11 +42,7 @@ export function PrivateGunnyOutwardReport() {
                     </div>
                     <PrivateGunnyOutwardPrimaryButtons />
                 </div>
-                <PrivateGunnyOutwardTable
-                    data={privateGunnyOutwardEntries}
-                    search={search}
-                    navigate={navigate}
-                />
+                <PrivateGunnyOutwardTable data={privateGunnyOutwardEntries} />
             </Main>
 
             <PrivateGunnyOutwardDialogs />

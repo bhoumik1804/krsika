@@ -23,7 +23,7 @@ export const nakkhiSalesEntries: NakkhiSales[] = Array.from(
                 max: 2000,
                 fractionDigits: 2,
             }),
-            batavPercent: faker.number.float({
+            discountPercent: faker.number.float({
                 min: 0,
                 max: 20,
                 fractionDigits: 2,

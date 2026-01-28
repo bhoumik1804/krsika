@@ -41,7 +41,7 @@ export function LabourOtherDeleteDialog({
                     <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
                         Are you sure you want to delete this record for{' '}
-                        <strong>{currentRow?.partyName}</strong>?
+                        <strong>{currentRow?.labourGroupName}</strong>?
                         <br />
                         This action cannot be undone.
                     </AlertDialogDescription>

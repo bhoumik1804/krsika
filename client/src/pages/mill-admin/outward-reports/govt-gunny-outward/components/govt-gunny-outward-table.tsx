@@ -12,7 +12,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { NavigateFunction } from 'react-router'
 import {
     Table,
     TableBody,
@@ -28,8 +27,6 @@ import { GovtGunnyOutwardColumns as columns } from './govt-gunny-outward-columns
 
 interface DataTableProps {
     data: GovtGunnyOutward[]
-    search: Record<string, string>
-    navigate: NavigateFunction
 }
 
 export function GovtGunnyOutwardTable({ data }: DataTableProps) {

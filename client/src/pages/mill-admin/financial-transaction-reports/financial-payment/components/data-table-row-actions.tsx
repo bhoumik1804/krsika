@@ -10,15 +10,15 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type FinancialPayment } from '../data/schema'
-import { FinancialPayment } from './financial-payment-provider'
+import { type FinancialPayment as FinancialPaymentType } from '../data/schema'
+import { useFinancialPayment } from './financial-payment-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<FinancialPayment>
+    row: Row<FinancialPaymentType>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = FinancialPayment()
+    const { setOpen, setCurrentRow } = useFinancialPayment()
     return (
         <>
             <DropdownMenu modal={false}>
@@ -61,4 +61,3 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         </>
     )
 }
-

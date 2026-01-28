@@ -2,7 +2,6 @@ import { z } from 'zod'
 
 // Schema for StockOverview records
 export const stockOverviewSchema = z.object({
-    id: z.string(),
     date: z.string(),
     partyName: z.string(),
     vehicleNumber: z.string(),

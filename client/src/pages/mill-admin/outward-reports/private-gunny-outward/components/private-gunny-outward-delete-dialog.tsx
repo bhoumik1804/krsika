@@ -33,7 +33,7 @@ export function PrivateGunnyOutwardDeleteDialog({
                     <AlertDialogDescription>
                         This action cannot be undone. This will permanently
                         delete the record for{' '}
-                        <strong>{currentRow.gunnyBuyAuto}</strong>.
+                        <strong>{currentRow?.truckNo}</strong> on{' '}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

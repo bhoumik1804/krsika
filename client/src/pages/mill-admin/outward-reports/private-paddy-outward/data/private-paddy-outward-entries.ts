@@ -5,7 +5,7 @@ const paddyTypes = ['मोटी', 'पतली', 'सरेला', 'मह�
 
 export const privatePaddyOutwardEntries: PrivatePaddyOutward[] = Array.from(
     { length: 30 },
-    (_, i) => {
+    () => {
         const gunnyNew = faker.number.int({ min: 0, max: 100 })
         const gunnyOld = faker.number.int({ min: 0, max: 80 })
         const gunnyPlastic = faker.number.int({ min: 0, max: 60 })

@@ -2,7 +2,6 @@ import { z } from 'zod'
 
 // Schema for OutwardBalanceLiftingRice records
 export const outwardBalanceLiftingRiceSchema = z.object({
-    id: z.string(),
     date: z.string(),
     partyName: z.string(),
     vehicleNumber: z.string(),
@@ -14,4 +13,6 @@ export const outwardBalanceLiftingRiceSchema = z.object({
     remarks: z.string().optional(),
 })
 
-export type OutwardBalanceLiftingRice = z.infer<typeof outwardBalanceLiftingRiceSchema>
+export type OutwardBalanceLiftingRice = z.infer<
+    typeof outwardBalanceLiftingRiceSchema
+>

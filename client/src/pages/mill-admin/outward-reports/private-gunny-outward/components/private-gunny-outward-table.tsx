@@ -12,7 +12,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { NavigateFunction } from 'react-router'
 import {
     Table,
     TableBody,

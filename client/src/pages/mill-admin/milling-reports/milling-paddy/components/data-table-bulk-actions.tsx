@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
     Tooltip,
@@ -20,7 +18,6 @@ export function DataTableBulkActions<TData>({
     table,
 }: DataTableBulkActionsProps<TData>) {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-    const selectedRows = table.getFilteredSelectedRowModel().rows
 
     return (
         <>

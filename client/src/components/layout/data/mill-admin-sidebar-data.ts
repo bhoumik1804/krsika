@@ -3,7 +3,6 @@ import {
     Package,
     ShoppingCart,
     Receipt,
-    Users,
     UserCog,
     BarChart3,
     Settings,
@@ -12,6 +11,9 @@ import {
     FileBarChart,
     Calendar,
     ArrowLeftRight,
+    ArrowLeftToLine,
+    ArrowBigDown,
+    ArrowRightFromLine,
 } from 'lucide-react'
 import { type SidebarData } from '../types'
 
@@ -39,6 +41,7 @@ export const getMillAdminSidebarData = (millId: string): SidebarData => ({
             items: [
                 {
                     title: 'Input Reports',
+                    icon: ArrowBigDown,
                     items: [
                         {
                             title: 'Party Report',
@@ -127,26 +130,6 @@ export const getMillAdminSidebarData = (millId: string): SidebarData => ({
                         {
                             title: 'Stock Overview',
                             url: `/mill/${millId}/stock/overview/report`,
-                        },
-                        {
-                            title: 'Paddy Stock',
-                            url: `/mill/${millId}/stock/paddy/report`,
-                        },
-                        {
-                            title: 'Rice Stock',
-                            url: `/mill/${millId}/stock/rice/report`,
-                        },
-                        {
-                            title: 'By-Products Stock',
-                            url: `/mill/${millId}/stock/by-products/report`,
-                        },
-                        {
-                            title: 'Gunny Stock',
-                            url: `/mill/${millId}/stock/gunny/report`,
-                        },
-                        {
-                            title: 'Other Stock',
-                            url: `/mill/${millId}/stock/other/report`,
                         },
                     ],
                 },
@@ -273,7 +256,7 @@ export const getMillAdminSidebarData = (millId: string): SidebarData => ({
             items: [
                 {
                     title: 'Inward',
-                    icon: Users,
+                    icon: ArrowLeftToLine,
                     items: [
                         {
                             title: 'Govt Paddy Inward Report',
@@ -303,7 +286,7 @@ export const getMillAdminSidebarData = (millId: string): SidebarData => ({
                 },
                 {
                     title: 'Outward',
-                    icon: Users,
+                    icon: ArrowRightFromLine,
                     items: [
                         {
                             title: 'Private Paddy Outward Report',

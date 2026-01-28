@@ -10,11 +10,11 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type LabourGroupReport } from '../data/schema'
+import { type LabourGroupReportData } from '../data/schema'
 import { labourGroupReport } from './labour-group-report-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<LabourGroupReport>
+    row: Row<LabourGroupReportData>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {

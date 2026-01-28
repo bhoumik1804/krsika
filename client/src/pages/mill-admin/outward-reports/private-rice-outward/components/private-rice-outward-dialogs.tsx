@@ -1,9 +1,9 @@
 import { PrivateRiceOutwardActionDialog } from './private-rice-outward-action-dialog'
 import { PrivateRiceOutwardDeleteDialog } from './private-rice-outward-delete-dialog'
-import { PrivateRiceOutward } from './private-rice-outward-provider'
+import { usePrivateRiceOutward } from './private-rice-outward-provider'
 
 export function PrivateRiceOutwardDialogs() {
-    const { open, setOpen, currentRow } = PrivateRiceOutward()
+    const { open, setOpen, currentRow } = usePrivateRiceOutward()
 
     return (
         <>

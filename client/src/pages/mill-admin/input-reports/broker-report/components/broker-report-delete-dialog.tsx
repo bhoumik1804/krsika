@@ -41,8 +41,7 @@ export function BrokerReportDeleteDialog({
                     <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
                         Are you sure you want to delete this record for{' '}
-                        <strong>{currentRow?.partyName}</strong>?
-                        <br />
+                        <strong>{currentRow?.brokerName}</strong> on <br />
                         This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>

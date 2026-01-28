@@ -2,7 +2,7 @@ import * as React from 'react'
 import { isBefore, startOfToday, isSameDay } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 
 export type AttendanceStatus = 'present' | 'absent' | 'half-day'
 

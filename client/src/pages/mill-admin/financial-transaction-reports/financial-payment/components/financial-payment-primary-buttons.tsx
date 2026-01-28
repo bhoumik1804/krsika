@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { FinancialPayment } from './financial-payment-provider'
+import { useFinancialPayment } from './financial-payment-provider'
 
 export function FinancialPaymentPrimaryButtons() {
-    const { setOpen } = FinancialPayment()
+    const { setOpen } = useFinancialPayment()
 
     return (
         <Button onClick={() => setOpen('add')}>
@@ -12,4 +12,3 @@ export function FinancialPaymentPrimaryButtons() {
         </Button>
     )
 }
-

@@ -10,11 +10,11 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type VehicleReport } from '../data/schema'
+import { type VehicleReportData } from '../data/schema'
 import { vehicleReport } from './vehicle-report-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<VehicleReport>
+    row: Row<VehicleReportData>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {

@@ -27,13 +27,17 @@ import { type TransporterReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { transporterReportColumns as columns } from './transporter-report-columns'
 
-type DataTableProps = {
-    data: TransporterReport[]
+interface DataTableProps {
+    data: TransporterReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
 }
 
-export function TransporterReportTable({ data, search, navigate }: DataTableProps) {
+export function TransporterReportTable({
+    data,
+    search,
+    navigate,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
