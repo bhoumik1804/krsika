@@ -70,6 +70,10 @@ app.use((req, res, next) => {
 // API routes
 app.use(`/api/${env.API_VERSION}`, routes)
 
+app.get('/', (req, res) => {
+    res.status(200).json({ message: 'Krsika API running successfully!' })
+})
+
 // 404 handler
 app.use(notFoundHandler)
 
