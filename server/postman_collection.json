@@ -1,0 +1,272 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Mill Project API v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for Mill Project backend authentication API."
+  },
+  "item": [
+    {
+      "name": "Login (Email/Password)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"securepassword123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/v1/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "v1", "auth", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Google Login (Token)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"token\": \"GOOGLE_ID_TOKEN\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/v1/auth/google/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "v1", "auth", "google", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Google OAuth Redirect",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:5000/api/v1/auth/google",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "v1", "auth", "google"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Google OAuth Callback",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:5000/api/v1/auth/google/callback",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "v1", "auth", "google", "callback"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Refresh Token",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:5000/api/v1/auth/refresh",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "v1", "auth", "refresh"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:5000/api/v1/auth/logout",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "v1", "auth", "logout"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Current User (Me)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:5000/api/v1/auth/me",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "v1", "auth", "me"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Profile",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Super Admin\",\n  \"phone\": \"1234567890\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/v1/auth/profile",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "v1", "auth", "profile"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Change Password",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"currentPassword\": \"securepassword123\",\n  \"newPassword\": \"newpassword456\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/v1/auth/change-password",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "v1", "auth", "change-password"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:5000/api/v1/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "v1", "health"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Socket.IO: admin:mills:list (Super Admin)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Listen for response event",
+              "pm.socketio.on('admin:mills:list:response', (data) => {",
+              "    pm.test('admin:mills:list:response success', function () {",
+              "        pm.expect(data.success).to.eql(true);",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "url": {
+          "raw": "ws://localhost:5000",
+          "protocol": "ws",
+          "host": ["localhost"],
+          "port": "5000"
+        },
+        "method": "SOCKETIO",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"event\": \"admin:mills:list\",\n  \"data\": {\n    \"page\": 1,\n    \"limit\": 10\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Socket.IO: mill:dashboard (Mill Admin)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.socketio.on('mill:dashboard:response', (data) => {",
+              "    pm.test('mill:dashboard:response success', function () {",
+              "        pm.expect(data.success).to.eql(true);",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "url": {
+          "raw": "ws://localhost:5000",
+          "protocol": "ws",
+          "host": ["localhost"],
+          "port": "5000"
+        },
+        "method": "SOCKETIO",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"event\": \"mill:dashboard\",\n  \"data\": {}\n}"
+        }
+      }
+    },
+    {
+      "name": "Socket.IO: staff:dashboard (Mill Staff)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.socketio.on('staff:dashboard:response', (data) => {",
+              "    pm.test('staff:dashboard:response success', function () {",
+              "        pm.expect(data.success).to.eql(true);",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "url": {
+          "raw": "ws://localhost:5000",
+          "protocol": "ws",
+          "host": ["localhost"],
+          "port": "5000"
+        },
+        "method": "SOCKETIO",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"event\": \"staff:dashboard\",\n  \"data\": {}\n}"
+        }
+      }
+    }
+  ]
+}

@@ -1,79 +1,79 @@
 import express from 'express'
-import passport from 'passport'
-import config from './config/index.js'
-import configurePassport from './config/passport.js'
-import v1Routes from './routes/v1/index.js'
-import { errorHandler } from './shared/middlewares/error-handler.js'
-import { notFound } from './shared/middlewares/not-found.js'
-import { generalLimiter } from './shared/middlewares/rate-limiter.js'
-import {
-    helmetConfig,
-    corsConfig,
-    mongoSanitizeConfig,
-} from './shared/middlewares/security.js'
-import logger from './shared/utils/logger.js'
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
+import 'dotenv/config'
+import rateLimit from 'express-rate-limit'
+import helmet from 'helmet'
+import env from './config/env.js'
+import passport from './config/passport.js'
+import { errorHandler, notFoundHandler } from './middlewares/errorHandler.js'
+import routes from './routes/index.js'
+import logger from './utils/logger.js'
 
-/**
- * Create Express application
- */
-const createApp = () => {
-    const app = express()
+const app = express()
 
-    // Trust proxy (for rate limiting by IP when behind reverse proxy)
-    app.set('trust proxy', 1)
+// Security middleware
+app.use(helmet())
 
-    // Security middleware
-    app.use(helmetConfig)
-    app.use(corsConfig)
+// CORS configuration
+const allowedOrigins = env.ALLOWED_ORIGINS
+    ? env.ALLOWED_ORIGINS.split(',')
+    : [env.CLIENT_URL]
 
-    // Body parsers
-    app.use(express.json({ limit: '10mb' }))
-    app.use(express.urlencoded({ extended: true, limit: '10mb' }))
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            // Allow requests with no origin (like mobile apps or curl requests)
+            if (!origin) return callback(null, true)
 
-    // MongoDB sanitization (prevent NoSQL injection)
-    app.use(mongoSanitizeConfig)
-
-    // Rate limiting
-    if (config.server.isProduction) {
-        app.use(generalLimiter)
-    }
-
-    // Passport initialization
-    configurePassport()
-    app.use(passport.initialize())
-
-    // Request logging (development only)
-    if (config.server.isDevelopment) {
-        app.use((req, res, next) => {
-            logger.http(`${req.method} ${req.url}`, {
-                ip: req.ip,
-                userAgent: req.get('user-agent'),
-            })
-            next()
-        })
-    }
-
-    // Root endpoint
-    app.get('/', (req, res) => {
-        res.json({
-            success: true,
-            message: 'Rice Mill SaaS API',
-            version: '1.0.0',
-            environment: config.server.env,
-            docs: '/api/docs',
-        })
+            if (allowedOrigins.includes(origin)) {
+                callback(null, true)
+            } else {
+                callback(new Error('Not allowed by CORS'))
+            }
+        },
+        credentials: true, // Allow cookies
     })
+)
 
-    // API routes
-    app.use('/api/v1', v1Routes)
+// Body parser middleware
+app.use(express.json({ limit: '10kb' }))
+app.use(express.urlencoded({ extended: true, limit: '10kb' }))
 
-    // 404 handler
-    app.use(notFound)
+// Cookie parser
+app.use(cookieParser())
 
-    // Global error handler (must be last)
-    app.use(errorHandler)
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+})
 
-    return app
-}
+app.use('/api', limiter)
 
-export default createApp
+// Passport initialization
+app.use(passport.initialize())
+
+// Request logging
+app.use((req, res, next) => {
+    logger.info('Incoming request', {
+        method: req.method,
+        path: req.path,
+        ip: req.ip,
+    })
+    next()
+})
+
+// API routes
+app.use(`/api/${env.API_VERSION}`, routes)
+
+// 404 handler
+app.use(notFoundHandler)
+
+// Error handler (must be last)
+app.use(errorHandler)
+
+export default app

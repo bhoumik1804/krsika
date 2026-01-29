@@ -1,78 +1,57 @@
-import createApp from './app.js'
-import config from './config/index.js'
-import { connectDatabase } from './shared/database/connection.js'
-import logger from './shared/utils/logger.js'
+import http from 'http';
+import app from './app.js';
+import connectDB from './config/db.js';
+import { initializeSocket } from './socket/index.js';
+import env from './config/env.js';
+import logger from './utils/logger.js';
 
-/**
- * Start server
- */
+const PORT = env.PORT || 5000;
+
+// Create HTTP server
+const server = http.createServer(app);
+
+// Initialize Socket.IO
+const io = initializeSocket(server);
+
+// Connect to database and start server
 const startServer = async () => {
-    try {
-        // Connect to database
-        logger.info('Connecting to database...')
-        await connectDatabase()
+  try {
+    // Connect to MongoDB
+    await connectDB();
+    
+    // Start server
+    server.listen(PORT, () => {
+      logger.info(`Server running on port ${PORT} in ${env.NODE_ENV} mode`);
+      logger.info(`API available at http://localhost:${PORT}/api/${env.API_VERSION}`);
+    });
+  } catch (error) {
+    logger.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
 
-        // Create Express app
-        const app = createApp()
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  logger.error('Unhandled Promise Rejection:', err);
+  server.close(() => {
+    process.exit(1);
+  });
+});
 
-        // Start listening
-        const PORT = config.server.port
-        const server = app.listen(PORT, () => {
-            logger.info(
-                `Server running in ${config.server.env} mode on port ${PORT}`
-            )
-            logger.info(`API v1: http://localhost:${PORT}/api/v1`)
-            logger.info(`Health check: http://localhost:${PORT}/api/v1/health`)
-        })
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  logger.error('Uncaught Exception:', err);
+  server.close(() => {
+    process.exit(1);
+  });
+});
 
-        // Graceful shutdown
-        const gracefulShutdown = async (signal) => {
-            logger.info(`${signal} received. Starting graceful shutdown...`)
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM received. Shutting down gracefully...');
+  server.close(() => {
+    logger.info('Process terminated');
+  });
+});
 
-            server.close(async () => {
-                logger.info('HTTP server closed')
-
-                try {
-                    // Close database connection
-                    const { disconnectDatabase } =
-                        await import('./shared/database/connection.js')
-                    await disconnectDatabase()
-
-                    logger.info('Graceful shutdown completed')
-                    process.exit(0)
-                } catch (error) {
-                    logger.error('Error during graceful shutdown:', error)
-                    process.exit(1)
-                }
-            })
-
-            // Force shutdown after 10 seconds
-            setTimeout(() => {
-                logger.error('Forcing shutdown due to timeout')
-                process.exit(1)
-            }, 10000)
-        }
-
-        // Handle shutdown signals
-        process.on('SIGTERM', () => gracefulShutdown('SIGTERM'))
-        process.on('SIGINT', () => gracefulShutdown('SIGINT'))
-
-        // Handle uncaught exceptions
-        process.on('uncaughtException', (error) => {
-            logger.error('Uncaught Exception:', error)
-            gracefulShutdown('uncaughtException')
-        })
-
-        // Handle unhandled promise rejections
-        process.on('unhandledRejection', (reason, promise) => {
-            logger.error('Unhandled Rejection at:', promise, 'reason:', reason)
-            gracefulShutdown('unhandledRejection')
-        })
-    } catch (error) {
-        logger.error('Failed to start server:', error)
-        process.exit(1)
-    }
-}
-
-// Start the server
-startServer()
+startServer();
