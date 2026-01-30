@@ -622,10 +622,6 @@ export const router = createBrowserRouter([
                         element: <LazyRoute Component={MillAdminStaff} />,
                     },
                     {
-                        path: 'staff/attendance',
-                        element: <LazyRoute Component={MillAdminStaff} />,
-                    },
-                    {
                         path: 'settings',
                         element: <LazyRoute Component={MillAdminProfile} />,
                     },

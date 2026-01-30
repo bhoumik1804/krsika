@@ -1,13 +1,6 @@
-import { UserCog, Plus, Download, Calendar } from 'lucide-react'
-import { useParams } from 'react-router'
-import { Button } from '@/components/ui/button'
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card'
+import { UserCog } from 'lucide-react'
+import { useParams, useSearchParams } from 'react-router'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
@@ -15,19 +8,38 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { StaffDialogs } from './components/staff-dialogs'
+// import { StaffPrimaryButtons } from './components/staff-primary-buttons'
+import { StaffProvider } from './components/staff-provider'
+import { StaffTable } from './components/staff-table'
+import { staff } from './data/staff'
 
 export function MillAdminStaff() {
     const { millId } = useParams<{ millId: string }>()
     const sidebarData = getMillAdminSidebarData(millId || '')
+    const [searchParams, setSearchParams] = useSearchParams()
+
+    const search = Object.fromEntries(searchParams.entries())
+
+    const navigate = (opts: { search: unknown; replace?: boolean }) => {
+        if (typeof opts.search === 'function') {
+            const newSearch = opts.search(search)
+            setSearchParams(newSearch as Record<string, string>)
+        } else if (opts.search === true) {
+            // Keep current params
+        } else {
+            setSearchParams(opts.search as Record<string, string>)
+        }
+    }
+
+    const activeStaff = staff.filter((s) => s.status === 'active')
+    const suspendedStaff = staff.filter((s) => s.status === 'suspended')
+
     return (
-        <>
-            <Header>
-                <div className='flex items-center gap-2'>
-                    <UserCog className='h-5 w-5' />
-                    <h1 className='text-lg font-semibold'>Staff Management</h1>
-                </div>
+        <StaffProvider>
+            <Header fixed>
+                <Search />
                 <div className='ms-auto flex items-center space-x-4'>
-                    <Search />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -37,84 +49,53 @@ export function MillAdminStaff() {
                 </div>
             </Header>
 
-            <Main>
-                <div className='mb-6 flex items-center justify-between'>
+            <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
+                <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
-                        <h1 className='text-2xl font-bold tracking-tight'>
-                            Staff
-                        </h1>
+                        <div className='flex items-center gap-2'>
+                            <UserCog className='h-5 w-5' />
+                            <h2 className='text-2xl font-bold tracking-tight'>
+                                Staff Directory
+                            </h2>
+                        </div>
                         <p className='text-muted-foreground'>
-                            Manage staff accounts, roles, and attendance
+                            Manage staff accounts, roles, and attendance.
                         </p>
                     </div>
-                    <div className='flex items-center gap-2'>
-                        <Button variant='outline' size='sm'>
-                            <Calendar className='mr-2 h-4 w-4' />
-                            Attendance
-                        </Button>
-                        <Button variant='outline' size='sm'>
-                            <Download className='mr-2 h-4 w-4' />
-                            Export
-                        </Button>
-                        <Button size='sm'>
-                            <Plus className='mr-2 h-4 w-4' />
-                            Add Staff
-                        </Button>
-                    </div>
+                    {/* <StaffPrimaryButtons /> */}
                 </div>
 
-                {/* Summary Cards */}
-                <div className='mb-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-                    {[
-                        {
-                            name: 'Total Staff',
-                            value: '24',
-                            sub: 'Active employees',
-                        },
-                        {
-                            name: 'Present Today',
-                            value: '21',
-                            sub: '87.5% attendance',
-                        },
-                        { name: 'On Leave', value: '2', sub: 'This week' },
-                        { name: 'New Joiners', value: '3', sub: 'This month' },
-                    ].map((item) => (
-                        <Card key={item.name}>
-                            <CardHeader className='pb-2'>
-                                <CardTitle className='text-sm font-medium text-muted-foreground'>
-                                    {item.name}
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className='text-2xl font-bold'>
-                                    {item.value}
-                                </div>
-                                <p className='text-xs text-muted-foreground'>
-                                    {item.sub}
-                                </p>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Staff Directory</CardTitle>
-                        <CardDescription>
-                            All staff members with roles and contact info
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className='flex h-[400px] items-center justify-center text-muted-foreground'>
-                        <div className='text-center'>
-                            <UserCog className='mx-auto mb-4 h-12 w-12 text-muted-foreground/50' />
-                            <p>Staff directory will be displayed here</p>
-                            <p className='text-sm'>
-                                Connect to backend API to load staff data
-                            </p>
-                        </div>
-                    </CardContent>
-                </Card>
+                <Tabs defaultValue='all' className='flex-1'>
+                    <TabsList className='grid w-full grid-cols-3 md:w-[420px]'>
+                        <TabsTrigger value='all'>All Staff</TabsTrigger>
+                        <TabsTrigger value='active'>Active</TabsTrigger>
+                        <TabsTrigger value='suspended'>Suspended</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value='all' className='space-y-4'>
+                        <StaffTable
+                            data={staff}
+                            search={search}
+                            navigate={navigate}
+                        />
+                    </TabsContent>
+                    <TabsContent value='active' className='space-y-4'>
+                        <StaffTable
+                            data={activeStaff}
+                            search={search}
+                            navigate={navigate}
+                        />
+                    </TabsContent>
+                    <TabsContent value='suspended' className='space-y-4'>
+                        <StaffTable
+                            data={suspendedStaff}
+                            search={search}
+                            navigate={navigate}
+                        />
+                    </TabsContent>
+                </Tabs>
             </Main>
-        </>
+
+            <StaffDialogs />
+        </StaffProvider>
     )
 }
