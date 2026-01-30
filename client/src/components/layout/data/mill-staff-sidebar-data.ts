@@ -30,6 +30,16 @@ export const getMillStaffSidebarData = (
             ],
         },
         {
+            title: 'Staff',
+            items: [
+                {
+                    title: 'Staff Directory',
+                    url: `/staff/${millId}/${staffId}/manage/staff`,
+                    icon: UserCog,
+                },
+            ],
+        },
+        {
             title: 'Purchase Reports',
             items: [
                 {

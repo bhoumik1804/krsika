@@ -2,13 +2,7 @@ import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { type Staff } from '../data/schema'
 
-type StaffDialogType =
-    | 'add'
-    | 'edit'
-    | 'delete'
-    | 'mark-attendance'
-    | 'view-attendance'
-    | 'bulk-attendance'
+type StaffDialogType = 'add' | 'edit' | 'delete' | 'mark-attendance'
 
 type StaffContextType = {
     open: StaffDialogType | null

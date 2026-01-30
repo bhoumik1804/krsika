@@ -432,6 +432,12 @@ const MillStaffAppearance = lazy(() =>
     }))
 )
 
+const MillStaffStaff = lazy(() =>
+    import('@/pages/mill-staff/staff').then((m) => ({
+        default: m.MillStaffStaff,
+    }))
+)
+
 // Mill Staff Purchase Reports
 const MillStaffPaddyPurchaseReport = lazy(() =>
     import('@/pages/mill-staff/purchase-reports/paddy').then((m) => ({
@@ -958,6 +964,10 @@ export const router = createBrowserRouter([
                     {
                         path: 'profile',
                         element: <LazyRoute Component={MillStaffProfile} />,
+                    },
+                    {
+                        path: 'manage/staff',
+                        element: <LazyRoute Component={MillStaffStaff} />,
                     },
                     {
                         path: 'purchases/paddy/report',

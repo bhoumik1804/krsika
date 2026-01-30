@@ -1,12 +1,6 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
-import {
-    CalendarCheck,
-    CalendarDays,
-    CalendarRange,
-    Trash2,
-    UserPen,
-} from 'lucide-react'
+import { CalendarCheck, Trash2, UserPen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
@@ -47,28 +41,6 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                         Mark Attendance
                         <DropdownMenuShortcut>
                             <CalendarCheck size={16} />
-                        </DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => {
-                            setCurrentRow(row.original)
-                            setOpen('view-attendance')
-                        }}
-                    >
-                        View Attendance
-                        <DropdownMenuShortcut>
-                            <CalendarDays size={16} />
-                        </DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => {
-                            setCurrentRow(row.original)
-                            setOpen('bulk-attendance')
-                        }}
-                    >
-                        Bulk Update Attendance
-                        <DropdownMenuShortcut>
-                            <CalendarRange size={16} />
                         </DropdownMenuShortcut>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />

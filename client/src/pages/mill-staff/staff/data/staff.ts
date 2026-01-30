@@ -15,13 +15,20 @@ export const staff = Array.from({ length: 150 }, () => {
     const generateAttendanceHistory = () => {
         if (status !== 'active') return undefined
 
-        const attendanceHistory = []
         const today = new Date()
+        const currentMonth = today.getMonth()
+        const currentYear = today.getFullYear()
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
 
-        for (let i = 0; i < 30; i++) {
-            const date = new Date(today);
-            date.setDate(today.getDate() - i)
+        const attendanceHistory = []
+        const daysToGenerate = faker.number.int({
+            min: Math.max(1, daysInMonth - 25),
+            max: daysInMonth,
+        })
 
+        for (let i = 0; i < daysToGenerate; i++) {
+            const day = i + 1
+            const date = new Date(currentYear, currentMonth, day)
             const dateStr = date.toISOString().split('T')[0]
 
             attendanceHistory.push({

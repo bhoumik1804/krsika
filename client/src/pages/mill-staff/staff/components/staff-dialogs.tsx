@@ -1,9 +1,7 @@
 import { StaffActionDialog } from './staff-action-dialog'
-import { StaffBulkAttendanceDialog } from './staff-bulk-attendance-dialog'
 import { StaffDeleteDialog } from './staff-delete-dialog'
 import { StaffMarkAttendanceDialog } from './staff-mark-attendance-dialog'
 import { useStaff } from './staff-provider'
-import { StaffViewAttendanceDialog } from './staff-view-attendance-dialog'
 
 export function StaffDialogs() {
     const { open, setOpen, currentRow, setCurrentRow } = useStaff()
@@ -43,30 +41,6 @@ export function StaffDialogs() {
 
                     <StaffMarkAttendanceDialog
                         key={`staff-attendance-${currentRow.id}`}
-                    />
-
-                    <StaffViewAttendanceDialog
-                        key={`staff-view-attendance-${currentRow.id}`}
-                        open={open === 'view-attendance'}
-                        onOpenChange={() => {
-                            setOpen('view-attendance')
-                            setTimeout(() => {
-                                setCurrentRow(null)
-                            }, 500)
-                        }}
-                        currentRow={currentRow}
-                    />
-
-                    <StaffBulkAttendanceDialog
-                        key={`staff-bulk-attendance-${currentRow.id}`}
-                        open={open === 'bulk-attendance'}
-                        onOpenChange={() => {
-                            setOpen('bulk-attendance')
-                            setTimeout(() => {
-                                setCurrentRow(null)
-                            }, 500)
-                        }}
-                        currentRow={currentRow}
                     />
                 </>
             )}

@@ -20,7 +20,7 @@ const staffRoleSchema = z.union([
 const attendanceStatusSchema = z.union([
     z.literal('P'), // Present
     z.literal('A'), // Absent
-    z.literal('H'), // Half Day
+    z.literal('H'), // Holiday
 ])
 export type AttendanceStatus = z.infer<typeof attendanceStatusSchema>
 
