@@ -7,10 +7,7 @@ import logger from '../utils/logger.js'
 const seedSuperAdmins = async () => {
     try {
         // Connect to database
-        const dbName =
-            process.env.NODE_ENV === 'development'
-                ? process.env.MONGODB_TEST_DATABASE_NAME
-                : process.env.MONGODB_DATABASE_NAME
+        const dbName = process.env.MONGODB_DATABASE_NAME
         await mongoose.connect(process.env.MONGODB_URI, { dbName })
 
         logger.info('Connected to database for seeding')
