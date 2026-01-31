@@ -38,7 +38,7 @@ export function AuthSuccess() {
     useEffect(() => {
         if (user && isAuthenticated) {
             const redirectPath = isUserRole(user.role)
-                ? getRedirectPath(user.role)
+                ? getRedirectPath(user)
                 : '/'
 
             setTimeout(() => {
