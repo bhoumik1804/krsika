@@ -541,6 +541,282 @@ const LabourGroupReport = lazy(() =>
     )
 )
 
+// Mill Staff Transaction Reports
+const MillStaffBrokerTransactionReport = lazy(() =>
+    import('@/pages/mill-staff/transaction-reports/broker').then((m) => ({
+        default: m.TransactionBrokerReport,
+    }))
+)
+const MillStaffPartyTransactionReport = lazy(() =>
+    import('@/pages/mill-staff/transaction-reports/party').then((m) => ({
+        default: m.TransactionPartyReport,
+    }))
+)
+
+// Mill Staff Balance Lifting Reports
+const MillStaffBalanceLiftingPurchasesPaddyReport = lazy(() =>
+    import('@/pages/mill-staff/balance-lifting-reports/balance-lifting-purchases-paddy').then(
+        (m) => ({
+            default: m.BalanceLiftingPurchasesPaddyReport,
+        })
+    )
+)
+const MillStaffBalanceLiftingPurchasesRiceReport = lazy(() =>
+    import('@/pages/mill-staff/balance-lifting-reports/balance-lifting-purchases-rice').then(
+        (m) => ({
+            default: m.BalanceLiftingPurchasesRiceReport,
+        })
+    )
+)
+const MillStaffBalanceLiftingPurchasesGunnyReport = lazy(() =>
+    import('@/pages/mill-staff/balance-lifting-reports/balance-lifting-purchases-gunny').then(
+        (m) => ({
+            default: m.BalanceLiftingPurchasesGunnyReport,
+        })
+    )
+)
+const MillStaffBalanceLiftingPurchasesFrkReport = lazy(() =>
+    import('@/pages/mill-staff/balance-lifting-reports/balance-lifting-purchases-frk').then(
+        (m) => ({
+            default: m.BalanceLiftingPurchasesFrkReport,
+        })
+    )
+)
+const MillStaffBalanceLiftingSalesPaddyReport = lazy(() =>
+    import('@/pages/mill-staff/balance-lifting-reports/balance-lifting-sales-paddy').then(
+        (m) => ({
+            default: m.BalanceLiftingSalesPaddyReport,
+        })
+    )
+)
+const MillStaffOutwardBalanceLiftingRiceReport = lazy(() =>
+    import('@/pages/mill-staff/outward-balance-lifting-reports/outward-balance-lifting-rice').then(
+        (m) => ({
+            default: m.OutwardBalanceLiftingRiceReport,
+        })
+    )
+)
+
+// Mill Staff Inward Reports
+const MillStaffGovtPaddyInwardReport = lazy(() =>
+    import('@/pages/mill-staff/inward-reports/govt-paddy-inward').then((m) => ({
+        default: m.GovtPaddyInwardReport,
+    }))
+)
+const MillStaffPrivatePaddyInwardReport = lazy(() =>
+    import('@/pages/mill-staff/inward-reports/private-paddy-inward').then(
+        (m) => ({
+            default: m.PrivatePaddyInwardReport,
+        })
+    )
+)
+const MillStaffRiceInwardReport = lazy(() =>
+    import('@/pages/mill-staff/inward-reports/rice-inward').then((m) => ({
+        default: m.RiceInwardReport,
+    }))
+)
+const MillStaffGunnyInwardReport = lazy(() =>
+    import('@/pages/mill-staff/inward-reports/gunny-inward').then((m) => ({
+        default: m.GunnyInwardReport,
+    }))
+)
+const MillStaffOtherInwardReport = lazy(() =>
+    import('@/pages/mill-staff/inward-reports/other-inward').then((m) => ({
+        default: m.OtherInwardReport,
+    }))
+)
+const MillStaffFrkInwardReport = lazy(() =>
+    import('@/pages/mill-staff/inward-reports/frk-inward').then((m) => ({
+        default: m.FrkInwardReport,
+    }))
+)
+
+// Mill Staff Outward Reports
+const MillStaffPrivatePaddyOutwardReport = lazy(() =>
+    import('@/pages/mill-staff/outward-reports/private-paddy-outward').then(
+        (m) => ({
+            default: m.PrivatePaddyOutwardReport,
+        })
+    )
+)
+const MillStaffPrivateRiceOutwardReport = lazy(() =>
+    import('@/pages/mill-staff/outward-reports/private-rice-outward').then(
+        (m) => ({
+            default: m.PrivateRiceOutwardReport,
+        })
+    )
+)
+const MillStaffGovtRiceOutwardReport = lazy(() =>
+    import('@/pages/mill-staff/outward-reports/govt-rice-outward').then(
+        (m) => ({
+            default: m.GovtRiceOutwardReport,
+        })
+    )
+)
+const MillStaffGovtGunnyOutwardReport = lazy(() =>
+    import('@/pages/mill-staff/outward-reports/govt-gunny-outward').then(
+        (m) => ({
+            default: m.GovtGunnyOutwardReport,
+        })
+    )
+)
+const MillStaffPrivateGunnyOutwardReport = lazy(() =>
+    import('@/pages/mill-staff/outward-reports/private-gunny-outward').then(
+        (m) => ({
+            default: m.PrivateGunnyOutwardReport,
+        })
+    )
+)
+const MillStaffFrkOutwardReport = lazy(() =>
+    import('@/pages/mill-staff/outward-reports/frk-outward').then((m) => ({
+        default: m.FrkOutwardReport,
+    }))
+)
+const MillStaffKhandaOutwardReport = lazy(() =>
+    import('@/pages/mill-staff/outward-reports/khanda-outward').then((m) => ({
+        default: m.KhandaOutwardReport,
+    }))
+)
+const MillStaffNakkhiOutwardReport = lazy(() =>
+    import('@/pages/mill-staff/outward-reports/nakkhi-outward').then((m) => ({
+        default: m.NakkhiOutwardReport,
+    }))
+)
+const MillStaffBhusaOutwardReport = lazy(() =>
+    import('@/pages/mill-staff/outward-reports/bhusa-outward').then((m) => ({
+        default: m.BhusaOutwardReport,
+    }))
+)
+const MillStaffKodhaOutwardReport = lazy(() =>
+    import('@/pages/mill-staff/outward-reports/kodha-outward').then((m) => ({
+        default: m.KodhaOutwardReport,
+    }))
+)
+const MillStaffSilkyKodhaOutwardReport = lazy(() =>
+    import('@/pages/mill-staff/outward-reports/silky-kodha-outward').then(
+        (m) => ({
+            default: m.SilkyKodhaOutwardReport,
+        })
+    )
+)
+const MillStaffOtherOutwardReport = lazy(() =>
+    import('@/pages/mill-staff/outward-reports/other-outward').then((m) => ({
+        default: m.OtherOutwardReport,
+    }))
+)
+
+// Mill Staff Milling Reports
+const MillStaffMillingPaddyReport = lazy(() =>
+    import('@/pages/mill-staff/milling-reports/milling-paddy').then((m) => ({
+        default: m.MillingPaddyReport,
+    }))
+)
+const MillStaffMillingRiceReport = lazy(() =>
+    import('@/pages/mill-staff/milling-reports/milling-rice').then((m) => ({
+        default: m.MillingRiceReport,
+    }))
+)
+
+// Mill Staff Labour Cost Reports
+const MillStaffLabourInwardReport = lazy(() =>
+    import('@/pages/mill-staff/labour-cost-reports/labour-inward').then(
+        (m) => ({
+            default: m.LabourInwardReport,
+        })
+    )
+)
+const MillStaffLabourOutwardReport = lazy(() =>
+    import('@/pages/mill-staff/labour-cost-reports/labour-outward').then(
+        (m) => ({
+            default: m.LabourOutwardReport,
+        })
+    )
+)
+const MillStaffLabourMillingReport = lazy(() =>
+    import('@/pages/mill-staff/labour-cost-reports/labour-milling').then(
+        (m) => ({
+            default: m.LabourMillingReport,
+        })
+    )
+)
+const MillStaffLabourOtherReport = lazy(() =>
+    import('@/pages/mill-staff/labour-cost-reports/labour-other').then((m) => ({
+        default: m.LabourOtherReport,
+    }))
+)
+
+// Mill Staff Financial Transaction Reports
+const MillStaffFinancialReceiptReport = lazy(() =>
+    import('@/pages/mill-staff/financial-transaction-reports/financial-receipt').then(
+        (m) => ({
+            default: m.FinancialReceiptReport,
+        })
+    )
+)
+const MillStaffFinancialPaymentReport = lazy(() =>
+    import('@/pages/mill-staff/financial-transaction-reports/financial-payment').then(
+        (m) => ({
+            default: m.FinancialPaymentReport,
+        })
+    )
+)
+
+// Mill Staff Stock Reports
+const MillStaffStockOverviewReport = lazy(() =>
+    import('@/pages/mill-staff/stock/stock-overview').then((m) => ({
+        default: m.StockOverviewReport,
+    }))
+)
+
+// Mill Staff Daily Reports
+const MillStaffPurchaseDealsReport = lazy(() =>
+    import('@/pages/mill-staff/daily-reports/purchase-deals').then((m) => ({
+        default: m.PurchaseDealsReport,
+    }))
+)
+const MillStaffSalesDealsReport = lazy(() =>
+    import('@/pages/mill-staff/daily-reports/sales-deals').then((m) => ({
+        default: m.SalesDealsReport,
+    }))
+)
+const MillStaffInwardsReport = lazy(() =>
+    import('@/pages/mill-staff/daily-reports/inwards').then((m) => ({
+        default: m.InwardsReport,
+    }))
+)
+const MillStaffOutwardsReport = lazy(() =>
+    import('@/pages/mill-staff/daily-reports/outwards').then((m) => ({
+        default: m.OutwardsReport,
+    }))
+)
+const MillStaffMillingReport = lazy(() =>
+    import('@/pages/mill-staff/daily-reports/milling').then((m) => ({
+        default: m.MillingReport,
+    }))
+)
+const MillStaffProductionReport = lazy(() =>
+    import('@/pages/mill-staff/daily-reports/production').then((m) => ({
+        default: m.ProductionReport,
+    }))
+)
+const MillStaffReceiptReport = lazy(() =>
+    import('@/pages/mill-staff/daily-reports/receipt').then((m) => ({
+        default: m.ReceiptReport,
+    }))
+)
+const MillStaffPaymentReport = lazy(() =>
+    import('@/pages/mill-staff/daily-reports/payment').then((m) => ({
+        default: m.PaymentReport,
+    }))
+)
+
+// Daily Reports Overview
+const MillStaffDailyReportsOverview = lazy(() =>
+    import('@/pages/mill-staff/daily-reports').then((m) => ({
+        default: m.DailyReportsOverview,
+    }))
+)
+
 // Root layout with Suspense wrapper for navigation
 function RootLayoutWithSuspense() {
     return (
@@ -876,6 +1152,14 @@ export const router = createBrowserRouter([
                         element: <LazyRoute Component={StockOverviewReport} />,
                     },
                     {
+                        path: 'daily/reports',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffDailyReportsOverview}
+                            />
+                        ),
+                    },
+                    {
                         path: 'daily/reports/purchase',
                         element: <LazyRoute Component={PurchaseDealsReport} />,
                     },
@@ -968,6 +1252,342 @@ export const router = createBrowserRouter([
                     {
                         path: 'manage/staff',
                         element: <LazyRoute Component={MillStaffStaff} />,
+                    },
+                    {
+                        path: 'transaction/broker',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffBrokerTransactionReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'transaction/party',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffPartyTransactionReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'balance/lifting/report/purchases/paddy',
+                        element: (
+                            <LazyRoute
+                                Component={
+                                    MillStaffBalanceLiftingPurchasesPaddyReport
+                                }
+                            />
+                        ),
+                    },
+                    {
+                        path: 'balance/lifting/report/purchases/rice',
+                        element: (
+                            <LazyRoute
+                                Component={
+                                    MillStaffBalanceLiftingPurchasesRiceReport
+                                }
+                            />
+                        ),
+                    },
+                    {
+                        path: 'balance/lifting/report/purchases/gunny',
+                        element: (
+                            <LazyRoute
+                                Component={
+                                    MillStaffBalanceLiftingPurchasesGunnyReport
+                                }
+                            />
+                        ),
+                    },
+                    {
+                        path: 'balance/lifting/report/purchases/frk',
+                        element: (
+                            <LazyRoute
+                                Component={
+                                    MillStaffBalanceLiftingPurchasesFrkReport
+                                }
+                            />
+                        ),
+                    },
+                    {
+                        path: 'balance/lifting/report/sales/paddy',
+                        element: (
+                            <LazyRoute
+                                Component={
+                                    MillStaffBalanceLiftingSalesPaddyReport
+                                }
+                            />
+                        ),
+                    },
+                    {
+                        path: 'outward/balance/lifting/report/rice',
+                        element: (
+                            <LazyRoute
+                                Component={
+                                    MillStaffOutwardBalanceLiftingRiceReport
+                                }
+                            />
+                        ),
+                    },
+                    {
+                        path: 'inward/govt/paddy/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffGovtPaddyInwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'inward/private/paddy/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffPrivatePaddyInwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'inward/rice/report',
+                        element: (
+                            <LazyRoute Component={MillStaffRiceInwardReport} />
+                        ),
+                    },
+                    {
+                        path: 'inward/gunny/report',
+                        element: (
+                            <LazyRoute Component={MillStaffGunnyInwardReport} />
+                        ),
+                    },
+                    {
+                        path: 'inward/other/report',
+                        element: (
+                            <LazyRoute Component={MillStaffOtherInwardReport} />
+                        ),
+                    },
+                    {
+                        path: 'inward/frk/report',
+                        element: (
+                            <LazyRoute Component={MillStaffFrkInwardReport} />
+                        ),
+                    },
+                    {
+                        path: 'outward/private/paddy/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffPrivatePaddyOutwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'outward/private/rice/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffPrivateRiceOutwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'outward/govt/rice/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffGovtRiceOutwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'outward/govt/gunny/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffGovtGunnyOutwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'outward/private/gunny/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffPrivateGunnyOutwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'outward/frk/report',
+                        element: (
+                            <LazyRoute Component={MillStaffFrkOutwardReport} />
+                        ),
+                    },
+                    {
+                        path: 'outward/khanda/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffKhandaOutwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'outward/nakkhi/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffNakkhiOutwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'outward/bhusa/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffBhusaOutwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'outward/kodha/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffKodhaOutwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'outward/silky-kodha/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffSilkyKodhaOutwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'outward/other/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffOtherOutwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'milling/paddy/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffMillingPaddyReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'milling/rice/report',
+                        element: (
+                            <LazyRoute Component={MillStaffMillingRiceReport} />
+                        ),
+                    },
+                    {
+                        path: 'labour/inward/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffLabourInwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'labour/outward/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffLabourOutwardReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'labour/milling/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffLabourMillingReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'labour/other/report',
+                        element: (
+                            <LazyRoute Component={MillStaffLabourOtherReport} />
+                        ),
+                    },
+                    {
+                        path: 'financial/transaction/receipt/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffFinancialReceiptReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'financial/transaction/payment/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffFinancialPaymentReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'stock/overview/report',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffStockOverviewReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'daily/reports',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffDailyReportsOverview}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'daily/reports/purchase',
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffPurchaseDealsReport}
+                            />
+                        ),
+                    },
+                    {
+                        path: 'daily/reports/sales',
+                        element: (
+                            <LazyRoute Component={MillStaffSalesDealsReport} />
+                        ),
+                    },
+                    {
+                        path: 'daily/reports/inwards',
+                        element: (
+                            <LazyRoute Component={MillStaffInwardsReport} />
+                        ),
+                    },
+                    {
+                        path: 'daily/reports/outwards',
+                        element: (
+                            <LazyRoute Component={MillStaffOutwardsReport} />
+                        ),
+                    },
+                    {
+                        path: 'daily/reports/milling',
+                        element: (
+                            <LazyRoute Component={MillStaffMillingReport} />
+                        ),
+                    },
+                    {
+                        path: 'daily/reports/production',
+                        element: (
+                            <LazyRoute Component={MillStaffProductionReport} />
+                        ),
+                    },
+                    {
+                        path: 'daily/reports/receipt',
+                        element: (
+                            <LazyRoute Component={MillStaffReceiptReport} />
+                        ),
+                    },
+                    {
+                        path: 'daily/reports/payment',
+                        element: (
+                            <LazyRoute Component={MillStaffPaymentReport} />
+                        ),
                     },
                     {
                         path: 'purchases/paddy/report',

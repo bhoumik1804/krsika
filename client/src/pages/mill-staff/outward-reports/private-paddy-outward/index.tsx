@@ -1,0 +1,70 @@
+import { useParams, useSearchParams } from 'react-router'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { getMillAdminSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { PrivatePaddyOutwardDialogs } from './components/private-paddy-outward-dialogs'
+import { PrivatePaddyOutwardPrimaryButtons } from './components/private-paddy-outward-primary-buttons'
+import { PrivatePaddyOutwardProvider } from './components/private-paddy-outward-provider'
+import { PrivatePaddyOutwardTable } from './components/private-paddy-outward-table'
+import { privatePaddyOutwardEntries } from './data/private-paddy-outward-entries'
+
+export function PrivatePaddyOutwardReport() {
+    const { millId } = useParams<{ millId: string }>()
+    const [searchParams, setSearchParams] = useSearchParams()
+    const sidebarData = getMillAdminSidebarData(millId || '')
+
+    const search = Object.fromEntries(searchParams.entries())
+
+    const navigate = (opts: { search: unknown; replace?: boolean }) => {
+        if (typeof opts.search === 'function') {
+            const newSearch = opts.search(search)
+            setSearchParams(newSearch as Record<string, string>)
+        } else if (opts.search === true) {
+            // Keep current params
+        } else {
+            setSearchParams(opts.search as Record<string, string>)
+        }
+    }
+
+    return (
+        <PrivatePaddyOutwardProvider>
+            <Header fixed>
+                <Search />
+                <div className='ms-auto flex items-center space-x-4'>
+                    <ThemeSwitch />
+                    <ConfigDrawer />
+                    <ProfileDropdown
+                        user={sidebarData.user}
+                        links={sidebarData.profileLinks}
+                    />
+                </div>
+            </Header>
+
+            <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
+                <div className='flex flex-wrap items-end justify-between gap-2'>
+                    <div>
+                        <h2 className='text-2xl font-bold tracking-tight'>
+                            Private Paddy Outward Report
+                        </h2>
+                        <p className='text-muted-foreground'>
+                            Manage private paddy outward transactions and
+                            records
+                        </p>
+                    </div>
+                    <PrivatePaddyOutwardPrimaryButtons />
+                </div>
+                <PrivatePaddyOutwardTable
+                    data={privatePaddyOutwardEntries}
+                    search={search}
+                    navigate={navigate}
+                />
+            </Main>
+
+            <PrivatePaddyOutwardDialogs />
+        </PrivatePaddyOutwardProvider>
+    )
+}
