@@ -43,6 +43,7 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }))
 
 // Cookie parser
 app.use(cookieParser())
+app.set('trust proxy', 1)
 
 // Rate limiting
 const limiter = rateLimit({
