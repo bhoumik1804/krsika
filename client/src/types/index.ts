@@ -4,14 +4,34 @@
  */
 
 // ==========================================
+// Common Pagination Types
+// ==========================================
+
+export interface PaginationMeta {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasPrevPage: boolean
+    hasNextPage: boolean
+    prevPage: number | null
+    nextPage: number | null
+}
+
+export interface PaginatedResponse<T> {
+    data: T[]
+    pagination: PaginationMeta
+}
+
+// ==========================================
 // User & Authentication Types
 // ==========================================
 
 export const USER_ROLES = {
-    SUPER_ADMIN: 'super_admin',
+    SUPER_ADMIN: 'super-admin',
     ADMIN: 'admin',
     STAFF: 'staff',
-    GUEST_USER: 'guest_user',
+    GUEST_USER: 'guest-user',
 } as const
 
 export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES]
@@ -339,16 +359,16 @@ export interface ApiResponse<T> {
     message?: string
 }
 
-export interface PaginatedResponse<T> {
-    success: boolean
-    data: T[]
-    pagination: {
-        page: number
-        limit: number
-        total: number
-        totalPages: number
-    }
-}
+// export interface PaginatedResponse<T> {
+//     success: boolean
+//     data: T[]
+//     pagination: {
+//         page: number
+//         limit: number
+//         total: number
+//         totalPages: number
+//     }
+// }
 
 export interface ApiError {
     success: false
