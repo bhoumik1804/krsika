@@ -45,6 +45,22 @@ export const loginWithCredentials = async (credentials: {
 }
 
 /**
+ * Signup with email and password
+ * Uses public API client for unauthenticated request
+ */
+export const signupWithCredentials = async (data: {
+    fullName: string
+    email: string
+    password: string
+}): Promise<User> => {
+    const response = await publicApiClient.post<ApiResponse<{ user: User }>>(
+        '/auth/signup',
+        data
+    )
+    return response.data.data.user
+}
+
+/**
  * Logout user
  * Clears cookies on server
  */

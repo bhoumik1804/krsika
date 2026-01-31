@@ -1,20 +1,77 @@
-import { useMemo } from 'react'
-import { useSearchParams } from 'react-router'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ConfigDrawer } from '@/components/config-drawer'
-import { superAdminSidebarData } from '@/components/layout/data'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { LoadingSpinner } from '@/components/loading-spinner'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
-import { UsersDialogs } from './components/users-dialogs'
-import { UsersPrimaryButtons } from './components/users-primary-buttons'
-import { UsersProvider } from './components/users-provider'
-import { UsersTable } from './components/users-table'
-import { useUsersList } from './data/hooks'
-import type { UserRole } from './data/schema'
+import { useMemo } from 'react';
+import { useSearchParams } from 'react-router';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ConfigDrawer } from '@/components/config-drawer';
+import { superAdminSidebarData } from '@/components/layout/data';
+import { Header } from '@/components/layout/header';
+import { Main } from '@/components/layout/main';
+import { LoadingSpinner } from '@/components/loading-spinner';
+import { ProfileDropdown } from '@/components/profile-dropdown';
+import { Search } from '@/components/search';
+import { ThemeSwitch } from '@/components/theme-switch';
+import { UsersDialogs } from './components/users-dialogs';
+import { UsersPrimaryButtons } from './components/users-primary-buttons';
+import { UsersProvider } from './components/users-provider';
+import { UsersTable } from './components/users-table';
+import { useUsersList } from './data/hooks';
+import type { UserRole } from './data/schema';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export function Users() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -114,9 +171,7 @@ export function Users() {
                     </TabsList>
                     <TabsContent value='all' className='space-y-4'>
                         {isLoading ? (
-                            <div className='flex items-center justify-center py-10'>
-                                <LoadingSpinner />
-                            </div>
+                            <LoadingSpinner className='h-full w-full' />
                         ) : isError ? (
                             <div className='py-10 text-center text-destructive'>
                                 Failed to load users data
@@ -132,9 +187,7 @@ export function Users() {
                     </TabsContent>
                     <TabsContent value='active' className='space-y-4'>
                         {isLoading ? (
-                            <div className='flex items-center justify-center py-10'>
-                                <LoadingSpinner />
-                            </div>
+                            <LoadingSpinner className='h-full w-full' />
                         ) : (
                             <UsersTable
                                 data={activeUsers}
@@ -145,9 +198,7 @@ export function Users() {
                     </TabsContent>
                     <TabsContent value='guest' className='space-y-4'>
                         {isLoading ? (
-                            <div className='flex items-center justify-center py-10'>
-                                <LoadingSpinner />
-                            </div>
+                            <LoadingSpinner className='h-full w-full' />
                         ) : (
                             <UsersTable
                                 data={guestUsers}

@@ -7,6 +7,7 @@ import {
 import env from '../config/env.js'
 import {
     loginUser,
+    signupUser,
     getUserById,
     updateUserProfile,
     changeUserPassword,
@@ -16,6 +17,35 @@ import {
     registerNewMill,
 } from '../services/auth.service.js'
 import logger from '../utils/logger.js'
+
+export const signup = async (req, res, next) => {
+    try {
+        const { fullName, email, password } = req.body
+        const userAgent = req.get('user-agent')
+        const ipAddress = req.ip
+
+        const { user, accessToken, refreshToken } = await signupUser(
+            fullName,
+            email,
+            password,
+            userAgent,
+            ipAddress
+        )
+
+        // Set cookies
+        res.cookie('accessToken', accessToken, accessTokenCookieOptions)
+        res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions)
+
+        res.status(201).json({
+            success: true,
+            statusCode: 201,
+            data: user,
+            message: 'Signup successful',
+        })
+    } catch (error) {
+        next(error)
+    }
+}
 
 export const login = async (req, res, next) => {
     try {
@@ -125,10 +155,7 @@ export const logout = async (req, res, next) => {
 
         // Clear cookies
         res.clearCookie('accessToken', clearCookieOptions)
-        res.clearCookie('refreshToken', {
-            ...clearCookieOptions,
-            path: '/api/auth/refresh',
-        })
+        res.clearCookie('refreshToken', clearCookieOptions)
 
         res.status(200).json({
             success: true,

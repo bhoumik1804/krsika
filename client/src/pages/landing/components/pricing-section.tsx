@@ -3,11 +3,11 @@ import { formatCurrency, API_URL } from '@/constants'
 import type { PricingPlan } from '@/types'
 import { CircleCheckBig, Loader2 } from 'lucide-react'
 import { Link } from 'react-router'
-import { useAuthStore } from '@/stores/auth-store'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { pricingData } from '../data'
+import { useUser } from '../hooks'
 import { MillRegistrationDialog } from './mill-registration-dialog'
 
 // ==========================================
@@ -19,7 +19,7 @@ interface PricingCardProps {
 }
 
 function PricingCard({ plan }: PricingCardProps) {
-    const { isAuthenticated } = useAuthStore()
+    const { isAuthenticated } = useUser()
 
     return (
         <Card

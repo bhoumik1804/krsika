@@ -97,18 +97,13 @@ export function StockOverviewReport() {
                     <StockOverviewPrimaryButtons />
                 </div>
                 {isLoading ? (
-                    <div className='flex items-center justify-center py-10'>
-                        <LoadingSpinner />
-                    </div>
+                    <LoadingSpinner className='h-full w-full' />
                 ) : isError ? (
                     <div className='py-10 text-center text-destructive'>
                         Failed to load stock overview data
                     </div>
                 ) : (
-                    <StockOverviewCards
-                        data={stockData}
-                        summary={summaryResponse}
-                    />
+                    <StockOverviewCards data={stockData} />
                 )}
             </Main>
 

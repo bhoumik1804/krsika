@@ -1,18 +1,35 @@
-import { useMemo } from 'react'
-import { useRiceInwardList } from '@/pages/mill-staff/inwards/rice-inward/data/hooks'
-import { useParams, useSearchParams } from 'react-router'
-import { ConfigDrawer } from '@/components/config-drawer'
-import { getMillAdminSidebarData } from '@/components/layout/data'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { LoadingSpinner } from '@/components/loading-spinner'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
-import { RiceInwardDialogs } from './components/rice-inward-dialogs'
-import { RiceInwardPrimaryButtons } from './components/rice-inward-primary-buttons'
-import { RiceInwardProvider } from './components/rice-inward-provider'
-import { RiceInwardTable } from './components/rice-inward-table'
+import { useMemo } from 'react';
+import { useRiceInwardList } from '@/pages/mill-staff/inwards/rice-inward/data/hooks';
+import { useParams, useSearchParams } from 'react-router';
+import { ConfigDrawer } from '@/components/config-drawer';
+import { getMillAdminSidebarData } from '@/components/layout/data';
+import { Header } from '@/components/layout/header';
+import { Main } from '@/components/layout/main';
+import { LoadingSpinner } from '@/components/loading-spinner';
+import { ProfileDropdown } from '@/components/profile-dropdown';
+import { Search } from '@/components/search';
+import { ThemeSwitch } from '@/components/theme-switch';
+import { RiceInwardDialogs } from './components/rice-inward-dialogs';
+import { RiceInwardPrimaryButtons } from './components/rice-inward-primary-buttons';
+import { RiceInwardProvider } from './components/rice-inward-provider';
+import { RiceInwardTable } from './components/rice-inward-table';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export function RiceInwardReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -99,9 +116,7 @@ export function RiceInwardReport() {
                     <RiceInwardPrimaryButtons />
                 </div>
                 {isLoading ? (
-                    <div className='flex items-center justify-center py-10'>
-                        <LoadingSpinner />
-                    </div>
+                    <LoadingSpinner className='h-full w-full' />
                 ) : isError ? (
                     <div className='py-10 text-center text-destructive'>
                         Failed to load rice inward data

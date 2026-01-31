@@ -1,5 +1,6 @@
 import express from 'express'
 import {
+    signup,
     login,
     googleAuth,
     googleCallback,
@@ -13,6 +14,7 @@ import {
 import { authenticate } from '../middlewares/auth.js'
 import { validate } from '../middlewares/validate.js'
 import {
+    signupSchema,
     loginSchema,
     updateProfileSchema,
     changePasswordSchema,
@@ -22,8 +24,14 @@ import {
 const router = express.Router()
 
 // Public routes
+router.post('/signup', validate(signupSchema), signup)
 router.post('/login', validate(loginSchema), login)
-router.post('/register-mill', validate(registerMillSchema), registerMill)
+router.post(
+    '/register-mill',
+    authenticate,
+    validate(registerMillSchema),
+    registerMill
+)
 router.get('/google', googleAuth)
 router.get('/google/callback', googleCallback)
 router.post('/refresh', refreshToken)

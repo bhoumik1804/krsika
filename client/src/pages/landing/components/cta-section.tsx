@@ -1,9 +1,12 @@
 import { ArrowRight, Phone, Mail } from 'lucide-react'
 import { Link } from 'react-router'
+import { useAuthStore } from '@/stores/auth-store'
 import { Button } from '@/components/ui/button'
 import { ctaData } from '../data'
+import { MillRegistrationDialog } from './mill-registration-dialog'
 
 export function CtaSection() {
+    const { isAuthenticated } = useAuthStore()
     return (
         <section className='relative overflow-hidden bg-linear-to-br from-primary via-primary/95 to-primary/90 py-24 text-primary-foreground'>
             {/* Background Pattern */}
@@ -29,17 +32,32 @@ export function CtaSection() {
 
                     {/* CTA Buttons */}
                     <div className='mb-12 flex flex-col items-center justify-center gap-4 sm:flex-row'>
-                        <Button
-                            size='lg'
-                            variant='secondary'
-                            className='group h-12 px-8 text-base'
-                            asChild
-                        >
-                            <Link to='/sign-up'>
-                                Start Free Trial
-                                <ArrowRight className='ml-2 h-4 w-4 transition-transform group-hover:translate-x-1' />
-                            </Link>
-                        </Button>
+                        {isAuthenticated ? (
+                            <MillRegistrationDialog
+                                trigger={
+                                    <Button
+                                        size='lg'
+                                        variant='secondary'
+                                        className='group h-12 px-8 text-base'
+                                    >
+                                        Start Free Trial
+                                        <ArrowRight className='ml-2 h-4 w-4 transition-transform group-hover:translate-x-1' />
+                                    </Button>
+                                }
+                            />
+                        ) : (
+                            <Button
+                                size='lg'
+                                variant='secondary'
+                                className='group h-12 px-8 text-base'
+                                asChild
+                            >
+                                <Link to='/sign-in'>
+                                    Start Free Trial
+                                    <ArrowRight className='ml-2 h-4 w-4 transition-transform group-hover:translate-x-1' />
+                                </Link>
+                            </Button>
+                        )}
                         <Button
                             size='lg'
                             variant='outline'

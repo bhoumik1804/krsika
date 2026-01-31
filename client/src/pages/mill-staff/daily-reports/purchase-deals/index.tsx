@@ -1,27 +1,33 @@
-import { useMemo } from 'react'
-import { useParams, useSearchParams } from 'react-router'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table'
-import { ConfigDrawer } from '@/components/config-drawer'
-import { getMillAdminSidebarData } from '@/components/layout/data'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { LoadingSpinner } from '@/components/loading-spinner'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
-import { DateRangePicker } from './components/date-range-picker'
-import {
-    useDailyPurchaseDealList,
-    useDailyPurchaseDealSummary,
-} from './data/hooks'
+import { useMemo } from 'react';
+import { useParams, useSearchParams } from 'react-router';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ConfigDrawer } from '@/components/config-drawer';
+import { getMillAdminSidebarData } from '@/components/layout/data';
+import { Header } from '@/components/layout/header';
+import { Main } from '@/components/layout/main';
+import { LoadingSpinner } from '@/components/loading-spinner';
+import { ProfileDropdown } from '@/components/profile-dropdown';
+import { Search } from '@/components/search';
+import { ThemeSwitch } from '@/components/theme-switch';
+import { DateRangePicker } from './components/date-range-picker';
+import { useDailyPurchaseDealList, useDailyPurchaseDealSummary } from './data/hooks';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export function PurchaseDealsReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -154,9 +160,7 @@ export function PurchaseDealsReport() {
                     </CardHeader>
                     <CardContent>
                         {isLoading ? (
-                            <div className='flex items-center justify-center py-10'>
-                                <LoadingSpinner />
-                            </div>
+                            <LoadingSpinner className='h-full w-full' />
                         ) : isError ? (
                             <div className='py-10 text-center text-destructive'>
                                 Failed to load purchase deal data

@@ -1,19 +1,37 @@
-import { useMemo } from 'react'
-import { useSearchParams } from 'react-router'
-import { ConfigDrawer } from '@/components/config-drawer'
-import { superAdminSidebarData } from '@/components/layout/data'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { LoadingSpinner } from '@/components/loading-spinner'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
-import { MillsDialogs } from './components/mills-dialogs'
-import { MillsPrimaryButtons } from './components/mills-primary-buttons'
-import { MillsProvider } from './components/mills-provider'
-import { MillsTable } from './components/mills-table'
-import { useMillsList } from './data/hooks'
-import type { MillStatus } from './data/schema'
+import { useMemo } from 'react';
+import { useSearchParams } from 'react-router';
+import { ConfigDrawer } from '@/components/config-drawer';
+import { superAdminSidebarData } from '@/components/layout/data';
+import { Header } from '@/components/layout/header';
+import { Main } from '@/components/layout/main';
+import { LoadingSpinner } from '@/components/loading-spinner';
+import { ProfileDropdown } from '@/components/profile-dropdown';
+import { Search } from '@/components/search';
+import { ThemeSwitch } from '@/components/theme-switch';
+import { MillsDialogs } from './components/mills-dialogs';
+import { MillsPrimaryButtons } from './components/mills-primary-buttons';
+import { MillsProvider } from './components/mills-provider';
+import { MillsTable } from './components/mills-table';
+import { useMillsList } from './data/hooks';
+import type { MillStatus } from './data/schema';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export function Mills() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -102,9 +120,7 @@ export function Mills() {
                     <MillsPrimaryButtons />
                 </div>
                 {isLoading ? (
-                    <div className='flex items-center justify-center py-10'>
-                        <LoadingSpinner />
-                    </div>
+                    <LoadingSpinner className='h-full w-full' />
                 ) : isError ? (
                     <div className='py-10 text-center text-destructive'>
                         Failed to load mills data

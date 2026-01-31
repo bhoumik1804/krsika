@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-import rateLimit from 'express-rate-limit'
+// import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
 import env from './config/env.js'
 import passport from './config/passport.js'
@@ -43,18 +43,6 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }))
 
 // Cookie parser
 app.use(cookieParser())
-app.set('trust proxy', 1)
-
-// Rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per windowMs
-    message: 'Too many requests from this IP, please try again later.',
-    standardHeaders: true,
-    legacyHeaders: false,
-})
-
-app.use('/api', limiter)
 
 // Passport initialization
 app.use(passport.initialize())

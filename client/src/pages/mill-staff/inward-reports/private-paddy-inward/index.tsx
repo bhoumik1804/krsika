@@ -1,18 +1,35 @@
-import { useMemo } from 'react'
-import { useParams, useSearchParams } from 'react-router'
-import { ConfigDrawer } from '@/components/config-drawer'
-import { getMillAdminSidebarData } from '@/components/layout/data'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { LoadingSpinner } from '@/components/loading-spinner'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
-import { PrivatePaddyInwardDialogs } from './components/private-paddy-inward-dialogs'
-import { PrivatePaddyInwardPrimaryButtons } from './components/private-paddy-inward-primary-buttons'
-import { PrivatePaddyInwardProvider } from './components/private-paddy-inward-provider'
-import { PrivatePaddyInwardTable } from './components/private-paddy-inward-table'
-import { usePrivatePaddyInwardList } from './data/hooks'
+import { useMemo } from 'react';
+import { useParams, useSearchParams } from 'react-router';
+import { ConfigDrawer } from '@/components/config-drawer';
+import { getMillAdminSidebarData } from '@/components/layout/data';
+import { Header } from '@/components/layout/header';
+import { Main } from '@/components/layout/main';
+import { LoadingSpinner } from '@/components/loading-spinner';
+import { ProfileDropdown } from '@/components/profile-dropdown';
+import { Search } from '@/components/search';
+import { ThemeSwitch } from '@/components/theme-switch';
+import { PrivatePaddyInwardDialogs } from './components/private-paddy-inward-dialogs';
+import { PrivatePaddyInwardPrimaryButtons } from './components/private-paddy-inward-primary-buttons';
+import { PrivatePaddyInwardProvider } from './components/private-paddy-inward-provider';
+import { PrivatePaddyInwardTable } from './components/private-paddy-inward-table';
+import { usePrivatePaddyInwardList } from './data/hooks';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export function PrivatePaddyInwardReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -114,9 +131,7 @@ export function PrivatePaddyInwardReport() {
                     <PrivatePaddyInwardPrimaryButtons />
                 </div>
                 {isLoading ? (
-                    <div className='flex items-center justify-center py-10'>
-                        <LoadingSpinner />
-                    </div>
+                    <LoadingSpinner className='h-full w-full' />
                 ) : isError ? (
                     <div className='py-10 text-center text-destructive'>
                         Failed to load private paddy inward data

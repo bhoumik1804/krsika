@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useAuthStore } from '@/stores/auth-store'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -26,6 +25,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useRegisterMill } from '../data/hooks'
+import { useUser } from '../hooks'
 
 const formSchema = z.object({
     millName: z
@@ -33,10 +33,7 @@ const formSchema = z.object({
         .min(1, 'Mill name is required')
         .max(200, 'Mill name is too long'),
     contact: z.object({
-        email: z
-            .string()
-            .email('Invalid email address')
-            .max(255, 'Email is too long'),
+        email: z.email('Invalid email address'),
         phone: z
             .string()
             .min(10, 'Phone number must be at least 10 digits')
@@ -66,7 +63,7 @@ export function MillRegistrationDialog({
     open: controlledOpen,
     onOpenChange: setControlledOpen,
 }: MillRegistrationDialogProps) {
-    const { user } = useAuthStore()
+    const { user } = useUser()
     const [internalOpen, setInternalOpen] = useState(false)
     const isControlled = controlledOpen !== undefined
     const open = isControlled ? controlledOpen : internalOpen
@@ -79,7 +76,7 @@ export function MillRegistrationDialog({
         defaultValues: {
             millName: '',
             contact: {
-                email: user?.email || '',
+                email: user?.email ?? '',
                 phone: '',
                 address: '',
             },

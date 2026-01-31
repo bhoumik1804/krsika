@@ -1,20 +1,77 @@
-import { useMemo } from 'react'
-import { UserCog } from 'lucide-react'
-import { useParams, useSearchParams } from 'react-router'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ConfigDrawer } from '@/components/config-drawer'
-import { getMillStaffSidebarData } from '@/components/layout/data'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { LoadingSpinner } from '@/components/loading-spinner'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
-import { StaffDialogs } from './components/staff-dialogs'
-import { StaffProvider } from './components/staff-provider'
-import { StaffTable } from './components/staff-table'
-import { useStaffList } from './data/hooks'
-import type { StaffRole } from './data/types'
+import { useMemo } from 'react';
+import { UserCog } from 'lucide-react';
+import { useParams, useSearchParams } from 'react-router';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ConfigDrawer } from '@/components/config-drawer';
+import { getMillStaffSidebarData } from '@/components/layout/data';
+import { Header } from '@/components/layout/header';
+import { Main } from '@/components/layout/main';
+import { LoadingSpinner } from '@/components/loading-spinner';
+import { ProfileDropdown } from '@/components/profile-dropdown';
+import { Search } from '@/components/search';
+import { ThemeSwitch } from '@/components/theme-switch';
+import { StaffDialogs } from './components/staff-dialogs';
+import { StaffProvider } from './components/staff-provider';
+import { StaffTable } from './components/staff-table';
+import { useStaffList } from './data/hooks';
+import type { StaffRole } from './data/types';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export function MillStaffStaff() {
     const { millId } = useParams<{ millId: string; staffId: string }>()
@@ -118,9 +175,7 @@ export function MillStaffStaff() {
                     </TabsList>
                     <TabsContent value='all' className='space-y-4'>
                         {isLoading ? (
-                            <div className='flex items-center justify-center py-10'>
-                                <LoadingSpinner />
-                            </div>
+                            <LoadingSpinner className='h-full w-full' />
                         ) : isError ? (
                             <div className='py-10 text-center text-destructive'>
                                 Failed to load staff data
@@ -135,9 +190,7 @@ export function MillStaffStaff() {
                     </TabsContent>
                     <TabsContent value='active' className='space-y-4'>
                         {isLoading ? (
-                            <div className='flex items-center justify-center py-10'>
-                                <LoadingSpinner />
-                            </div>
+                            <LoadingSpinner className='h-full w-full' />
                         ) : (
                             <StaffTable
                                 data={activeStaff}
@@ -148,9 +201,7 @@ export function MillStaffStaff() {
                     </TabsContent>
                     <TabsContent value='suspended' className='space-y-4'>
                         {isLoading ? (
-                            <div className='flex items-center justify-center py-10'>
-                                <LoadingSpinner />
-                            </div>
+                            <LoadingSpinner className='h-full w-full' />
                         ) : (
                             <StaffTable
                                 data={suspendedStaff}

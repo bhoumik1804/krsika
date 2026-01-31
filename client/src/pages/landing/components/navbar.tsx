@@ -41,7 +41,6 @@ export function Navbar() {
     const handleGoToDashboard = () => {
         if (user) {
             const path = getDashboardPath(user)
-            alert(path)
             navigate(path)
         }
     }

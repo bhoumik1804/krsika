@@ -1,18 +1,35 @@
-import { useMemo } from 'react'
-import { useOtherInwardList } from '@/pages/mill-staff/inwards/other-inward/data/hooks'
-import { useParams, useSearchParams } from 'react-router'
-import { ConfigDrawer } from '@/components/config-drawer'
-import { getMillAdminSidebarData } from '@/components/layout/data'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { LoadingSpinner } from '@/components/loading-spinner'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
-import { OtherInwardDialogs } from './components/other-inward-dialogs'
-import { OtherInwardPrimaryButtons } from './components/other-inward-primary-buttons'
-import { OtherInwardProvider } from './components/other-inward-provider'
-import { OtherInwardTable } from './components/other-inward-table'
+import { useMemo } from 'react';
+import { useOtherInwardList } from '@/pages/mill-staff/inwards/other-inward/data/hooks';
+import { useParams, useSearchParams } from 'react-router';
+import { ConfigDrawer } from '@/components/config-drawer';
+import { getMillAdminSidebarData } from '@/components/layout/data';
+import { Header } from '@/components/layout/header';
+import { Main } from '@/components/layout/main';
+import { LoadingSpinner } from '@/components/loading-spinner';
+import { ProfileDropdown } from '@/components/profile-dropdown';
+import { Search } from '@/components/search';
+import { ThemeSwitch } from '@/components/theme-switch';
+import { OtherInwardDialogs } from './components/other-inward-dialogs';
+import { OtherInwardPrimaryButtons } from './components/other-inward-primary-buttons';
+import { OtherInwardProvider } from './components/other-inward-provider';
+import { OtherInwardTable } from './components/other-inward-table';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export function OtherInwardReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -95,9 +112,7 @@ export function OtherInwardReport() {
                     <OtherInwardPrimaryButtons />
                 </div>
                 {isLoading ? (
-                    <div className='flex items-center justify-center py-10'>
-                        <LoadingSpinner />
-                    </div>
+                    <LoadingSpinner className='h-full w-full' />
                 ) : isError ? (
                     <div className='py-10 text-center text-destructive'>
                         Failed to load other inward data

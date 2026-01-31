@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { MILL_STATUS } from '../constants/mill.status.enum.js'
+import { ROLES } from '../constants/user.roles.enum.js'
 import { Mill } from '../models/mill.model.js'
 import { User } from '../models/user.model.js'
 import logger from '../utils/logger.js'
@@ -50,6 +51,10 @@ export const createMillEntry = async (data, userId) => {
         })
 
         await mill.save()
+
+        const user = await User.findById(userId)
+        user.millId = mill._id
+        await user.save()
 
         logger.info('Mill created', {
             id: mill._id,
@@ -367,8 +372,17 @@ export const verifyMillEntry = async (id, status, rejectionReason, userId) => {
             throw error
         }
 
-        mill.status = status
-
+        // Find the user associated with this mill
+        const user = await User.findOne({ millId: mill._id })
+        if (!user) {
+            const error = new Error('No user associated with this mill')
+            error.statusCode = 404
+            throw error
+        }
+        user.role =
+            status === MILL_STATUS.ACTIVE ? ROLES.MILL_ADMIN : ROLES.GUEST_USER
+        await user.save()
+        mill.status = MILL_STATUS.ACTIVE
         await mill.save()
 
         logger.info('Mill verified', {

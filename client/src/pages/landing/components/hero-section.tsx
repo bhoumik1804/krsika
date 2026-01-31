@@ -1,8 +1,11 @@
 import { ArrowRight, Play, Sparkles } from 'lucide-react'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
+import { useUser } from '../hooks'
 import { MillRegistrationDialog } from './mill-registration-dialog'
 
 export function HeroSection() {
+    const { isAuthenticated } = useUser()
     return (
         <section className='relative flex min-h-screen items-center justify-center overflow-hidden pt-16'>
             {/* Background Gradient */}
@@ -43,17 +46,30 @@ export function HeroSection() {
                     </p>
 
                     <div className='flex flex-col items-center justify-center gap-4 sm:flex-row'>
-                        <MillRegistrationDialog
-                            trigger={
-                                <Button
-                                    size='lg'
-                                    className='group h-12 px-8 text-base'
-                                >
+                        {isAuthenticated ? (
+                            <MillRegistrationDialog
+                                trigger={
+                                    <Button
+                                        size='lg'
+                                        className='group h-12 px-8 text-base'
+                                    >
+                                        Get Started
+                                        <ArrowRight className='ml-2 h-4 w-4 transition-transform group-hover:translate-x-1' />
+                                    </Button>
+                                }
+                            />
+                        ) : (
+                            <Button
+                                size='lg'
+                                className='group h-12 px-8 text-base'
+                                asChild
+                            >
+                                <Link to='/sign-up'>
                                     Get Started
                                     <ArrowRight className='ml-2 h-4 w-4 transition-transform group-hover:translate-x-1' />
-                                </Button>
-                            }
-                        />
+                                </Link>
+                            </Button>
+                        )}
                         <Button
                             size='lg'
                             variant='outline'

@@ -6,6 +6,70 @@ import logger from '../utils/logger.js'
 import { createMillEntry } from './mills.service.js'
 
 /**
+ * Register a new user (Signup)
+ * Used by: Signup endpoint for new users
+ * Returns: User object with access and refresh tokens
+ */
+export const signupUser = async (
+    fullName,
+    email,
+    password,
+    userAgent,
+    ipAddress
+) => {
+    try {
+        // Check if user already exists
+        const existingUser = await User.findOne({ email })
+        if (existingUser) {
+            const error = new Error('User with this email already exists')
+            error.statusCode = 409
+            throw error
+        }
+
+        // Create new user with GUEST_USER role
+        const user = new User({
+            fullName,
+            email,
+            password,
+            role: ROLES.GUEST_USER,
+            isActive: true,
+        })
+
+        await user.save()
+
+        // Generate tokens
+        const accessToken = user.generateAccessToken()
+        const refreshToken = user.generateRefreshToken()
+
+        // Save refresh token
+        user.refreshToken = refreshToken
+        await user.save()
+
+        logger.info('User signup successful', {
+            userId: user._id,
+            email: user.email,
+            role: user.role,
+            ipAddress,
+            userAgent,
+        })
+
+        // Return user without password
+        const userResponse = user.toObject()
+        delete userResponse.password
+        delete userResponse.refreshToken
+
+        return {
+            user: userResponse,
+            accessToken,
+            refreshToken,
+        }
+    } catch (error) {
+        logger.error('Signup failed', { email, error: error.message })
+        throw error
+    }
+}
+
+/**
  * Authenticate user with email and password
  * Used by: Login endpoint for all user roles
  * Returns: User object with access and refresh tokens
@@ -540,7 +604,7 @@ export const logoutUser = async (userId) => {
  * Used by: Public registration endpoint
  * Status: PENDING_VERIFICATION
  */
-export const registerNewMill = async (data) => {
+export const registerNewMill = async (data, userId) => {
     try {
         // Force status to PENDING_VERIFICATION
         const millData = {
@@ -548,24 +612,16 @@ export const registerNewMill = async (data) => {
             millStatus: MILL_STATUS.PENDING_VERIFICATION,
         }
 
-        const user = await User.findById(req.user._id).select(
-            '-password -refreshToken'
-        )
+        const mill = await createMillEntry(millData, userId)
 
-        if (!user.millId) {
-            const mill = await createMillEntry(millData, millStatus)
-            user.millId = mill._id
-            await user.save()
-        }
-
-        logger.info('Public mill registration successful', {
+        logger.info('mill registration successful', {
             millId: mill._id,
             email: mill.contact.email,
         })
 
         return mill
     } catch (error) {
-        logger.error('Public mill registration failed', {
+        logger.error('mill registration failed', {
             error: error.message,
         })
         throw error

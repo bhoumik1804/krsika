@@ -28,15 +28,16 @@ export function ProtectedRoute({
     fallbackPath = '/403',
 }: ProtectedRouteProps) {
     const user = useAuthStore((state) => state.user)
+    const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
     const { isLoading } = useUser()
 
     // Show loading while checking authentication
     if (isLoading) {
-        return <LoadingSpinner />
+        return <LoadingSpinner className='h-screen w-screen' />
     }
 
     // Not authenticated
-    if (!user) {
+    if (!user || !isAuthenticated) {
         return <Navigate to='/sign-in' replace />
     }
 

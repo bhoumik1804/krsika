@@ -1,9 +1,24 @@
 import { z } from 'zod'
 import { createMillSchema } from './mills.validator.js'
 
+export const signupSchema = z.object({
+    body: z.object({
+        fullName: z
+            .string({ required_error: 'Full name is required' })
+            .trim()
+            .min(1, 'Full name cannot be empty')
+            .max(100, 'Full name is too long'),
+        email: z.email('Invalid email address'),
+        password: z
+            .string({ required_error: 'Password is required' })
+            .min(6, 'Password must be at least 6 characters long')
+            .max(100, 'Password is too long'),
+    }),
+})
+
 export const loginSchema = z.object({
     body: z.object({
-        email: z.string().email('Invalid email address'),
+        email: z.email('Invalid email address'),
         password: z
             .string({ required_error: 'Password is required' })
             .min(1, 'Password cannot be empty'),

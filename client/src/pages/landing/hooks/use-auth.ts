@@ -10,6 +10,7 @@ import { useAuthStore } from '@/stores/auth-store'
 import {
     fetchUser,
     loginWithCredentials,
+    signupWithCredentials,
     logout,
     initiateGoogleLogin,
     refreshToken,
@@ -111,6 +112,36 @@ export const useCredentialsLogin = () => {
     return {
         login: mutation.mutate,
         loginAsync: mutation.mutateAsync,
+        isLoading: mutation.isPending,
+        isError: mutation.isError,
+        error: mutation.error,
+        isSuccess: mutation.isSuccess,
+    }
+}
+
+// ==========================================
+// useSignup Hook
+// Signup with email and password
+// ==========================================
+
+export const useSignup = () => {
+    const queryClient = useQueryClient()
+    const { setUser } = useAuthStore()
+
+    const mutation = useMutation({
+        mutationFn: signupWithCredentials,
+        onSuccess: (user: User) => {
+            // Update React Query cache
+            queryClient.setQueryData(authKeys.user(), user)
+
+            // Update Zustand
+            setUser(user)
+        },
+    })
+
+    return {
+        signup: mutation.mutate,
+        signupAsync: mutation.mutateAsync,
         isLoading: mutation.isPending,
         isError: mutation.isError,
         error: mutation.error,

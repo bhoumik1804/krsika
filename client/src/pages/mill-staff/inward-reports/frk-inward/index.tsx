@@ -1,18 +1,35 @@
-import { useMemo } from 'react'
-import { useFrkInwardList } from '@/pages/mill-staff/inwards/frk-inward/data/hooks'
-import { useParams, useSearchParams } from 'react-router'
-import { ConfigDrawer } from '@/components/config-drawer'
-import { getMillAdminSidebarData } from '@/components/layout/data'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { LoadingSpinner } from '@/components/loading-spinner'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
-import { FrkInwardDialogs } from './components/frk-inward-dialogs'
-import { FrkInwardPrimaryButtons } from './components/frk-inward-primary-buttons'
-import { FrkInwardProvider } from './components/frk-inward-provider'
-import { FrkInwardTable } from './components/frk-inward-table'
+import { useMemo } from 'react';
+import { useFrkInwardList } from '@/pages/mill-staff/inwards/frk-inward/data/hooks';
+import { useParams, useSearchParams } from 'react-router';
+import { ConfigDrawer } from '@/components/config-drawer';
+import { getMillAdminSidebarData } from '@/components/layout/data';
+import { Header } from '@/components/layout/header';
+import { Main } from '@/components/layout/main';
+import { LoadingSpinner } from '@/components/loading-spinner';
+import { ProfileDropdown } from '@/components/profile-dropdown';
+import { Search } from '@/components/search';
+import { ThemeSwitch } from '@/components/theme-switch';
+import { FrkInwardDialogs } from './components/frk-inward-dialogs';
+import { FrkInwardPrimaryButtons } from './components/frk-inward-primary-buttons';
+import { FrkInwardProvider } from './components/frk-inward-provider';
+import { FrkInwardTable } from './components/frk-inward-table';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export function FrkInwardReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -93,9 +110,7 @@ export function FrkInwardReport() {
                     <FrkInwardPrimaryButtons />
                 </div>
                 {isLoading ? (
-                    <div className='flex items-center justify-center py-10'>
-                        <LoadingSpinner />
-                    </div>
+                    <LoadingSpinner className='h-full w-full' />
                 ) : isError ? (
                     <div className='py-10 text-center text-destructive'>
                         Failed to load FRK inward data
