@@ -12,6 +12,7 @@
         "seed:admin": "node src/scripts/seed-admin.js",
         "seed:pricing": "node src/scripts/seed-pricing-plans.js",
         "prebuild": "npm run seed:admin",
+        "postinstall": "npm run prebuild",
         "format": "prettier --write \"src/**/*.js\"",
         "format:check": "prettier --check \"src/**/*.js\"",
         "test": "NODE_ENV=test jest --coverage --detectOpenHandles",
@@ -39,6 +40,7 @@
         "passport-google-oauth20": "^2.0.0",
         "passport-jwt": "^4.0.1",
         "passport-local": "^1.0.0",
+        "postinstall": "^0.11.2",
         "winston": "^3.19.0",
         "winston-daily-rotate-file": "^5.0.0",
         "zod": "^4.3.6"
