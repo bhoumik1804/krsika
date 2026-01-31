@@ -117,8 +117,8 @@ function RecentEntries() {
 }
 
 export function MillStaffDashboard() {
-    const { millId, staffId } = useParams<{ millId: string; staffId: string }>()
-    const sidebarData = getMillStaffSidebarData(millId || '', staffId || '')
+    const { millId } = useParams<{ millId: string; staffId: string }>()
+    const sidebarData = getMillStaffSidebarData(millId || '')
 
     const [todayAttendance, setTodayAttendance] =
         useState<AttendanceStatus | null>(null)

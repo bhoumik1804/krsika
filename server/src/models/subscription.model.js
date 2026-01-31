@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose'
+import { model, Schema } from 'mongoose'
 import { SUBSCRIPTION_BILLING_CYCLE } from '../constants/subscription.billing.cycle.enum.js'
 import { SUBSCRIPTION_STATUS } from '../constants/subscription.status.enum.js'
 
@@ -32,3 +32,5 @@ const SubscriptionSchema = new Schema(
     },
     { timestamps: true }
 )
+
+export const Subscription = model('Subscription', SubscriptionSchema)

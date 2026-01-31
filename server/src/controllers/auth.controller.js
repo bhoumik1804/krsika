@@ -10,20 +10,10 @@ import {
     getUserById,
     updateUserProfile,
     changeUserPassword,
-} from '../services/authService.js'
-import {
-    verifyGoogleToken,
-    findOrCreateGoogleUser,
-} from '../services/googleAuthService.js'
-import {
-    generateAccessToken,
-    generateRefreshToken,
-    verifyRefreshToken,
-    findRefreshToken,
-    saveRefreshToken,
-    revokeRefreshToken,
-    revokeAllUserTokens,
-} from '../services/tokenService.js'
+    refreshAccessToken,
+    logoutUser,
+    generateUserTokens,
+} from '../services/auth.service.js'
 import logger from '../utils/logger.js'
 
 export const login = async (req, res, next) => {
@@ -38,43 +28,18 @@ export const login = async (req, res, next) => {
             userAgent,
             ipAddress
         )
-
+        console.table(user)
+        console.table(accessToken)
+        console.table(refreshToken)
         // Set cookies
-        res.cookie('access_token', accessToken, accessTokenCookieOptions)
-        res.cookie('refresh_token', refreshToken, refreshTokenCookieOptions)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { user },
-            message: 'Login successful',
-        })
-    } catch (error) {
-        next(error)
-    }
-}
-
-export const googleLogin = async (req, res, next) => {
-    try {
-        const { token } = req.body
-        const userAgent = req.get('user-agent')
-        const ipAddress = req.ip
-
-        const { user, accessToken, refreshToken } = await verifyGoogleToken(
-            token,
-            userAgent,
-            ipAddress
-        )
-
-        // Set cookies
-        res.cookie('access_token', accessToken, accessTokenCookieOptions)
-        res.cookie('refresh_token', refreshToken, refreshTokenCookieOptions)
+        res.cookie('accessToken', accessToken, accessTokenCookieOptions)
+        res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions)
 
         res.status(200).json({
             success: true,
             statusCode: 200,
             data: user,
-            message: 'Google login successful',
+            message: 'Login successful',
         })
     } catch (error) {
         next(error)
@@ -106,29 +71,14 @@ export const googleCallback = (req, res, next) => {
                     return res.redirect(`${env.CLIENT_URL}/auth/google-error`)
                 }
 
-                const userAgent = req.get('user-agent')
-                const ipAddress = req.ip
-
                 // Generate tokens
-                const accessToken = generateAccessToken(user._id)
-                const refreshToken = generateRefreshToken(user._id)
-
-                // Save refresh token
-                await saveRefreshToken(
-                    user._id,
-                    refreshToken,
-                    userAgent,
-                    ipAddress
-                )
+                const { accessToken, refreshToken } =
+                    await generateUserTokens(user)
 
                 // Set cookies
+                res.cookie('accessToken', accessToken, accessTokenCookieOptions)
                 res.cookie(
-                    'access_token',
-                    accessToken,
-                    accessTokenCookieOptions
-                )
-                res.cookie(
-                    'refresh_token',
+                    'refreshToken',
                     refreshToken,
                     refreshTokenCookieOptions
                 )
@@ -145,46 +95,20 @@ export const googleCallback = (req, res, next) => {
 
 export const refreshToken = async (req, res, next) => {
     try {
-        const refreshToken = req.cookies.refresh_token
+        const token = req.cookies.refreshToken
 
-        if (!refreshToken) {
+        if (!token) {
             const error = new Error('Refresh token not found')
             error.statusCode = 401
-            error.code = 'REFRESH_TOKEN_MISSING'
             throw error
         }
 
-        // Verify token
-        const decoded = verifyRefreshToken(refreshToken)
-
-        // Find token in database
-        const tokenDoc = await findRefreshToken(refreshToken)
-
-        if (!tokenDoc || tokenDoc.isRevoked) {
-            const error = new Error('Invalid refresh token')
-            error.statusCode = 401
-            error.code = 'INVALID_REFRESH_TOKEN'
-            throw error
-        }
-
-        // Get user
-        const user = await getUserById(decoded.userId)
-
-        // Generate new tokens
-        const newAccessToken = generateAccessToken(user._id)
-        const newRefreshToken = generateRefreshToken(user._id)
-
-        // Revoke old refresh token
-        await revokeRefreshToken(tokenDoc._id)
-
-        // Save new refresh token
-        const userAgent = req.get('user-agent')
-        const ipAddress = req.ip
-        await saveRefreshToken(user._id, newRefreshToken, userAgent, ipAddress)
+        const { accessToken, refreshToken, user } =
+            await refreshAccessToken(token)
 
         // Set new cookies
-        res.cookie('access_token', newAccessToken, accessTokenCookieOptions)
-        res.cookie('refresh_token', newRefreshToken, refreshTokenCookieOptions)
+        res.cookie('accessToken', accessToken, accessTokenCookieOptions)
+        res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions)
 
         res.status(200).json({
             success: true,
@@ -199,11 +123,11 @@ export const refreshToken = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
     try {
-        await revokeAllUserTokens(req.user._id)
+        await logoutUser(req.user._id)
 
         // Clear cookies
-        res.clearCookie('access_token', clearCookieOptions)
-        res.clearCookie('refresh_token', {
+        res.clearCookie('accessToken', clearCookieOptions)
+        res.clearCookie('refreshToken', {
             ...clearCookieOptions,
             path: '/api/auth/refresh',
         })
@@ -254,8 +178,8 @@ export const changePassword = async (req, res, next) => {
         await changeUserPassword(req.user._id, currentPassword, newPassword)
 
         // Revoke all tokens, user needs to login again
-        res.clearCookie('access_token', clearCookieOptions)
-        res.clearCookie('refresh_token', {
+        res.clearCookie('accessToken', clearCookieOptions)
+        res.clearCookie('refreshToken', {
             ...clearCookieOptions,
             path: '/api/auth/refresh',
         })

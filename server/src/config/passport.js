@@ -2,7 +2,8 @@ import passport from 'passport'
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
 import { Strategy as LocalStrategy } from 'passport-local'
-import User from '../models/User.js'
+import '../models/mill.model.js'
+import { User } from '../models/user.model.js'
 import logger from '../utils/logger.js'
 import env from './env.js'
 
@@ -10,7 +11,7 @@ import env from './env.js'
 const cookieExtractor = (req) => {
     let token = null
     if (req && req.cookies) {
-        token = req.cookies['access_token']
+        token = req.cookies['accessToken']
     }
     return token
 }
@@ -39,7 +40,6 @@ passport.use(
                 if (!isPasswordValid) {
                     return done(null, false, { message: 'Invalid credentials' })
                 }
-
                 return done(null, user)
             } catch (error) {
                 logger.error('Local strategy error:', error)
@@ -58,9 +58,7 @@ passport.use(
         },
         async (payload, done) => {
             try {
-                const user = await User.findById(payload.userId).populate(
-                    'millId'
-                )
+                const user = await User.findById(payload.id).populate('millId')
 
                 if (!user) {
                     return done(null, false)
@@ -89,6 +87,7 @@ if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
                 callbackURL: env.GOOGLE_REDIRECT_URI,
             },
             async (accessToken, refreshToken, profile, done) => {
+                console.log(profile)
                 try {
                     const {
                         id: googleId,
@@ -125,7 +124,7 @@ if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
                     if (!user) {
                         user = await User.create({
                             email,
-                            name: displayName,
+                            fullName: displayName,
                             googleId,
                             avatar,
                             isActive: true,

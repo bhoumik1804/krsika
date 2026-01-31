@@ -12,6 +12,8 @@ const userSchema = new Schema(
         email: {
             type: String,
         },
+        googleId: { type: String },
+        avatar: { type: String },
         password: { type: String }, // Store Bcrypt hash, not plain text
         role: {
             type: String,
@@ -44,11 +46,10 @@ const userSchema = new Schema(
     },
     { timestamps: true }
 )
-userSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next()
+userSchema.pre('save', async function () {
+    if (!this.isModified('password')) return
 
     this.password = await bcrypt.hash(this.password, 10)
-    next()
 })
 
 userSchema.methods.isPasswordCorrect = async function (password) {
@@ -66,7 +67,7 @@ userSchema.methods.generateAccessToken = function () {
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
         }
     )
 }
@@ -80,7 +81,7 @@ userSchema.methods.generateRefreshToken = function () {
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
-            expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
         }
     )
 }

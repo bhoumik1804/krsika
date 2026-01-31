@@ -64,8 +64,8 @@ const PAYMENT_CATEGORIES: DealItem[] = [
 ]
 
 export function DailyReportsOverview() {
-    const { millId, staffId } = useParams<{ millId: string; staffId: string }>()
-    const sidebarData = getMillStaffSidebarData(millId || '', staffId || '')
+    const { millId } = useParams<{ millId: string; staffId: string }>()
+    const sidebarData = getMillStaffSidebarData(millId || '')
 
     return (
         <>

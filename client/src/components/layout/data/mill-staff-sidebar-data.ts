@@ -16,8 +16,7 @@ import {
 import { type SidebarData } from '../types'
 
 export const getMillStaffSidebarData = (
-    millId: string,
-    staffId: string
+    millId: string
 ): SidebarData => ({
     user: {
         name: 'Staff Member',
@@ -31,7 +30,7 @@ export const getMillStaffSidebarData = (
             items: [
                 {
                     title: 'Overview',
-                    url: `/staff/${millId}/${staffId}`,
+                    url: `/staff/${millId}`,
                     icon: LayoutDashboard,
                 },
             ],
@@ -41,7 +40,7 @@ export const getMillStaffSidebarData = (
             items: [
                 {
                     title: 'Staff Directory',
-                    url: `/staff/${millId}/${staffId}/manage/staff`,
+                    url: `/staff/${millId}/manage/staff`,
                     icon: UserCog,
                 },
             ],
@@ -51,27 +50,27 @@ export const getMillStaffSidebarData = (
             items: [
                 {
                     title: 'Paddy Purchase Report',
-                    url: `/staff/${millId}/${staffId}/purchases/paddy/report`,
+                    url: `/staff/${millId}/purchases/paddy/report`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Rice Purchase Report',
-                    url: `/staff/${millId}/${staffId}/purchases/rice/report`,
+                    url: `/staff/${millId}/purchases/rice/report`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Gunny Purchase Report',
-                    url: `/staff/${millId}/${staffId}/purchases/gunny/report`,
+                    url: `/staff/${millId}/purchases/gunny/report`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'FRK Purchase Report',
-                    url: `/staff/${millId}/${staffId}/purchases/frk/report`,
+                    url: `/staff/${millId}/purchases/frk/report`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Other Purchase Report',
-                    url: `/staff/${millId}/${staffId}/purchases/other/report`,
+                    url: `/staff/${millId}/purchases/other/report`,
                     icon: FileBarChart,
                 },
             ],
@@ -81,32 +80,32 @@ export const getMillStaffSidebarData = (
             items: [
                 {
                     title: 'Rice Sales Report',
-                    url: `/staff/${millId}/${staffId}/sales/rice/report`,
+                    url: `/staff/${millId}/sales/rice/report`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Paddy Sales Report',
-                    url: `/staff/${millId}/${staffId}/sales/paddy/report`,
+                    url: `/staff/${millId}/sales/paddy/report`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Gunny Sales Report',
-                    url: `/staff/${millId}/${staffId}/sales/gunny/report`,
+                    url: `/staff/${millId}/sales/gunny/report`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Khanda Sales Report',
-                    url: `/staff/${millId}/${staffId}/sales/khanda/report`,
+                    url: `/staff/${millId}/sales/khanda/report`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Nakkhi Sales Report',
-                    url: `/staff/${millId}/${staffId}/sales/nakkhi/report`,
+                    url: `/staff/${millId}/sales/nakkhi/report`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Other Sales Report',
-                    url: `/staff/${millId}/${staffId}/sales/other/report`,
+                    url: `/staff/${millId}/sales/other/report`,
                     icon: FileBarChart,
                 },
             ],
@@ -116,42 +115,42 @@ export const getMillStaffSidebarData = (
             items: [
                 {
                     title: 'Party Report',
-                    url: `/staff/${millId}/${staffId}/input/reports/party`,
+                    url: `/staff/${millId}/input/reports/party`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Transporter Report',
-                    url: `/staff/${millId}/${staffId}/input/reports/transporter`,
+                    url: `/staff/${millId}/input/reports/transporter`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Broker Report',
-                    url: `/staff/${millId}/${staffId}/input/reports/broker`,
+                    url: `/staff/${millId}/input/reports/broker`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Committee Report',
-                    url: `/staff/${millId}/${staffId}/input/reports/committee`,
+                    url: `/staff/${millId}/input/reports/committee`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'DO Report',
-                    url: `/staff/${millId}/${staffId}/input/reports/do`,
+                    url: `/staff/${millId}/input/reports/do`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Vehicle Report',
-                    url: `/staff/${millId}/${staffId}/input/reports/vehicle`,
+                    url: `/staff/${millId}/input/reports/vehicle`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Staff Report',
-                    url: `/staff/${millId}/${staffId}/input/reports/staff`,
+                    url: `/staff/${millId}/input/reports/staff`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Labour Group Report',
-                    url: `/staff/${millId}/${staffId}/input/reports/labour-group`,
+                    url: `/staff/${millId}/input/reports/labour-group`,
                     icon: FileBarChart,
                 },
             ],
@@ -161,17 +160,17 @@ export const getMillStaffSidebarData = (
             items: [
                 {
                     title: 'Reports Overview',
-                    url: `/staff/${millId}/${staffId}/daily/reports`,
+                    url: `/staff/${millId}/daily/reports`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Receipt',
-                    url: `/staff/${millId}/${staffId}/daily/reports/receipt`,
+                    url: `/staff/${millId}/daily/reports/receipt`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Payment',
-                    url: `/staff/${millId}/${staffId}/daily/reports/payment`,
+                    url: `/staff/${millId}/daily/reports/payment`,
                     icon: FileBarChart,
                 },
             ],
@@ -181,7 +180,7 @@ export const getMillStaffSidebarData = (
             items: [
                 {
                     title: 'Stock Overview',
-                    url: `/staff/${millId}/${staffId}/stock/overview/report`,
+                    url: `/staff/${millId}/stock/overview/report`,
                     icon: Package,
                 },
             ],
@@ -191,12 +190,12 @@ export const getMillStaffSidebarData = (
             items: [
                 {
                     title: "Broker's Transaction",
-                    url: `/staff/${millId}/${staffId}/transaction/broker`,
+                    url: `/staff/${millId}/transaction/broker`,
                     icon: ArrowLeftRight,
                 },
                 {
                     title: "Party's Transaction",
-                    url: `/staff/${millId}/${staffId}/transaction/party`,
+                    url: `/staff/${millId}/transaction/party`,
                     icon: ArrowLeftRight,
                 },
             ],
@@ -206,22 +205,22 @@ export const getMillStaffSidebarData = (
             items: [
                 {
                     title: 'Report on Balance Lifting of Paddy Purchases',
-                    url: `/staff/${millId}/${staffId}/balance/lifting/report/purchases/paddy`,
+                    url: `/staff/${millId}/balance/lifting/report/purchases/paddy`,
                     icon: ShoppingCart,
                 },
                 {
                     title: 'Report on Balance Lifting of Rice Purchases',
-                    url: `/staff/${millId}/${staffId}/balance/lifting/report/purchases/rice`,
+                    url: `/staff/${millId}/balance/lifting/report/purchases/rice`,
                     icon: ShoppingCart,
                 },
                 {
                     title: 'Report on Balance Lifting of Gunny Purchases',
-                    url: `/staff/${millId}/${staffId}/balance/lifting/report/purchases/gunny`,
+                    url: `/staff/${millId}/balance/lifting/report/purchases/gunny`,
                     icon: ShoppingCart,
                 },
                 {
                     title: 'Report on Balance Lifting of FRK Purchases',
-                    url: `/staff/${millId}/${staffId}/balance/lifting/report/purchases/frk`,
+                    url: `/staff/${millId}/balance/lifting/report/purchases/frk`,
                     icon: ShoppingCart,
                 },
             ],
@@ -231,7 +230,7 @@ export const getMillStaffSidebarData = (
             items: [
                 {
                     title: 'Report on Balance Lifting of Paddy Sales from Mill',
-                    url: `/staff/${millId}/${staffId}/balance/lifting/report/sales/paddy`,
+                    url: `/staff/${millId}/balance/lifting/report/sales/paddy`,
                     icon: Receipt,
                 },
             ],
@@ -241,7 +240,7 @@ export const getMillStaffSidebarData = (
             items: [
                 {
                     title: 'Outward Balance Lifting Report of Rice Sales',
-                    url: `/staff/${millId}/${staffId}/outward/balance/lifting/report/rice`,
+                    url: `/staff/${millId}/outward/balance/lifting/report/rice`,
                     icon: Receipt,
                 },
             ],
@@ -255,27 +254,27 @@ export const getMillStaffSidebarData = (
                     items: [
                         {
                             title: 'Govt Paddy Inward Report',
-                            url: `/staff/${millId}/${staffId}/inward/govt/paddy/report`,
+                            url: `/staff/${millId}/inward/govt/paddy/report`,
                         },
                         {
                             title: 'Private Paddy Inward Report',
-                            url: `/staff/${millId}/${staffId}/inward/private/paddy/report`,
+                            url: `/staff/${millId}/inward/private/paddy/report`,
                         },
                         {
                             title: 'Rice Inward Report',
-                            url: `/staff/${millId}/${staffId}/inward/rice/report`,
+                            url: `/staff/${millId}/inward/rice/report`,
                         },
                         {
                             title: 'Gunny Inward Report',
-                            url: `/staff/${millId}/${staffId}/inward/gunny/report`,
+                            url: `/staff/${millId}/inward/gunny/report`,
                         },
                         {
                             title: 'Other Inward Report',
-                            url: `/staff/${millId}/${staffId}/inward/other/report`,
+                            url: `/staff/${millId}/inward/other/report`,
                         },
                         {
                             title: 'FRK Inward Report',
-                            url: `/staff/${millId}/${staffId}/inward/frk/report`,
+                            url: `/staff/${millId}/inward/frk/report`,
                         },
                     ],
                 },
@@ -285,51 +284,51 @@ export const getMillStaffSidebarData = (
                     items: [
                         {
                             title: 'Private Paddy Outward Report',
-                            url: `/staff/${millId}/${staffId}/outward/private/paddy/report`,
+                            url: `/staff/${millId}/outward/private/paddy/report`,
                         },
                         {
                             title: 'Private Rice Outward Report',
-                            url: `/staff/${millId}/${staffId}/outward/private/rice/report`,
+                            url: `/staff/${millId}/outward/private/rice/report`,
                         },
                         {
                             title: 'Govt Rice Outward Report',
-                            url: `/staff/${millId}/${staffId}/outward/govt/rice/report`,
+                            url: `/staff/${millId}/outward/govt/rice/report`,
                         },
                         {
                             title: 'Govt Gunny Outward Report',
-                            url: `/staff/${millId}/${staffId}/outward/govt/gunny/report`,
+                            url: `/staff/${millId}/outward/govt/gunny/report`,
                         },
                         {
                             title: 'Private Gunny Outward Report',
-                            url: `/staff/${millId}/${staffId}/outward/private/gunny/report`,
+                            url: `/staff/${millId}/outward/private/gunny/report`,
                         },
                         {
                             title: 'FRK Outward Report',
-                            url: `/staff/${millId}/${staffId}/outward/frk/report`,
+                            url: `/staff/${millId}/outward/frk/report`,
                         },
                         {
                             title: 'Khanda Outward Report',
-                            url: `/staff/${millId}/${staffId}/outward/khanda/report`,
+                            url: `/staff/${millId}/outward/khanda/report`,
                         },
                         {
                             title: 'Nakkhi Outward Report',
-                            url: `/staff/${millId}/${staffId}/outward/nakkhi/report`,
+                            url: `/staff/${millId}/outward/nakkhi/report`,
                         },
                         {
                             title: 'Bhusa Outward Report',
-                            url: `/staff/${millId}/${staffId}/outward/bhusa/report`,
+                            url: `/staff/${millId}/outward/bhusa/report`,
                         },
                         {
                             title: 'Kodha Outward Report',
-                            url: `/staff/${millId}/${staffId}/outward/kodha/report`,
+                            url: `/staff/${millId}/outward/kodha/report`,
                         },
                         {
                             title: 'Silky Kodha Outward Report',
-                            url: `/staff/${millId}/${staffId}/outward/silky-kodha/report`,
+                            url: `/staff/${millId}/outward/silky-kodha/report`,
                         },
                         {
                             title: 'Other Outward Report',
-                            url: `/staff/${millId}/${staffId}/outward/other/report`,
+                            url: `/staff/${millId}/outward/other/report`,
                         },
                     ],
                 },
@@ -340,12 +339,12 @@ export const getMillStaffSidebarData = (
             items: [
                 {
                     title: 'Paddy Milling Report',
-                    url: `/staff/${millId}/${staffId}/milling/paddy/report`,
+                    url: `/staff/${millId}/milling/paddy/report`,
                     icon: BarChart3,
                 },
                 {
                     title: 'Rice Milling Report',
-                    url: `/staff/${millId}/${staffId}/milling/rice/report`,
+                    url: `/staff/${millId}/milling/rice/report`,
                     icon: BarChart3,
                 },
             ],
@@ -355,22 +354,22 @@ export const getMillStaffSidebarData = (
             items: [
                 {
                     title: 'Inward Labour Cost Report',
-                    url: `/staff/${millId}/${staffId}/labour/inward/report`,
+                    url: `/staff/${millId}/labour/inward/report`,
                     icon: BarChart3,
                 },
                 {
                     title: 'Outward Labour Cost Report',
-                    url: `/staff/${millId}/${staffId}/labour/outward/report`,
+                    url: `/staff/${millId}/labour/outward/report`,
                     icon: BarChart3,
                 },
                 {
                     title: 'Milling Labour Cost Report',
-                    url: `/staff/${millId}/${staffId}/labour/milling/report`,
+                    url: `/staff/${millId}/labour/milling/report`,
                     icon: BarChart3,
                 },
                 {
                     title: 'Other Labour Cost Report',
-                    url: `/staff/${millId}/${staffId}/labour/other/report`,
+                    url: `/staff/${millId}/labour/other/report`,
                     icon: BarChart3,
                 },
             ],
@@ -380,12 +379,12 @@ export const getMillStaffSidebarData = (
             items: [
                 {
                     title: 'Financial Receipt Report',
-                    url: `/staff/${millId}/${staffId}/financial/transaction/receipt/report`,
+                    url: `/staff/${millId}/financial/transaction/receipt/report`,
                     icon: FileBarChart,
                 },
                 {
                     title: 'Financial Payment Report',
-                    url: `/staff/${millId}/${staffId}/financial/transaction/payment/report`,
+                    url: `/staff/${millId}/financial/transaction/payment/report`,
                     icon: FileBarChart,
                 },
             ],
@@ -399,19 +398,19 @@ export const getMillStaffSidebarData = (
                     items: [
                         {
                             title: 'Profile',
-                            url: `/staff/${millId}/${staffId}/profile`,
+                            url: `/staff/${millId}/profile`,
                             icon: UserCog,
                         },
                         {
                             title: 'Appearance',
-                            url: `/staff/${millId}/${staffId}/settings/appearance`,
+                            url: `/staff/${millId}/settings/appearance`,
                             icon: Palette,
                         },
                     ],
                 },
                 {
                     title: 'Help',
-                    url: `/staff/${millId}/${staffId}/help`,
+                    url: `/staff/${millId}/help`,
                     icon: HelpCircle,
                 },
             ],
@@ -420,17 +419,17 @@ export const getMillStaffSidebarData = (
     profileLinks: [
         {
             title: 'My Profile',
-            url: `/staff/${millId}/${staffId}/profile`,
+            url: `/staff/${millId}/profile`,
             icon: UserCog,
         },
         {
             title: 'Appearance',
-            url: `/staff/${millId}/${staffId}/settings/appearance`,
+            url: `/staff/${millId}/settings/appearance`,
             icon: Palette,
         },
         {
             title: 'Help',
-            url: `/staff/${millId}/${staffId}/help`,
+            url: `/staff/${millId}/help`,
             icon: HelpCircle,
         },
     ],

@@ -1,6 +1,8 @@
 import { lazy, Suspense } from 'react'
+import { AuthSuccess } from '@/pages/auth/auth-success'
 // Auth routes
 import { ForgotPassword } from '@/pages/auth/forgot-password'
+import { GoogleAuthError } from '@/pages/auth/google-auth-error'
 import { SignIn } from '@/pages/auth/sign-in'
 import { SignUp } from '@/pages/auth/sign-up'
 // Error routes
@@ -12,7 +14,9 @@ import { Dashboard } from '@/pages/super-admin/dashboard'
 import { Mills } from '@/pages/super-admin/mills'
 // Error Boundary
 import { ErrorBoundary } from '@/routes/error-boundary'
+import { ProtectedRoute } from '@/routes/protected-route'
 import { RootLayout } from '@/routes/root-layout'
+import { USER_ROLES } from '@/types'
 import { createBrowserRouter } from 'react-router'
 import { ComingSoon } from '@/components/coming-soon'
 // Layouts
@@ -855,7 +859,11 @@ export const router = createBrowserRouter([
             // ==========================================
             {
                 path: 'admin',
-                element: <SuperAdminLayout />,
+                element: (
+                    <ProtectedRoute requiredRoles={[USER_ROLES.SUPER_ADMIN]}>
+                        <SuperAdminLayout />
+                    </ProtectedRoute>
+                ),
                 children: [
                     {
                         index: true,
@@ -893,7 +901,16 @@ export const router = createBrowserRouter([
             // ==========================================
             {
                 path: 'mill/:millId',
-                element: <MillAdminLayout />,
+                element: (
+                    <ProtectedRoute
+                        requiredRoles={[
+                            USER_ROLES.SUPER_ADMIN,
+                            USER_ROLES.ADMIN,
+                        ]}
+                    >
+                        <MillAdminLayout />
+                    </ProtectedRoute>
+                ),
                 children: [
                     {
                         index: true,
@@ -1230,8 +1247,17 @@ export const router = createBrowserRouter([
             // Mill Staff Routes (/staff/:millId/:staffId/*)
             // ==========================================
             {
-                path: 'staff/:millId/:staffId',
-                element: <MillStaffLayout />,
+                path: 'staff/:millId',
+                element: (
+                    <ProtectedRoute
+                        requiredRoles={[
+                            USER_ROLES.SUPER_ADMIN,
+                            USER_ROLES.STAFF,
+                        ]}
+                    >
+                        <MillStaffLayout />
+                    </ProtectedRoute>
+                ),
                 children: [
                     {
                         index: true,
@@ -1712,6 +1738,14 @@ export const router = createBrowserRouter([
             {
                 path: 'forgot-password',
                 element: <ForgotPassword />,
+            },
+            {
+                path: 'auth-success',
+                element: <AuthSuccess />,
+            },
+            {
+                path: 'google-auth-error',
+                element: <GoogleAuthError />,
             },
 
             // ==========================================

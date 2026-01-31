@@ -13,8 +13,8 @@ type MillStaffLayoutProps = {
 
 export function MillStaffLayout({ children }: MillStaffLayoutProps) {
     const defaultOpen = getCookie('sidebar_state') !== 'false'
-    const { millId, staffId } = useParams<{ millId: string; staffId: string }>()
-    const sidebarData = getMillStaffSidebarData(millId || '', staffId || '')
+    const { millId } = useParams<{ millId: string }>()
+    const sidebarData = getMillStaffSidebarData(millId || '')
 
     return (
         <SearchProvider sidebarData={sidebarData}>

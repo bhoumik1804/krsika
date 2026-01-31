@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose'
+import { model, Schema } from 'mongoose'
 import { PAYMENT_STAUS } from '../constants/subscription.payment.status.enum.js'
 
 const PaymentSchema = new Schema(
@@ -28,3 +28,5 @@ const PaymentSchema = new Schema(
     },
     { timestamps: true }
 )
+
+export const Payment = model('Payment', PaymentSchema)

@@ -29,7 +29,7 @@ export const SIDEBAR_FACTORIES: Readonly<Record<UserRole, SidebarFactory>> = {
     'super-admin': () => superAdminSidebarData,
     'mill-admin': (ctx) => getMillAdminSidebarData(ctx?.millId || ''),
     'mill-staff': (ctx) =>
-        getMillStaffSidebarData(ctx?.millId || '', ctx?.staffId || ''),
+        getMillStaffSidebarData(ctx?.millId || '',),
 } as const
 
 // ==========================================

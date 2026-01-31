@@ -1,3 +1,5 @@
+import { model, Schema } from 'mongoose'
+
 const PlanSchema = new Schema(
     {
         name: { type: String, required: true, unique: true }, // e.g., 'Basic', 'Pro', 'Enterprise'
@@ -16,3 +18,5 @@ const PlanSchema = new Schema(
     },
     { timestamps: true }
 )
+
+export const Plan = model('Plan', PlanSchema)

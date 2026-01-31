@@ -5,7 +5,7 @@
  */
 export const ROLES = Object.freeze({
     /** The owner of the SaaS. Has global access to create Plans and verify Mills. */
-    SUPER_ADMIN: 'super_admin',
+    SUPER_ADMIN: 'super-admin',
 
     /** The owner of a specific Rice Mill. Can manage their own subscription, staff, and mill operations. */
     MILL_ADMIN: 'mill-admin',
@@ -14,7 +14,7 @@ export const ROLES = Object.freeze({
     MILL_STAFF: 'mill-staff',
 
     /** Guest user is the default role; can log in but has not purchased any subscription and cannot access any modules. */
-    GUEST_USER: 'guest_user',
+    GUEST_USER: 'guest-user',
 })
 
 // // services/userService.js

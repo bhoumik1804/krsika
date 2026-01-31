@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import 'dotenv/config'
-import User from '../models/User.js'
+import { ROLES } from '../constants/user.roles.enum.js'
+import { User } from '../models/user.model.js'
 import logger from '../utils/logger.js'
 
 const seedSuperAdmins = async () => {
@@ -16,16 +17,16 @@ const seedSuperAdmins = async () => {
 
         const admins = [
             {
-                name: process.env.SUPER_ADMIN_1_NAME,
+                fullName: process.env.SUPER_ADMIN_1_NAME,
                 email: process.env.SUPER_ADMIN_1_EMAIL,
                 password: process.env.SUPER_ADMIN_1_PASSWORD,
-                phone: process.env.SUPER_ADMIN_1_PHONE,
+                // phone: process.env.SUPER_ADMIN_1_PHONE,
             },
             {
-                name: process.env.SUPER_ADMIN_2_NAME,
+                fullName: process.env.SUPER_ADMIN_2_NAME,
                 email: process.env.SUPER_ADMIN_2_EMAIL,
                 password: process.env.SUPER_ADMIN_2_PASSWORD,
-                phone: process.env.SUPER_ADMIN_2_PHONE,
+                // phone: process.env.SUPER_ADMIN_2_PHONE,
             },
         ]
 
@@ -45,9 +46,9 @@ const seedSuperAdmins = async () => {
             await User.create({
                 email: admin.email,
                 password: admin.password,
-                name: admin.name,
-                phone: admin.phone,
-                role: 'super-admin',
+                fullName: admin.fullName,
+                // phone: admin.phone,
+                role: ROLES.SUPER_ADMIN,
                 isActive: true,
             })
 

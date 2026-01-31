@@ -14,8 +14,8 @@ import { StaffTable } from './components/staff-table'
 import { staff } from './data/staff'
 
 export function MillStaffStaff() {
-    const { millId, staffId } = useParams<{ millId: string; staffId: string }>()
-    const sidebarData = getMillStaffSidebarData(millId || '', staffId || '')
+    const { millId } = useParams<{ millId: string; staffId: string }>()
+    const sidebarData = getMillStaffSidebarData(millId || '')
     const [searchParams, setSearchParams] = useSearchParams()
 
     const search = Object.fromEntries(searchParams.entries())

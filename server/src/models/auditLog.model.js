@@ -1,3 +1,5 @@
+import { model, Schema } from 'mongoose'
+
 const AuditLogSchema = new Schema(
     {
         millId: { type: Schema.Types.ObjectId, ref: 'Mill' }, // The mill being accessed
@@ -15,3 +17,5 @@ const AuditLogSchema = new Schema(
     },
     { timestamps: true }
 )
+
+export const AuditLog = model('AuditLog', AuditLogSchema)

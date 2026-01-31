@@ -14,18 +14,18 @@ export function MillStaffSettings({
 }: {
     children?: React.ReactNode
 }) {
-    const { millId, staffId } = useParams<{ millId: string; staffId: string }>()
-    const sidebarData = getMillStaffSidebarData(millId || '', staffId || '')
+    const { millId } = useParams<{ millId: string; staffId: string }>()
+    const sidebarData = getMillStaffSidebarData(millId || '')
 
     const sidebarNavItems = [
         {
             title: 'Profile',
-            href: `/staff/${millId}/${staffId}/settings`,
+            href: `/staff/${millId}/settings`,
             icon: <UserCog size={18} />,
         },
         {
             title: 'Appearance',
-            href: `/staff/${millId}/${staffId}/settings/appearance`,
+            href: `/staff/${millId}/settings/appearance`,
             icon: <Palette size={18} />,
         },
     ]

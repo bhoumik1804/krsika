@@ -1,13 +1,15 @@
-import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import {
+    useCredentialsLogin,
+    useGoogleLogin,
+} from '@/pages/landing/hooks/use-auth'
 import { Loader2, LogIn } from 'lucide-react'
 import { Link, useNavigate } from 'react-router'
 import { toast } from 'sonner'
 import { IconGoogle } from '@/assets/brand-icons'
-import { useAuthStore } from '@/stores/auth-store'
-import { sleep, cn } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
     Form,
@@ -40,9 +42,9 @@ export function UserAuthForm({
     redirectTo,
     ...props
 }: UserAuthFormProps) {
-    const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
-    const { auth } = useAuthStore()
+    const { login, isLoading } = useCredentialsLogin()
+    const { login: googleLogin } = useGoogleLogin()
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -53,36 +55,23 @@ export function UserAuthForm({
     })
 
     function onSubmit(data: z.infer<typeof formSchema>) {
-        setIsLoading(true)
+        login(
+            { email: data.email, password: data.password },
+            {
+                onSuccess: () => {
+                    const targetPath = redirectTo || '/'
+                    navigate(targetPath, { replace: true })
+                    toast.success(`Welcome back!`)
+                },
+                onError: (err: any) => {
+                    toast.error(err?.response?.data?.message)
+                },
+            }
+        )
+    }
 
-        toast.promise(sleep(2000), {
-            loading: 'Signing in...',
-            success: () => {
-                setIsLoading(false)
-
-                // Mock successful authentication with expiry computed at success time
-                const mockUser = {
-                    id: 'mock-user-001',
-                    email: data.email,
-                    name: 'Mock User',
-                    role: 'super-admin' as const,
-                    isActive: true,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                }
-
-                // Set user and access token
-                auth.setUser(mockUser)
-                auth.setAccessToken('mock-access-token')
-
-                // Redirect to the stored location or default to dashboard
-                const targetPath = redirectTo || '/'
-                navigate(targetPath, { replace: true })
-
-                return `Welcome back, ${data.email}!`
-            },
-            error: 'Error',
-        })
+    function handleGoogleLogin() {
+        googleLogin()
     }
 
     return (
@@ -154,6 +143,7 @@ export function UserAuthForm({
                     variant='outline'
                     type='button'
                     disabled={isLoading}
+                    onClick={handleGoogleLogin}
                     className='w-full'
                 >
                     <IconGoogle className='h-4 w-4' /> Google

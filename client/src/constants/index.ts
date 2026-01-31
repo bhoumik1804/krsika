@@ -218,8 +218,8 @@ export const APP_META = {
 
 /** Local storage keys for consistent access */
 export const STORAGE_KEYS = {
-    AUTH_TOKEN: 'auth_token',
-    REFRESH_TOKEN: 'refresh_token',
+    AUTH_TOKEN: 'authToken',
+    REFRESH_TOKEN: 'refreshToken',
     USER: 'user',
     THEME: 'theme',
     SIDEBAR_STATE: 'sidebar_state',

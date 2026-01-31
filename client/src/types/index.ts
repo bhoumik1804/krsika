@@ -7,18 +7,25 @@
 // User & Authentication Types
 // ==========================================
 
-export type UserRole = 'super-admin' | 'mill-admin' | 'mill-staff'
+export const USER_ROLES = {
+    SUPER_ADMIN: 'super_admin',
+    ADMIN: 'admin',
+    STAFF: 'staff',
+    GUEST_USER: 'guest_user',
+} as const
+
+export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES]
 
 export interface User {
-    id: string
+    _id: string
     email: string
-    name: string
+    fullName: string
     avatar?: string
     role: UserRole
-    millId?: string // Required for mill-admin and mill-staff
+    millId?: string
     isActive: boolean
-    createdAt: string
-    updatedAt: string
+    permissions?: string[]
+    lastLogin?: string
 }
 
 export interface AuthResponse {
