@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useUser } from '@/pages/landing/hooks'
-import { USER_ROLES, UserRole } from '@/types'
+import { User, USER_ROLES, UserRole } from '@/types'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/auth-store'
 import { LoadingSpinner } from '@/components/loading-spinner'
@@ -8,15 +8,15 @@ import { LoadingSpinner } from '@/components/loading-spinner'
 // -----------------------------
 // Type-safe redirect map
 // -----------------------------
-const ROLE_REDIRECT_MAP: Record<UserRole, string> = {
-    [USER_ROLES.SUPER_ADMIN]: '/admin',
-    [USER_ROLES.ADMIN]: '/mill-admin/dashboard',
-    [USER_ROLES.STAFF]: '/mill-staff/dashboard',
-    [USER_ROLES.GUEST_USER]: '/',
+const ROLE_REDIRECT_MAP: Record<UserRole, (user: User) => string> = {
+    [USER_ROLES.SUPER_ADMIN]: () => '/admin',
+    [USER_ROLES.MILL_ADMIN]: (user) => `/mill/${user.millId}`,
+    [USER_ROLES.MILL_STAFF]: (user) => `/staff/${user.millId}`,
+    [USER_ROLES.GUEST_USER]: () => '/',
 }
 
-function getRedirectPath(role: UserRole): string {
-    return ROLE_REDIRECT_MAP[role] ?? '/'
+function getRedirectPath(user: User): string {
+    return ROLE_REDIRECT_MAP[user.role](user) ?? '/'
 }
 
 // -----------------------------

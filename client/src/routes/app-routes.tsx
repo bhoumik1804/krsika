@@ -905,7 +905,7 @@ export const router = createBrowserRouter([
                     <ProtectedRoute
                         requiredRoles={[
                             USER_ROLES.SUPER_ADMIN,
-                            USER_ROLES.ADMIN,
+                            USER_ROLES.MILL_ADMIN,
                         ]}
                     >
                         <MillAdminLayout />
@@ -1252,7 +1252,7 @@ export const router = createBrowserRouter([
                     <ProtectedRoute
                         requiredRoles={[
                             USER_ROLES.SUPER_ADMIN,
-                            USER_ROLES.STAFF,
+                            USER_ROLES.MILL_STAFF,
                         ]}
                     >
                         <MillStaffLayout />

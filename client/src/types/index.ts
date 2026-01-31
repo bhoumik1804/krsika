@@ -29,8 +29,8 @@ export interface PaginatedResponse<T> {
 
 export const USER_ROLES = {
     SUPER_ADMIN: 'super-admin',
-    ADMIN: 'admin',
-    STAFF: 'staff',
+    MILL_ADMIN: 'mill-admin',
+    MILL_STAFF: 'mill-staff',
     GUEST_USER: 'guest-user',
 } as const
 

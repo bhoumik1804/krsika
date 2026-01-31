@@ -133,9 +133,9 @@ export const loginUser = async (email, password, userAgent, ipAddress) => {
  */
 export const getUserById = async (userId) => {
     try {
-        const user = await User.findById(userId)
-            .select('-password -refreshToken')
-            .populate('millId', 'millName status currentPlan')
+        const user = await User.findById(userId).select(
+            '-password -refreshToken'
+        )
 
         if (!user) {
             throw new Error('User not found')

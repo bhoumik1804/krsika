@@ -262,8 +262,8 @@ export function Navbar() {
 // Each role maps to a function that receives `user` and returns a path
 const ROLE_REDIRECT_MAP: Record<UserRole, (user: User) => string> = {
     [USER_ROLES.SUPER_ADMIN]: () => '/admin',
-    [USER_ROLES.ADMIN]: (user) => `/mill/${user.millId}`,
-    [USER_ROLES.STAFF]: (user) => `/staff/${user.millId}`,
+    [USER_ROLES.MILL_ADMIN]: (user) => `/mill/${user.millId}`,
+    [USER_ROLES.MILL_STAFF]: (user) => `/staff/${user.millId}`,
     [USER_ROLES.GUEST_USER]: () => '/',
 }
 
