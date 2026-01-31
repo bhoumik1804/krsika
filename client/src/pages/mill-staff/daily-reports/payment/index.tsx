@@ -1,6 +1,5 @@
-import { useState } from 'react'
-import { DateRange } from 'react-day-picker'
-import { useParams } from 'react-router'
+import { useMemo } from 'react'
+import { useParams, useSearchParams } from 'react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
     Table,
@@ -14,35 +13,92 @@ import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { DateRangePicker } from './components/date-range-picker'
-
-type PaymentRow = {
-    description: string
-    amount: number
-}
+import { useDailyPaymentList, useDailyPaymentSummary } from './data/hooks'
 
 export function PaymentReport() {
     const { millId } = useParams<{ millId: string }>()
+    const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
-    const [dateRange, setDateRange] = useState<DateRange | undefined>({
-        from: new Date(),
-        to: new Date(),
-    })
 
-    // Sample data matching the image categories
-    const payments: PaymentRow[] = [
-        { description: 'Party Name / Broker Name', amount: 0 },
-        { description: 'Transporter', amount: 0 },
-        { description: 'Diesel', amount: 0 },
-        { description: 'Allowance', amount: 0 },
-        { description: 'Repair / Maintenance', amount: 0 },
-        { description: 'Hamali', amount: 0 },
-        { description: 'Salary', amount: 0 },
-        { description: 'Other Expenses', amount: 0 },
-    ]
+    const search = Object.fromEntries(searchParams.entries())
+
+    // Extract query params from URL
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 50,
+            search: search.search as string | undefined,
+            startDate: search.startDate as string | undefined,
+            endDate: search.endDate as string | undefined,
+            sortBy: (search.sortBy as string) || 'date',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    // Fetch daily payment data using the hook
+    const {
+        data: paymentResponse,
+        isLoading,
+        isError,
+    } = useDailyPaymentList(millId || '', queryParams, { enabled: !!millId })
+
+    // Fetch summary data
+    const { data: summaryResponse } = useDailyPaymentSummary(
+        millId || '',
+        { startDate: queryParams.startDate, endDate: queryParams.endDate },
+        { enabled: !!millId }
+    )
+
+    // Transform API response to table format - group by purpose
+    const paymentsData = useMemo(() => {
+        if (!paymentResponse?.data) return []
+
+        // Group by purpose and sum amounts
+        const groupedData = paymentResponse.data.reduce(
+            (acc, item) => {
+                const key = item.purpose
+                if (!acc[key]) {
+                    acc[key] = { description: key, amount: 0 }
+                }
+                acc[key].amount += item.amount
+                return acc
+            },
+            {} as Record<string, { description: string; amount: number }>
+        )
+
+        return Object.values(groupedData)
+    }, [paymentResponse])
+
+    // Handle date range change
+    const handleDateChange = (
+        range: { from?: Date; to?: Date } | undefined
+    ) => {
+        const newParams = new URLSearchParams(searchParams)
+        if (range?.from) {
+            newParams.set('startDate', range.from.toISOString().split('T')[0])
+        } else {
+            newParams.delete('startDate')
+        }
+        if (range?.to) {
+            newParams.set('endDate', range.to.toISOString().split('T')[0])
+        } else {
+            newParams.delete('endDate')
+        }
+        setSearchParams(newParams)
+    }
+
+    // Parse current date range from URL
+    const dateRange = useMemo(() => {
+        const from = search.startDate ? new Date(search.startDate) : new Date()
+        const to = search.endDate ? new Date(search.endDate) : new Date()
+        return { from, to }
+    }, [search.startDate, search.endDate])
 
     return (
         <>
@@ -70,41 +126,72 @@ export function PaymentReport() {
                     </div>
                     <DateRangePicker
                         date={dateRange}
-                        onDateChange={setDateRange}
+                        onDateChange={handleDateChange}
                     />
                 </div>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Payment Summary</CardTitle>
+                        <CardTitle>
+                            Payment Summary
+                            {summaryResponse && (
+                                <span className='ml-2 text-sm font-normal text-muted-foreground'>
+                                    ({summaryResponse.totalEntries} entries, ₹
+                                    {summaryResponse.totalAmount.toLocaleString()}
+                                    )
+                                </span>
+                            )}
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className='overflow-x-auto'>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className='w-[300px]'>
-                                            Description
-                                        </TableHead>
-                                        <TableHead className='text-right'>
-                                            Amount
-                                        </TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {payments.map((row, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell className='font-medium'>
-                                                {row.description}
-                                            </TableCell>
-                                            <TableCell className='text-right'>
-                                                {row.amount.toFixed(2)}
-                                            </TableCell>
+                        {isLoading ? (
+                            <div className='flex items-center justify-center py-10'>
+                                <LoadingSpinner />
+                            </div>
+                        ) : isError ? (
+                            <div className='py-10 text-center text-destructive'>
+                                Failed to load payment data
+                            </div>
+                        ) : (
+                            <div className='overflow-x-auto'>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className='w-[300px]'>
+                                                Description
+                                            </TableHead>
+                                            <TableHead className='text-right'>
+                                                Amount (₹)
+                                            </TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {paymentsData.length === 0 ? (
+                                            <TableRow>
+                                                <TableCell
+                                                    colSpan={2}
+                                                    className='text-center text-muted-foreground'
+                                                >
+                                                    No payment data found for
+                                                    the selected date range
+                                                </TableCell>
+                                            </TableRow>
+                                        ) : (
+                                            paymentsData.map((row, index) => (
+                                                <TableRow key={index}>
+                                                    <TableCell className='font-medium'>
+                                                        {row.description}
+                                                    </TableCell>
+                                                    <TableCell className='text-right'>
+                                                        {row.amount.toFixed(2)}
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </Main>

@@ -3,7 +3,6 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -22,24 +21,21 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
 import { PasswordInput } from '@/components/password-input'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { roles } from '../data/data'
+import { useCreateUser, useUpdateUser } from '../data/hooks'
 import { type User } from '../data/schema'
 
 const formSchema = z
     .object({
-        firstName: z.string().min(1, 'First Name is required.'),
-        lastName: z.string().min(1, 'Last Name is required.'),
-        username: z.string().min(1, 'Username is required.'),
-        phoneNumber: z.string().min(1, 'Phone number is required.'),
-        email: z.email({
-            error: (iss) =>
-                iss.input === '' ? 'Email is required.' : undefined,
-        }),
+        fullName: z.string().min(1, 'Full Name is required.'),
+        email: z.string().email('Please enter a valid email address.'),
         password: z.string().transform((pwd) => pwd.trim()),
         role: z.string().min(1, 'Role is required.'),
         confirmPassword: z.string().transform((pwd) => pwd.trim()),
+        isActive: z.boolean(),
         isEdit: z.boolean(),
     })
     .refine(
@@ -106,35 +102,69 @@ export function UsersActionDialog({
     onOpenChange,
 }: UserActionDialogProps) {
     const isEdit = !!currentRow
+    const createUser = useCreateUser()
+    const updateUser = useUpdateUser()
+
     const form = useForm<UserForm>({
         resolver: zodResolver(formSchema),
         defaultValues: isEdit
             ? {
-                  ...currentRow,
+                  fullName: currentRow.fullName || '',
+                  email: currentRow.email || '',
+                  role: currentRow.role || '',
+                  isActive: currentRow.status === 'active',
                   password: '',
                   confirmPassword: '',
                   isEdit,
               }
             : {
-                  firstName: '',
-                  lastName: '',
-                  username: '',
+                  fullName: '',
                   email: '',
                   role: '',
-                  phoneNumber: '',
+                  isActive: true,
                   password: '',
                   confirmPassword: '',
                   isEdit,
               },
     })
 
-    const onSubmit = (values: UserForm) => {
-        form.reset()
-        showSubmittedData(values)
-        onOpenChange(false)
+    const onSubmit = async (values: UserForm) => {
+        try {
+            if (isEdit && currentRow) {
+                await updateUser.mutateAsync({
+                    id: currentRow.id,
+                    fullName: values.fullName,
+                    email: values.email,
+                    role: values.role as
+                        | 'super-admin'
+                        | 'mill-admin'
+                        | 'mill-staff'
+                        | 'guest-user',
+                    isActive: values.isActive,
+                    ...(values.password && { password: values.password }),
+                })
+            } else {
+                await createUser.mutateAsync({
+                    fullName: values.fullName,
+                    email: values.email,
+                    role: values.role as
+                        | 'super-admin'
+                        | 'mill-admin'
+                        | 'mill-staff'
+                        | 'guest-user',
+                    isActive: values.isActive,
+                    password: values.password,
+                })
+            }
+            form.reset()
+            onOpenChange(false)
+        } catch (error) {
+            // Error handled by mutation hooks
+        }
     }
 
     const isPasswordTouched = !!form.formState.dirtyFields.password
+    const isSubmitting = createUser.isPending || updateUser.isPending
 
     return (
         <Dialog
@@ -156,7 +186,7 @@ export function UsersActionDialog({
                         Click save when you&apos;re done.
                     </DialogDescription>
                 </DialogHeader>
-                <div className='h-105 w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3'>
+                <div className='h-96 w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3'>
                     <Form {...form}>
                         <form
                             id='user-form'
@@ -165,56 +195,17 @@ export function UsersActionDialog({
                         >
                             <FormField
                                 control={form.control}
-                                name='firstName'
+                                name='fullName'
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            First Name
+                                            Full Name
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='John'
+                                                placeholder='John Doe'
                                                 className='col-span-4'
                                                 autoComplete='off'
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage className='col-span-4 col-start-3' />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name='lastName'
-                                render={({ field }) => (
-                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                                        <FormLabel className='col-span-2 text-end'>
-                                            Last Name
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder='Doe'
-                                                className='col-span-4'
-                                                autoComplete='off'
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage className='col-span-4 col-start-3' />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name='username'
-                                render={({ field }) => (
-                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                                        <FormLabel className='col-span-2 text-end'>
-                                            Username
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder='john_doe'
-                                                className='col-span-4'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -243,25 +234,6 @@ export function UsersActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='phoneNumber'
-                                render={({ field }) => (
-                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                                        <FormLabel className='col-span-2 text-end'>
-                                            Phone Number
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder='+123456789'
-                                                className='col-span-4'
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage className='col-span-4 col-start-3' />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
                                 name='role'
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
@@ -280,6 +252,24 @@ export function UsersActionDialog({
                                                 })
                                             )}
                                         />
+                                        <FormMessage className='col-span-4 col-start-3' />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='isActive'
+                                render={({ field }) => (
+                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                                        <FormLabel className='col-span-2 text-end'>
+                                            Active
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Switch
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                            />
+                                        </FormControl>
                                         <FormMessage className='col-span-4 col-start-3' />
                                     </FormItem>
                                 )}
@@ -327,8 +317,12 @@ export function UsersActionDialog({
                     </Form>
                 </div>
                 <DialogFooter>
-                    <Button type='submit' form='user-form'>
-                        Save changes
+                    <Button
+                        type='submit'
+                        form='user-form'
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Saving...' : 'Save changes'}
                     </Button>
                 </DialogFooter>
             </DialogContent>

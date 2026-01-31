@@ -1,8 +1,10 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -10,7 +12,7 @@ import { GovtPaddyInwardDialogs } from './components/govt-paddy-inward-dialogs'
 import { GovtPaddyInwardPrimaryButtons } from './components/govt-paddy-inward-primary-buttons'
 import { GovtPaddyInwardProvider } from './components/govt-paddy-inward-provider'
 import { GovtPaddyInwardTable } from './components/govt-paddy-inward-table'
-import { govtPaddyInwardEntries } from './data/govt-paddy-inward-entries'
+import { useGovtPaddyInwardList } from './data/hooks'
 
 export function GovtPaddyInwardReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +20,54 @@ export function GovtPaddyInwardReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    // Extract query params from URL
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            startDate: search.startDate as string | undefined,
+            endDate: search.endDate as string | undefined,
+            sortBy: (search.sortBy as string) || 'date',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    // Fetch govt paddy inward data using the hook
+    const {
+        data: inwardResponse,
+        isLoading,
+        isError,
+    } = useGovtPaddyInwardList(millId || '', queryParams, { enabled: !!millId })
+
+    // Transform API response to table format
+    const inwardData = useMemo(() => {
+        if (!inwardResponse?.data) return []
+        return inwardResponse.data.map((item) => ({
+            id: item._id,
+            date: item.date,
+            doNumber: item.doNumber,
+            committeeName: item.committeeName,
+            balanceDo: item.balanceDo ?? 0,
+            gunnyNew: item.gunnyNew ?? 0,
+            gunnyOld: item.gunnyOld ?? 0,
+            gunnyPlastic: item.gunnyPlastic ?? 0,
+            juteWeight: item.juteWeight ?? 0,
+            plasticWeight: item.plasticWeight ?? 0,
+            gunnyWeight: item.gunnyWeight ?? 0,
+            truckNumber: item.truckNumber,
+            rstNumber: item.rstNumber ?? '',
+            truckLoadWeight: item.truckLoadWeight ?? 0,
+            paddyType: item.paddyType ?? '',
+            paddyMota: item.paddyMota ?? 0,
+            paddyPatla: item.paddyPatla ?? 0,
+            paddySarna: item.paddySarna ?? 0,
+            paddyMahamaya: item.paddyMahamaya ?? 0,
+            paddyRbGold: item.paddyRbGold ?? 0,
+        }))
+    }, [inwardResponse])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -56,11 +106,21 @@ export function GovtPaddyInwardReport() {
                     </div>
                     <GovtPaddyInwardPrimaryButtons />
                 </div>
-                <GovtPaddyInwardTable
-                    data={govtPaddyInwardEntries}
-                    search={search}
-                    navigate={navigate}
-                />
+                {isLoading ? (
+                    <div className='flex items-center justify-center py-10'>
+                        <LoadingSpinner />
+                    </div>
+                ) : isError ? (
+                    <div className='py-10 text-center text-destructive'>
+                        Failed to load govt paddy inward data
+                    </div>
+                ) : (
+                    <GovtPaddyInwardTable
+                        data={inwardData}
+                        search={search}
+                        navigate={navigate}
+                    />
+                )}
             </Main>
 
             <GovtPaddyInwardDialogs />

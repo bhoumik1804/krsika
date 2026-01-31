@@ -1,6 +1,5 @@
-import { useState } from 'react'
-import { DateRange } from 'react-day-picker'
-import { useParams } from 'react-router'
+import { useMemo } from 'react'
+import { useParams, useSearchParams } from 'react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
     Table,
@@ -14,34 +13,92 @@ import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { DateRangePicker } from './components/date-range-picker'
-
-type ProductionRow = {
-    description: string
-    quantity: number
-}
+import { useDailyProductionList, useDailyProductionSummary } from './data/hooks'
 
 export function ProductionReport() {
     const { millId } = useParams<{ millId: string }>()
+    const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
-    const [dateRange, setDateRange] = useState<DateRange | undefined>({
-        from: new Date(),
-        to: new Date(),
-    })
 
-    // Sample data matching the image categories - production by-products
-    const production: ProductionRow[] = [
-        { description: 'Rice (Patla)', quantity: 0 },
-        { description: 'Rice (Mota)', quantity: 0 },
-        { description: 'Khanda', quantity: 0 },
-        { description: 'Koda', quantity: 0 },
-        { description: 'Bhusa', quantity: 0 },
-        { description: 'Nakkhi', quantity: 0 },
-        { description: 'Silky Koda', quantity: 0 },
-    ]
+    const search = Object.fromEntries(searchParams.entries())
+
+    // Extract query params from URL
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 50,
+            search: search.search as string | undefined,
+            startDate: search.startDate as string | undefined,
+            endDate: search.endDate as string | undefined,
+            sortBy: (search.sortBy as string) || 'date',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    // Fetch daily production data using the hook
+    const {
+        data: productionResponse,
+        isLoading,
+        isError,
+    } = useDailyProductionList(millId || '', queryParams, { enabled: !!millId })
+
+    // Fetch summary data
+    const { data: summaryResponse } = useDailyProductionSummary(
+        millId || '',
+        { startDate: queryParams.startDate, endDate: queryParams.endDate },
+        { enabled: !!millId }
+    )
+
+    // Transform API response to table format - group by item name
+    const productionData = useMemo(() => {
+        if (!productionResponse?.data) return []
+
+        // Group by item name and sum quantities
+        const groupedData = productionResponse.data.reduce(
+            (acc, item) => {
+                const key = item.itemName
+                if (!acc[key]) {
+                    acc[key] = { description: key, quantity: 0 }
+                }
+                acc[key].quantity += item.weight
+                return acc
+            },
+            {} as Record<string, { description: string; quantity: number }>
+        )
+
+        return Object.values(groupedData)
+    }, [productionResponse])
+
+    // Handle date range change
+    const handleDateChange = (
+        range: { from?: Date; to?: Date } | undefined
+    ) => {
+        const newParams = new URLSearchParams(searchParams)
+        if (range?.from) {
+            newParams.set('startDate', range.from.toISOString().split('T')[0])
+        } else {
+            newParams.delete('startDate')
+        }
+        if (range?.to) {
+            newParams.set('endDate', range.to.toISOString().split('T')[0])
+        } else {
+            newParams.delete('endDate')
+        }
+        setSearchParams(newParams)
+    }
+
+    // Parse current date range from URL
+    const dateRange = useMemo(() => {
+        const from = search.startDate ? new Date(search.startDate) : new Date()
+        const to = search.endDate ? new Date(search.endDate) : new Date()
+        return { from, to }
+    }, [search.startDate, search.endDate])
 
     return (
         <>
@@ -69,41 +126,74 @@ export function ProductionReport() {
                     </div>
                     <DateRangePicker
                         date={dateRange}
-                        onDateChange={setDateRange}
+                        onDateChange={handleDateChange}
                     />
                 </div>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Production Summary</CardTitle>
+                        <CardTitle>
+                            Production Summary
+                            {summaryResponse && (
+                                <span className='ml-2 text-sm font-normal text-muted-foreground'>
+                                    ({summaryResponse.totalEntries} entries,{' '}
+                                    {summaryResponse.totalBags} bags,{' '}
+                                    {summaryResponse.totalWeight.toFixed(2)} kg)
+                                </span>
+                            )}
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className='overflow-x-auto'>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className='w-[300px]'>
-                                            Description
-                                        </TableHead>
-                                        <TableHead className='text-right'>
-                                            Quantity
-                                        </TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {production.map((row, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell className='font-medium'>
-                                                {row.description}
-                                            </TableCell>
-                                            <TableCell className='text-right'>
-                                                {row.quantity.toFixed(2)}
-                                            </TableCell>
+                        {isLoading ? (
+                            <div className='flex items-center justify-center py-10'>
+                                <LoadingSpinner />
+                            </div>
+                        ) : isError ? (
+                            <div className='py-10 text-center text-destructive'>
+                                Failed to load production data
+                            </div>
+                        ) : (
+                            <div className='overflow-x-auto'>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className='w-[300px]'>
+                                                Description
+                                            </TableHead>
+                                            <TableHead className='text-right'>
+                                                Quantity (kg)
+                                            </TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {productionData.length === 0 ? (
+                                            <TableRow>
+                                                <TableCell
+                                                    colSpan={2}
+                                                    className='text-center text-muted-foreground'
+                                                >
+                                                    No production data found for
+                                                    the selected date range
+                                                </TableCell>
+                                            </TableRow>
+                                        ) : (
+                                            productionData.map((row, index) => (
+                                                <TableRow key={index}>
+                                                    <TableCell className='font-medium'>
+                                                        {row.description}
+                                                    </TableCell>
+                                                    <TableCell className='text-right'>
+                                                        {row.quantity.toFixed(
+                                                            2
+                                                        )}
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </Main>

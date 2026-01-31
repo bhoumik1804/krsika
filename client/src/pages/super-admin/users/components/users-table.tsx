@@ -27,13 +27,30 @@ import { type User } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { usersColumns as columns } from './users-columns'
 
+interface PaginationInfo {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasPrevPage: boolean
+    hasNextPage: boolean
+    prevPage: number | null
+    nextPage: number | null
+}
+
 type DataTableProps = {
     data: User[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: PaginationInfo
 }
 
-export function UsersTable({ data, search, navigate }: DataTableProps) {
+export function UsersTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -41,11 +58,7 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
     )
     const [sorting, setSorting] = useState<SortingState>([])
 
-    // Local state management for table (uncomment to use local-only state, not synced with URL)
-    // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])
-    // const [pagination, onPaginationChange] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 })
-
-    // Synced with URL states (keys/defaults mirror users route search schema)
+    // Synced with URL states
     const {
         columnFilters,
         onColumnFiltersChange,
@@ -58,8 +71,7 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
         pagination: { defaultPage: 1, defaultPageSize: 10 },
         globalFilter: { enabled: false },
         columnFilters: [
-            // username per-column text filter
-            { columnId: 'username', searchKey: 'username', type: 'string' },
+            { columnId: 'fullName', searchKey: 'search', type: 'string' },
             { columnId: 'status', searchKey: 'status', type: 'array' },
             { columnId: 'role', searchKey: 'role', type: 'array' },
         ],
@@ -76,6 +88,9 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
             columnFilters,
             columnVisibility,
         },
+        // Use server-side pagination info when available
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
@@ -91,20 +106,22 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
             className={cn(
-                'max-sm:has-[div[role="toolbar"]]:mb-16', // Add margin bottom to the table on mobile when the toolbar is visible
+                'max-sm:has-[div[role="toolbar"]]:mb-16',
                 'flex flex-1 flex-col gap-4'
             )}
         >
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Filter users...'
-                searchKey='username'
+                searchKey='fullName'
                 filters={[
                     {
                         columnId: 'status',
@@ -112,14 +129,16 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
                         options: [
                             { label: 'Active', value: 'active' },
                             { label: 'Inactive', value: 'inactive' },
-                            { label: 'Invited', value: 'invited' },
                             { label: 'Suspended', value: 'suspended' },
                         ],
                     },
                     {
                         columnId: 'role',
                         title: 'Role',
-                        options: roles.map((role) => ({ ...role })),
+                        options: roles.map((role) => ({
+                            label: role.label,
+                            value: role.value,
+                        })),
                     },
                 ]}
             />
@@ -199,7 +218,11 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
                     </TableBody>
                 </Table>
             </div>
-            <DataTablePagination table={table} className='mt-auto' />
+            <DataTablePagination
+                table={table}
+                className='mt-auto'
+                totalItems={serverPagination?.total}
+            />
             <DataTableBulkActions table={table} />
         </div>
     )

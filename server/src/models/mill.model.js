@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose'
+import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
 import { MILL_STATUS } from '../constants/mill.status.enum.js'
 
 const MillSchema = new Schema(
@@ -34,5 +35,7 @@ const MillSchema = new Schema(
     },
     { timestamps: true }
 )
+
+MillSchema.plugin(aggregatePaginate)
 
 export const Mill = model('Mill', MillSchema)

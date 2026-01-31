@@ -1,6 +1,7 @@
 import mongoose, { Schema } from 'mongoose'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
 import { MODULE_SLUGS } from '../constants/module.slugs.enum.js'
 import { PERMISSION_ACTIONS } from '../constants/permission.actions.enum.js'
 import { ROLES } from '../constants/user.roles.enum.js'
@@ -85,5 +86,7 @@ userSchema.methods.generateRefreshToken = function () {
         }
     )
 }
+
+userSchema.plugin(aggregatePaginate)
 
 export const User = mongoose.model('User', userSchema)

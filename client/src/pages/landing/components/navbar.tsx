@@ -1,37 +1,20 @@
-import { useState } from 'react';
-import { User, USER_ROLES, UserRole } from '@/types';
-import { Menu, X, Wheat } from 'lucide-react';
-import { Link, useNavigate } from 'react-router';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ThemeSwitch } from '@/components/theme-switch';
-import { navbarData } from '../data';
-import { useUser, useLogout } from '../hooks';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { useState } from 'react'
+import { User, USER_ROLES, UserRole } from '@/types'
+import { Menu, X, Wheat } from 'lucide-react'
+import { Link, useNavigate } from 'react-router'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { navbarData } from '../data'
+import { useUser, useLogout } from '../hooks'
 
 export function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -58,6 +41,7 @@ export function Navbar() {
     const handleGoToDashboard = () => {
         if (user) {
             const path = getDashboardPath(user)
+            alert(path)
             navigate(path)
         }
     }
@@ -278,14 +262,13 @@ export function Navbar() {
 
 // Each role maps to a function that receives `user` and returns a path
 const ROLE_REDIRECT_MAP: Record<UserRole, (user: User) => string> = {
-  [USER_ROLES.SUPER_ADMIN]: () => '/admin',
-  [USER_ROLES.ADMIN]: (user) => `/mill/${user.millId}`,
-  [USER_ROLES.STAFF]: (user) => `/staff/${user.millId}`,
-  [USER_ROLES.GUEST_USER]: () => '/',
+    [USER_ROLES.SUPER_ADMIN]: () => '/admin',
+    [USER_ROLES.ADMIN]: (user) => `/mill/${user.millId}`,
+    [USER_ROLES.STAFF]: (user) => `/staff/${user.millId}`,
+    [USER_ROLES.GUEST_USER]: () => '/',
 }
 
 // Function to get dashboard path
 export function getDashboardPath(user: User): string {
-  return ROLE_REDIRECT_MAP[user.role]?.(user) ?? '/'
+    return ROLE_REDIRECT_MAP[user.role]?.(user) ?? '/'
 }
-

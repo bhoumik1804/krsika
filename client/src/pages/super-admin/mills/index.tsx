@@ -1,8 +1,10 @@
+import { useMemo } from 'react'
 import { useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { superAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -10,13 +12,34 @@ import { MillsDialogs } from './components/mills-dialogs'
 import { MillsPrimaryButtons } from './components/mills-primary-buttons'
 import { MillsProvider } from './components/mills-provider'
 import { MillsTable } from './components/mills-table'
-import { mills } from './data/mills'
+import { useMillsList } from './data/hooks'
+import type { MillStatus } from './data/schema'
 
 export function Mills() {
     const [searchParams, setSearchParams] = useSearchParams()
 
     // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
+
+    // Extract query params from URL
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            status: search.status as MillStatus | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    // Fetch mills data using the hook
+    const {
+        data: millsResponse,
+        isLoading,
+        isError,
+    } = useMillsList(queryParams)
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -28,6 +51,26 @@ export function Mills() {
             setSearchParams(opts.search as Record<string, string>)
         }
     }
+
+    // Transform API response to table format
+    const millsData = useMemo(() => {
+        if (!millsResponse?.data) return []
+        return millsResponse.data.map((m) => ({
+            id: m._id,
+            name: m.millName,
+            email: m.contact.email,
+            phone: m.contact.phone,
+            location: m.contact.address || '',
+            gstNumber: m.millInfo.gstNumber,
+            status: m.status,
+            planName: m.currentPlan?.name || null,
+            planValidUntil: m.planValidUntil
+                ? new Date(m.planValidUntil)
+                : null,
+            createdAt: new Date(m.createdAt),
+            updatedAt: new Date(m.updatedAt),
+        }))
+    }, [millsResponse])
 
     return (
         <MillsProvider>
@@ -55,7 +98,22 @@ export function Mills() {
                     </div>
                     <MillsPrimaryButtons />
                 </div>
-                <MillsTable data={mills} search={search} navigate={navigate} />
+                {isLoading ? (
+                    <div className='flex items-center justify-center py-10'>
+                        <LoadingSpinner />
+                    </div>
+                ) : isError ? (
+                    <div className='py-10 text-center text-destructive'>
+                        Failed to load mills data
+                    </div>
+                ) : (
+                    <MillsTable
+                        data={millsData}
+                        search={search}
+                        navigate={navigate}
+                        pagination={millsResponse?.pagination}
+                    />
+                )}
             </Main>
 
             <MillsDialogs />
