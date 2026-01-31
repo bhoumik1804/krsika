@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -10,7 +11,7 @@ import { LabourGroupReportDialogs } from './components/labour-group-report-dialo
 import { LabourGroupReportPrimaryButtons } from './components/labour-group-report-primary-buttons'
 import { LabourGroupReportProvider } from './components/labour-group-report-provider'
 import { LabourGroupReportTable } from './components/labour-group-report-table'
-import { labourGroupReportEntries } from './data/labour-group-report-entries'
+import { useLabourGroupList } from './data/hooks'
 
 export function LabourGroupReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +19,33 @@ export function LabourGroupReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const {
+        data: response,
+        isLoading,
+        isError,
+    } = useLabourGroupList(millId || '', queryParams, { enabled: !!millId })
+
+    const labourGroupReportData = useMemo(() => {
+        if (!response?.data) return []
+        return response.data.map((item) => ({
+            id: item._id,
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+        }))
+    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -57,9 +85,12 @@ export function LabourGroupReport() {
                     <LabourGroupReportPrimaryButtons />
                 </div>
                 <LabourGroupReportTable
-                    data={labourGroupReportEntries}
+                    data={labourGroupReportData}
                     search={search}
                     navigate={navigate}
+                    isLoading={isLoading}
+                    isError={isError}
+                    totalRows={response?.pagination?.total}
                 />
             </Main>
 

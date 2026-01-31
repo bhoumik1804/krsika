@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -10,7 +11,7 @@ import { BhusaOutwardDialogs } from './components/bhusa-outward-dialogs'
 import { BhusaOutwardPrimaryButtons } from './components/bhusa-outward-primary-buttons'
 import { BhusaOutwardProvider } from './components/bhusa-outward-provider'
 import { BhusaOutwardTable } from './components/bhusa-outward-table'
-import { bhusaOutwardEntries } from './data/bhusa-outward-entries'
+import { useBhusaOutwardList } from './data/hooks'
 
 export function BhusaOutwardReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +19,33 @@ export function BhusaOutwardReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const {
+        data: response,
+        isLoading,
+        isError,
+    } = useBhusaOutwardList(millId || '', queryParams, { enabled: !!millId })
+
+    const data = useMemo(() => {
+        if (!response?.data) return []
+        return response.data.map((item) => ({
+            id: item._id,
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+        }))
+    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -57,9 +85,13 @@ export function BhusaOutwardReport() {
                     <BhusaOutwardPrimaryButtons />
                 </div>
                 <BhusaOutwardTable
-                    data={bhusaOutwardEntries}
+                    data={data}
                     search={search}
                     navigate={navigate}
+                    isLoading={isLoading}
+                    isError={isError}
+                    totalPages={response?.pagination?.totalPages}
+                    totalItems={response?.pagination?.total}
                 />
             </Main>
             <BhusaOutwardDialogs />

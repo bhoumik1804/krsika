@@ -87,7 +87,6 @@ if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
                 callbackURL: env.GOOGLE_REDIRECT_URI,
             },
             async (accessToken, refreshToken, profile, done) => {
-                console.log(profile)
                 try {
                     const {
                         id: googleId,

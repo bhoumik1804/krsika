@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -10,7 +11,7 @@ import { PartyTransactionDialogs } from './components/party-transaction-dialogs'
 import { PartyTransactionPrimaryButtons } from './components/party-transaction-primary-buttons'
 import { PartyTransactionProvider } from './components/party-transaction-provider'
 import { PartyTransactionTable } from './components/party-transaction-table'
-import { partyTransactionEntries } from './data/party-entries'
+import { usePartyTransactionList } from './data/hooks'
 
 export function TransactionPartyReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -19,6 +20,35 @@ export function TransactionPartyReport() {
 
     // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const {
+        data: response,
+        isLoading,
+        isError,
+    } = usePartyTransactionList(millId || '', queryParams, {
+        enabled: !!millId,
+    })
+
+    const partyTransactionData = useMemo(() => {
+        if (!response?.data) return []
+        return response.data.map((item) => ({
+            id: item._id,
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+        }))
+    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -58,7 +88,9 @@ export function TransactionPartyReport() {
                     <PartyTransactionPrimaryButtons />
                 </div>
                 <PartyTransactionTable
-                    data={partyTransactionEntries}
+                    data={partyTransactionData}
+                    isLoading={isLoading}
+                    isError={isError}
                     search={search}
                     navigate={navigate}
                 />

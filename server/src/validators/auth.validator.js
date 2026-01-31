@@ -1,8 +1,9 @@
 import { z } from 'zod'
+import { createMillSchema } from './mills.validator.js'
 
 export const loginSchema = z.object({
     body: z.object({
-        email: z.email('Invalid email address'),
+        email: z.string().email('Invalid email address'),
         password: z
             .string({ required_error: 'Password is required' })
             .min(1, 'Password cannot be empty'),
@@ -27,3 +28,5 @@ export const changePasswordSchema = z.object({
             .min(6, 'New password must be at least 6 characters long'),
     }),
 })
+
+export const registerMillSchema = createMillSchema

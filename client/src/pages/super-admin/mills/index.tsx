@@ -62,6 +62,9 @@ export function Mills() {
             phone: m.contact.phone,
             location: m.contact.address || '',
             gstNumber: m.millInfo.gstNumber,
+            panNumber: m.millInfo.panNumber,
+            currency: m.settings.currency,
+            taxPercentage: m.settings.taxPercentage,
             status: m.status,
             planName: m.currentPlan?.name || null,
             planValidUntil: m.planValidUntil

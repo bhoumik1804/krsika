@@ -3,7 +3,6 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -23,17 +22,17 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { statuses } from '../data/data'
-import { type Mill } from '../data/schema'
+import { useCreateMill, useUpdateMill } from '../data/hooks'
+import type { Mill, MillStatus } from '../data/schema'
 
 const formSchema = z.object({
-    name: z.string().min(1, 'Name is required.'),
-    location: z.string().min(1, 'Location is required.'),
-    capacity: z.string().min(1, 'Capacity is required.'),
-    type: z.string().min(1, 'Type is required.'),
-    status: z.string().min(1, 'Status is required.'),
-    manager: z.string().min(1, 'Manager name is required.'),
-    phoneNumber: z.string().min(1, 'Phone number is required.'),
+    millName: z.string().min(1, 'Mill name is required.'),
+    gstNumber: z.string().min(1, 'GST number is required.'),
+    panNumber: z.string().min(1, 'PAN number is required.'),
+    email: z.string().email('Valid email is required.'),
+    phone: z.string().min(1, 'Phone number is required.'),
+    address: z.string().optional(),
+    status: z.enum(['PENDING_VERIFICATION', 'ACTIVE', 'SUSPENDED', 'REJECTED']),
     isEdit: z.boolean(),
 })
 type MillForm = z.infer<typeof formSchema>
@@ -50,37 +49,73 @@ export function MillsActionDialog({
     onOpenChange,
 }: MillActionDialogProps) {
     const isEdit = !!currentRow
+    const createMill = useCreateMill()
+    const updateMill = useUpdateMill()
+
     const form = useForm<MillForm>({
         resolver: zodResolver(formSchema),
-        defaultValues: isEdit
-            ? {
-                  ...currentRow,
-                  isEdit,
-              }
-            : {
-                  name: '',
-                  location: '',
-                  capacity: '',
-                  type: '',
-                  status: 'active',
-                  manager: '',
-                  phoneNumber: '',
-                  isEdit,
-              },
+        defaultValues:
+            isEdit && currentRow
+                ? {
+                      millName: currentRow.name,
+                      gstNumber: currentRow.gstNumber,
+                      panNumber: currentRow.panNumber,
+                      email: currentRow.email,
+                      phone: currentRow.phone,
+                      address: currentRow.location,
+                      status: currentRow.status,
+                      isEdit,
+                  }
+                : {
+                      millName: '',
+                      gstNumber: '',
+                      panNumber: '',
+                      email: '',
+                      phone: '',
+                      address: '',
+                      status: 'PENDING_VERIFICATION' as MillStatus,
+                      isEdit,
+                  },
     })
 
-    const onSubmit = (values: MillForm) => {
+    const onSubmit = async (values: MillForm) => {
+        const millData = {
+            millName: values.millName,
+            millInfo: {
+                gstNumber: values.gstNumber,
+                panNumber: values.panNumber,
+            },
+            contact: {
+                email: values.email,
+                phone: values.phone,
+                address: values.address,
+            },
+            status: values.status as MillStatus,
+        }
+
+        if (isEdit && currentRow) {
+            await updateMill.mutateAsync({
+                id: currentRow.id,
+                ...millData,
+            })
+        } else {
+            await createMill.mutateAsync(millData)
+        }
+
         form.reset()
-        showSubmittedData(values)
         onOpenChange(false)
     }
+
+    const isLoading = createMill.isPending || updateMill.isPending
 
     return (
         <Dialog
             open={open}
             onOpenChange={(state) => {
-                form.reset()
-                onOpenChange(state)
+                if (!isLoading) {
+                    form.reset()
+                    onOpenChange(state)
+                }
             }}
         >
             <DialogContent className='sm:max-w-lg'>
@@ -104,15 +139,15 @@ export function MillsActionDialog({
                         >
                             <FormField
                                 control={form.control}
-                                name='name'
+                                name='millName'
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Name
+                                            Mill Name
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Rice Mill A'
+                                                placeholder='Rice Mill Pvt. Ltd.'
                                                 className='col-span-4'
                                                 autoComplete='off'
                                                 {...field}
@@ -124,15 +159,15 @@ export function MillsActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='location'
+                                name='gstNumber'
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Location
+                                            GST Number
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='New York'
+                                                placeholder='22AAAAA0000A1Z5'
                                                 className='col-span-4'
                                                 autoComplete='off'
                                                 {...field}
@@ -144,15 +179,56 @@ export function MillsActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='capacity'
+                                name='panNumber'
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Capacity
+                                            PAN Number
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='1000 tons/day'
+                                                placeholder='ABCDE1234F'
+                                                className='col-span-4'
+                                                autoComplete='off'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className='col-span-4 col-start-3' />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='email'
+                                render={({ field }) => (
+                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                                        <FormLabel className='col-span-2 text-end'>
+                                            Email
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type='email'
+                                                placeholder='contact@mill.com'
+                                                className='col-span-4'
+                                                autoComplete='off'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className='col-span-4 col-start-3' />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='phone'
+                                render={({ field }) => (
+                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                                        <FormLabel className='col-span-2 text-end'>
+                                            Phone
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder='+91 9876543210'
                                                 className='col-span-4'
                                                 {...field}
                                             />
@@ -163,24 +239,19 @@ export function MillsActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='type'
+                                name='address'
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Type
+                                            Address
                                         </FormLabel>
-                                        <SelectDropdown
-                                            defaultValue={field.value}
-                                            onValueChange={field.onChange}
-                                            placeholder='Select a type'
-                                            className='col-span-4'
-                                            items={statuses.map(
-                                                ({ label, value }) => ({
-                                                    label,
-                                                    value,
-                                                })
-                                            )}
-                                        />
+                                        <FormControl>
+                                            <Input
+                                                placeholder='123 Main Street, City'
+                                                className='col-span-4'
+                                                {...field}
+                                            />
+                                        </FormControl>
                                         <FormMessage className='col-span-4 col-start-3' />
                                     </FormItem>
                                 )}
@@ -200,61 +271,23 @@ export function MillsActionDialog({
                                             className='col-span-4'
                                             items={[
                                                 {
+                                                    label: 'Pending Verification',
+                                                    value: 'PENDING_VERIFICATION',
+                                                },
+                                                {
                                                     label: 'Active',
-                                                    value: 'active',
+                                                    value: 'ACTIVE',
                                                 },
                                                 {
-                                                    label: 'Inactive',
-                                                    value: 'inactive',
+                                                    label: 'Suspended',
+                                                    value: 'SUSPENDED',
                                                 },
                                                 {
-                                                    label: 'Maintenance',
-                                                    value: 'maintenance',
-                                                },
-                                                {
-                                                    label: 'Closed',
-                                                    value: 'closed',
+                                                    label: 'Rejected',
+                                                    value: 'REJECTED',
                                                 },
                                             ]}
                                         />
-                                        <FormMessage className='col-span-4 col-start-3' />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name='manager'
-                                render={({ field }) => (
-                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                                        <FormLabel className='col-span-2 text-end'>
-                                            Manager
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder='John Doe'
-                                                className='col-span-4'
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage className='col-span-4 col-start-3' />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name='phoneNumber'
-                                render={({ field }) => (
-                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                                        <FormLabel className='col-span-2 text-end'>
-                                            Phone Number
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder='+123456789'
-                                                className='col-span-4'
-                                                {...field}
-                                            />
-                                        </FormControl>
                                         <FormMessage className='col-span-4 col-start-3' />
                                     </FormItem>
                                 )}
@@ -263,8 +296,8 @@ export function MillsActionDialog({
                     </Form>
                 </div>
                 <DialogFooter>
-                    <Button type='submit' form='mill-form'>
-                        Save changes
+                    <Button type='submit' form='mill-form' disabled={isLoading}>
+                        {isLoading ? 'Saving...' : 'Save changes'}
                     </Button>
                 </DialogFooter>
             </DialogContent>

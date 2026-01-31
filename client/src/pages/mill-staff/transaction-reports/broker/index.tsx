@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -10,7 +11,7 @@ import { BrokerTransactionTable } from './components/broker-table'
 import { BrokerTransactionDialogs } from './components/broker-transaction-dialogs'
 import { BrokerTransactionPrimaryButtons } from './components/broker-transaction-primary-buttons'
 import { BrokerTransactionProvider } from './components/broker-transaction-provider'
-import { brokerTransactionEntries } from './data/broker-entries'
+import { useBrokerTransactionList } from './data/hooks'
 
 export function TransactionBrokerReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -19,6 +20,35 @@ export function TransactionBrokerReport() {
 
     // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const {
+        data: response,
+        isLoading,
+        isError,
+    } = useBrokerTransactionList(millId || '', queryParams, {
+        enabled: !!millId,
+    })
+
+    const brokerTransactionData = useMemo(() => {
+        if (!response?.data) return []
+        return response.data.map((item) => ({
+            id: item._id,
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+        }))
+    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -58,7 +88,9 @@ export function TransactionBrokerReport() {
                     <BrokerTransactionPrimaryButtons />
                 </div>
                 <BrokerTransactionTable
-                    data={brokerTransactionEntries}
+                    data={brokerTransactionData}
+                    isLoading={isLoading}
+                    isError={isError}
                     search={search}
                     navigate={navigate}
                 />

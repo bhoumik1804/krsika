@@ -13,6 +13,7 @@ import {
     refreshAccessToken,
     logoutUser,
     generateUserTokens,
+    registerNewMill,
 } from '../services/auth.service.js'
 import logger from '../utils/logger.js'
 
@@ -28,9 +29,6 @@ export const login = async (req, res, next) => {
             userAgent,
             ipAddress
         )
-        console.table(user)
-        console.table(accessToken)
-        console.table(refreshToken)
         // Set cookies
         res.cookie('accessToken', accessToken, accessTokenCookieOptions)
         res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions)
@@ -189,6 +187,22 @@ export const changePassword = async (req, res, next) => {
             statusCode: 200,
             data: null,
             message: 'Password changed successfully. Please login again.',
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const registerMill = async (req, res, next) => {
+    try {
+        const mill = await registerNewMill(req.body, req.user._id)
+
+        res.status(201).json({
+            success: true,
+            statusCode: 201,
+            data: mill,
+            message:
+                'Mill registration successful. Please wait for verification.',
         })
     } catch (error) {
         next(error)

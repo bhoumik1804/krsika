@@ -111,7 +111,7 @@ export const bulkDeletePrivateRiceOutwardSchema = z.object({
 })
 
 // List query params schema
-export const listPrivateRiceOutwardSchema = z.object({
+export const getPrivateRiceOutwardListSchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
     }),
@@ -147,7 +147,7 @@ export const listPrivateRiceOutwardSchema = z.object({
 })
 
 // Summary query params schema
-export const summaryPrivateRiceOutwardSchema = z.object({
+export const getPrivateRiceOutwardSummarySchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
     }),

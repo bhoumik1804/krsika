@@ -8,6 +8,7 @@ import {
     getMe,
     updateProfile,
     changePassword,
+    registerMill,
 } from '../controllers/auth.controller.js'
 import { authenticate } from '../middlewares/auth.js'
 import { validate } from '../middlewares/validate.js'
@@ -15,12 +16,14 @@ import {
     loginSchema,
     updateProfileSchema,
     changePasswordSchema,
+    registerMillSchema,
 } from '../validators/auth.validator.js'
 
 const router = express.Router()
 
 // Public routes
 router.post('/login', validate(loginSchema), login)
+router.post('/register-mill', validate(registerMillSchema), registerMill)
 router.get('/google', googleAuth)
 router.get('/google/callback', googleCallback)
 router.post('/refresh', refreshToken)

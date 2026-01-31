@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -10,7 +11,7 @@ import { FinancialPaymentDialogs } from './components/financial-payment-dialogs'
 import { FinancialPaymentPrimaryButtons } from './components/financial-payment-primary-buttons'
 import { FinancialPaymentProvider } from './components/financial-payment-provider'
 import { FinancialPaymentTable } from './components/financial-payment-table'
-import { FinancialPaymentEntries } from './data/financial-payment-entries'
+import { useFinancialPaymentList } from './data/hooks'
 
 export function FinancialPaymentReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +19,35 @@ export function FinancialPaymentReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const {
+        data: response,
+        isLoading,
+        isError,
+    } = useFinancialPaymentList(millId || '', queryParams, {
+        enabled: !!millId,
+    })
+
+    const financialPaymentData = useMemo(() => {
+        if (!response?.data) return []
+        return response.data.map((item) => ({
+            id: item._id,
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+        }))
+    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -57,7 +87,9 @@ export function FinancialPaymentReport() {
                     <FinancialPaymentPrimaryButtons />
                 </div>
                 <FinancialPaymentTable
-                    data={FinancialPaymentEntries}
+                    data={financialPaymentData}
+                    isLoading={isLoading}
+                    isError={isError}
                     search={search}
                     navigate={navigate}
                 />

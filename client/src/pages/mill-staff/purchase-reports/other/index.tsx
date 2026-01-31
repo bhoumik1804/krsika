@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -6,11 +7,11 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { useOtherPurchaseList } from '../../purchases/other-purchase/data/hooks'
 import { OtherDialogs } from './components/other-dialogs'
 import { OtherPrimaryButtons } from './components/other-primary-buttons'
 import { OtherProvider } from './components/other-provider'
 import { OtherTable } from './components/other-table'
-import { otherPurchases } from './data/other-purchases'
 
 export function OtherPurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -19,6 +20,33 @@ export function OtherPurchaseReport() {
 
     // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const {
+        data: response,
+        isLoading,
+        isError,
+    } = useOtherPurchaseList(millId || '', queryParams, { enabled: !!millId })
+
+    const purchaseData = useMemo(() => {
+        if (!response?.data) return []
+        return response.data.map((item) => ({
+            id: item._id,
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+        }))
+    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -29,6 +57,24 @@ export function OtherPurchaseReport() {
         } else {
             setSearchParams(opts.search as Record<string, string>)
         }
+    }
+
+    if (isLoading) {
+        return (
+            <Main className='flex flex-1 items-center justify-center'>
+                <div className='text-muted-foreground'>Loading...</div>
+            </Main>
+        )
+    }
+
+    if (isError) {
+        return (
+            <Main className='flex flex-1 items-center justify-center'>
+                <div className='text-destructive'>
+                    Error loading other purchase data
+                </div>
+            </Main>
+        )
     }
 
     return (
@@ -58,7 +104,7 @@ export function OtherPurchaseReport() {
                     <OtherPrimaryButtons />
                 </div>
                 <OtherTable
-                    data={otherPurchases}
+                    data={purchaseData}
                     search={search}
                     navigate={navigate}
                 />

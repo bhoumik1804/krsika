@@ -1,7 +1,9 @@
 import jwt from 'jsonwebtoken'
+import { MILL_STATUS } from '../constants/mill.status.enum.js'
 import { ROLES } from '../constants/user.roles.enum.js'
 import { User } from '../models/user.model.js'
 import logger from '../utils/logger.js'
+import { createMillEntry } from './mills.service.js'
 
 /**
  * Authenticate user with email and password
@@ -328,7 +330,7 @@ export const hasModulePermission = async (userId, moduleSlug, action) => {
  * Used by: Admin user creation endpoint
  * Default role: GUEST_USER (can be set by Super Admin)
  */
-export const registerUser = async (userData, createdBy) => {
+export const registerNewUser = async (userData, createdBy) => {
     try {
         const {
             email,
@@ -531,4 +533,41 @@ export const refreshAccessToken = async (refreshToken) => {
  */
 export const logoutUser = async (userId) => {
     await User.findByIdAndUpdate(userId, { refreshToken: null })
+}
+
+/**
+ * Register new mill
+ * Used by: Public registration endpoint
+ * Status: PENDING_VERIFICATION
+ */
+export const registerNewMill = async (data) => {
+    try {
+        // Force status to PENDING_VERIFICATION
+        const millData = {
+            ...data,
+            millStatus: MILL_STATUS.PENDING_VERIFICATION,
+        }
+
+        const user = await User.findById(req.user._id).select(
+            '-password -refreshToken'
+        )
+
+        if (!user.millId) {
+            const mill = await createMillEntry(millData, millStatus)
+            user.millId = mill._id
+            await user.save()
+        }
+
+        logger.info('Public mill registration successful', {
+            millId: mill._id,
+            email: mill.contact.email,
+        })
+
+        return mill
+    } catch (error) {
+        logger.error('Public mill registration failed', {
+            error: error.message,
+        })
+        throw error
+    }
 }

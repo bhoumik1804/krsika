@@ -1,6 +1,6 @@
 import { ArrowRight, Play, Sparkles } from 'lucide-react'
-import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
+import { MillRegistrationDialog } from './mill-registration-dialog'
 
 export function HeroSection() {
     return (
@@ -42,18 +42,18 @@ export function HeroSection() {
                         operations and boost efficiency by 40%.
                     </p>
 
-                    {/* CTA Buttons */}
                     <div className='flex flex-col items-center justify-center gap-4 sm:flex-row'>
-                        <Button
-                            size='lg'
-                            className='group h-12 px-8 text-base'
-                            asChild
-                        >
-                            <Link to='/sign-up'>
-                                Start Free Trial
-                                <ArrowRight className='ml-2 h-4 w-4 transition-transform group-hover:translate-x-1' />
-                            </Link>
-                        </Button>
+                        <MillRegistrationDialog
+                            trigger={
+                                <Button
+                                    size='lg'
+                                    className='group h-12 px-8 text-base'
+                                >
+                                    Get Started
+                                    <ArrowRight className='ml-2 h-4 w-4 transition-transform group-hover:translate-x-1' />
+                                </Button>
+                            }
+                        />
                         <Button
                             size='lg'
                             variant='outline'

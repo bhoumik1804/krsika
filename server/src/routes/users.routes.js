@@ -31,7 +31,7 @@ const router = express.Router()
 
 // All routes require authentication and super admin role
 router.use(authenticate)
-router.use(requireRole([ROLES.SUPER_ADMIN]))
+router.use(requireRole(ROLES.SUPER_ADMIN))
 
 /**
  * Users Routes (Super Admin)

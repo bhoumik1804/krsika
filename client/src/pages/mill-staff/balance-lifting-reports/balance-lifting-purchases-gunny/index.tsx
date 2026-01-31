@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -10,15 +11,43 @@ import { BalanceLiftingPurchasesGunnyDialogs } from './components/balance-liftin
 import { BalanceLiftingPurchasesGunnyPrimaryButtons } from './components/balance-lifting-purchases-gunny-primary-buttons'
 import { BalanceLiftingPurchasesGunnyProvider } from './components/balance-lifting-purchases-gunny-provider'
 import { BalanceLiftingPurchasesGunnyTable } from './components/balance-lifting-purchases-gunny-table'
-import { balanceLiftingPurchasesGunnyEntries } from './data/balance-lifting-purchases-gunny-entries'
+import { useBalanceLiftingPurchasesGunnyList } from './data/hooks'
 
 export function BalanceLiftingPurchasesGunnyReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
 
-    // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const { data: response } = useBalanceLiftingPurchasesGunnyList(
+        millId || '',
+        queryParams,
+        {
+            enabled: !!millId,
+        }
+    )
+
+    const balanceLiftingPurchasesGunnyData = useMemo(() => {
+        if (!response?.data) return []
+        return response.data.map((item) => ({
+            id: item._id,
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+        }))
+    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -58,7 +87,7 @@ export function BalanceLiftingPurchasesGunnyReport() {
                     <BalanceLiftingPurchasesGunnyPrimaryButtons />
                 </div>
                 <BalanceLiftingPurchasesGunnyTable
-                    data={balanceLiftingPurchasesGunnyEntries}
+                    data={balanceLiftingPurchasesGunnyData}
                     search={search}
                     navigate={navigate}
                 />

@@ -94,7 +94,7 @@ export const bulkDeleteOtherInwardSchema = z.object({
 })
 
 // List query params schema
-export const listOtherInwardSchema = z.object({
+export const getOtherInwardListSchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
     }),
@@ -129,7 +129,7 @@ export const listOtherInwardSchema = z.object({
 })
 
 // Summary query params schema
-export const summaryOtherInwardSchema = z.object({
+export const getOtherInwardSummarySchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
     }),

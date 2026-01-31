@@ -1,8 +1,10 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -10,7 +12,7 @@ import { LabourOutwardDialogs } from './components/labour-outward-dialogs'
 import { LabourOutwardPrimaryButtons } from './components/labour-outward-primary-buttons'
 import { LabourOutwardProvider } from './components/labour-outward-provider'
 import { LabourOutwardTable } from './components/labour-outward-table'
-import { labourOutwardEntries } from './data/labour-outward-entries'
+import { useLabourOutwardList } from './data/hooks'
 
 export function LabourOutwardReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +20,35 @@ export function LabourOutwardReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const {
+        data: response,
+        isLoading,
+        isError,
+    } = useLabourOutwardList(millId || '', queryParams, {
+        enabled: !!millId,
+    })
+
+    const labourOutwardData = useMemo(() => {
+        if (!response?.data) return []
+        return response.data.map((item) => ({
+            id: item._id,
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+        }))
+    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -56,11 +87,21 @@ export function LabourOutwardReport() {
                     </div>
                     <LabourOutwardPrimaryButtons />
                 </div>
-                <LabourOutwardTable
-                    data={labourOutwardEntries}
-                    search={search}
-                    navigate={navigate}
-                />
+                {isLoading ? (
+                    <div className='flex items-center justify-center py-10'>
+                        <LoadingSpinner />
+                    </div>
+                ) : isError ? (
+                    <div className='py-10 text-center text-destructive'>
+                        Failed to load labour outward data
+                    </div>
+                ) : (
+                    <LabourOutwardTable
+                        data={labourOutwardData}
+                        search={search}
+                        navigate={navigate}
+                    />
+                )}
             </Main>
 
             <LabourOutwardDialogs />

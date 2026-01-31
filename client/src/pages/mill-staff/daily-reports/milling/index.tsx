@@ -35,7 +35,12 @@ export function MillingReport() {
             search: search.search as string | undefined,
             startDate: search.startDate as string | undefined,
             endDate: search.endDate as string | undefined,
-            sortBy: (search.sortBy as string) || 'date',
+            sortBy:
+                (search.sortBy as
+                    | 'date'
+                    | 'paddyType'
+                    | 'paddyQuantity'
+                    | 'createdAt') || 'date',
             sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
         }),
         [search]

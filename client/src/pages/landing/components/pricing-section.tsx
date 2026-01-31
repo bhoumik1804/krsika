@@ -3,16 +3,12 @@ import { formatCurrency, API_URL } from '@/constants'
 import type { PricingPlan } from '@/types'
 import { CircleCheckBig, Loader2 } from 'lucide-react'
 import { Link } from 'react-router'
+import { useAuthStore } from '@/stores/auth-store'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { pricingData } from '../data'
-
-// ==========================================
-// Pricing Card Component
-// ==========================================
-// ... (omitting PricingCard and PricingCardSkeleton for brevity as they don't change logic, just props)
-// (Wait, I need to keep the file structure intact, so I'll just replace the whole relevant chunk)
+import { MillRegistrationDialog } from './mill-registration-dialog'
 
 // ==========================================
 // Pricing Card Component
@@ -23,6 +19,8 @@ interface PricingCardProps {
 }
 
 function PricingCard({ plan }: PricingCardProps) {
+    const { isAuthenticated } = useAuthStore()
+
     return (
         <Card
             className={`relative flex flex-col ${
@@ -73,13 +71,26 @@ function PricingCard({ plan }: PricingCardProps) {
             </CardContent>
 
             <CardFooter className='pt-4'>
-                <Button
-                    className='w-full'
-                    variant={plan.isPopular ? 'default' : 'outline'}
-                    asChild
-                >
-                    <Link to='/sign-up'>Start Free Trial</Link>
-                </Button>
+                {isAuthenticated ? (
+                    <MillRegistrationDialog
+                        trigger={
+                            <Button
+                                className='w-full'
+                                variant={plan.isPopular ? 'default' : 'outline'}
+                            >
+                                Continue
+                            </Button>
+                        }
+                    />
+                ) : (
+                    <Button
+                        className='w-full'
+                        variant={plan.isPopular ? 'default' : 'outline'}
+                        asChild
+                    >
+                        <Link to='/sign-up'>Continue</Link>
+                    </Button>
+                )}
             </CardFooter>
         </Card>
     )

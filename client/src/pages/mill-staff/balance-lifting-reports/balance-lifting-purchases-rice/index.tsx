@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -10,15 +11,43 @@ import { BalanceLiftingPurchasesRiceDialogs } from './components/balance-lifting
 import { BalanceLiftingPurchasesRicePrimaryButtons } from './components/balance-lifting-purchases-rice-primary-buttons'
 import { BalanceLiftingPurchasesRiceProvider } from './components/balance-lifting-purchases-rice-provider'
 import { BalanceLiftingPurchasesRiceTable } from './components/balance-lifting-purchases-rice-table'
-import { balanceLiftingPurchasesRiceEntries } from './data/balance-lifting-purchases-rice-entries'
+import { useBalanceLiftingPurchasesRiceList } from './data/hooks'
 
 export function BalanceLiftingPurchasesRiceReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
 
-    // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const { data: response } = useBalanceLiftingPurchasesRiceList(
+        millId || '',
+        queryParams,
+        {
+            enabled: !!millId,
+        }
+    )
+
+    const balanceLiftingPurchasesRiceData = useMemo(() => {
+        if (!response?.data) return []
+        return response.data.map((item) => ({
+            id: item._id,
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+        }))
+    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -58,7 +87,7 @@ export function BalanceLiftingPurchasesRiceReport() {
                     <BalanceLiftingPurchasesRicePrimaryButtons />
                 </div>
                 <BalanceLiftingPurchasesRiceTable
-                    data={balanceLiftingPurchasesRiceEntries}
+                    data={balanceLiftingPurchasesRiceData}
                     search={search}
                     navigate={navigate}
                 />

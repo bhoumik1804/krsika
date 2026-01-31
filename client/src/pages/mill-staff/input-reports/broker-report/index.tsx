@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -10,7 +11,7 @@ import { BrokerReportDialogs } from './components/broker-report-dialogs'
 import { BrokerReportPrimaryButtons } from './components/broker-report-primary-buttons'
 import { BrokerReportProvider } from './components/broker-report-provider'
 import { BrokerReportTable } from './components/broker-report-table'
-import { brokerReportEntries } from './data/broker-report-entries'
+import { useBrokerList } from './data/hooks'
 
 export function BrokerReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +19,33 @@ export function BrokerReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const {
+        data: response,
+        isLoading,
+        isError,
+    } = useBrokerList(millId || '', queryParams, { enabled: !!millId })
+
+    const brokerReportData = useMemo(() => {
+        if (!response?.data) return []
+        return response.data.map((item) => ({
+            id: item._id,
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+        }))
+    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -57,9 +85,12 @@ export function BrokerReport() {
                     <BrokerReportPrimaryButtons />
                 </div>
                 <BrokerReportTable
-                    data={brokerReportEntries}
+                    data={brokerReportData}
                     search={search}
                     navigate={navigate}
+                    isLoading={isLoading}
+                    isError={isError}
+                    totalRows={response?.pagination?.total}
                 />
             </Main>
 

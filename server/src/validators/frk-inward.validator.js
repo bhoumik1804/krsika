@@ -93,7 +93,7 @@ export const bulkDeleteFrkInwardSchema = z.object({
 })
 
 // List query params schema
-export const listFrkInwardSchema = z.object({
+export const getFrkInwardListSchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
     }),
@@ -119,7 +119,7 @@ export const listFrkInwardSchema = z.object({
 })
 
 // Summary query params schema
-export const summaryFrkInwardSchema = z.object({
+export const getFrkInwardSummarySchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
     }),

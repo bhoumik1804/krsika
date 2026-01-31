@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -10,7 +11,7 @@ import { NakkhiSalesDialogs } from './components/nakkhi-sales-dialogs'
 import { NakkhiSalesPrimaryButtons } from './components/nakkhi-sales-primary-buttons'
 import { NakkhiSalesProvider } from './components/nakkhi-sales-provider'
 import { NakkhiSalesTable } from './components/nakkhi-sales-table'
-import { nakkhiSalesEntries } from './data/nakkhi-sales-entries'
+import { useNakkhiSalesList } from './data/hooks'
 
 export function NakkhiSalesReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +19,32 @@ export function NakkhiSalesReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const {
+        data: response,
+        isLoading,
+        isError,
+    } = useNakkhiSalesList(millId || '', queryParams, { enabled: !!millId })
+
+    const salesData = useMemo(() => {
+        if (!response?.data) return []
+        return response.data.map((item) => ({
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+        }))
+    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -57,9 +84,13 @@ export function NakkhiSalesReport() {
                     <NakkhiSalesPrimaryButtons />
                 </div>
                 <NakkhiSalesTable
-                    data={nakkhiSalesEntries}
+                    data={salesData}
                     search={search}
                     navigate={navigate}
+                    isLoading={isLoading}
+                    isError={isError}
+                    totalPages={response?.pagination?.totalPages}
+                    totalItems={response?.pagination?.total}
                 />
             </Main>
 

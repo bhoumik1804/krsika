@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -10,7 +11,7 @@ import { LabourMillingDialogs } from './components/labour-milling-dialogs'
 import { LabourMillingPrimaryButtons } from './components/labour-milling-primary-buttons'
 import { LabourMillingProvider } from './components/labour-milling-provider'
 import { LabourMillingTable } from './components/labour-milling-table'
-import { labourMillingEntries } from './data/labour-milling-entries'
+import { useLabourMillingList } from './data/hooks'
 
 export function LabourMillingReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +19,33 @@ export function LabourMillingReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const {
+        data: response,
+        isLoading,
+        isError,
+    } = useLabourMillingList(millId || '', queryParams, { enabled: !!millId })
+
+    const labourMillingData = useMemo(() => {
+        if (!response?.data) return []
+        return response.data.map((item) => ({
+            id: item._id,
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+        }))
+    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -57,9 +85,12 @@ export function LabourMillingReport() {
                     <LabourMillingPrimaryButtons />
                 </div>
                 <LabourMillingTable
-                    data={labourMillingEntries}
+                    data={labourMillingData}
                     search={search}
                     navigate={navigate}
+                    isLoading={isLoading}
+                    isError={isError}
+                    totalRows={response?.pagination?.total}
                 />
             </Main>
 

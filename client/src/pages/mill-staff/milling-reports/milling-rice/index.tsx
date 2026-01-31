@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+import { useMillingRiceList } from '@/pages/mill-staff/milling/milling-rice/data/hooks'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -10,7 +12,6 @@ import { MillingRiceDialogs } from './components/milling-rice-dialogs'
 import { MillingRicePrimaryButtons } from './components/milling-rice-primary-buttons'
 import { MillingRiceProvider } from './components/milling-rice-provider'
 import { MillingRiceTable } from './components/milling-rice-table'
-import { millingRiceEntries } from './data/milling-rice-entries'
 
 export function MillingRiceReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +19,33 @@ export function MillingRiceReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const {
+        data: response,
+        isLoading,
+        isError,
+    } = useMillingRiceList(millId || '', queryParams, { enabled: !!millId })
+
+    const millingRiceData = useMemo(() => {
+        if (!response?.data) return []
+        return response.data.map((item) => ({
+            id: item._id,
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+        }))
+    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -57,9 +85,13 @@ export function MillingRiceReport() {
                     <MillingRicePrimaryButtons />
                 </div>
                 <MillingRiceTable
-                    data={millingRiceEntries}
+                    data={millingRiceData}
                     search={search}
                     navigate={navigate}
+                    isLoading={isLoading}
+                    isError={isError}
+                    totalPages={response?.pagination?.totalPages}
+                    totalItems={response?.pagination?.total}
                 />
             </Main>
 
