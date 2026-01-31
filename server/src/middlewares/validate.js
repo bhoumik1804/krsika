@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import ApiError from '../utils/ApiError.js'
 
 export const validate = (schema) => {
     return (req, res, next) => {
@@ -17,13 +16,10 @@ export const validate = (schema) => {
                     message: err.message,
                 }))
 
-                next(
-                    ApiError.badRequest(
-                        'Validation failed',
-                        'VALIDATION_ERROR',
-                        details
-                    )
-                )
+                const validationError = new Error('Validation failed')
+                validationError.statusCode = 400
+                validationError.details = details
+                next(validationError)
             } else {
                 next(error)
             }

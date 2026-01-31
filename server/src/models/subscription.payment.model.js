@@ -1,3 +1,6 @@
+import { Schema } from 'mongoose'
+import { PAYMENT_STAUS } from '../constants/subscription.payment.status.enum.js'
+
 const PaymentSchema = new Schema(
     {
         millId: {
@@ -15,9 +18,10 @@ const PaymentSchema = new Schema(
 
         verifiedBy: { type: Schema.Types.ObjectId, ref: 'User' }, // Super Admin who verified
         status: {
+            // payment status
             type: String,
-            enum: ['PENDING', 'VERIFIED', 'FAILED', 'REFUNDED'],
-            default: 'PENDING',
+            enum: Object.values(PAYMENT_STAUS),
+            default: PAYMENT_STAUS.PENDING,
         },
 
         invoiceUrl: String,

@@ -1,3 +1,7 @@
+import { Schema } from 'mongoose'
+import { SUBSCRIPTION_BILLING_CYCLE } from '../constants/subscription.billing.cycle.enum.js'
+import { SUBSCRIPTION_STATUS } from '../constants/subscription.status.enum.js'
+
 const SubscriptionSchema = new Schema(
     {
         millId: {
@@ -14,14 +18,15 @@ const SubscriptionSchema = new Schema(
         endDate: { type: Date }, // Null if lifetime/recurring not set
 
         status: {
+            // subscription status
             type: String,
-            enum: ['ACTIVE', 'EXPIRED', 'CANCELED', 'UPGRADED'],
-            default: 'ACTIVE',
+            enum: Object.values(SUBSCRIPTION_STATUS),
+            default: SUBSCRIPTION_STATUS.ACTIVE,
         },
 
         billingCycle: {
             type: String,
-            enum: ['MONTHLY', 'YEARLY', 'ONE_TIME'],
+            enum: Object.values(SUBSCRIPTION_BILLING_CYCLE),
         },
         price: { type: Number, default: 0 }, // Snapshot of price at time of subscription
     },

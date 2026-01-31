@@ -1,36 +1,33 @@
-import ApiError from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
 export const errorHandler = (err, req, res, next) => {
-    let error = err
-
-    // If it's not an ApiError, convert it
-    if (!(error instanceof ApiError)) {
-        const statusCode = error.statusCode || 500
-        const message = error.message || 'Internal Server Error'
-        error = new ApiError(statusCode, message, 'INTERNAL_ERROR')
-    }
+    const statusCode = err.statusCode || 500
+    const message = err.message || 'Internal Server Error'
+    const code = err.code || 'INTERNAL_ERROR'
 
     // Log error
     logger.error('Error occurred:', {
-        message: error.message,
-        code: error.code,
-        statusCode: error.statusCode,
-        stack: error.stack,
+        message,
+        code,
+        statusCode,
+        stack: err.stack,
         path: req.path,
         method: req.method,
     })
 
     // Send response
-    res.status(error.statusCode).json({
+    res.status(statusCode).json({
         success: false,
-        error: error.message,
-        code: error.code,
-        ...(error.details && { details: error.details }),
-        ...(process.env.NODE_ENV === 'development' && { stack: error.stack }),
+        error: message,
+        code,
+        ...(err.details && { details: err.details }),
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
     })
 }
 
 export const notFoundHandler = (req, res, next) => {
-    next(ApiError.notFound(`Route ${req.originalUrl} not found`))
+    const error = new Error(`Route ${req.originalUrl} not found`)
+    error.statusCode = 404
+    error.code = 'NOT_FOUND'
+    next(error)
 }

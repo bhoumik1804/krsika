@@ -1,3 +1,6 @@
+import { Schema } from 'mongoose'
+import { MILL_STATUS } from '../constants/mill.status.enum.js'
+
 const MillSchema = new Schema(
     {
         millName: { type: String, required: true },
@@ -18,8 +21,8 @@ const MillSchema = new Schema(
         // Flattened status fields for quick middleware checks
         status: {
             type: String,
-            enum: ['PENDING_VERIFICATION', 'ACTIVE', 'SUSPENDED', 'REJECTED'],
-            default: 'PENDING_VERIFICATION',
+            enum: Object.values(MILL_STATUS),
+            default: MILL_STATUS.PENDING_VERIFICATION,
         },
         // Changed from hardcoded enum to Reference
         currentPlan: { type: Schema.Types.ObjectId, ref: 'Plan' },
