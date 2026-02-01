@@ -86,6 +86,22 @@ export const loginUser = async (email, password, userAgent, ipAddress) => {
             throw new Error('User account is inactive')
         }
 
+        // Debug logging
+        logger.debug('Login attempt:', {
+            email,
+            hasPassword: !!password,
+            hasUserPassword: !!user.password,
+            userId: user._id
+        })
+
+        if (!password) {
+            throw new Error('Password is required')
+        }
+
+        if (!user.password) {
+            throw new Error('User account has no password set. Please use alternative login method.')
+        }
+
         const isPasswordValid = await user.isPasswordCorrect(password)
         if (!isPasswordValid) {
             throw new Error('Invalid email or password')

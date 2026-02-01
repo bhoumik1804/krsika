@@ -1,8 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -22,6 +20,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { partyReportSchema, type PartyReportData } from '../data/schema'
+import { useCreateParty, useUpdateParty } from '../data/hooks'
+import { useUser } from '@/pages/landing/hooks/use-auth'
 
 type PartyReportActionDialogProps = {
     open: boolean
@@ -35,10 +35,18 @@ export function PartyReportActionDialog({
     currentRow,
 }: PartyReportActionDialogProps) {
     const isEditing = !!currentRow
+    const { user } = useUser()
+    const millId = user?.millId as any
+
+    const createMutation = useCreateParty(millId)
+    const updateMutation = useUpdateParty(millId)
+    const isLoading = createMutation.isPending || updateMutation.isPending
 
     const form = useForm<PartyReportData>({
         resolver: zodResolver(partyReportSchema),
         defaultValues: {
+            _id: '',
+            id: '',
             partyName: '',
             gstn: '',
             phone: '',
@@ -48,27 +56,47 @@ export function PartyReportActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow as any)
+            } else {
+                form.reset({
+                    _id: '',
+                    id: '',
+                    partyName: '',
+                    gstn: '',
+                    phone: '',
+                    email: '',
+                    address: '',
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [open, currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating party...' : 'Adding party...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Party updated successfully'
-                    : 'Party added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update party'
-                : 'Failed to add party',
-        })
+    const onSubmit = async (data: any) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({ 
+                    id: currentRow._id, 
+                    partyName: data.partyName,
+                    gstn: data.gstn,
+                    phone: data.phone,
+                    email: data.email,
+                    address: data.address,
+                })
+            } else {
+                await createMutation.mutateAsync({
+                    partyName: data.partyName,
+                    gstn: data.gstn,
+                    phone: data.phone,
+                    email: data.email,
+                    address: data.address,
+                })
+            }
+            onOpenChange(false)
+        } catch (error: any) {
+            console.error('Form submission error:', error)
+        }
     }
 
     return (
@@ -184,11 +212,18 @@ export function PartyReportActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Party
+                            <Button 
+                                type='submit'
+                                disabled={isLoading}
+                            >
+                                {isLoading 
+                                    ? (isEditing ? 'Updating...' : 'Adding...') 
+                                    : (isEditing ? 'Update' : 'Add') 
+                                } Party
                             </Button>
                         </DialogFooter>
                     </form>

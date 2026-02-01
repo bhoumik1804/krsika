@@ -30,31 +30,43 @@ export function useParseExcel() {
                     try {
                         const data = event.target?.result as ArrayBuffer
                         const workbook = XLSX.read(data, { type: 'array' })
-                        const worksheet =
-                            workbook.Sheets[workbook.SheetNames[0]]
-                        // Use header: 1 to get all rows as arrays (no header skipping)
-                        const rawData = XLSX.utils.sheet_to_json(worksheet, {
+                        const worksheet = workbook.Sheets[workbook.SheetNames[0]]
+                        
+                        // Read ALL data as arrays first (including header)
+                        const allRows = XLSX.utils.sheet_to_json(worksheet, {
                             header: 1,
+                            defval: ''
                         }) as unknown[][]
 
-                        // Filter out completely empty rows (where all cells are null/undefined/'')
-                        const jsonData = rawData.filter((row) => {
-                            if (!Array.isArray(row)) return false
-                            return row.some(
-                                (cell) =>
-                                    cell !== null &&
-                                    cell !== undefined &&
-                                    cell !== ''
-                            )
-                        })
+                        console.log('All rows count:', allRows.length)
+                        console.log('First 3 rows:', allRows.slice(0, 3))
 
-                        if (jsonData.length === 0) {
-                            toast.error('No data found in the Excel file')
+                        if (allRows.length < 2) {
+                            toast.error('Excel file must have header and data rows')
                             setParseStats({
                                 totalRows: 0,
                                 successRows: 0,
                                 failedRows: 0,
-                                errorDetails: ['No data found in file'],
+                                errorDetails: ['File has no data rows'],
+                                hasHeaders: true,
+                            })
+                            setIsLoading(false)
+                            resolve(null)
+                            return
+                        }
+
+                        // Extract header from first row
+                        const headerRow = allRows[0]
+                        console.log('Header row:', headerRow)
+                        console.log('Header row type:', typeof headerRow, Array.isArray(headerRow))
+                        console.log('Header values:', headerRow?.map(h => String(h).toLowerCase().trim()))
+                        if (!Array.isArray(headerRow)) {
+                            toast.error('Invalid Excel format')
+                            setParseStats({
+                                totalRows: 0,
+                                successRows: 0,
+                                failedRows: 0,
+                                errorDetails: ['Invalid header row'],
                                 hasHeaders: false,
                             })
                             setIsLoading(false)
@@ -62,87 +74,122 @@ export function useParseExcel() {
                             return
                         }
 
-                        // Validate and count successful/failed rows
+                        // Convert array row to object using header - map by POSITION not by name
+                        const arrayToObject = (row: unknown[]): Record<string, unknown> | null => {
+                            if (!Array.isArray(row)) return null
+                            
+                            const obj: Record<string, unknown> = {}
+                            
+                            // Map by column position:
+                            // Col 0 = committeeType
+                            // Col 1 = committeeName
+                            if (row[0] !== null && row[0] !== undefined && row[0] !== '') {
+                                obj['committeeType'] = row[0]
+                            }
+                            if (row[1] !== null && row[1] !== undefined && row[1] !== '') {
+                                obj['committeeName'] = row[1]
+                            }
+                            
+                            return obj
+                        }
+
+                        // Process rows (skip header at index 0)
                         const errorDetails: string[] = []
                         let successCount = 0
                         let failCount = 0
+                        const validatedData: Array<Record<string, unknown>> = []
 
-                        const validatedData = jsonData.filter((row, index) => {
+                        for (let i = 1; i < allRows.length; i++) {
                             try {
-                                // Check if row has any data
-                                const hasData = row.some(
-                                    (cell) =>
-                                        cell !== null &&
-                                        cell !== undefined &&
-                                        cell !== ''
-                                )
+                                const row = allRows[i]
 
-                                if (hasData) {
-                                    successCount++
-                                    return true
-                                } else {
+                                // Check if row is array
+                                if (!Array.isArray(row)) {
                                     failCount++
-                                    errorDetails.push(
-                                        `Row ${index + 1}: No data or all fields are empty`
-                                    )
-                                    return false
+                                    errorDetails.push(`Row ${i + 1}: Invalid row format`)
+                                    continue
                                 }
+
+                                // Check if has any data - SILENTLY skip empty rows (don't count as error)
+                                const hasData = row.some(cell => cell !== null && cell !== undefined && cell !== '')
+                                if (!hasData) {
+                                    continue  // Just skip, don't count as error
+                                }
+
+                                // Convert array to object
+                                const objRow = arrayToObject(row)
+                                if (!objRow) {
+                                    failCount++
+                                    errorDetails.push(`Row ${i + 1}: Could not parse row`)
+                                    continue
+                                }
+
+                                // Check for required field
+                                if (!objRow['committeeName']) {
+                                    failCount++
+                                    errorDetails.push(`Row ${i + 1}: Committee name is required`)
+                                    continue
+                                }
+
+                                validatedData.push(objRow)
+                                successCount++
                             } catch (error) {
                                 failCount++
-                                errorDetails.push(
-                                    `Row ${index + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`
-                                )
-                                return false
+                                errorDetails.push(`Row ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`)
                             }
-                        })
+                        }
+
+                        if (validatedData.length === 0) {
+                            toast.error('No valid committees found')
+                            setParseStats({
+                                totalRows: allRows.length - 1,
+                                successRows: 0,
+                                failedRows: failCount,
+                                errorDetails,
+                                hasHeaders: true,
+                            })
+                            setIsLoading(false)
+                            resolve(null)
+                            return
+                        }
+
+                        console.log('Final validatedData length:', validatedData.length)
+                        console.log('Final validatedData[0]:', validatedData[0])
+                        console.log('validatedData[0] type:', typeof validatedData[0])
+                        console.log('validatedData[0] isArray?:', Array.isArray(validatedData[0]))
+                        console.log('Is object?', typeof validatedData[0] === 'object' && !Array.isArray(validatedData[0]))
+                        console.log('validatedData[0] keys:', Object.keys(validatedData[0]))
 
                         const stats: ParseStats = {
-                            totalRows: jsonData.length,
+                            totalRows: allRows.length - 1,
                             successRows: successCount,
                             failedRows: failCount,
-                            errorDetails:
-                                errorDetails.length > 5
-                                    ? [
-                                          ...errorDetails.slice(0, 5),
-                                          `... and ${errorDetails.length - 5} more errors`,
-                                      ]
-                                    : errorDetails,
-                            hasHeaders: false,
+                            errorDetails: errorDetails.length > 5
+                                ? [...errorDetails.slice(0, 5), `... and ${errorDetails.length - 5} more errors`]
+                                : errorDetails,
+                            hasHeaders: true,
                         }
 
                         setParseStats(stats)
 
                         if (successCount > 0) {
-                            toast.success(
-                                `Loaded ${successCount} records${failCount > 0 ? ` (${failCount} skipped)` : ''}`
-                            )
+                            toast.success(`Loaded ${successCount} records${failCount > 0 ? ` (${failCount} skipped)` : ''}`)
                         }
 
                         if (failCount > 0) {
-                            toast.warning(
-                                `${failCount} rows could not be parsed and were skipped`
-                            )
+                            toast.warning(`${failCount} rows could not be parsed`)
                         }
 
                         setIsLoading(false)
-                        resolve({
-                            data: validatedData,
-                            stats,
-                        })
+                        resolve({ data: validatedData, stats })
                     } catch (error) {
-                        toast.error(
-                            'Failed to read Excel file. Please check the format.'
-                        )
+                        toast.error('Failed to read Excel file')
                         console.error('Error reading file:', error)
                         setParseStats({
                             totalRows: 0,
                             successRows: 0,
                             failedRows: 0,
-                            errorDetails: [
-                                error instanceof Error
-                                    ? error.message
-                                    : 'Unknown error',
-                            ],
+                            errorDetails: [error instanceof Error ? error.message : 'Unknown error'],
                             hasHeaders: false,
                         })
                         setIsLoading(false)

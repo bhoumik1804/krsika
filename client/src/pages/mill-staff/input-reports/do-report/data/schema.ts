@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 // Schema for DoReport records
 export const doReportSchema = z.object({
+    _id: z.string().optional(),
+    id: z.string().optional(),
     date: z.string().min(1, 'Date is required'),
     samitiSangrahan: z.string().optional(),
     doNo: z.string().optional(),

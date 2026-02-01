@@ -1,5 +1,6 @@
 import {
     createCommitteeEntry,
+    bulkCreateCommittees as bulkCreateCommitteesService,
     getCommitteeById,
     getCommitteeList,
     getCommitteeSummary,
@@ -29,6 +30,29 @@ export const createCommittee = async (req, res, next) => {
             statusCode: 201,
             data: committee,
             message: 'Committee created successfully',
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+/**
+ * Bulk create committees
+ * POST /api/mills/:millId/committees/bulk
+ */
+export const bulkCreateCommittees = async (req, res, next) => {
+    try {
+        const { millId } = req.params
+        const userId = req.user._id
+        const { committees } = req.body
+
+        const result = await bulkCreateCommitteesService(millId, committees, userId)
+
+        res.status(201).json({
+            success: true,
+            statusCode: 201,
+            data: result,
+            message: `${result.created} committee(s) created successfully`,
         })
     } catch (error) {
         next(error)
@@ -76,7 +100,10 @@ export const getCommitteeListHandler = async (req, res, next) => {
         res.status(200).json({
             success: true,
             statusCode: 200,
-            data: result,
+            data: {
+                data: result.data,
+                pagination: result.pagination,
+            },
             message: 'Committee list retrieved successfully',
         })
     } catch (error) {

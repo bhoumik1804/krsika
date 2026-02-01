@@ -16,7 +16,8 @@ export interface CreatePartyRequest {
 }
 
 export interface UpdatePartyRequest {
-    id: string
+    id?: string
+    _id?: string
     partyName?: string
     gstn?: string
     phone?: string

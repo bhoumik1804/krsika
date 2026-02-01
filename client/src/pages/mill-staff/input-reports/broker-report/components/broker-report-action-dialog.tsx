@@ -1,8 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -22,6 +20,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { brokerReportSchema, type BrokerReportData } from '../data/schema'
+import { useCreateBroker, useUpdateBroker } from '../data/hooks'
+import { useUser } from '@/pages/landing/hooks/use-auth'
 
 type BrokerReportActionDialogProps = {
     open: boolean
@@ -35,10 +35,18 @@ export function BrokerReportActionDialog({
     currentRow,
 }: BrokerReportActionDialogProps) {
     const isEditing = !!currentRow
+    const { user } = useUser()
+    const millId = user?.millId as any
+
+    const createMutation = useCreateBroker(millId)
+    const updateMutation = useUpdateBroker(millId)
+    const isLoading = createMutation.isPending || updateMutation.isPending
 
     const form = useForm<BrokerReportData>({
         resolver: zodResolver(brokerReportSchema),
         defaultValues: {
+            _id: '',
+            id: '',
             brokerName: '',
             phone: '',
             email: '',
@@ -47,27 +55,44 @@ export function BrokerReportActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow as any)
+            } else {
+                form.reset({
+                    _id: '',
+                    id: '',
+                    brokerName: '',
+                    phone: '',
+                    email: '',
+                    address: '',
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [open, currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating broker...' : 'Adding broker...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Broker updated successfully'
-                    : 'Broker added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update broker'
-                : 'Failed to add broker',
-        })
+    const onSubmit = async (data: any) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({ 
+                    id: currentRow._id, 
+                    brokerName: data.brokerName,
+                    phone: data.phone,
+                    email: data.email,
+                    address: data.address,
+                })
+            } else {
+                await createMutation.mutateAsync({
+                    brokerName: data.brokerName,
+                    phone: data.phone,
+                    email: data.email,
+                    address: data.address,
+                })
+            }
+            onOpenChange(false)
+        } catch (error: any) {
+            console.error('Form submission error:', error)
+        }
     }
 
     return (
@@ -170,8 +195,8 @@ export function BrokerReportActionDialog({
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Broker
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading ? (isEditing ? 'Updating...' : 'Adding...') : (isEditing ? 'Update' : 'Add')} Broker
                             </Button>
                         </DialogFooter>
                     </form>

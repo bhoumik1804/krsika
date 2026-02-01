@@ -7,7 +7,6 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -22,7 +21,6 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type PartyReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { partyReportColumns as columns } from './party-report-columns'
@@ -31,9 +29,12 @@ type DataTableProps = {
     data: PartyReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    totalRows?: number
+    isLoading?: boolean
+    isError?: boolean
 }
 
-export function PartyReportTable({ data, search, navigate }: DataTableProps) {
+export function PartyReportTable({ data, search, navigate, isLoading, isError, totalRows }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -49,11 +50,15 @@ export function PartyReportTable({ data, search, navigate }: DataTableProps) {
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: { 
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1, 
+            defaultPageSize: 10 
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
         ],
     })
 
@@ -74,17 +79,22 @@ export function PartyReportTable({ data, search, navigate }: DataTableProps) {
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
+        // DO NOT use getPaginationRowModel() - pagination is handled server-side
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        // Set manual pageCount for server-side pagination
+        pageCount: totalRows !== undefined ? Math.ceil(totalRows / (pagination.pageSize || 10)) : undefined,
+        manualPagination: true,
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (totalRows !== undefined) {
+            ensurePageInRange(Math.ceil(totalRows / (pagination.pageSize || 10)))
+        }
+    }, [totalRows, pagination.pageSize, ensurePageInRange])
 
     return (
         <div
@@ -97,13 +107,7 @@ export function PartyReportTable({ data, search, navigate }: DataTableProps) {
                 table={table}
                 searchPlaceholder='Search...'
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
+                filters={[]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>
@@ -140,7 +144,25 @@ export function PartyReportTable({ data, search, navigate }: DataTableProps) {
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className='h-24 text-center'
+                                >
+                                    Loading...
+                                </TableCell>
+                            </TableRow>
+                        ) : isError ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className='h-24 text-center text-red-500'
+                                >
+                                    Error loading data. Please try again.
+                                </TableCell>
+                            </TableRow>
+                        ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}

@@ -16,7 +16,8 @@ export interface CreateCommitteeRequest {
 }
 
 export interface UpdateCommitteeRequest {
-    id: string
+    id?: string
+    _id?: string
     committeeName?: string
     contactPerson?: string
     phone?: string

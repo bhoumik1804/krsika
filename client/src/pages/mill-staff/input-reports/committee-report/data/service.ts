@@ -77,6 +77,23 @@ export const createCommittee = async (
 }
 
 /**
+ * Bulk create committees
+ */
+export const bulkCreateCommittees = async (
+    millId: string,
+    committees: CreateCommitteeRequest[]
+): Promise<{ created: number; committees: CommitteeResponse[] }> => {
+    console.log('Sending to server:', { committees })
+    console.log('First committee type:', typeof committees[0], Array.isArray(committees[0]))
+    
+    const response = await apiClient.post<ApiResponse<{ created: number; committees: CommitteeResponse[] }>>(
+        `${COMMITTEE_ENDPOINT(millId)}/bulk`,
+        { committees }
+    )
+    return response.data.data
+}
+
+/**
  * Update an existing committee
  */
 export const updateCommittee = async (

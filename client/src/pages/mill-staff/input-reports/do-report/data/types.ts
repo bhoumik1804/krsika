@@ -18,7 +18,8 @@ export interface CreateDoReportRequest {
 }
 
 export interface UpdateDoReportRequest {
-    id: string
+    id?: string
+    _id?: string
     doNumber?: string
     date?: string
     partyName?: string

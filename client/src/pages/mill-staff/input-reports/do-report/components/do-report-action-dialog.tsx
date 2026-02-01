@@ -3,8 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -33,6 +31,8 @@ import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { doReportSchema, type DoReportData } from '../data/schema'
 import { useParseExcel } from '../hooks/use-parse-excel'
+import { useCreateDoReport, useUpdateDoReport } from '../data/hooks'
+import { useUser } from '@/pages/landing/hooks/use-auth'
 
 type DoReportActionDialogProps = {
     open: boolean
@@ -45,7 +45,12 @@ export function DoReportActionDialog({
     onOpenChange,
     currentRow,
 }: DoReportActionDialogProps) {
-    const isEditing = !!currentRow
+    const { user } = useUser()
+    const millId = user?.millId as any
+    const createMutation = useCreateDoReport(millId)
+    const updateMutation = useUpdateDoReport(millId)
+    const isLoading = createMutation.isPending || updateMutation.isPending
+    const isEditing = !!currentRow?._id
     const [uploadedFile, setUploadedFile] = useState<File | null>(null)
     const [previewData, setPreviewData] = useState<unknown[]>([])
     const { parseFile, parseStats } = useParseExcel()
@@ -70,19 +75,22 @@ export function DoReportActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating DO...' : 'Adding DO...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                setUploadedFile(null)
-                return isEditing
-                    ? 'DO updated successfully'
-                    : 'DO added successfully'
-            },
-            error: isEditing ? 'Failed to update DO' : 'Failed to add DO',
-        })
+    const onSubmit = async (data: DoReportData) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    ...data,
+                })
+            } else {
+                await createMutation.mutateAsync(data)
+            }
+            onOpenChange(false)
+            form.reset()
+            setUploadedFile(null)
+        } catch (error) {
+            console.error('Error submitting form:', error)
+        }
     }
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -449,11 +457,18 @@ export function DoReportActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} DO Report
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'} DO Report
                             </Button>
                         </DialogFooter>
                     </form>

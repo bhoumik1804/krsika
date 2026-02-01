@@ -7,29 +7,14 @@ import { z } from 'zod'
 
 // Common fields schema
 const staffReportBaseSchema = {
-    staffName: z
-        .string({ required_error: 'Staff name is required' })
+    fullName: z
+        .string({ required_error: 'Full name is required' })
         .trim()
-        .min(1, 'Staff name cannot be empty')
-        .max(200, 'Staff name is too long'),
-    designation: z
-        .string()
-        .trim()
-        .max(100, 'Designation is too long')
-        .optional(),
-    department: z.string().trim().max(100, 'Department is too long').optional(),
-    phone: z.string().trim().max(20, 'Phone number is too long').optional(),
-    email: z
-        .string()
-        .trim()
-        .email('Invalid email format')
-        .max(100, 'Email is too long')
-        .optional()
-        .or(z.literal('')),
-    joiningDate: z
-        .string()
-        .refine((val) => !val || !isNaN(Date.parse(val)), 'Invalid date format')
-        .optional(),
+        .min(1, 'Full name cannot be empty')
+        .max(200, 'Full name is too long'),
+    phoneNumber: z.string().trim().max(20, 'Phone number is too long').optional(),
+    email: z.email({ required_error: 'Email is required' }),
+    address: z.string().trim().max(500, 'Address is too long').optional(),
     salary: z.coerce.number().min(0, 'Salary cannot be negative').optional(),
 }
 
@@ -46,12 +31,10 @@ export const createStaffReportSchema = z.object({
 // Update staff report schema
 export const updateStaffReportSchema = z.object({
     body: z.object({
-        staffName: staffReportBaseSchema.staffName.optional(),
-        designation: staffReportBaseSchema.designation,
-        department: staffReportBaseSchema.department,
-        phone: staffReportBaseSchema.phone,
+        fullName: staffReportBaseSchema.fullName.optional(),
+        phoneNumber: staffReportBaseSchema.phoneNumber,
         email: staffReportBaseSchema.email,
-        joiningDate: staffReportBaseSchema.joiningDate,
+        address: staffReportBaseSchema.address,
         salary: staffReportBaseSchema.salary,
     }),
     params: z.object({

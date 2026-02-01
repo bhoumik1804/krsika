@@ -7,25 +7,12 @@ import { z } from 'zod'
 
 // Common fields schema
 const committeeBaseSchema = {
+    committeeType: z.string().trim().max(100, 'Committee type is too long').optional(),
     committeeName: z
         .string({ required_error: 'Committee name is required' })
         .trim()
         .min(1, 'Committee name cannot be empty')
         .max(200, 'Committee name is too long'),
-    contactPerson: z
-        .string()
-        .trim()
-        .max(200, 'Contact person name is too long')
-        .optional(),
-    phone: z.string().trim().max(20, 'Phone number is too long').optional(),
-    email: z
-        .string()
-        .trim()
-        .email('Invalid email format')
-        .max(100, 'Email is too long')
-        .optional()
-        .or(z.literal('')),
-    address: z.string().trim().max(500, 'Address is too long').optional(),
 }
 
 // Create committee schema
@@ -38,9 +25,43 @@ export const createCommitteeSchema = z.object({
     }),
 })
 
+// Bulk create committee schema
+export const bulkCreateCommitteeSchema = z.object({
+    body: z.object({
+        committees: z.array(
+            z.object({
+                committeeType: z.string().trim().max(100, 'Committee type is too long').optional(),
+                committeeName: z
+                    .string({ required_error: 'Committee name is required' })
+                    .trim()
+                    .min(1, 'Committee name cannot be empty')
+                    .max(200, 'Committee name is too long'),
+                contactPerson: z
+                    .string()
+                    .trim()
+                    .max(200, 'Contact person name is too long')
+                    .optional(),
+                phone: z.string().trim().max(20, 'Phone number is too long').optional(),
+                email: z
+                    .string()
+                    .trim()
+                    .email('Invalid email format')
+                    .max(100, 'Email is too long')
+                    .optional()
+                    .or(z.literal('')),
+                address: z.string().trim().max(500, 'Address is too long').optional(),
+            }).passthrough()
+        ).min(1, 'At least one committee is required'),
+    }),
+    params: z.object({
+        millId: z.string({ required_error: 'Mill ID is required' }),
+    }),
+})
+
 // Update committee schema
 export const updateCommitteeSchema = z.object({
     body: z.object({
+        committeeType: committeeBaseSchema.committeeType,
         committeeName: committeeBaseSchema.committeeName.optional(),
         contactPerson: committeeBaseSchema.contactPerson,
         phone: committeeBaseSchema.phone,

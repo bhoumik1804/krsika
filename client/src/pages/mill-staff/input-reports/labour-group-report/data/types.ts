@@ -16,7 +16,8 @@ export interface CreateLabourGroupRequest {
 }
 
 export interface UpdateLabourGroupRequest {
-    id: string
+    id?: string
+    _id?: string
     groupName?: string
     leaderName?: string
     phone?: string

@@ -1,8 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -25,6 +23,8 @@ import {
     transporterReportSchema,
     type TransporterReportData,
 } from '../data/schema'
+import { useCreateTransporter, useUpdateTransporter } from '../data/hooks'
+import { useUser } from '@/pages/landing/hooks/use-auth'
 
 type TransporterReportActionDialogProps = {
     open: boolean
@@ -37,7 +37,12 @@ export function TransporterReportActionDialog({
     onOpenChange,
     currentRow,
 }: TransporterReportActionDialogProps) {
-    const isEditing = !!currentRow
+    const { user } = useUser()
+    const millId = user?.millId as any
+    const createMutation = useCreateTransporter(millId)
+    const updateMutation = useUpdateTransporter(millId)
+    const isLoading = createMutation.isPending || updateMutation.isPending
+    const isEditing = !!currentRow?._id
 
     const form = useForm<TransporterReportData>({
         resolver: zodResolver(transporterReportSchema),
@@ -58,20 +63,21 @@ export function TransporterReportActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating transporter...' : 'Adding transporter...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Transporter updated successfully'
-                    : 'Transporter added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update transporter'
-                : 'Failed to add transporter',
-        })
+    const onSubmit = async (data: TransporterReportData) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    ...data,
+                })
+            } else {
+                await createMutation.mutateAsync(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            console.error('Error submitting form:', error)
+        }
     }
 
     return (
@@ -187,11 +193,18 @@ export function TransporterReportActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Transporter
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'} Transporter
                             </Button>
                         </DialogFooter>
                     </form>

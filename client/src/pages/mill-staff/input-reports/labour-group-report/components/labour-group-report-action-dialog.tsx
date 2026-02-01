@@ -1,8 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -25,6 +23,8 @@ import {
     labourGroupReportSchema,
     type LabourGroupReportData,
 } from '../data/schema'
+import { useCreateLabourGroup, useUpdateLabourGroup } from '../data/hooks'
+import { useUser } from '@/pages/landing/hooks/use-auth'
 
 type LabourGroupReportActionDialogProps = {
     open: boolean
@@ -37,7 +37,12 @@ export function LabourGroupReportActionDialog({
     onOpenChange,
     currentRow,
 }: LabourGroupReportActionDialogProps) {
-    const isEditing = !!currentRow
+    const { user } = useUser()
+    const millId = user?.millId as any
+    const createMutation = useCreateLabourGroup(millId)
+    const updateMutation = useUpdateLabourGroup(millId)
+    const isLoading = createMutation.isPending || updateMutation.isPending
+    const isEditing = !!currentRow?._id
 
     const form = useForm<LabourGroupReportData>({
         resolver: zodResolver(labourGroupReportSchema),
@@ -54,22 +59,21 @@ export function LabourGroupReportActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing
-                ? 'Updating labour group...'
-                : 'Adding labour group...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Labour group updated successfully'
-                    : 'Labour group added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update labour group'
-                : 'Failed to add labour group',
-        })
+    const onSubmit = async (data: LabourGroupReportData) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    ...data,
+                })
+            } else {
+                await createMutation.mutateAsync(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            console.error('Error submitting form:', error)
+        }
     }
 
     return (
@@ -110,11 +114,18 @@ export function LabourGroupReportActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Labour Group
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'} Labour Group
                             </Button>
                         </DialogFooter>
                     </form>

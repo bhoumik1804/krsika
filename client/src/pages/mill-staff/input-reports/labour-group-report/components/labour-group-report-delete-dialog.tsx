@@ -1,5 +1,3 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,6 +9,8 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { type LabourGroupReportData } from '../data/schema'
+import { useDeleteLabourGroup } from '../data/hooks'
+import { useUser } from '@/pages/landing/hooks/use-auth'
 
 type LabourGroupReportDeleteDialogProps = {
     open: boolean
@@ -23,15 +23,19 @@ export function LabourGroupReportDeleteDialog({
     onOpenChange,
     currentRow,
 }: LabourGroupReportDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+    const { user } = useUser()
+    const millId = user?.millId as any
+    const deleteMutation = useDeleteLabourGroup(millId)
+
+    const handleDelete = async () => {
+        if (!currentRow?._id) return
+        
+        try {
+            await deleteMutation.mutateAsync(currentRow._id)
+            onOpenChange(false)
+        } catch (error: any) {
+            console.error('Delete error:', error)
+        }
     }
 
     return (
@@ -47,12 +51,13 @@ export function LabourGroupReportDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={deleteMutation.isPending}>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={deleteMutation.isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

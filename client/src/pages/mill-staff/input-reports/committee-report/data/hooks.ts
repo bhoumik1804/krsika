@@ -9,6 +9,7 @@ import {
     fetchCommitteeById,
     fetchCommitteeSummary,
     createCommittee,
+    bulkCreateCommittees,
     updateCommittee,
     deleteCommittee,
     bulkDeleteCommittee,
@@ -114,6 +115,29 @@ export const useCreateCommittee = (millId: string) => {
         },
         onError: (error) => {
             toast.error(error.message || 'Failed to create committee')
+        },
+    })
+}
+
+/**
+ * Hook to bulk create committees
+ */
+export const useBulkCreateCommittees = (millId: string) => {
+    const queryClient = useQueryClient()
+
+    return useMutation<{ created: number; committees: CommitteeResponse[] }, Error, CreateCommitteeRequest[]>({
+        mutationFn: (committees) => bulkCreateCommittees(millId, committees),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({
+                queryKey: committeeKeys.lists(),
+            })
+            queryClient.invalidateQueries({
+                queryKey: committeeKeys.summaries(),
+            })
+            toast.success(`${data.created} committee(s) created successfully`)
+        },
+        onError: (error) => {
+            toast.error(error.message || 'Failed to create committees')
         },
     })
 }

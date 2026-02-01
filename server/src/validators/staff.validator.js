@@ -16,11 +16,7 @@ export const createStaffSchema = z.object({
             .trim()
             .min(2, 'Full name must be at least 2 characters')
             .max(100, 'Full name must be at most 100 characters'),
-        email: z
-            .string({ required_error: 'Email is required' })
-            .trim()
-            .email('Invalid email format')
-            .max(255, 'Email is too long'),
+        email: z.email('Invalid email format'),
         phoneNumber: z
             .string()
             .trim()

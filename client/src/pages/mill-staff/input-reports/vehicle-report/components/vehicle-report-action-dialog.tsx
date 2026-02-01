@@ -1,8 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -22,6 +20,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { vehicleReportSchema, type VehicleReportData } from '../data/schema'
+import { useCreateVehicle, useUpdateVehicle } from '../data/hooks'
+import { useUser } from '@/pages/landing/hooks/use-auth'
 
 type VehicleReportActionDialogProps = {
     open: boolean
@@ -34,7 +34,12 @@ export function VehicleReportActionDialog({
     onOpenChange,
     currentRow,
 }: VehicleReportActionDialogProps) {
-    const isEditing = !!currentRow
+    const { user } = useUser()
+    const millId = user?.millId as any
+    const createMutation = useCreateVehicle(millId)
+    const updateMutation = useUpdateVehicle(millId)
+    const isLoading = createMutation.isPending || updateMutation.isPending
+    const isEditing = !!currentRow?._id
 
     const form = useForm<VehicleReportData>({
         resolver: zodResolver(vehicleReportSchema),
@@ -51,20 +56,21 @@ export function VehicleReportActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating vehicle...' : 'Adding vehicle...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Vehicle updated successfully'
-                    : 'Vehicle added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update vehicle'
-                : 'Failed to add vehicle',
-        })
+    const onSubmit = async (data: VehicleReportData) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    ...data,
+                })
+            } else {
+                await createMutation.mutateAsync(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            console.error('Error submitting form:', error)
+        }
     }
 
     return (
@@ -105,11 +111,18 @@ export function VehicleReportActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Vehicle
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'} Vehicle
                             </Button>
                         </DialogFooter>
                     </form>

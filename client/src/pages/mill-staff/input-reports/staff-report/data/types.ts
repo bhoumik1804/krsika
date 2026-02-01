@@ -8,24 +8,20 @@
 // ==========================================
 
 export interface CreateStaffReportRequest {
-    staffName: string
-    designation?: string
-    department?: string
-    phone?: string
-    email?: string
-    joiningDate?: string
+    fullName: string
     salary?: number
+    phoneNumber?: string
+    email?: string
+    address?: string
 }
 
 export interface UpdateStaffReportRequest {
     id: string
-    staffName?: string
-    designation?: string
-    department?: string
-    phone?: string
-    email?: string
-    joiningDate?: string
+    fullName?: string
     salary?: number
+    phoneNumber?: string
+    email?: string
+    address?: string
 }
 
 // ==========================================

@@ -37,6 +37,38 @@ export const createCommitteeEntry = async (millId, data, userId) => {
 }
 
 /**
+ * Bulk create committees
+ */
+export const bulkCreateCommittees = async (millId, dataArray, userId) => {
+    try {
+        const committees = dataArray.map((data) => ({
+            ...data,
+            millId,
+            createdBy: userId,
+        }))
+
+        const result = await Committee.insertMany(committees, { ordered: false })
+
+        logger.info('Bulk committees created', {
+            count: result.length,
+            millId,
+            userId,
+        })
+
+        return {
+            created: result.length,
+            committees: result,
+        }
+    } catch (error) {
+        logger.error('Failed to bulk create committees', {
+            millId,
+            error: error.message,
+        })
+        throw error
+    }
+}
+
+/**
  * Get committee by ID
  */
 export const getCommitteeById = async (millId, id) => {
@@ -78,68 +110,45 @@ export const getCommitteeList = async (millId, options = {}) => {
             sortOrder = 'asc',
         } = options
 
-        const matchStage = { millId: new mongoose.Types.ObjectId(millId) }
+        const query = { millId: new mongoose.Types.ObjectId(millId) }
 
         if (search) {
-            matchStage.$or = [
+            query.$or = [
                 { committeeName: { $regex: search, $options: 'i' } },
-                { contactPerson: { $regex: search, $options: 'i' } },
-                { phone: { $regex: search, $options: 'i' } },
-                { email: { $regex: search, $options: 'i' } },
-                { address: { $regex: search, $options: 'i' } },
+                { committeeType: { $regex: search, $options: 'i' } },
             ]
         }
 
-        const sortStage = {}
-        sortStage[sortBy] = sortOrder === 'asc' ? 1 : -1
+        const sortObj = {}
+        sortObj[sortBy] = sortOrder === 'asc' ? 1 : -1
 
-        const aggregate = Committee.aggregate([
-            { $match: matchStage },
-            { $sort: sortStage },
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: 'createdBy',
-                    foreignField: '_id',
-                    as: 'createdByUser',
-                    pipeline: [{ $project: { fullName: 1, email: 1 } }],
-                },
-            },
-            {
-                $unwind: {
-                    path: '$createdByUser',
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
-        ])
+        const skip = (page - 1) * limit
 
-        const result = await Committee.aggregatePaginate(aggregate, {
-            page: parseInt(page, 10),
-            limit: parseInt(limit, 10),
-            customLabels: {
-                docs: 'data',
-                totalDocs: 'total',
-                totalPages: 'totalPages',
-                page: 'page',
-                limit: 'limit',
-                hasPrevPage: 'hasPrevPage',
-                hasNextPage: 'hasNextPage',
-                prevPage: 'prevPage',
-                nextPage: 'nextPage',
-            },
-        })
+        const data = await Committee.find(query)
+            .sort(sortObj)
+            .skip(skip)
+            .limit(limit)
+            .populate({
+                path: 'createdBy',
+                select: 'fullName email',
+                as: 'createdByUser',
+            })
+            .lean()
+
+        const total = await Committee.countDocuments(query)
+        const totalPages = Math.ceil(total / limit)
 
         return {
-            data: result.data,
+            data,
             pagination: {
-                page: result.page,
-                limit: result.limit,
-                total: result.total,
-                totalPages: result.totalPages,
-                hasPrevPage: result.hasPrevPage,
-                hasNextPage: result.hasNextPage,
-                prevPage: result.prevPage,
-                nextPage: result.nextPage,
+                page,
+                limit,
+                total,
+                totalPages,
+                hasPrevPage: page > 1,
+                hasNextPage: page < totalPages,
+                prevPage: page > 1 ? page - 1 : null,
+                nextPage: page < totalPages ? page + 1 : null,
             },
         }
     } catch (error) {

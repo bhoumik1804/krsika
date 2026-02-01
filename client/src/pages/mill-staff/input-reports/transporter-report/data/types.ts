@@ -16,7 +16,8 @@ export interface CreateTransporterRequest {
 }
 
 export interface UpdateTransporterRequest {
-    id: string
+    id?: string
+    _id?: string
     transporterName?: string
     phone?: string
     email?: string

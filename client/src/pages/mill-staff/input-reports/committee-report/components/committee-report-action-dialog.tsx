@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { committeeTypeOptions } from '@/constants/input-form'
 import { Button } from '@/components/ui/button'
 import {
@@ -33,6 +32,8 @@ import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { committeeReportSchema, type CommitteeReportData } from '../data/schema'
 import { useParseExcel } from '../hooks/use-parse-excel'
+import { useCreateCommittee, useUpdateCommittee, useBulkCreateCommittees } from '../data/hooks'
+import { useUser } from '@/pages/landing/hooks/use-auth'
 
 type CommitteeReportActionDialogProps = {
     open: boolean
@@ -45,7 +46,13 @@ export function CommitteeReportActionDialog({
     onOpenChange,
     currentRow,
 }: CommitteeReportActionDialogProps) {
-    const isEditing = !!currentRow
+    const { user } = useUser()
+    const millId = user?.millId as any
+    const createMutation = useCreateCommittee(millId)
+    const updateMutation = useUpdateCommittee(millId)
+    const bulkCreateMutation = useBulkCreateCommittees(millId)
+    const isLoading = createMutation.isPending || updateMutation.isPending || bulkCreateMutation.isPending
+    const isEditing = !!currentRow?._id
     const [uploadedFile, setUploadedFile] = useState<File | null>(null)
     const [previewData, setPreviewData] = useState<unknown[]>([])
     const { parseFile, parseStats } = useParseExcel()
@@ -58,31 +65,44 @@ export function CommitteeReportActionDialog({
         },
     })
 
-    useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
-        }
-    }, [currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing
-                ? 'Updating committee...'
-                : 'Adding committee...',
-            success: () => {
-                onOpenChange(false)
+    useEffect(() => {
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
                 form.reset()
+                setPreviewData([])
                 setUploadedFile(null)
-                return isEditing
-                    ? 'Committee updated successfully'
-                    : 'Committee added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update committee'
-                : 'Failed to add committee',
-        })
+            }
+        }
+    }, [currentRow, form, open])
+
+    const onSubmit = async (data: CommitteeReportData) => {
+        try {
+            // Handle bulk upload from file
+            if (previewData.length > 0) {
+                console.log('previewData before mutation:', previewData)
+                console.log('previewData[0] type:', typeof previewData[0], Array.isArray(previewData[0]))
+                console.log('previewData[0]:', previewData[0])
+                await bulkCreateMutation.mutateAsync(previewData as any)
+            } 
+            // Handle single record create/update
+            else if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    ...data,
+                })
+            } else {
+                await createMutation.mutateAsync(data)
+            }
+            onOpenChange(false)
+            form.reset()
+            setUploadedFile(null)
+            setPreviewData([])
+        } catch (error) {
+            console.error('Error submitting form:', error)
+        }
     }
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +159,7 @@ export function CommitteeReportActionDialog({
                                                     onValueChange={
                                                         field.onChange
                                                     }
-                                                    defaultValue={field.value}
+                                                    value={field.value}
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger className='w-full'>
@@ -340,11 +360,18 @@ export function CommitteeReportActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Committee
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'} Committee
                             </Button>
                         </DialogFooter>
                     </form>

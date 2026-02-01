@@ -42,6 +42,8 @@ const userSchema = new Schema(
             enum: Object.values(ROLES),
             default: ROLES.GUEST_USER,
         },
+        salary: { type: Number, default: 0 },
+        address: { type: String },
 
         // Embedded Permissions
         permissions: [
@@ -80,6 +82,9 @@ userSchema.pre('save', async function () {
 })
 
 userSchema.methods.isPasswordCorrect = async function (password) {
+    if (!password || !this.password) {
+        return false
+    }
     return await bcrypt.compare(password, this.password)
 }
 

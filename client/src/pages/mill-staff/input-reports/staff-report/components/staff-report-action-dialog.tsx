@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -23,6 +22,8 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { staffReportSchema, type StaffReportData } from '../data/schema'
+import { useCreateStaffReport, useUpdateStaffReport } from '../data/hooks'
+import { useUser } from '@/pages/landing/hooks/use-auth'
 
 type StaffReportActionDialogProps = {
     open: boolean
@@ -36,39 +37,65 @@ export function StaffReportActionDialog({
     currentRow,
 }: StaffReportActionDialogProps) {
     const isEditing = !!currentRow
+    const { user } = useUser()
+    const millId = user?.millId as any
+    const createMutation = useCreateStaffReport(millId)
+    const updateMutation = useUpdateStaffReport(millId)
+    const isLoading = createMutation.isPending || updateMutation.isPending
 
     const form = useForm<StaffReportData>({
         resolver: zodResolver(staffReportSchema),
         defaultValues: {
-            staffName: '',
-            post: '',
+            _id: '',
+            fullName: '',
             salary: undefined,
-            phone: '',
+            phoneNumber: '',
             email: '',
             address: '',
         },
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow as any)
+            } else {
+                form.reset({
+                    _id: '',
+                    fullName: '',
+                    salary: undefined,
+                    phoneNumber: '',
+                    email: '',
+                    address: '',
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [open, currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating staff...' : 'Adding staff...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Staff updated successfully'
-                    : 'Staff added successfully'
-            },
-            error: isEditing ? 'Failed to update staff' : 'Failed to add staff',
-        })
+    const onSubmit = async (data: any) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({ 
+                    id: currentRow._id, 
+                    fullName: data.fullName,
+                    salary: data.salary,
+                    phoneNumber: data.phoneNumber,
+                    email: data.email,
+                    address: data.address,
+                })
+            } else {
+                await createMutation.mutateAsync({
+                    fullName: data.fullName,
+                    salary: data.salary,
+                    phoneNumber: data.phoneNumber,
+                    email: data.email,
+                    address: data.address,
+                })
+            }
+            onOpenChange(false)
+        } catch (error: any) {
+            console.error('Form submission error:', error)
+        }
     }
 
     return (
@@ -90,13 +117,13 @@ export function StaffReportActionDialog({
                         <div className='grid grid-cols-2 gap-4'>
                             <FormField
                                 control={form.control}
-                                name='staffName'
+                                name='fullName'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Staff Name</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter staff name'
+                                                placeholder='Enter full name'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -106,13 +133,14 @@ export function StaffReportActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='post'
+                                name='phoneNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Post</FormLabel>
+                                        <FormLabel>Phone Number</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter post/designation'
+                                                type='tel'
+                                                placeholder='Enter phone number'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -150,23 +178,6 @@ export function StaffReportActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='phone'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Phone</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type='tel'
-                                                placeholder='Enter phone number'
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
                                 name='email'
                                 render={({ field }) => (
                                     <FormItem>
@@ -190,9 +201,8 @@ export function StaffReportActionDialog({
                                 <FormItem>
                                     <FormLabel>Address</FormLabel>
                                     <FormControl>
-                                        <Textarea
+                                        <Input
                                             placeholder='Enter address'
-                                            rows={3}
                                             {...field}
                                         />
                                     </FormControl>
@@ -205,11 +215,18 @@ export function StaffReportActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Staff
+                            <Button 
+                                type='submit'
+                                disabled={isLoading}
+                            >
+                                {isLoading 
+                                    ? (isEditing ? 'Updating...' : 'Adding...') 
+                                    : (isEditing ? 'Update' : 'Add') 
+                                } Staff
                             </Button>
                         </DialogFooter>
                     </form>

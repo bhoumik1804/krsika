@@ -39,8 +39,9 @@ export function PartyReport() {
 
     const partyReportData = useMemo(() => {
         if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
+        return response.data.map((item: any) => ({
+            _id: item._id,
+            id: item._id, // Keep for backward compatibility
             ...item,
             createdAt: new Date(item.createdAt),
             updatedAt: new Date(item.updatedAt),
@@ -76,10 +77,10 @@ export function PartyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Party Report Report
+                            Party Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage party report transactions and records
+                            Manage party details and information
                         </p>
                     </div>
                     <PartyReportPrimaryButtons />

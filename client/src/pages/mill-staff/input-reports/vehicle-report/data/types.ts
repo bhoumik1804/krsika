@@ -17,7 +17,8 @@ export interface CreateVehicleRequest {
 }
 
 export interface UpdateVehicleRequest {
-    id: string
+    id?: string
+    _id?: string
     vehicleNumber?: string
     vehicleType?: string
     transporterName?: string

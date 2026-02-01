@@ -15,7 +15,8 @@ export interface CreateBrokerRequest {
 }
 
 export interface UpdateBrokerRequest {
-    id: string
+    id?: string
+    _id?: string
     brokerName?: string
     phone?: string
     email?: string
