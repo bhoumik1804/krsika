@@ -35,7 +35,6 @@ import {
 } from './types'
 
 export function NavGroup({ title, items }: NavGroupProps) {
-    console.log(items)
     const { state, isMobile } = useSidebar()
     const location = useLocation()
     const href = location.pathname

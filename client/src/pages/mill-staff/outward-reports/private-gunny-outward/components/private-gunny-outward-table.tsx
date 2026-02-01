@@ -12,6 +12,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { type NavigateFn } from '@/hooks/use-table-url-state'
 import {
     Table,
     TableBody,
@@ -27,6 +28,12 @@ import { PrivateGunnyOutwardColumns as columns } from './private-gunny-outward-c
 
 interface DataTableProps {
     data: PrivateGunnyOutward[]
+    search?: Record<string, unknown>
+    navigate?: NavigateFn
+    isLoading?: boolean
+    isError?: boolean
+    totalPages?: number
+    totalItems?: number
 }
 
 export function PrivateGunnyOutwardTable({ data }: DataTableProps) {

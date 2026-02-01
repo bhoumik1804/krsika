@@ -7,12 +7,12 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { type Staff } from '../data/schema'
+import { type StaffResponse } from '../data/types'
 
 type StaffDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: Staff
+    currentRow: StaffResponse
 }
 
 export function StaffDeleteDialog({
@@ -23,8 +23,7 @@ export function StaffDeleteDialog({
     const [value, setValue] = useState('')
 
     const handleDelete = () => {
-        const fullName = `${currentRow.firstName} ${currentRow.lastName}`
-        if (value.trim() !== fullName) return
+        if (value.trim() !== currentRow.fullName) return
 
         onOpenChange(false)
         showSubmittedData(
@@ -38,10 +37,7 @@ export function StaffDeleteDialog({
             open={open}
             onOpenChange={onOpenChange}
             handleConfirm={handleDelete}
-            disabled={
-                value.trim() !==
-                `${currentRow.firstName} ${currentRow.lastName}`
-            }
+            disabled={value.trim() !== currentRow.fullName}
             title={
                 <span className='text-destructive'>
                     <AlertTriangle
@@ -55,16 +51,10 @@ export function StaffDeleteDialog({
                 <div className='space-y-4'>
                     <p className='mb-2'>
                         Are you sure you want to delete{' '}
-                        <span className='font-bold'>
-                            {currentRow.firstName} {currentRow.lastName}
-                        </span>
+                        <span className='font-bold'>{currentRow.fullName}</span>
                         ?
                         <br />
-                        This action will permanently remove the staff member
-                        with the role of{' '}
-                        <span className='font-bold'>
-                            {currentRow.role.toUpperCase()}
-                        </span>{' '}
+                        This action will permanently remove this staff member
                         from the system. This cannot be undone.
                     </p>
 

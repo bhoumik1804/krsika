@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
+import { useParams } from 'react-router'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -23,21 +23,26 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
-import { SelectDropdown } from '@/components/select-dropdown'
-import { roles } from '../data/data'
+import { useCreateStaff, useUpdateStaff } from '../data/hooks'
 import { type Staff } from '../data/schema'
 
 const formSchema = z
     .object({
-        firstName: z.string().min(1, 'First Name is required.'),
-        lastName: z.string().min(1, 'Last Name is required.'),
-        phoneNumber: z.string().min(1, 'Phone number is required.'),
+        fullName: z
+            .string()
+            .min(2, 'Full Name must be at least 2 characters.')
+            .max(100, 'Full Name must be at most 100 characters.'),
+        phoneNumber: z
+            .string()
+            .min(10, 'Phone number must be at least 10 digits.')
+            .max(15, 'Phone number must be at most 15 digits.')
+            .optional()
+            .or(z.literal('')),
         email: z.email({
             error: (iss) =>
                 iss.input === '' ? 'Email is required.' : undefined,
         }),
         password: z.string().transform((pwd) => pwd.trim()),
-        role: z.string().min(1, 'Role is required.'),
         confirmPassword: z.string().transform((pwd) => pwd.trim()),
         isEdit: z.boolean(),
     })
@@ -104,7 +109,12 @@ export function StaffActionDialog({
     open,
     onOpenChange,
 }: StaffActionDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
     const isEdit = !!currentRow
+
+    const createMutation = useCreateStaff(millId || '')
+    const updateMutation = useUpdateStaff(millId || '')
+
     const form = useForm<StaffForm>({
         resolver: zodResolver(formSchema),
         defaultValues: isEdit
@@ -115,10 +125,8 @@ export function StaffActionDialog({
                   isEdit,
               }
             : {
-                  firstName: '',
-                  lastName: '',
+                  fullName: '',
                   email: '',
-                  role: '',
                   phoneNumber: '',
                   password: '',
                   confirmPassword: '',
@@ -126,10 +134,30 @@ export function StaffActionDialog({
               },
     })
 
-    const onSubmit = (values: StaffForm) => {
-        form.reset()
-        showSubmittedData(values)
-        onOpenChange(false)
+    const onSubmit = async (values: StaffForm) => {
+        try {
+            if (isEdit && currentRow) {
+                await updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    fullName: values.fullName,
+                    email: values.email,
+                    phoneNumber: values.phoneNumber || '',
+                    isActive: currentRow.isActive,
+                })
+            } else {
+                await createMutation.mutateAsync({
+                    fullName: values.fullName,
+                    email: values.email,
+                    phoneNumber: values.phoneNumber || '',
+                    password: values.password,
+                })
+            }
+            form.reset()
+            onOpenChange(false)
+        } catch (error) {
+            // Error is already handled by the mutation's onError
+            console.error('Staff operation failed:', error)
+        }
     }
 
     const isPasswordTouched = !!form.formState.dirtyFields.password
@@ -163,35 +191,15 @@ export function StaffActionDialog({
                         >
                             <FormField
                                 control={form.control}
-                                name='firstName'
+                                name='fullName'
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            First Name
+                                            Full Name
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='John'
-                                                className='col-span-4'
-                                                autoComplete='off'
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage className='col-span-4 col-start-3' />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name='lastName'
-                                render={({ field }) => (
-                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                                        <FormLabel className='col-span-2 text-end'>
-                                            Last Name
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder='Doe'
+                                                placeholder='John Doe'
                                                 className='col-span-4'
                                                 autoComplete='off'
                                                 {...field}
@@ -241,30 +249,6 @@ export function StaffActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='role'
-                                render={({ field }) => (
-                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                                        <FormLabel className='col-span-2 text-end'>
-                                            Role
-                                        </FormLabel>
-                                        <SelectDropdown
-                                            defaultValue={field.value}
-                                            onValueChange={field.onChange}
-                                            placeholder='Select a role'
-                                            className='col-span-4'
-                                            items={roles.map(
-                                                ({ label, value }) => ({
-                                                    label,
-                                                    value,
-                                                })
-                                            )}
-                                        />
-                                        <FormMessage className='col-span-4 col-start-3' />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
                                 name='password'
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
@@ -306,8 +290,18 @@ export function StaffActionDialog({
                     </Form>
                 </div>
                 <DialogFooter>
-                    <Button type='submit' form='staff-form'>
-                        Save changes
+                    <Button
+                        type='submit'
+                        form='staff-form'
+                        disabled={
+                            createMutation.isPending || updateMutation.isPending
+                        }
+                    >
+                        {createMutation.isPending || updateMutation.isPending
+                            ? 'Saving...'
+                            : isEdit
+                              ? 'Save changes'
+                              : 'Create Staff'}
                     </Button>
                 </DialogFooter>
             </DialogContent>

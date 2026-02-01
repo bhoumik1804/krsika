@@ -6,15 +6,11 @@ import {
     updateStaffEntry,
     deleteStaffEntry,
     bulkDeleteStaffEntries,
-    markStaffAttendance,
-    bulkMarkStaffAttendance,
-    getStaffAttendanceSummary,
-    getBulkAttendanceSummary,
 } from '../services/staff.service.js'
 
 /**
  * Staff Controller
- * HTTP request handlers for staff endpoints
+ * HTTP request handlers for staff endpoints (Mill Admin operations)
  */
 
 /**
@@ -24,9 +20,9 @@ import {
 export const createStaff = async (req, res, next) => {
     try {
         const { millId } = req.params
-        const userId = req.user._id
+        const adminId = req.user._id
 
-        const staff = await createStaffEntry(millId, req.body, userId)
+        const staff = await createStaffEntry(millId, req.body, adminId)
 
         res.status(201).json({
             success: true,
@@ -61,46 +57,28 @@ export const getStaffByIdHandler = async (req, res, next) => {
 }
 
 /**
- * Get staff list with pagination
+ * Get all staff members with pagination
  * GET /api/mills/:millId/staff
  */
 export const getStaffListHandler = async (req, res, next) => {
     try {
         const { millId } = req.params
-        const {
-            page,
-            limit,
-            search,
-            status,
-            role,
-            isPaymentDone,
-            isMillVerified,
-            sortBy,
-            sortOrder,
-        } = req.query
+        const { page, limit, search, isActive, sortBy, sortOrder } = req.query
 
         const result = await getStaffList(millId, {
-            page: page ? parseInt(page, 10) : undefined,
-            limit: limit ? parseInt(limit, 10) : undefined,
-            search,
-            status,
-            role,
-            isPaymentDone:
-                isPaymentDone !== undefined
-                    ? isPaymentDone === 'true'
-                    : undefined,
-            isMillVerified:
-                isMillVerified !== undefined
-                    ? isMillVerified === 'true'
-                    : undefined,
-            sortBy,
-            sortOrder,
+            page: parseInt(page) || 1,
+            limit: parseInt(limit) || 10,
+            search: search || '',
+            isActive: isActive !== undefined ? isActive === 'true' : undefined,
+            sortBy: sortBy || 'createdAt',
+            sortOrder: sortOrder || 'desc',
         })
 
         res.status(200).json({
             success: true,
             statusCode: 200,
-            data: result,
+            data: result.data,
+            pagination: result.pagination,
             message: 'Staff list retrieved successfully',
         })
     } catch (error) {
@@ -130,15 +108,15 @@ export const getStaffSummaryHandler = async (req, res, next) => {
 }
 
 /**
- * Update a staff member
+ * Update staff member
  * PUT /api/mills/:millId/staff/:id
  */
 export const updateStaffHandler = async (req, res, next) => {
     try {
         const { millId, id } = req.params
-        const userId = req.user._id
+        const adminId = req.user._id
 
-        const staff = await updateStaffEntry(millId, id, req.body, userId)
+        const staff = await updateStaffEntry(millId, id, req.body, adminId)
 
         res.status(200).json({
             success: true,
@@ -152,19 +130,19 @@ export const updateStaffHandler = async (req, res, next) => {
 }
 
 /**
- * Delete a staff member
+ * Delete staff member
  * DELETE /api/mills/:millId/staff/:id
  */
 export const deleteStaffHandler = async (req, res, next) => {
     try {
         const { millId, id } = req.params
+        const adminId = req.user._id
 
-        await deleteStaffEntry(millId, id)
+        await deleteStaffEntry(millId, id, adminId)
 
         res.status(200).json({
             success: true,
             statusCode: 200,
-            data: null,
             message: 'Staff member deleted successfully',
         })
     } catch (error) {
@@ -180,115 +158,15 @@ export const bulkDeleteStaffHandler = async (req, res, next) => {
     try {
         const { millId } = req.params
         const { ids } = req.body
+        const adminId = req.user._id
 
-        const deletedCount = await bulkDeleteStaffEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} staff members deleted successfully`,
-        })
-    } catch (error) {
-        next(error)
-    }
-}
-
-/**
- * Mark attendance for a staff member
- * POST /api/mills/:millId/staff/:id/attendance
- */
-export const markAttendanceHandler = async (req, res, next) => {
-    try {
-        const { millId, id } = req.params
-        const { date, status } = req.body
-
-        const staff = await markStaffAttendance(millId, id, date, status)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: staff,
-            message: 'Attendance marked successfully',
-        })
-    } catch (error) {
-        next(error)
-    }
-}
-
-/**
- * Bulk mark attendance for multiple staff members
- * POST /api/mills/:millId/staff/attendance/bulk
- */
-export const bulkMarkAttendanceHandler = async (req, res, next) => {
-    try {
-        const { millId } = req.params
-        const { date, attendanceRecords } = req.body
-
-        const result = await bulkMarkStaffAttendance(
-            millId,
-            date,
-            attendanceRecords
-        )
+        const result = await bulkDeleteStaffEntries(millId, ids, adminId)
 
         res.status(200).json({
             success: true,
             statusCode: 200,
             data: result,
-            message: `Attendance marked for ${result.success} staff members`,
-        })
-    } catch (error) {
-        next(error)
-    }
-}
-
-/**
- * Get attendance summary for a staff member
- * GET /api/mills/:millId/staff/:id/attendance/summary
- */
-export const getAttendanceSummaryHandler = async (req, res, next) => {
-    try {
-        const { millId, id } = req.params
-        const { month, year } = req.query
-
-        const summary = await getStaffAttendanceSummary(
-            millId,
-            id,
-            parseInt(month, 10),
-            parseInt(year, 10)
-        )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Attendance summary retrieved successfully',
-        })
-    } catch (error) {
-        next(error)
-    }
-}
-
-/**
- * Get bulk attendance summary for all staff
- * GET /api/mills/:millId/staff/attendance/summary
- */
-export const getBulkAttendanceSummaryHandler = async (req, res, next) => {
-    try {
-        const { millId } = req.params
-        const { month, year } = req.query
-
-        const summary = await getBulkAttendanceSummary(
-            millId,
-            parseInt(month, 10),
-            parseInt(year, 10)
-        )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Bulk attendance summary retrieved successfully',
+            message: 'Staff members deleted successfully',
         })
     } catch (error) {
         next(error)

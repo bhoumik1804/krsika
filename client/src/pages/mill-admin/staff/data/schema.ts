@@ -1,51 +1,52 @@
 import { z } from 'zod'
 
-// Staff status
-const staffStatusSchema = z.union([
-    z.literal('active'),
-    z.literal('inactive'),
-    z.literal('suspended'),
-])
-export type StaffStatus = z.infer<typeof staffStatusSchema>
+// ==========================================
+// Staff Schema (aligned with User model)
+// ==========================================
 
-// Staff roles
-const staffRoleSchema = z.union([
-    z.literal('manager'),
-    z.literal('supervisor'),
-    z.literal('operator'),
-    z.literal('accountant'),
-])
-
-// Attendance enum
-const attendanceStatusSchema = z.union([
-    z.literal('P'), // Present
-    z.literal('A'), // Absent
-    z.literal('H'), // Half Day
-])
-export type AttendanceStatus = z.infer<typeof attendanceStatusSchema>
-
-// Attendance record per day
-const attendanceRecordSchema = z.object({
-    date: z.string(), // YYYY-MM-DD format
-    status: attendanceStatusSchema,
-})
-export type AttendanceRecord = z.infer<typeof attendanceRecordSchema>
-
-// Staff schema
-const staffSchema = z.object({
-    id: z.string(),
-    firstName: z.string(),
-    lastName: z.string(),
-    email: z.string(),
-    phoneNumber: z.string(),
-    status: staffStatusSchema,
-    role: staffRoleSchema,
-    attendanceHistory: z.array(attendanceRecordSchema).optional(), // history for calendar
-    isPaymentDone: z.boolean(),
-    isMillVerified: z.boolean(),
-    createdAt: z.coerce.date(),
-    updatedAt: z.coerce.date(),
+export const staffSchema = z.object({
+    _id: z.string(),
+    millId: z.string(),
+    fullName: z.string(),
+    email: z.string().email(),
+    phoneNumber: z.string().optional(),
+    avatar: z.string().optional(),
+    isActive: z.boolean().default(true),
+    permissions: z
+        .array(
+            z.object({
+                moduleSlug: z.string(),
+                actions: z.array(z.string()),
+            })
+        )
+        .optional(),
+    lastLogin: z.string().optional(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
 })
 export type Staff = z.infer<typeof staffSchema>
 
 export const staffListSchema = z.array(staffSchema)
+
+// ==========================================
+// Form Schemas
+// ==========================================
+
+export const createStaffFormSchema = z.object({
+    fullName: z
+        .string()
+        .min(2, 'Full name must be at least 2 characters')
+        .max(100, 'Full name must be at most 100 characters'),
+    email: z.string().email('Please enter a valid email address'),
+    phoneNumber: z
+        .string()
+        .min(10, 'Phone number must be at least 10 digits')
+        .max(15, 'Phone number must be at most 15 digits')
+        .optional(),
+})
+export type CreateStaffForm = z.infer<typeof createStaffFormSchema>
+
+export const updateStaffFormSchema = createStaffFormSchema.partial().extend({
+    id: z.string(),
+})
+export type UpdateStaffForm = z.infer<typeof updateStaffFormSchema>

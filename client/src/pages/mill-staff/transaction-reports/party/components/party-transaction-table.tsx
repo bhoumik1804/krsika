@@ -30,6 +30,8 @@ type DataTableProps = {
     data: PartyTransaction[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    isLoading?: boolean
+    isError?: boolean
 }
 
 export function PartyTransactionTable({

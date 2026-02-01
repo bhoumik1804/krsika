@@ -22,15 +22,15 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { roles, statuses } from '../data/data'
-import { type Staff } from '../data/schema'
+import { type StaffResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { staffColumns as columns } from './staff-columns'
 
 type DataTableProps = {
-    data: Staff[]
+    data: StaffResponse[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    isLoading?: boolean
 }
 
 export function StaffTable({ data, search, navigate }: DataTableProps) {
@@ -52,8 +52,7 @@ export function StaffTable({ data, search, navigate }: DataTableProps) {
         pagination: { defaultPage: 1, defaultPageSize: 10 },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'status', searchKey: 'status', type: 'array' },
-            { columnId: 'role', searchKey: 'role', type: 'array' },
+            { columnId: 'isActive', searchKey: 'isActive', type: 'array' },
         ],
     })
 
@@ -99,14 +98,12 @@ export function StaffTable({ data, search, navigate }: DataTableProps) {
                 searchKey='fullName'
                 filters={[
                     {
-                        columnId: 'status',
+                        columnId: 'isActive',
                         title: 'Status',
-                        options: statuses,
-                    },
-                    {
-                        columnId: 'role',
-                        title: 'Role',
-                        options: roles.map((role) => ({ ...role })),
+                        options: [
+                            { label: 'Active', value: 'true' },
+                            { label: 'Inactive', value: 'false' },
+                        ],
                     },
                 ]}
             />

@@ -9,10 +9,10 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { StaffDialogs } from './components/staff-dialogs'
-// import { StaffPrimaryButtons } from './components/staff-primary-buttons'
+import { StaffPrimaryButtons } from './components/staff-primary-buttons'
 import { StaffProvider } from './components/staff-provider'
 import { StaffTable } from './components/staff-table'
-import { staff } from './data/staff'
+import { useStaffList } from './data/hooks'
 
 export function MillAdminStaff() {
     const { millId } = useParams<{ millId: string }>()
@@ -20,6 +20,10 @@ export function MillAdminStaff() {
     const [searchParams, setSearchParams] = useSearchParams()
 
     const search = Object.fromEntries(searchParams.entries())
+
+    // Fetch staff data
+    const { data: staffListResponse, isLoading } = useStaffList(millId || '')
+    const staff = staffListResponse?.data || []
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -32,8 +36,8 @@ export function MillAdminStaff() {
         }
     }
 
-    const activeStaff = staff.filter((s) => s.status === 'active')
-    const suspendedStaff = staff.filter((s) => s.status === 'suspended')
+    const activeStaff = staff.filter((s) => s.isActive === true)
+    const inactiveStaff = staff.filter((s) => s.isActive === false)
 
     return (
         <StaffProvider>
@@ -59,23 +63,30 @@ export function MillAdminStaff() {
                             </h2>
                         </div>
                         <p className='text-muted-foreground'>
-                            Manage staff accounts, roles, and attendance.
+                            Manage staff accounts, roles, and permissions.
                         </p>
                     </div>
-                    {/* <StaffPrimaryButtons /> */}
+                    <StaffPrimaryButtons />
                 </div>
 
                 <Tabs defaultValue='all' className='flex-1'>
                     <TabsList className='grid w-full grid-cols-3 md:w-[420px]'>
-                        <TabsTrigger value='all'>All Staff</TabsTrigger>
-                        <TabsTrigger value='active'>Active</TabsTrigger>
-                        <TabsTrigger value='suspended'>Suspended</TabsTrigger>
+                        <TabsTrigger value='all'>
+                            All Staff ({staff.length})
+                        </TabsTrigger>
+                        <TabsTrigger value='active'>
+                            Active ({activeStaff.length})
+                        </TabsTrigger>
+                        <TabsTrigger value='inactive'>
+                            Inactive ({inactiveStaff.length})
+                        </TabsTrigger>
                     </TabsList>
                     <TabsContent value='all' className='space-y-4'>
                         <StaffTable
                             data={staff}
                             search={search}
                             navigate={navigate}
+                            isLoading={isLoading}
                         />
                     </TabsContent>
                     <TabsContent value='active' className='space-y-4'>
@@ -83,13 +94,15 @@ export function MillAdminStaff() {
                             data={activeStaff}
                             search={search}
                             navigate={navigate}
+                            isLoading={isLoading}
                         />
                     </TabsContent>
-                    <TabsContent value='suspended' className='space-y-4'>
+                    <TabsContent value='inactive' className='space-y-4'>
                         <StaffTable
-                            data={suspendedStaff}
+                            data={inactiveStaff}
                             search={search}
                             navigate={navigate}
+                            isLoading={isLoading}
                         />
                     </TabsContent>
                 </Tabs>

@@ -190,6 +190,16 @@ export interface ApiResponse<T = any> {
     statusCode: number
     data: T
     message: string
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
 // ==========================================

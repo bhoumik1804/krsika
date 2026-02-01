@@ -30,6 +30,8 @@ type DataTableProps = {
     data: BrokerTransaction[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    isLoading?: boolean
+    isError?: boolean
 }
 
 export function BrokerTransactionTable({

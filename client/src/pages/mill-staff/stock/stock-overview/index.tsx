@@ -16,7 +16,7 @@ import { useStockOverviewList, useStockOverviewSummary } from './data/hooks'
 
 export function StockOverviewReport() {
     const { millId } = useParams<{ millId: string }>()
-    const [searchParams, setSearchParams] = useSearchParams()
+    const [searchParams, _setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
@@ -48,7 +48,7 @@ export function StockOverviewReport() {
     } = useStockOverviewList(millId || '', queryParams, { enabled: !!millId })
 
     // Fetch summary data
-    const { data: summaryResponse } = useStockOverviewSummary(
+    const { data: _summaryResponse } = useStockOverviewSummary(
         millId || '',
         { startDate: queryParams.startDate, endDate: queryParams.endDate },
         { enabled: !!millId }
