@@ -7,189 +7,105 @@ import {
     deleteRiceInwardEntry,
     bulkDeleteRiceInwardEntries,
 } from '../services/rice-inward.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Rice Inward Controller
- * HTTP request handlers for rice inward endpoints
- */
-
-/**
- * Create a new rice inward entry
- * POST /api/mills/:millId/rice-inward
- */
 export const createRiceInward = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const riceInward = await createRiceInwardEntry(millId, req.body, userId)
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: riceInward,
-            message: 'Rice inward entry created successfully',
-        })
+        const entry = await createRiceInwardEntry(
+            req.params.millId,
+            req.body,
+            req.user._id
+        )
+        res.status(201).json(
+            new ApiResponse(201, { entry }, 'Rice inward created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get rice inward entry by ID
- * GET /api/mills/:millId/rice-inward/:id
- */
 export const getRiceInwardByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const riceInward = await getRiceInwardById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: riceInward,
-            message: 'Rice inward entry retrieved successfully',
-        })
+        const entry = await getRiceInwardById(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Rice inward retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get rice inward list with pagination
- * GET /api/mills/:millId/rice-inward
- */
 export const getRiceInwardListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const {
-            page,
-            limit,
-            search,
-            riceType,
-            partyName,
-            brokerName,
-            startDate,
-            endDate,
-            sortBy,
-            sortOrder,
-        } = req.query
-
-        const result = await getRiceInwardList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getRiceInwardList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            riceType,
-            partyName,
-            brokerName,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Rice inward list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { entries: result.data, pagination: result.pagination },
+                'Rice inward list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get rice inward summary statistics
- * GET /api/mills/:millId/rice-inward/summary
- */
 export const getRiceInwardSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getRiceInwardSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Rice inward summary retrieved successfully',
-        })
+        const summary = await getRiceInwardSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Rice inward summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a rice inward entry
- * PUT /api/mills/:millId/rice-inward/:id
- */
 export const updateRiceInwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const riceInward = await updateRiceInwardEntry(
-            millId,
-            id,
+        const entry = await updateRiceInwardEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: riceInward,
-            message: 'Rice inward entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Rice inward updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a rice inward entry
- * DELETE /api/mills/:millId/rice-inward/:id
- */
 export const deleteRiceInwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteRiceInwardEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Rice inward entry deleted successfully',
-        })
+        await deleteRiceInwardEntry(req.params.millId, req.params.id)
+        res.status(200).json(new ApiResponse(200, null, 'Rice inward deleted'))
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete rice inward entries
- * DELETE /api/mills/:millId/rice-inward/bulk
- */
 export const bulkDeleteRiceInwardHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteRiceInwardEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} rice inward entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteRiceInwardEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

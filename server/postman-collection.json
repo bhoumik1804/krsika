@@ -1,0 +1,460 @@
+{
+  "info": {
+    "_postman_id": "admin-pannel-api",
+    "name": "Admin Panel API",
+    "description": "API collection for Rice Mill Admin Panel",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5050/api/v1", "type": "string" },
+    { "key": "accessToken", "value": "", "type": "string" },
+    { "key": "refreshToken", "value": "", "type": "string" },
+    { "key": "millId", "value": "", "type": "string" },
+    { "key": "userId", "value": "", "type": "string" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/signup", "host": ["{{baseUrl}}"], "path": ["auth", "signup"] }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "    pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
+                  "    if (jsonData.data.user && jsonData.data.user.millId) {",
+                  "        pm.collectionVariables.set('millId', jsonData.data.user.millId);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" },
+            "url": { "raw": "{{baseUrl}}/auth/refresh", "host": ["{{baseUrl}}"], "path": ["auth", "refresh"] }
+          }
+        },
+        {
+          "name": "Get Me",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"Updated Name\"\n}" },
+            "url": { "raw": "{{baseUrl}}/auth/profile", "host": ["{{baseUrl}}"], "path": ["auth", "profile"] }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"currentPassword\": \"Password123!\",\n  \"newPassword\": \"NewPassword123!\"\n}" },
+            "url": { "raw": "{{baseUrl}}/auth/password", "host": ["{{baseUrl}}"], "path": ["auth", "password"] }
+          }
+        },
+        {
+          "name": "Register Mill",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"millName\": \"Test Rice Mill\",\n  \"contact\": {\n    \"email\": \"mill@example.com\",\n    \"phone\": \"9876543210\"\n  },\n  \"millInfo\": {\n    \"gstNumber\": \"22AAAAA0000A1Z5\",\n    \"panNumber\": \"AAAAA0000A\",\n    \"address\": \"123 Mill Street\",\n    \"city\": \"Mumbai\",\n    \"state\": \"Maharashtra\",\n    \"pincode\": \"400001\"\n  }\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register-mill", "host": ["{{baseUrl}}"], "path": ["auth", "register-mill"] }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/auth/logout", "host": ["{{baseUrl}}"], "path": ["auth", "logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Mills",
+      "description": "Super Admin routes for mills management",
+      "item": [
+        {
+          "name": "Get Mills List",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/admin/mills?page=1&limit=10",
+              "host": ["{{baseUrl}}"], "path": ["admin", "mills"],
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }, { "key": "search", "value": "", "disabled": true }, { "key": "status", "value": "", "disabled": true }]
+            }
+          }
+        },
+        {
+          "name": "Get Mills Summary",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/admin/mills/summary", "host": ["{{baseUrl}}"], "path": ["admin", "mills", "summary"] } }
+        },
+        {
+          "name": "Get Mill By ID",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/admin/mills/{{millId}}", "host": ["{{baseUrl}}"], "path": ["admin", "mills", "{{millId}}"] } }
+        },
+        {
+          "name": "Create Mill",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"millName\": \"New Rice Mill\",\n  \"contact\": {\n    \"email\": \"newmill@example.com\",\n    \"phone\": \"9876543210\"\n  },\n  \"millInfo\": {\n    \"gstNumber\": \"22BBBBB0000B1Z6\",\n    \"panNumber\": \"BBBBB0000B\",\n    \"address\": \"456 Mill Road\",\n    \"city\": \"Delhi\",\n    \"state\": \"Delhi\",\n    \"pincode\": \"110001\"\n  }\n}" },
+            "url": { "raw": "{{baseUrl}}/admin/mills", "host": ["{{baseUrl}}"], "path": ["admin", "mills"] }
+          }
+        },
+        {
+          "name": "Update Mill",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"millName\": \"Updated Mill Name\"\n}" },
+            "url": { "raw": "{{baseUrl}}/admin/mills/{{millId}}", "host": ["{{baseUrl}}"], "path": ["admin", "mills", "{{millId}}"] }
+          }
+        },
+        {
+          "name": "Verify Mill",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"ACTIVE\"\n}" },
+            "url": { "raw": "{{baseUrl}}/admin/mills/{{millId}}/verify", "host": ["{{baseUrl}}"], "path": ["admin", "mills", "{{millId}}", "verify"] }
+          }
+        },
+        {
+          "name": "Suspend Mill",
+          "request": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/admin/mills/{{millId}}/suspend", "host": ["{{baseUrl}}"], "path": ["admin", "mills", "{{millId}}", "suspend"] } }
+        },
+        {
+          "name": "Reactivate Mill",
+          "request": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/admin/mills/{{millId}}/reactivate", "host": ["{{baseUrl}}"], "path": ["admin", "mills", "{{millId}}", "reactivate"] } }
+        },
+        {
+          "name": "Delete Mill",
+          "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/admin/mills/{{millId}}", "host": ["{{baseUrl}}"], "path": ["admin", "mills", "{{millId}}"] } }
+        },
+        {
+          "name": "Bulk Delete Mills",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"ids\": [\"id1\", \"id2\"]\n}" },
+            "url": { "raw": "{{baseUrl}}/admin/mills/bulk", "host": ["{{baseUrl}}"], "path": ["admin", "mills", "bulk"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Users",
+      "description": "Super Admin routes for users management",
+      "item": [
+        {
+          "name": "Get Users List",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/admin/users?page=1&limit=10",
+              "host": ["{{baseUrl}}"], "path": ["admin", "users"],
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }, { "key": "search", "value": "", "disabled": true }, { "key": "role", "value": "", "disabled": true }, { "key": "isActive", "value": "", "disabled": true }]
+            }
+          }
+        },
+        {
+          "name": "Get Users Summary",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/admin/users/summary", "host": ["{{baseUrl}}"], "path": ["admin", "users", "summary"] } }
+        },
+        {
+          "name": "Get User By ID",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/admin/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["admin", "users", "{{userId}}"] } }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"New User\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"Password123!\",\n  \"role\": \"mill-admin\"\n}" },
+            "url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin", "users"] }
+          }
+        },
+        {
+          "name": "Invite User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"invited@example.com\",\n  \"role\": \"mill-staff\"\n}" },
+            "url": { "raw": "{{baseUrl}}/admin/users/invite", "host": ["{{baseUrl}}"], "path": ["admin", "users", "invite"] }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"Updated Name\"\n}" },
+            "url": { "raw": "{{baseUrl}}/admin/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["admin", "users", "{{userId}}"] }
+          }
+        },
+        {
+          "name": "Suspend User",
+          "request": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/admin/users/{{userId}}/suspend", "host": ["{{baseUrl}}"], "path": ["admin", "users", "{{userId}}", "suspend"] } }
+        },
+        {
+          "name": "Reactivate User",
+          "request": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/admin/users/{{userId}}/reactivate", "host": ["{{baseUrl}}"], "path": ["admin", "users", "{{userId}}", "reactivate"] } }
+        },
+        {
+          "name": "Delete User",
+          "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/admin/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["admin", "users", "{{userId}}"] } }
+        },
+        {
+          "name": "Bulk Delete Users",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"ids\": [\"id1\", \"id2\"]\n}" },
+            "url": { "raw": "{{baseUrl}}/admin/users/bulk", "host": ["{{baseUrl}}"], "path": ["admin", "users", "bulk"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mill - Staff",
+      "item": [
+        { "name": "Get Staff List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/staff?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "staff"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Get Staff Summary", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/staff/summary", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "staff", "summary"] } } },
+        { "name": "Get Staff By ID", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/staff/:id", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "staff", ":id"] } } },
+        { "name": "Create Staff", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"Staff Member\",\n  \"email\": \"staff@example.com\",\n  \"password\": \"Password123!\",\n  \"permissions\": []\n}" }, "url": { "raw": "{{baseUrl}}/mills/{{millId}}/staff", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "staff"] } } },
+        { "name": "Update Staff", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"Updated Staff Name\"\n}" }, "url": { "raw": "{{baseUrl}}/mills/{{millId}}/staff/:id", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "staff", ":id"] } } },
+        { "name": "Delete Staff", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/staff/:id", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "staff", ":id"] } } }
+      ]
+    },
+    {
+      "name": "Mill - Parties",
+      "item": [
+        { "name": "Get Parties List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/parties?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "parties"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Get Party Summary", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/parties/summary", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "parties", "summary"] } } },
+        { "name": "Get Party By ID", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/parties/:id", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "parties", ":id"] } } },
+        { "name": "Create Party", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Party Name\",\n  \"phone\": \"9876543210\",\n  \"address\": \"Party Address\"\n}" }, "url": { "raw": "{{baseUrl}}/mills/{{millId}}/parties", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "parties"] } } },
+        { "name": "Update Party", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Updated Party Name\"\n}" }, "url": { "raw": "{{baseUrl}}/mills/{{millId}}/parties/:id", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "parties", ":id"] } } },
+        { "name": "Delete Party", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/parties/:id", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "parties", ":id"] } } }
+      ]
+    },
+    {
+      "name": "Mill - Brokers",
+      "item": [
+        { "name": "Get Brokers List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/brokers?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "brokers"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Get Broker Summary", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/brokers/summary", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "brokers", "summary"] } } },
+        { "name": "Get Broker By ID", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/brokers/:id", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "brokers", ":id"] } } },
+        { "name": "Create Broker", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Broker Name\",\n  \"phone\": \"9876543210\"\n}" }, "url": { "raw": "{{baseUrl}}/mills/{{millId}}/brokers", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "brokers"] } } },
+        { "name": "Update Broker", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Updated Broker Name\"\n}" }, "url": { "raw": "{{baseUrl}}/mills/{{millId}}/brokers/:id", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "brokers", ":id"] } } },
+        { "name": "Delete Broker", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/brokers/:id", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "brokers", ":id"] } } }
+      ]
+    },
+    {
+      "name": "Mill - Daily Operations",
+      "item": [
+        {
+          "name": "Daily Inwards",
+          "item": [
+            { "name": "Get List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-inwards?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-inwards"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+            { "name": "Get Summary", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-inwards/summary", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-inwards", "summary"] } } },
+            { "name": "Get By ID", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-inwards/:id", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-inwards", ":id"] } } },
+            { "name": "Create", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"date\": \"2026-02-06\",\n  \"partyName\": \"Test Party\",\n  \"bags\": 100,\n  \"weight\": 5000\n}" }, "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-inwards", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-inwards"] } } },
+            { "name": "Update", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"bags\": 150\n}" }, "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-inwards/:id", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-inwards", ":id"] } } },
+            { "name": "Delete", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-inwards/:id", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-inwards", ":id"] } } }
+          ]
+        },
+        {
+          "name": "Daily Outwards",
+          "item": [
+            { "name": "Get List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-outwards?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-outwards"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+            { "name": "Get Summary", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-outwards/summary", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-outwards", "summary"] } } },
+            { "name": "Create", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"date\": \"2026-02-06\",\n  \"partyName\": \"Test Party\",\n  \"bags\": 100,\n  \"weight\": 5000\n}" }, "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-outwards", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-outwards"] } } }
+          ]
+        },
+        {
+          "name": "Daily Milling",
+          "item": [
+            { "name": "Get List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-milling?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-milling"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+            { "name": "Get Summary", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-milling/summary", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-milling", "summary"] } } },
+            { "name": "Create", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"date\": \"2026-02-06\",\n  \"inputWeight\": 1000,\n  \"outputWeight\": 650\n}" }, "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-milling", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-milling"] } } }
+          ]
+        },
+        {
+          "name": "Daily Payments",
+          "item": [
+            { "name": "Get List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-payments?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-payments"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+            { "name": "Get Summary", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-payments/summary", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-payments", "summary"] } } },
+            { "name": "Create", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"date\": \"2026-02-06\",\n  \"partyName\": \"Test Party\",\n  \"amount\": 50000\n}" }, "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-payments", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-payments"] } } }
+          ]
+        },
+        {
+          "name": "Daily Receipts",
+          "item": [
+            { "name": "Get List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-receipts?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-receipts"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+            { "name": "Get Summary", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-receipts/summary", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-receipts", "summary"] } } },
+            { "name": "Create", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"date\": \"2026-02-06\",\n  \"partyName\": \"Test Party\",\n  \"amount\": 50000\n}" }, "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-receipts", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-receipts"] } } }
+          ]
+        },
+        {
+          "name": "Daily Production",
+          "item": [
+            { "name": "Get List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-production?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-production"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+            { "name": "Get Summary", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-production/summary", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-production", "summary"] } } }
+          ]
+        },
+        {
+          "name": "Daily Purchase Deals",
+          "item": [
+            { "name": "Get List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-purchase-deals?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-purchase-deals"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+            { "name": "Get Summary", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-purchase-deals/summary", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-purchase-deals", "summary"] } } }
+          ]
+        },
+        {
+          "name": "Daily Sales Deals",
+          "item": [
+            { "name": "Get List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-sales-deals?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-sales-deals"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+            { "name": "Get Summary", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/daily-sales-deals/summary", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "daily-sales-deals", "summary"] } } }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Mill - Stock & Reports",
+      "item": [
+        { "name": "Stock Overview", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/stock-overview", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "stock-overview"] } } },
+        { "name": "DO Reports List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/do-reports?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "do-reports"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Staff Reports", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/staff-reports?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "staff-reports"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } }
+      ]
+    },
+    {
+      "name": "Mill - Financial",
+      "item": [
+        { "name": "Financial Payments List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/financial-payments?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "financial-payments"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Financial Receipts List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/financial-receipts?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "financial-receipts"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Party Transactions", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/party-transactions?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "party-transactions"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Broker Transactions", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/broker-transactions?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "broker-transactions"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Balance Lifting Party", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/balance-lifting-party?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "balance-lifting-party"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Outward Balance Party", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/outward-balance-party?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "outward-balance-party"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } }
+      ]
+    },
+    {
+      "name": "Mill - Govt Operations",
+      "item": [
+        { "name": "Govt Paddy Inward List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/govt-paddy-inward?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "govt-paddy-inward"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Govt Rice Outward List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/govt-rice-outward?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "govt-rice-outward"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } }
+      ]
+    },
+    {
+      "name": "Mill - Private Operations",
+      "item": [
+        { "name": "Private Paddy Inward List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/private-paddy-inward?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "private-paddy-inward"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Private Rice Outward List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/private-rice-outward?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "private-rice-outward"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } }
+      ]
+    },
+    {
+      "name": "Mill - Milling",
+      "item": [
+        { "name": "Milling Paddy List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/milling-paddy?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "milling-paddy"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Milling Rice List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/milling-rice?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "milling-rice"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Paddy Purchase List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/paddy-purchase?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "paddy-purchase"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } }
+      ]
+    },
+    {
+      "name": "Mill - Rice",
+      "item": [
+        { "name": "Rice Inward List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/rice-inward?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "rice-inward"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Rice Purchase List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/rice-purchase?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "rice-purchase"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Rice Sales List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/rice-sales?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "rice-sales"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } }
+      ]
+    },
+    {
+      "name": "Mill - FRK",
+      "item": [
+        { "name": "FRK Inward List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/frk-inward?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "frk-inward"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "FRK Purchase List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/frk-purchase?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "frk-purchase"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "FRK Sales List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/frk-sales?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "frk-sales"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } }
+      ]
+    },
+    {
+      "name": "Mill - Gunny",
+      "item": [
+        { "name": "Gunny Inward List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/gunny-inward?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "gunny-inward"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Gunny Purchase List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/gunny-purchase?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "gunny-purchase"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Gunny Sales List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/gunny-sales?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "gunny-sales"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } }
+      ]
+    },
+    {
+      "name": "Mill - Other",
+      "item": [
+        { "name": "Other Inward List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/other-inward?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "other-inward"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Other Purchase List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/other-purchase?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "other-purchase"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Other Sales List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/other-sales?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "other-sales"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } }
+      ]
+    },
+    {
+      "name": "Mill - Labour",
+      "item": [
+        { "name": "Labour Groups List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/labour-groups?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "labour-groups"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Labour Inward List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/labour-inward?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "labour-inward"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Labour Outward List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/labour-outward?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "labour-outward"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Labour Milling List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/labour-milling?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "labour-milling"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Labour Other List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/labour-other?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "labour-other"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } }
+      ]
+    },
+    {
+      "name": "Mill - Entities",
+      "item": [
+        { "name": "Transporters List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/transporters?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "transporters"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Vehicles List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/vehicles?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "vehicles"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } },
+        { "name": "Committees List", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mills/{{millId}}/committees?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["mills", "{{millId}}", "committees"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] } } }
+      ]
+    }
+  ]
+}

@@ -7,180 +7,114 @@ import {
     deleteLabourOutwardEntry,
     bulkDeleteLabourOutwardEntries,
 } from '../services/labour-outward.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Labour Outward Controller
- * HTTP request handlers for labour outward endpoints
- */
-
-/**
- * Create a new labour outward entry
- * POST /api/mills/:millId/labour-outward
- */
 export const createLabourOutward = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const labourOutward = await createLabourOutwardEntry(
-            millId,
+        const entry = await createLabourOutwardEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: labourOutward,
-            message: 'Labour outward entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { entry }, 'Labour outward created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get labour outward entry by ID
- * GET /api/mills/:millId/labour-outward/:id
- */
 export const getLabourOutwardByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const labourOutward = await getLabourOutwardById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: labourOutward,
-            message: 'Labour outward entry retrieved successfully',
-        })
+        const entry = await getLabourOutwardById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Labour outward retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get labour outward list with pagination
- * GET /api/mills/:millId/labour-outward
- */
 export const getLabourOutwardListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { page, limit, search, startDate, endDate, sortBy, sortOrder } =
-            req.query
-
-        const result = await getLabourOutwardList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getLabourOutwardList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Labour outward list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { entries: result.data, pagination: result.pagination },
+                'Labour outward list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get labour outward summary statistics
- * GET /api/mills/:millId/labour-outward/summary
- */
 export const getLabourOutwardSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getLabourOutwardSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Labour outward summary retrieved successfully',
-        })
+        const summary = await getLabourOutwardSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { summary },
+                'Labour outward summary retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a labour outward entry
- * PUT /api/mills/:millId/labour-outward/:id
- */
 export const updateLabourOutwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const labourOutward = await updateLabourOutwardEntry(
-            millId,
-            id,
+        const entry = await updateLabourOutwardEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: labourOutward,
-            message: 'Labour outward entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Labour outward updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a labour outward entry
- * DELETE /api/mills/:millId/labour-outward/:id
- */
 export const deleteLabourOutwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteLabourOutwardEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Labour outward entry deleted successfully',
-        })
+        await deleteLabourOutwardEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Labour outward deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete labour outward entries
- * DELETE /api/mills/:millId/labour-outward/bulk
- */
 export const bulkDeleteLabourOutwardHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteLabourOutwardEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} labour outward entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteLabourOutwardEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

@@ -7,66 +7,47 @@ import {
     deleteDailyOutwardEntry,
     bulkDeleteDailyOutwardEntries,
 } from '../services/daily-outward.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Daily Outward Controller
- * HTTP request handlers for daily outward endpoints
- */
-
-/**
- * Create a new daily outward entry
- * POST /api/mills/:millId/daily-outwards
- */
 export const createDailyOutward = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
         const dailyOutward = await createDailyOutwardEntry(
-            millId,
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: dailyOutward,
-            message: 'Daily outward entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(
+                201,
+                { dailyOutward },
+                'Daily outward entry created'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily outward entry by ID
- * GET /api/mills/:millId/daily-outwards/:id
- */
 export const getDailyOutwardByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const dailyOutward = await getDailyOutwardById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: dailyOutward,
-            message: 'Daily outward entry retrieved successfully',
-        })
+        const dailyOutward = await getDailyOutwardById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { dailyOutward },
+                'Daily outward entry retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily outward list with pagination
- * GET /api/mills/:millId/daily-outwards
- */
 export const getDailyOutwardListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const {
             page,
             limit,
@@ -77,8 +58,7 @@ export const getDailyOutwardListHandler = async (req, res, next) => {
             sortBy,
             sortOrder,
         } = req.query
-
-        const result = await getDailyOutwardList(millId, {
+        const result = await getDailyOutwardList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
@@ -88,108 +68,77 @@ export const getDailyOutwardListHandler = async (req, res, next) => {
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Daily outward list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { dailyOutwards: result.data, pagination: result.pagination },
+                'Daily outward list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily outward summary statistics
- * GET /api/mills/:millId/daily-outwards/summary
- */
 export const getDailyOutwardSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const { startDate, endDate } = req.query
-
-        const summary = await getDailyOutwardSummary(millId, {
+        const summary = await getDailyOutwardSummary(req.params.millId, {
             startDate,
             endDate,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Daily outward summary retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Daily outward summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a daily outward entry
- * PUT /api/mills/:millId/daily-outwards/:id
- */
 export const updateDailyOutwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
         const dailyOutward = await updateDailyOutwardEntry(
-            millId,
-            id,
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: dailyOutward,
-            message: 'Daily outward entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { dailyOutward },
+                'Daily outward entry updated'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a daily outward entry
- * DELETE /api/mills/:millId/daily-outwards/:id
- */
 export const deleteDailyOutwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteDailyOutwardEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Daily outward entry deleted successfully',
-        })
+        await deleteDailyOutwardEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Daily outward entry deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete daily outward entries
- * DELETE /api/mills/:millId/daily-outwards/bulk
- */
 export const bulkDeleteDailyOutwardHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteDailyOutwardEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} daily outward entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteDailyOutwardEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

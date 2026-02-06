@@ -3,11 +3,6 @@ import { createMillSchema } from './mills.validator.js'
 
 export const signupSchema = z.object({
     body: z.object({
-        fullName: z
-            .string({ required_error: 'Full name is required' })
-            .trim()
-            .min(1, 'Full name cannot be empty')
-            .max(100, 'Full name is too long'),
         email: z.email('Invalid email address'),
         password: z
             .string({ required_error: 'Password is required' })

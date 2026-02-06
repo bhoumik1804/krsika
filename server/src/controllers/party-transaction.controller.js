@@ -7,195 +7,114 @@ import {
     deletePartyTransactionEntry,
     bulkDeletePartyTransactionEntries,
 } from '../services/party-transaction.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Party Transaction Controller
- * HTTP request handlers for party transaction endpoints
- */
-
-/**
- * Create a new party transaction entry
- * POST /api/mills/:millId/party-transactions
- */
 export const createPartyTransaction = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const partyTransaction = await createPartyTransactionEntry(
-            millId,
+        const transaction = await createPartyTransactionEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: partyTransaction,
-            message: 'Party transaction entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { transaction }, 'Party transaction created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get party transaction entry by ID
- * GET /api/mills/:millId/party-transactions/:id
- */
 export const getPartyTransactionByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const partyTransaction = await getPartyTransactionById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: partyTransaction,
-            message: 'Party transaction entry retrieved successfully',
-        })
+        const transaction = await getPartyTransactionById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { transaction }, 'Party transaction retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get party transaction list with pagination
- * GET /api/mills/:millId/party-transactions
- */
 export const getPartyTransactionListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const {
-            page,
-            limit,
-            search,
-            transactionType,
-            partyName,
-            startDate,
-            endDate,
-            sortBy,
-            sortOrder,
-        } = req.query
-
-        const result = await getPartyTransactionList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getPartyTransactionList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            transactionType,
-            partyName,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Party transaction list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { transactions: result.data, pagination: result.pagination },
+                'Party transaction list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get party transaction summary statistics
- * GET /api/mills/:millId/party-transactions/summary
- */
 export const getPartyTransactionSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate, partyName } = req.query
-
-        const summary = await getPartyTransactionSummary(millId, {
-            startDate,
-            endDate,
-            partyName,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Party transaction summary retrieved successfully',
-        })
+        const summary = await getPartyTransactionSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { summary },
+                'Party transaction summary retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a party transaction entry
- * PUT /api/mills/:millId/party-transactions/:id
- */
 export const updatePartyTransactionHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const partyTransaction = await updatePartyTransactionEntry(
-            millId,
-            id,
+        const transaction = await updatePartyTransactionEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: partyTransaction,
-            message: 'Party transaction entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { transaction }, 'Party transaction updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a party transaction entry
- * DELETE /api/mills/:millId/party-transactions/:id
- */
 export const deletePartyTransactionHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deletePartyTransactionEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Party transaction entry deleted successfully',
-        })
+        await deletePartyTransactionEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Party transaction deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete party transaction entries
- * DELETE /api/mills/:millId/party-transactions/bulk
- */
 export const bulkDeletePartyTransactionHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
         const deletedCount = await bulkDeletePartyTransactionEntries(
-            millId,
-            ids
+            req.params.millId,
+            req.body.ids
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} party transaction entries deleted successfully`,
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} transactions deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

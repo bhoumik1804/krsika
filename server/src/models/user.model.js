@@ -7,10 +7,9 @@ import { PERMISSION_ACTIONS } from '../constants/permission.actions.enum.js'
 import { ROLES } from '../constants/user.roles.enum.js'
 
 // ---------------------------------------------------------
-// 1. Sub-Schemas (from Zod definitions)
+// Sub-Schemas
 // ---------------------------------------------------------
 
-// Maps to Zod: attendanceRecordSchema
 const attendanceSchema = new Schema(
     {
         date: { type: String, required: true }, // Format: YYYY-MM-DD
@@ -20,60 +19,85 @@ const attendanceSchema = new Schema(
             required: true,
         },
     },
-    { _id: false } // Disable _id for sub-documents if not needed
+    { _id: false } // No _id for embedded docs
+)
+
+const permissionSchema = new Schema(
+    {
+        moduleSlug: {
+            type: String,
+            required: true,
+            enum: Object.values(MODULE_SLUGS),
+        },
+        actions: [
+            {
+                type: String,
+                enum: Object.values(PERMISSION_ACTIONS),
+            },
+        ],
+    },
+    { _id: false } // No _id for embedded docs
 )
 
 // ---------------------------------------------------------
-// 2. Main User Schema (Merged)
+// Main User Schema
 // ---------------------------------------------------------
 
 const userSchema = new Schema(
     {
-        // --- Existing User Fields ---
-        millId: { type: Schema.Types.ObjectId, ref: 'Mill', default: null },
-        fullName: { type: String }, // Main display name
-        email: { type: String, required: true, unique: true }, // Added unique/required for safety
-        googleId: { type: String },
+        // Identity
+        fullName: { type: String, trim: true },
+        email: {
+            type: String,
+            unique: true,
+            lowercase: true,
+            trim: true,
+            sparse: true, // Allow multiple nulls
+        },
+        phoneNumber: { type: String, trim: true },
         avatar: { type: String },
-        password: { type: String },
-        phoneNumber: { type: String },
+
+        // Authentication
+        password: { type: String, select: false }, // Exclude by default
+        googleId: { type: String, sparse: true },
+        refreshToken: { type: String, select: false },
+
+        // Authorization
         role: {
             type: String,
             enum: Object.values(ROLES),
             default: ROLES.GUEST_USER,
+            index: true,
         },
-        salary: { type: Number, default: 0 },
-        address: { type: String },
 
-        // Embedded Permissions
-        permissions: [
-            {
-                moduleSlug: {
-                    type: String,
-                    required: true,
-                    enum: Object.values(MODULE_SLUGS),
-                },
-                actions: [
-                    {
-                        type: String,
-                        enum: Object.values(PERMISSION_ACTIONS),
-                    },
-                ],
-            },
-        ],
+        // Associations
+        millId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Mill',
+            default: null,
+            index: true,
+        },
 
-        refreshToken: { type: String },
-        isActive: { type: Boolean, default: true }, // Existing global active flag
-        lastLogin: { type: Date },
+        // Status
+        isActive: { type: Boolean, default: true, index: true },
 
-        // Zod 'attendanceHistory'
+        // Permissions
+        permissions: [permissionSchema],
+        // Staff-specific (embedded for performance)
         attendanceHistory: [attendanceSchema],
     },
     { timestamps: true } // Handles createdAt & updatedAt automatically
 )
 
 // ---------------------------------------------------------
-// 3. Middleware & Methods (Preserved)
+// Indexes
+// ---------------------------------------------------------
+userSchema.index({ email: 1, role: 1 })
+userSchema.index({ millId: 1, role: 1 })
+userSchema.index({ googleId: 1 }, { sparse: true })
+
+// ---------------------------------------------------------
+// Middleware
 // ---------------------------------------------------------
 
 userSchema.pre('save', async function () {
@@ -81,11 +105,13 @@ userSchema.pre('save', async function () {
     this.password = await bcrypt.hash(this.password, 10)
 })
 
+// ---------------------------------------------------------
+// Instance Methods
+// ---------------------------------------------------------
+
 userSchema.methods.isPasswordCorrect = async function (password) {
-    if (!password || !this.password) {
-        return false
-    }
-    return await bcrypt.compare(password, this.password)
+    if (!this.password) return false
+    return bcrypt.compare(password, this.password)
 }
 
 userSchema.methods.generateAccessToken = function () {
@@ -98,26 +124,19 @@ userSchema.methods.generateAccessToken = function () {
             millId: this.millId,
         },
         process.env.ACCESS_TOKEN_SECRET,
-        {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
-        }
+        { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN }
     )
 }
 
 userSchema.methods.generateRefreshToken = function () {
-    return jwt.sign(
-        {
-            id: this._id,
-            email: this.email,
-            fullName: this.fullName,
-        },
-        process.env.REFRESH_TOKEN_SECRET,
-        {
-            expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
-        }
-    )
+    return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN_SECRET, {
+        expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
+    })
 }
 
+// ---------------------------------------------------------
+// Plugins
+// ---------------------------------------------------------
 userSchema.plugin(aggregatePaginate)
 
 export const User = mongoose.model('User', userSchema)

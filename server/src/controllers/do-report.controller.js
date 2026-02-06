@@ -7,164 +7,105 @@ import {
     deleteDoReportEntry,
     bulkDeleteDoReportEntries,
 } from '../services/do-report.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * DO Report Controller
- * HTTP request handlers for DO report endpoints
- */
-
-/**
- * Create a new DO report
- * POST /api/mills/:millId/do-reports
- */
 export const createDoReport = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const doReport = await createDoReportEntry(millId, req.body, userId)
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: doReport,
-            message: 'DO report created successfully',
-        })
+        const report = await createDoReportEntry(
+            req.params.millId,
+            req.body,
+            req.user._id
+        )
+        res.status(201).json(
+            new ApiResponse(201, { report }, 'DO report created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get DO report by ID
- * GET /api/mills/:millId/do-reports/:id
- */
 export const getDoReportByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const doReport = await getDoReportById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: doReport,
-            message: 'DO report retrieved successfully',
-        })
+        const report = await getDoReportById(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, { report }, 'DO report retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get DO report list with pagination
- * GET /api/mills/:millId/do-reports
- */
 export const getDoReportListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const { page, limit, search, sortBy, sortOrder } = req.query
-
-        const result = await getDoReportList(millId, {
+        const result = await getDoReportList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'DO report list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { reports: result.data, pagination: result.pagination },
+                'DO report list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get DO report summary statistics
- * GET /api/mills/:millId/do-reports/summary
- */
 export const getDoReportSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-
-        const summary = await getDoReportSummary(millId)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'DO report summary retrieved successfully',
-        })
+        const summary = await getDoReportSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'DO report summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a DO report
- * PUT /api/mills/:millId/do-reports/:id
- */
 export const updateDoReportHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const doReport = await updateDoReportEntry(millId, id, req.body, userId)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: doReport,
-            message: 'DO report updated successfully',
-        })
+        const report = await updateDoReportEntry(
+            req.params.millId,
+            req.params.id,
+            req.body,
+            req.user._id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { report }, 'DO report updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a DO report
- * DELETE /api/mills/:millId/do-reports/:id
- */
 export const deleteDoReportHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteDoReportEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'DO report deleted successfully',
-        })
+        await deleteDoReportEntry(req.params.millId, req.params.id)
+        res.status(200).json(new ApiResponse(200, null, 'DO report deleted'))
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete DO reports
- * DELETE /api/mills/:millId/do-reports/bulk
- */
 export const bulkDeleteDoReportHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteDoReportEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} DO reports deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteDoReportEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} reports deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

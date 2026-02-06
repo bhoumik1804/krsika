@@ -7,180 +7,110 @@ import {
     deleteLabourInwardEntry,
     bulkDeleteLabourInwardEntries,
 } from '../services/labour-inward.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Labour Inward Controller
- * HTTP request handlers for labour inward endpoints
- */
-
-/**
- * Create a new labour inward entry
- * POST /api/mills/:millId/labour-inward
- */
 export const createLabourInward = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const labourInward = await createLabourInwardEntry(
-            millId,
+        const entry = await createLabourInwardEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: labourInward,
-            message: 'Labour inward entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { entry }, 'Labour inward created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get labour inward entry by ID
- * GET /api/mills/:millId/labour-inward/:id
- */
 export const getLabourInwardByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const labourInward = await getLabourInwardById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: labourInward,
-            message: 'Labour inward entry retrieved successfully',
-        })
+        const entry = await getLabourInwardById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Labour inward retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get labour inward list with pagination
- * GET /api/mills/:millId/labour-inward
- */
 export const getLabourInwardListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { page, limit, search, startDate, endDate, sortBy, sortOrder } =
-            req.query
-
-        const result = await getLabourInwardList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getLabourInwardList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Labour inward list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { entries: result.data, pagination: result.pagination },
+                'Labour inward list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get labour inward summary statistics
- * GET /api/mills/:millId/labour-inward/summary
- */
 export const getLabourInwardSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getLabourInwardSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Labour inward summary retrieved successfully',
-        })
+        const summary = await getLabourInwardSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Labour inward summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a labour inward entry
- * PUT /api/mills/:millId/labour-inward/:id
- */
 export const updateLabourInwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const labourInward = await updateLabourInwardEntry(
-            millId,
-            id,
+        const entry = await updateLabourInwardEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: labourInward,
-            message: 'Labour inward entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Labour inward updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a labour inward entry
- * DELETE /api/mills/:millId/labour-inward/:id
- */
 export const deleteLabourInwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteLabourInwardEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Labour inward entry deleted successfully',
-        })
+        await deleteLabourInwardEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Labour inward deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete labour inward entries
- * DELETE /api/mills/:millId/labour-inward/bulk
- */
 export const bulkDeleteLabourInwardHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteLabourInwardEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} labour inward entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteLabourInwardEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

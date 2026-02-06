@@ -7,176 +7,114 @@ import {
     deleteBalanceLiftingPartyEntry,
     bulkDeleteBalanceLiftingPartyEntries,
 } from '../services/balance-lifting-party.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Balance Lifting Party Controller
- * HTTP request handlers for balance lifting party endpoints
- */
-
-/**
- * Create a new balance lifting party entry
- * POST /api/mills/:millId/balance-lifting-party
- */
 export const createBalanceLiftingParty = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const balanceLiftingParty = await createBalanceLiftingPartyEntry(
-            millId,
+        const entry = await createBalanceLiftingPartyEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: balanceLiftingParty,
-            message: 'Balance lifting party entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { entry }, 'Balance lifting party created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get balance lifting party entry by ID
- * GET /api/mills/:millId/balance-lifting-party/:id
- */
 export const getBalanceLiftingPartyByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const balanceLiftingParty = await getBalanceLiftingPartyById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: balanceLiftingParty,
-            message: 'Balance lifting party entry retrieved successfully',
-        })
+        const entry = await getBalanceLiftingPartyById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Balance lifting party retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get balance lifting party list with pagination
- * GET /api/mills/:millId/balance-lifting-party
- */
 export const getBalanceLiftingPartyListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const { page, limit, search, sortBy, sortOrder } = req.query
-
-        const result = await getBalanceLiftingPartyList(millId, {
+        const result = await getBalanceLiftingPartyList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Balance lifting party list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { entries: result.data, pagination: result.pagination },
+                'Balance lifting party list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get balance lifting party summary statistics
- * GET /api/mills/:millId/balance-lifting-party/summary
- */
 export const getBalanceLiftingPartySummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-
-        const summary = await getBalanceLiftingPartySummary(millId)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Balance lifting party summary retrieved successfully',
-        })
+        const summary = await getBalanceLiftingPartySummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { summary },
+                'Balance lifting party summary retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a balance lifting party entry
- * PUT /api/mills/:millId/balance-lifting-party/:id
- */
 export const updateBalanceLiftingPartyHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const balanceLiftingParty = await updateBalanceLiftingPartyEntry(
-            millId,
-            id,
+        const entry = await updateBalanceLiftingPartyEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: balanceLiftingParty,
-            message: 'Balance lifting party entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Balance lifting party updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a balance lifting party entry
- * DELETE /api/mills/:millId/balance-lifting-party/:id
- */
 export const deleteBalanceLiftingPartyHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteBalanceLiftingPartyEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Balance lifting party entry deleted successfully',
-        })
+        await deleteBalanceLiftingPartyEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Balance lifting party deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete balance lifting party entries
- * DELETE /api/mills/:millId/balance-lifting-party/bulk
- */
 export const bulkDeleteBalanceLiftingPartyHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
         const deletedCount = await bulkDeleteBalanceLiftingPartyEntries(
-            millId,
-            ids
+            req.params.millId,
+            req.body.ids
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} balance lifting party entries deleted successfully`,
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

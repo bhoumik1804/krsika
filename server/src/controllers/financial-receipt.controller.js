@@ -7,192 +7,114 @@ import {
     deleteFinancialReceiptEntry,
     bulkDeleteFinancialReceiptEntries,
 } from '../services/financial-receipt.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Financial Receipt Controller
- * HTTP request handlers for financial receipt endpoints
- */
-
-/**
- * Create a new financial receipt entry
- * POST /api/mills/:millId/financial-receipts
- */
 export const createFinancialReceipt = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const financialReceipt = await createFinancialReceiptEntry(
-            millId,
+        const receipt = await createFinancialReceiptEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: financialReceipt,
-            message: 'Financial receipt entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { receipt }, 'Financial receipt created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get financial receipt entry by ID
- * GET /api/mills/:millId/financial-receipts/:id
- */
 export const getFinancialReceiptByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const financialReceipt = await getFinancialReceiptById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: financialReceipt,
-            message: 'Financial receipt entry retrieved successfully',
-        })
+        const receipt = await getFinancialReceiptById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { receipt }, 'Financial receipt retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get financial receipt list with pagination
- * GET /api/mills/:millId/financial-receipts
- */
 export const getFinancialReceiptListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const {
-            page,
-            limit,
-            search,
-            receiptMode,
-            startDate,
-            endDate,
-            sortBy,
-            sortOrder,
-        } = req.query
-
-        const result = await getFinancialReceiptList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getFinancialReceiptList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            receiptMode,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Financial receipt list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { receipts: result.data, pagination: result.pagination },
+                'Financial receipt list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get financial receipt summary statistics
- * GET /api/mills/:millId/financial-receipts/summary
- */
 export const getFinancialReceiptSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getFinancialReceiptSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Financial receipt summary retrieved successfully',
-        })
+        const summary = await getFinancialReceiptSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { summary },
+                'Financial receipt summary retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a financial receipt entry
- * PUT /api/mills/:millId/financial-receipts/:id
- */
 export const updateFinancialReceiptHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const financialReceipt = await updateFinancialReceiptEntry(
-            millId,
-            id,
+        const receipt = await updateFinancialReceiptEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: financialReceipt,
-            message: 'Financial receipt entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { receipt }, 'Financial receipt updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a financial receipt entry
- * DELETE /api/mills/:millId/financial-receipts/:id
- */
 export const deleteFinancialReceiptHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteFinancialReceiptEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Financial receipt entry deleted successfully',
-        })
+        await deleteFinancialReceiptEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Financial receipt deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete financial receipt entries
- * DELETE /api/mills/:millId/financial-receipts/bulk
- */
 export const bulkDeleteFinancialReceiptHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
         const deletedCount = await bulkDeleteFinancialReceiptEntries(
-            millId,
-            ids
+            req.params.millId,
+            req.body.ids
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} financial receipt entries deleted successfully`,
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} receipts deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

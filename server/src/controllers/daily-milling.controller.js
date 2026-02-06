@@ -7,191 +7,138 @@ import {
     deleteDailyMillingEntry,
     bulkDeleteDailyMillingEntries,
 } from '../services/daily-milling.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Daily Milling Controller
- * HTTP request handlers for daily milling endpoints
- */
-
-/**
- * Create a new daily milling entry
- * POST /api/mills/:millId/daily-milling
- */
 export const createDailyMilling = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
         const dailyMilling = await createDailyMillingEntry(
-            millId,
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: dailyMilling,
-            message: 'Daily milling entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(
+                201,
+                { dailyMilling },
+                'Daily milling entry created'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily milling entry by ID
- * GET /api/mills/:millId/daily-milling/:id
- */
 export const getDailyMillingByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const dailyMilling = await getDailyMillingById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: dailyMilling,
-            message: 'Daily milling entry retrieved successfully',
-        })
+        const dailyMilling = await getDailyMillingById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { dailyMilling },
+                'Daily milling entry retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily milling list with pagination
- * GET /api/mills/:millId/daily-milling
- */
 export const getDailyMillingListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const {
             page,
             limit,
             search,
             status,
-            shift,
             startDate,
             endDate,
             sortBy,
             sortOrder,
         } = req.query
-
-        const result = await getDailyMillingList(millId, {
+        const result = await getDailyMillingList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
             status,
-            shift,
             startDate,
             endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Daily milling list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { dailyMillings: result.data, pagination: result.pagination },
+                'Daily milling list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily milling summary statistics
- * GET /api/mills/:millId/daily-milling/summary
- */
 export const getDailyMillingSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const { startDate, endDate } = req.query
-
-        const summary = await getDailyMillingSummary(millId, {
+        const summary = await getDailyMillingSummary(req.params.millId, {
             startDate,
             endDate,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Daily milling summary retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Daily milling summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a daily milling entry
- * PUT /api/mills/:millId/daily-milling/:id
- */
 export const updateDailyMillingHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
         const dailyMilling = await updateDailyMillingEntry(
-            millId,
-            id,
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: dailyMilling,
-            message: 'Daily milling entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { dailyMilling },
+                'Daily milling entry updated'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a daily milling entry
- * DELETE /api/mills/:millId/daily-milling/:id
- */
 export const deleteDailyMillingHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteDailyMillingEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Daily milling entry deleted successfully',
-        })
+        await deleteDailyMillingEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Daily milling entry deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete daily milling entries
- * DELETE /api/mills/:millId/daily-milling/bulk
- */
 export const bulkDeleteDailyMillingHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const result = await bulkDeleteDailyMillingEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: `${result.deletedCount} entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteDailyMillingEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

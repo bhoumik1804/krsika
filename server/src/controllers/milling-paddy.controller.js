@@ -7,191 +7,110 @@ import {
     deleteMillingPaddyEntry,
     bulkDeleteMillingPaddyEntries,
 } from '../services/milling-paddy.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Milling Paddy Controller
- * HTTP request handlers for milling paddy endpoints
- */
-
-/**
- * Create a new milling paddy entry
- * POST /api/mills/:millId/milling-paddy
- */
 export const createMillingPaddy = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const millingPaddy = await createMillingPaddyEntry(
-            millId,
+        const entry = await createMillingPaddyEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: millingPaddy,
-            message: 'Milling paddy entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { entry }, 'Milling paddy created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get milling paddy entry by ID
- * GET /api/mills/:millId/milling-paddy/:id
- */
 export const getMillingPaddyByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const millingPaddy = await getMillingPaddyById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: millingPaddy,
-            message: 'Milling paddy entry retrieved successfully',
-        })
+        const entry = await getMillingPaddyById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Milling paddy retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get milling paddy list with pagination
- * GET /api/mills/:millId/milling-paddy
- */
 export const getMillingPaddyListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const {
-            page,
-            limit,
-            search,
-            paddyType,
-            riceType,
-            startDate,
-            endDate,
-            sortBy,
-            sortOrder,
-        } = req.query
-
-        const result = await getMillingPaddyList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getMillingPaddyList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            paddyType,
-            riceType,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Milling paddy list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { entries: result.data, pagination: result.pagination },
+                'Milling paddy list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get milling paddy summary statistics
- * GET /api/mills/:millId/milling-paddy/summary
- */
 export const getMillingPaddySummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getMillingPaddySummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Milling paddy summary retrieved successfully',
-        })
+        const summary = await getMillingPaddySummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Milling paddy summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a milling paddy entry
- * PUT /api/mills/:millId/milling-paddy/:id
- */
 export const updateMillingPaddyHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const millingPaddy = await updateMillingPaddyEntry(
-            millId,
-            id,
+        const entry = await updateMillingPaddyEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: millingPaddy,
-            message: 'Milling paddy entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Milling paddy updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a milling paddy entry
- * DELETE /api/mills/:millId/milling-paddy/:id
- */
 export const deleteMillingPaddyHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteMillingPaddyEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Milling paddy entry deleted successfully',
-        })
+        await deleteMillingPaddyEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Milling paddy deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete milling paddy entries
- * DELETE /api/mills/:millId/milling-paddy/bulk
- */
 export const bulkDeleteMillingPaddyHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const result = await bulkDeleteMillingPaddyEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: `${result.deletedCount} milling paddy entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteMillingPaddyEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

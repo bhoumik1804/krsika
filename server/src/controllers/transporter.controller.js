@@ -7,173 +7,122 @@ import {
     deleteTransporterEntry,
     bulkDeleteTransporterEntries,
 } from '../services/transporter.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Transporter Controller
- * HTTP request handlers for transporter endpoints
- */
-
-/**
- * Create a new transporter
- * POST /api/mills/:millId/transporters
- */
 export const createTransporter = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
         const transporter = await createTransporterEntry(
-            millId,
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: transporter,
-            message: 'Transporter created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(
+                201,
+                { transporter },
+                'Transporter created successfully'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get transporter by ID
- * GET /api/mills/:millId/transporters/:id
- */
 export const getTransporterByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const transporter = await getTransporterById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: transporter,
-            message: 'Transporter retrieved successfully',
-        })
+        const transporter = await getTransporterById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { transporter },
+                'Transporter retrieved successfully'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get transporter list with pagination
- * GET /api/mills/:millId/transporters
- */
 export const getTransporterListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const { page, limit, search, sortBy, sortOrder } = req.query
-
-        const result = await getTransporterList(millId, {
+        const result = await getTransporterList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Transporter list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { transporters: result.data, pagination: result.pagination },
+                'Transporter list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get transporter summary statistics
- * GET /api/mills/:millId/transporters/summary
- */
 export const getTransporterSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-
-        const summary = await getTransporterSummary(millId)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Transporter summary retrieved successfully',
-        })
+        const summary = await getTransporterSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Transporter summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a transporter
- * PUT /api/mills/:millId/transporters/:id
- */
 export const updateTransporterHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
         const transporter = await updateTransporterEntry(
-            millId,
-            id,
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: transporter,
-            message: 'Transporter updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { transporter },
+                'Transporter updated successfully'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a transporter
- * DELETE /api/mills/:millId/transporters/:id
- */
 export const deleteTransporterHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteTransporterEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Transporter deleted successfully',
-        })
+        await deleteTransporterEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Transporter deleted successfully')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete transporters
- * DELETE /api/mills/:millId/transporters/bulk
- */
 export const bulkDeleteTransporterHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteTransporterEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} transporters deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteTransporterEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} transporters deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

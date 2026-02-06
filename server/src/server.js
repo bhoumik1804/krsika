@@ -39,7 +39,7 @@ app.use(
 
 // Body parser middleware
 app.use(express.json({ limit: '50mb' }))
-app.use(express.urlencoded({ extended: true, limit: '50mb' }))
+app.use(express.urlencoded({ extended: true, limit: '10kb' }))
 
 // Cookie parser
 app.use(cookieParser())

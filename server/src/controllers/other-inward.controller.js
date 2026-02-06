@@ -7,193 +7,105 @@ import {
     deleteOtherInwardEntry,
     bulkDeleteOtherInwardEntries,
 } from '../services/other-inward.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Other Inward Controller
- * HTTP request handlers for other inward endpoints
- */
-
-/**
- * Create a new other inward entry
- * POST /api/mills/:millId/other-inward
- */
 export const createOtherInward = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const otherInward = await createOtherInwardEntry(
-            millId,
+        const entry = await createOtherInwardEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: otherInward,
-            message: 'Other inward entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { entry }, 'Other inward created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get other inward entry by ID
- * GET /api/mills/:millId/other-inward/:id
- */
 export const getOtherInwardByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const otherInward = await getOtherInwardById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: otherInward,
-            message: 'Other inward entry retrieved successfully',
-        })
+        const entry = await getOtherInwardById(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Other inward retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get other inward list with pagination
- * GET /api/mills/:millId/other-inward
- */
 export const getOtherInwardListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const {
-            page,
-            limit,
-            search,
-            partyName,
-            itemName,
-            unit,
-            startDate,
-            endDate,
-            sortBy,
-            sortOrder,
-        } = req.query
-
-        const result = await getOtherInwardList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getOtherInwardList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            partyName,
-            itemName,
-            unit,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Other inward list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { entries: result.data, pagination: result.pagination },
+                'Other inward list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get other inward summary statistics
- * GET /api/mills/:millId/other-inward/summary
- */
 export const getOtherInwardSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getOtherInwardSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Other inward summary retrieved successfully',
-        })
+        const summary = await getOtherInwardSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Other inward summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update an other inward entry
- * PUT /api/mills/:millId/other-inward/:id
- */
 export const updateOtherInwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const otherInward = await updateOtherInwardEntry(
-            millId,
-            id,
+        const entry = await updateOtherInwardEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: otherInward,
-            message: 'Other inward entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Other inward updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete an other inward entry
- * DELETE /api/mills/:millId/other-inward/:id
- */
 export const deleteOtherInwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteOtherInwardEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Other inward entry deleted successfully',
-        })
+        await deleteOtherInwardEntry(req.params.millId, req.params.id)
+        res.status(200).json(new ApiResponse(200, null, 'Other inward deleted'))
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete other inward entries
- * DELETE /api/mills/:millId/other-inward/bulk
- */
 export const bulkDeleteOtherInwardHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteOtherInwardEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} other inward entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteOtherInwardEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

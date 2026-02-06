@@ -7,164 +7,107 @@ import {
     deleteBrokerEntry,
     bulkDeleteBrokerEntries,
 } from '../services/broker.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Broker Controller
- * HTTP request handlers for broker endpoints
- */
-
-/**
- * Create a new broker
- * POST /api/mills/:millId/brokers
- */
 export const createBroker = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const broker = await createBrokerEntry(millId, req.body, userId)
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: broker,
-            message: 'Broker created successfully',
-        })
+        const broker = await createBrokerEntry(
+            req.params.millId,
+            req.body,
+            req.user._id
+        )
+        res.status(201).json(
+            new ApiResponse(201, { broker }, 'Broker created successfully')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get broker by ID
- * GET /api/mills/:millId/brokers/:id
- */
 export const getBrokerByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const broker = await getBrokerById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: broker,
-            message: 'Broker retrieved successfully',
-        })
+        const broker = await getBrokerById(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, { broker }, 'Broker retrieved successfully')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get broker list with pagination
- * GET /api/mills/:millId/brokers
- */
 export const getBrokerListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const { page, limit, search, sortBy, sortOrder } = req.query
-
-        const result = await getBrokerList(millId, {
+        const result = await getBrokerList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Broker list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { brokers: result.data, pagination: result.pagination },
+                'Broker list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get broker summary statistics
- * GET /api/mills/:millId/brokers/summary
- */
 export const getBrokerSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-
-        const summary = await getBrokerSummary(millId)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Broker summary retrieved successfully',
-        })
+        const summary = await getBrokerSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Broker summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a broker
- * PUT /api/mills/:millId/brokers/:id
- */
 export const updateBrokerHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const broker = await updateBrokerEntry(millId, id, req.body, userId)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: broker,
-            message: 'Broker updated successfully',
-        })
+        const broker = await updateBrokerEntry(
+            req.params.millId,
+            req.params.id,
+            req.body,
+            req.user._id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { broker }, 'Broker updated successfully')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a broker
- * DELETE /api/mills/:millId/brokers/:id
- */
 export const deleteBrokerHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteBrokerEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Broker deleted successfully',
-        })
+        await deleteBrokerEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Broker deleted successfully')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete brokers
- * DELETE /api/mills/:millId/brokers/bulk
- */
 export const bulkDeleteBrokerHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteBrokerEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} brokers deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteBrokerEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} brokers deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

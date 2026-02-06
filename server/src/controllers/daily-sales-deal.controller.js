@@ -7,191 +7,134 @@ import {
     deleteDailySalesDealEntry,
     bulkDeleteDailySalesDealEntries,
 } from '../services/daily-sales-deal.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Daily Sales Deal Controller
- * HTTP request handlers for daily sales deal endpoints
- */
-
-/**
- * Create a new daily sales deal entry
- * POST /api/mills/:millId/daily-sales-deals
- */
 export const createDailySalesDeal = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
         const dailySalesDeal = await createDailySalesDealEntry(
-            millId,
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: dailySalesDeal,
-            message: 'Daily sales deal entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { dailySalesDeal }, 'Daily sales deal created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily sales deal entry by ID
- * GET /api/mills/:millId/daily-sales-deals/:id
- */
 export const getDailySalesDealByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const dailySalesDeal = await getDailySalesDealById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: dailySalesDeal,
-            message: 'Daily sales deal entry retrieved successfully',
-        })
+        const dailySalesDeal = await getDailySalesDealById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { dailySalesDeal },
+                'Daily sales deal retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily sales deal list with pagination
- * GET /api/mills/:millId/daily-sales-deals
- */
 export const getDailySalesDealListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const {
             page,
             limit,
             search,
-            paymentStatus,
             status,
             startDate,
             endDate,
             sortBy,
             sortOrder,
         } = req.query
-
-        const result = await getDailySalesDealList(millId, {
+        const result = await getDailySalesDealList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            paymentStatus,
             status,
             startDate,
             endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Daily sales deal list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { dailySalesDeals: result.data, pagination: result.pagination },
+                'Daily sales deal list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily sales deal summary statistics
- * GET /api/mills/:millId/daily-sales-deals/summary
- */
 export const getDailySalesDealSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const { startDate, endDate } = req.query
-
-        const summary = await getDailySalesDealSummary(millId, {
+        const summary = await getDailySalesDealSummary(req.params.millId, {
             startDate,
             endDate,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Daily sales deal summary retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { summary },
+                'Daily sales deal summary retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a daily sales deal entry
- * PUT /api/mills/:millId/daily-sales-deals/:id
- */
 export const updateDailySalesDealHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
         const dailySalesDeal = await updateDailySalesDealEntry(
-            millId,
-            id,
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: dailySalesDeal,
-            message: 'Daily sales deal entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { dailySalesDeal }, 'Daily sales deal updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a daily sales deal entry
- * DELETE /api/mills/:millId/daily-sales-deals/:id
- */
 export const deleteDailySalesDealHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteDailySalesDealEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Daily sales deal entry deleted successfully',
-        })
+        await deleteDailySalesDealEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Daily sales deal deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete daily sales deal entries
- * DELETE /api/mills/:millId/daily-sales-deals/bulk
- */
 export const bulkDeleteDailySalesDealHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteDailySalesDealEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} daily sales deal entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteDailySalesDealEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

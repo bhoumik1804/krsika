@@ -16,16 +16,17 @@ import {
     generateUserTokens,
     registerNewMill,
 } from '../services/auth.service.js'
+import { ApiError } from '../utils/ApiError.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 import logger from '../utils/logger.js'
 
 export const signup = async (req, res, next) => {
     try {
-        const { fullName, email, password } = req.body
+        const { email, password } = req.body
         const userAgent = req.get('user-agent')
         const ipAddress = req.ip
 
         const { user, accessToken, refreshToken } = await signupUser(
-            fullName,
             email,
             password,
             userAgent,
@@ -36,12 +37,9 @@ export const signup = async (req, res, next) => {
         res.cookie('accessToken', accessToken, accessTokenCookieOptions)
         res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions)
 
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: user,
-            message: 'Signup successful',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { user }, 'Signup successful')
+        )
     } catch (error) {
         next(error)
     }
@@ -59,16 +57,12 @@ export const login = async (req, res, next) => {
             userAgent,
             ipAddress
         )
+
         // Set cookies
         res.cookie('accessToken', accessToken, accessTokenCookieOptions)
         res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions)
 
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: user,
-            message: 'Login successful',
-        })
+        res.status(200).json(new ApiResponse(200, { user }, 'Login successful'))
     } catch (error) {
         next(error)
     }
@@ -126,9 +120,7 @@ export const refreshToken = async (req, res, next) => {
         const token = req.cookies.refreshToken
 
         if (!token) {
-            const error = new Error('Refresh token not found')
-            error.statusCode = 401
-            throw error
+            throw new ApiError(401, 'Refresh token not found')
         }
 
         const { accessToken, refreshToken, user } =
@@ -138,12 +130,7 @@ export const refreshToken = async (req, res, next) => {
         res.cookie('accessToken', accessToken, accessTokenCookieOptions)
         res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions)
 
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { user },
-            message: 'Token refreshed',
-        })
+        res.status(200).json(new ApiResponse(200, { user }, 'Token refreshed'))
     } catch (error) {
         next(error)
     }
@@ -157,12 +144,7 @@ export const logout = async (req, res, next) => {
         res.clearCookie('accessToken', clearCookieOptions)
         res.clearCookie('refreshToken', clearCookieOptions)
 
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Logout successful',
-        })
+        res.status(200).json(new ApiResponse(200, null, 'Logout successful'))
     } catch (error) {
         next(error)
     }
@@ -171,12 +153,7 @@ export const logout = async (req, res, next) => {
 export const getMe = async (req, res, next) => {
     try {
         const user = await getUserById(req.user._id)
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: user,
-            message: 'Success',
-        })
+        res.status(200).json(new ApiResponse(200, { user }, 'Success'))
     } catch (error) {
         next(error)
     }
@@ -185,12 +162,9 @@ export const getMe = async (req, res, next) => {
 export const updateProfile = async (req, res, next) => {
     try {
         const user = await updateUserProfile(req.user._id, req.body)
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: user,
-            message: 'Profile updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { user }, 'Profile updated successfully')
+        )
     } catch (error) {
         next(error)
     }
@@ -209,12 +183,13 @@ export const changePassword = async (req, res, next) => {
             path: '/api/auth/refresh',
         })
 
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Password changed successfully. Please login again.',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                null,
+                'Password changed successfully. Please login again.'
+            )
+        )
     } catch (error) {
         next(error)
     }
@@ -224,13 +199,13 @@ export const registerMill = async (req, res, next) => {
     try {
         const mill = await registerNewMill(req.body, req.user._id)
 
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: mill,
-            message:
-                'Mill registration successful. Please wait for verification.',
-        })
+        res.status(201).json(
+            new ApiResponse(
+                201,
+                { mill },
+                'Mill registration successful. Please wait for verification.'
+            )
+        )
     } catch (error) {
         next(error)
     }

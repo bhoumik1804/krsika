@@ -7,192 +7,114 @@ import {
     deleteFinancialPaymentEntry,
     bulkDeleteFinancialPaymentEntries,
 } from '../services/financial-payment.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Financial Payment Controller
- * HTTP request handlers for financial payment endpoints
- */
-
-/**
- * Create a new financial payment entry
- * POST /api/mills/:millId/financial-payments
- */
 export const createFinancialPayment = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const financialPayment = await createFinancialPaymentEntry(
-            millId,
+        const payment = await createFinancialPaymentEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: financialPayment,
-            message: 'Financial payment entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { payment }, 'Financial payment created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get financial payment entry by ID
- * GET /api/mills/:millId/financial-payments/:id
- */
 export const getFinancialPaymentByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const financialPayment = await getFinancialPaymentById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: financialPayment,
-            message: 'Financial payment entry retrieved successfully',
-        })
+        const payment = await getFinancialPaymentById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { payment }, 'Financial payment retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get financial payment list with pagination
- * GET /api/mills/:millId/financial-payments
- */
 export const getFinancialPaymentListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const {
-            page,
-            limit,
-            search,
-            paymentMode,
-            startDate,
-            endDate,
-            sortBy,
-            sortOrder,
-        } = req.query
-
-        const result = await getFinancialPaymentList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getFinancialPaymentList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            paymentMode,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Financial payment list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { payments: result.data, pagination: result.pagination },
+                'Financial payment list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get financial payment summary statistics
- * GET /api/mills/:millId/financial-payments/summary
- */
 export const getFinancialPaymentSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getFinancialPaymentSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Financial payment summary retrieved successfully',
-        })
+        const summary = await getFinancialPaymentSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { summary },
+                'Financial payment summary retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a financial payment entry
- * PUT /api/mills/:millId/financial-payments/:id
- */
 export const updateFinancialPaymentHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const financialPayment = await updateFinancialPaymentEntry(
-            millId,
-            id,
+        const payment = await updateFinancialPaymentEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: financialPayment,
-            message: 'Financial payment entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { payment }, 'Financial payment updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a financial payment entry
- * DELETE /api/mills/:millId/financial-payments/:id
- */
 export const deleteFinancialPaymentHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteFinancialPaymentEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Financial payment entry deleted successfully',
-        })
+        await deleteFinancialPaymentEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Financial payment deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete financial payment entries
- * DELETE /api/mills/:millId/financial-payments/bulk
- */
 export const bulkDeleteFinancialPaymentHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
         const deletedCount = await bulkDeleteFinancialPaymentEntries(
-            millId,
-            ids
+            req.params.millId,
+            req.body.ids
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} financial payment entries deleted successfully`,
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} payments deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

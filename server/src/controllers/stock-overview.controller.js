@@ -7,189 +7,114 @@ import {
     deleteStockOverviewEntry,
     bulkDeleteStockOverviewEntries,
 } from '../services/stock-overview.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Stock Overview Controller
- * HTTP request handlers for stock overview endpoints
- */
-
-/**
- * Create a new stock overview entry
- * POST /api/mills/:millId/stock-overview
- */
 export const createStockOverview = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const stockOverview = await createStockOverviewEntry(
-            millId,
+        const stock = await createStockOverviewEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: stockOverview,
-            message: 'Stock overview entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { stock }, 'Stock overview created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get stock overview entry by ID
- * GET /api/mills/:millId/stock-overview/:id
- */
 export const getStockOverviewByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const stockOverview = await getStockOverviewById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: stockOverview,
-            message: 'Stock overview entry retrieved successfully',
-        })
+        const stock = await getStockOverviewById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { stock }, 'Stock overview retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get stock overview list with pagination
- * GET /api/mills/:millId/stock-overview
- */
 export const getStockOverviewListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const {
-            page,
-            limit,
-            search,
-            status,
-            startDate,
-            endDate,
-            sortBy,
-            sortOrder,
-        } = req.query
-
-        const result = await getStockOverviewList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getStockOverviewList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            status,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Stock overview list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { stocks: result.data, pagination: result.pagination },
+                'Stock overview list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get stock overview summary statistics
- * GET /api/mills/:millId/stock-overview/summary
- */
 export const getStockOverviewSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getStockOverviewSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Stock overview summary retrieved successfully',
-        })
+        const summary = await getStockOverviewSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { summary },
+                'Stock overview summary retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a stock overview entry
- * PUT /api/mills/:millId/stock-overview/:id
- */
 export const updateStockOverviewHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const stockOverview = await updateStockOverviewEntry(
-            millId,
-            id,
+        const stock = await updateStockOverviewEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: stockOverview,
-            message: 'Stock overview entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { stock }, 'Stock overview updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a stock overview entry
- * DELETE /api/mills/:millId/stock-overview/:id
- */
 export const deleteStockOverviewHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteStockOverviewEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Stock overview entry deleted successfully',
-        })
+        await deleteStockOverviewEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Stock overview deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete stock overview entries
- * DELETE /api/mills/:millId/stock-overview/bulk
- */
 export const bulkDeleteStockOverviewHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteStockOverviewEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} stock overview entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteStockOverviewEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

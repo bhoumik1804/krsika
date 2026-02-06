@@ -7,176 +7,105 @@ import {
     deleteOtherSaleEntry,
     bulkDeleteOtherSaleEntries,
 } from '../services/other-sale.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Other Sale Controller
- * HTTP request handlers for other sale endpoints
- */
-
-/**
- * Create a new other sale entry
- * POST /api/mills/:millId/other-sales
- */
 export const createOtherSale = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const otherSale = await createOtherSaleEntry(millId, req.body, userId)
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: otherSale,
-            message: 'Other sale entry created successfully',
-        })
+        const sale = await createOtherSaleEntry(
+            req.params.millId,
+            req.body,
+            req.user._id
+        )
+        res.status(201).json(
+            new ApiResponse(201, { sale }, 'Other sale created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get other sale entry by ID
- * GET /api/mills/:millId/other-sales/:id
- */
 export const getOtherSaleByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const otherSale = await getOtherSaleById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: otherSale,
-            message: 'Other sale entry retrieved successfully',
-        })
+        const sale = await getOtherSaleById(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, { sale }, 'Other sale retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get other sale list with pagination
- * GET /api/mills/:millId/other-sales
- */
 export const getOtherSaleListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { page, limit, search, startDate, endDate, sortBy, sortOrder } =
-            req.query
-
-        const result = await getOtherSaleList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getOtherSaleList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Other sale list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { sales: result.data, pagination: result.pagination },
+                'Other sale list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get other sale summary statistics
- * GET /api/mills/:millId/other-sales/summary
- */
 export const getOtherSaleSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getOtherSaleSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Other sale summary retrieved successfully',
-        })
+        const summary = await getOtherSaleSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Other sale summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update an other sale entry
- * PUT /api/mills/:millId/other-sales/:id
- */
 export const updateOtherSaleHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const otherSale = await updateOtherSaleEntry(
-            millId,
-            id,
+        const sale = await updateOtherSaleEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: otherSale,
-            message: 'Other sale entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { sale }, 'Other sale updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete an other sale entry
- * DELETE /api/mills/:millId/other-sales/:id
- */
 export const deleteOtherSaleHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteOtherSaleEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Other sale entry deleted successfully',
-        })
+        await deleteOtherSaleEntry(req.params.millId, req.params.id)
+        res.status(200).json(new ApiResponse(200, null, 'Other sale deleted'))
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete other sale entries
- * DELETE /api/mills/:millId/other-sales/bulk
- */
 export const bulkDeleteOtherSaleHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteOtherSaleEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} other sale entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteOtherSaleEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} sales deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

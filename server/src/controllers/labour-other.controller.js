@@ -7,180 +7,105 @@ import {
     deleteLabourOtherEntry,
     bulkDeleteLabourOtherEntries,
 } from '../services/labour-other.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Labour Other Controller
- * HTTP request handlers for labour other endpoints
- */
-
-/**
- * Create a new labour other entry
- * POST /api/mills/:millId/labour-other
- */
 export const createLabourOther = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const labourOther = await createLabourOtherEntry(
-            millId,
+        const entry = await createLabourOtherEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: labourOther,
-            message: 'Labour other entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { entry }, 'Labour other created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get labour other entry by ID
- * GET /api/mills/:millId/labour-other/:id
- */
 export const getLabourOtherByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const labourOther = await getLabourOtherById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: labourOther,
-            message: 'Labour other entry retrieved successfully',
-        })
+        const entry = await getLabourOtherById(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Labour other retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get labour other list with pagination
- * GET /api/mills/:millId/labour-other
- */
 export const getLabourOtherListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { page, limit, search, startDate, endDate, sortBy, sortOrder } =
-            req.query
-
-        const result = await getLabourOtherList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getLabourOtherList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Labour other list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { entries: result.data, pagination: result.pagination },
+                'Labour other list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get labour other summary statistics
- * GET /api/mills/:millId/labour-other/summary
- */
 export const getLabourOtherSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getLabourOtherSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Labour other summary retrieved successfully',
-        })
+        const summary = await getLabourOtherSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Labour other summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a labour other entry
- * PUT /api/mills/:millId/labour-other/:id
- */
 export const updateLabourOtherHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const labourOther = await updateLabourOtherEntry(
-            millId,
-            id,
+        const entry = await updateLabourOtherEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: labourOther,
-            message: 'Labour other entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Labour other updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a labour other entry
- * DELETE /api/mills/:millId/labour-other/:id
- */
 export const deleteLabourOtherHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteLabourOtherEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Labour other entry deleted successfully',
-        })
+        await deleteLabourOtherEntry(req.params.millId, req.params.id)
+        res.status(200).json(new ApiResponse(200, null, 'Labour other deleted'))
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete labour other entries
- * DELETE /api/mills/:millId/labour-other/bulk
- */
 export const bulkDeleteLabourOtherHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteLabourOtherEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} labour other entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteLabourOtherEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

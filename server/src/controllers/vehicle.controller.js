@@ -7,164 +7,107 @@ import {
     deleteVehicleEntry,
     bulkDeleteVehicleEntries,
 } from '../services/vehicle.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Vehicle Controller
- * HTTP request handlers for vehicle endpoints
- */
-
-/**
- * Create a new vehicle
- * POST /api/mills/:millId/vehicles
- */
 export const createVehicle = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const vehicle = await createVehicleEntry(millId, req.body, userId)
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: vehicle,
-            message: 'Vehicle created successfully',
-        })
+        const vehicle = await createVehicleEntry(
+            req.params.millId,
+            req.body,
+            req.user._id
+        )
+        res.status(201).json(
+            new ApiResponse(201, { vehicle }, 'Vehicle created successfully')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get vehicle by ID
- * GET /api/mills/:millId/vehicles/:id
- */
 export const getVehicleByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const vehicle = await getVehicleById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: vehicle,
-            message: 'Vehicle retrieved successfully',
-        })
+        const vehicle = await getVehicleById(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, { vehicle }, 'Vehicle retrieved successfully')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get vehicle list with pagination
- * GET /api/mills/:millId/vehicles
- */
 export const getVehicleListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const { page, limit, search, sortBy, sortOrder } = req.query
-
-        const result = await getVehicleList(millId, {
+        const result = await getVehicleList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Vehicle list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { vehicles: result.data, pagination: result.pagination },
+                'Vehicle list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get vehicle summary statistics
- * GET /api/mills/:millId/vehicles/summary
- */
 export const getVehicleSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-
-        const summary = await getVehicleSummary(millId)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Vehicle summary retrieved successfully',
-        })
+        const summary = await getVehicleSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Vehicle summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a vehicle
- * PUT /api/mills/:millId/vehicles/:id
- */
 export const updateVehicleHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const vehicle = await updateVehicleEntry(millId, id, req.body, userId)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: vehicle,
-            message: 'Vehicle updated successfully',
-        })
+        const vehicle = await updateVehicleEntry(
+            req.params.millId,
+            req.params.id,
+            req.body,
+            req.user._id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { vehicle }, 'Vehicle updated successfully')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a vehicle
- * DELETE /api/mills/:millId/vehicles/:id
- */
 export const deleteVehicleHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteVehicleEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Vehicle deleted successfully',
-        })
+        await deleteVehicleEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Vehicle deleted successfully')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete vehicles
- * DELETE /api/mills/:millId/vehicles/bulk
- */
 export const bulkDeleteVehicleHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteVehicleEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} vehicles deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteVehicleEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} vehicles deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

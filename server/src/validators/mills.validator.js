@@ -18,6 +18,13 @@ const millInfoSchema = z.object({
         .trim()
         .min(10, 'PAN number must be 10 characters')
         .max(10, 'PAN number must be 10 characters'),
+    mnmNumber: z
+        .string({ required_error: 'MNM number is required' })
+        .trim()
+        .regex(
+            /^[A-Z]{2}\d{6}$/,
+            'MNM number must start with 2 uppercase letters followed by 6 digits (e.g., MA123456)'
+        ),
 })
 
 // Mill contact schema
@@ -32,7 +39,13 @@ const millContactSchema = z.object({
         .trim()
         .min(10, 'Phone number must be at least 10 characters')
         .max(20, 'Phone number is too long'),
-    address: z.string().trim().max(500, 'Address is too long').optional(),
+    address: z.string().trim().max(500, 'Address is too long'),
+    city: z.string().trim().max(100, 'City name is too long'),
+    state: z.string().trim().max(100, 'State name is too long'),
+    pincode: z
+        .string()
+        .trim()
+        .regex(/^\d{6}$/, 'Pincode must be 6 digits'),
 })
 
 // Mill settings schema
@@ -49,7 +62,7 @@ export const createMillSchema = z.object({
             .trim()
             .min(1, 'Mill name cannot be empty')
             .max(200, 'Mill name is too long'),
-        millInfo: millInfoSchema,
+        millInfo: millInfoSchema.optional(),
         contact: millContactSchema,
         status: z
             .enum(Object.values(MILL_STATUS), {
@@ -58,9 +71,6 @@ export const createMillSchema = z.object({
                 }),
             })
             .optional(),
-        currentPlan: z.string().optional(),
-        planValidUntil: z.string().datetime().optional(),
-        settings: millSettingsSchema.optional(),
     }),
 })
 

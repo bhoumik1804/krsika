@@ -13,10 +13,6 @@ const CommitteeSchema = new Schema(
             required: true,
             index: true,
         },
-        committeeType: {
-            type: String,
-            trim: true,
-        },
         committeeName: {
             type: String,
             required: true,

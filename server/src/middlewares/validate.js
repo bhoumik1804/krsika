@@ -5,18 +5,24 @@ export const validate = (schema) => {
     return (req, res, next) => {
         try {
             const data = {
-                body: req.body || {},
-                query: req.query || {},
-                params: req.params || {},
+                body: req.body,
+                query: req.query,
+                params: req.params,
             }
 
+            // Debug logging
+            console.log('=== VALIDATION DEBUG ===')
+            console.log('Path:', req.path)
+            console.log('Method:', req.method)
+            console.log('Data to validate:', JSON.stringify(data, null, 2))
+
             schema.parse(data)
+            console.log('Validation passed!')
             next()
         } catch (error) {
             console.log('=== VALIDATION ERROR ===')
             console.log('Error type:', error.constructor.name)
             console.log('Error message:', error.message)
-            console.log('Full error:', error)
 
             if (error instanceof z.ZodError) {
                 console.log(
@@ -27,7 +33,6 @@ export const validate = (schema) => {
                 const details = (error.errors || []).map((err) => ({
                     field: err.path.join('.') || 'root',
                     message: err.message,
-                    code: err.code,
                 }))
 
                 logger.warn('Validation error', {
@@ -41,17 +46,10 @@ export const validate = (schema) => {
                 validationError.details = details
                 next(validationError)
             } else {
-                console.log('Non-Zod error details:', {
-                    message: error.message,
-                    stack: error.stack,
-                    statusCode: error.statusCode,
-                    details: error.details,
-                })
                 logger.error('Non-Zod error in validate middleware', {
                     path: req.path,
                     method: req.method,
                     error: error.message,
-                    stack: error.stack,
                 })
                 next(error)
             }

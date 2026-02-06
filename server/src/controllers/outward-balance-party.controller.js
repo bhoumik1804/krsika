@@ -7,176 +7,114 @@ import {
     deleteOutwardBalancePartyEntry,
     bulkDeleteOutwardBalancePartyEntries,
 } from '../services/outward-balance-party.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Outward Balance Party Controller
- * HTTP request handlers for outward balance party endpoints
- */
-
-/**
- * Create a new outward balance party entry
- * POST /api/mills/:millId/outward-balance-party
- */
 export const createOutwardBalanceParty = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const outwardBalanceParty = await createOutwardBalancePartyEntry(
-            millId,
+        const entry = await createOutwardBalancePartyEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: outwardBalanceParty,
-            message: 'Outward balance party entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { entry }, 'Outward balance party created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get outward balance party entry by ID
- * GET /api/mills/:millId/outward-balance-party/:id
- */
 export const getOutwardBalancePartyByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const outwardBalanceParty = await getOutwardBalancePartyById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: outwardBalanceParty,
-            message: 'Outward balance party entry retrieved successfully',
-        })
+        const entry = await getOutwardBalancePartyById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Outward balance party retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get outward balance party list with pagination
- * GET /api/mills/:millId/outward-balance-party
- */
 export const getOutwardBalancePartyListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const { page, limit, search, sortBy, sortOrder } = req.query
-
-        const result = await getOutwardBalancePartyList(millId, {
+        const result = await getOutwardBalancePartyList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Outward balance party list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { entries: result.data, pagination: result.pagination },
+                'Outward balance party list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get outward balance party summary statistics
- * GET /api/mills/:millId/outward-balance-party/summary
- */
 export const getOutwardBalancePartySummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-
-        const summary = await getOutwardBalancePartySummary(millId)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Outward balance party summary retrieved successfully',
-        })
+        const summary = await getOutwardBalancePartySummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { summary },
+                'Outward balance party summary retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update an outward balance party entry
- * PUT /api/mills/:millId/outward-balance-party/:id
- */
 export const updateOutwardBalancePartyHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const outwardBalanceParty = await updateOutwardBalancePartyEntry(
-            millId,
-            id,
+        const entry = await updateOutwardBalancePartyEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: outwardBalanceParty,
-            message: 'Outward balance party entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Outward balance party updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete an outward balance party entry
- * DELETE /api/mills/:millId/outward-balance-party/:id
- */
 export const deleteOutwardBalancePartyHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteOutwardBalancePartyEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Outward balance party entry deleted successfully',
-        })
+        await deleteOutwardBalancePartyEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Outward balance party deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete outward balance party entries
- * DELETE /api/mills/:millId/outward-balance-party/bulk
- */
 export const bulkDeleteOutwardBalancePartyHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
         const deletedCount = await bulkDeleteOutwardBalancePartyEntries(
-            millId,
-            ids
+            req.params.millId,
+            req.body.ids
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} outward balance party entries deleted successfully`,
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

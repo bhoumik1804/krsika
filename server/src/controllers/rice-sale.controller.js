@@ -7,196 +7,105 @@ import {
     deleteRiceSaleEntry,
     bulkDeleteRiceSaleEntries,
 } from '../services/rice-sale.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Rice Sale Controller
- * HTTP request handlers for rice sale endpoints
- */
-
-/**
- * Create a new rice sale entry
- * POST /api/mills/:millId/rice-sales
- */
 export const createRiceSale = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const riceSale = await createRiceSaleEntry(millId, req.body, userId)
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: riceSale,
-            message: 'Rice sale entry created successfully',
-        })
+        const sale = await createRiceSaleEntry(
+            req.params.millId,
+            req.body,
+            req.user._id
+        )
+        res.status(201).json(
+            new ApiResponse(201, { sale }, 'Rice sale created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get rice sale entry by ID
- * GET /api/mills/:millId/rice-sales/:id
- */
 export const getRiceSaleByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const riceSale = await getRiceSaleById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: riceSale,
-            message: 'Rice sale entry retrieved successfully',
-        })
+        const sale = await getRiceSaleById(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, { sale }, 'Rice sale retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get rice sale list with pagination
- * GET /api/mills/:millId/rice-sales
- */
 export const getRiceSaleListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const {
-            page,
-            limit,
-            search,
-            partyName,
-            brokerName,
-            deliveryType,
-            lotOrOther,
-            fciOrNAN,
-            riceType,
-            gunnyType,
-            frkType,
-            lotNumber,
-            startDate,
-            endDate,
-            sortBy,
-            sortOrder,
-        } = req.query
-
-        const result = await getRiceSaleList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getRiceSaleList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            partyName,
-            brokerName,
-            deliveryType,
-            lotOrOther,
-            fciOrNAN,
-            riceType,
-            gunnyType,
-            frkType,
-            lotNumber,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Rice sale list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { sales: result.data, pagination: result.pagination },
+                'Rice sale list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get rice sale summary statistics
- * GET /api/mills/:millId/rice-sales/summary
- */
 export const getRiceSaleSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getRiceSaleSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Rice sale summary retrieved successfully',
-        })
+        const summary = await getRiceSaleSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Rice sale summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a rice sale entry
- * PUT /api/mills/:millId/rice-sales/:id
- */
 export const updateRiceSaleHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const riceSale = await updateRiceSaleEntry(millId, id, req.body, userId)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: riceSale,
-            message: 'Rice sale entry updated successfully',
-        })
+        const sale = await updateRiceSaleEntry(
+            req.params.millId,
+            req.params.id,
+            req.body,
+            req.user._id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { sale }, 'Rice sale updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a rice sale entry
- * DELETE /api/mills/:millId/rice-sales/:id
- */
 export const deleteRiceSaleHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteRiceSaleEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Rice sale entry deleted successfully',
-        })
+        await deleteRiceSaleEntry(req.params.millId, req.params.id)
+        res.status(200).json(new ApiResponse(200, null, 'Rice sale deleted'))
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete rice sale entries
- * DELETE /api/mills/:millId/rice-sales/bulk
- */
 export const bulkDeleteRiceSaleHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteRiceSaleEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} rice sale entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteRiceSaleEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} sales deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

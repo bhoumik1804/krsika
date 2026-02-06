@@ -7,66 +7,43 @@ import {
     deleteDailyInwardEntry,
     bulkDeleteDailyInwardEntries,
 } from '../services/daily-inward.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Daily Inward Controller
- * HTTP request handlers for daily inward endpoints
- */
-
-/**
- * Create a new daily inward entry
- * POST /api/mills/:millId/daily-inwards
- */
 export const createDailyInward = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
         const dailyInward = await createDailyInwardEntry(
-            millId,
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: dailyInward,
-            message: 'Daily inward entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { dailyInward }, 'Daily inward entry created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily inward entry by ID
- * GET /api/mills/:millId/daily-inwards/:id
- */
 export const getDailyInwardByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const dailyInward = await getDailyInwardById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: dailyInward,
-            message: 'Daily inward entry retrieved successfully',
-        })
+        const dailyInward = await getDailyInwardById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { dailyInward },
+                'Daily inward entry retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily inward list with pagination
- * GET /api/mills/:millId/daily-inwards
- */
 export const getDailyInwardListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const {
             page,
             limit,
@@ -77,8 +54,7 @@ export const getDailyInwardListHandler = async (req, res, next) => {
             sortBy,
             sortOrder,
         } = req.query
-
-        const result = await getDailyInwardList(millId, {
+        const result = await getDailyInwardList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
@@ -88,108 +64,73 @@ export const getDailyInwardListHandler = async (req, res, next) => {
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Daily inward list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { dailyInwards: result.data, pagination: result.pagination },
+                'Daily inward list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily inward summary statistics
- * GET /api/mills/:millId/daily-inwards/summary
- */
 export const getDailyInwardSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const { startDate, endDate } = req.query
-
-        const summary = await getDailyInwardSummary(millId, {
+        const summary = await getDailyInwardSummary(req.params.millId, {
             startDate,
             endDate,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Daily inward summary retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Daily inward summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a daily inward entry
- * PUT /api/mills/:millId/daily-inwards/:id
- */
 export const updateDailyInwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
         const dailyInward = await updateDailyInwardEntry(
-            millId,
-            id,
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: dailyInward,
-            message: 'Daily inward entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { dailyInward }, 'Daily inward entry updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a daily inward entry
- * DELETE /api/mills/:millId/daily-inwards/:id
- */
 export const deleteDailyInwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteDailyInwardEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Daily inward entry deleted successfully',
-        })
+        await deleteDailyInwardEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Daily inward entry deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete daily inward entries
- * DELETE /api/mills/:millId/daily-inwards/bulk
- */
 export const bulkDeleteDailyInwardHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteDailyInwardEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} daily inward entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteDailyInwardEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

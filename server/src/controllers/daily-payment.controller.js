@@ -7,191 +7,138 @@ import {
     deleteDailyPaymentEntry,
     bulkDeleteDailyPaymentEntries,
 } from '../services/daily-payment.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Daily Payment Controller
- * HTTP request handlers for daily payment endpoints
- */
-
-/**
- * Create a new daily payment entry
- * POST /api/mills/:millId/daily-payments
- */
 export const createDailyPayment = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
         const dailyPayment = await createDailyPaymentEntry(
-            millId,
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: dailyPayment,
-            message: 'Daily payment entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(
+                201,
+                { dailyPayment },
+                'Daily payment entry created'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily payment entry by ID
- * GET /api/mills/:millId/daily-payments/:id
- */
 export const getDailyPaymentByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const dailyPayment = await getDailyPaymentById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: dailyPayment,
-            message: 'Daily payment entry retrieved successfully',
-        })
+        const dailyPayment = await getDailyPaymentById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { dailyPayment },
+                'Daily payment entry retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily payment list with pagination
- * GET /api/mills/:millId/daily-payments
- */
 export const getDailyPaymentListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const {
             page,
             limit,
             search,
             status,
-            paymentMode,
             startDate,
             endDate,
             sortBy,
             sortOrder,
         } = req.query
-
-        const result = await getDailyPaymentList(millId, {
+        const result = await getDailyPaymentList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
             status,
-            paymentMode,
             startDate,
             endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Daily payment list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { dailyPayments: result.data, pagination: result.pagination },
+                'Daily payment list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get daily payment summary statistics
- * GET /api/mills/:millId/daily-payments/summary
- */
 export const getDailyPaymentSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
         const { startDate, endDate } = req.query
-
-        const summary = await getDailyPaymentSummary(millId, {
+        const summary = await getDailyPaymentSummary(req.params.millId, {
             startDate,
             endDate,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Daily payment summary retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Daily payment summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a daily payment entry
- * PUT /api/mills/:millId/daily-payments/:id
- */
 export const updateDailyPaymentHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
         const dailyPayment = await updateDailyPaymentEntry(
-            millId,
-            id,
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: dailyPayment,
-            message: 'Daily payment entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { dailyPayment },
+                'Daily payment entry updated'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a daily payment entry
- * DELETE /api/mills/:millId/daily-payments/:id
- */
 export const deleteDailyPaymentHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteDailyPaymentEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Daily payment entry deleted successfully',
-        })
+        await deleteDailyPaymentEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Daily payment entry deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete daily payment entries
- * DELETE /api/mills/:millId/daily-payments/bulk
- */
 export const bulkDeleteDailyPaymentHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteDailyPaymentEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} daily payment entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteDailyPaymentEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

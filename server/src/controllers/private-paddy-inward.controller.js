@@ -7,200 +7,114 @@ import {
     deletePrivatePaddyInwardEntry,
     bulkDeletePrivatePaddyInwardEntries,
 } from '../services/private-paddy-inward.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Private Paddy Inward Controller
- * HTTP request handlers for private paddy inward endpoints
- */
-
-/**
- * Create a new private paddy inward entry
- * POST /api/mills/:millId/private-paddy-inward
- */
 export const createPrivatePaddyInward = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const privatePaddyInward = await createPrivatePaddyInwardEntry(
-            millId,
+        const entry = await createPrivatePaddyInwardEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: privatePaddyInward,
-            message: 'Private paddy inward entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { entry }, 'Private paddy inward created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get private paddy inward entry by ID
- * GET /api/mills/:millId/private-paddy-inward/:id
- */
 export const getPrivatePaddyInwardByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const privatePaddyInward = await getPrivatePaddyInwardById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: privatePaddyInward,
-            message: 'Private paddy inward entry retrieved successfully',
-        })
+        const entry = await getPrivatePaddyInwardById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Private paddy inward retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get private paddy inward list with pagination
- * GET /api/mills/:millId/private-paddy-inward
- */
 export const getPrivatePaddyInwardListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const {
-            page,
-            limit,
-            search,
-            purchaseType,
-            paddyType,
-            partyName,
-            brokerName,
-            committeeName,
-            startDate,
-            endDate,
-            sortBy,
-            sortOrder,
-        } = req.query
-
-        const result = await getPrivatePaddyInwardList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getPrivatePaddyInwardList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            purchaseType,
-            paddyType,
-            partyName,
-            brokerName,
-            committeeName,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Private paddy inward list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { entries: result.data, pagination: result.pagination },
+                'Private paddy inward list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get private paddy inward summary statistics
- * GET /api/mills/:millId/private-paddy-inward/summary
- */
 export const getPrivatePaddyInwardSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getPrivatePaddyInwardSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Private paddy inward summary retrieved successfully',
-        })
+        const summary = await getPrivatePaddyInwardSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { summary },
+                'Private paddy inward summary retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a private paddy inward entry
- * PUT /api/mills/:millId/private-paddy-inward/:id
- */
 export const updatePrivatePaddyInwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const privatePaddyInward = await updatePrivatePaddyInwardEntry(
-            millId,
-            id,
+        const entry = await updatePrivatePaddyInwardEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: privatePaddyInward,
-            message: 'Private paddy inward entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Private paddy inward updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a private paddy inward entry
- * DELETE /api/mills/:millId/private-paddy-inward/:id
- */
 export const deletePrivatePaddyInwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deletePrivatePaddyInwardEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Private paddy inward entry deleted successfully',
-        })
+        await deletePrivatePaddyInwardEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Private paddy inward deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete private paddy inward entries
- * DELETE /api/mills/:millId/private-paddy-inward/bulk
- */
 export const bulkDeletePrivatePaddyInwardHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
         const deletedCount = await bulkDeletePrivatePaddyInwardEntries(
-            millId,
-            ids
+            req.params.millId,
+            req.body.ids
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} private paddy inward entries deleted successfully`,
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

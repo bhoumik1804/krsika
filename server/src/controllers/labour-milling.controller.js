@@ -7,180 +7,114 @@ import {
     deleteLabourMillingEntry,
     bulkDeleteLabourMillingEntries,
 } from '../services/labour-milling.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Labour Milling Controller
- * HTTP request handlers for labour milling endpoints
- */
-
-/**
- * Create a new labour milling entry
- * POST /api/mills/:millId/labour-milling
- */
 export const createLabourMilling = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const labourMilling = await createLabourMillingEntry(
-            millId,
+        const entry = await createLabourMillingEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: labourMilling,
-            message: 'Labour milling entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { entry }, 'Labour milling created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get labour milling entry by ID
- * GET /api/mills/:millId/labour-milling/:id
- */
 export const getLabourMillingByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const labourMilling = await getLabourMillingById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: labourMilling,
-            message: 'Labour milling entry retrieved successfully',
-        })
+        const entry = await getLabourMillingById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Labour milling retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get labour milling list with pagination
- * GET /api/mills/:millId/labour-milling
- */
 export const getLabourMillingListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { page, limit, search, startDate, endDate, sortBy, sortOrder } =
-            req.query
-
-        const result = await getLabourMillingList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getLabourMillingList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Labour milling list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { entries: result.data, pagination: result.pagination },
+                'Labour milling list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get labour milling summary statistics
- * GET /api/mills/:millId/labour-milling/summary
- */
 export const getLabourMillingSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getLabourMillingSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Labour milling summary retrieved successfully',
-        })
+        const summary = await getLabourMillingSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { summary },
+                'Labour milling summary retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a labour milling entry
- * PUT /api/mills/:millId/labour-milling/:id
- */
 export const updateLabourMillingHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const labourMilling = await updateLabourMillingEntry(
-            millId,
-            id,
+        const entry = await updateLabourMillingEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: labourMilling,
-            message: 'Labour milling entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Labour milling updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a labour milling entry
- * DELETE /api/mills/:millId/labour-milling/:id
- */
 export const deleteLabourMillingHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteLabourMillingEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Labour milling entry deleted successfully',
-        })
+        await deleteLabourMillingEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Labour milling deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete labour milling entries
- * DELETE /api/mills/:millId/labour-milling/bulk
- */
 export const bulkDeleteLabourMillingHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteLabourMillingEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} labour milling entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteLabourMillingEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

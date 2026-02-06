@@ -1,7 +1,6 @@
 import { Router } from 'express'
 import {
     createCommittee,
-    bulkCreateCommittees,
     getCommitteeByIdHandler,
     getCommitteeListHandler,
     getCommitteeSummaryHandler,
@@ -13,7 +12,6 @@ import { authenticate } from '../middlewares/auth.js'
 import { validate } from '../middlewares/validate.js'
 import {
     createCommitteeSchema,
-    bulkCreateCommitteeSchema,
     updateCommitteeSchema,
     getCommitteeByIdSchema,
     deleteCommitteeSchema,
@@ -55,9 +53,6 @@ router.get(
 
 // Create a new committee
 router.post('/', authenticate, validate(createCommitteeSchema), createCommittee)
-
-// Bulk create committees
-router.post('/bulk', authenticate, validate(bulkCreateCommitteeSchema), bulkCreateCommittees)
 
 // Update a committee
 router.put(

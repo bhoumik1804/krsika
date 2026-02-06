@@ -7,180 +7,108 @@ import {
     deleteFrkPurchaseEntry,
     bulkDeleteFrkPurchaseEntries,
 } from '../services/frk-purchase.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * FRK Purchase Controller
- * HTTP request handlers for FRK purchase endpoints
- */
-
-/**
- * Create a new FRK purchase entry
- * POST /api/mills/:millId/frk-purchase
- */
 export const createFrkPurchase = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const frkPurchase = await createFrkPurchaseEntry(
-            millId,
+        const purchase = await createFrkPurchaseEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: frkPurchase,
-            message: 'FRK purchase entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { purchase }, 'FRK purchase created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get FRK purchase entry by ID
- * GET /api/mills/:millId/frk-purchase/:id
- */
 export const getFrkPurchaseByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const frkPurchase = await getFrkPurchaseById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: frkPurchase,
-            message: 'FRK purchase entry retrieved successfully',
-        })
+        const purchase = await getFrkPurchaseById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { purchase }, 'FRK purchase retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get FRK purchase list with pagination
- * GET /api/mills/:millId/frk-purchase
- */
 export const getFrkPurchaseListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { page, limit, search, startDate, endDate, sortBy, sortOrder } =
-            req.query
-
-        const result = await getFrkPurchaseList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getFrkPurchaseList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'FRK purchase list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { purchases: result.data, pagination: result.pagination },
+                'FRK purchase list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get FRK purchase summary statistics
- * GET /api/mills/:millId/frk-purchase/summary
- */
 export const getFrkPurchaseSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getFrkPurchaseSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'FRK purchase summary retrieved successfully',
-        })
+        const summary = await getFrkPurchaseSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'FRK purchase summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a FRK purchase entry
- * PUT /api/mills/:millId/frk-purchase/:id
- */
 export const updateFrkPurchaseHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const frkPurchase = await updateFrkPurchaseEntry(
-            millId,
-            id,
+        const purchase = await updateFrkPurchaseEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: frkPurchase,
-            message: 'FRK purchase entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { purchase }, 'FRK purchase updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a FRK purchase entry
- * DELETE /api/mills/:millId/frk-purchase/:id
- */
 export const deleteFrkPurchaseHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteFrkPurchaseEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'FRK purchase entry deleted successfully',
-        })
+        await deleteFrkPurchaseEntry(req.params.millId, req.params.id)
+        res.status(200).json(new ApiResponse(200, null, 'FRK purchase deleted'))
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete FRK purchase entries
- * DELETE /api/mills/:millId/frk-purchase/bulk
- */
 export const bulkDeleteFrkPurchaseHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteFrkPurchaseEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} FRK purchase entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteFrkPurchaseEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} purchases deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

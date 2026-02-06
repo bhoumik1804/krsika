@@ -7,191 +7,114 @@ import {
     deleteGovtRiceOutwardEntry,
     bulkDeleteGovtRiceOutwardEntries,
 } from '../services/govt-rice-outward.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Govt Rice Outward Controller
- * HTTP request handlers for govt rice outward endpoints
- */
-
-/**
- * Create a new govt rice outward entry
- * POST /api/mills/:millId/govt-rice-outward
- */
 export const createGovtRiceOutward = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const govtRiceOutward = await createGovtRiceOutwardEntry(
-            millId,
+        const entry = await createGovtRiceOutwardEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: govtRiceOutward,
-            message: 'Govt rice outward entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { entry }, 'Govt rice outward created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get govt rice outward entry by ID
- * GET /api/mills/:millId/govt-rice-outward/:id
- */
 export const getGovtRiceOutwardByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const govtRiceOutward = await getGovtRiceOutwardById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: govtRiceOutward,
-            message: 'Govt rice outward entry retrieved successfully',
-        })
+        const entry = await getGovtRiceOutwardById(
+            req.params.millId,
+            req.params.id
+        )
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Govt rice outward retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get govt rice outward list with pagination
- * GET /api/mills/:millId/govt-rice-outward
- */
 export const getGovtRiceOutwardListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const {
-            page,
-            limit,
-            search,
-            riceType,
-            lotNo,
-            startDate,
-            endDate,
-            sortBy,
-            sortOrder,
-        } = req.query
-
-        const result = await getGovtRiceOutwardList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getGovtRiceOutwardList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            riceType,
-            lotNo,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Govt rice outward list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { entries: result.data, pagination: result.pagination },
+                'Govt rice outward list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get govt rice outward summary statistics
- * GET /api/mills/:millId/govt-rice-outward/summary
- */
 export const getGovtRiceOutwardSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getGovtRiceOutwardSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Govt rice outward summary retrieved successfully',
-        })
+        const summary = await getGovtRiceOutwardSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { summary },
+                'Govt rice outward summary retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a govt rice outward entry
- * PUT /api/mills/:millId/govt-rice-outward/:id
- */
 export const updateGovtRiceOutwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const govtRiceOutward = await updateGovtRiceOutwardEntry(
-            millId,
-            id,
+        const entry = await updateGovtRiceOutwardEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: govtRiceOutward,
-            message: 'Govt rice outward entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Govt rice outward updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a govt rice outward entry
- * DELETE /api/mills/:millId/govt-rice-outward/:id
- */
 export const deleteGovtRiceOutwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteGovtRiceOutwardEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Govt rice outward entry deleted successfully',
-        })
+        await deleteGovtRiceOutwardEntry(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, null, 'Govt rice outward deleted')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete govt rice outward entries
- * DELETE /api/mills/:millId/govt-rice-outward/bulk
- */
 export const bulkDeleteGovtRiceOutwardHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteGovtRiceOutwardEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} govt rice outward entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteGovtRiceOutwardEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }

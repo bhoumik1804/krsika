@@ -6,8 +6,9 @@ const MillSchema = new Schema(
     {
         millName: { type: String, required: true },
         millInfo: {
-            gstNumber: { type: String, required: true },
-            panNumber: { type: String, required: true }, // pan card number(Business / Company)
+            gstNumber: { type: String },
+            panNumber: { type: String }, // pan card number (Business / Company)
+            mnmNumber: { type: String },
         },
         contact: {
             email: {
@@ -18,19 +19,15 @@ const MillSchema = new Schema(
             },
             phone: { type: String, required: true },
             address: { type: String },
+            city: { type: String },
+            state: { type: String },
+            pincode: { type: String },
         },
         // Flattened status fields for quick middleware checks
         status: {
             type: String,
             enum: Object.values(MILL_STATUS),
             default: MILL_STATUS.PENDING_VERIFICATION,
-        },
-        // Changed from hardcoded enum to Reference
-        currentPlan: { type: Schema.Types.ObjectId, ref: 'Plan' },
-        planValidUntil: { type: Date },
-        settings: {
-            currency: { type: String, default: 'INR' },
-            taxPercentage: { type: Number, default: 0 },
         },
     },
     { timestamps: true }

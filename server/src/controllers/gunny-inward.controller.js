@@ -7,191 +7,105 @@ import {
     deleteGunnyInwardEntry,
     bulkDeleteGunnyInwardEntries,
 } from '../services/gunny-inward.service.js'
+import { ApiResponse } from '../utils/ApiResponse.js'
 
-/**
- * Gunny Inward Controller
- * HTTP request handlers for gunny inward endpoints
- */
-
-/**
- * Create a new gunny inward entry
- * POST /api/mills/:millId/gunny-inward
- */
 export const createGunnyInward = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const userId = req.user._id
-
-        const gunnyInward = await createGunnyInwardEntry(
-            millId,
+        const entry = await createGunnyInwardEntry(
+            req.params.millId,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(201).json({
-            success: true,
-            statusCode: 201,
-            data: gunnyInward,
-            message: 'Gunny inward entry created successfully',
-        })
+        res.status(201).json(
+            new ApiResponse(201, { entry }, 'Gunny inward created')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get gunny inward entry by ID
- * GET /api/mills/:millId/gunny-inward/:id
- */
 export const getGunnyInwardByIdHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        const gunnyInward = await getGunnyInwardById(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: gunnyInward,
-            message: 'Gunny inward entry retrieved successfully',
-        })
+        const entry = await getGunnyInwardById(req.params.millId, req.params.id)
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Gunny inward retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get gunny inward list with pagination
- * GET /api/mills/:millId/gunny-inward
- */
 export const getGunnyInwardListHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const {
-            page,
-            limit,
-            search,
-            gunnyType,
-            partyName,
-            startDate,
-            endDate,
-            sortBy,
-            sortOrder,
-        } = req.query
-
-        const result = await getGunnyInwardList(millId, {
+        const { page, limit, search, sortBy, sortOrder } = req.query
+        const result = await getGunnyInwardList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
-            gunnyType,
-            partyName,
-            startDate,
-            endDate,
             sortBy,
             sortOrder,
         })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: result,
-            message: 'Gunny inward list retrieved successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { entries: result.data, pagination: result.pagination },
+                'Gunny inward list retrieved'
+            )
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Get gunny inward summary statistics
- * GET /api/mills/:millId/gunny-inward/summary
- */
 export const getGunnyInwardSummaryHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { startDate, endDate } = req.query
-
-        const summary = await getGunnyInwardSummary(millId, {
-            startDate,
-            endDate,
-        })
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: summary,
-            message: 'Gunny inward summary retrieved successfully',
-        })
+        const summary = await getGunnyInwardSummary(req.params.millId)
+        res.status(200).json(
+            new ApiResponse(200, { summary }, 'Gunny inward summary retrieved')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Update a gunny inward entry
- * PUT /api/mills/:millId/gunny-inward/:id
- */
 export const updateGunnyInwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-        const userId = req.user._id
-
-        const gunnyInward = await updateGunnyInwardEntry(
-            millId,
-            id,
+        const entry = await updateGunnyInwardEntry(
+            req.params.millId,
+            req.params.id,
             req.body,
-            userId
+            req.user._id
         )
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: gunnyInward,
-            message: 'Gunny inward entry updated successfully',
-        })
+        res.status(200).json(
+            new ApiResponse(200, { entry }, 'Gunny inward updated')
+        )
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Delete a gunny inward entry
- * DELETE /api/mills/:millId/gunny-inward/:id
- */
 export const deleteGunnyInwardHandler = async (req, res, next) => {
     try {
-        const { millId, id } = req.params
-
-        await deleteGunnyInwardEntry(millId, id)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: null,
-            message: 'Gunny inward entry deleted successfully',
-        })
+        await deleteGunnyInwardEntry(req.params.millId, req.params.id)
+        res.status(200).json(new ApiResponse(200, null, 'Gunny inward deleted'))
     } catch (error) {
         next(error)
     }
 }
 
-/**
- * Bulk delete gunny inward entries
- * DELETE /api/mills/:millId/gunny-inward/bulk
- */
 export const bulkDeleteGunnyInwardHandler = async (req, res, next) => {
     try {
-        const { millId } = req.params
-        const { ids } = req.body
-
-        const deletedCount = await bulkDeleteGunnyInwardEntries(millId, ids)
-
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            data: { deletedCount },
-            message: `${deletedCount} gunny inward entries deleted successfully`,
-        })
+        const deletedCount = await bulkDeleteGunnyInwardEntries(
+            req.params.millId,
+            req.body.ids
+        )
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                { deletedCount },
+                `${deletedCount} entries deleted`
+            )
+        )
     } catch (error) {
         next(error)
     }
