@@ -1,77 +1,20 @@
-import { useMemo } from 'react';
-import { useSearchParams } from 'react-router';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ConfigDrawer } from '@/components/config-drawer';
-import { superAdminSidebarData } from '@/components/layout/data';
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { LoadingSpinner } from '@/components/loading-spinner';
-import { ProfileDropdown } from '@/components/profile-dropdown';
-import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
-import { UsersDialogs } from './components/users-dialogs';
-import { UsersPrimaryButtons } from './components/users-primary-buttons';
-import { UsersProvider } from './components/users-provider';
-import { UsersTable } from './components/users-table';
-import { useUsersList } from './data/hooks';
-import type { UserRole } from './data/schema';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { useMemo } from 'react'
+import { useSearchParams } from 'react-router'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { superAdminSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { UsersDialogs } from './components/users-dialogs'
+import { UsersPrimaryButtons } from './components/users-primary-buttons'
+import { UsersProvider } from './components/users-provider'
+import { UsersTable } from './components/users-table'
+import { useUsersList } from './data/hooks'
+import type { UserRole } from './data/schema'
 
 export function Users() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -80,10 +23,17 @@ export function Users() {
     const search = Object.fromEntries(searchParams.entries())
 
     // Extract query params from URL
-    const queryParams = useMemo(
-        () => ({
+    const queryParams = useMemo(() => {
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        // Validate limit against allowed values
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
             page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            limit,
             search: search.search as string | undefined,
             role: search.role as UserRole | undefined,
             isActive:
@@ -92,9 +42,8 @@ export function Users() {
                     : undefined,
             sortBy: (search.sortBy as string) || 'createdAt',
             sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
+        }
+    }, [search])
 
     // Fetch users data using the hook
     const {

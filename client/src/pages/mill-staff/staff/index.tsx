@@ -1,77 +1,20 @@
-import { useMemo } from 'react';
-import { UserCog } from 'lucide-react';
-import { useParams, useSearchParams } from 'react-router';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ConfigDrawer } from '@/components/config-drawer';
-import { getMillStaffSidebarData } from '@/components/layout/data';
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { LoadingSpinner } from '@/components/loading-spinner';
-import { ProfileDropdown } from '@/components/profile-dropdown';
-import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
-import { StaffDialogs } from './components/staff-dialogs';
-import { StaffProvider } from './components/staff-provider';
-import { StaffTable } from './components/staff-table';
-import { useStaffList } from './data/hooks';
-import type { StaffRole } from './data/types';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { useMemo } from 'react'
+import { UserCog } from 'lucide-react'
+import { useParams, useSearchParams } from 'react-router'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { getMillStaffSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { StaffDialogs } from './components/staff-dialogs'
+import { StaffProvider } from './components/staff-provider'
+import { StaffTable } from './components/staff-table'
+import { useStaffList } from './data/hooks'
+import type { StaffRole } from './data/types'
 
 export function MillStaffStaff() {
     const { millId } = useParams<{ millId: string; staffId: string }>()
@@ -81,10 +24,17 @@ export function MillStaffStaff() {
     const search = Object.fromEntries(searchParams.entries())
 
     // Extract query params from URL
-    const queryParams = useMemo(
-        () => ({
+    const queryParams = useMemo(() => {
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        // Validate limit against allowed values
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
             page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            limit,
             search: search.search as string | undefined,
             status: search.status as
                 | 'active'
@@ -94,9 +44,8 @@ export function MillStaffStaff() {
             role: search.role as StaffRole | undefined,
             sortBy: (search.sortBy as string) || 'createdAt',
             sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
+        }
+    }, [search])
 
     // Fetch staff data using the hook
     const {

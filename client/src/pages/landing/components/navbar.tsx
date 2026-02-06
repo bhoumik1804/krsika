@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { User, USER_ROLES, UserRole } from '@/types'
 import { Menu, X, Wheat } from 'lucide-react'
 import { Link, useNavigate } from 'react-router'
+import { getRedirectPath } from '@/lib/auth-utils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -40,7 +40,8 @@ export function Navbar() {
 
     const handleGoToDashboard = () => {
         if (user) {
-            const path = getDashboardPath(user)
+            const path = getRedirectPath(user)
+            alert(`Redirecting to ${path}...`) // Optional: Show a message before redirecting
             navigate(path)
         }
     }
@@ -132,11 +133,6 @@ export function Navbar() {
                                             onClick={handleGoToDashboard}
                                         >
                                             Dashboard
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem asChild>
-                                            <Link to='/settings/profile'>
-                                                Settings
-                                            </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
@@ -253,21 +249,4 @@ export function Navbar() {
             </div>
         </nav>
     )
-}
-
-/**
- * Get dashboard path based on user role
- */
-
-// Each role maps to a function that receives `user` and returns a path
-const ROLE_REDIRECT_MAP: Record<UserRole, (user: User) => string> = {
-    [USER_ROLES.SUPER_ADMIN]: () => '/admin',
-    [USER_ROLES.MILL_ADMIN]: (user) => `/mill/${user.millId}`,
-    [USER_ROLES.MILL_STAFF]: (user) => `/staff/${user.millId}`,
-    [USER_ROLES.GUEST_USER]: () => '/',
-}
-
-// Function to get dashboard path
-export function getDashboardPath(user: User): string {
-    return ROLE_REDIRECT_MAP[user.role]?.(user) ?? '/'
 }

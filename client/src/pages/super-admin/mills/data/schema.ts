@@ -1,18 +1,17 @@
 import { z } from 'zod'
+import { MILL_STATUS } from '@/constants'
 
-// API response status schema (matches server enum)
-const millStatusSchema = z.union([
-    z.literal('PENDING_VERIFICATION'),
-    z.literal('ACTIVE'),
-    z.literal('SUSPENDED'),
-    z.literal('REJECTED'),
-])
-export type MillStatus = z.infer<typeof millStatusSchema>
+// 1. Define the type for the values first (if you haven't already)
+export type MillStatus = (typeof MILL_STATUS)[keyof typeof MILL_STATUS]
+
+// 1. Extract values into a format Zod accepts (tuple of strings)
+export const STATUS_VALUES = Object.values(MILL_STATUS) as [string, ...string[]]
 
 // Mill info schema
 const millInfoSchema = z.object({
     gstNumber: z.string(),
     panNumber: z.string(),
+    mnmNumber: z.string(),
 })
 
 // Mill contact schema
@@ -20,23 +19,10 @@ const millContactSchema = z.object({
     email: z.string(),
     phone: z.string(),
     address: z.string().optional(),
+    city: z.string(),
+    state: z.string(),
+    pincode: z.string(),
 })
-
-// Mill settings schema
-const millSettingsSchema = z.object({
-    currency: z.string(),
-    taxPercentage: z.number(),
-})
-
-// Plan reference schema
-const planReferenceSchema = z
-    .object({
-        _id: z.string(),
-        name: z.string(),
-        price: z.number(),
-        billingCycle: z.string(),
-    })
-    .nullable()
 
 // Full mill schema from API response
 const millResponseSchema = z.object({
@@ -44,10 +30,7 @@ const millResponseSchema = z.object({
     millName: z.string(),
     millInfo: millInfoSchema,
     contact: millContactSchema,
-    status: millStatusSchema,
-    currentPlan: planReferenceSchema,
-    planValidUntil: z.string().nullable(),
-    settings: millSettingsSchema,
+    status: z.string(),
     createdAt: z.string(),
     updatedAt: z.string(),
 })
@@ -62,11 +45,8 @@ const millSchema = z.object({
     location: z.string(),
     gstNumber: z.string(),
     panNumber: z.string(),
-    currency: z.string(),
-    taxPercentage: z.number(),
-    status: millStatusSchema,
-    planName: z.string().nullable(),
-    planValidUntil: z.coerce.date().nullable(),
+    mnmNumber: z.string(),
+    status: z.string(),
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date(),
 })

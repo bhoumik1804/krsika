@@ -13,14 +13,12 @@ import { DirectionProvider } from './context/direction-provider'
 import { FontProvider } from './context/font-provider'
 import { ThemeProvider } from './context/theme-provider'
 import { router } from './routes/app-routes'
-// Styles
 import './styles/index.css'
 
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             retry: (failureCount, error) => {
-                // eslint-disable-next-line no-console
                 if (import.meta.env.DEV) console.log({ failureCount, error })
 
                 if (failureCount >= 0 && import.meta.env.DEV) return false
@@ -32,10 +30,11 @@ const queryClient = new QueryClient({
                 )
             },
             refetchOnWindowFocus: import.meta.env.PROD,
-            staleTime: 10 * 1000, // 10s
+            staleTime: 10 * 1000,
         },
         mutations: {
             onError: (error) => {
+                // This now works because we updated handleServerError
                 handleServerError(error)
 
                 if (error instanceof AxiosError) {
@@ -49,23 +48,26 @@ const queryClient = new QueryClient({
     queryCache: new QueryCache({
         onError: (error) => {
             if (error instanceof AxiosError) {
-                if (error.response?.status === 401) {
+                const status = error.response?.status
+
+                if (status === 401) {
                     toast.error('Session expired!')
-                    // Navigate will be handled by error boundary since we don't have router context here
+                    router.navigate('/')
                 }
-                if (error.response?.status === 500) {
+
+                if (status === 500) {
                     toast.error('Internal Server Error!')
+                    router.navigate('/500')
                 }
-                if (error.response?.status === 403) {
-                    // first clear path and redirect to /403 page
-                    
+
+                if (status === 403) {
+                    router.navigate('/403')
                 }
             }
         },
     }),
 })
 
-// Render the app
 const rootElement = document.getElementById('root')!
 if (!rootElement.innerHTML) {
     const root = ReactDOM.createRoot(rootElement)

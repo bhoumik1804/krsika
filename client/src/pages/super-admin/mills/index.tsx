@@ -1,37 +1,19 @@
-import { useMemo } from 'react';
-import { useSearchParams } from 'react-router';
-import { ConfigDrawer } from '@/components/config-drawer';
-import { superAdminSidebarData } from '@/components/layout/data';
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { LoadingSpinner } from '@/components/loading-spinner';
-import { ProfileDropdown } from '@/components/profile-dropdown';
-import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
-import { MillsDialogs } from './components/mills-dialogs';
-import { MillsPrimaryButtons } from './components/mills-primary-buttons';
-import { MillsProvider } from './components/mills-provider';
-import { MillsTable } from './components/mills-table';
-import { useMillsList } from './data/hooks';
-import type { MillStatus } from './data/schema';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { useMemo } from 'react'
+import { useSearchParams } from 'react-router'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { superAdminSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { MillsDialogs } from './components/mills-dialogs'
+import { MillsPrimaryButtons } from './components/mills-primary-buttons'
+import { MillsProvider } from './components/mills-provider'
+import { MillsTable } from './components/mills-table'
+import { useMillsList } from './data/hooks'
+import type { MillStatus } from './data/schema'
 
 export function Mills() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -40,17 +22,23 @@ export function Mills() {
     const search = Object.fromEntries(searchParams.entries())
 
     // Extract query params from URL
-    const queryParams = useMemo(
-        () => ({
+    const queryParams = useMemo(() => {
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        // Validate limit against allowed values
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
             page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            limit,
             search: search.search as string | undefined,
             status: search.status as MillStatus | undefined,
             sortBy: (search.sortBy as string) || 'createdAt',
             sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
+        }
+    }, [search])
 
     // Fetch mills data using the hook
     const {
@@ -72,8 +60,8 @@ export function Mills() {
 
     // Transform API response to table format
     const millsData = useMemo(() => {
-        if (!millsResponse?.data) return []
-        return millsResponse.data.map((m) => ({
+        if (!millsResponse?.mills) return []
+        return millsResponse.mills.map((m) => ({
             id: m._id,
             name: m.millName,
             email: m.contact.email,
@@ -81,13 +69,8 @@ export function Mills() {
             location: m.contact.address || '',
             gstNumber: m.millInfo.gstNumber,
             panNumber: m.millInfo.panNumber,
-            currency: m.settings.currency,
-            taxPercentage: m.settings.taxPercentage,
+            mnmNumber: m.millInfo.mnmNumber,
             status: m.status,
-            planName: m.currentPlan?.name || null,
-            planValidUntil: m.planValidUntil
-                ? new Date(m.planValidUntil)
-                : null,
             createdAt: new Date(m.createdAt),
             updatedAt: new Date(m.updatedAt),
         }))

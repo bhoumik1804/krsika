@@ -1,4 +1,3 @@
-import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Contact } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -12,7 +11,6 @@ import {
 } from '@/components/ui/popover'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
-import { statusStyles } from '../data/data'
 import { type Mill } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
@@ -47,16 +45,6 @@ export const millsColumns: ColumnDef<Mill>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'id',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Mill ID' />
-        ),
-        cell: ({ row }) => (
-            <LongText className='max-w-36'>{row.getValue('id')}</LongText>
-        ),
-        meta: { className: 'w-36' },
-    },
-    {
         accessorKey: 'name',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Mill Name' />
@@ -81,6 +69,15 @@ export const millsColumns: ColumnDef<Mill>[] = [
         ),
         cell: ({ row }) => (
             <div className='w-fit text-nowrap'>{row.getValue('gstNumber')}</div>
+        ),
+    },
+    {
+        accessorKey: 'mnmNumber',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='MNM No.' />
+        ),
+        cell: ({ row }) => (
+            <div className='w-fit text-nowrap'>{row.getValue('mnmNumber')}</div>
         ),
     },
     {
@@ -114,9 +111,6 @@ export const millsColumns: ColumnDef<Mill>[] = [
                                 <h4 className='leading-none font-medium'>
                                     Contact Details
                                 </h4>
-                                <p className='text-sm text-muted-foreground'>
-                                    Contact information for {row.original.name}
-                                </p>
                             </div>
                             <div className='grid gap-2'>
                                 <div className='grid grid-cols-3 items-center gap-4'>
@@ -150,46 +144,17 @@ export const millsColumns: ColumnDef<Mill>[] = [
             )
         },
     },
-    {
-        accessorKey: 'planName',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Current Plan' />
-        ),
-        cell: ({ row }) => (
-            <div className='w-fit text-nowrap'>
-                {row.getValue('planName') || 'No Plan'}
-            </div>
-        ),
-    },
-    {
-        accessorKey: 'planValidUntil',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plan Expiry' />
-        ),
-        cell: ({ row }) => {
-            const date = row.getValue('planValidUntil') as Date | null
-            if (!date) return <div className='text-muted-foreground'>N/A</div>
-            return (
-                <div className='w-fit text-nowrap'>
-                    {format(date, 'MMM dd, yyyy')}
-                </div>
-            )
-        },
-    },
-    {
-        accessorKey: 'currency',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Currency' />
-        ),
-        cell: ({ row }) => <div>{row.getValue('currency')}</div>,
-    },
-    {
-        accessorKey: 'taxPercentage',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Tax %' />
-        ),
-        cell: ({ row }) => <div>{row.getValue('taxPercentage')}%</div>,
-    },
+    // {
+    //     accessorKey: 'planName',
+    //     header: ({ column }) => (
+    //         <DataTableColumnHeader column={column} title='Current Plan' />
+    //     ),
+    //     cell: ({ row }) => (
+    //         <div className='w-fit text-nowrap'>
+    //             {row.getValue('planName') || 'No Plan'}
+    //         </div>
+    //     ),
+    // },
     {
         accessorKey: 'status',
         header: ({ column }) => (
@@ -197,13 +162,9 @@ export const millsColumns: ColumnDef<Mill>[] = [
         ),
         cell: ({ row }) => {
             const { status } = row.original
-            const badgeColor = statusStyles.get(status)
             return (
                 <div className='flex space-x-2'>
-                    <Badge
-                        variant='outline'
-                        className={cn('capitalize', badgeColor)}
-                    >
+                    <Badge variant='outline' className={cn('capitalize')}>
                         {status.replace(/_/g, ' ').toLowerCase()}
                     </Badge>
                 </div>

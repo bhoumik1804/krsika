@@ -2,17 +2,16 @@
  * Mills Types
  * TypeScript type definitions for Mills module (Super Admin)
  */
+import { MILL_STATUS } from '@/constants'
 
 // ==========================================
 // Status Types
 // ==========================================
 
-export type MillStatus =
-    | 'PENDING_VERIFICATION'
-    | 'ACTIVE'
-    | 'SUSPENDED'
-    | 'REJECTED'
+// 1. Define the type for the values first (if you haven't already)
+export type MillStatus = (typeof MILL_STATUS)[keyof typeof MILL_STATUS]
 
+// 2. Use that type in your interface
 export interface MillStatusOption {
     label: string
     value: MillStatus
@@ -25,28 +24,16 @@ export interface MillStatusOption {
 export interface MillInfo {
     gstNumber: string
     panNumber: string
+    mnmNumber: string
 }
 
 export interface MillContact {
     email: string
     phone: string
     address?: string
-}
-
-export interface MillSettings {
-    currency: string
-    taxPercentage: number
-}
-
-// ==========================================
-// Plan Types
-// ==========================================
-
-export interface PlanReference {
-    _id: string
-    name: string
-    price: number
-    billingCycle: string
+    city: string
+    state: string
+    pincode: string
 }
 
 // ==========================================
@@ -58,9 +45,6 @@ export interface CreateMillRequest {
     millInfo: MillInfo
     contact: MillContact
     status?: MillStatus
-    currentPlan?: string
-    planValidUntil?: string
-    settings?: Partial<MillSettings>
 }
 
 export interface UpdateMillRequest {
@@ -69,16 +53,19 @@ export interface UpdateMillRequest {
     millInfo?: Partial<MillInfo>
     contact?: Partial<MillContact>
     status?: MillStatus
-    currentPlan?: string
-    planValidUntil?: string
-    settings?: Partial<MillSettings>
 }
 
-export interface VerifyMillRequest {
-    id: string
-    status: 'ACTIVE' | 'REJECTED'
-    rejectionReason?: string
-}
+export type VerifyMillRequest =
+    | {
+          id: string
+          status: typeof MILL_STATUS.ACTIVE
+          rejectionReason?: never // Cannot provide reason if active
+      }
+    | {
+          id: string
+          status: typeof MILL_STATUS.REJECTED
+          rejectionReason: string // REQUIRED if rejected
+      }
 
 // ==========================================
 // API Response Types
@@ -90,15 +77,12 @@ export interface MillResponse {
     millInfo: MillInfo
     contact: MillContact
     status: MillStatus
-    currentPlan: PlanReference | null
-    planValidUntil: string | null
-    settings: MillSettings
     createdAt: string
     updatedAt: string
 }
 
 export interface MillListResponse {
-    data: MillResponse[]
+    mills: MillResponse[]
     pagination: {
         page: number
         limit: number

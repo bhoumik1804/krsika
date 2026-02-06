@@ -3,6 +3,8 @@
  * These types are designed to match backend API schemas for seamless integration
  */
 
+import { UserRole } from "@/constants"
+
 // ==========================================
 // Common Pagination Types
 // ==========================================
@@ -23,18 +25,18 @@ export interface PaginatedResponse<T> {
     pagination: PaginationMeta
 }
 
-// ==========================================
-// User & Authentication Types
-// ==========================================
+// // ==========================================
+// // User & Authentication Types
+// // ==========================================
 
-export const USER_ROLES = {
-    SUPER_ADMIN: 'super-admin',
-    MILL_ADMIN: 'mill-admin',
-    MILL_STAFF: 'mill-staff',
-    GUEST_USER: 'guest-user',
-} as const
+// export const USER_ROLES = {
+//     SUPER_ADMIN: 'super-admin',
+//     MILL_ADMIN: 'mill-admin',
+//     MILL_STAFF: 'mill-staff',
+//     GUEST_USER: 'guest-user',
+// } as const
 
-export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES]
+// export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES]
 
 export interface User {
     _id: string

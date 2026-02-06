@@ -133,17 +133,3 @@ export const bulkDeleteMills = async (ids: string[]): Promise<void> => {
         data: { ids },
     })
 }
-
-/**
- * Export mills list to CSV/Excel
- */
-export const exportMills = async (
-    params?: MillQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(`${MILLS_ENDPOINT}/export`, {
-        params: { ...params, format },
-        responseType: 'blob',
-    })
-    return response.data
-}

@@ -2,6 +2,7 @@
 
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
+import { MILL_STATUS } from '@/constants'
 import { CheckCircle, Trash2, XCircle, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -24,13 +25,22 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     const { setOpen, setCurrentRow } = useMills()
     const verifyMill = useVerifyMill()
 
-    const isPending = row.original.status === 'PENDING_VERIFICATION'
+    const status = (row.original as any).status
+    const isPending =
+        status === MILL_STATUS.PENDING_VERIFICATION ||
+        status === 'pending-verification'
 
-    const handleVerify = (status: 'ACTIVE' | 'REJECTED') => {
-        verifyMill.mutate({
-            id: row.original.id,
-            status,
-        })
+    const handleApprove = () => {
+        const millData: any = {
+            id: (row.original as any).id,
+            status: 'active',
+        }
+        verifyMill.mutate(millData)
+    }
+
+    const handleRejectClick = () => {
+        setCurrentRow(row.original as any)
+        setOpen('reject')
     }
 
     return (
@@ -48,9 +58,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                 <DropdownMenuContent align='end' className='w-[160px]'>
                     {isPending && (
                         <>
-                            <DropdownMenuItem
-                                onClick={() => handleVerify('ACTIVE')}
-                            >
+                            <DropdownMenuItem onClick={handleApprove}>
                                 Approve
                                 <DropdownMenuShortcut>
                                     <CheckCircle
@@ -59,9 +67,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                                     />
                                 </DropdownMenuShortcut>
                             </DropdownMenuItem>
-                            <DropdownMenuItem
-                                onClick={() => handleVerify('REJECTED')}
-                            >
+                            <DropdownMenuItem onClick={handleRejectClick}>
                                 Reject
                                 <DropdownMenuShortcut>
                                     <XCircle
@@ -76,7 +82,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
 
                     <DropdownMenuItem
                         onClick={() => {
-                            setCurrentRow(row.original)
+                            setCurrentRow(row.original as any)
                             setOpen('edit')
                         }}
                     >
@@ -88,7 +94,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         onClick={() => {
-                            setCurrentRow(row.original)
+                            setCurrentRow(row.original as any)
                             setOpen('delete')
                         }}
                         className='text-red-500!'

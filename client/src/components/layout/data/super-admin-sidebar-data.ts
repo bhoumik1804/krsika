@@ -43,11 +43,6 @@ export const superAdminSidebarData: SidebarData = {
                     url: '/admin/users',
                     icon: Users,
                 },
-                {
-                    title: 'Subscriptions',
-                    url: '/admin/subscriptions',
-                    icon: CreditCard,
-                },
             ],
         },
         {
@@ -99,11 +94,6 @@ export const superAdminSidebarData: SidebarData = {
                             icon: Palette,
                         },
                     ],
-                },
-                {
-                    title: 'Help Center',
-                    url: '/admin/help-center',
-                    icon: HelpCircle,
                 },
             ],
         },

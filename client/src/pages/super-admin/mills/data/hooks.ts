@@ -3,6 +3,7 @@
  * React Query hooks for Mills data management (Super Admin)
  */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { MILL_STATUS } from '@/constants'
 import { toast } from 'sonner'
 import {
     fetchMillsList,
@@ -15,7 +16,7 @@ import {
     reactivateMill,
     deleteMill,
     bulkDeleteMills,
-    exportMills,
+    // exportMills,
 } from './service'
 import type {
     MillResponse,
@@ -146,7 +147,7 @@ export const useUpdateMill = () => {
 export const useVerifyMill = () => {
     const queryClient = useQueryClient()
 
-    return useMutation<MillResponse, Error, VerifyMillRequest>({
+    return useMutation<any, Error, any>({
         mutationFn: (data) => verifyMill(data),
         onSuccess: (data) => {
             // Invalidate and refetch list queries
@@ -159,8 +160,9 @@ export const useVerifyMill = () => {
             queryClient.invalidateQueries({
                 queryKey: millsKeys.summaries(),
             })
+            alert(JSON.stringify(data))
             toast.success(
-                data.status === 'ACTIVE'
+                data.mill.status === MILL_STATUS.ACTIVE
                     ? 'Mill approved successfully'
                     : 'Mill rejected'
             )
@@ -271,34 +273,6 @@ export const useBulkDeleteMills = () => {
         },
         onError: (error) => {
             toast.error(error.message || 'Failed to delete mills')
-        },
-    })
-}
-
-/**
- * Hook to export mills
- */
-export const useExportMills = () => {
-    return useMutation<
-        Blob,
-        Error,
-        { params?: MillQueryParams; format?: 'csv' | 'xlsx' }
-    >({
-        mutationFn: ({ params, format }) => exportMills(params, format),
-        onSuccess: (blob, { format = 'csv' }) => {
-            // Create download link
-            const url = window.URL.createObjectURL(blob)
-            const a = document.createElement('a')
-            a.href = url
-            a.download = `mills-export.${format}`
-            document.body.appendChild(a)
-            a.click()
-            window.URL.revokeObjectURL(url)
-            document.body.removeChild(a)
-            toast.success('Mills exported successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to export mills')
         },
     })
 }

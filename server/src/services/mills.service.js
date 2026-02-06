@@ -216,8 +216,17 @@ export const verifyMillEntry = async (id, status, rejectionReason, userId) => {
     user.role =
         status === MILL_STATUS.ACTIVE ? ROLES.MILL_ADMIN : ROLES.GUEST_USER
     await user.save()
-    mill.status = MILL_STATUS.ACTIVE
-    await mill.save()
+
+    if (status === MILL_STATUS.REJECTED) {
+        mill.status = MILL_STATUS.REJECTED
+        mill.rejectionReason = rejectionReason
+        await mill.save()
+        logger.info('Mill rejected', { id, status, rejectionReason, userId })
+    } else if (status === MILL_STATUS.ACTIVE) {
+        mill.status = MILL_STATUS.ACTIVE
+        await mill.save()
+        logger.info('Mill verified', { id, status, userId })
+    }
 
     logger.info('Mill verified', { id, status, userId })
     return mill

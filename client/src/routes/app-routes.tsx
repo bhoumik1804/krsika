@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react'
+import { USER_ROLES } from '@/constants'
 import { AuthSuccess } from '@/pages/auth/auth-success'
 // Auth routes
 import { ForgotPassword } from '@/pages/auth/forgot-password'
@@ -16,9 +17,8 @@ import { Mills } from '@/pages/super-admin/mills'
 import { ErrorBoundary } from '@/routes/error-boundary'
 import { ProtectedRoute } from '@/routes/protected-route'
 import { RootLayout } from '@/routes/root-layout'
-import { USER_ROLES } from '@/types'
 import { createBrowserRouter } from 'react-router'
-import { ComingSoon } from '@/components/coming-soon'
+// import { ComingSoon } from '@/components/coming-soon'
 // Layouts
 import { MillAdminLayout } from '@/components/layout/mill-admin-layout'
 import { MillStaffLayout } from '@/components/layout/mill-staff-layout'
@@ -33,11 +33,6 @@ import Error503Page from './errors/503'
 // Lazy load - Super Admin
 const Users = lazy(() =>
     import('@/pages/super-admin/users').then((m) => ({ default: m.Users }))
-)
-const Subscriptions = lazy(() =>
-    import('@/pages/super-admin/subscriptions').then((m) => ({
-        default: m.Subscriptions,
-    }))
 )
 const SettingsProfile = lazy(() =>
     import('@/pages/super-admin/settings/profile').then((m) => ({
@@ -884,14 +879,6 @@ export const router = createBrowserRouter([
                     {
                         path: 'settings/appearance',
                         element: <LazyRoute Component={SettingsAppearance} />,
-                    },
-                    {
-                        path: 'subscriptions',
-                        element: <LazyRoute Component={Subscriptions} />,
-                    },
-                    {
-                        path: 'help-center',
-                        element: <LazyRoute Component={ComingSoon} />,
                     },
                 ],
             },

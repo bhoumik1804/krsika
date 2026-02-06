@@ -68,7 +68,13 @@ export function MillsTable({
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'name', searchKey: 'search', type: 'string' },

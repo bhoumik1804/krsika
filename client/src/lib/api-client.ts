@@ -35,80 +35,82 @@ export const apiClient = axios.create({
 
 /**
  * Common error handler for both authenticated and public API clients
- * Converts server errors to user-friendly messages
+ * * CHANGE: This now returns Promise.reject(error) instead of throwing a new Error.
+ * This allows components to access err.response.data.message.
  */
 const handleApiError = async (
     error: AxiosError,
     clientType: 'authenticated' | 'public' = 'authenticated'
 ) => {
-    if (error.response) {
-        // Server responded with error status
-        const status = error.response.status
-        const data = error.response.data as any
+    const prefix =
+        clientType === 'public' ? '[Public API Error]' : '[API Error]'
 
-        // Log error in development
-        if (import.meta.env.DEV) {
-            const prefix =
-                clientType === 'public' ? '[Public API Error]' : '[API Error]'
+    // 1. Log the error in development
+    if (import.meta.env.DEV) {
+        if (error.response) {
             console.error(
                 `${prefix} ${error.config?.method?.toUpperCase()} ${error.config?.url}`,
-                status,
-                data
+                error.response.status,
+                error.response.data
             )
+        } else if (error.request) {
+            console.error(`${prefix} No response received:`, error.request)
+        } else {
+            console.error(`${prefix} Request setup error:`, error.message)
         }
+    }
 
-        // Handle specific error codes
+    // 2. Handle Network Errors (No Response)
+    if (!error.response) {
+        toast.warning('Network error. Please check your internet connection.')
+        // We reject with the original error so the component handles it if needed
+        return Promise.reject(error)
+    }
+
+    // 3. Normalize Error Messages in response.data
+    // This ensures err.response.data.message ALWAYS exists, even if server sent empty body
+    const status = error.response.status
+    const data = error.response.data as any
+
+    // If data is missing or not an object, initialize it
+    if (!data || typeof data !== 'object') {
+        error.response.data = { message: '' }
+    }
+
+    // If message is missing, inject a default based on status code
+    if (!(error.response.data as any).message) {
+        let defaultMsg = 'An unexpected error occurred.'
         switch (status) {
             case 401:
-                throw new Error(
-                    data?.message || 'Unauthorized. Please sign in again.'
-                )
+                defaultMsg = 'Unauthorized. Please sign in again.'
+                break
             case 403:
-                throw new Error(
-                    data?.message ||
-                        'You do not have permission to perform this action.'
-                )
+                defaultMsg =
+                    'You do not have permission to perform this action.'
+                break
             case 404:
-                throw new Error(
-                    data?.message || 'The requested resource was not found.'
-                )
+                defaultMsg = 'The requested resource was not found.'
+                break
             case 422:
-                throw new Error(
-                    data?.message ||
-                        'Validation failed. Please check your input.'
-                )
+                defaultMsg = 'Validation failed. Please check your input.'
+                break
             case 429:
-                throw new Error(
-                    data?.message ||
-                        'Too many requests. Please try again later.'
-                )
+                defaultMsg = 'Too many requests. Please try again later.'
+                break
             case 500:
-                throw new Error(
-                    data?.message ||
-                        'Internal server error. Please try again later.'
-                )
+                defaultMsg = 'Internal server error. Please try again later.'
+                break
             case 503:
-                throw new Error(
-                    data?.message ||
-                        'Service is temporarily unavailable. Please try again later.'
-                )
+                defaultMsg = 'Service is temporarily unavailable.'
+                break
             default:
-                throw new Error(data?.message || `An error occurred: ${status}`)
+                defaultMsg = `An error occurred: ${status}`
         }
-    } else if (error.request) {
-        // Request was made but no response received
-        const prefix =
-            clientType === 'public' ? '[Public API Error]' : '[API Error]'
-        console.error(`${prefix} No response received:`, error.request)
-        toast.warning('Network error. Please check your internet connection.')
-        throw new Error('Network error. Please check your internet connection.')
-    } else {
-        // Something else happened while setting up the request
-        const prefix =
-            clientType === 'public' ? '[Public API Error]' : '[API Error]'
-        console.error(`${prefix} Request setup error:`, error.message)
-        throw new Error(error.message || 'An unexpected error occurred.')
+        ;(error.response.data as any).message = defaultMsg
     }
+
+    // 4. Return the rejected promise containing the FULL error object
+    return Promise.reject(error)
 }
 
 // ==========================================
@@ -117,16 +119,11 @@ const handleApiError = async (
 
 apiClient.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        // Cookies are automatically sent by browser due to withCredentials: true
-        // No need to manually add Authorization header for HTTP-only cookies
-
-        // Log request in development
         if (import.meta.env.DEV) {
             console.log(
                 `[API Request] ${config.method?.toUpperCase()} ${config.url}`
             )
         }
-
         return config
     },
     (error) => {
@@ -140,14 +137,12 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
     (response) => {
-        // Log response in development
         if (import.meta.env.DEV) {
             console.log(
                 `[API Response] ${response.config.method?.toUpperCase()} ${response.config.url}`,
                 response.status
             )
         }
-
         return response
     },
     async (error: AxiosError) => {
@@ -155,6 +150,7 @@ apiClient.interceptors.response.use(
         const status = error.response?.status
         const url = originalRequest?.url ?? ''
 
+        // Handle 401 Refresh Token logic
         if (
             status === 401 &&
             originalRequest &&
@@ -181,10 +177,6 @@ apiClient.interceptors.response.use(
 // Typed API Response
 // ==========================================
 
-/**
- * Standard API response format
- * Matches backend response structure
- */
 export interface ApiResponse<T = any> {
     success: boolean
     statusCode: number
@@ -204,14 +196,8 @@ export interface ApiResponse<T = any> {
 
 // ==========================================
 // Public API Client
-// For unauthenticated requests (login, register, etc.)
 // ==========================================
 
-/**
- * Public API client instance
- * Used for unauthenticated requests like login, signup, etc.
- * Does NOT include cookies in requests
- */
 export const publicApiClient = axios.create({
     baseURL: API_BASE_URL,
     withCredentials: true,
@@ -221,16 +207,13 @@ export const publicApiClient = axios.create({
     timeout: 30000,
 })
 
-// Request interceptor for public client
 publicApiClient.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        // Log request in development
         if (import.meta.env.DEV) {
             console.log(
                 `[Public API Request] ${config.method?.toUpperCase()} ${config.url}`
             )
         }
-
         return config
     },
     (error) => {
@@ -238,46 +221,32 @@ publicApiClient.interceptors.request.use(
     }
 )
 
-// Response interceptor for public client (same error handling as authenticated client)
 publicApiClient.interceptors.response.use(
     (response) => {
-        // Log response in development
         if (import.meta.env.DEV) {
             console.log(
                 `[Public API Response] ${response.config.method?.toUpperCase()} ${response.config.url}`,
                 response.status
             )
         }
-
         return response
     },
     (error: AxiosError) => handleApiError(error, 'public')
 )
 
 // ==========================================
-// Helper Functions
-// ==========================================
-
-// ==========================================
-// Error Handling
-// ==========================================
-
-/**
- * For additional error handling with toast notifications,
- * use the handleServerError utility from @/lib/handle-server-error
- *
- * Example:
- * import { handleServerError } from '@/lib/handle-server-error'
- *
- * try {
- *     const response = await apiClient.get('/users')
- * } catch (error) {
- *     handleServerError(error)  // Shows toast notification
- * }
- */
-
-// ==========================================
 // Export default instance
 // ==========================================
 
 export default apiClient
+
+/**
+ * USAGE EXAMPLE:
+ * * try {
+ * await apiClient.post('/users');
+ * } catch (err: any) {
+ * // Now this works safely:
+ * const msg = err?.response?.data?.message;
+ * toast.error(msg);
+ * }
+ */

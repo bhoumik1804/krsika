@@ -9,7 +9,7 @@ import { createMillEntry } from './mills.service.js'
 /**
  * Register a new user (Signup)
  */
-export const signupUser = async (email, password, userAgent, ipAddress) => {
+export const signupUser = async (email, password, fullName) => {
     const existingUser = await User.findOne({ email })
     if (existingUser)
         throw new ApiError(409, 'User with this email already exists')
@@ -17,6 +17,7 @@ export const signupUser = async (email, password, userAgent, ipAddress) => {
     const user = new User({
         email,
         password,
+        fullName,
         role: ROLES.GUEST_USER,
         isActive: true,
     })
@@ -31,8 +32,6 @@ export const signupUser = async (email, password, userAgent, ipAddress) => {
         userId: user._id,
         email: user.email,
         role: user.role,
-        ipAddress,
-        userAgent,
     })
 
     const userResponse = user.toObject()
@@ -45,7 +44,7 @@ export const signupUser = async (email, password, userAgent, ipAddress) => {
 /**
  * Authenticate user with email and password
  */
-export const loginUser = async (email, password, userAgent, ipAddress) => {
+export const loginUser = async (email, password) => {
     const user = await User.findOne({ email }).select('+password')
     if (!user) throw new ApiError(401, 'Invalid email or password')
     if (!user.isActive) throw new ApiError(401, 'User account is inactive')
@@ -65,8 +64,6 @@ export const loginUser = async (email, password, userAgent, ipAddress) => {
         userId: user._id,
         email: user.email,
         role: user.role,
-        ipAddress,
-        userAgent,
     })
 
     const userResponse = user.toObject()

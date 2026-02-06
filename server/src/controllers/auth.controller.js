@@ -22,15 +22,12 @@ import logger from '../utils/logger.js'
 
 export const signup = async (req, res, next) => {
     try {
-        const { email, password } = req.body
-        const userAgent = req.get('user-agent')
-        const ipAddress = req.ip
+        const { email, password, fullName } = req.body
 
         const { user, accessToken, refreshToken } = await signupUser(
             email,
             password,
-            userAgent,
-            ipAddress
+            fullName
         )
 
         // Set cookies
@@ -48,14 +45,10 @@ export const signup = async (req, res, next) => {
 export const login = async (req, res, next) => {
     try {
         const { email, password } = req.body
-        const userAgent = req.get('user-agent')
-        const ipAddress = req.ip
 
         const { user, accessToken, refreshToken } = await loginUser(
             email,
-            password,
-            userAgent,
-            ipAddress
+            password
         )
 
         // Set cookies

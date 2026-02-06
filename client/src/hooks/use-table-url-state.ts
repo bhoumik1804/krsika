@@ -23,6 +23,7 @@ type UseTableUrlStateParams = {
         pageSizeKey?: string
         defaultPage?: number
         defaultPageSize?: number
+        allowedPageSizes?: number[]
     }
     globalFilter?: {
         enabled?: boolean
@@ -80,6 +81,17 @@ export function useTableUrlState(
     const pageSizeKey = paginationCfg?.pageSizeKey ?? ('pageSize' as string)
     const defaultPage = paginationCfg?.defaultPage ?? 1
     const defaultPageSize = paginationCfg?.defaultPageSize ?? 10
+    const allowedPageSizes = paginationCfg?.allowedPageSizes ?? [
+        10, 20, 30, 40, 50,
+    ]
+
+    // Validate page size against allowed values
+    const validatePageSize = (size: number): number => {
+        if (allowedPageSizes.includes(size)) {
+            return size
+        }
+        return defaultPageSize
+    }
 
     const globalFilterKey = globalFilterCfg?.key ?? ('filter' as string)
     const globalFilterEnabled = globalFilterCfg?.enabled ?? true
@@ -126,8 +138,18 @@ export function useTableUrlState(
                 : typeof rawPageSize === 'string'
                   ? parseInt(rawPageSize, 10) || defaultPageSize
                   : defaultPageSize
-        return { pageIndex: Math.max(0, pageNum - 1), pageSize: pageSizeNum }
-    }, [search, pageKey, pageSizeKey, defaultPage, defaultPageSize])
+        return {
+            pageIndex: Math.max(0, pageNum - 1),
+            pageSize: validatePageSize(pageSizeNum),
+        }
+    }, [
+        search,
+        pageKey,
+        pageSizeKey,
+        defaultPage,
+        defaultPageSize,
+        allowedPageSizes,
+    ])
 
     // Helper to filter out undefined/null values from search params
     const filterUndefined = (obj: SearchRecord): SearchRecord => {
@@ -142,16 +164,21 @@ export function useTableUrlState(
         const next =
             typeof updater === 'function' ? updater(pagination) : updater
         const nextPage = next.pageIndex + 1
-        const nextPageSize = next.pageSize
+        const validatedPageSize = validatePageSize(next.pageSize)
+
+        // If page size changed, reset to page 1
+        const pageSizeChanged = validatedPageSize !== pagination.pageSize
+        const pageToSet = pageSizeChanged ? 1 : nextPage
+
         navigate({
             search: (prev) =>
                 filterUndefined({
                     ...(prev as SearchRecord),
-                    [pageKey]: nextPage <= defaultPage ? undefined : nextPage,
+                    [pageKey]: pageToSet <= defaultPage ? undefined : pageToSet,
                     [pageSizeKey]:
-                        nextPageSize === defaultPageSize
+                        validatedPageSize === defaultPageSize
                             ? undefined
-                            : nextPageSize,
+                            : validatedPageSize,
                 }),
         })
     }

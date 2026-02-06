@@ -25,8 +25,9 @@ export const initiateGoogleLogin = () => {
  * Used by React Query to get user data
  */
 export const fetchUser = async (): Promise<User> => {
-    const response = await apiClient.get<ApiResponse<User>>('/auth/me')
-    return response.data.data
+    const response =
+        await apiClient.get<ApiResponse<{ user: User }>>('/auth/me')
+    return response.data.data.user
 }
 
 /**
@@ -85,11 +86,11 @@ export const updateProfile = async (data: {
     name?: string
     avatar?: string
 }): Promise<User> => {
-    const response = await apiClient.put<ApiResponse<User>>(
+    const response = await apiClient.put<ApiResponse<{ user: User }>>(
         '/auth/profile',
         data
     )
-    return response.data.data
+    return response.data.data.user
 }
 
 /**

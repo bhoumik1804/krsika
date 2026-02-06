@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { API_URL } from '@/constants'
 import Autoplay from 'embla-carousel-autoplay'
 import { Star, Quote } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -121,25 +120,9 @@ export function TestimonialsSection() {
 
     useEffect(() => {
         async function fetchTestimonials() {
-            try {
-                setLoading(true)
-
-                // Fetch testimonials from API (managed by Super Admin)
-                const response = await fetch(`${API_URL}/testimonials`)
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch testimonials')
-                }
-
-                const data = await response.json()
-                setTestimonials(data.testimonials || data)
-            } catch (err) {
-                console.warn('Using fallback testimonials:', err)
-                // Use fallback testimonials if API fails
-                setTestimonials(testimonialsData.fallbackTestimonials)
-            } finally {
-                setLoading(false)
-            }
+            setLoading(true)
+            setTestimonials(testimonialsData.fallbackTestimonials)
+            setLoading(false)
         }
 
         fetchTestimonials()

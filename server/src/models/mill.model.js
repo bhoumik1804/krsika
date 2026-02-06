@@ -23,6 +23,7 @@ const MillSchema = new Schema(
             state: { type: String },
             pincode: { type: String },
         },
+        rejectedReason: { type: String },
         // Flattened status fields for quick middleware checks
         status: {
             type: String,

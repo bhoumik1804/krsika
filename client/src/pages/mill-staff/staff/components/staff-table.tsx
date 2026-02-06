@@ -49,7 +49,13 @@ export function StaffTable({ data, search, navigate }: DataTableProps) {
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'status', searchKey: 'status', type: 'array' },

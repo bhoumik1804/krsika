@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
+import { USER_ROLES, UserRole } from '@/constants'
 import { useUser } from '@/pages/landing/hooks'
-import { User, USER_ROLES, UserRole } from '@/types'
+import { User } from '@/types'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/auth-store'
 import { LoadingSpinner } from '@/components/loading-spinner'

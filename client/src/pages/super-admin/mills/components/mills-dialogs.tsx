@@ -1,6 +1,7 @@
 import { MillsActionDialog } from './mills-action-dialog'
 import { MillsDeleteDialog } from './mills-delete-dialog'
 import { useMills } from './mills-provider'
+import { MillsRejectionDialog } from './mills-rejection-dialog'
 
 export function MillsDialogs() {
     const { open, setOpen, currentRow, setCurrentRow } = useMills()
@@ -31,6 +32,18 @@ export function MillsDialogs() {
                         open={open === 'delete'}
                         onOpenChange={() => {
                             setOpen('delete')
+                            setTimeout(() => {
+                                setCurrentRow(null)
+                            }, 500)
+                        }}
+                        currentRow={currentRow}
+                    />
+
+                    <MillsRejectionDialog
+                        key={`mill-reject-${currentRow.id}`}
+                        open={open === 'reject'}
+                        onOpenChange={() => {
+                            setOpen('reject')
                             setTimeout(() => {
                                 setCurrentRow(null)
                             }, 500)

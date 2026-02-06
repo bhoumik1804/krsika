@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -23,7 +24,6 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { useRegisterMill } from '../data/hooks'
 import { useUser } from '../hooks'
 
@@ -33,20 +33,43 @@ const formSchema = z.object({
         .min(1, 'Mill name is required')
         .max(200, 'Mill name is too long'),
     contact: z.object({
-        email: z.email('Invalid email address'),
+        email: z.string().email('Invalid email address'),
         phone: z
             .string()
             .min(10, 'Phone number must be at least 10 digits')
-            .max(20, 'Phone number must be at most 20 digits'),
-        address: z.string().max(500, 'Address is too long').optional(),
+            .max(15, 'Phone number must be at most 15 digits'),
+        address: z
+            .string()
+            .min(1, 'Address is required')
+            .max(500, 'Address is too long'),
+        city: z
+            .string()
+            .min(1, 'City is required')
+            .max(100, 'City name is too long'),
+        state: z
+            .string()
+            .min(1, 'State is required')
+            .max(100, 'State name is too long'),
+        pincode: z
+            .string()
+            .regex(/^\d{6}$/, 'Pincode must be exactly 6 digits'),
     }),
     millInfo: z.object({
         gstNumber: z
             .string()
-            .length(15, 'GST number must be exactly 15 characters'),
+            .length(15, 'GST number must be exactly 15 characters')
+            .regex(
+                /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+                'Invalid GST number format'
+            ),
         panNumber: z
             .string()
-            .length(10, 'PAN number must be exactly 10 characters'),
+            .length(10, 'PAN number must be exactly 10 characters')
+            .regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, 'Invalid PAN number format'),
+        mnmNumber: z
+            .string()
+            .min(1, 'MNM number is required')
+            .max(20, 'MNM number is too long'),
     }),
 })
 
@@ -79,10 +102,14 @@ export function MillRegistrationDialog({
                 email: user?.email ?? '',
                 phone: '',
                 address: '',
+                city: '',
+                state: '',
+                pincode: '',
             },
             millInfo: {
                 gstNumber: '',
                 panNumber: '',
+                mnmNumber: '',
             },
         },
     })
@@ -112,24 +139,23 @@ export function MillRegistrationDialog({
                         onSubmit={form.handleSubmit(onSubmit)}
                         className='space-y-4'
                     >
-                        <FormField
-                            control={form.control}
-                            name='millName'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Mill Name</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder='Enter mill name'
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
                         <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                            <FormField
+                                control={form.control}
+                                name='millName'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Mill Name</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder='Enter mill name'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name='millInfo.gstNumber'
@@ -138,7 +164,7 @@ export function MillRegistrationDialog({
                                         <FormLabel>GST Number</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter GST number'
+                                                placeholder='enter GST number'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -154,7 +180,7 @@ export function MillRegistrationDialog({
                                         <FormLabel>PAN Number</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter PAN number'
+                                                placeholder='enter PAN number'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -162,9 +188,22 @@ export function MillRegistrationDialog({
                                     </FormItem>
                                 )}
                             />
-                        </div>
-
-                        <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+                            <FormField
+                                control={form.control}
+                                name='millInfo.mnmNumber'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>MNM Number</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder='enter MNM number'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name='contact.email'
@@ -174,7 +213,7 @@ export function MillRegistrationDialog({
                                         <FormControl>
                                             <Input
                                                 type='email'
-                                                placeholder='Enter email address'
+                                                placeholder='enter email address'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -190,7 +229,73 @@ export function MillRegistrationDialog({
                                         <FormLabel>Phone Number</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter phone number'
+                                                placeholder='enter phone number'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='contact.address'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Address</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder='enter mill address'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name='contact.city'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>City</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder='enter city name'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='contact.state'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>State</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder='enter state name'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='contact.pincode'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Pincode</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder='enter pincode'
+                                                maxLength={6}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -200,31 +305,19 @@ export function MillRegistrationDialog({
                             />
                         </div>
 
-                        <FormField
-                            control={form.control}
-                            name='contact.address'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Address</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder='Enter full address'
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
                         <DialogFooter>
                             <Button
                                 type='submit'
                                 disabled={registerMill.isPending}
                             >
-                                {registerMill.isPending
-                                    ? 'Registering...'
-                                    : 'Register'}
+                                {registerMill.isPending ? (
+                                    <>
+                                        <Loader2 className='h-4 w-4 animate-spin' />
+                                        Registering...
+                                    </>
+                                ) : (
+                                    'Register'
+                                )}
                             </Button>
                         </DialogFooter>
                     </form>

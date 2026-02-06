@@ -71,7 +71,7 @@ export function SignUpForm({
                     toast.success('Account created successfully!')
                 },
                 onError: (err: any) => {
-                    toast.error(err?.response?.data?.message || 'Signup failed')
+                    toast.error(err?.response?.data?.message)
                 },
             }
         )

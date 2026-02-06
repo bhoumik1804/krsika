@@ -22,18 +22,21 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { useCreateMill, useUpdateMill } from '../data/hooks'
+import { useCreateMill, useUpdateMill, useVerifyMill } from '../data/hooks'
 import type { Mill, MillStatus } from '../data/schema'
 
 const formSchema = z.object({
     millName: z.string().min(1, 'Mill name is required.'),
     gstNumber: z.string().min(1, 'GST number is required.'),
     panNumber: z.string().min(1, 'PAN number is required.'),
-    email: z.string().email('Valid email is required.'),
+    mnmNumber: z.string().min(1, 'Mill Manager Number is required.'),
+    email: z.email('Valid email is required.'),
     phone: z.string().min(1, 'Phone number is required.'),
     address: z.string().optional(),
-    status: z.enum(['PENDING_VERIFICATION', 'ACTIVE', 'SUSPENDED', 'REJECTED']),
-    isEdit: z.boolean(),
+    city: z.string().min(1, 'City is required.'),
+    state: z.string().min(1, 'State is required.'),
+    pincode: z.string().min(1, 'Pincode is required.'),
+    status: z.enum(['pending-verification', 'active', 'suspended', 'rejected']),
 })
 type MillForm = z.infer<typeof formSchema>
 
@@ -51,46 +54,62 @@ export function MillsActionDialog({
     const isEdit = !!currentRow
     const createMill = useCreateMill()
     const updateMill = useUpdateMill()
+    const verifyMill = useVerifyMill()
+
+    const getDefaultValues = (): MillForm => {
+        if (isEdit && currentRow) {
+            const row: any = currentRow
+            return {
+                millName: row.name || '',
+                gstNumber: row.gstNumber || '',
+                panNumber: row.panNumber || '',
+                mnmNumber: row.mnmNumber || '',
+                email: row.email || '',
+                phone: row.phone || '',
+                address: row.location || '',
+                city: '',
+                state: '',
+                pincode: '',
+                status: (row.status || 'pending-verification') as MillStatus,
+            }
+        }
+        return {
+            millName: '',
+            gstNumber: '',
+            panNumber: '',
+            mnmNumber: '',
+            email: '',
+            phone: '',
+            address: '',
+            city: '',
+            state: '',
+            pincode: '',
+            status: 'pending-verification' as MillStatus,
+        }
+    }
 
     const form = useForm<MillForm>({
         resolver: zodResolver(formSchema),
-        defaultValues:
-            isEdit && currentRow
-                ? {
-                      millName: currentRow.name,
-                      gstNumber: currentRow.gstNumber,
-                      panNumber: currentRow.panNumber,
-                      email: currentRow.email,
-                      phone: currentRow.phone,
-                      address: currentRow.location,
-                      status: currentRow.status,
-                      isEdit,
-                  }
-                : {
-                      millName: '',
-                      gstNumber: '',
-                      panNumber: '',
-                      email: '',
-                      phone: '',
-                      address: '',
-                      status: 'PENDING_VERIFICATION' as MillStatus,
-                      isEdit,
-                  },
+        defaultValues: getDefaultValues(),
     })
 
     const onSubmit = async (values: MillForm) => {
-        const millData = {
+        const millData: any = {
             millName: values.millName,
             millInfo: {
                 gstNumber: values.gstNumber,
                 panNumber: values.panNumber,
+                mnmNumber: values.mnmNumber,
             },
             contact: {
                 email: values.email,
                 phone: values.phone,
                 address: values.address,
+                city: values.city,
+                state: values.state,
+                pincode: values.pincode,
             },
-            status: values.status as MillStatus,
+            status: values.status,
         }
 
         if (isEdit && currentRow) {
@@ -106,7 +125,19 @@ export function MillsActionDialog({
         onOpenChange(false)
     }
 
-    const isLoading = createMill.isPending || updateMill.isPending
+    const handleVerify = async () => {
+        if (!currentRow) return
+        const verifyData: any = {
+            id: currentRow.id,
+            status: 'active',
+        }
+        await verifyMill.mutateAsync(verifyData)
+        form.reset()
+        onOpenChange(false)
+    }
+
+    const isLoading =
+        createMill.isPending || updateMill.isPending || verifyMill.isPending
 
     return (
         <Dialog
@@ -258,6 +289,83 @@ export function MillsActionDialog({
                             />
                             <FormField
                                 control={form.control}
+                                name='mnmNumber'
+                                render={({ field }) => (
+                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                                        <FormLabel className='col-span-2 text-end'>
+                                            MNM Number
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder='Mill Manager Number'
+                                                className='col-span-4'
+                                                autoComplete='off'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className='col-span-4 col-start-3' />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='city'
+                                render={({ field }) => (
+                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                                        <FormLabel className='col-span-2 text-end'>
+                                            City
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder='City name'
+                                                className='col-span-4'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className='col-span-4 col-start-3' />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='state'
+                                render={({ field }) => (
+                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                                        <FormLabel className='col-span-2 text-end'>
+                                            State
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder='State name'
+                                                className='col-span-4'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className='col-span-4 col-start-3' />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='pincode'
+                                render={({ field }) => (
+                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                                        <FormLabel className='col-span-2 text-end'>
+                                            Pincode
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder='Postal code'
+                                                className='col-span-4'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className='col-span-4 col-start-3' />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
                                 name='status'
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
@@ -272,19 +380,19 @@ export function MillsActionDialog({
                                             items={[
                                                 {
                                                     label: 'Pending Verification',
-                                                    value: 'PENDING_VERIFICATION',
+                                                    value: 'pending-verification',
                                                 },
                                                 {
                                                     label: 'Active',
-                                                    value: 'ACTIVE',
+                                                    value: 'active',
                                                 },
                                                 {
                                                     label: 'Suspended',
-                                                    value: 'SUSPENDED',
+                                                    value: 'suspended',
                                                 },
                                                 {
                                                     label: 'Rejected',
-                                                    value: 'REJECTED',
+                                                    value: 'rejected',
                                                 },
                                             ]}
                                         />
@@ -295,7 +403,26 @@ export function MillsActionDialog({
                         </form>
                     </Form>
                 </div>
-                <DialogFooter>
+                <DialogFooter className='flex justify-between'>
+                    <div className='flex gap-2'>
+                        {isEdit &&
+                            ((currentRow as any)?.status ===
+                                'pending-verification' ||
+                                (currentRow as any)?.status ===
+                                    'PENDING_VERIFICATION') && (
+                                <Button
+                                    type='button'
+                                    variant='default'
+                                    onClick={handleVerify}
+                                    disabled={isLoading}
+                                    className='bg-green-600 hover:bg-green-700'
+                                >
+                                    {verifyMill.isPending
+                                        ? 'Verifying...'
+                                        : 'Verify & Approve'}
+                                </Button>
+                            )}
+                    </div>
                     <Button type='submit' form='mill-form' disabled={isLoading}>
                         {isLoading ? 'Saving...' : 'Save changes'}
                     </Button>

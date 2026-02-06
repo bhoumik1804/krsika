@@ -2,7 +2,6 @@ import {
     Navbar,
     HeroSection,
     FeaturesSection,
-    PricingSection,
     TestimonialsSection,
     HowItWorksSection,
     CtaSection,
@@ -17,7 +16,6 @@ export function Landing() {
                 <HeroSection />
                 <FeaturesSection />
                 <HowItWorksSection />
-                <PricingSection />
                 <TestimonialsSection />
                 <CtaSection />
             </main>
