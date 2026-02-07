@@ -26,13 +26,22 @@ import { DataTableBulkActions } from './data-table-bulk-actions'
 import { staffReportColumns as columns } from './staff-report-columns'
 
 type DataTableProps = {
-    data: StaffReportData[]
+    data: StaffReportData[] | any[]
     search: Record<string, unknown>
     navigate: NavigateFn
     totalRows?: number
+    isLoading?: boolean
+    isError?: boolean
 }
 
-export function StaffReportTable({ data, search, navigate, totalRows }: DataTableProps) {
+export function StaffReportTable({
+    data,
+    search,
+    navigate,
+    totalRows,
+    // isLoading,
+    // isError,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -48,11 +57,11 @@ export function StaffReportTable({ data, search, navigate, totalRows }: DataTabl
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { 
+        pagination: {
             pageKey: 'page',
             pageSizeKey: 'limit',
-            defaultPage: 1, 
-            defaultPageSize: 10 
+            defaultPage: 1,
+            defaultPageSize: 10,
         },
         globalFilter: { enabled: false },
         columnFilters: [],
@@ -82,13 +91,18 @@ export function StaffReportTable({ data, search, navigate, totalRows }: DataTabl
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
         // Set manual pageCount for server-side pagination
-        pageCount: totalRows !== undefined ? Math.ceil(totalRows / (pagination.pageSize || 10)) : undefined,
+        pageCount:
+            totalRows !== undefined
+                ? Math.ceil(totalRows / (pagination.pageSize || 10))
+                : undefined,
         manualPagination: true,
     })
 
     useEffect(() => {
         if (totalRows !== undefined) {
-            ensurePageInRange(Math.ceil(totalRows / (pagination.pageSize || 10)))
+            ensurePageInRange(
+                Math.ceil(totalRows / (pagination.pageSize || 10))
+            )
         }
     }, [totalRows, pagination.pageSize, ensurePageInRange])
 

@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { formatCurrency } from '@/constants'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -97,9 +96,7 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
             <DataTableColumnHeader column={column} title='Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                {formatCurrency(row.getValue('rate'))}
-            </div>
+            <div className='text-right'>{row.getValue('rate')}</div>
         ),
     },
     {
@@ -108,9 +105,7 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
             <DataTableColumnHeader column={column} title='Brokerage' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                {formatCurrency(row.getValue('brokerage'))}
-            </div>
+            <div className='text-right'>{row.getValue('brokerage')}</div>
         ),
     },
     {

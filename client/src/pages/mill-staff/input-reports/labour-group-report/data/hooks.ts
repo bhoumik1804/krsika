@@ -18,7 +18,7 @@ import type {
     LabourGroupResponse,
     LabourGroupListResponse,
     LabourGroupSummaryResponse,
-    CreateLabourGroupRequest,
+    // CreateLabourGroupRequest,
     UpdateLabourGroupRequest,
     LabourGroupQueryParams,
 } from './types'
@@ -101,7 +101,7 @@ export const useLabourGroupSummary = (
 export const useCreateLabourGroup = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<LabourGroupResponse, Error, CreateLabourGroupRequest>({
+    return useMutation<any, Error, any>({
         mutationFn: (data) => createLabourGroup(millId, data),
         onSuccess: () => {
             queryClient.invalidateQueries({

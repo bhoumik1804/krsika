@@ -1,5 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { formatCurrency } from '@/constants'
+// '
 import { cn } from '@/lib/utils'
 // import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -148,7 +148,7 @@ export const paddyColumns: ColumnDef<PaddyPurchase>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {formatCurrency(row.getValue('paddyRatePerQuintal') || 0)}
+                {row.getValue('paddyRatePerQuintal') || '0.00'}
             </div>
         ),
     },
@@ -170,7 +170,7 @@ export const paddyColumns: ColumnDef<PaddyPurchase>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {formatCurrency(row.getValue('brokerage') || 0)}
+                {row.getValue('brokerage') || '0.00'}
             </div>
         ),
     },
@@ -190,7 +190,7 @@ export const paddyColumns: ColumnDef<PaddyPurchase>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {formatCurrency(row.getValue('newGunnyRate') || 0)}
+                {row.getValue('newGunnyRate') || '0.00'}
             </div>
         ),
     },
@@ -201,7 +201,7 @@ export const paddyColumns: ColumnDef<PaddyPurchase>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {formatCurrency(row.getValue('oldGunnyRate') || 0)}
+                {row.getValue('oldGunnyRate') || '0.00'}
             </div>
         ),
     },
@@ -212,7 +212,7 @@ export const paddyColumns: ColumnDef<PaddyPurchase>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {formatCurrency(row.getValue('plasticGunnyRate') || 0)}
+                {row.getValue('plasticGunnyRate') || '0.00'}
             </div>
         ),
     },

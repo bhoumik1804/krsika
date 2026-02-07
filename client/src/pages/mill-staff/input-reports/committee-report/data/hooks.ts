@@ -102,7 +102,7 @@ export const useCommitteeSummary = (
 export const useCreateCommittee = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<CommitteeResponse, Error, CreateCommitteeRequest>({
+    return useMutation<any, Error, any>({
         mutationFn: (data) => createCommittee(millId, data),
         onSuccess: () => {
             queryClient.invalidateQueries({
@@ -125,7 +125,11 @@ export const useCreateCommittee = (millId: string) => {
 export const useBulkCreateCommittees = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<{ created: number; committees: CommitteeResponse[] }, Error, CreateCommitteeRequest[]>({
+    return useMutation<
+        { created: number; committees: CommitteeResponse[] },
+        Error,
+        CreateCommitteeRequest[]
+    >({
         mutationFn: (committees) => bulkCreateCommittees(millId, committees),
         onSuccess: (data) => {
             queryClient.invalidateQueries({

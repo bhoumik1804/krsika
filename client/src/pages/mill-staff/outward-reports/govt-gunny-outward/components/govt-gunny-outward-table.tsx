@@ -12,6 +12,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { NavigateFn } from '@/hooks/use-table-url-state'
 import {
     Table,
     TableBody,
@@ -27,9 +28,23 @@ import { GovtGunnyOutwardColumns as columns } from './govt-gunny-outward-columns
 
 interface DataTableProps {
     data: GovtGunnyOutward[]
+    search: Record<string, unknown>
+    navigate: NavigateFn
+    isLoading?: boolean
+    isError?: boolean
+    totalPages?: number
+    totalItems?: number
 }
 
-export function GovtGunnyOutwardTable({ data }: DataTableProps) {
+export function GovtGunnyOutwardTable({
+    data,
+    // search,
+    // navigate,
+    // isLoading,
+    // isError,
+    // totalItems,
+    // totalPages,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

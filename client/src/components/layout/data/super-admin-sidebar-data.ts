@@ -2,7 +2,6 @@ import {
     LayoutDashboard,
     Bug,
     FileX,
-    HelpCircle,
     Lock,
     Bell,
     Palette,
@@ -12,7 +11,6 @@ import {
     UserX,
     Users,
     Factory,
-    CreditCard,
 } from 'lucide-react'
 import { type SidebarData } from '../types'
 

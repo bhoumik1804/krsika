@@ -1,5 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { formatCurrency } from '@/constants'
+// '
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -103,9 +103,7 @@ export const salesDealsColumns: ColumnDef<SalesDeal>[] = [
             <DataTableColumnHeader column={column} title='Rate/Qtl' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                {formatCurrency(row.getValue('rate'))}
-            </div>
+            <div className='text-right'>{row.getValue('rate')}</div>
         ),
     },
     {
@@ -115,7 +113,7 @@ export const salesDealsColumns: ColumnDef<SalesDeal>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
-                {formatCurrency(row.getValue('totalAmount'))}
+                {row.getValue('totalAmount')}
             </div>
         ),
     },

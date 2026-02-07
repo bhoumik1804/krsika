@@ -4,8 +4,8 @@
  * Redirects to 403 page if user doesn't have required role
  */
 import { ReactNode } from 'react'
+import type { UserRole } from '@/constants'
 import { useUser } from '@/pages/landing/hooks/use-auth'
-import type { UserRole } from '@/types'
 import { Navigate } from 'react-router'
 import { useAuthStore } from '@/stores/auth-store'
 import { LoadingSpinner } from '@/components/loading-spinner'

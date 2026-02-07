@@ -28,8 +28,7 @@ export type SidebarFactory = (context?: SidebarContext) => SidebarData
 export const SIDEBAR_FACTORIES: Readonly<Record<UserRole, SidebarFactory>> = {
     'super-admin': () => superAdminSidebarData,
     'mill-admin': (ctx) => getMillAdminSidebarData(ctx?.millId || ''),
-    'mill-staff': (ctx) =>
-        getMillStaffSidebarData(ctx?.millId || '',),
+    'mill-staff': (ctx) => getMillStaffSidebarData(ctx?.millId || ''),
 } as const
 
 // ==========================================
@@ -63,9 +62,9 @@ export function getSidebarData(
  * Get all available roles (useful for dropdowns, selects)
  * @returns Array of all available user roles
  */
-export function getAvailableRoles(): readonly UserRole[] {
-    return USER_ROLES
-}
+// export function getAvailableRoles(): UserRole[] {
+//     return USER_ROLES
+// }
 
 /**
  * Get role display name (for UI)

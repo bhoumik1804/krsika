@@ -1,5 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { formatCurrency } from '@/constants'
+// '
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -70,18 +70,14 @@ export const partyTransactionColumns: ColumnDef<PartyTransaction>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Purchase Deal' />
         ),
-        cell: ({ row }) => (
-            <div>{formatCurrency(row.getValue('purchaseDeal'))}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('purchaseDeal')}</div>,
     },
     {
         accessorKey: 'salesDeal',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Sales Deal' />
         ),
-        cell: ({ row }) => (
-            <div>{formatCurrency(row.getValue('salesDeal'))}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('salesDeal')}</div>,
     },
     {
         accessorKey: 'inward',
@@ -102,18 +98,14 @@ export const partyTransactionColumns: ColumnDef<PartyTransaction>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Account (Receipt)' />
         ),
-        cell: ({ row }) => (
-            <div>{formatCurrency(row.getValue('accountReceipt'))}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('accountReceipt')}</div>,
     },
     {
         accessorKey: 'accountPayment',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Account (Payment)' />
         ),
-        cell: ({ row }) => (
-            <div>{formatCurrency(row.getValue('accountPayment'))}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('accountPayment')}</div>,
     },
     {
         accessorKey: 'accountBrokerage',
@@ -123,32 +115,28 @@ export const partyTransactionColumns: ColumnDef<PartyTransaction>[] = [
                 title='Account (Brokerage)'
             />
         ),
-        cell: ({ row }) => (
-            <div>{formatCurrency(row.getValue('accountBrokerage'))}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('accountBrokerage')}</div>,
     },
     {
         accessorKey: 'receipt',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Receipt' />
         ),
-        cell: ({ row }) => <div>{formatCurrency(row.getValue('receipt'))}</div>,
+        cell: ({ row }) => <div>{row.getValue('receipt')}</div>,
     },
     {
         accessorKey: 'payment',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Payment' />
         ),
-        cell: ({ row }) => <div>{formatCurrency(row.getValue('payment'))}</div>,
+        cell: ({ row }) => <div>{row.getValue('payment')}</div>,
     },
     {
         accessorKey: 'brokerage',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Brokerage' />
         ),
-        cell: ({ row }) => (
-            <div>{formatCurrency(row.getValue('brokerage'))}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('brokerage')}</div>,
     },
     {
         id: 'actions',

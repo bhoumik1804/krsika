@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useUser } from '@/pages/landing/hooks/use-auth'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -19,9 +20,8 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { vehicleReportSchema, type VehicleReportData } from '../data/schema'
 import { useCreateVehicle, useUpdateVehicle } from '../data/hooks'
-import { useUser } from '@/pages/landing/hooks/use-auth'
+import { vehicleReportSchema, type VehicleReportData } from '../data/schema'
 
 type VehicleReportActionDialogProps = {
     open: boolean
@@ -64,7 +64,8 @@ export function VehicleReportActionDialog({
                     ...data,
                 })
             } else {
-                await createMutation.mutateAsync(data)
+                const { _id, id, ...createData } = data
+                await createMutation.mutateAsync(createData)
             }
             onOpenChange(false)
             form.reset()
@@ -122,7 +123,8 @@ export function VehicleReportActionDialog({
                                         : 'Adding...'
                                     : isEditing
                                       ? 'Update'
-                                      : 'Add'} Vehicle
+                                      : 'Add'}{' '}
+                                Vehicle
                             </Button>
                         </DialogFooter>
                     </form>

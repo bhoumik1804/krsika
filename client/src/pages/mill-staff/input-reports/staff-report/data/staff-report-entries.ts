@@ -8,20 +8,20 @@ export const staffReportEntries: StaffReportData[] = Array.from(
     { length: 50 },
     (): StaffReportData => {
         return {
-            staffName: faker.person.fullName(),
-            post: faker.helpers.arrayElement([
-                'Manager',
-                'Supervisor',
-                'Operator',
-                'Clerk',
-                'Helper',
-            ]),
+            fullName: faker.person.fullName(),
+            // post: faker.helpers.arrayElement([
+            //     'Manager',
+            //     'Supervisor',
+            //     'Operator',
+            //     'Clerk',
+            //     'Helper',
+            // // ]),
             salary: faker.number.float({
                 min: 15000,
                 max: 80000,
                 fractionDigits: 2,
             }),
-            phone: faker.phone.number(),
+            // phone: faker.phone.number(),
             email: faker.internet.email(),
             address: faker.location.streetAddress(),
         }

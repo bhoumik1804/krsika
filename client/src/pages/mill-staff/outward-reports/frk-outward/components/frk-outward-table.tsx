@@ -32,9 +32,20 @@ type DataTableProps = {
     data: FrkOutward[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    isLoading?: boolean
+    isError?: boolean
+    totalPages?: number
+    totalItems?: number
 }
 
-export function FrkOutwardTable({ data, search, navigate }: DataTableProps) {
+export function FrkOutwardTable({
+    data,
+    search,
+    navigate,
+    // isLoading,
+    // isError,
+    // totalItems,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

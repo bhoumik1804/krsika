@@ -30,10 +30,22 @@ import { otherOutwardColumns as columns } from './other-outward-columns'
 type DataTableProps = {
     data: OtherOutward[]
     search: Record<string, unknown>
-    navigate: NavigateFn
+    navigate: NavigateFn,
+    isLoading?: boolean
+    isError?: boolean
+    totalPages?: number
+    totalItems?: number
 }
 
-export function OtherOutwardTable({ data, search, navigate }: DataTableProps) {
+export function OtherOutwardTable({
+    data,
+    search,
+    navigate,
+    // isLoading,
+    // isError,
+    // totalItems,
+    // totalPages,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

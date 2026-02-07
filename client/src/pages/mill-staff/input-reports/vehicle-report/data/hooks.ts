@@ -18,7 +18,7 @@ import type {
     VehicleResponse,
     VehicleListResponse,
     VehicleSummaryResponse,
-    CreateVehicleRequest,
+    // CreateVehicleRequest,
     UpdateVehicleRequest,
     VehicleQueryParams,
 } from './types'
@@ -100,7 +100,7 @@ export const useVehicleSummary = (
 export const useCreateVehicle = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<VehicleResponse, Error, CreateVehicleRequest>({
+    return useMutation<VehicleResponse, Error, any>({
         mutationFn: (data) => createVehicle(millId, data),
         onSuccess: () => {
             queryClient.invalidateQueries({

@@ -30,12 +30,16 @@ type DataTableProps = {
     data: FinancialPayment[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    isLoading?: boolean
+    isError?: boolean
 }
 
 export function FinancialPaymentTable({
     data,
     search,
     navigate,
+    // isLoading,
+    // isError,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(

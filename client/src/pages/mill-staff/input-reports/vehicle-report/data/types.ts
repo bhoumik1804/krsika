@@ -8,7 +8,7 @@
 // ==========================================
 
 export interface CreateVehicleRequest {
-    vehicleNumber: string
+    vehicleNumber?: string
     vehicleType?: string
     transporterName?: string
     driverName?: string

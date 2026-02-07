@@ -22,12 +22,12 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { type PartyTransaction } from '../data/schema'
+// import { type PartyTransaction } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { partyTransactionColumns as columns } from './party-transaction-columns'
 
 type DataTableProps = {
-    data: PartyTransaction[]
+    data: any[]
     search: Record<string, unknown>
     navigate: NavigateFn
     isLoading?: boolean

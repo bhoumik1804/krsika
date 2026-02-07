@@ -1,5 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { formatCurrency } from '@/constants'
+// '
 import { cn } from '@/lib/utils'
 // import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -148,7 +148,7 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {formatCurrency(row.getValue('paddyRatePerQuintal') || 0)}
+                {row.getValue('paddyRatePerQuintal') || 0}
             </div>
         ),
     },
@@ -169,9 +169,7 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
             <DataTableColumnHeader column={column} title='Brokerage' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                {formatCurrency(row.getValue('brokerage') || 0)}
-            </div>
+            <div className='text-right'>{row.getValue('brokerage') || 0}</div>
         ),
     },
     {
@@ -190,7 +188,7 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {formatCurrency(row.getValue('newGunnyRate') || 0)}
+                {row.getValue('newGunnyRate') || 0}
             </div>
         ),
     },
@@ -201,7 +199,7 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {formatCurrency(row.getValue('oldGunnyRate') || 0)}
+                {row.getValue('oldGunnyRate') || 0}
             </div>
         ),
     },
@@ -212,7 +210,7 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {formatCurrency(row.getValue('plasticGunnyRate') || 0)}
+                {row.getValue('plasticGunnyRate') || 0}
             </div>
         ),
     },

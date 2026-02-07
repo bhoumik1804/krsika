@@ -31,9 +31,21 @@ type DataTableProps = {
     data: KhandaOutward[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    isLoading?: boolean
+    isError?: boolean
+    totalPages?: number
+    totalItems?: number
 }
 
-export function KhandaOutwardTable({ data, search, navigate }: DataTableProps) {
+export function KhandaOutwardTable({
+    data,
+    search,
+    navigate,
+    // isLoading,
+    // isError,
+    // totalItems,
+    // totalPages,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

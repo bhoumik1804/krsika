@@ -21,19 +21,28 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
-import { type VehicleReportData } from '../data/schema'
+// import { statuses } from '../data/data'
+// import { type VehicleReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { vehicleReportColumns as columns } from './vehicle-report-columns'
 
 type DataTableProps = {
-    data: VehicleReportData[]
+    data: any[]
     search: Record<string, unknown>
     navigate: NavigateFn
     totalRows?: number
+    isLoading?: boolean
+    isError?: boolean
 }
 
-export function VehicleReportTable({ data, search, navigate, totalRows }: DataTableProps) {
+export function VehicleReportTable({
+    data,
+    search,
+    navigate,
+    totalRows,
+    // isLoading,
+    // isError,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -49,11 +58,11 @@ export function VehicleReportTable({ data, search, navigate, totalRows }: DataTa
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { 
+        pagination: {
             pageKey: 'page',
             pageSizeKey: 'limit',
-            defaultPage: 1, 
-            defaultPageSize: 10 
+            defaultPage: 1,
+            defaultPageSize: 10,
         },
         globalFilter: { enabled: false },
         columnFilters: [
@@ -85,13 +94,18 @@ export function VehicleReportTable({ data, search, navigate, totalRows }: DataTa
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
         // Set manual pageCount for server-side pagination
-        pageCount: totalRows !== undefined ? Math.ceil(totalRows / (pagination.pageSize || 10)) : undefined,
+        pageCount:
+            totalRows !== undefined
+                ? Math.ceil(totalRows / (pagination.pageSize || 10))
+                : undefined,
         manualPagination: true,
     })
 
     useEffect(() => {
         if (totalRows !== undefined) {
-            ensurePageInRange(Math.ceil(totalRows / (pagination.pageSize || 10)))
+            ensurePageInRange(
+                Math.ceil(totalRows / (pagination.pageSize || 10))
+            )
         }
     }, [totalRows, pagination.pageSize, ensurePageInRange])
 

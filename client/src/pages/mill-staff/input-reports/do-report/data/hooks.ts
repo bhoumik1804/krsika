@@ -18,7 +18,7 @@ import type {
     DoReportResponse,
     DoReportListResponse,
     DoReportSummaryResponse,
-    CreateDoReportRequest,
+    // CreateDoReportRequest,
     UpdateDoReportRequest,
     DoReportQueryParams,
 } from './types'
@@ -100,7 +100,7 @@ export const useDoReportSummary = (
 export const useCreateDoReport = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<DoReportResponse, Error, CreateDoReportRequest>({
+    return useMutation<any, Error, any>({
         mutationFn: (data) => createDoReport(millId, data),
         onSuccess: () => {
             queryClient.invalidateQueries({

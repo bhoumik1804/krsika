@@ -21,8 +21,16 @@ export const staffSchema = z.object({
         )
         .optional(),
     lastLogin: z.string().optional(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
+    attendanceHistory: z
+        .array(
+            z.object({
+                date: z.string(),
+                status: z.enum(['P', 'A', 'H']),
+                createdAt: z.string(),
+                updatedAt: z.string(),
+            })
+        )
+        .optional(),
 })
 export type Staff = z.infer<typeof staffSchema>
 

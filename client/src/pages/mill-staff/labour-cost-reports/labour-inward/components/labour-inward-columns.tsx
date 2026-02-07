@@ -1,5 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { formatCurrency } from '@/constants'
+// '
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -105,9 +105,7 @@ export const labourInwardColumns: ColumnDef<LabourInward>[] = [
             <DataTableColumnHeader column={column} title='Unloading Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                {formatCurrency(row.getValue('unloadingRate'))}
-            </div>
+            <div className='text-right'>{row.getValue('unloadingRate')}</div>
         ),
     },
     {
@@ -116,9 +114,7 @@ export const labourInwardColumns: ColumnDef<LabourInward>[] = [
             <DataTableColumnHeader column={column} title='Stacking Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                {formatCurrency(row.getValue('stackingRate'))}
-            </div>
+            <div className='text-right'>{row.getValue('stackingRate')}</div>
         ),
     },
     {

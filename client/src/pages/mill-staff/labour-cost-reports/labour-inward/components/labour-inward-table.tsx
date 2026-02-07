@@ -31,9 +31,23 @@ type DataTableProps = {
     data: LabourInward[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    isLoading?: boolean
+    isError?: boolean
+    totalPages?: number
+    totalItems?: number
+    totalRows?: number
 }
 
-export function LabourInwardTable({ data, search, navigate }: DataTableProps) {
+export function LabourInwardTable({
+    data,
+    search,
+    navigate,
+    // isLoading,
+    // isError,
+    // totalPages,
+    // totalItems,
+    // totalRows,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

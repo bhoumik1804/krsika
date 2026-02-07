@@ -31,12 +31,19 @@ type DataTableProps = {
     data: PrivatePaddyOutward[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    isLoading: boolean
+    isError: boolean
+    totalPages?: number
+    totalItems?: number
 }
 
 export function PrivatePaddyOutwardTable({
     data,
     search,
     navigate,
+    // isLoading,
+    // isError,
+    // totalPages,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(

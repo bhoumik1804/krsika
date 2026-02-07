@@ -1,39 +1,45 @@
-import { useEffect, useState } from 'react'
-import {
-    type SortingState,
-    type VisibilityState,
-    flexRender,
-    getCoreRowModel,
-    getFacetedRowModel,
-    getFacetedUniqueValues,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable,
-} from '@tanstack/react-table'
-import { cn } from '@/lib/utils'
-import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table'
-import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
-import { type NakkhiOutward } from '../data/schema'
-import { DataTableBulkActions } from './data-table-bulk-actions'
-import { nakkhiOutwardColumns as columns } from './nakkhi-outward-columns'
+import { useEffect, useState } from 'react';
+import { type SortingState, type VisibilityState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import { cn } from '@/lib/utils';
+import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { DataTablePagination, DataTableToolbar } from '@/components/data-table';
+import { statuses } from '../data/data';
+import { type NakkhiOutward } from '../data/schema';
+import { DataTableBulkActions } from './data-table-bulk-actions';
+import { nakkhiOutwardColumns as columns } from './nakkhi-outward-columns';
+
+
+
+
+
+
+
+
+
+
+
+
 
 type DataTableProps = {
     data: NakkhiOutward[]
     search: Record<string, unknown>
-    navigate: NavigateFn
+    navigate: NavigateFn,
+    isLoading?: boolean
+    isError?: boolean
+    totalPages?: number
+    totalItems?: number
 }
 
-export function NakkhiOutwardTable({ data, search, navigate }: DataTableProps) {
+export function NakkhiOutwardTable({
+    data,
+    search,
+    navigate,
+    // isLoading,
+    // isError,
+    // totalItems,
+    // totalPages,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

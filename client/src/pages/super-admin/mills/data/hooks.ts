@@ -24,7 +24,7 @@ import type {
     MillSummaryResponse,
     CreateMillRequest,
     UpdateMillRequest,
-    VerifyMillRequest,
+    // VerifyMillRequest,
     MillQueryParams,
 } from './types'
 

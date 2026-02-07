@@ -31,9 +31,21 @@ type DataTableProps = {
     data: MillingRice[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    isLoading?: boolean
+    isError?: boolean
+    totalPages?: number
+    totalItems?: number
 }
 
-export function MillingRiceTable({ data, search, navigate }: DataTableProps) {
+export function MillingRiceTable({
+    data,
+    search,
+    navigate,
+    // isLoading,
+    // isError,
+    // totalPages,
+    // totalItems,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

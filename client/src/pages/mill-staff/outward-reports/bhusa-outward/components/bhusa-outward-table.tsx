@@ -32,9 +32,20 @@ type DataTableProps = {
     data: BhusaOutward[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    isLoading: boolean
+    isError: boolean
+    totalPages?: number
+    totalItems?: number
 }
 
-export function BhusaOutwardTable({ data, search, navigate }: DataTableProps) {
+export function BhusaOutwardTable({
+    data,
+    search,
+    navigate,
+    // isLoading,
+    // isError,
+    // totalPages,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
