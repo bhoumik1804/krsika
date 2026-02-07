@@ -4,10 +4,28 @@ import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
 export const createCommitteeEntry = async (millId, data, userId) => {
-    const committee = new Committee({ ...data, millId, createdBy: userId })
+    const committee = new Committee({ ...data, millId })
     await committee.save()
     logger.info('Committee created', { id: committee._id, millId, userId })
     return committee
+}
+
+export const bulkCreateCommitteeEntries = async (
+    millId,
+    committees,
+    userId
+) => {
+    const committeeData = committees.map((c) => ({
+        ...c,
+        millId,
+    }))
+    const result = await Committee.insertMany(committeeData)
+    logger.info('Committees bulk created', {
+        millId,
+        count: result.length,
+        userId,
+    })
+    return result
 }
 
 export const getCommitteeById = async (millId, id) => {
@@ -99,11 +117,9 @@ export const getCommitteeSummary = async (millId) => {
 export const updateCommitteeEntry = async (millId, id, data, userId) => {
     const committee = await Committee.findOneAndUpdate(
         { _id: id, millId },
-        { ...data, updatedBy: userId },
+        { ...data },
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
 
     if (!committee) throw new ApiError(404, 'Committee not found')
     logger.info('Committee updated', { id, millId, userId })

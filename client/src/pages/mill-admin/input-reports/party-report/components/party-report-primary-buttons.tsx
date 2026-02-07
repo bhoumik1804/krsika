@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { partyReport } from './party-report-provider'
+import { usePartyReport } from './party-report-provider'
 
 export function PartyReportPrimaryButtons() {
-    const { setOpen } = partyReport()
+    const { setOpen } = usePartyReport()
 
     return (
         <Button onClick={() => setOpen('add')}>

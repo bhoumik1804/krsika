@@ -63,7 +63,7 @@ export const getUsersListHandler = async (req, res, next) => {
         res.status(200).json(
             new ApiResponse(
                 200,
-                { users: result.data, pagination: result.pagination },
+                { data: result.data, pagination: result.pagination },
                 'Users list retrieved'
             )
         )

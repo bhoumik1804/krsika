@@ -8,6 +8,7 @@ export const signupSchema = z.object({
             .string({ required_error: 'Password is required' })
             .min(6, 'Password must be at least 6 characters long')
             .max(100, 'Password is too long'),
+        fullName: z.string().trim().min(1, 'Name cannot be empty').max(100, 'Name is too long'),
     }),
 })
 

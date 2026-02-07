@@ -22,12 +22,12 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { type RicePurchase } from '../data/schema'
+import { type RicePurchaseData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { riceColumns as columns } from './rice-columns'
 
 type DataTableProps = {
-    data: RicePurchase[]
+    data: RicePurchaseData[]
     search: Record<string, unknown>
     navigate: NavigateFn
 }

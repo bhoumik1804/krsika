@@ -134,10 +134,10 @@ export const summaryMillsSchema = z.object({})
 // Verify mill schema
 export const verifyMillSchema = z.object({
     body: z.object({
-        status: z.enum(['ACTIVE', 'REJECTED'], {
+        status: z.enum(['active', 'rejected'], {
             required_error: 'Status is required',
             errorMap: () => ({
-                message: 'Status must be ACTIVE or REJECTED',
+                message: 'Status must be active or rejected',
             }),
         }),
         rejectionReason: z.string().trim().max(500).optional(),

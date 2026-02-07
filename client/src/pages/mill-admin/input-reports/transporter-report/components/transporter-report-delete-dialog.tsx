@@ -1,5 +1,3 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,7 +8,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteTransporter } from '../data/hooks'
 import { type TransporterReportData } from '../data/schema'
+import { useTransporterReport } from './transporter-report-provider'
 
 type TransporterReportDeleteDialogProps = {
     open: boolean
@@ -21,17 +21,20 @@ type TransporterReportDeleteDialogProps = {
 export function TransporterReportDeleteDialog({
     open,
     onOpenChange,
-    currentRow,
 }: TransporterReportDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+    const { currentRow, millId } = useTransporterReport()
+    const { mutate: deleteTransporter, isPending: isDeleting } =
+        useDeleteTransporter(millId)
+
+    const handleDelete = (e: React.MouseEvent) => {
+        e.preventDefault() // Prevent default AlertDialog close behavior
+        if (currentRow?.id) {
+            deleteTransporter(currentRow.id, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                },
+            })
+        }
     }
 
     return (
@@ -47,12 +50,15 @@ export function TransporterReportDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

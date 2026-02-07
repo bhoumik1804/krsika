@@ -3,7 +3,7 @@ import { RiceDeleteDialog } from './rice-delete-dialog'
 import { useRice } from './rice-provider'
 
 export function RiceDialogs() {
-    const { open, setOpen, currentRow } = useRice()
+    const { open, setOpen } = useRice()
 
     return (
         <>
@@ -12,14 +12,12 @@ export function RiceDialogs() {
                 onOpenChange={(isOpen: boolean) =>
                     setOpen(isOpen ? open : null)
                 }
-                currentRow={currentRow}
             />
             <RiceDeleteDialog
                 open={open === 'delete'}
                 onOpenChange={(isOpen: boolean) =>
                     setOpen(isOpen ? 'delete' : null)
                 }
-                currentRow={currentRow}
             />
         </>
     )

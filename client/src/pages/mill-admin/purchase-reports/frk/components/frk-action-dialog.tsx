@@ -3,8 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -29,31 +27,38 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-import { frkPurchaseSchema, type FrkPurchase } from '../data/schema'
+import { frkPurchaseSchema, type FrkPurchaseData } from '../data/schema'
+import { useCreateFrkPurchase, useUpdateFrkPurchase } from '../data/hooks'
+import { useFrk } from './frk-provider'
 
 type FrkActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: FrkPurchase | null
 }
 
 export function FrkActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: FrkActionDialogProps) {
+    const { currentRow, millId } = useFrk()
+    const { mutate: createFrkPurchase, isPending: isCreating } =
+        useCreateFrkPurchase(millId)
+    const { mutate: updateFrkPurchase, isPending: isUpdating } =
+        useUpdateFrkPurchase(millId)
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<FrkPurchase>({
+    const form = useForm<FrkPurchaseData>({
         resolver: zodResolver(frkPurchaseSchema),
         defaultValues: {
             date: format(new Date(), 'yyyy-MM-dd'),
             partyName: '',
-            frkQty: undefined,
-            frkRate: undefined,
-            gst: undefined,
-        } as FrkPurchase,
+            totalWeight: undefined,
+            rate: undefined,
+            amount: undefined,
+        } as FrkPurchaseData,
     })
 
     useEffect(() => {
@@ -64,20 +69,25 @@ export function FrkActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Purchase updated successfully'
-                    : 'Purchase added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update purchase'
-                : 'Failed to add purchase',
-        })
+    const onSubmit = (data: FrkPurchaseData) => {
+        if (isEditing) {
+            updateFrkPurchase(
+                { purchaseId: currentRow?.id || '', data },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        } else {
+            createFrkPurchase(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
+        }
     }
 
     return (
@@ -181,11 +191,11 @@ export function FrkActionDialog({
 
                                 <FormField
                                     control={form.control}
-                                    name='frkQty'
+                                    name='totalWeight'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Quantity (Qtl)
+                                                Total Weight (Qtl)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -214,7 +224,7 @@ export function FrkActionDialog({
                                 />
                                 <FormField
                                     control={form.control}
-                                    name='frkRate'
+                                    name='rate'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
@@ -248,10 +258,10 @@ export function FrkActionDialog({
 
                                 <FormField
                                     control={form.control}
-                                    name='gst'
+                                    name='amount'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>GST (%)</FormLabel>
+                                            <FormLabel>Amount (₹)</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -284,11 +294,18 @@ export function FrkActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Purchase
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

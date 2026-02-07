@@ -3,10 +3,10 @@ import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
-import { type RicePurchase } from '../data/schema'
+import { type RicePurchaseData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const riceColumns: ColumnDef<RicePurchase>[] = [
+export const riceColumns: ColumnDef<RicePurchaseData>[] = [
     {
         id: 'select',
         header: ({ table }) => (

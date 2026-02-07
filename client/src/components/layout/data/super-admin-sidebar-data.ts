@@ -1,14 +1,14 @@
 import {
     LayoutDashboard,
-    Bug,
-    FileX,
-    Lock,
-    Bell,
+    // Bug,
+    // FileX,
+    // Lock,
+    // Bell,
     Palette,
-    ServerOff,
+    // ServerOff,
     Settings,
     UserCog,
-    UserX,
+    // UserX,
     Users,
     Factory,
 } from 'lucide-react'
@@ -43,37 +43,37 @@ export const superAdminSidebarData: SidebarData = {
                 },
             ],
         },
-        {
-            title: 'Pages',
-            items: [
-                {
-                    title: 'Errors',
-                    icon: Bug,
-                    items: [
-                        {
-                            title: 'Unauthorized',
-                            url: '/401',
-                            icon: Lock,
-                        },
-                        {
-                            title: 'Forbidden',
-                            url: '/403',
-                            icon: UserX,
-                        },
-                        {
-                            title: 'Not Found',
-                            url: '/404',
-                            icon: FileX,
-                        },
-                        {
-                            title: 'Internal Server Error',
-                            url: '/500',
-                            icon: ServerOff,
-                        },
-                    ],
-                },
-            ],
-        },
+        // {
+        //     title: 'Pages',
+        //     items: [
+        //         {
+        //             title: 'Errors',
+        //             icon: Bug,
+        //             items: [
+        //                 {
+        //                     title: 'Unauthorized',
+        //                     url: '/401',
+        //                     icon: Lock,
+        //                 },
+        //                 {
+        //                     title: 'Forbidden',
+        //                     url: '/403',
+        //                     icon: UserX,
+        //                 },
+        //                 {
+        //                     title: 'Not Found',
+        //                     url: '/404',
+        //                     icon: FileX,
+        //                 },
+        //                 {
+        //                     title: 'Internal Server Error',
+        //                     url: '/500',
+        //                     icon: ServerOff,
+        //                 },
+        //             ],
+        //         },
+        //     ],
+        // },
         {
             title: 'Other',
             items: [
@@ -107,10 +107,10 @@ export const superAdminSidebarData: SidebarData = {
             url: '/admin/settings/appearance',
             icon: Palette,
         },
-        {
-            title: 'Notifications',
-            url: '#',
-            icon: Bell,
-        },
+        // {
+        //     title: 'Notifications',
+        //     url: '#',
+        //     icon: Bell,
+        // },
     ],
 }

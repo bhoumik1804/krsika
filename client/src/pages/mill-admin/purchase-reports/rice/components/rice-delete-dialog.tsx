@@ -1,5 +1,3 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,28 +8,30 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { type RicePurchase } from '../data/schema'
+import { useDeleteRicePurchase } from '../data/hooks'
+import { useRice } from './rice-provider'
 
 type RiceDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: RicePurchase | null
 }
 
 export function RiceDeleteDialog({
     open,
     onOpenChange,
-    currentRow,
 }: RiceDeleteDialogProps) {
+    const { currentRow, millId } = useRice()
+    const { mutate: deleteRicePurchase, isPending: isDeleting } =
+        useDeleteRicePurchase(millId)
+
     const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting rice purchase...',
-            success: () => {
-                onOpenChange(false)
-                return 'Rice purchase deleted successfully'
-            },
-            error: 'Failed to delete purchase record',
-        })
+        if (currentRow?.id) {
+            deleteRicePurchase(currentRow.id, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                },
+            })
+        }
     }
 
     return (
@@ -47,12 +47,15 @@ export function RiceDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

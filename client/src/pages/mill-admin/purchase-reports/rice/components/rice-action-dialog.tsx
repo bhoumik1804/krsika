@@ -3,8 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     riceTypeOptions,
     deliveryTypeOptions,
@@ -44,23 +42,30 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import { ricePurchaseSchema, type RicePurchase } from '../data/schema'
+import { ricePurchaseSchema, type RicePurchaseData } from '../data/schema'
+import { useCreateRicePurchase, useUpdateRicePurchase } from '../data/hooks'
+import { useRice } from './rice-provider'
 
 type RiceActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: RicePurchase | null
 }
 
 export function RiceActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: RiceActionDialogProps) {
+    const { currentRow, millId } = useRice()
+    const { mutate: createRicePurchase, isPending: isCreating } =
+        useCreateRicePurchase(millId)
+    const { mutate: updateRicePurchase, isPending: isUpdating } =
+        useUpdateRicePurchase(millId)
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<RicePurchase>({
+    const form = useForm<RicePurchaseData>({
         resolver: zodResolver(ricePurchaseSchema),
         defaultValues: {
             date: format(new Date(), 'yyyy-MM-dd'),
@@ -81,7 +86,7 @@ export function RiceActionDialog({
             frkType: '',
             frkRatePerQuintal: undefined,
             lotNumber: '',
-        } as RicePurchase,
+        } as RicePurchaseData,
     })
 
     // Watchers for conditional rendering
@@ -106,20 +111,25 @@ export function RiceActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Rice purchase updated successfully'
-                    : 'Rice purchase added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update purchase'
-                : 'Failed to add purchase',
-        })
+    const onSubmit = (data: RicePurchaseData) => {
+        if (isEditing) {
+            updateRicePurchase(
+                { purchaseId: currentRow?.id || '', data },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        } else {
+            createRicePurchase(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
+        }
     }
 
     return (
@@ -775,11 +785,18 @@ export function RiceActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Purchase
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

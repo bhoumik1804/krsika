@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -21,7 +20,9 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useCreateParty, useUpdateParty } from '../data/hooks'
 import { partyReportSchema, type PartyReportData } from '../data/schema'
+import { usePartyReport } from './party-report-provider'
 
 type PartyReportActionDialogProps = {
     open: boolean
@@ -32,9 +33,17 @@ type PartyReportActionDialogProps = {
 export function PartyReportActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: PartyReportActionDialogProps) {
+    const { currentRow, millId } = usePartyReport()
+    const { mutate: createParty, isPending: isCreating } =
+        useCreateParty(millId)
+    const { mutate: updateParty, isPending: isUpdating } = useUpdateParty(
+        millId,
+        currentRow?.id || ''
+    )
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
 
     const form = useForm<PartyReportData>({
         resolver: zodResolver(partyReportSchema),
@@ -55,20 +64,22 @@ export function PartyReportActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating party...' : 'Adding party...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Party updated successfully'
-                    : 'Party added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update party'
-                : 'Failed to add party',
-        })
+    const onSubmit = (data: PartyReportData) => {
+        if (isEditing) {
+            updateParty(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
+        } else {
+            createParty(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
+        }
     }
 
     return (
@@ -79,8 +90,7 @@ export function PartyReportActionDialog({
                         {isEditing ? 'Edit' : 'Add'} Party
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the party details
-                        below
+                        {isEditing ? 'Update' : 'Enter'} the party details below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -95,9 +105,7 @@ export function PartyReportActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Party Name
-                                            </FormLabel>
+                                            <FormLabel>Party Name</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter party name'
@@ -129,9 +137,7 @@ export function PartyReportActionDialog({
                                     name='phone'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Phone
-                                            </FormLabel>
+                                            <FormLabel>Phone</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter phone number'
@@ -164,9 +170,7 @@ export function PartyReportActionDialog({
                                     name='address'
                                     render={({ field }) => (
                                         <FormItem className='col-span-2'>
-                                            <FormLabel>
-                                                Address
-                                            </FormLabel>
+                                            <FormLabel>Address</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter address'
@@ -184,11 +188,19 @@ export function PartyReportActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Party
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}{' '}
+                                Party
                             </Button>
                         </DialogFooter>
                     </form>

@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { committeeReport } from './committee-report-provider'
+import { useCommitteeReport } from './committee-report-provider'
 
 export function CommitteeReportPrimaryButtons() {
-    const { setOpen } = committeeReport()
+    const { setOpen } = useCommitteeReport()
 
     return (
         <Button onClick={() => setOpen('add')}>

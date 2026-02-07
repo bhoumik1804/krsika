@@ -68,6 +68,50 @@ const MillAdminAppearance = lazy(() =>
     }))
 )
 
+// Mill Admin Input Reports
+const MillAdminPartyReport = lazy(() =>
+    import('@/pages/mill-admin/input-reports/party-report').then((m) => ({
+        default: m.PartyReport,
+    }))
+)
+const MillAdminTransporterReport = lazy(() =>
+    import('@/pages/mill-admin/input-reports/transporter-report').then((m) => ({
+        default: m.TransporterReport,
+    }))
+)
+const MillAdminBrokerReport = lazy(() =>
+    import('@/pages/mill-admin/input-reports/broker-report').then((m) => ({
+        default: m.BrokerReport,
+    }))
+)
+const MillAdminCommitteeReport = lazy(() =>
+    import('@/pages/mill-admin/input-reports/committee-report').then((m) => ({
+        default: m.CommitteeReport,
+    }))
+)
+const MillAdminDoReport = lazy(() =>
+    import('@/pages/mill-admin/input-reports/do-report').then((m) => ({
+        default: m.DoReport,
+    }))
+)
+const MillAdminVehicleReport = lazy(() =>
+    import('@/pages/mill-admin/input-reports/vehicle-report').then((m) => ({
+        default: m.VehicleReport,
+    }))
+)
+const MillAdminStaffReport = lazy(() =>
+    import('@/pages/mill-admin/input-reports/staff-report').then((m) => ({
+        default: m.StaffReport,
+    }))
+)
+const MillAdminLabourGroupReport = lazy(() =>
+    import('@/pages/mill-admin/input-reports/labour-group-report').then(
+        (m) => ({
+            default: m.LabourGroupReport,
+        })
+    )
+)
+
 // Transaction Reports
 const BrokerTransactionReport = lazy(() =>
     import('@/pages/mill-admin/transaction-reports/broker').then((m) => ({
@@ -1197,35 +1241,45 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: 'input/reports/party',
-                        element: <LazyRoute Component={PartyReport} />,
+                        element: <LazyRoute Component={MillAdminPartyReport} />,
                     },
                     {
                         path: 'input/reports/transporter',
-                        element: <LazyRoute Component={TransporterReport} />,
+                        element: (
+                            <LazyRoute Component={MillAdminTransporterReport} />
+                        ),
                     },
                     {
                         path: 'input/reports/broker',
-                        element: <LazyRoute Component={BrokerReport} />,
+                        element: (
+                            <LazyRoute Component={MillAdminBrokerReport} />
+                        ),
                     },
                     {
                         path: 'input/reports/committee',
-                        element: <LazyRoute Component={CommitteeReport} />,
+                        element: (
+                            <LazyRoute Component={MillAdminCommitteeReport} />
+                        ),
                     },
                     {
                         path: 'input/reports/do',
-                        element: <LazyRoute Component={DoReport} />,
+                        element: <LazyRoute Component={MillAdminDoReport} />,
                     },
                     {
                         path: 'input/reports/vehicle',
-                        element: <LazyRoute Component={VehicleReport} />,
+                        element: (
+                            <LazyRoute Component={MillAdminVehicleReport} />
+                        ),
                     },
                     {
                         path: 'input/reports/staff',
-                        element: <LazyRoute Component={StaffReport} />,
+                        element: <LazyRoute Component={MillAdminStaffReport} />,
                     },
                     {
                         path: 'input/reports/labour-group',
-                        element: <LazyRoute Component={LabourGroupReport} />,
+                        element: (
+                            <LazyRoute Component={MillAdminLabourGroupReport} />
+                        ),
                     },
                 ],
             },

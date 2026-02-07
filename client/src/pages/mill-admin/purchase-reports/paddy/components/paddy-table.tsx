@@ -23,12 +23,12 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
-import { type PaddyPurchase } from '../data/schema'
+import { type PaddyPurchaseData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { paddyColumns as columns } from './paddy-columns'
 
 type DataTableProps = {
-    data: PaddyPurchase[]
+    data: PaddyPurchaseData[]
     search: Record<string, unknown>
     navigate: NavigateFn
 }

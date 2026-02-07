@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for Paddy Purchase records
 export const paddyPurchaseSchema = z.object({
+    id: z.string(),
     date: z.string().min(1, 'Date is required'),
     partyName: z.string().optional(),
     brokerName: z.string().optional(),
@@ -19,6 +20,8 @@ export const paddyPurchaseSchema = z.object({
     newGunnyRate: z.number().optional(),
     oldGunnyRate: z.number().optional(),
     plasticGunnyRate: z.number().optional(),
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional(),
 })
 
-export type PaddyPurchase = z.infer<typeof paddyPurchaseSchema>
+export type PaddyPurchaseData = z.infer<typeof paddyPurchaseSchema>

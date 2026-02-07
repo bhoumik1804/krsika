@@ -1,8 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -21,7 +19,9 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useCreateBroker, useUpdateBroker } from '../data/hooks'
 import { brokerReportSchema, type BrokerReportData } from '../data/schema'
+import { useBrokerReport } from './broker-report-provider'
 
 type BrokerReportActionDialogProps = {
     open: boolean
@@ -32,9 +32,15 @@ type BrokerReportActionDialogProps = {
 export function BrokerReportActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: BrokerReportActionDialogProps) {
+    const { currentRow, millId } = useBrokerReport()
+    const { mutate: createBroker, isPending: isCreating } =
+        useCreateBroker(millId)
+    const { mutate: updateBroker, isPending: isUpdating } =
+        useUpdateBroker(millId)
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
 
     const form = useForm<BrokerReportData>({
         resolver: zodResolver(brokerReportSchema),
@@ -54,20 +60,25 @@ export function BrokerReportActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating broker...' : 'Adding broker...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Broker updated successfully'
-                    : 'Broker added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update broker'
-                : 'Failed to add broker',
-        })
+    const onSubmit = (data: BrokerReportData) => {
+        if (isEditing) {
+            updateBroker(
+                { brokerId: currentRow?.id || '', data },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        } else {
+            createBroker(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
+        }
     }
 
     return (
@@ -94,9 +105,7 @@ export function BrokerReportActionDialog({
                                     name='brokerName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Broker Name
-                                            </FormLabel>
+                                            <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter broker name'
@@ -112,9 +121,7 @@ export function BrokerReportActionDialog({
                                     name='phone'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Phone
-                                            </FormLabel>
+                                            <FormLabel>Phone</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter phone number'
@@ -146,10 +153,8 @@ export function BrokerReportActionDialog({
                                     control={form.control}
                                     name='address'
                                     render={({ field }) => (
-                                        <FormItem className='col-span-2'>
-                                            <FormLabel>
-                                                Address
-                                            </FormLabel>
+                                        <FormItem>
+                                            <FormLabel>Address</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter address'
@@ -170,8 +175,15 @@ export function BrokerReportActionDialog({
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Broker
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}{' '}
+                                Broker
                             </Button>
                         </DialogFooter>
                     </form>

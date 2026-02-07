@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 export const ricePurchaseSchema = z.object({
+    id: z.string(),
     date: z.string().min(1, 'Date is required'),
     partyName: z.string().optional(),
     brokerName: z.string().optional(),
@@ -19,6 +20,8 @@ export const ricePurchaseSchema = z.object({
     frkType: z.string().optional(),
     frkRatePerQuintal: z.number().optional(),
     lotNumber: z.string().optional(),
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional(),
 })
 
-export type RicePurchase = z.infer<typeof ricePurchaseSchema>
+export type RicePurchaseData = z.infer<typeof ricePurchaseSchema>

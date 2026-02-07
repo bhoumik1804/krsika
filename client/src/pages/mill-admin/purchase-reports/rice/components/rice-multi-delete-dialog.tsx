@@ -1,6 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,23 +9,38 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeleteRicePurchases } from '../data/hooks'
+import { useRice } from './rice-provider'
+import { type RicePurchaseData } from '../data/schema'
 
-type RiceMultiDeleteDialogProps<TData> = {
-    table: Table<TData>
+type RiceMultiDeleteDialogProps = {
+    table: Table<RicePurchaseData>
     open: boolean
     onOpenChange: (open: boolean) => void
 }
 
-export function RiceMultiDeleteDialog<TData>({
+export function RiceMultiDeleteDialog({
     table,
     open,
     onOpenChange,
-}: RiceMultiDeleteDialogProps<TData>) {
+}: RiceMultiDeleteDialogProps) {
+    const { millId } = useRice()
+    const { mutate: bulkDeleteRicePurchases, isPending: isDeleting } =
+        useBulkDeleteRicePurchases(millId)
+
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting rice purchases...',
+        const ids = selectedRows.map(
+            (row) => (row.original as RicePurchaseData).id
+        )
+        bulkDeleteRicePurchases(ids, {
+            onSuccess: () => {
+                table.resetRowSelection()
+                onOpenChange(false)
+            },
+        })
+    }
             success: () => {
                 table.resetRowSelection()
                 onOpenChange(false)

@@ -27,17 +27,21 @@ export function ProtectedRoute({
     requiredRoles = [],
     fallbackPath = '/403',
 }: ProtectedRouteProps) {
-    const user = useAuthStore((state) => state.user)
-    const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
-    const { isLoading } = useUser()
+    const storeUser = useAuthStore((state) => state.user)
+    const { isLoading, isError, user: queryUser } = useUser()
+
+    // Determine the current user (prefer query user, fallback to store)
+    const user = queryUser ?? storeUser
 
     // Show loading while checking authentication
+    // This prevents redirecting to sign-in before the auth check completes on page refresh
     if (isLoading) {
         return <LoadingSpinner className='h-screen w-screen' />
     }
 
-    // Not authenticated
-    if (!user || !isAuthenticated) {
+    // Not authenticated - only redirect after query has completed
+    // isError indicates the auth check failed (e.g., 401 unauthorized)
+    if (!user || isError) {
         return <Navigate to='/sign-in' replace />
     }
 

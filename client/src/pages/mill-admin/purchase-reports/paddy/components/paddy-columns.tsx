@@ -6,10 +6,10 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 // import { statusStyles } from '../data/data'
-import { type PaddyPurchase } from '../data/schema'
+import { type PaddyPurchaseData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const paddyColumns: ColumnDef<PaddyPurchase>[] = [
+export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         id: 'select',
         header: ({ table }) => (

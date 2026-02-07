@@ -1,8 +1,14 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { Building2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { callTypes, roles } from '../data/data'
@@ -93,8 +99,46 @@ export const usersColumns: ColumnDef<User>[] = [
         cell: ({ row }) => {
             const { millId } = row.original
             return (
-                <div className='w-fit text-nowrap'>
-                    {millId?.millName || '-'}
+                <div className='w-fit'>
+                    {millId ? (
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <button className='inline-flex cursor-pointer items-center justify-center rounded-md p-1 transition-colors hover:bg-accent hover:text-accent-foreground'>
+                                    <Building2 size={18} />
+                                </button>
+                            </PopoverTrigger>
+                            <PopoverContent className='w-72'>
+                                <div className='space-y-2'>
+                                    <h4 className='text-sm font-semibold'>
+                                        Mill Details
+                                    </h4>
+                                    <div className='space-y-1 text-sm'>
+                                        <p>
+                                            <span className='text-muted-foreground'>
+                                                Name:
+                                            </span>{' '}
+                                            <span className='font-medium'>
+                                                {millId.millName}
+                                            </span>
+                                        </p>
+                                        <p>
+                                            <span className='text-muted-foreground'>
+                                                Status:
+                                            </span>{' '}
+                                            <Badge
+                                                variant='outline'
+                                                className='ms-2 capitalize'
+                                            >
+                                                {millId.status}
+                                            </Badge>
+                                        </p>
+                                    </div>
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                    ) : (
+                        <span className='text-muted-foreground'>-</span>
+                    )}
                 </div>
             )
         },
@@ -157,23 +201,6 @@ export const usersColumns: ColumnDef<User>[] = [
         },
         enableSorting: false,
         enableHiding: false,
-    },
-    {
-        accessorKey: 'lastLogin',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Last Login' />
-        ),
-        cell: ({ row }) => {
-            const { lastLogin } = row.original
-            if (!lastLogin)
-                return <div className='text-muted-foreground'>Never</div>
-            return (
-                <div className='text-sm text-nowrap'>
-                    {lastLogin.toLocaleDateString()}
-                </div>
-            )
-        },
-        enableSorting: true,
     },
     {
         id: 'actions',

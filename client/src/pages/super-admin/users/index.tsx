@@ -80,8 +80,12 @@ export function Users() {
         }))
     }, [usersResponse])
 
-    const activeUsers = usersData.filter((u) => u.status === 'active')
-    const guestUsers = usersData.filter((u) => u.role === 'guest-user')
+    // Determine active tab based on URL parameters
+    const getCurrentTab = () => {
+        if (search.role === 'guest-user') return 'guest'
+        if (search.isActive === 'true') return 'active'
+        return 'all'
+    }
 
     const sidebarData = superAdminSidebarData
 
@@ -112,7 +116,25 @@ export function Users() {
                     <UsersPrimaryButtons />
                 </div>
 
-                <Tabs defaultValue='all' className='flex-1'>
+                <Tabs
+                    value={getCurrentTab()}
+                    className='flex-1'
+                    onValueChange={(tab) => {
+                        const newSearch: Record<string, string> = {
+                            ...search,
+                            page: '1',
+                        } as Record<string, string>
+                        if (tab === 'active') {
+                            newSearch.isActive = 'true'
+                        } else if (tab === 'guest') {
+                            newSearch.role = 'guest-user'
+                        } else {
+                            delete newSearch.isActive
+                            delete newSearch.role
+                        }
+                        setSearchParams(newSearch)
+                    }}
+                >
                     <TabsList className='grid w-full grid-cols-3 md:w-[400px]'>
                         <TabsTrigger value='all'>All User</TabsTrigger>
                         <TabsTrigger value='active'>Active User</TabsTrigger>
@@ -139,9 +161,10 @@ export function Users() {
                             <LoadingSpinner className='h-full w-full' />
                         ) : (
                             <UsersTable
-                                data={activeUsers}
+                                data={usersData}
                                 search={search}
                                 navigate={navigate}
+                                pagination={usersResponse?.pagination}
                             />
                         )}
                     </TabsContent>
@@ -150,9 +173,10 @@ export function Users() {
                             <LoadingSpinner className='h-full w-full' />
                         ) : (
                             <UsersTable
-                                data={guestUsers}
+                                data={usersData}
                                 search={search}
                                 navigate={navigate}
+                                pagination={usersResponse?.pagination}
                             />
                         )}
                     </TabsContent>

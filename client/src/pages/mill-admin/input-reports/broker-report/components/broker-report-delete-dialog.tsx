@@ -1,5 +1,3 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,7 +8,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteBroker } from '../data/hooks'
 import { type BrokerReportData } from '../data/schema'
+import { useBrokerReport } from './broker-report-provider'
 
 type BrokerReportDeleteDialogProps = {
     open: boolean
@@ -21,17 +21,20 @@ type BrokerReportDeleteDialogProps = {
 export function BrokerReportDeleteDialog({
     open,
     onOpenChange,
-    currentRow,
 }: BrokerReportDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+    const { currentRow, millId } = useBrokerReport()
+    const { mutate: deleteBroker, isPending: isDeleting } =
+        useDeleteBroker(millId)
+
+    const handleDelete = (e: React.MouseEvent) => {
+        e.preventDefault() // Prevent default AlertDialog close behavior
+        if (currentRow?.id) {
+            deleteBroker(currentRow.id, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                },
+            })
+        }
     }
 
     return (
@@ -41,17 +44,21 @@ export function BrokerReportDeleteDialog({
                     <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
                         Are you sure you want to delete this record for{' '}
-                        <strong>{currentRow?.brokerName}</strong> on <br />
+                        <strong>{currentRow?.brokerName}</strong>?
+                        <br />
                         This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

@@ -1,5 +1,6 @@
 import {
     createCommitteeEntry,
+    bulkCreateCommitteeEntries,
     getCommitteeById,
     getCommitteeList,
     getCommitteeSummary,
@@ -21,6 +22,25 @@ export const createCommittee = async (req, res, next) => {
                 201,
                 { committee },
                 'Committee created successfully'
+            )
+        )
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const bulkCreateCommittee = async (req, res, next) => {
+    try {
+        const committees = await bulkCreateCommitteeEntries(
+            req.params.millId,
+            req.body,
+            req.user._id
+        )
+        res.status(201).json(
+            new ApiResponse(
+                201,
+                { committees, count: committees.length },
+                `${committees.length} committees created successfully`
             )
         )
     } catch (error) {

@@ -18,31 +18,10 @@ const CommitteeSchema = new Schema(
             required: true,
             trim: true,
         },
-        contactPerson: {
+        committeeType: {
             type: String,
-            trim: true,
-        },
-        phone: {
-            type: String,
-            trim: true,
-        },
-        email: {
-            type: String,
-            trim: true,
-            lowercase: true,
-        },
-        address: {
-            type: String,
-            trim: true,
-        },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
             required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
+            trim: true,
         },
     },
     {

@@ -1,26 +1,44 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { RiceDialogs } from './components/rice-dialogs'
 import { RicePrimaryButtons } from './components/rice-primary-buttons'
-import { RiceProvider } from './components/rice-provider'
+import { RiceProvider, useRice } from './components/rice-provider'
 import { RiceTable } from './components/rice-table'
-import { ricePurchases } from './data/rice-purchases'
 
 export function RicePurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+
+    // Extract query params from URL
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
-    // Convert URLSearchParams to record
-    const search = Object.fromEntries(searchParams.entries())
-
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
+        const search = Object.fromEntries(searchParams.entries())
         if (typeof opts.search === 'function') {
             const newSearch = opts.search(search)
             setSearchParams(newSearch as Record<string, string>)
@@ -32,7 +50,7 @@ export function RicePurchaseReport() {
     }
 
     return (
-        <RiceProvider>
+        <RiceProvider millId={millId || ''} initialQueryParams={queryParams}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -57,14 +75,47 @@ export function RicePurchaseReport() {
                     </div>
                     <RicePrimaryButtons />
                 </div>
-                <RiceTable
-                    data={ricePurchases}
-                    search={search}
-                    navigate={navigate}
-                />
+                <RicePurchaseContent navigate={navigate} />
             </Main>
 
             <RiceDialogs />
         </RiceProvider>
+    )
+}
+
+// Separate component to use context hook
+function RicePurchaseContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const context = useRice()
+
+    if (context.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (context.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                Failed to load rice purchase data. Please try again later.
+            </div>
+        )
+    }
+
+    return (
+        <RiceTable
+            data={context.data}
+            search={Object.fromEntries(
+                Object.entries(context.queryParams || {})
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => [key, String(value)])
+            )}
+            navigate={navigate}
+        />
     )
 }

@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { brokerReport } from './broker-report-provider'
+import { useBrokerReport } from './broker-report-provider'
 
 export function BrokerReportPrimaryButtons() {
-    const { setOpen } = brokerReport()
+    const { setOpen } = useBrokerReport()
 
     return (
         <Button onClick={() => setOpen('add')}>

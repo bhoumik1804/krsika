@@ -3,8 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -36,7 +34,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import { paddyPurchaseSchema, type PaddyPurchase } from '../data/schema'
+import { paddyPurchaseSchema, type PaddyPurchaseData } from '../data/schema'
+import {
+    useCreatePaddyPurchase,
+    useUpdatePaddyPurchase,
+} from '../data/hooks'
+import { usePaddy } from './paddy-provider'
 import {
     paddyTypeOptions,
     deliveryTypeOptions,
@@ -47,15 +50,20 @@ import {
 type PaddyActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: PaddyPurchase | null
 }
 
 export function PaddyActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: PaddyActionDialogProps) {
+    const { currentRow, millId } = usePaddy()
+    const { mutate: createPaddyPurchase, isPending: isCreating } =
+        useCreatePaddyPurchase(millId)Data
+    const { mutate: updatePaddyPurchase, isPending: isUpdating } =
+        useUpdatePaddyPurchase(millId)
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
     const form = useForm<PaddyPurchase>({
@@ -109,20 +117,25 @@ export function PaddyActionDialog({
         }
     }, [isDOPurchase, watchDoPaddyQty, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Purchase updated successfully'
-                    : 'Purchase added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update purchase'
-                : 'Failed to add purchase',
-        })
+    const onSubmit = (data: PaddyPurchaseData) => {
+        if (isEditing) {
+            updatePaddyPurchase(
+                { purchaseId: currentRow?.id || '', data },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        } else {
+            createPaddyPurchase(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
+        }
     }
 
     return (
@@ -713,11 +726,18 @@ export function PaddyActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Purchase
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

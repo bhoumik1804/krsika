@@ -6,6 +6,7 @@ import {
     type UserRole,
 } from '@/constants'
 import { type SidebarData } from '../types'
+import { getGuestUserSidebarData } from './guest-user-sidebar-data'
 import { getMillAdminSidebarData } from './mill-admin-sidebar-data'
 import { getMillStaffSidebarData } from './mill-staff-sidebar-data'
 import { superAdminSidebarData } from './super-admin-sidebar-data'
@@ -29,6 +30,7 @@ export const SIDEBAR_FACTORIES: Readonly<Record<UserRole, SidebarFactory>> = {
     'super-admin': () => superAdminSidebarData,
     'mill-admin': (ctx) => getMillAdminSidebarData(ctx?.millId || ''),
     'mill-staff': (ctx) => getMillStaffSidebarData(ctx?.millId || ''),
+    'guest-user': () => getGuestUserSidebarData(),
 } as const
 
 // ==========================================
@@ -41,7 +43,10 @@ export const SIDEBAR_FACTORIES: Readonly<Record<UserRole, SidebarFactory>> = {
  * @returns True if the role is a valid UserRole
  */
 export function isValidRole(role: unknown): role is UserRole {
-    return typeof role === 'string' && USER_ROLES.includes(role as UserRole)
+    return (
+        typeof role === 'string' &&
+        Object.values(USER_ROLES).includes(role as UserRole)
+    )
 }
 
 /**
