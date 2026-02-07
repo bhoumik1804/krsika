@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { format } from 'date-fns/format'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -41,7 +42,9 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -79,33 +82,40 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Dhan (Mota)' />
         ),
-        cell: ({ row }) => (
-            <div className='text-right'>
-                {(row.getValue('dhanMota') as number).toFixed(2)}
-            </div>
-        ),
+        cell: ({ row }) => {
+            const value = row.getValue('dhanMota') as number | undefined
+            return <div className='text-right'>{value}</div>
+        },
     },
     {
         accessorKey: 'dhanPatla',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Dhan (Patla)' />
         ),
-        cell: ({ row }) => (
-            <div className='text-right'>
-                {(row.getValue('dhanPatla') as number).toFixed(2)}
-            </div>
-        ),
+        cell: ({ row }) => {
+            const value = row.getValue('dhanPatla') as number | undefined
+            return <div className='text-right'>{value}</div>
+        },
     },
     {
         accessorKey: 'dhanSarna',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Dhan (Sarna)' />
         ),
-        cell: ({ row }) => (
-            <div className='text-right'>
-                {(row.getValue('dhanSarna') as number).toFixed(2)}
-            </div>
+        cell: ({ row }) => {
+            const value = row.getValue('dhanSarna') as number | undefined
+            return <div className='text-right'>{value}</div>
+        },
+    },
+    {
+        accessorKey: 'total',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Total' />
         ),
+        cell: ({ row }) => {
+            const total = row.getValue('total') as number | undefined
+            return <div className='text-right font-semibold'>{total}</div>
+        },
     },
     {
         id: 'actions',

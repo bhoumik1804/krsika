@@ -3,17 +3,28 @@ import { DoReport } from '../models/do-report.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createDoReportEntry = async (millId, data, userId) => {
-    const entry = new DoReport({ ...data, millId, createdBy: userId })
+export const createDoReportEntry = async (millId, data) => {
+    const entry = new DoReport({ ...data, millId })
     await entry.save()
-    logger.info('DO report entry created', { id: entry._id, millId, userId })
+    logger.info('DO report entry created', { id: entry._id, millId })
     return entry
+}
+
+export const bulkCreateDoReportEntries = async (millId, reports) => {
+    const reportData = reports.map((r) => ({
+        ...r,
+        millId,
+    }))
+    const result = await DoReport.insertMany(reportData)
+    logger.info('DO report entries bulk created', {
+        millId,
+        count: result.length,
+    })
+    return result
 }
 
 export const getDoReportById = async (millId, id) => {
     const entry = await DoReport.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'DO report entry not found')
     return entry
 }
@@ -23,36 +34,21 @@ export const getDoReportList = async (millId, options = {}) => {
         page = 1,
         limit = 10,
         search,
-        sortBy = 'createdAt',
+        sortBy = 'date',
         sortOrder = 'desc',
     } = options
     const matchStage = { millId: new mongoose.Types.ObjectId(millId) }
 
     if (search) {
         matchStage.$or = [
-            { doNumber: { $regex: search, $options: 'i' } },
-            { partyName: { $regex: search, $options: 'i' } },
+            { samitiSangrahan: { $regex: search, $options: 'i' } },
+            { doNo: { $regex: search, $options: 'i' } },
         ]
     }
 
     const aggregate = DoReport.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
 
     const result = await DoReport.aggregatePaginate(aggregate, {
@@ -93,24 +89,39 @@ export const getDoReportSummary = async (millId) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalQuantity: { $sum: '$quantity' },
+                totalDhanMota: { $sum: '$dhanMota' },
+                totalDhanPatla: { $sum: '$dhanPatla' },
+                totalDhanSarna: { $sum: '$dhanSarna' },
             },
         },
-        { $project: { _id: 0, totalEntries: 1, totalQuantity: 1 } },
+        {
+            $project: {
+                _id: 0,
+                totalEntries: 1,
+                totalDhanMota: 1,
+                totalDhanPatla: 1,
+                totalDhanSarna: 1,
+            },
+        },
     ])
-    return summary || { totalEntries: 0, totalQuantity: 0 }
+    return (
+        summary || {
+            totalEntries: 0,
+            totalDhanMota: 0,
+            totalDhanPatla: 0,
+            totalDhanSarna: 0,
+        }
+    )
 }
 
-export const updateDoReportEntry = async (millId, id, data, userId) => {
+export const updateDoReportEntry = async (millId, id, data) => {
     const entry = await DoReport.findOneAndUpdate(
         { _id: id, millId },
-        { ...data, updatedBy: userId },
+        { ...data },
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'DO report entry not found')
-    logger.info('DO report entry updated', { id, millId, userId })
+    logger.info('DO report entry updated', { id, millId })
     return entry
 }
 

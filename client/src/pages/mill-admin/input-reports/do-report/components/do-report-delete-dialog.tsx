@@ -1,5 +1,4 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useParams } from 'react-router'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,7 +9,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteDoReport } from '../data/hooks'
 import { type DoReportData } from '../data/schema'
+import { doReport } from './do-report-provider'
 
 type DoReportDeleteDialogProps = {
     open: boolean
@@ -23,19 +24,33 @@ export function DoReportDeleteDialog({
     onOpenChange,
     currentRow,
 }: DoReportDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+    const { setCurrentRow } = doReport()
+    const { millId } = useParams<{ millId: string }>()
+    const { mutate: deleteDoReport, isPending: isDeleting } = useDeleteDoReport(
+        millId || ''
+    )
+
+    const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        if (currentRow?._id) {
+            deleteDoReport(currentRow._id, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    setCurrentRow(null)
+                },
+            })
+        }
+    }
+
+    const handleDialogClose = (isOpen: boolean) => {
+        if (!isOpen) {
+            setCurrentRow(null)
+        }
+        onOpenChange(isOpen)
     }
 
     return (
-        <AlertDialog open={open} onOpenChange={onOpenChange}>
+        <AlertDialog open={open} onOpenChange={handleDialogClose}>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Delete Record?</AlertDialogTitle>
@@ -46,12 +61,15 @@ export function DoReportDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

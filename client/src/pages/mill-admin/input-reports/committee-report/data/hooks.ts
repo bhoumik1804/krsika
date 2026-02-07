@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import type { CommitteeReportData } from './schema'
-import { committeeService } from './service'
+import { committeeService, type CommitteeListResponse } from './service'
 
 // Query key factory for committees
 const committeeQueryKeys = {
@@ -14,16 +14,20 @@ const committeeQueryKeys = {
 interface UseCommitteeListParams {
     millId: string
     page?: number
-    pageSize?: number
+    limit?: number
     search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
 }
 
 export const useCommitteeList = (params: UseCommitteeListParams) => {
-    return useQuery({
+    return useQuery<CommitteeListResponse, Error>({
         queryKey: committeeQueryKeys.list(params.millId, {
             page: params.page,
-            pageSize: params.pageSize,
+            limit: params.limit,
             search: params.search,
+            sortBy: params.sortBy,
+            sortOrder: params.sortOrder,
         }),
         queryFn: () => committeeService.fetchCommitteeList(params),
         enabled: !!params.millId,

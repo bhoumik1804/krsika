@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { useCommitteeList } from '../data/hooks'
 import { type CommitteeReportData } from '../data/schema'
@@ -17,8 +17,20 @@ type CommitteeReportContextType = {
     open: CommitteeReportDialogType | null
     setOpen: (str: CommitteeReportDialogType | null) => void
     currentRow: CommitteeReportData | null
-    setCurrentRow: React.Dispatch<React.SetStateAction<CommitteeReportData | null>>
+    setCurrentRow: React.Dispatch<
+        React.SetStateAction<CommitteeReportData | null>
+    >
     data: CommitteeReportData[]
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
     isLoading: boolean
     isError: boolean
     millId: string
@@ -55,15 +67,17 @@ export function CommitteeReportProvider({
     const [queryParams, setQueryParams] =
         useState<QueryParams>(initialQueryParams)
 
-    const {
-        data = [],
-        isLoading,
-        isError,
-    } = useCommitteeList({
+    useEffect(() => {
+        setQueryParams(initialQueryParams)
+    }, [initialQueryParams])
+
+    const { data, isLoading, isError } = useCommitteeList({
         millId,
         page: queryParams.page,
-        pageSize: queryParams.limit,
+        limit: queryParams.limit,
         search: queryParams.search,
+        sortBy: queryParams.sortBy,
+        sortOrder: queryParams.sortOrder,
     })
 
     return (
@@ -73,7 +87,8 @@ export function CommitteeReportProvider({
                 setOpen,
                 currentRow,
                 setCurrentRow,
-                data,
+                data: data?.committees ?? [],
+                pagination: data?.pagination,
                 isLoading,
                 isError,
                 millId,

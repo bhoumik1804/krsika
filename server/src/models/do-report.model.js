@@ -13,41 +13,33 @@ const DoReportSchema = new Schema(
             required: true,
             index: true,
         },
-        doNumber: {
-            type: String,
-            required: true,
-            trim: true,
-        },
         date: {
             type: Date,
             required: true,
         },
-        partyName: {
+        samitiSangrahan: {
             type: String,
-            trim: true,
+            optional: true,
         },
-        itemType: {
+        doNo: {
             type: String,
-            trim: true,
+            optional: true,
         },
-        quantity: {
+        dhanMota: {
             type: Number,
-            min: 0,
+            optional: true,
         },
-        validFrom: {
-            type: Date,
+        dhanPatla: {
+            type: Number,
+            optional: true,
         },
-        validTo: {
-            type: Date,
+        dhanSarna: {
+            type: Number,
+            optional: true,
         },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
+        total: {
+            type: Number,
+            optional: true,
         },
     },
     {
@@ -55,8 +47,6 @@ const DoReportSchema = new Schema(
     }
 )
 
-// Compound indexes for common queries
-DoReportSchema.index({ millId: 1, doNumber: 1 })
 DoReportSchema.index({ millId: 1, date: -1 })
 
 // Ensure virtuals are included in JSON output

@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -10,7 +11,7 @@ import { DoReportDialogs } from './components/do-report-dialogs'
 import { DoReportPrimaryButtons } from './components/do-report-primary-buttons'
 import { DoReportProvider } from './components/do-report-provider'
 import { DoReportTable } from './components/do-report-table'
-import { doReportEntries } from './data/do-report-entries'
+import { useDoReportList } from './data/hooks'
 
 export function DoReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +19,25 @@ export function DoReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const {
+        data: response,
+        isLoading,
+        isError,
+    } = useDoReportList(millId || '', queryParams, { enabled: !!millId })
+
+    const doReportData = useMemo(() => response?.reports ?? [], [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -48,7 +68,7 @@ export function DoReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Do Report Report
+                            DO Report
                         </h2>
                         <p className='text-muted-foreground'>
                             Manage do report transactions and records
@@ -57,9 +77,12 @@ export function DoReport() {
                     <DoReportPrimaryButtons />
                 </div>
                 <DoReportTable
-                    data={doReportEntries}
+                    data={doReportData}
                     search={search}
                     navigate={navigate}
+                    isLoading={isLoading}
+                    isError={isError}
+                    pagination={response?.pagination}
                 />
             </Main>
 

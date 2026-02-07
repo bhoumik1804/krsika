@@ -56,7 +56,7 @@ export function MillingPaddyActionDialog({
     const form = useForm<MillingPaddy>({
         resolver: zodResolver(millingPaddySchema),
         defaultValues: {
-            date: '',
+            date: format(new Date(), 'yyyy-MM-dd'),
             paddyType: '',
             hopperInGunny: undefined,
             hopperInQintal: undefined,

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import {
     createDoReport,
+    bulkCreateDoReport,
     getDoReportByIdHandler,
     getDoReportListHandler,
     getDoReportSummaryHandler,
@@ -12,6 +13,7 @@ import { authenticate } from '../middlewares/auth.js'
 import { validate } from '../middlewares/validate.js'
 import {
     createDoReportSchema,
+    bulkCreateDoReportSchema,
     updateDoReportSchema,
     getDoReportByIdSchema,
     deleteDoReportSchema,
@@ -53,6 +55,14 @@ router.get(
 
 // Create a new DO report
 router.post('/', authenticate, validate(createDoReportSchema), createDoReport)
+
+// Bulk create DO reports
+router.post(
+    '/bulk',
+    authenticate,
+    validate(bulkCreateDoReportSchema),
+    bulkCreateDoReport
+)
 
 // Update a DO report
 router.put(

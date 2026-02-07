@@ -116,6 +116,7 @@ function CommitteeReportContent({
     return (
         <CommitteeReportTable
             data={context.data}
+            pagination={context.pagination}
             search={Object.fromEntries(
                 Object.entries(context.queryParams || {})
                     .filter(([, value]) => value !== undefined)

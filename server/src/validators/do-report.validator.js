@@ -7,28 +7,28 @@ import { z } from 'zod'
 
 // Common fields schema
 const doReportBaseSchema = {
-    doNumber: z
-        .string({ required_error: 'DO number is required' })
-        .trim()
-        .min(1, 'DO number cannot be empty')
-        .max(100, 'DO number is too long'),
     date: z
         .string({ required_error: 'Date is required' })
         .refine((val) => !isNaN(Date.parse(val)), 'Invalid date format'),
-    partyName: z.string().trim().max(200, 'Party name is too long').optional(),
-    itemType: z.string().trim().max(100, 'Item type is too long').optional(),
-    quantity: z.coerce
+    samitiSangrahan: z
+        .string()
+        .trim()
+        .max(200, 'Samiti sangrahan is too long')
+        .optional(),
+    doNo: z.string().trim().max(100, 'DO number is too long').optional(),
+    dhanMota: z.coerce
         .number()
-        .min(0, 'Quantity cannot be negative')
+        .min(0, 'Dhan mota cannot be negative')
         .optional(),
-    validFrom: z
-        .string()
-        .refine((val) => !val || !isNaN(Date.parse(val)), 'Invalid date format')
+    dhanPatla: z.coerce
+        .number()
+        .min(0, 'Dhan patla cannot be negative')
         .optional(),
-    validTo: z
-        .string()
-        .refine((val) => !val || !isNaN(Date.parse(val)), 'Invalid date format')
+    dhanSarna: z.coerce
+        .number()
+        .min(0, 'Dhan sarna cannot be negative')
         .optional(),
+    total: z.coerce.number().min(0, 'Total cannot be negative').optional(),
 }
 
 // Create DO report schema
@@ -41,10 +41,31 @@ export const createDoReportSchema = z.object({
     }),
 })
 
+// Bulk create DO reports schema
+// Date is shared for all reports in the batch
+export const bulkCreateDoReportSchema = z.object({
+    body: z
+        .array(
+            z.object({
+                date: doReportBaseSchema.date,
+                samitiSangrahan: doReportBaseSchema.samitiSangrahan,
+                doNo: doReportBaseSchema.doNo,
+                dhanMota: doReportBaseSchema.dhanMota,
+                dhanPatla: doReportBaseSchema.dhanPatla,
+                dhanSarna: doReportBaseSchema.dhanSarna,
+                total: doReportBaseSchema.total,
+            }),
+            { required_error: 'Reports array is required' }
+        )
+        .min(1, 'At least one DO report is required'),
+    params: z.object({
+        millId: z.string({ required_error: 'Mill ID is required' }),
+    }),
+})
+
 // Update DO report schema
 export const updateDoReportSchema = z.object({
     body: z.object({
-        doNumber: doReportBaseSchema.doNumber.optional(),
         date: z
             .string()
             .refine(
@@ -52,11 +73,12 @@ export const updateDoReportSchema = z.object({
                 'Invalid date format'
             )
             .optional(),
-        partyName: doReportBaseSchema.partyName,
-        itemType: doReportBaseSchema.itemType,
-        quantity: doReportBaseSchema.quantity,
-        validFrom: doReportBaseSchema.validFrom,
-        validTo: doReportBaseSchema.validTo,
+        samitiSangrahan: doReportBaseSchema.samitiSangrahan,
+        doNo: doReportBaseSchema.doNo,
+        dhanMota: doReportBaseSchema.dhanMota,
+        dhanPatla: doReportBaseSchema.dhanPatla,
+        dhanSarna: doReportBaseSchema.dhanSarna,
+        total: doReportBaseSchema.total,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
@@ -102,7 +124,7 @@ export const getDoReportListSchema = z.object({
         limit: z.coerce.number().int().min(1).max(100).default(10).optional(),
         search: z.string().trim().optional(),
         sortBy: z
-            .enum(['doNumber', 'date', 'partyName', 'createdAt'])
+            .enum(['date', 'samitiSangrahan', 'doNo', 'createdAt'])
             .default('date')
             .optional(),
         sortOrder: z.enum(['asc', 'desc']).default('desc').optional(),

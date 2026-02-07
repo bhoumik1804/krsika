@@ -1,5 +1,6 @@
 import {
     createDoReportEntry,
+    bulkCreateDoReportEntries,
     getDoReportById,
     getDoReportList,
     getDoReportSummary,
@@ -11,13 +12,27 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 
 export const createDoReport = async (req, res, next) => {
     try {
-        const report = await createDoReportEntry(
-            req.params.millId,
-            req.body,
-            req.user._id
-        )
+        const report = await createDoReportEntry(req.params.millId, req.body)
         res.status(201).json(
             new ApiResponse(201, { report }, 'DO report created')
+        )
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const bulkCreateDoReport = async (req, res, next) => {
+    try {
+        const reports = await bulkCreateDoReportEntries(
+            req.params.millId,
+            req.body
+        )
+        res.status(201).json(
+            new ApiResponse(
+                201,
+                { reports, count: reports.length },
+                `${reports.length} DO reports created successfully`
+            )
         )
     } catch (error) {
         next(error)
@@ -73,8 +88,7 @@ export const updateDoReportHandler = async (req, res, next) => {
         const report = await updateDoReportEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(200, { report }, 'DO report updated')

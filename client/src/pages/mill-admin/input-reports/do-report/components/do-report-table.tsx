@@ -22,18 +22,36 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type DoReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { doReportColumns as columns } from './do-report-columns'
+
+interface PaginationInfo {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasPrevPage: boolean
+    hasNextPage: boolean
+    prevPage: number | null
+    nextPage: number | null
+}
 
 type DataTableProps = {
     data: DoReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: PaginationInfo
+    isLoading?: boolean
+    isError?: boolean
 }
 
-export function DoReportTable({ data, search, navigate }: DataTableProps) {
+export function DoReportTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -49,11 +67,20 @@ export function DoReportTable({ data, search, navigate }: DataTableProps) {
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
+            {
+                columnId: 'samitiSangrahan',
+                searchKey: 'search',
+                type: 'string',
+            },
         ],
     })
 
@@ -74,17 +101,22 @@ export function DoReportTable({ data, search, navigate }: DataTableProps) {
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
+        // Use server-side pagination info when available
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        getPaginationRowModel: getPaginationRowModel(),
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -96,14 +128,8 @@ export function DoReportTable({ data, search, navigate }: DataTableProps) {
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
+                searchKey='search'
+                filters={[]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>
