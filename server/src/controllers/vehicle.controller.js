@@ -11,11 +11,7 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 
 export const createVehicle = async (req, res, next) => {
     try {
-        const vehicle = await createVehicleEntry(
-            req.params.millId,
-            req.body,
-            req.user._id
-        )
+        const vehicle = await createVehicleEntry(req.params.millId, req.body)
         res.status(201).json(
             new ApiResponse(201, { vehicle }, 'Vehicle created successfully')
         )
@@ -73,8 +69,7 @@ export const updateVehicleHandler = async (req, res, next) => {
         const vehicle = await updateVehicleEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(200, { vehicle }, 'Vehicle updated successfully')

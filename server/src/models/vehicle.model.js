@@ -13,48 +13,16 @@ const VehicleSchema = new Schema(
             required: true,
             index: true,
         },
-        vehicleNumber: {
+        truckNo: {
             type: String,
             required: true,
             trim: true,
-        },
-        vehicleType: {
-            type: String,
-            trim: true,
-        },
-        transporterName: {
-            type: String,
-            trim: true,
-        },
-        driverName: {
-            type: String,
-            trim: true,
-        },
-        driverPhone: {
-            type: String,
-            trim: true,
-        },
-        capacity: {
-            type: Number,
-            min: 0,
-        },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
         },
     },
     {
         timestamps: true,
     }
 )
-
-// Compound indexes for common queries
-VehicleSchema.index({ millId: 1, vehicleNumber: 1 })
 
 // Ensure virtuals are included in JSON output
 VehicleSchema.set('toJSON', { virtuals: true })

@@ -38,12 +38,10 @@ export function VehicleReport() {
     } = useVehicleList(millId || '', queryParams, { enabled: !!millId })
 
     const vehicleReportData = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
+        if (!response?.vehicles) return []
+        return response.vehicles.map((item) => ({
+            _id: item._id,
+            truckNo: item.truckNo || '',
         }))
     }, [response])
 
@@ -76,7 +74,7 @@ export function VehicleReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Vehicle Report Report
+                            Vehicle Report
                         </h2>
                         <p className='text-muted-foreground'>
                             Manage vehicle report transactions and records
@@ -90,7 +88,7 @@ export function VehicleReport() {
                     navigate={navigate}
                     isLoading={isLoading}
                     isError={isError}
-                    totalRows={response?.pagination?.total}
+                    pagination={response?.pagination}
                 />
             </Main>
 

@@ -7,35 +7,11 @@ import { z } from 'zod'
 
 // Common fields schema
 const vehicleBaseSchema = {
-    vehicleNumber: z
-        .string({ required_error: 'Vehicle number is required' })
+    truckNo: z
+        .string({ required_error: 'Truck number is required' })
         .trim()
-        .min(1, 'Vehicle number cannot be empty')
-        .max(50, 'Vehicle number is too long'),
-    vehicleType: z
-        .string()
-        .trim()
-        .max(100, 'Vehicle type is too long')
-        .optional(),
-    transporterName: z
-        .string()
-        .trim()
-        .max(200, 'Transporter name is too long')
-        .optional(),
-    driverName: z
-        .string()
-        .trim()
-        .max(200, 'Driver name is too long')
-        .optional(),
-    driverPhone: z
-        .string()
-        .trim()
-        .max(20, 'Driver phone is too long')
-        .optional(),
-    capacity: z.coerce
-        .number()
-        .min(0, 'Capacity cannot be negative')
-        .optional(),
+        .min(1, 'Truck number cannot be empty')
+        .max(50, 'Truck number is too long'),
 }
 
 // Create vehicle schema
@@ -51,12 +27,7 @@ export const createVehicleSchema = z.object({
 // Update vehicle schema
 export const updateVehicleSchema = z.object({
     body: z.object({
-        vehicleNumber: vehicleBaseSchema.vehicleNumber.optional(),
-        vehicleType: vehicleBaseSchema.vehicleType,
-        transporterName: vehicleBaseSchema.transporterName,
-        driverName: vehicleBaseSchema.driverName,
-        driverPhone: vehicleBaseSchema.driverPhone,
-        capacity: vehicleBaseSchema.capacity,
+        truckNo: vehicleBaseSchema.truckNo.optional(),
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
@@ -101,10 +72,7 @@ export const getVehicleListSchema = z.object({
         page: z.coerce.number().int().min(1).default(1).optional(),
         limit: z.coerce.number().int().min(1).max(100).default(10).optional(),
         search: z.string().trim().optional(),
-        sortBy: z
-            .enum(['vehicleNumber', 'vehicleType', 'createdAt'])
-            .default('vehicleNumber')
-            .optional(),
+        sortBy: z.enum(['truckNo', 'createdAt']).default('truckNo').optional(),
         sortOrder: z.enum(['asc', 'desc']).default('asc').optional(),
     }),
 })

@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -10,7 +11,7 @@ import { VehicleReportDialogs } from './components/vehicle-report-dialogs'
 import { VehicleReportPrimaryButtons } from './components/vehicle-report-primary-buttons'
 import { VehicleReportProvider } from './components/vehicle-report-provider'
 import { VehicleReportTable } from './components/vehicle-report-table'
-import { vehicleReportEntries } from './data/vehicle-report-entries'
+import { useVehicleList } from './data/hooks'
 
 export function VehicleReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +19,32 @@ export function VehicleReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const {
+        data: response,
+        isLoading,
+        isError,
+    } = useVehicleList(millId || '', queryParams, { enabled: !!millId })
+
+    const vehicleData = useMemo(
+        () =>
+            response?.vehicles.map((vehicle) => ({
+                _id: vehicle._id,
+                truckNo: vehicle.truckNo || '',
+            })) ?? [],
+        [response]
+    )
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -48,7 +75,7 @@ export function VehicleReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Vehicle Report Report
+                            Vehicle Report
                         </h2>
                         <p className='text-muted-foreground'>
                             Manage vehicle report transactions and records
@@ -57,9 +84,12 @@ export function VehicleReport() {
                     <VehicleReportPrimaryButtons />
                 </div>
                 <VehicleReportTable
-                    data={vehicleReportEntries}
+                    data={vehicleData}
                     search={search}
                     navigate={navigate}
+                    isLoading={isLoading}
+                    isError={isError}
+                    pagination={response?.pagination}
                 />
             </Main>
 

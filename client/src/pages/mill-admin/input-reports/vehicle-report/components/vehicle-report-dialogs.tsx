@@ -3,15 +3,20 @@ import { VehicleReportDeleteDialog } from './vehicle-report-delete-dialog'
 import { vehicleReport } from './vehicle-report-provider'
 
 export function VehicleReportDialogs() {
-    const { open, setOpen, currentRow } = vehicleReport()
+    const { open, setOpen, currentRow, setCurrentRow } = vehicleReport()
+
+    const handleDialogChange = (isOpen: boolean) => {
+        if (!isOpen) {
+            setCurrentRow(null)
+        }
+        setOpen(isOpen ? open : null)
+    }
 
     return (
         <>
             <VehicleReportActionDialog
                 open={open === 'add' || open === 'edit'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? open : null)
-                }
+                onOpenChange={handleDialogChange}
                 currentRow={currentRow}
             />
             <VehicleReportDeleteDialog

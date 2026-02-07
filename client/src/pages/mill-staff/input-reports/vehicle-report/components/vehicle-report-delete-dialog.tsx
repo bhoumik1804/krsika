@@ -1,3 +1,5 @@
+import { useUser } from '@/pages/landing/hooks/use-auth'
+import { useParams } from 'react-router'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -8,9 +10,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { type VehicleReportData } from '../data/schema'
 import { useDeleteVehicle } from '../data/hooks'
-import { useUser } from '@/pages/landing/hooks/use-auth'
+import { type VehicleReportData } from '../data/schema'
 
 type VehicleReportDeleteDialogProps = {
     open: boolean
@@ -24,12 +25,13 @@ export function VehicleReportDeleteDialog({
     currentRow,
 }: VehicleReportDeleteDialogProps) {
     const { user } = useUser()
-    const millId = user?.millId as any
+    const { millId: routeMillId } = useParams<{ millId: string }>()
+    const millId = user?.millId || routeMillId || ''
     const deleteMutation = useDeleteVehicle(millId)
 
     const handleDelete = async () => {
-        if (!currentRow?._id) return
-        
+        if (!currentRow?._id || !millId) return
+
         try {
             await deleteMutation.mutateAsync(currentRow._id)
             onOpenChange(false)
@@ -51,7 +53,9 @@ export function VehicleReportDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel disabled={deleteMutation.isPending}>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={deleteMutation.isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         disabled={deleteMutation.isPending}

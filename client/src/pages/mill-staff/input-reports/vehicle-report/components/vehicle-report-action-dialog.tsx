@@ -57,18 +57,22 @@ export function VehicleReportActionDialog({
     }, [currentRow, form])
 
     const onSubmit = async (data: VehicleReportData) => {
+        const payload = {
+            truckNo: data.truckNo,
+        }
         try {
             if (isEditing && currentRow?._id) {
                 await updateMutation.mutateAsync({
                     id: currentRow._id,
-                    ...data,
+                    ...payload,
                 })
             } else {
-                const { _id, id, ...createData } = data
-                await createMutation.mutateAsync(createData)
+                await createMutation.mutateAsync(payload)
             }
             onOpenChange(false)
-            form.reset()
+            form.reset({
+                truckNo: '',
+            })
         } catch (error) {
             console.error('Error submitting form:', error)
         }

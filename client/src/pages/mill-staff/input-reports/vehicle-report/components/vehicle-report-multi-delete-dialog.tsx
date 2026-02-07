@@ -1,6 +1,5 @@
 import { type Table } from '@tanstack/react-table'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useUser } from '@/pages/landing/hooks/use-auth'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,6 +10,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeleteVehicle } from '../data/hooks'
 
 type VehicleReportMultiDeleteDialogProps<TData> = {
     table: Table<TData>
@@ -24,17 +24,26 @@ export function VehicleReportMultiDeleteDialog<TData>({
     onOpenChange,
 }: VehicleReportMultiDeleteDialogProps<TData>) {
     const selectedRows = table.getFilteredSelectedRowModel().rows
+    const { user } = useUser()
+    const millId = user?.millId as string
+    const bulkDeleteMutation = useBulkDeleteVehicle(millId)
 
-    const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                table.resetRowSelection()
-                onOpenChange(false)
-                return `Deleted ${selectedRows.length} record${selectedRows.length > 1 ? 's' : ''}`
-            },
-            error: 'Error deleting records',
-        })
+    const handleDeleteSelected = async () => {
+        const ids = selectedRows
+            .map((row) => (row.original as { _id?: string })._id)
+            .filter((id): id is string => !!id)
+
+        if (ids.length === 0) {
+            return
+        }
+
+        try {
+            await bulkDeleteMutation.mutateAsync(ids)
+            table.resetRowSelection()
+            onOpenChange(false)
+        } catch (error) {
+            console.error('Bulk delete error:', error)
+        }
     }
 
     return (
@@ -52,12 +61,17 @@ export function VehicleReportMultiDeleteDialog<TData>({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={bulkDeleteMutation.isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
+                        disabled={bulkDeleteMutation.isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {bulkDeleteMutation.isPending
+                            ? 'Deleting...'
+                            : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

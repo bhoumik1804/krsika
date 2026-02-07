@@ -7,6 +7,7 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -26,11 +27,22 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { vehicleReportColumns as columns } from './vehicle-report-columns'
 
+interface PaginationInfo {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasPrevPage: boolean
+    hasNextPage: boolean
+    prevPage: number | null
+    nextPage: number | null
+}
+
 type DataTableProps = {
     data: any[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    totalRows?: number
+    pagination?: PaginationInfo
     isLoading?: boolean
     isError?: boolean
 }
@@ -39,7 +51,7 @@ export function VehicleReportTable({
     data,
     search,
     navigate,
-    totalRows,
+    pagination: serverPagination,
     // isLoading,
     // isError,
 }: DataTableProps) {
@@ -63,10 +75,11 @@ export function VehicleReportTable({
             pageSizeKey: 'limit',
             defaultPage: 1,
             defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
         },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
+            { columnId: 'truckNo', searchKey: 'search', type: 'string' },
         ],
     })
 
@@ -87,27 +100,22 @@ export function VehicleReportTable({
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        // DO NOT use getPaginationRowModel() - pagination is handled server-side
+        // Use server-side pagination info when available
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-        // Set manual pageCount for server-side pagination
-        pageCount:
-            totalRows !== undefined
-                ? Math.ceil(totalRows / (pagination.pageSize || 10))
-                : undefined,
-        manualPagination: true,
+        getPaginationRowModel: getPaginationRowModel(),
     })
 
     useEffect(() => {
-        if (totalRows !== undefined) {
-            ensurePageInRange(
-                Math.ceil(totalRows / (pagination.pageSize || 10))
-            )
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
         }
-    }, [totalRows, pagination.pageSize, ensurePageInRange])
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -119,7 +127,7 @@ export function VehicleReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='partyName'
+                searchKey='search'
                 filters={[]}
             />
             <div className='overflow-hidden rounded-md border'>
