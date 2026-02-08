@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { format } from 'date-fns/format'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -41,7 +42,9 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -57,7 +60,9 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
             <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('partyName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('partyName') || '-'}
+            </div>
         ),
     },
     {
@@ -66,7 +71,9 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
             <DataTableColumnHeader column={column} title='Broker Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('brokerName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('brokerName') || '-'}
+            </div>
         ),
     },
     {
@@ -75,7 +82,9 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
             <DataTableColumnHeader column={column} title='Item Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('otherPurchaseName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('otherPurchaseName') || '-'}
+            </div>
         ),
     },
     {
@@ -84,7 +93,9 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
             <DataTableColumnHeader column={column} title='Quantity' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.otherPurchaseQty || 0}</div>
+            <div className='text-right'>
+                {row.original.otherPurchaseQty || 0}
+            </div>
         ),
     },
     {
@@ -111,7 +122,9 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
             <DataTableColumnHeader column={column} title='Discount %' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.discountPercent || 0}%</div>
+            <div className='text-right'>
+                {row.original.discountPercent || 0}%
+            </div>
         ),
     },
     {
