@@ -1,6 +1,5 @@
 import { type Table } from '@tanstack/react-table'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,6 +10,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeletePrivatePaddyInward } from '../data/hooks'
+import { privatePaddyInward } from './private-paddy-inward-provider'
 
 type PrivatePaddyInwardMultiDeleteDialogProps<TData> = {
     table: Table<TData>
@@ -23,17 +24,28 @@ export function PrivatePaddyInwardMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: PrivatePaddyInwardMultiDeleteDialogProps<TData>) {
+    const { millId } = privatePaddyInward()
+    const bulkDeleteMutation = useBulkDeletePrivatePaddyInward(millId)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
+        const ids = selectedRows
+            .map((row) => (row.original as { _id?: string })._id)
+            .filter((id): id is string => !!id)
+
+        if (!ids.length) return
+
+        bulkDeleteMutation.mutate(ids, {
+            onSuccess: () => {
                 table.resetRowSelection()
                 onOpenChange(false)
-                return `Deleted ${selectedRows.length} record${selectedRows.length > 1 ? 's' : ''}`
+                toast.success(
+                    `Deleted ${ids.length} record${ids.length > 1 ? 's' : ''}`
+                )
             },
-            error: 'Error deleting records',
+            onError: (error) => {
+                toast.error(error.message || 'Error deleting records')
+            },
         })
     }
 

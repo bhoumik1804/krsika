@@ -9,16 +9,31 @@ type FrkInwardContextType = {
     setOpen: (str: FrkInwardDialogType | null) => void
     currentRow: FrkInward | null
     setCurrentRow: React.Dispatch<React.SetStateAction<FrkInward | null>>
+    millId: string
 }
 
 const FrkInwardContext = React.createContext<FrkInwardContextType | null>(null)
 
-export function FrkInwardProvider({ children }: { children: React.ReactNode }) {
+export function FrkInwardProvider({
+    children,
+    millId,
+}: {
+    children: React.ReactNode
+    millId: string
+}) {
     const [open, setOpen] = useDialogState<FrkInwardDialogType>(null)
     const [currentRow, setCurrentRow] = useState<FrkInward | null>(null)
 
     return (
-        <FrkInwardContext value={{ open, setOpen, currentRow, setCurrentRow }}>
+        <FrkInwardContext
+            value={{
+                open,
+                setOpen,
+                currentRow,
+                setCurrentRow,
+                millId,
+            }}
+        >
             {children}
         </FrkInwardContext>
     )

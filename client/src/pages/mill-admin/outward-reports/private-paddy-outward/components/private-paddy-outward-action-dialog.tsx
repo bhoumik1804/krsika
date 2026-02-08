@@ -3,8 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { paddyTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -38,9 +36,14 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import {
+    useCreatePrivatePaddyOutward,
+    useUpdatePrivatePaddyOutward,
+} from '../data/hooks'
+import {
     privatePaddyOutwardSchema,
     type PrivatePaddyOutward,
 } from '../data/schema'
+import { usePrivatePaddyOutward } from './private-paddy-outward-provider'
 
 type PrivatePaddyOutwardActionDialogProps = {
     open: boolean
@@ -55,11 +58,14 @@ export function PrivatePaddyOutwardActionDialog({
 }: PrivatePaddyOutwardActionDialogProps) {
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+    const { millId, setOpen: setDialogOpen } = usePrivatePaddyOutward()
+    const createMutation = useCreatePrivatePaddyOutward(millId)
+    const updateMutation = useUpdatePrivatePaddyOutward(millId)
 
     const form = useForm<PrivatePaddyOutward>({
         resolver: zodResolver(privatePaddyOutwardSchema),
         defaultValues: {
-            date: '',
+            date: format(new Date(), 'yyyy-MM-dd'),
             paddySaleDealNumber: '',
             partyName: '',
             brokerName: '',
@@ -103,16 +109,22 @@ export function PrivatePaddyOutwardActionDialog({
         }
     }, [currentRow, form, open])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = async (data: PrivatePaddyOutward) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data: data,
+                })
+            } else {
+                await createMutation.mutateAsync(data)
+            }
+            setDialogOpen(null)
+            onOpenChange(false)
+            form.reset()
+        } catch {
+            // Error is handled by mutation hooks
+        }
     }
 
     return (
@@ -202,7 +214,9 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='paddySaleDealNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Sale Auto Number</FormLabel>
+                                        <FormLabel>
+                                            Paddy Sale Deal Number
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder='SALE-XXXX'

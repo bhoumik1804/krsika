@@ -3,22 +3,19 @@ import { FrkInward } from '../models/frk-inward.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createFrkInwardEntry = async (millId, data, userId) => {
+export const createFrkInwardEntry = async (millId, data) => {
     const entry = new FrkInward({
         ...data,
         millId,
-        createdBy: userId,
         date: new Date(data.date),
     })
     await entry.save()
-    logger.info('FRK inward entry created', { id: entry._id, millId, userId })
+    logger.info('FRK inward entry created', { id: entry._id, millId })
     return entry
 }
 
 export const getFrkInwardById = async (millId, id) => {
     const entry = await FrkInward.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'FRK inward entry not found')
     return entry
 }
@@ -43,28 +40,15 @@ export const getFrkInwardList = async (millId, options = {}) => {
     if (search) {
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
-            { vehicleNumber: { $regex: search, $options: 'i' } },
+            { purchaseDealId: { $regex: search, $options: 'i' } },
+            { truckNumber: { $regex: search, $options: 'i' } },
+            { rstNumber: { $regex: search, $options: 'i' } },
         ]
     }
 
     const aggregate = FrkInward.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
 
     const result = await FrkInward.aggregatePaginate(aggregate, {
@@ -100,7 +84,7 @@ export const getFrkInwardList = async (millId, options = {}) => {
 
 export const getFrkInwardSummary = async (millId, options = {}) => {
     const { startDate, endDate } = options
-    const match = { millId }
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     if (startDate || endDate) {
         match.date = {}
         if (startDate) match.date.$gte = new Date(startDate)
@@ -113,24 +97,36 @@ export const getFrkInwardSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalBags: { $sum: '$bags' },
-                totalWeight: { $sum: '$weight' },
+                totalNetWeight: { $sum: '$netWeight' },
+                totalTruckWeight: { $sum: '$truckWeight' },
+                totalGunnyWeight: { $sum: '$gunnyWeight' },
+                totalPlasticWeight: { $sum: '$plasticWeight' },
             },
         },
         {
             $project: {
                 _id: 0,
                 totalEntries: 1,
-                totalBags: 1,
-                totalWeight: { $round: ['$totalWeight', 2] },
+                totalNetWeight: { $round: ['$totalNetWeight', 2] },
+                totalTruckWeight: { $round: ['$totalTruckWeight', 2] },
+                totalGunnyWeight: { $round: ['$totalGunnyWeight', 2] },
+                totalPlasticWeight: { $round: ['$totalPlasticWeight', 2] },
             },
         },
     ])
-    return summary || { totalEntries: 0, totalBags: 0, totalWeight: 0 }
+    return (
+        summary || {
+            totalEntries: 0,
+            totalNetWeight: 0,
+            totalTruckWeight: 0,
+            totalGunnyWeight: 0,
+            totalPlasticWeight: 0,
+        }
+    )
 }
 
-export const updateFrkInwardEntry = async (millId, id, data, userId) => {
-    const updateData = { ...data, updatedBy: userId }
+export const updateFrkInwardEntry = async (millId, id, data) => {
+    const updateData = { ...data }
     if (data.date) updateData.date = new Date(data.date)
 
     const entry = await FrkInward.findOneAndUpdate(
@@ -138,10 +134,8 @@ export const updateFrkInwardEntry = async (millId, id, data, userId) => {
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'FRK inward entry not found')
-    logger.info('FRK inward entry updated', { id, millId, userId })
+    logger.info('FRK inward entry updated', { id, millId })
     return entry
 }
 

@@ -7,19 +7,7 @@ import { z } from 'zod'
 
 // Common fields schema
 const privatePaddyInwardBaseSchema = {
-    date: z
-        .string({
-            required_error: 'Date is required',
-        })
-        .datetime({ offset: true })
-        .or(
-            z
-                .string()
-                .regex(
-                    /^\d{4}-\d{2}-\d{2}$/,
-                    'Invalid date format (YYYY-MM-DD)'
-                )
-        ),
+    date: z.string(),
     paddyPurchaseDealNumber: z
         .string()
         .trim()
@@ -75,8 +63,8 @@ const privatePaddyInwardBaseSchema = {
         .optional(),
     paddyType: z.string().trim().max(100, 'Paddy type is too long').optional(),
     paddyMota: z.number().min(0, 'Paddy mota cannot be negative').optional(),
-    paddyPatla: z.number().min(0, 'Paddy patla cannot be negative').optional(),
-    paddySarna: z.number().min(0, 'Paddy sarna cannot be negative').optional(),
+    paddyPatla: z.number().optional(),
+    paddySarna: z.number().optional(),
     paddyMahamaya: z
         .number()
         .min(0, 'Paddy mahamaya cannot be negative')
@@ -161,7 +149,7 @@ export const bulkDeletePrivatePaddyInwardSchema = z.object({
 })
 
 // List query params schema
-export const listPrivatePaddyInwardSchema = z.object({
+export const getPrivatePaddyInwardListSchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
     }),
@@ -199,7 +187,7 @@ export const listPrivatePaddyInwardSchema = z.object({
 })
 
 // Summary query params schema
-export const summaryPrivatePaddyInwardSchema = z.object({
+export const getPrivatePaddyInwardSummarySchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
     }),

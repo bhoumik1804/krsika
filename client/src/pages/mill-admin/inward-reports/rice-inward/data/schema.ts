@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 export const riceInwardSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
     ricePurchaseNumber: z.string().optional(),
     partyName: z.string().optional(),

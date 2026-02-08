@@ -23,30 +23,29 @@ const GunnyInwardSchema = new Schema(
             required: true,
             trim: true,
         },
-        gunnyType: {
+        purchaseDealId: {
             type: String,
             trim: true,
         },
-        totalGunny: {
+        delivery: {
+            type: String,
+            trim: true,
+        },
+        samitiSangrahan: {
+            type: String,
+            trim: true,
+        },
+        gunnyNew: {
             type: Number,
             min: 0,
         },
-        rate: {
+        gunnyOld: {
             type: Number,
             min: 0,
         },
-        amount: {
+        gunnyPlastic: {
             type: Number,
             min: 0,
-        },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
         },
     },
     {

@@ -97,11 +97,9 @@ const PrivatePaddyInwardSchema = new Schema(
         },
         paddyPatla: {
             type: Number,
-            min: 0,
         },
         paddySarna: {
             type: Number,
-            min: 0,
         },
         paddyMahamaya: {
             type: Number,
@@ -110,15 +108,6 @@ const PrivatePaddyInwardSchema = new Schema(
         paddyRbGold: {
             type: Number,
             min: 0,
-        },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
         },
     },
     {

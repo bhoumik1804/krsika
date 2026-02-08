@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { gunnyDeliveryTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -30,25 +28,36 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import { useCreateGunnyInward, useUpdateGunnyInward } from '../data/hooks'
 import { gunnyInwardSchema, type GunnyInward } from '../data/schema'
+import { gunnyInward } from './gunny-inward-provider'
 
 type GunnyInwardActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: GunnyInward | null
 }
 
 export function GunnyInwardActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: GunnyInwardActionDialogProps) {
-    const isEditing = !!currentRow
+    const { millId, currentRow } = gunnyInward()
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<GunnyInward>({
-        resolver: zodResolver(gunnyInwardSchema),
-        defaultValues: {
+    const { mutate: createInward, isPending: isCreating } =
+        useCreateGunnyInward(millId)
+    const { mutate: updateInward, isPending: isUpdating } =
+        useUpdateGunnyInward(millId)
+    const isLoading = isCreating || isUpdating
+    const isEditing = !!currentRow
+
+    const getDefaultValues = useMemo(() => {
+        if (currentRow) {
+            return {
+                ...currentRow,
+            } as any
+        }
+        return {
             date: format(new Date(), 'yyyy-MM-dd'),
             purchaseDealId: '',
             partyName: '',
@@ -57,36 +66,48 @@ export function GunnyInwardActionDialog({
             gunnyNew: undefined,
             gunnyOld: undefined,
             gunnyPlastic: undefined,
-        },
+        } as any
+    }, [currentRow])
+
+    const form = useForm<GunnyInward>({
+        resolver: zodResolver(gunnyInwardSchema),
+        defaultValues: getDefaultValues,
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
+        if (open) {
+            form.reset(getDefaultValues)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentRow, open, getDefaultValues])
+
+    const onSubmit = (data: GunnyInward) => {
+        console.log('Submitting data:', data)
+
+        if (isEditing && currentRow?._id) {
+            updateInward(
+                {
+                    id: currentRow._id,
+                    data: {
+                        ...data,
+                        _id: currentRow._id,
+                    },
+                },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
         } else {
-            form.reset({
-                date: format(new Date(), 'yyyy-MM-dd'),
-                purchaseDealId: '',
-                partyName: '',
-                delivery: '',
-                samitiSangrahan: '',
-                gunnyNew: undefined,
-                gunnyOld: undefined,
-                gunnyPlastic: undefined,
+            createInward(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
             })
         }
-    }, [currentRow, form])
-
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
     }
 
     return (
@@ -119,15 +140,14 @@ export function GunnyInwardActionDialog({
                                             <PopoverTrigger asChild>
                                                 <FormControl>
                                                     <Button
+                                                        id='date'
                                                         variant='outline'
                                                         className='w-full justify-start text-left font-normal'
                                                     >
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                  new Date(
-                                                                      field.value
-                                                                  ),
+                                                                  field.value,
                                                                   'MMM dd, yyyy'
                                                               )
                                                             : 'Pick a date'}
@@ -175,8 +195,10 @@ export function GunnyInwardActionDialog({
                                         <FormLabel>Purchase Deal ID</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='purchaseDealId'
                                                 placeholder='Enter Deal ID'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -191,8 +213,10 @@ export function GunnyInwardActionDialog({
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='partyName'
                                                 placeholder='Enter Party Name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -207,8 +231,10 @@ export function GunnyInwardActionDialog({
                                         <FormLabel>Delivery</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='delivery'
                                                 placeholder='Enter Delivery'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -227,8 +253,10 @@ export function GunnyInwardActionDialog({
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
+                                                    id='samitiSangrahan'
                                                     placeholder='Enter Samiti Name'
                                                     {...field}
+                                                    value={field.value || ''}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -245,13 +273,17 @@ export function GunnyInwardActionDialog({
                                         <FormLabel>Gunny New</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='gunnyNew'
                                                 type='number'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -271,13 +303,17 @@ export function GunnyInwardActionDialog({
                                         <FormLabel>Gunny Old</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='gunnyOld'
                                                 type='number'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -297,13 +333,17 @@ export function GunnyInwardActionDialog({
                                         <FormLabel>Gunny Plastic</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='gunnyPlastic'
                                                 type='number'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -321,11 +361,18 @@ export function GunnyInwardActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

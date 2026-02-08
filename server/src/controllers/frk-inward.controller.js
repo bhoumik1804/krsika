@@ -11,11 +11,7 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 
 export const createFrkInward = async (req, res, next) => {
     try {
-        const entry = await createFrkInwardEntry(
-            req.params.millId,
-            req.body,
-            req.user._id
-        )
+        const entry = await createFrkInwardEntry(req.params.millId, req.body)
         res.status(201).json(
             new ApiResponse(201, { entry }, 'FRK inward created')
         )
@@ -37,11 +33,14 @@ export const getFrkInwardByIdHandler = async (req, res, next) => {
 
 export const getFrkInwardListHandler = async (req, res, next) => {
     try {
-        const { page, limit, search, sortBy, sortOrder } = req.query
+        const { page, limit, search, startDate, endDate, sortBy, sortOrder } =
+            req.query
         const result = await getFrkInwardList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
+            startDate,
+            endDate,
             sortBy,
             sortOrder,
         })
@@ -59,7 +58,11 @@ export const getFrkInwardListHandler = async (req, res, next) => {
 
 export const getFrkInwardSummaryHandler = async (req, res, next) => {
     try {
-        const summary = await getFrkInwardSummary(req.params.millId)
+        const { startDate, endDate } = req.query
+        const summary = await getFrkInwardSummary(req.params.millId, {
+            startDate,
+            endDate,
+        })
         res.status(200).json(
             new ApiResponse(200, { summary }, 'FRK inward summary retrieved')
         )
@@ -73,8 +76,7 @@ export const updateFrkInwardHandler = async (req, res, next) => {
         const entry = await updateFrkInwardEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(200, { entry }, 'FRK inward updated')

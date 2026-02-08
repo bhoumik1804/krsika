@@ -1,5 +1,3 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,27 +8,28 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { type GunnyInward } from '../data/schema'
+import { useDeleteGunnyInward } from '../data/hooks'
+import { gunnyInward } from './gunny-inward-provider'
 
 type GunnyInwardDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: GunnyInward | null
 }
 
 export function GunnyInwardDeleteDialog({
     open,
     onOpenChange,
-    currentRow,
 }: GunnyInwardDeleteDialogProps) {
+    const { millId, currentRow } = gunnyInward()
+    const { mutate: deleteInward, isPending } = useDeleteGunnyInward(millId)
+
     const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
+        if (!currentRow?._id) return
+
+        deleteInward(currentRow._id, {
+            onSuccess: () => {
                 onOpenChange(false)
-                return 'Deleted successfully'
             },
-            error: 'Failed to delete',
         })
     }
 
@@ -47,12 +46,15 @@ export function GunnyInwardDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

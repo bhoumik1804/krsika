@@ -11,6 +11,7 @@ type PrivatePaddyOutwardContextType = {
     setCurrentRow: React.Dispatch<
         React.SetStateAction<PrivatePaddyOutward | null>
     >
+    millId: string
 }
 
 const PrivatePaddyOutwardContext =
@@ -18,8 +19,10 @@ const PrivatePaddyOutwardContext =
 
 export function PrivatePaddyOutwardProvider({
     children,
+    millId,
 }: {
     children: React.ReactNode
+    millId: string
 }) {
     const [open, setOpen] = useDialogState<PrivatePaddyOutwardDialogType>(null)
     const [currentRow, setCurrentRow] = useState<PrivatePaddyOutward | null>(
@@ -28,7 +31,7 @@ export function PrivatePaddyOutwardProvider({
 
     return (
         <PrivatePaddyOutwardContext
-            value={{ open, setOpen, currentRow, setCurrentRow }}
+            value={{ open, setOpen, currentRow, setCurrentRow, millId }}
         >
             {children}
         </PrivatePaddyOutwardContext>
@@ -36,12 +39,12 @@ export function PrivatePaddyOutwardProvider({
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const privatePaddyOutward = () => {
+export const usePrivatePaddyOutward = () => {
     const context = React.useContext(PrivatePaddyOutwardContext)
 
     if (!context) {
         throw new Error(
-            'privatePaddyOutward has to be used within <PrivatePaddyOutwardContext>'
+            'usePrivatePaddyOutward has to be used within <PrivatePaddyOutwardProvider>'
         )
     }
 

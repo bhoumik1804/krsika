@@ -39,6 +39,7 @@ import paddyPurchaseRoutes from './paddy-purchase.routes.js'
 import partyTransactionRoutes from './party-transaction.routes.js'
 import partyRoutes from './party.routes.js'
 import privatePaddyInwardRoutes from './private-paddy-inward.routes.js'
+import privatePaddyOutwardRoutes from './private-paddy-outward.routes.js'
 import privateRiceOutwardRoutes from './private-rice-outward.routes.js'
 import riceInwardRoutes from './rice-inward.routes.js'
 import ricePurchaseRoutes from './rice-purchase.routes.js'
@@ -101,6 +102,7 @@ router.use('/mills/:millId/frk-inward', frkInwardRoutes)
 router.use('/mills/:millId/other-inward', otherInwardRoutes)
 
 // Outward Reports
+router.use('/mills/:millId/private-paddy-outward', privatePaddyOutwardRoutes)
 router.use('/mills/:millId/private-rice-outward', privateRiceOutwardRoutes)
 
 // Purchase Reports

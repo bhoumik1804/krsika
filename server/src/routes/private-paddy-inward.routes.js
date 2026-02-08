@@ -16,8 +16,8 @@ import {
     getPrivatePaddyInwardByIdSchema,
     deletePrivatePaddyInwardSchema,
     bulkDeletePrivatePaddyInwardSchema,
-    listPrivatePaddyInwardSchema,
-    summaryPrivatePaddyInwardSchema,
+    getPrivatePaddyInwardListSchema,
+    getPrivatePaddyInwardSummarySchema,
 } from '../validators/private-paddy-inward.validator.js'
 
 const router = express.Router({ mergeParams: true })
@@ -33,14 +33,14 @@ router.use(authenticate)
 // GET /api/mills/:millId/private-paddy-inward/summary - Get summary statistics
 router.get(
     '/summary',
-    validate(summaryPrivatePaddyInwardSchema),
+    validate(getPrivatePaddyInwardSummarySchema),
     getPrivatePaddyInwardSummaryHandler
 )
 
 // GET /api/mills/:millId/private-paddy-inward - Get list with pagination
 router.get(
     '/',
-    validate(listPrivatePaddyInwardSchema),
+    validate(getPrivatePaddyInwardListSchema),
     getPrivatePaddyInwardListHandler
 )
 

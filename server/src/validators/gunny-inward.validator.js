@@ -5,21 +5,9 @@ import { z } from 'zod'
  * Zod schemas for request validation
  */
 
-// Common fields schema
+// Common fields schema - matches GunnyInward model
 const gunnyInwardBaseSchema = {
-    date: z
-        .string({
-            required_error: 'Date is required',
-        })
-        .datetime({ offset: true })
-        .or(
-            z
-                .string()
-                .regex(
-                    /^\d{4}-\d{2}-\d{2}$/,
-                    'Invalid date format (YYYY-MM-DD)'
-                )
-        ),
+    date: z.string(),
     partyName: z
         .string({
             required_error: 'Party name is required',
@@ -27,10 +15,20 @@ const gunnyInwardBaseSchema = {
         .trim()
         .min(1, 'Party name is required')
         .max(200, 'Party name is too long'),
-    gunnyType: z.string().trim().max(100, 'Gunny type is too long').optional(),
-    totalGunny: z.number().min(0, 'Total gunny cannot be negative').optional(),
-    rate: z.number().min(0, 'Rate cannot be negative').optional(),
-    amount: z.number().min(0, 'Amount cannot be negative').optional(),
+    purchaseDealId: z
+        .string()
+        .trim()
+        .max(100, 'Purchase deal ID is too long')
+        .optional(),
+    delivery: z.string().trim().max(200, 'Delivery is too long').optional(),
+    samitiSangrahan: z
+        .string()
+        .trim()
+        .max(200, 'Samiti Sangrahan is too long')
+        .optional(),
+    gunnyNew: z.number().min(0, 'Cannot be negative').optional(),
+    gunnyOld: z.number().min(0, 'Cannot be negative').optional(),
+    gunnyPlastic: z.number().min(0, 'Cannot be negative').optional(),
 }
 
 // Create gunny inward schema
@@ -52,10 +50,12 @@ export const updateGunnyInwardSchema = z.object({
             .trim()
             .max(200, 'Party name is too long')
             .optional(),
-        gunnyType: gunnyInwardBaseSchema.gunnyType,
-        totalGunny: gunnyInwardBaseSchema.totalGunny,
-        rate: gunnyInwardBaseSchema.rate,
-        amount: gunnyInwardBaseSchema.amount,
+        purchaseDealId: gunnyInwardBaseSchema.purchaseDealId,
+        delivery: gunnyInwardBaseSchema.delivery,
+        samitiSangrahan: gunnyInwardBaseSchema.samitiSangrahan,
+        gunnyNew: gunnyInwardBaseSchema.gunnyNew,
+        gunnyOld: gunnyInwardBaseSchema.gunnyOld,
+        gunnyPlastic: gunnyInwardBaseSchema.gunnyPlastic,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
@@ -100,8 +100,6 @@ export const getGunnyInwardListSchema = z.object({
         page: z.coerce.number().int().min(1).default(1).optional(),
         limit: z.coerce.number().int().min(1).max(100).default(10).optional(),
         search: z.string().trim().optional(),
-        gunnyType: z.string().trim().optional(),
-        partyName: z.string().trim().optional(),
         startDate: z
             .string()
             .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
@@ -111,14 +109,7 @@ export const getGunnyInwardListSchema = z.object({
             .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
             .optional(),
         sortBy: z
-            .enum([
-                'date',
-                'partyName',
-                'gunnyType',
-                'totalGunny',
-                'amount',
-                'createdAt',
-            ])
+            .enum(['date', 'partyName', 'createdAt'])
             .default('date')
             .optional(),
         sortOrder: z.enum(['asc', 'desc']).default('desc').optional(),

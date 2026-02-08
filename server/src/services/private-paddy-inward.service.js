@@ -3,26 +3,22 @@ import { PrivatePaddyInward } from '../models/private-paddy-inward.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createPrivatePaddyInwardEntry = async (millId, data, userId) => {
+export const createPrivatePaddyInwardEntry = async (millId, data) => {
     const entry = new PrivatePaddyInward({
         ...data,
         millId,
-        createdBy: userId,
         date: new Date(data.date),
     })
     await entry.save()
     logger.info('Private paddy inward entry created', {
         id: entry._id,
         millId,
-        userId,
     })
     return entry
 }
 
 export const getPrivatePaddyInwardById = async (millId, id) => {
     const entry = await PrivatePaddyInward.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Private paddy inward entry not found')
     return entry
 }
@@ -46,27 +42,15 @@ export const getPrivatePaddyInwardList = async (millId, options = {}) => {
     if (search)
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
-            { vehicleNumber: { $regex: search, $options: 'i' } },
+            { truckNumber: { $regex: search, $options: 'i' } },
+            { paddyPurchaseDealNumber: { $regex: search, $options: 'i' } },
+            { rstNumber: { $regex: search, $options: 'i' } },
+            { doNumber: { $regex: search, $options: 'i' } },
         ]
 
     const aggregate = PrivatePaddyInward.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
     const result = await PrivatePaddyInward.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
@@ -100,7 +84,7 @@ export const getPrivatePaddyInwardList = async (millId, options = {}) => {
 
 export const getPrivatePaddyInwardSummary = async (millId, options = {}) => {
     const { startDate, endDate } = options
-    const match = { millId }
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     if (startDate || endDate) {
         match.date = {}
         if (startDate) match.date.$gte = new Date(startDate)
@@ -112,39 +96,62 @@ export const getPrivatePaddyInwardSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalBags: { $sum: '$bags' },
-                totalWeight: { $sum: '$weight' },
+                totalMota: { $sum: '$paddyMota' },
+                totalPatla: { $sum: '$paddyPatla' },
+                totalSarna: { $sum: '$paddySarna' },
+                totalMahamaya: { $sum: '$paddyMahamaya' },
+                totalRbGold: { $sum: '$paddyRbGold' },
             },
         },
         {
             $project: {
                 _id: 0,
                 totalEntries: 1,
-                totalBags: 1,
-                totalWeight: { $round: ['$totalWeight', 2] },
+                totalMota: { $round: ['$totalMota', 2] },
+                totalPatla: { $round: ['$totalPatla', 2] },
+                totalSarna: { $round: ['$totalSarna', 2] },
+                totalMahamaya: { $round: ['$totalMahamaya', 2] },
+                totalRbGold: { $round: ['$totalRbGold', 2] },
+                totalWeight: {
+                    $round: [
+                        {
+                            $add: [
+                                '$totalMota',
+                                '$totalPatla',
+                                '$totalSarna',
+                                '$totalMahamaya',
+                                '$totalRbGold',
+                            ],
+                        },
+                        2,
+                    ],
+                },
             },
         },
     ])
-    return summary || { totalEntries: 0, totalBags: 0, totalWeight: 0 }
+    return (
+        summary || {
+            totalEntries: 0,
+            totalMota: 0,
+            totalPatla: 0,
+            totalSarna: 0,
+            totalMahamaya: 0,
+            totalRbGold: 0,
+            totalWeight: 0,
+        }
+    )
 }
 
-export const updatePrivatePaddyInwardEntry = async (
-    millId,
-    id,
-    data,
-    userId
-) => {
-    const updateData = { ...data, updatedBy: userId }
+export const updatePrivatePaddyInwardEntry = async (millId, id, data) => {
+    const updateData = { ...data }
     if (data.date) updateData.date = new Date(data.date)
     const entry = await PrivatePaddyInward.findOneAndUpdate(
         { _id: id, millId },
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Private paddy inward entry not found')
-    logger.info('Private paddy inward entry updated', { id, millId, userId })
+    logger.info('Private paddy inward entry updated', { id, millId })
     return entry
 }
 

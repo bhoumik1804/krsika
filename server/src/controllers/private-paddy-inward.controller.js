@@ -13,8 +13,7 @@ export const createPrivatePaddyInward = async (req, res, next) => {
     try {
         const entry = await createPrivatePaddyInwardEntry(
             req.params.millId,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(201).json(
             new ApiResponse(201, { entry }, 'Private paddy inward created')
@@ -40,11 +39,14 @@ export const getPrivatePaddyInwardByIdHandler = async (req, res, next) => {
 
 export const getPrivatePaddyInwardListHandler = async (req, res, next) => {
     try {
-        const { page, limit, search, sortBy, sortOrder } = req.query
+        const { page, limit, search, startDate, endDate, sortBy, sortOrder } =
+            req.query
         const result = await getPrivatePaddyInwardList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
+            startDate,
+            endDate,
             sortBy,
             sortOrder,
         })
@@ -62,7 +64,11 @@ export const getPrivatePaddyInwardListHandler = async (req, res, next) => {
 
 export const getPrivatePaddyInwardSummaryHandler = async (req, res, next) => {
     try {
-        const summary = await getPrivatePaddyInwardSummary(req.params.millId)
+        const { startDate, endDate } = req.query
+        const summary = await getPrivatePaddyInwardSummary(req.params.millId, {
+            startDate,
+            endDate,
+        })
         res.status(200).json(
             new ApiResponse(
                 200,
@@ -80,8 +86,7 @@ export const updatePrivatePaddyInwardHandler = async (req, res, next) => {
         const entry = await updatePrivatePaddyInwardEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(200, { entry }, 'Private paddy inward updated')

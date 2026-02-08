@@ -1,6 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,6 +9,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeleteGunnyInward } from '../data/hooks'
+import { type GunnyInward } from '../data/types'
+import { gunnyInward } from './gunny-inward-provider'
 
 type GunnyInwardMultiDeleteDialogProps<TData> = {
     table: Table<TData>
@@ -23,17 +24,22 @@ export function GunnyInwardMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: GunnyInwardMultiDeleteDialogProps<TData>) {
+    const { millId } = gunnyInward()
+    const { mutate: bulkDelete, isPending } = useBulkDeleteGunnyInward(millId)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
+        const ids = selectedRows
+            .map((row) => (row.original as GunnyInward)._id)
+            .filter((id): id is string => Boolean(id))
+
+        if (ids.length === 0) return
+
+        bulkDelete(ids, {
+            onSuccess: () => {
                 table.resetRowSelection()
                 onOpenChange(false)
-                return `Deleted ${selectedRows.length} record${selectedRows.length > 1 ? 's' : ''}`
             },
-            error: 'Error deleting records',
         })
     }
 
@@ -52,12 +58,15 @@ export function GunnyInwardMultiDeleteDialog<TData>({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
+                        disabled={isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

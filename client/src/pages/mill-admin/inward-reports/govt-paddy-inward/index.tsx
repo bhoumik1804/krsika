@@ -1,8 +1,10 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -10,12 +12,36 @@ import { GovtPaddyInwardDialogs } from './components/govt-paddy-inward-dialogs'
 import { GovtPaddyInwardPrimaryButtons } from './components/govt-paddy-inward-primary-buttons'
 import { GovtPaddyInwardProvider } from './components/govt-paddy-inward-provider'
 import { GovtPaddyInwardTable } from './components/govt-paddy-inward-table'
-import { govtPaddyInwardEntries } from './data/govt-paddy-inward-entries'
+import { useGovtPaddyInwardList } from './data/hooks'
 
 export function GovtPaddyInwardReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
+
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            startDate: search.startDate as string | undefined,
+            endDate: search.endDate as string | undefined,
+            sortBy:
+                (search.sortBy as
+                    | 'date'
+                    | 'doNumber'
+                    | 'committeeName'
+                    | 'createdAt') || 'date',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
 
     const search = Object.fromEntries(searchParams.entries())
 
@@ -31,7 +57,7 @@ export function GovtPaddyInwardReport() {
     }
 
     return (
-        <GovtPaddyInwardProvider>
+        <GovtPaddyInwardProvider millId={millId || ''}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -56,8 +82,9 @@ export function GovtPaddyInwardReport() {
                     </div>
                     <GovtPaddyInwardPrimaryButtons />
                 </div>
-                <GovtPaddyInwardTable
-                    data={govtPaddyInwardEntries}
+                <GovtPaddyInwardContent
+                    millId={millId || ''}
+                    queryParams={queryParams}
                     search={search}
                     navigate={navigate}
                 />
@@ -65,5 +92,60 @@ export function GovtPaddyInwardReport() {
 
             <GovtPaddyInwardDialogs />
         </GovtPaddyInwardProvider>
+    )
+}
+
+function GovtPaddyInwardContent({
+    millId,
+    queryParams,
+    search,
+    navigate,
+}: {
+    millId: string
+    queryParams: {
+        page: number
+        limit: number
+        search?: string
+        startDate?: string
+        endDate?: string
+        sortBy?: 'date' | 'doNumber' | 'committeeName' | 'createdAt'
+        sortOrder?: 'asc' | 'desc'
+    }
+    search: Record<string, string>
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const {
+        data: listData,
+        isLoading,
+        error,
+    } = useGovtPaddyInwardList(millId, queryParams)
+
+    const data = listData?.entries ?? []
+    const pagination = listData?.pagination
+
+    if (isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                {error.message ||
+                    'Failed to load govt paddy inward data. Please try again later.'}
+            </div>
+        )
+    }
+
+    return (
+        <GovtPaddyInwardTable
+            data={data}
+            search={search}
+            navigate={navigate}
+            pagination={pagination}
+        />
     )
 }

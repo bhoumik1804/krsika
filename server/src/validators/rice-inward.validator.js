@@ -5,51 +5,52 @@ import { z } from 'zod'
  * Zod schemas for request validation
  */
 
-// Common fields schema
+// Common fields schema - matches RiceInward model
 const riceInwardBaseSchema = {
-    date: z
-        .string({
-            required_error: 'Date is required',
-        })
-        .datetime({ offset: true })
-        .or(
-            z
-                .string()
-                .regex(
-                    /^\d{4}-\d{2}-\d{2}$/,
-                    'Invalid date format (YYYY-MM-DD)'
-                )
-        ),
-    partyName: z
-        .string({
-            required_error: 'Party name is required',
-        })
-        .trim()
-        .min(1, 'Party name is required')
-        .max(200, 'Party name is too long'),
-    riceType: z.string().trim().max(100, 'Rice type is too long').optional(),
-    truckNumber: z
+    date: z.string(),
+    ricePurchaseNumber: z
         .string()
         .trim()
-        .max(20, 'Truck number is too long')
+        .max(100, 'Rice purchase number is too long')
         .optional(),
-    riceGunny: z.number().min(0, 'Rice gunny cannot be negative').optional(),
-    frk: z.number().min(0, 'FRK cannot be negative').optional(),
-    sampleWeight: z
-        .number()
-        .min(0, 'Sample weight cannot be negative')
-        .optional(),
-    grossWeight: z
-        .number()
-        .min(0, 'Gross weight cannot be negative')
-        .optional(),
-    tareWeight: z.number().min(0, 'Tare weight cannot be negative').optional(),
-    netWeight: z.number().min(0, 'Net weight cannot be negative').optional(),
+    partyName: z.string().trim().max(200, 'Party name is too long').optional(),
     brokerName: z
         .string()
         .trim()
         .max(200, 'Broker name is too long')
         .optional(),
+    riceType: z.string().trim().max(100, 'Rice type is too long').optional(),
+    balanceInward: z
+        .number()
+        .min(0, 'Balance inward cannot be negative')
+        .optional(),
+    inwardType: z
+        .string()
+        .trim()
+        .max(100, 'Inward type is too long')
+        .optional(),
+    lotNumber: z.string().trim().max(100, 'Lot number is too long').optional(),
+    frkOrNAN: z.string().trim().max(100, 'FRK or NAN is too long').optional(),
+    gunnyOption: z
+        .string()
+        .trim()
+        .max(100, 'Gunny option is too long')
+        .optional(),
+    gunnyNew: z.number().min(0, 'Cannot be negative').optional(),
+    gunnyOld: z.number().min(0, 'Cannot be negative').optional(),
+    gunnyPlastic: z.number().min(0, 'Cannot be negative').optional(),
+    juteWeight: z.number().min(0, 'Cannot be negative').optional(),
+    plasticWeight: z.number().min(0, 'Cannot be negative').optional(),
+    gunnyWeight: z.number().min(0, 'Cannot be negative').optional(),
+    truckNumber: z
+        .string()
+        .trim()
+        .max(50, 'Truck number is too long')
+        .optional(),
+    rstNumber: z.string().trim().max(50, 'RST number is too long').optional(),
+    truckLoadWeight: z.number().min(0, 'Cannot be negative').optional(),
+    riceMotaNetWeight: z.number().min(0, 'Cannot be negative').optional(),
+    ricePatlaNetWeight: z.number().min(0, 'Cannot be negative').optional(),
 }
 
 // Create rice inward schema
@@ -66,20 +67,26 @@ export const createRiceInwardSchema = z.object({
 export const updateRiceInwardSchema = z.object({
     body: z.object({
         date: riceInwardBaseSchema.date.optional(),
-        partyName: z
-            .string()
-            .trim()
-            .max(200, 'Party name is too long')
-            .optional(),
-        riceType: riceInwardBaseSchema.riceType,
-        truckNumber: riceInwardBaseSchema.truckNumber,
-        riceGunny: riceInwardBaseSchema.riceGunny,
-        frk: riceInwardBaseSchema.frk,
-        sampleWeight: riceInwardBaseSchema.sampleWeight,
-        grossWeight: riceInwardBaseSchema.grossWeight,
-        tareWeight: riceInwardBaseSchema.tareWeight,
-        netWeight: riceInwardBaseSchema.netWeight,
+        ricePurchaseNumber: riceInwardBaseSchema.ricePurchaseNumber,
+        partyName: riceInwardBaseSchema.partyName,
         brokerName: riceInwardBaseSchema.brokerName,
+        riceType: riceInwardBaseSchema.riceType,
+        balanceInward: riceInwardBaseSchema.balanceInward,
+        inwardType: riceInwardBaseSchema.inwardType,
+        lotNumber: riceInwardBaseSchema.lotNumber,
+        frkOrNAN: riceInwardBaseSchema.frkOrNAN,
+        gunnyOption: riceInwardBaseSchema.gunnyOption,
+        gunnyNew: riceInwardBaseSchema.gunnyNew,
+        gunnyOld: riceInwardBaseSchema.gunnyOld,
+        gunnyPlastic: riceInwardBaseSchema.gunnyPlastic,
+        juteWeight: riceInwardBaseSchema.juteWeight,
+        plasticWeight: riceInwardBaseSchema.plasticWeight,
+        gunnyWeight: riceInwardBaseSchema.gunnyWeight,
+        truckNumber: riceInwardBaseSchema.truckNumber,
+        rstNumber: riceInwardBaseSchema.rstNumber,
+        truckLoadWeight: riceInwardBaseSchema.truckLoadWeight,
+        riceMotaNetWeight: riceInwardBaseSchema.riceMotaNetWeight,
+        ricePatlaNetWeight: riceInwardBaseSchema.ricePatlaNetWeight,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
@@ -142,7 +149,6 @@ export const getRiceInwardListSchema = z.object({
                 'brokerName',
                 'truckNumber',
                 'riceType',
-                'netWeight',
                 'createdAt',
             ])
             .default('date')

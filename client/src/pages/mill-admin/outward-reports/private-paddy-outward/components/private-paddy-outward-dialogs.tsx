@@ -1,9 +1,9 @@
 import { PrivatePaddyOutwardActionDialog } from './private-paddy-outward-action-dialog'
 import { PrivatePaddyOutwardDeleteDialog } from './private-paddy-outward-delete-dialog'
-import { privatePaddyOutward } from './private-paddy-outward-provider'
+import { usePrivatePaddyOutward } from './private-paddy-outward-provider'
 
 export function PrivatePaddyOutwardDialogs() {
-    const { open, setOpen, currentRow } = privatePaddyOutward()
+    const { open, setOpen, currentRow } = usePrivatePaddyOutward()
 
     return (
         <>

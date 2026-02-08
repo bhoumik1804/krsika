@@ -1,6 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,6 +9,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeleteGovtPaddyInward } from '../data/hooks'
+import { type GovtPaddyInward } from '../data/schema'
+import { useGovtPaddyInward } from './govt-paddy-inward-provider'
 
 type GovtPaddyInwardMultiDeleteDialogProps<TData> = {
     table: Table<TData>
@@ -23,18 +24,26 @@ export function GovtPaddyInwardMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: GovtPaddyInwardMultiDeleteDialogProps<TData>) {
+    const { millId } = useGovtPaddyInward()
+    const { mutateAsync: bulkDeleteGovtPaddyInward, isPending } =
+        useBulkDeleteGovtPaddyInward(millId)
+
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
-    const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                table.resetRowSelection()
-                onOpenChange(false)
-                return `Deleted ${selectedRows.length} record${selectedRows.length > 1 ? 's' : ''}`
-            },
-            error: 'Error deleting records',
-        })
+    const handleDeleteSelected = async () => {
+        const ids = selectedRows
+            .map((row) => (row.original as GovtPaddyInward)._id)
+            .filter((id): id is string => !!id)
+
+        if (ids.length === 0) return
+
+        try {
+            await bulkDeleteGovtPaddyInward(ids)
+            table.resetRowSelection()
+            onOpenChange(false)
+        } catch (error) {
+            console.error('Bulk delete error:', error)
+        }
     }
 
     return (
@@ -52,12 +61,15 @@ export function GovtPaddyInwardMultiDeleteDialog<TData>({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
+                        disabled={isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

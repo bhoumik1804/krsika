@@ -7,31 +7,39 @@ import { z } from 'zod'
 
 // Common fields schema
 const otherInwardBaseSchema = {
-    date: z
-        .string({
-            required_error: 'Date is required',
-        })
-        .datetime({ offset: true })
-        .or(
-            z
-                .string()
-                .regex(
-                    /^\d{4}-\d{2}-\d{2}$/,
-                    'Invalid date format (YYYY-MM-DD)'
-                )
-        ),
-    partyName: z
-        .string({
-            required_error: 'Party name is required',
-        })
+    date: z.string(),
+    purchaseDealId: z
+        .string()
         .trim()
-        .min(1, 'Party name is required')
-        .max(200, 'Party name is too long'),
+        .max(100, 'Purchase deal ID is too long')
+        .optional(),
     itemName: z.string().trim().max(200, 'Item name is too long').optional(),
     quantity: z.number().min(0, 'Quantity cannot be negative').optional(),
-    unit: z.string().trim().max(50, 'Unit is too long').optional(),
-    rate: z.number().min(0, 'Rate cannot be negative').optional(),
-    amount: z.number().min(0, 'Amount cannot be negative').optional(),
+    quantityType: z
+        .string()
+        .trim()
+        .max(50, 'Quantity type is too long')
+        .optional(),
+    partyName: z.string().trim().max(200, 'Party name is too long').optional(),
+    brokerName: z
+        .string()
+        .trim()
+        .max(200, 'Broker name is too long')
+        .optional(),
+    gunnyNew: z.number().min(0, 'Cannot be negative').optional(),
+    gunnyOld: z.number().min(0, 'Cannot be negative').optional(),
+    gunnyPlastic: z.number().min(0, 'Cannot be negative').optional(),
+    juteWeight: z.number().min(0, 'Cannot be negative').optional(),
+    plasticWeight: z.number().min(0, 'Cannot be negative').optional(),
+    truckNumber: z
+        .string()
+        .trim()
+        .max(50, 'Truck number is too long')
+        .optional(),
+    rstNumber: z.string().trim().max(50, 'RST number is too long').optional(),
+    truckWeight: z.number().min(0, 'Cannot be negative').optional(),
+    gunnyWeight: z.number().min(0, 'Cannot be negative').optional(),
+    netWeight: z.number().min(0, 'Cannot be negative').optional(),
 }
 
 // Create other inward schema
@@ -44,20 +52,26 @@ export const createOtherInwardSchema = z.object({
     }),
 })
 
-// Update other inward schema (all fields optional except id)
+// Update other inward schema
 export const updateOtherInwardSchema = z.object({
     body: z.object({
         date: otherInwardBaseSchema.date.optional(),
-        partyName: z
-            .string()
-            .trim()
-            .max(200, 'Party name is too long')
-            .optional(),
+        purchaseDealId: otherInwardBaseSchema.purchaseDealId,
         itemName: otherInwardBaseSchema.itemName,
         quantity: otherInwardBaseSchema.quantity,
-        unit: otherInwardBaseSchema.unit,
-        rate: otherInwardBaseSchema.rate,
-        amount: otherInwardBaseSchema.amount,
+        quantityType: otherInwardBaseSchema.quantityType,
+        partyName: otherInwardBaseSchema.partyName,
+        brokerName: otherInwardBaseSchema.brokerName,
+        gunnyNew: otherInwardBaseSchema.gunnyNew,
+        gunnyOld: otherInwardBaseSchema.gunnyOld,
+        gunnyPlastic: otherInwardBaseSchema.gunnyPlastic,
+        juteWeight: otherInwardBaseSchema.juteWeight,
+        plasticWeight: otherInwardBaseSchema.plasticWeight,
+        truckNumber: otherInwardBaseSchema.truckNumber,
+        rstNumber: otherInwardBaseSchema.rstNumber,
+        truckWeight: otherInwardBaseSchema.truckWeight,
+        gunnyWeight: otherInwardBaseSchema.gunnyWeight,
+        netWeight: otherInwardBaseSchema.netWeight,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
@@ -102,9 +116,6 @@ export const getOtherInwardListSchema = z.object({
         page: z.coerce.number().int().min(1).default(1).optional(),
         limit: z.coerce.number().int().min(1).max(100).default(10).optional(),
         search: z.string().trim().optional(),
-        partyName: z.string().trim().optional(),
-        itemName: z.string().trim().optional(),
-        unit: z.string().trim().optional(),
         startDate: z
             .string()
             .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
@@ -114,14 +125,7 @@ export const getOtherInwardListSchema = z.object({
             .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
             .optional(),
         sortBy: z
-            .enum([
-                'date',
-                'partyName',
-                'itemName',
-                'quantity',
-                'amount',
-                'createdAt',
-            ])
+            .enum(['date', 'partyName', 'itemName', 'createdAt'])
             .default('date')
             .optional(),
         sortOrder: z.enum(['asc', 'desc']).default('desc').optional(),

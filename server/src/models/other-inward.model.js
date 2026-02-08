@@ -18,9 +18,8 @@ const OtherInwardSchema = new Schema(
             required: true,
             index: true,
         },
-        partyName: {
+        purchaseDealId: {
             type: String,
-            required: true,
             trim: true,
         },
         itemName: {
@@ -31,26 +30,57 @@ const OtherInwardSchema = new Schema(
             type: Number,
             min: 0,
         },
-        unit: {
+        quantityType: {
             type: String,
             trim: true,
         },
-        rate: {
+        partyName: {
+            type: String,
+            trim: true,
+        },
+        brokerName: {
+            type: String,
+            trim: true,
+        },
+        gunnyNew: {
             type: Number,
             min: 0,
         },
-        amount: {
+        gunnyOld: {
             type: Number,
             min: 0,
         },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
+        gunnyPlastic: {
+            type: Number,
+            min: 0,
         },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
+        juteWeight: {
+            type: Number,
+            min: 0,
+        },
+        plasticWeight: {
+            type: Number,
+            min: 0,
+        },
+        truckNumber: {
+            type: String,
+            trim: true,
+        },
+        rstNumber: {
+            type: String,
+            trim: true,
+        },
+        truckWeight: {
+            type: Number,
+            min: 0,
+        },
+        gunnyWeight: {
+            type: Number,
+            min: 0,
+        },
+        netWeight: {
+            type: Number,
+            min: 0,
         },
     },
     {

@@ -5,15 +5,19 @@ import { useOther } from './other-provider'
 export function OtherDialogs() {
     const { open, setOpen, currentRow, setCurrentRow } = useOther()
 
+    const handleActionDialogClose = (isOpen: boolean) => {
+        if (!isOpen) {
+            setOpen(null)
+            setCurrentRow(null)
+        }
+    }
+
     return (
         <>
             <OtherActionDialog
                 open={open === 'add' || open === 'edit'}
-                onOpenChange={(isOpen: boolean) => {
-                    if (!isOpen) setCurrentRow(null)
-                    setOpen(isOpen ? open : null)
-                }}
-                currentRow={open === 'edit' ? currentRow : null}
+                onOpenChange={handleActionDialogClose}
+                currentRow={open === 'add' ? null : currentRow}
             />
             <OtherDeleteDialog
                 open={open === 'delete'}

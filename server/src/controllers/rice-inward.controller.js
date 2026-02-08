@@ -11,11 +11,7 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 
 export const createRiceInward = async (req, res, next) => {
     try {
-        const entry = await createRiceInwardEntry(
-            req.params.millId,
-            req.body,
-            req.user._id
-        )
+        const entry = await createRiceInwardEntry(req.params.millId, req.body)
         res.status(201).json(
             new ApiResponse(201, { entry }, 'Rice inward created')
         )
@@ -37,11 +33,14 @@ export const getRiceInwardByIdHandler = async (req, res, next) => {
 
 export const getRiceInwardListHandler = async (req, res, next) => {
     try {
-        const { page, limit, search, sortBy, sortOrder } = req.query
+        const { page, limit, search, startDate, endDate, sortBy, sortOrder } =
+            req.query
         const result = await getRiceInwardList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
+            startDate,
+            endDate,
             sortBy,
             sortOrder,
         })
@@ -59,7 +58,11 @@ export const getRiceInwardListHandler = async (req, res, next) => {
 
 export const getRiceInwardSummaryHandler = async (req, res, next) => {
     try {
-        const summary = await getRiceInwardSummary(req.params.millId)
+        const { startDate, endDate } = req.query
+        const summary = await getRiceInwardSummary(req.params.millId, {
+            startDate,
+            endDate,
+        })
         res.status(200).json(
             new ApiResponse(200, { summary }, 'Rice inward summary retrieved')
         )
@@ -73,8 +76,7 @@ export const updateRiceInwardHandler = async (req, res, next) => {
         const entry = await updateRiceInwardEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(200, { entry }, 'Rice inward updated')

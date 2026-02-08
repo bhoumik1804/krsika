@@ -5,34 +5,26 @@ import { z } from 'zod'
  * Zod schemas for request validation
  */
 
-// Common fields schema
+// Common fields schema - matches FrkInward model
 const frkInwardBaseSchema = {
-    date: z
-        .string({
-            required_error: 'Date is required',
-        })
-        .datetime({ offset: true })
-        .or(
-            z
-                .string()
-                .regex(
-                    /^\d{4}-\d{2}-\d{2}$/,
-                    'Invalid date format (YYYY-MM-DD)'
-                )
-        ),
-    partyName: z
-        .string({
-            required_error: 'Party name is required',
-        })
+    date: z.string(),
+    purchaseDealId: z
+        .string()
         .trim()
-        .min(1, 'Party name is required')
-        .max(200, 'Party name is too long'),
-    totalWeight: z
-        .number()
-        .min(0, 'Total weight cannot be negative')
+        .max(100, 'Purchase deal ID is too long')
         .optional(),
-    rate: z.number().min(0, 'Rate cannot be negative').optional(),
-    amount: z.number().min(0, 'Amount cannot be negative').optional(),
+    partyName: z.string().trim().max(200, 'Party name is too long').optional(),
+    gunnyPlastic: z.number().min(0, 'Cannot be negative').optional(),
+    plasticWeight: z.number().min(0, 'Cannot be negative').optional(),
+    truckNumber: z
+        .string()
+        .trim()
+        .max(50, 'Truck number is too long')
+        .optional(),
+    rstNumber: z.string().trim().max(50, 'RST number is too long').optional(),
+    truckWeight: z.number().min(0, 'Cannot be negative').optional(),
+    gunnyWeight: z.number().min(0, 'Cannot be negative').optional(),
+    netWeight: z.number().min(0, 'Cannot be negative').optional(),
 }
 
 // Create FRK inward schema
@@ -49,14 +41,15 @@ export const createFrkInwardSchema = z.object({
 export const updateFrkInwardSchema = z.object({
     body: z.object({
         date: frkInwardBaseSchema.date.optional(),
-        partyName: z
-            .string()
-            .trim()
-            .max(200, 'Party name is too long')
-            .optional(),
-        totalWeight: frkInwardBaseSchema.totalWeight,
-        rate: frkInwardBaseSchema.rate,
-        amount: frkInwardBaseSchema.amount,
+        purchaseDealId: frkInwardBaseSchema.purchaseDealId,
+        partyName: frkInwardBaseSchema.partyName,
+        gunnyPlastic: frkInwardBaseSchema.gunnyPlastic,
+        plasticWeight: frkInwardBaseSchema.plasticWeight,
+        truckNumber: frkInwardBaseSchema.truckNumber,
+        rstNumber: frkInwardBaseSchema.rstNumber,
+        truckWeight: frkInwardBaseSchema.truckWeight,
+        gunnyWeight: frkInwardBaseSchema.gunnyWeight,
+        netWeight: frkInwardBaseSchema.netWeight,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
@@ -101,7 +94,6 @@ export const getFrkInwardListSchema = z.object({
         page: z.coerce.number().int().min(1).default(1).optional(),
         limit: z.coerce.number().int().min(1).max(100).default(10).optional(),
         search: z.string().trim().optional(),
-        partyName: z.string().trim().optional(),
         startDate: z
             .string()
             .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
@@ -111,7 +103,7 @@ export const getFrkInwardListSchema = z.object({
             .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
             .optional(),
         sortBy: z
-            .enum(['date', 'partyName', 'totalWeight', 'amount', 'createdAt'])
+            .enum(['date', 'partyName', 'netWeight', 'createdAt'])
             .default('date')
             .optional(),
         sortOrder: z.enum(['asc', 'desc']).default('desc').optional(),

@@ -3,22 +3,19 @@ import { GunnyInward } from '../models/gunny-inward.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createGunnyInwardEntry = async (millId, data, userId) => {
+export const createGunnyInwardEntry = async (millId, data) => {
     const entry = new GunnyInward({
         ...data,
         millId,
-        createdBy: userId,
         date: new Date(data.date),
     })
     await entry.save()
-    logger.info('Gunny inward entry created', { id: entry._id, millId, userId })
+    logger.info('Gunny inward entry created', { id: entry._id, millId })
     return entry
 }
 
 export const getGunnyInwardById = async (millId, id) => {
     const entry = await GunnyInward.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Gunny inward entry not found')
     return entry
 }
@@ -43,28 +40,15 @@ export const getGunnyInwardList = async (millId, options = {}) => {
     if (search) {
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
-            { vehicleNumber: { $regex: search, $options: 'i' } },
+            { purchaseDealId: { $regex: search, $options: 'i' } },
+            { delivery: { $regex: search, $options: 'i' } },
+            { samitiSangrahan: { $regex: search, $options: 'i' } },
         ]
     }
 
     const aggregate = GunnyInward.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
 
     const result = await GunnyInward.aggregatePaginate(aggregate, {
@@ -99,7 +83,7 @@ export const getGunnyInwardList = async (millId, options = {}) => {
 
 export const getGunnyInwardSummary = async (millId, options = {}) => {
     const { startDate, endDate } = options
-    const match = { millId }
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     if (startDate || endDate) {
         match.date = {}
         if (startDate) match.date.$gte = new Date(startDate)
@@ -112,34 +96,41 @@ export const getGunnyInwardSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalBags: { $sum: '$bags' },
-                totalWeight: { $sum: '$weight' },
+                totalGunnyNew: { $sum: '$gunnyNew' },
+                totalGunnyOld: { $sum: '$gunnyOld' },
+                totalGunnyPlastic: { $sum: '$gunnyPlastic' },
             },
         },
         {
             $project: {
                 _id: 0,
                 totalEntries: 1,
-                totalBags: 1,
-                totalWeight: { $round: ['$totalWeight', 2] },
+                totalGunnyNew: 1,
+                totalGunnyOld: 1,
+                totalGunnyPlastic: 1,
             },
         },
     ])
-    return summary || { totalEntries: 0, totalBags: 0, totalWeight: 0 }
+    return (
+        summary || {
+            totalEntries: 0,
+            totalGunnyNew: 0,
+            totalGunnyOld: 0,
+            totalGunnyPlastic: 0,
+        }
+    )
 }
 
-export const updateGunnyInwardEntry = async (millId, id, data, userId) => {
-    const updateData = { ...data, updatedBy: userId }
+export const updateGunnyInwardEntry = async (millId, id, data) => {
+    const updateData = { ...data }
     if (data.date) updateData.date = new Date(data.date)
     const entry = await GunnyInward.findOneAndUpdate(
         { _id: id, millId },
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Gunny inward entry not found')
-    logger.info('Gunny inward entry updated', { id, millId, userId })
+    logger.info('Gunny inward entry updated', { id, millId })
     return entry
 }
 

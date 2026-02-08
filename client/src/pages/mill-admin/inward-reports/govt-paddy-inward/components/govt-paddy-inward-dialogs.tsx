@@ -1,18 +1,23 @@
 import { GovtPaddyInwardActionDialog } from './govt-paddy-inward-action-dialog'
 import { GovtPaddyInwardDeleteDialog } from './govt-paddy-inward-delete-dialog'
-import { govtPaddyInward } from './govt-paddy-inward-provider'
+import { useGovtPaddyInward } from './govt-paddy-inward-provider'
 
 export function GovtPaddyInwardDialogs() {
-    const { open, setOpen, currentRow } = govtPaddyInward()
+    const { open, setOpen, currentRow, setCurrentRow } = useGovtPaddyInward()
+
+    const handleActionDialogClose = (isOpen: boolean) => {
+        if (!isOpen) {
+            setOpen(null)
+            setCurrentRow(null)
+        }
+    }
 
     return (
         <>
             <GovtPaddyInwardActionDialog
                 open={open === 'add' || open === 'edit'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? open : null)
-                }
-                currentRow={currentRow}
+                onOpenChange={handleActionDialogClose}
+                currentRow={open === 'add' ? null : currentRow}
             />
             <GovtPaddyInwardDeleteDialog
                 open={open === 'delete'}

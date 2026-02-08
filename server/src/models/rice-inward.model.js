@@ -18,56 +18,85 @@ const RiceInwardSchema = new Schema(
             required: true,
             index: true,
         },
+        ricePurchaseNumber: {
+            type: String,
+            trim: true,
+        },
         partyName: {
             type: String,
-            required: true,
+            trim: true,
+        },
+        brokerName: {
+            type: String,
             trim: true,
         },
         riceType: {
             type: String,
             trim: true,
         },
+        balanceInward: {
+            type: Number,
+            min: 0,
+        },
+        inwardType: {
+            type: String,
+            trim: true,
+        },
+        lotNumber: {
+            type: String,
+            trim: true,
+        },
+        frkOrNAN: {
+            type: String,
+            trim: true,
+        },
+        gunnyOption: {
+            type: String,
+            trim: true,
+        },
+        gunnyNew: {
+            type: Number,
+            min: 0,
+        },
+        gunnyOld: {
+            type: Number,
+            min: 0,
+        },
+        gunnyPlastic: {
+            type: Number,
+            min: 0,
+        },
+        juteWeight: {
+            type: Number,
+            min: 0,
+        },
+        plasticWeight: {
+            type: Number,
+            min: 0,
+        },
+        gunnyWeight: {
+            type: Number,
+            min: 0,
+        },
         truckNumber: {
             type: String,
             trim: true,
-            uppercase: true,
         },
-        riceGunny: {
-            type: Number,
-            min: 0,
-        },
-        frk: {
-            type: Number,
-            min: 0,
-        },
-        sampleWeight: {
-            type: Number,
-            min: 0,
-        },
-        grossWeight: {
-            type: Number,
-            min: 0,
-        },
-        tareWeight: {
-            type: Number,
-            min: 0,
-        },
-        netWeight: {
-            type: Number,
-            min: 0,
-        },
-        brokerName: {
+        rstNumber: {
             type: String,
             trim: true,
         },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
+        truckLoadWeight: {
+            type: Number,
+            min: 0,
         },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
+        riceMotaNetWeight: {
+            type: Number,
+            min: 0,
+        },
+        ricePatlaNetWeight: {
+            type: Number,
+            min: 0,
         },
     },
     {

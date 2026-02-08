@@ -18,31 +18,36 @@ const FrkInwardSchema = new Schema(
             required: true,
             index: true,
         },
-        partyName: {
+        purchaseDealId: {
             type: String,
-            required: true,
             trim: true,
         },
-        totalWeight: {
+        partyName: {
+            type: String,
+            trim: true,
+        },
+        gunnyPlastic: {
             type: Number,
-            min: 0,
         },
-        rate: {
+        plasticWeight: {
             type: Number,
-            min: 0,
         },
-        amount: {
+        truckNumber: {
+            type: String,
+            trim: true,
+        },
+        rstNumber: {
+            type: String,
+            trim: true,
+        },
+        truckWeight: {
             type: Number,
-            min: 0,
         },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
+        gunnyWeight: {
+            type: Number,
         },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
+        netWeight: {
+            type: Number,
         },
     },
     {

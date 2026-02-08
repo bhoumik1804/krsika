@@ -3,22 +3,19 @@ import { RiceInward } from '../models/rice-inward.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createRiceInwardEntry = async (millId, data, userId) => {
+export const createRiceInwardEntry = async (millId, data) => {
     const entry = new RiceInward({
         ...data,
         millId,
-        createdBy: userId,
         date: new Date(data.date),
     })
     await entry.save()
-    logger.info('Rice inward entry created', { id: entry._id, millId, userId })
+    logger.info('Rice inward entry created', { id: entry._id, millId })
     return entry
 }
 
 export const getRiceInwardById = async (millId, id) => {
     const entry = await RiceInward.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Rice inward entry not found')
     return entry
 }
@@ -42,27 +39,14 @@ export const getRiceInwardList = async (millId, options = {}) => {
     if (search)
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
-            { vehicleNumber: { $regex: search, $options: 'i' } },
+            { ricePurchaseNumber: { $regex: search, $options: 'i' } },
+            { truckNumber: { $regex: search, $options: 'i' } },
+            { rstNumber: { $regex: search, $options: 'i' } },
         ]
 
     const aggregate = RiceInward.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
     const result = await RiceInward.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
@@ -96,7 +80,7 @@ export const getRiceInwardList = async (millId, options = {}) => {
 
 export const getRiceInwardSummary = async (millId, options = {}) => {
     const { startDate, endDate } = options
-    const match = { millId }
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     if (startDate || endDate) {
         match.date = {}
         if (startDate) match.date.$gte = new Date(startDate)
@@ -108,34 +92,45 @@ export const getRiceInwardSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalBags: { $sum: '$bags' },
-                totalWeight: { $sum: '$weight' },
+                totalMotaWeight: { $sum: '$riceMotaNetWeight' },
+                totalPatlaWeight: { $sum: '$ricePatlaNetWeight' },
             },
         },
         {
             $project: {
                 _id: 0,
                 totalEntries: 1,
-                totalBags: 1,
-                totalWeight: { $round: ['$totalWeight', 2] },
+                totalMotaWeight: { $round: ['$totalMotaWeight', 2] },
+                totalPatlaWeight: { $round: ['$totalPatlaWeight', 2] },
+                totalNetWeight: {
+                    $round: [
+                        { $add: ['$totalMotaWeight', '$totalPatlaWeight'] },
+                        2,
+                    ],
+                },
             },
         },
     ])
-    return summary || { totalEntries: 0, totalBags: 0, totalWeight: 0 }
+    return (
+        summary || {
+            totalEntries: 0,
+            totalMotaWeight: 0,
+            totalPatlaWeight: 0,
+            totalNetWeight: 0,
+        }
+    )
 }
 
-export const updateRiceInwardEntry = async (millId, id, data, userId) => {
-    const updateData = { ...data, updatedBy: userId }
+export const updateRiceInwardEntry = async (millId, id, data) => {
+    const updateData = { ...data }
     if (data.date) updateData.date = new Date(data.date)
     const entry = await RiceInward.findOneAndUpdate(
         { _id: id, millId },
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Rice inward entry not found')
-    logger.info('Rice inward entry updated', { id, millId, userId })
+    logger.info('Rice inward entry updated', { id, millId })
     return entry
 }
 
