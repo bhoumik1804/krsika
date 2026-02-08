@@ -1,4 +1,4 @@
-import { type Table } from '@tantml:react-table'
+import { type Table } from '@tanstack/react-table'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,8 +10,8 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { useBulkDeletePaddyPurchases } from '../data/hooks'
-import { usePaddy } from './paddy-provider'
 import { type PaddyPurchaseData } from '../data/schema'
+import { usePaddy } from './paddy-provider'
 
 type PaddyMultiDeleteDialogProps = {
     table: Table<PaddyPurchaseData>
@@ -25,21 +25,22 @@ export function PaddyMultiDeleteDialog({
     onOpenChange,
 }: PaddyMultiDeleteDialogProps) {
     const { millId } = usePaddy()
-    const { mutate: bulkDeletePaddyPurchases, isPending: isDeleting } =
+    const { mutateAsync: bulkDeletePaddyPurchases, isPending: isDeleting } =
         useBulkDeletePaddyPurchases(millId)
 
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
-    const handleDeleteSelected = () => {
-        const ids = selectedRows.map(
-            (row) => (row.original as PaddyPurchaseData).id
-        )
-        bulkDeletePaddyPurchases(ids, {
-            onSuccess: () => {
-                table.resetRowSelection()
-                onOpenChange(false)
-            },
-        })
+    const handleDeleteSelected = async () => {
+        try {
+            const ids = selectedRows
+                .map((row) => (row.original as PaddyPurchaseData)._id)
+                .filter(Boolean) as string[]
+            await bulkDeletePaddyPurchases(ids)
+            table.resetRowSelection()
+            onOpenChange(false)
+        } catch (error) {
+            console.error('Error deleting records:', error)
+        }
     }
 
     return (
@@ -66,12 +67,6 @@ export function PaddyMultiDeleteDialog({
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
                         {isDeleting ? 'Deleting...' : 'Delete'}
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
-    )
-}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

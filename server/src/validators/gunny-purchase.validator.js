@@ -7,30 +7,15 @@ import { z } from 'zod'
 
 // Common fields schema
 const gunnyPurchaseBaseSchema = {
-    date: z
-        .string({
-            required_error: 'Date is required',
-        })
-        .datetime({ offset: true })
-        .or(
-            z
-                .string()
-                .regex(
-                    /^\d{4}-\d{2}-\d{2}$/,
-                    'Invalid date format (YYYY-MM-DD)'
-                )
-        ),
-    partyName: z
-        .string({
-            required_error: 'Party name is required',
-        })
-        .trim()
-        .min(1, 'Party name is required')
-        .max(200, 'Party name is too long'),
-    gunnyType: z.string().trim().max(100, 'Gunny type is too long').optional(),
-    totalGunny: z.number().min(0, 'Total gunny cannot be negative').optional(),
-    rate: z.number().min(0, 'Rate cannot be negative').optional(),
-    amount: z.number().min(0, 'Amount cannot be negative').optional(),
+    date: z.string().min(1, 'Date is required'),
+    partyName: z.string().min(1, 'Party name is required'),
+    deliveryType: z.string().optional(),
+    newGunnyQty: z.number().optional(),
+    newGunnyRate: z.number().optional(),
+    oldGunnyQty: z.number().optional(),
+    oldGunnyRate: z.number().optional(),
+    plasticGunnyQty: z.number().optional(),
+    plasticGunnyRate: z.number().optional(),
 }
 
 // Create gunny purchase schema
@@ -46,20 +31,10 @@ export const createGunnyPurchaseSchema = z.object({
 // Update gunny purchase schema
 export const updateGunnyPurchaseSchema = z.object({
     body: z.object({
-        date: gunnyPurchaseBaseSchema.date.optional(),
-        partyName: z
-            .string()
-            .trim()
-            .max(200, 'Party name is too long')
-            .optional(),
-        gunnyType: gunnyPurchaseBaseSchema.gunnyType,
-        totalGunny: gunnyPurchaseBaseSchema.totalGunny,
-        rate: gunnyPurchaseBaseSchema.rate,
-        amount: gunnyPurchaseBaseSchema.amount,
+        ...gunnyPurchaseBaseSchema,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
-        id: z.string({ required_error: 'Gunny purchase ID is required' }),
     }),
 })
 
@@ -67,7 +42,6 @@ export const updateGunnyPurchaseSchema = z.object({
 export const getGunnyPurchaseByIdSchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
-        id: z.string({ required_error: 'Gunny purchase ID is required' }),
     }),
 })
 
@@ -75,7 +49,6 @@ export const getGunnyPurchaseByIdSchema = z.object({
 export const deleteGunnyPurchaseSchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
-        id: z.string({ required_error: 'Gunny purchase ID is required' }),
     }),
 })
 
@@ -100,14 +73,6 @@ export const getGunnyPurchaseListSchema = z.object({
         page: z.coerce.number().int().min(1).default(1).optional(),
         limit: z.coerce.number().int().min(1).max(100).default(10).optional(),
         search: z.string().trim().optional(),
-        startDate: z
-            .string()
-            .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
-            .optional(),
-        endDate: z
-            .string()
-            .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
-            .optional(),
         sortBy: z
             .enum(['date', 'partyName', 'createdAt'])
             .default('date')
@@ -120,15 +85,5 @@ export const getGunnyPurchaseListSchema = z.object({
 export const getGunnyPurchaseSummarySchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
-    }),
-    query: z.object({
-        startDate: z
-            .string()
-            .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
-            .optional(),
-        endDate: z
-            .string()
-            .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
-            .optional(),
     }),
 })

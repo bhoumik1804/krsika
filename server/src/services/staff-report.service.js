@@ -1,21 +1,28 @@
 import mongoose from 'mongoose'
-import { StaffReport } from '../models/staff-report.model.js'
+import { ROLES } from '../constants/user.roles.enum.js'
+import { User } from '../models/user.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createStaffReportEntry = async (millId, data, userId) => {
-    const entry = new StaffReport({ ...data, millId, createdBy: userId })
-    await entry.save()
-    logger.info('Staff report entry created', { id: entry._id, millId, userId })
-    return entry
+export const createStaffReportEntry = async (millId, data) => {
+    const user = new User({
+        ...data,
+        millId,
+        role: ROLES.MILL_STAFF,
+    })
+    await user.save()
+    logger.info('Staff created', { id: user._id, millId })
+    return user
 }
 
 export const getStaffReportById = async (millId, id) => {
-    const entry = await StaffReport.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
-    if (!entry) throw new ApiError(404, 'Staff report entry not found')
-    return entry
+    const user = await User.findOne({
+        _id: id,
+        millId,
+        role: ROLES.MILL_STAFF,
+    })
+    if (!user) throw new ApiError(404, 'Staff not found')
+    return user
 }
 
 export const getStaffReportList = async (millId, options = {}) => {
@@ -23,39 +30,35 @@ export const getStaffReportList = async (millId, options = {}) => {
         page = 1,
         limit = 10,
         search,
-        sortBy = 'createdAt',
-        sortOrder = 'desc',
+        sortBy = 'fullName',
+        sortOrder = 'asc',
     } = options
-    const matchStage = { millId: new mongoose.Types.ObjectId(millId) }
+    const matchStage = {
+        millId: new mongoose.Types.ObjectId(millId),
+        role: ROLES.MILL_STAFF,
+    }
 
     if (search) {
         matchStage.$or = [
-            { staffName: { $regex: search, $options: 'i' } },
-            { reportType: { $regex: search, $options: 'i' } },
+            { fullName: { $regex: search, $options: 'i' } },
+            { post: { $regex: search, $options: 'i' } },
         ]
     }
 
-    const aggregate = StaffReport.aggregate([
+    const aggregate = User.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
         {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
+            $project: {
+                password: 0,
+                refreshToken: 0,
+                permissions: 0,
+                attendanceHistory: 0,
             },
         },
     ])
 
-    const result = await StaffReport.aggregatePaginate(aggregate, {
+    const result = await User.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
         limit: parseInt(limit, 10),
         customLabels: {
@@ -87,38 +90,52 @@ export const getStaffReportList = async (millId, options = {}) => {
 }
 
 export const getStaffReportSummary = async (millId) => {
-    const [summary] = await StaffReport.aggregate([
-        { $match: { millId: new mongoose.Types.ObjectId(millId) } },
-        { $group: { _id: null, totalEntries: { $sum: 1 } } },
-        { $project: { _id: 0, totalEntries: 1 } },
+    const [summary] = await User.aggregate([
+        {
+            $match: {
+                millId: new mongoose.Types.ObjectId(millId),
+                role: ROLES.MILL_STAFF,
+            },
+        },
+        {
+            $group: {
+                _id: null,
+                totalStaff: { $sum: 1 },
+                totalSalary: { $sum: '$salary' },
+            },
+        },
+        { $project: { _id: 0, totalStaff: 1, totalSalary: 1 } },
     ])
-    return summary || { totalEntries: 0 }
+    return summary || { totalStaff: 0, totalSalary: 0 }
 }
 
-export const updateStaffReportEntry = async (millId, id, data, userId) => {
-    const entry = await StaffReport.findOneAndUpdate(
-        { _id: id, millId },
-        { ...data, updatedBy: userId },
+export const updateStaffReportEntry = async (millId, id, data) => {
+    const user = await User.findOneAndUpdate(
+        { _id: id, millId, role: ROLES.MILL_STAFF },
+        { ...data },
         { new: true, runValidators: true }
-    )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
-    if (!entry) throw new ApiError(404, 'Staff report entry not found')
-    logger.info('Staff report entry updated', { id, millId, userId })
-    return entry
+    ).select('-password -refreshToken -permissions -attendanceHistory')
+    if (!user) throw new ApiError(404, 'Staff not found')
+    logger.info('Staff updated', { id, millId })
+    return user
 }
 
 export const deleteStaffReportEntry = async (millId, id) => {
-    const entry = await StaffReport.findOneAndDelete({ _id: id, millId })
-    if (!entry) throw new ApiError(404, 'Staff report entry not found')
-    logger.info('Staff report entry deleted', { id, millId })
+    const user = await User.findOneAndDelete({
+        _id: id,
+        millId,
+        role: ROLES.MILL_STAFF,
+    })
+    if (!user) throw new ApiError(404, 'Staff not found')
+    logger.info('Staff deleted', { id, millId })
 }
 
 export const bulkDeleteStaffReportEntries = async (millId, ids) => {
-    const result = await StaffReport.deleteMany({ _id: { $in: ids }, millId })
-    logger.info('Staff report entries bulk deleted', {
+    const result = await User.deleteMany({
+        _id: { $in: ids },
         millId,
-        count: result.deletedCount,
+        role: ROLES.MILL_STAFF,
     })
+    logger.info('Staff bulk deleted', { millId, count: result.deletedCount })
     return result.deletedCount
 }

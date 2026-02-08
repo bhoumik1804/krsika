@@ -7,37 +7,24 @@ import { z } from 'zod'
 
 // Common fields schema
 const ricePurchaseBaseSchema = {
-    date: z
-        .string({
-            required_error: 'Date is required',
-        })
-        .datetime({ offset: true })
-        .or(
-            z
-                .string()
-                .regex(
-                    /^\d{4}-\d{2}-\d{2}$/,
-                    'Invalid date format (YYYY-MM-DD)'
-                )
-        ),
-    partyName: z
-        .string({
-            required_error: 'Party name is required',
-        })
-        .trim()
-        .min(1, 'Party name is required')
-        .max(200, 'Party name is too long'),
-    riceType: z.string().trim().max(100, 'Rice type is too long').optional(),
-    riceGunny: z.number().min(0, 'Rice gunny cannot be negative').optional(),
-    netWeight: z.number().min(0, 'Net weight cannot be negative').optional(),
-    rate: z.number().min(0, 'Rate cannot be negative').optional(),
-    amount: z.number().min(0, 'Amount cannot be negative').optional(),
-    brokerName: z
-        .string()
-        .trim()
-        .max(200, 'Broker name is too long')
-        .optional(),
-    brokerage: z.number().min(0, 'Brokerage cannot be negative').optional(),
+    date: z.string().min(1, 'Date is required'),
+    partyName: z.string().optional(),
+    brokerName: z.string().optional(),
+    deliveryType: z.string().optional(),
+    lotOrOther: z.string().optional(), // LOT / Other
+    fciOrNAN: z.string().optional(), // FCI/NAN
+    riceType: z.string().optional(),
+    riceQty: z.number().optional(),
+    riceRate: z.number().optional(),
+    discountPercent: z.number().optional(),
+    brokeragePerQuintal: z.number().optional(),
+    gunnyType: z.string().optional(),
+    newGunnyRate: z.number().optional(),
+    oldGunnyRate: z.number().optional(),
+    plasticGunnyRate: z.number().optional(),
+    frkType: z.string().optional(),
+    frkRatePerQuintal: z.number().optional(),
+    lotNumber: z.string().optional(),
 }
 
 // Create rice purchase schema
@@ -53,19 +40,7 @@ export const createRicePurchaseSchema = z.object({
 // Update rice purchase schema
 export const updateRicePurchaseSchema = z.object({
     body: z.object({
-        date: ricePurchaseBaseSchema.date.optional(),
-        partyName: z
-            .string()
-            .trim()
-            .max(200, 'Party name is too long')
-            .optional(),
-        riceType: ricePurchaseBaseSchema.riceType,
-        riceGunny: ricePurchaseBaseSchema.riceGunny,
-        netWeight: ricePurchaseBaseSchema.netWeight,
-        rate: ricePurchaseBaseSchema.rate,
-        amount: ricePurchaseBaseSchema.amount,
-        brokerName: ricePurchaseBaseSchema.brokerName,
-        brokerage: ricePurchaseBaseSchema.brokerage,
+        ...ricePurchaseBaseSchema,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),

@@ -1,5 +1,11 @@
 import { apiClient } from '@/lib/api-client'
 import type { FrkPurchaseData } from './schema'
+import type {
+    FrkPurchaseListResponse,
+    FrkPurchaseRequest,
+    FrkPurchaseResponse,
+    PaginationData,
+} from './types'
 
 interface FetchFrkPurchaseListParams {
     millId: string
@@ -9,7 +15,10 @@ interface FetchFrkPurchaseListParams {
 }
 
 interface ApiResponse<T> {
+    statusCode: number
     data: T
+    message: string
+    success: boolean
 }
 
 export const frkPurchaseService = {
@@ -17,25 +26,44 @@ export const frkPurchaseService = {
         const queryParams = new URLSearchParams()
         if (params.page) queryParams.append('page', params.page.toString())
         if (params.pageSize)
-            queryParams.append('pageSize', params.pageSize.toString())
+            queryParams.append('limit', params.pageSize.toString())
         if (params.search) queryParams.append('search', params.search)
 
-        const response = await apiClient.get<
-            ApiResponse<{
-                frkPurchases: FrkPurchaseData[]
-                pagination: Record<string, unknown>
-            }>
-        >(`/mills/${params.millId}/frk-purchase?${queryParams.toString()}`)
-        return response.data.data.frkPurchases
+        const response = await apiClient.get<ApiResponse<FrkPurchaseListResponse>>(
+            `/mills/${params.millId}/frk-purchase?${queryParams.toString()}`
+        )
+
+        const data: FrkPurchaseData[] = response.data.data.purchases || []
+
+        const pagination: PaginationData = response.data.data.pagination || {
+            page: params.page || 1,
+            limit: params.pageSize || 10,
+            total: 0,
+            totalPages: 0,
+            hasPrevPage: false,
+            hasNextPage: false,
+            prevPage: null,
+            nextPage: null,
+        }
+
+        return { data, pagination }
     },
 
     createFrkPurchase: async (
         millId: string,
-        data: Omit<FrkPurchaseData, 'id'>
+        data: Omit<FrkPurchaseData, '_id'>
     ) => {
-        const response = await apiClient.post<ApiResponse<FrkPurchaseData>>(
+        const requestData: FrkPurchaseRequest = {
+            date: data.date,
+            partyName: data.partyName,
+            frkQty: data.frkQty,
+            frkRate: data.frkRate,
+            gst: data.gst,
+        }
+
+        const response = await apiClient.post<ApiResponse<FrkPurchaseResponse>>(
             `/mills/${millId}/frk-purchase`,
-            data
+            requestData
         )
         return response.data.data
     },
@@ -43,11 +71,19 @@ export const frkPurchaseService = {
     updateFrkPurchase: async (
         millId: string,
         purchaseId: string,
-        data: Omit<FrkPurchaseData, 'id'>
+        data: Omit<FrkPurchaseData, '_id'>
     ) => {
-        const response = await apiClient.put<ApiResponse<FrkPurchaseData>>(
+        const requestData: FrkPurchaseRequest = {
+            date: data.date,
+            partyName: data.partyName,
+            frkQty: data.frkQty,
+            frkRate: data.frkRate,
+            gst: data.gst,
+        }
+
+        const response = await apiClient.put<ApiResponse<FrkPurchaseResponse>>(
             `/mills/${millId}/frk-purchase/${purchaseId}`,
-            data
+            requestData
         )
         return response.data.data
     },

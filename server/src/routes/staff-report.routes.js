@@ -23,11 +23,11 @@ import {
 const router = Router({ mergeParams: true })
 
 /**
- * Staff Report Routes
+ * Staff Routes (uses User model with MILL_STAFF role)
  * Base path: /api/mills/:millId/staff-reports
  */
 
-// Get staff report list with pagination
+// Get staff list with pagination
 router.get(
     '/',
     authenticate,
@@ -35,7 +35,7 @@ router.get(
     getStaffReportListHandler
 )
 
-// Get staff report summary statistics
+// Get staff summary statistics
 router.get(
     '/summary',
     authenticate,
@@ -43,7 +43,7 @@ router.get(
     getStaffReportSummaryHandler
 )
 
-// Get staff report by ID
+// Get staff by ID
 router.get(
     '/:id',
     authenticate,
@@ -51,7 +51,7 @@ router.get(
     getStaffReportByIdHandler
 )
 
-// Create a new staff report
+// Create a new staff member
 router.post(
     '/',
     authenticate,
@@ -59,7 +59,7 @@ router.post(
     createStaffReport
 )
 
-// Update a staff report
+// Update a staff member
 router.put(
     '/:id',
     authenticate,
@@ -67,7 +67,7 @@ router.put(
     updateStaffReportHandler
 )
 
-// Bulk delete staff reports
+// Bulk delete staff members
 router.delete(
     '/bulk',
     authenticate,
@@ -75,7 +75,7 @@ router.delete(
     bulkDeleteStaffReportHandler
 )
 
-// Delete a staff report
+// Delete a staff member
 router.delete(
     '/:id',
     authenticate,

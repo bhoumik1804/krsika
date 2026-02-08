@@ -3,6 +3,12 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
+import {
+    paddyTypeOptions,
+    deliveryTypeOptions,
+    paddyPurchaseTypeOptions,
+    gunnyTypeOptions,
+} from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -34,39 +40,32 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { useCreatePaddyPurchase, useUpdatePaddyPurchase } from '../data/hooks'
 import { paddyPurchaseSchema, type PaddyPurchaseData } from '../data/schema'
-import {
-    useCreatePaddyPurchase,
-    useUpdatePaddyPurchase,
-} from '../data/hooks'
 import { usePaddy } from './paddy-provider'
-import {
-    paddyTypeOptions,
-    deliveryTypeOptions,
-    paddyPurchaseTypeOptions,
-    gunnyTypeOptions,
-} from '@/constants/purchase-form'
 
 type PaddyActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
+    currentRow?: PaddyPurchaseData | null
 }
 
 export function PaddyActionDialog({
     open,
     onOpenChange,
+    currentRow,
 }: PaddyActionDialogProps) {
-    const { currentRow, millId } = usePaddy()
-    const { mutate: createPaddyPurchase, isPending: isCreating } =
-        useCreatePaddyPurchase(millId)Data
-    const { mutate: updatePaddyPurchase, isPending: isUpdating } =
+    const { millId } = usePaddy()
+    const { mutateAsync: createPaddyPurchase, isPending: isCreating } =
+        useCreatePaddyPurchase(millId)
+    const { mutateAsync: updatePaddyPurchase, isPending: isUpdating } =
         useUpdatePaddyPurchase(millId)
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<PaddyPurchase>({
+    const form = useForm<PaddyPurchaseData>({
         resolver: zodResolver(paddyPurchaseSchema),
         defaultValues: {
             date: format(new Date(), 'yyyy-MM-dd'),
@@ -99,16 +98,37 @@ export function PaddyActionDialog({
     const watchGunnyType = form.watch('gunnyType')
 
     const isDOPurchase = watchPurchaseType === paddyPurchaseTypeOptions[0].value
-    const isOtherPurchase = watchPurchaseType === paddyPurchaseTypeOptions[1].value
+    const isOtherPurchase =
+        watchPurchaseType === paddyPurchaseTypeOptions[1].value
     const isGunnySahit = watchGunnyType === gunnyTypeOptions[1].value
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    partyName: '',
+                    brokerName: '',
+                    deliveryType: '',
+                    purchaseType: '',
+                    doNumber: '',
+                    committeeName: '',
+                    doPaddyQty: undefined,
+                    paddyType: '',
+                    totalPaddyQty: undefined,
+                    paddyRatePerQuintal: undefined,
+                    discountPercent: undefined,
+                    brokerage: undefined,
+                    gunnyType: '',
+                    newGunnyRate: undefined,
+                    oldGunnyRate: undefined,
+                    plasticGunnyRate: undefined,
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
     // Auto-sync doPaddyQty to totalPaddyQty for DO purchases
     useEffect(() => {
@@ -117,24 +137,21 @@ export function PaddyActionDialog({
         }
     }, [isDOPurchase, watchDoPaddyQty, form])
 
-    const onSubmit = (data: PaddyPurchaseData) => {
-        if (isEditing) {
-            updatePaddyPurchase(
-                { purchaseId: currentRow?.id || '', data },
-                {
-                    onSuccess: () => {
-                        onOpenChange(false)
-                        form.reset()
-                    },
-                }
-            )
-        } else {
-            createPaddyPurchase(data, {
-                onSuccess: () => {
-                    onOpenChange(false)
-                    form.reset()
-                },
-            })
+    const onSubmit = async (data: PaddyPurchaseData) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updatePaddyPurchase({
+                    _id: currentRow._id,
+                    ...data,
+                })
+            } else {
+                await createPaddyPurchase(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            // Error handling is managed by mutation hooks (onSuccess/onError)
+            console.error('Form submission error:', error)
         }
     }
 

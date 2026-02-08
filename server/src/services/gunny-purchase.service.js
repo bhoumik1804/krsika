@@ -3,26 +3,19 @@ import { GunnyPurchase } from '../models/gunny-purchase.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createGunnyPurchaseEntry = async (millId, data, userId) => {
+export const createGunnyPurchaseEntry = async (millId, data) => {
     const entry = new GunnyPurchase({
         ...data,
         millId,
-        createdBy: userId,
         date: new Date(data.date),
     })
     await entry.save()
-    logger.info('Gunny purchase entry created', {
-        id: entry._id,
-        millId,
-        userId,
-    })
+    logger.info('Gunny purchase entry created', { id: entry._id, millId })
     return entry
 }
 
 export const getGunnyPurchaseById = async (millId, id) => {
     const entry = await GunnyPurchase.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Gunny purchase entry not found')
     return entry
 }
@@ -32,41 +25,19 @@ export const getGunnyPurchaseList = async (millId, options = {}) => {
         page = 1,
         limit = 10,
         search,
-        startDate,
-        endDate,
         sortBy = 'date',
         sortOrder = 'desc',
     } = options
     const matchStage = { millId: new mongoose.Types.ObjectId(millId) }
-    if (startDate || endDate) {
-        matchStage.date = {}
-        if (startDate) matchStage.date.$gte = new Date(startDate)
-        if (endDate) matchStage.date.$lte = new Date(endDate + 'T23:59:59.999Z')
-    }
     if (search)
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
-            { brokerName: { $regex: search, $options: 'i' } },
+            { deliveryType: { $regex: search, $options: 'i' } },
         ]
 
     const aggregate = GunnyPurchase.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
     const result = await GunnyPurchase.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
@@ -98,48 +69,49 @@ export const getGunnyPurchaseList = async (millId, options = {}) => {
     }
 }
 
-export const getGunnyPurchaseSummary = async (millId, options = {}) => {
-    const { startDate, endDate } = options
-    const match = { millId }
-    if (startDate || endDate) {
-        match.date = {}
-        if (startDate) match.date.$gte = new Date(startDate)
-        if (endDate) match.date.$lte = new Date(endDate + 'T23:59:59.999Z')
-    }
+export const getGunnyPurchaseSummary = async (millId) => {
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     const [summary] = await GunnyPurchase.aggregate([
         { $match: match },
         {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalQuantity: { $sum: '$quantity' },
-                totalAmount: { $sum: '$amount' },
+                totalNewGunnyQty: { $sum: '$newGunnyQty' },
+                totalOldGunnyQty: { $sum: '$oldGunnyQty' },
+                totalPlasticGunnyQty: { $sum: '$plasticGunnyQty' },
             },
         },
         {
             $project: {
                 _id: 0,
                 totalEntries: 1,
-                totalQuantity: 1,
-                totalAmount: { $round: ['$totalAmount', 2] },
+                totalNewGunnyQty: 1,
+                totalOldGunnyQty: 1,
+                totalPlasticGunnyQty: 1,
             },
         },
     ])
-    return summary || { totalEntries: 0, totalQuantity: 0, totalAmount: 0 }
+    return (
+        summary || {
+            totalEntries: 0,
+            totalNewGunnyQty: 0,
+            totalOldGunnyQty: 0,
+            totalPlasticGunnyQty: 0,
+        }
+    )
 }
 
-export const updateGunnyPurchaseEntry = async (millId, id, data, userId) => {
-    const updateData = { ...data, updatedBy: userId }
+export const updateGunnyPurchaseEntry = async (millId, id, data) => {
+    const updateData = { ...data }
     if (data.date) updateData.date = new Date(data.date)
     const entry = await GunnyPurchase.findOneAndUpdate(
         { _id: id, millId },
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Gunny purchase entry not found')
-    logger.info('Gunny purchase entry updated', { id, millId, userId })
+    logger.info('Gunny purchase entry updated', { id, millId })
     return entry
 }
 

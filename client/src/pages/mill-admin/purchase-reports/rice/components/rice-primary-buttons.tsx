@@ -3,10 +3,15 @@ import { Button } from '@/components/ui/button'
 import { useRice } from './rice-provider'
 
 export function RicePrimaryButtons() {
-    const { setOpen } = useRice()
+    const { setOpen, setCurrentRow } = useRice()
 
     return (
-        <Button onClick={() => setOpen('add')}>
+        <Button
+            onClick={() => {
+                setCurrentRow(null)
+                setOpen('add')
+            }}
+        >
             <Plus className='mr-2 size-4' />
             Add Rice Purchase
         </Button>

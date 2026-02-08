@@ -3,22 +3,19 @@ import { FrkPurchase } from '../models/frk-purchase.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createFrkPurchaseEntry = async (millId, data, userId) => {
+export const createFrkPurchaseEntry = async (millId, data) => {
     const entry = new FrkPurchase({
         ...data,
         millId,
-        createdBy: userId,
         date: new Date(data.date),
     })
     await entry.save()
-    logger.info('FRK purchase entry created', { id: entry._id, millId, userId })
+    logger.info('FRK purchase entry created', { id: entry._id, millId })
     return entry
 }
 
 export const getFrkPurchaseById = async (millId, id) => {
     const entry = await FrkPurchase.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'FRK purchase entry not found')
     return entry
 }
@@ -28,43 +25,18 @@ export const getFrkPurchaseList = async (millId, options = {}) => {
         page = 1,
         limit = 10,
         search,
-        startDate,
-        endDate,
         sortBy = 'date',
         sortOrder = 'desc',
     } = options
     const matchStage = { millId: new mongoose.Types.ObjectId(millId) }
 
-    if (startDate || endDate) {
-        matchStage.date = {}
-        if (startDate) matchStage.date.$gte = new Date(startDate)
-        if (endDate) matchStage.date.$lte = new Date(endDate + 'T23:59:59.999Z')
-    }
     if (search) {
-        matchStage.$or = [
-            { partyName: { $regex: search, $options: 'i' } },
-            { brokerName: { $regex: search, $options: 'i' } },
-        ]
+        matchStage.$or = [{ partyName: { $regex: search, $options: 'i' } }]
     }
 
     const aggregate = FrkPurchase.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
 
     const result = await FrkPurchase.aggregatePaginate(aggregate, {
@@ -98,39 +70,30 @@ export const getFrkPurchaseList = async (millId, options = {}) => {
     }
 }
 
-export const getFrkPurchaseSummary = async (millId, options = {}) => {
-    const { startDate, endDate } = options
-    const match = { millId }
-    if (startDate || endDate) {
-        match.date = {}
-        if (startDate) match.date.$gte = new Date(startDate)
-        if (endDate) match.date.$lte = new Date(endDate + 'T23:59:59.999Z')
-    }
-
+export const getFrkPurchaseSummary = async (millId) => {
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     const [summary] = await FrkPurchase.aggregate([
         { $match: match },
         {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalQuantity: { $sum: '$quantity' },
-                totalAmount: { $sum: '$amount' },
+                totalFrkQty: { $sum: '$frkQty' },
             },
         },
         {
             $project: {
                 _id: 0,
                 totalEntries: 1,
-                totalQuantity: 1,
-                totalAmount: { $round: ['$totalAmount', 2] },
+                totalFrkQty: { $round: ['$totalFrkQty', 2] },
             },
         },
     ])
-    return summary || { totalEntries: 0, totalQuantity: 0, totalAmount: 0 }
+    return summary || { totalEntries: 0, totalFrkQty: 0 }
 }
 
-export const updateFrkPurchaseEntry = async (millId, id, data, userId) => {
-    const updateData = { ...data, updatedBy: userId }
+export const updateFrkPurchaseEntry = async (millId, id, data) => {
+    const updateData = { ...data }
     if (data.date) updateData.date = new Date(data.date)
 
     const entry = await FrkPurchase.findOneAndUpdate(
@@ -138,10 +101,8 @@ export const updateFrkPurchaseEntry = async (millId, id, data, userId) => {
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'FRK purchase entry not found')
-    logger.info('FRK purchase entry updated', { id, millId, userId })
+    logger.info('FRK purchase entry updated', { id, millId })
     return entry
 }
 

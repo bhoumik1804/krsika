@@ -31,7 +31,7 @@ export interface UpdateStaffReportRequest {
 export interface StaffReportResponse {
     _id: string
     millId: string
-    staffName: string
+    fullName: string
     designation?: string
     department?: string
     phone?: string

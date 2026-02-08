@@ -2,14 +2,12 @@ import { z } from 'zod'
 
 // Schema for FRK Purchase records
 export const frkPurchaseSchema = z.object({
-    id: z.string(),
+    _id: z.string().optional(),
     date: z.string().min(1, 'Date is required'),
     partyName: z.string().min(1, 'Party name is required'),
-    totalWeight: z.number().optional(),
-    rate: z.number().optional(),
-    amount: z.number().optional(),
-    createdAt: z.string().optional(),
-    updatedAt: z.string().optional(),
+    frkQty: z.number().optional(),
+    frkRate: z.number().optional(),
+    gst: z.number().optional(),
 })
 
 export type FrkPurchaseData = z.infer<typeof frkPurchaseSchema>

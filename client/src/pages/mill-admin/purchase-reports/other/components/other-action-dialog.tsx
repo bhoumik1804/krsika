@@ -3,8 +3,7 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -36,13 +35,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import {otherPurchaseAndSalesQtyTypeOptions} from '@/constants/purchase-form'
+import { useCreateOtherPurchase, useUpdateOtherPurchase } from '../data/hooks'
 import { otherPurchaseSchema, type OtherPurchase } from '../data/schema'
+import { useOther } from './other-provider'
 
 type OtherActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: OtherPurchase | null
+    currentRow?: OtherPurchase | null
 }
 
 export function OtherActionDialog({
@@ -50,7 +50,14 @@ export function OtherActionDialog({
     onOpenChange,
     currentRow,
 }: OtherActionDialogProps) {
+    const { millId } = useOther()
+    const { mutateAsync: createOtherPurchase, isPending: isCreating } =
+        useCreateOtherPurchase(millId)
+    const { mutateAsync: updateOtherPurchase, isPending: isUpdating } =
+        useUpdateOtherPurchase(millId)
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
     const form = useForm<OtherPurchase>({
@@ -60,36 +67,49 @@ export function OtherActionDialog({
             partyName: '',
             brokerName: '',
             otherPurchaseName: '',
-            otherPurchaseQty: undefined,
+            otherPurchaseQty: 0,
             qtyType: '',
-            rate: undefined,
-            discountPercent: undefined,
-            gst: undefined,
+            rate: 0,
+            discountPercent: 0,
+            gst: 0,
         } as OtherPurchase,
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    partyName: '',
+                    brokerName: '',
+                    otherPurchaseName: '',
+                    otherPurchaseQty: 0,
+                    qtyType: '',
+                    rate: 0,
+                    discountPercent: 0,
+                    gst: 0,
+                } as OtherPurchase)
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Purchase updated successfully'
-                    : 'Purchase added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update purchase'
-                : 'Failed to add purchase',
-        })
+    const onSubmit = async (data: OtherPurchase) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateOtherPurchase({
+                    purchaseId: currentRow._id,
+                    data,
+                })
+            } else {
+                await createOtherPurchase(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            console.error('Form submission error:', error)
+        }
     }
 
     return (
@@ -119,7 +139,9 @@ export function OtherActionDialog({
                                             <FormLabel>Date</FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
-                                                onOpenChange={setDatePopoverOpen}
+                                                onOpenChange={
+                                                    setDatePopoverOpen
+                                                }
                                             >
                                                 <PopoverTrigger asChild>
                                                     <FormControl>
@@ -182,6 +204,7 @@ export function OtherActionDialog({
                                                 <Input
                                                     placeholder='Enter party name'
                                                     {...field}
+                                                    value={field.value || ''}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -198,6 +221,7 @@ export function OtherActionDialog({
                                                 <Input
                                                     placeholder='Enter broker name'
                                                     {...field}
+                                                    value={field.value || ''}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -209,13 +233,12 @@ export function OtherActionDialog({
                                     name='otherPurchaseName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Item Name
-                                            </FormLabel>
+                                            <FormLabel>Item Name</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter item name'
                                                     {...field}
+                                                    value={field.value || ''}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -234,16 +257,17 @@ export function OtherActionDialog({
                                                     step='0.01'
                                                     placeholder='0.00'
                                                     {...field}
+                                                    value={field.value ?? ''}
                                                     onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? undefined
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -258,12 +282,10 @@ export function OtherActionDialog({
                                     name='qtyType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Quantity Type
-                                            </FormLabel>
+                                            <FormLabel>Quantity Type</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                value={field.value || ''}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
@@ -301,18 +323,19 @@ export function OtherActionDialog({
                                                 <Input
                                                     type='number'
                                                     step='0.01'
-                                                    placeholder='0.00'
+                                                    placeholder=''
                                                     {...field}
-                                                   onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                    value={field.value ?? ''}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? undefined
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -334,16 +357,17 @@ export function OtherActionDialog({
                                                     step='0.01'
                                                     placeholder='0.00'
                                                     {...field}
-                                                   onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                    value={field.value ?? ''}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? undefined
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -365,16 +389,17 @@ export function OtherActionDialog({
                                                     step='0.01'
                                                     placeholder='0.00'
                                                     {...field}
+                                                    value={field.value ?? ''}
                                                     onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? undefined
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -391,11 +416,19 @@ export function OtherActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Purchase
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}{' '}
+                                Purchase
                             </Button>
                         </DialogFooter>
                     </form>

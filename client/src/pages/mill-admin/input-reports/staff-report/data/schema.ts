@@ -2,10 +2,11 @@ import { z } from 'zod'
 
 // Schema for StaffReport records
 export const staffReportSchema = z.object({
-    staffName: z.string().min(1, 'Staff name is required'),
+    _id: z.string().optional(),
+    fullName: z.string().min(1, 'Name is required'),
     post: z.string().optional(),
     salary: z.number().optional(),
-    phone: z.string().optional(),
+    phoneNumber: z.string().optional(),
     email: z.string().optional(),
     address: z.string().optional(),
 })

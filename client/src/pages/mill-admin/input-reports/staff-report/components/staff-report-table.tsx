@@ -22,18 +22,38 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type StaffReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { staffReportColumns as columns } from './staff-report-columns'
+
+type Pagination = {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasPrevPage: boolean
+    hasNextPage: boolean
+    prevPage: number | null
+    nextPage: number | null
+}
 
 type DataTableProps = {
     data: StaffReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    isLoading?: boolean
+    isError?: boolean
+    pagination?: Pagination
 }
 
-export function StaffReportTable({ data, search, navigate }: DataTableProps) {
+export function StaffReportTable({
+    data,
+    search,
+    navigate,
+    isLoading,
+    isError,
+    pagination: serverPagination,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -49,11 +69,20 @@ export function StaffReportTable({ data, search, navigate }: DataTableProps) {
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
+            {
+                columnId: 'fullName',
+                searchKey: 'search',
+                type: 'string',
+            },
         ],
     })
 
@@ -74,6 +103,9 @@ export function StaffReportTable({ data, search, navigate }: DataTableProps) {
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
+        // Use server-side pagination info when available
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
@@ -83,8 +115,10 @@ export function StaffReportTable({ data, search, navigate }: DataTableProps) {
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -95,15 +129,8 @@ export function StaffReportTable({ data, search, navigate }: DataTableProps) {
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
-                searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
+                searchPlaceholder='Search staff...'
+                searchKey='fullName'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>
@@ -140,7 +167,25 @@ export function StaffReportTable({ data, search, navigate }: DataTableProps) {
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className='h-24 text-center'
+                                >
+                                    Loading...
+                                </TableCell>
+                            </TableRow>
+                        ) : isError ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className='h-24 text-center text-destructive'
+                                >
+                                    Error loading data
+                                </TableCell>
+                            </TableRow>
+                        ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}

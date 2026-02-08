@@ -22,11 +22,21 @@ export const ricePurchaseService = {
 
         const response = await apiClient.get<
             ApiResponse<{
-                ricePurchases: RicePurchaseData[]
+                purchases: Array<RicePurchaseData & { _id: string }>
                 pagination: Record<string, unknown>
             }>
         >(`/mills/${params.millId}/rice-purchase?${queryParams.toString()}`)
-        return response.data.data.ricePurchases
+
+        // Map _id to id for consistency
+        const data = response.data.data.purchases.map((item) => ({
+            ...item,
+            id: item._id,
+        }))
+
+        return {
+            data,
+            pagination: response.data.data.pagination,
+        }
     },
 
     createRicePurchase: async (

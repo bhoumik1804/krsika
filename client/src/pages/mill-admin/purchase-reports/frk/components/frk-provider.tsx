@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { useFrkPurchaseList } from '../data/hooks'
 import { type FrkPurchaseData } from '../data/schema'
@@ -24,6 +24,12 @@ type FrkContextType = {
     millId: string
     queryParams: QueryParams
     setQueryParams: React.Dispatch<React.SetStateAction<QueryParams>>
+    pagination: {
+        page: number
+        pageSize: number
+        total: number
+        totalPages: number
+    }
 }
 
 const FrkContext = React.createContext<FrkContextType | null>(null)
@@ -32,6 +38,7 @@ interface FrkProviderProps {
     children: React.ReactNode
     millId: string
     initialQueryParams?: QueryParams
+    onQueryParamsChange?: (params: QueryParams) => void
 }
 
 const defaultQueryParams: QueryParams = {
@@ -46,14 +53,26 @@ export function FrkProvider({
     children,
     millId,
     initialQueryParams = defaultQueryParams,
+    onQueryParamsChange,
 }: FrkProviderProps) {
     const [open, setOpen] = useDialogState<FrkDialogType>(null)
     const [currentRow, setCurrentRow] = useState<FrkPurchaseData | null>(null)
     const [queryParams, setQueryParams] =
         useState<QueryParams>(initialQueryParams)
 
+    // Sync URL params with internal state
+    useEffect(() => {
+        setQueryParams(initialQueryParams)
+    }, [initialQueryParams.page, initialQueryParams.limit, initialQueryParams.search])
+
+    // Notify parent when queryParams change
+    useEffect(() => {
+        onQueryParamsChange?.(queryParams)
+    }, [queryParams, onQueryParamsChange])
+
     const {
         data = [],
+        pagination = { page: 1, pageSize: 10, total: 0, totalPages: 0 },
         isLoading,
         isError,
     } = useFrkPurchaseList({
@@ -76,6 +95,12 @@ export function FrkProvider({
                 millId,
                 queryParams,
                 setQueryParams,
+                pagination: {
+                    page: pagination.page || 1,
+                    pageSize: pagination.pageSize || 10,
+                    total: pagination.total || 0,
+                    totalPages: pagination.totalPages || 0,
+                },
             }}
         >
             {children}

@@ -42,23 +42,25 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import { ricePurchaseSchema, type RicePurchaseData } from '../data/schema'
 import { useCreateRicePurchase, useUpdateRicePurchase } from '../data/hooks'
+import { ricePurchaseSchema, type RicePurchaseData } from '../data/schema'
 import { useRice } from './rice-provider'
 
 type RiceActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
+    currentRow?: RicePurchaseData | null
 }
 
 export function RiceActionDialog({
     open,
     onOpenChange,
+    currentRow,
 }: RiceActionDialogProps) {
-    const { currentRow, millId } = useRice()
-    const { mutate: createRicePurchase, isPending: isCreating } =
+    const { millId } = useRice()
+    const { mutateAsync: createRicePurchase, isPending: isCreating } =
         useCreateRicePurchase(millId)
-    const { mutate: updateRicePurchase, isPending: isUpdating } =
+    const { mutateAsync: updateRicePurchase, isPending: isUpdating } =
         useUpdateRicePurchase(millId)
 
     const isEditing = !!currentRow
@@ -104,31 +106,48 @@ export function RiceActionDialog({
     const isFrkSahit = watchFrkType === frkTypeOptions[0]?.value
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    partyName: '',
+                    brokerName: '',
+                    deliveryType: '',
+                    lotOrOther: '',
+                    fciOrNAN: '',
+                    riceType: '',
+                    riceQty: undefined,
+                    riceRate: undefined,
+                    discountPercent: undefined,
+                    brokeragePerQuintal: undefined,
+                    gunnyType: '',
+                    newGunnyRate: undefined,
+                    oldGunnyRate: undefined,
+                    plasticGunnyRate: undefined,
+                    frkType: '',
+                    frkRatePerQuintal: undefined,
+                    lotNumber: '',
+                } as RicePurchaseData)
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
-    const onSubmit = (data: RicePurchaseData) => {
-        if (isEditing) {
-            updateRicePurchase(
-                { purchaseId: currentRow?.id || '', data },
-                {
-                    onSuccess: () => {
-                        onOpenChange(false)
-                        form.reset()
-                    },
-                }
-            )
-        } else {
-            createRicePurchase(data, {
-                onSuccess: () => {
-                    onOpenChange(false)
-                    form.reset()
-                },
-            })
+    const onSubmit = async (data: RicePurchaseData) => {
+        try {
+            if (isEditing && currentRow?.id) {
+                await updateRicePurchase({
+                    purchaseId: currentRow.id,
+                    data,
+                })
+            } else {
+                await createRicePurchase(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            console.error('Form submission error:', error)
         }
     }
 

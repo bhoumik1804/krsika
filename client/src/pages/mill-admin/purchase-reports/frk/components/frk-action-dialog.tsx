@@ -41,9 +41,9 @@ export function FrkActionDialog({
     onOpenChange,
 }: FrkActionDialogProps) {
     const { currentRow, millId } = useFrk()
-    const { mutate: createFrkPurchase, isPending: isCreating } =
+    const { mutateAsync: createFrkPurchase, isPending: isCreating } =
         useCreateFrkPurchase(millId)
-    const { mutate: updateFrkPurchase, isPending: isUpdating } =
+    const { mutateAsync: updateFrkPurchase, isPending: isUpdating } =
         useUpdateFrkPurchase(millId)
 
     const isEditing = !!currentRow
@@ -55,9 +55,9 @@ export function FrkActionDialog({
         defaultValues: {
             date: format(new Date(), 'yyyy-MM-dd'),
             partyName: '',
-            totalWeight: undefined,
-            rate: undefined,
-            amount: undefined,
+            frkQty: undefined,
+            frkRate: undefined,
+            gst: undefined,
         } as FrkPurchaseData,
     })
 
@@ -65,28 +65,30 @@ export function FrkActionDialog({
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                partyName: '',
+                frkQty: undefined,
+                frkRate: undefined,
+                gst: undefined,
+            } as FrkPurchaseData)
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
-    const onSubmit = (data: FrkPurchaseData) => {
-        if (isEditing) {
-            updateFrkPurchase(
-                { purchaseId: currentRow?.id || '', data },
-                {
-                    onSuccess: () => {
-                        onOpenChange(false)
-                        form.reset()
-                    },
-                }
-            )
-        } else {
-            createFrkPurchase(data, {
-                onSuccess: () => {
-                    onOpenChange(false)
-                    form.reset()
-                },
-            })
+    const onSubmit = async (data: FrkPurchaseData) => {
+        try {
+            if (isEditing) {
+                await updateFrkPurchase({
+                    purchaseId: currentRow?._id || '',
+                    data,
+                })
+            } else {
+                await createFrkPurchase(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            console.error('Error submitting form:', error)
         }
     }
 
@@ -191,11 +193,11 @@ export function FrkActionDialog({
 
                                 <FormField
                                     control={form.control}
-                                    name='totalWeight'
+                                    name='frkQty'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Total Weight (Qtl)
+                                                FRK Quantity (Qtl)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -224,12 +226,10 @@ export function FrkActionDialog({
                                 />
                                 <FormField
                                     control={form.control}
-                                    name='rate'
+                                    name='frkRate'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Rate (per Qtl)
-                                            </FormLabel>
+                                            <FormLabel>FRK Rate (per Qtl)</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -258,10 +258,10 @@ export function FrkActionDialog({
 
                                 <FormField
                                     control={form.control}
-                                    name='amount'
+                                    name='gst'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Amount (₹)</FormLabel>
+                                            <FormLabel>GST (%)</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'

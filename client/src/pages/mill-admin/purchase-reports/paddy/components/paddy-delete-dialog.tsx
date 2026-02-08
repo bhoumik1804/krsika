@@ -9,28 +9,32 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { useDeletePaddyPurchase } from '../data/hooks'
+import { type PaddyPurchaseData } from '../data/schema'
 import { usePaddy } from './paddy-provider'
 
 type PaddyDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
+    currentRow: PaddyPurchaseData | null
 }
 
 export function PaddyDeleteDialog({
     open,
     onOpenChange,
+    currentRow,
 }: PaddyDeleteDialogProps) {
-    const { currentRow, millId } = usePaddy()
-    const { mutate: deletePaddyPurchase, isPending: isDeleting } =
+    const { millId } = usePaddy()
+    const { mutateAsync: deletePaddyPurchase, isPending: isDeleting } =
         useDeletePaddyPurchase(millId)
 
-    const handleDelete = () => {
-        if (currentRow?.id) {
-            deletePaddyPurchase(currentRow.id, {
-                onSuccess: () => {
-                    onOpenChange(false)
-                },
-            })
+    const handleDelete = async () => {
+        if (currentRow?._id) {
+            try {
+                await deletePaddyPurchase(currentRow._id)
+                onOpenChange(false)
+            } catch (error) {
+                console.error('Error deleting purchase:', error)
+            }
         }
     }
 

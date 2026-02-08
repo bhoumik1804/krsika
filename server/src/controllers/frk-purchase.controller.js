@@ -13,8 +13,7 @@ export const createFrkPurchase = async (req, res, next) => {
     try {
         const purchase = await createFrkPurchaseEntry(
             req.params.millId,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(201).json(
             new ApiResponse(201, { purchase }, 'FRK purchase created')
@@ -76,8 +75,7 @@ export const updateFrkPurchaseHandler = async (req, res, next) => {
         const purchase = await updateFrkPurchaseEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(200, { purchase }, 'FRK purchase updated')

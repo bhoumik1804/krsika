@@ -8,7 +8,7 @@ export const staffReportEntries: StaffReportData[] = Array.from(
     { length: 50 },
     (): StaffReportData => {
         return {
-            staffName: faker.person.fullName(),
+            fullName: faker.person.fullName(),
             post: faker.helpers.arrayElement([
                 'Manager',
                 'Supervisor',

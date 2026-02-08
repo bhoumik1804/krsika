@@ -7,32 +7,11 @@ import { z } from 'zod'
 
 // Common fields schema
 const frkPurchaseBaseSchema = {
-    date: z
-        .string({
-            required_error: 'Date is required',
-        })
-        .datetime({ offset: true })
-        .or(
-            z
-                .string()
-                .regex(
-                    /^\d{4}-\d{2}-\d{2}$/,
-                    'Invalid date format (YYYY-MM-DD)'
-                )
-        ),
-    partyName: z
-        .string({
-            required_error: 'Party name is required',
-        })
-        .trim()
-        .min(1, 'Party name is required')
-        .max(200, 'Party name is too long'),
-    totalWeight: z
-        .number()
-        .min(0, 'Total weight cannot be negative')
-        .optional(),
-    rate: z.number().min(0, 'Rate cannot be negative').optional(),
-    amount: z.number().min(0, 'Amount cannot be negative').optional(),
+    date: z.string().min(1, 'Date is required'),
+    partyName: z.string().min(1, 'Party name is required'),
+    frkQty: z.number().optional(),
+    frkRate: z.number().optional(),
+    gst: z.number().optional(),
 }
 
 // Create FRK purchase schema
@@ -48,19 +27,10 @@ export const createFrkPurchaseSchema = z.object({
 // Update FRK purchase schema
 export const updateFrkPurchaseSchema = z.object({
     body: z.object({
-        date: frkPurchaseBaseSchema.date.optional(),
-        partyName: z
-            .string()
-            .trim()
-            .max(200, 'Party name is too long')
-            .optional(),
-        totalWeight: frkPurchaseBaseSchema.totalWeight,
-        rate: frkPurchaseBaseSchema.rate,
-        amount: frkPurchaseBaseSchema.amount,
+        ...frkPurchaseBaseSchema,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
-        id: z.string({ required_error: 'FRK purchase ID is required' }),
     }),
 })
 
@@ -68,7 +38,6 @@ export const updateFrkPurchaseSchema = z.object({
 export const getFrkPurchaseByIdSchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
-        id: z.string({ required_error: 'FRK purchase ID is required' }),
     }),
 })
 
@@ -76,7 +45,6 @@ export const getFrkPurchaseByIdSchema = z.object({
 export const deleteFrkPurchaseSchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
-        id: z.string({ required_error: 'FRK purchase ID is required' }),
     }),
 })
 
@@ -101,14 +69,6 @@ export const getFrkPurchaseListSchema = z.object({
         page: z.coerce.number().int().min(1).default(1).optional(),
         limit: z.coerce.number().int().min(1).max(100).default(10).optional(),
         search: z.string().trim().optional(),
-        startDate: z
-            .string()
-            .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
-            .optional(),
-        endDate: z
-            .string()
-            .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
-            .optional(),
         sortBy: z
             .enum(['date', 'partyName', 'createdAt'])
             .default('date')
@@ -121,15 +81,5 @@ export const getFrkPurchaseListSchema = z.object({
 export const getFrkPurchaseSummarySchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
-    }),
-    query: z.object({
-        startDate: z
-            .string()
-            .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
-            .optional(),
-        endDate: z
-            .string()
-            .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
-            .optional(),
     }),
 })

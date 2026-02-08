@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 // Schema for Paddy Purchase records
 export const paddyPurchaseSchema = z.object({
-    id: z.string(),
+    _id: z.string().optional(),
     date: z.string().min(1, 'Date is required'),
     partyName: z.string().optional(),
     brokerName: z.string().optional(),

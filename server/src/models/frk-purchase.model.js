@@ -23,26 +23,14 @@ const FrkPurchaseSchema = new Schema(
             required: true,
             trim: true,
         },
-        totalWeight: {
+        frkQty: {
             type: Number,
-            min: 0,
         },
-        rate: {
+        frkRate: {
             type: Number,
-            min: 0,
         },
-        amount: {
+        gst: {
             type: Number,
-            min: 0,
-        },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
         },
     },
     {

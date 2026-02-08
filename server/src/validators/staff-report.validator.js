@@ -2,35 +2,29 @@ import { z } from 'zod'
 
 /**
  * Staff Report Validators
- * Zod schemas for request validation
+ * Zod schemas for request validation (uses User model with MILL_STAFF role)
  */
 
 // Common fields schema
 const staffReportBaseSchema = {
-    staffName: z
-        .string({ required_error: 'Staff name is required' })
+    fullName: z
+        .string({ required_error: 'Full name is required' })
         .trim()
-        .min(1, 'Staff name cannot be empty')
-        .max(200, 'Staff name is too long'),
-    designation: z
-        .string()
-        .trim()
-        .max(100, 'Designation is too long')
-        .optional(),
-    department: z.string().trim().max(100, 'Department is too long').optional(),
-    phone: z.string().trim().max(20, 'Phone number is too long').optional(),
+        .min(1, 'Full name cannot be empty')
+        .max(200, 'Full name is too long'),
     email: z
-        .string()
-        .trim()
         .email('Invalid email format')
         .max(100, 'Email is too long')
         .optional()
         .or(z.literal('')),
-    joiningDate: z
+    phoneNumber: z
         .string()
-        .refine((val) => !val || !isNaN(Date.parse(val)), 'Invalid date format')
+        .trim()
+        .max(20, 'Phone number is too long')
         .optional(),
+    post: z.string().trim().max(100, 'Post is too long').optional(),
     salary: z.coerce.number().min(0, 'Salary cannot be negative').optional(),
+    address: z.string().trim().max(500, 'Address is too long').optional(),
 }
 
 // Create staff report schema
@@ -46,17 +40,15 @@ export const createStaffReportSchema = z.object({
 // Update staff report schema
 export const updateStaffReportSchema = z.object({
     body: z.object({
-        staffName: staffReportBaseSchema.staffName.optional(),
-        designation: staffReportBaseSchema.designation,
-        department: staffReportBaseSchema.department,
-        phone: staffReportBaseSchema.phone,
+        fullName: staffReportBaseSchema.fullName.optional(),
         email: staffReportBaseSchema.email,
-        joiningDate: staffReportBaseSchema.joiningDate,
+        phoneNumber: staffReportBaseSchema.phoneNumber,
+        post: staffReportBaseSchema.post,
         salary: staffReportBaseSchema.salary,
+        address: staffReportBaseSchema.address,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
-        id: z.string({ required_error: 'Staff Report ID is required' }),
     }),
 })
 
@@ -64,7 +56,6 @@ export const updateStaffReportSchema = z.object({
 export const getStaffReportByIdSchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
-        id: z.string({ required_error: 'Staff Report ID is required' }),
     }),
 })
 
@@ -72,7 +63,6 @@ export const getStaffReportByIdSchema = z.object({
 export const deleteStaffReportSchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
-        id: z.string({ required_error: 'Staff Report ID is required' }),
     }),
 })
 
@@ -98,14 +88,8 @@ export const getStaffReportListSchema = z.object({
         limit: z.coerce.number().int().min(1).max(100).default(10).optional(),
         search: z.string().trim().optional(),
         sortBy: z
-            .enum([
-                'staffName',
-                'designation',
-                'department',
-                'createdAt',
-                'joiningDate',
-            ])
-            .default('staffName')
+            .enum(['fullName', 'post', 'salary', 'createdAt'])
+            .default('fullName')
             .optional(),
         sortOrder: z.enum(['asc', 'desc']).default('asc').optional(),
     }),

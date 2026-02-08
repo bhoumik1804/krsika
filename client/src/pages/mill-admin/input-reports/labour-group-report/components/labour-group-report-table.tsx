@@ -22,21 +22,37 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type LabourGroupReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { labourGroupReportColumns as columns } from './labour-group-report-columns'
+
+type Pagination = {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasPrevPage: boolean
+    hasNextPage: boolean
+    prevPage: number | null
+    nextPage: number | null
+}
 
 type DataTableProps = {
     data: LabourGroupReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: Pagination
+    isLoading?: boolean
+    isError?: boolean
 }
 
 export function LabourGroupReportTable({
     data,
     search,
     navigate,
+    pagination: serverPagination,
+    isLoading,
+    isError,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -53,11 +69,20 @@ export function LabourGroupReportTable({
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
+            {
+                columnId: 'labourTeamName',
+                searchKey: 'search',
+                type: 'string',
+            },
         ],
     })
 
@@ -78,6 +103,9 @@ export function LabourGroupReportTable({
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
+        // Use server-side pagination info when available
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
@@ -87,8 +115,10 @@ export function LabourGroupReportTable({
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -99,15 +129,8 @@ export function LabourGroupReportTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
-                searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
+                searchPlaceholder='Search labour team...'
+                searchKey='labourTeamName'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

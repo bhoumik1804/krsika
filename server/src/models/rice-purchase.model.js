@@ -20,45 +20,63 @@ const RicePurchaseSchema = new Schema(
         },
         partyName: {
             type: String,
-            required: true,
             trim: true,
-        },
-        riceType: {
-            type: String,
-            trim: true,
-        },
-        riceGunny: {
-            type: Number,
-            min: 0,
-        },
-        netWeight: {
-            type: Number,
-            min: 0,
-        },
-        rate: {
-            type: Number,
-            min: 0,
-        },
-        amount: {
-            type: Number,
-            min: 0,
         },
         brokerName: {
             type: String,
             trim: true,
         },
-        brokerage: {
+        deliveryType: {
+            type: String,
+            trim: true,
+        },
+        lotOrOther: {
+            type: String,
+            trim: true,
+        }, // LOT / Other
+        fciOrNAN: {
+            type: String,
+            trim: true,
+        }, // FCI/NAN
+        riceType: {
+            type: String,
+            trim: true,
+        },
+        riceQty: {
             type: Number,
-            min: 0,
         },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
+        riceRate: {
+            type: Number,
         },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
+        discountPercent: {
+            type: Number,
+        },
+        brokeragePerQuintal: {
+            type: Number,
+        },
+        gunnyType: {
+            type: String,
+            trim: true,
+        },
+        newGunnyRate: {
+            type: Number,
+        },
+        oldGunnyRate: {
+            type: Number,
+        },
+        plasticGunnyRate: {
+            type: Number,
+        },
+        frkType: {
+            type: String,
+            trim: true,
+        },
+        frkRatePerQuintal: {
+            type: Number,
+        },
+        lotNumber: {
+            type: String,
+            trim: true,
         },
     },
     {

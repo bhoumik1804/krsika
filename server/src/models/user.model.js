@@ -85,6 +85,16 @@ const userSchema = new Schema(
         permissions: [permissionSchema],
         // Staff-specific (embedded for performance)
         attendanceHistory: [attendanceSchema],
+
+        post: {
+            type: String,
+        },
+        salary: {
+            type: Number,
+        },
+        address: {
+            type: String,
+        },
     },
     { timestamps: true } // Handles createdAt & updatedAt automatically
 )

@@ -10,22 +10,20 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
-import { type PaddyPurchase } from '../data/schema'
+import { type PaddyPurchaseData } from '../data/schema'
 import { PaddyMultiDeleteDialog } from './paddy-multi-delete-dialog'
 
-type DataTableBulkActionsProps<TData> = {
-    table: Table<TData>
+type DataTableBulkActionsProps = {
+    table: Table<PaddyPurchaseData>
 }
 
-export function DataTableBulkActions<TData>({
-    table,
-}: DataTableBulkActionsProps<TData>) {
+export function DataTableBulkActions({ table }: DataTableBulkActionsProps) {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleBulkStatusChange = (status: 'completed' | 'cancelled') => {
         const selectedPurchases = selectedRows.map(
-            (row) => row.original as PaddyPurchase
+            (row) => row.original as PaddyPurchaseData
         )
         toast.promise(sleep(2000), {
             loading: `Marking as ${status}...`,

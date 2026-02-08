@@ -23,30 +23,28 @@ const GunnyPurchaseSchema = new Schema(
             required: true,
             trim: true,
         },
-        gunnyType: {
+        deliveryType: {
             type: String,
             trim: true,
         },
-        totalGunny: {
+        newGunnyQty: {
+            type: Number,
+        },
+        newGunnyRate: {
+            type: Number,
+        },
+        oldGunnyQty: {
+            type: Number,
+        },
+        oldGunnyRate: {
+            type: Number,
+        },
+        plasticGunnyQty: {
             type: Number,
             min: 0,
         },
-        rate: {
+        plasticGunnyRate: {
             type: Number,
-            min: 0,
-        },
-        amount: {
-            type: Number,
-            min: 0,
-        },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
         },
     },
     {

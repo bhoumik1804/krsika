@@ -20,37 +20,31 @@ const OtherPurchaseSchema = new Schema(
         },
         partyName: {
             type: String,
-            required: true,
             trim: true,
         },
-        itemName: {
+        brokerName: {
             type: String,
             trim: true,
         },
-        quantity: {
-            type: Number,
-            min: 0,
+        otherPurchaseName: {
+            type: String,
+            trim: true,
         },
-        unit: {
+        otherPurchaseQty: {
+            type: Number,
+        },
+        qtyType: {
             type: String,
             trim: true,
         },
         rate: {
             type: Number,
-            min: 0,
         },
-        amount: {
+        discountPercent: {
             type: Number,
-            min: 0,
         },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
+        gst: {
+            type: Number,
         },
     },
     {

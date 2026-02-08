@@ -21,16 +21,17 @@ export function RiceDeleteDialog({
     onOpenChange,
 }: RiceDeleteDialogProps) {
     const { currentRow, millId } = useRice()
-    const { mutate: deleteRicePurchase, isPending: isDeleting } =
+    const { mutateAsync: deleteRicePurchase, isPending: isDeleting } =
         useDeleteRicePurchase(millId)
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (currentRow?.id) {
-            deleteRicePurchase(currentRow.id, {
-                onSuccess: () => {
-                    onOpenChange(false)
-                },
-            })
+            try {
+                await deleteRicePurchase(currentRow.id)
+                onOpenChange(false)
+            } catch (error) {
+                console.error('Error deleting purchase:', error)
+            }
         }
     }
 

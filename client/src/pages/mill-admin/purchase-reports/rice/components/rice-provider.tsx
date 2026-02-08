@@ -24,6 +24,12 @@ type RiceContextType = {
     millId: string
     queryParams: QueryParams
     setQueryParams: React.Dispatch<React.SetStateAction<QueryParams>>
+    pagination: {
+        page: number
+        pageSize: number
+        total: number
+        totalPages: number
+    }
 }
 
 const RiceContext = React.createContext<RiceContextType | null>(null)
@@ -54,6 +60,7 @@ export function RiceProvider({
 
     const {
         data = [],
+        pagination = { page: 1, pageSize: 10, total: 0, totalPages: 0 },
         isLoading,
         isError,
     } = useRicePurchaseList({
@@ -76,6 +83,12 @@ export function RiceProvider({
                 millId,
                 queryParams,
                 setQueryParams,
+                pagination: {
+                    page: pagination.page || 1,
+                    pageSize: pagination.pageSize || 10,
+                    total: pagination.total || 0,
+                    totalPages: pagination.totalPages || 0,
+                },
             }}
         >
             {children}

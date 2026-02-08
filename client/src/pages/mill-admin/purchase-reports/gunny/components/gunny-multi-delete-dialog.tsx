@@ -1,6 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,30 +9,38 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeleteGunnyPurchases } from '../data/hooks'
+import { type GunnyPurchaseData } from '../data/schema'
+import { useGunny } from './gunny-provider'
 
-type GunnyMultiDeleteDialogProps<TData> = {
-    table: Table<TData>
+type GunnyMultiDeleteDialogProps = {
+    table: Table<GunnyPurchaseData>
     open: boolean
     onOpenChange: (open: boolean) => void
 }
 
-export function GunnyMultiDeleteDialog<TData>({
+export function GunnyMultiDeleteDialog({
     table,
     open,
     onOpenChange,
-}: GunnyMultiDeleteDialogProps<TData>) {
+}: GunnyMultiDeleteDialogProps) {
+    const { millId } = useGunny()
+    const { mutateAsync: bulkDeleteGunnyPurchases, isPending: isDeleting } =
+        useBulkDeleteGunnyPurchases(millId)
+
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
-    const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting purchases...',
-            success: () => {
-                table.resetRowSelection()
-                onOpenChange(false)
-                return `Deleted ${selectedRows.length} purchase${selectedRows.length > 1 ? 's' : ''}`
-            },
-            error: 'Error deleting purchases',
-        })
+    const handleDeleteSelected = async () => {
+        try {
+            const ids = selectedRows
+                .map((row) => (row.original as GunnyPurchaseData)._id)
+                .filter(Boolean) as string[]
+            await bulkDeleteGunnyPurchases(ids)
+            table.resetRowSelection()
+            onOpenChange(false)
+        } catch (error) {
+            console.error('Error deleting records:', error)
+        }
     }
 
     return (
@@ -42,22 +48,25 @@ export function GunnyMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Delete {selectedRows.length}{' '}
-                        {selectedRows.length > 1 ? 'purchases' : 'purchase'}?
+                        Delete {selectedRows.length} gunny purchase record
+                        {selectedRows.length > 1 ? 's' : ''}?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the selected purchases?{' '}
-                        <br />
+                        Are you sure you want to delete the selected gunny
+                        purchase records? <br />
                         This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

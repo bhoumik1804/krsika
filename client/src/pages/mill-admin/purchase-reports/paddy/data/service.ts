@@ -1,67 +1,79 @@
-import { apiClient } from '@/lib/api-client'
-import type { PaddyPurchaseData } from './schema'
+import { apiClient, type ApiResponse } from '@/lib/api-client'
+import type {
+    CreatePaddyPurchaseRequest,
+    UpdatePaddyPurchaseRequest,
+    PaddyPurchaseResponse,
+    PaddyPurchaseListResponse,
+    PaddyPurchaseQueryParams,
+    PaddyPurchaseSummaryResponse,
+} from './types'
 
-interface FetchPaddyPurchaseListParams {
+const BASE_PATH = '/mills'
+
+export const fetchPaddyPurchaseList = async (
+    millId: string,
+    params?: PaddyPurchaseQueryParams
+): Promise<PaddyPurchaseListResponse> => {
+    const response = await apiClient.get<
+        ApiResponse<PaddyPurchaseListResponse>
+    >(`${BASE_PATH}/${millId}/paddy-purchase`, { params })
+    return response.data.data
+}
+
+export const fetchPaddyPurchaseById = async (
+    millId: string,
+    id: string
+): Promise<PaddyPurchaseResponse> => {
+    const response = await apiClient.get<ApiResponse<PaddyPurchaseResponse>>(
+        `${BASE_PATH}/${millId}/paddy-purchase/${id}`
+    )
+    return response.data.data
+}
+
+export const fetchPaddyPurchaseSummary = async (
     millId: string
-    page?: number
-    pageSize?: number
-    search?: string
+): Promise<PaddyPurchaseSummaryResponse> => {
+    const response = await apiClient.get<
+        ApiResponse<PaddyPurchaseSummaryResponse>
+    >(`${BASE_PATH}/${millId}/paddy-purchase/summary`)
+    return response.data.data
 }
 
-interface ApiResponse<T> {
-    data: T
+export const createPaddyPurchase = async (
+    millId: string,
+    data: CreatePaddyPurchaseRequest
+): Promise<PaddyPurchaseResponse> => {
+    const response = await apiClient.post<ApiResponse<PaddyPurchaseResponse>>(
+        `${BASE_PATH}/${millId}/paddy-purchase`,
+        data
+    )
+    return response.data.data
 }
 
-export const paddyPurchaseService = {
-    fetchPaddyPurchaseList: async (params: FetchPaddyPurchaseListParams) => {
-        const queryParams = new URLSearchParams()
-        if (params.page) queryParams.append('page', params.page.toString())
-        if (params.pageSize)
-            queryParams.append('pageSize', params.pageSize.toString())
-        if (params.search) queryParams.append('search', params.search)
+export const updatePaddyPurchase = async (
+    millId: string,
+    data: UpdatePaddyPurchaseRequest
+): Promise<PaddyPurchaseResponse> => {
+    const { _id, ...payload } = data
+    const response = await apiClient.put<ApiResponse<PaddyPurchaseResponse>>(
+        `${BASE_PATH}/${millId}/paddy-purchase/${_id}`,
+        payload
+    )
+    return response.data.data
+}
 
-        const response = await apiClient.get<
-            ApiResponse<{
-                paddyPurchases: PaddyPurchaseData[]
-                pagination: Record<string, unknown>
-            }>
-        >(`/mills/${params.millId}/paddy-purchase?${queryParams.toString()}`)
-        return response.data.data.paddyPurchases
-    },
+export const deletePaddyPurchase = async (
+    millId: string,
+    id: string
+): Promise<void> => {
+    await apiClient.delete(`${BASE_PATH}/${millId}/paddy-purchase/${id}`)
+}
 
-    createPaddyPurchase: async (
-        millId: string,
-        data: Omit<PaddyPurchaseData, 'id'>
-    ) => {
-        const response = await apiClient.post<
-            ApiResponse<PaddyPurchaseData>
-        >(`/mills/${millId}/paddy-purchase`, data)
-        return response.data.data
-    },
-
-    updatePaddyPurchase: async (
-        millId: string,
-        purchaseId: string,
-        data: Omit<PaddyPurchaseData, 'id'>
-    ) => {
-        const response = await apiClient.put<ApiResponse<PaddyPurchaseData>>(
-            `/mills/${millId}/paddy-purchase/${purchaseId}`,
-            data
-        )
-        return response.data.data
-    },
-
-    deletePaddyPurchase: async (millId: string, purchaseId: string) => {
-        const response = await apiClient.delete<
-            ApiResponse<{ success: boolean }>
-        >(`/mills/${millId}/paddy-purchase/${purchaseId}`)
-        return response.data.data
-    },
-
-    bulkDeletePaddyPurchases: async (millId: string, purchaseIds: string[]) => {
-        const response = await apiClient.delete<
-            ApiResponse<{ success: boolean }>
-        >(`/mills/${millId}/paddy-purchase/bulk`, { data: { ids: purchaseIds } })
-        return response.data.data
-    },
+export const bulkDeletePaddyPurchase = async (
+    millId: string,
+    ids: string[]
+): Promise<void> => {
+    await apiClient.delete(`${BASE_PATH}/${millId}/paddy-purchase`, {
+        data: { ids },
+    })
 }

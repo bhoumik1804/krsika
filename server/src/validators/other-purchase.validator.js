@@ -7,31 +7,34 @@ import { z } from 'zod'
 
 // Common fields schema
 const otherPurchaseBaseSchema = {
-    date: z
-        .string({
-            required_error: 'Date is required',
-        })
-        .datetime({ offset: true })
-        .or(
-            z
-                .string()
-                .regex(
-                    /^\d{4}-\d{2}-\d{2}$/,
-                    'Invalid date format (YYYY-MM-DD)'
-                )
-        ),
-    partyName: z
-        .string({
-            required_error: 'Party name is required',
-        })
+    date: z.string(),
+    partyName: z.string().trim().max(200, 'Party name is too long').optional(),
+    brokerName: z
+        .string()
         .trim()
-        .min(1, 'Party name is required')
-        .max(200, 'Party name is too long'),
-    itemName: z.string().trim().max(200, 'Item name is too long').optional(),
-    quantity: z.number().min(0, 'Quantity cannot be negative').optional(),
-    unit: z.string().trim().max(50, 'Unit is too long').optional(),
+        .max(200, 'Broker name is too long')
+        .optional(),
+    otherPurchaseName: z
+        .string()
+        .trim()
+        .max(200, 'Other purchase name is too long')
+        .optional(),
+    otherPurchaseQty: z
+        .number()
+        .min(0, 'Quantity cannot be negative')
+        .optional(),
+    qtyType: z.string().trim().max(50, 'Quantity type is too long').optional(),
     rate: z.number().min(0, 'Rate cannot be negative').optional(),
-    amount: z.number().min(0, 'Amount cannot be negative').optional(),
+    discountPercent: z
+        .number()
+        .min(0, 'Discount percent cannot be negative')
+        .max(100, 'Discount percent cannot exceed 100')
+        .optional(),
+    gst: z
+        .number()
+        .min(0, 'GST cannot be negative')
+        .max(100, 'GST cannot exceed 100')
+        .optional(),
 }
 
 // Create other purchase schema
@@ -48,16 +51,14 @@ export const createOtherPurchaseSchema = z.object({
 export const updateOtherPurchaseSchema = z.object({
     body: z.object({
         date: otherPurchaseBaseSchema.date.optional(),
-        partyName: z
-            .string()
-            .trim()
-            .max(200, 'Party name is too long')
-            .optional(),
-        itemName: otherPurchaseBaseSchema.itemName,
-        quantity: otherPurchaseBaseSchema.quantity,
-        unit: otherPurchaseBaseSchema.unit,
+        partyName: otherPurchaseBaseSchema.partyName,
+        brokerName: otherPurchaseBaseSchema.brokerName,
+        otherPurchaseName: otherPurchaseBaseSchema.otherPurchaseName,
+        otherPurchaseQty: otherPurchaseBaseSchema.otherPurchaseQty,
+        qtyType: otherPurchaseBaseSchema.qtyType,
         rate: otherPurchaseBaseSchema.rate,
-        amount: otherPurchaseBaseSchema.amount,
+        discountPercent: otherPurchaseBaseSchema.discountPercent,
+        gst: otherPurchaseBaseSchema.gst,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
@@ -111,7 +112,7 @@ export const getOtherPurchaseListSchema = z.object({
             .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
             .optional(),
         sortBy: z
-            .enum(['date', 'partyName', 'itemName', 'createdAt'])
+            .enum(['date', 'partyName', 'otherPurchaseName', 'createdAt'])
             .default('date')
             .optional(),
         sortOrder: z.enum(['asc', 'desc']).default('desc').optional(),

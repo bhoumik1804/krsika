@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -7,7 +7,6 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -22,13 +21,13 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
-import { type GunnyPurchase } from '../data/schema'
+import { type GunnyPurchaseData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { gunnyColumns as columns } from './gunny-columns'
+import { useGunny } from './gunny-provider'
 
 type DataTableProps = {
-    data: GunnyPurchase[]
+    data: GunnyPurchaseData[]
     search: Record<string, unknown>
     navigate: NavigateFn
 }
@@ -40,22 +39,39 @@ export function GunnyTable({ data, search, navigate }: DataTableProps) {
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const { queryParams, setQueryParams, pagination } = useGunny()
 
-    // Synced with URL states
-    const {
-        columnFilters,
-        onColumnFiltersChange,
-        pagination,
-        onPaginationChange,
-        ensurePageInRange,
-    } = useTableUrlState({
+    // Pagination state from provider (server-side)
+    const paginationState = {
+        pageIndex: (queryParams.page || 1) - 1,
+        pageSize: queryParams.limit || 10,
+    }
+
+    const handlePaginationChange = (updater: any) => {
+        const newPageIndex =
+            typeof updater === 'function'
+                ? updater(paginationState).pageIndex
+                : updater.pageIndex
+        const newPageSize =
+            typeof updater === 'function'
+                ? updater(paginationState).pageSize
+                : updater.pageSize
+
+        setQueryParams((prev) => ({
+            ...prev,
+            page: newPageIndex + 1,
+            limit: newPageSize,
+        }))
+    }
+
+    // Only handle column filters (pagination is server-side)
+    const { columnFilters, onColumnFiltersChange } = useTableUrlState({
         search,
         navigate,
         pagination: { defaultPage: 1, defaultPageSize: 10 },
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
         ],
     })
 
@@ -65,28 +81,25 @@ export function GunnyTable({ data, search, navigate }: DataTableProps) {
         columns,
         state: {
             sorting,
-            pagination,
+            pagination: paginationState,
             rowSelection,
             columnFilters,
             columnVisibility,
         },
         enableRowSelection: true,
-        onPaginationChange,
+        onPaginationChange: handlePaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        pageCount: pagination.totalPages,
+        manualPagination: true,
     })
-
-    useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
 
     return (
         <div
@@ -99,13 +112,6 @@ export function GunnyTable({ data, search, navigate }: DataTableProps) {
                 table={table}
                 searchPlaceholder='Filter purchases...'
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

@@ -3,10 +3,15 @@ import { Button } from '@/components/ui/button'
 import { useFrk } from './frk-provider'
 
 export function FrkPrimaryButtons() {
-    const { setOpen } = useFrk()
+    const { setOpen, setCurrentRow } = useFrk()
 
     return (
-        <Button onClick={() => setOpen('add')}>
+        <Button
+            onClick={() => {
+                setCurrentRow(null)
+                setOpen('add')
+            }}
+        >
             <Plus className='mr-2 size-4' />
             Add Purchase
         </Button>

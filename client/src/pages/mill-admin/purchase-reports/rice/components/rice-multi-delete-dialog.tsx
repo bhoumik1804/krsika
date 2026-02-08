@@ -10,8 +10,8 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { useBulkDeleteRicePurchases } from '../data/hooks'
-import { useRice } from './rice-provider'
 import { type RicePurchaseData } from '../data/schema'
+import { useRice } from './rice-provider'
 
 type RiceMultiDeleteDialogProps = {
     table: Table<RicePurchaseData>
@@ -25,29 +25,22 @@ export function RiceMultiDeleteDialog({
     onOpenChange,
 }: RiceMultiDeleteDialogProps) {
     const { millId } = useRice()
-    const { mutate: bulkDeleteRicePurchases, isPending: isDeleting } =
+    const { mutateAsync: bulkDeleteRicePurchases, isPending: isDeleting } =
         useBulkDeleteRicePurchases(millId)
 
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
-    const handleDeleteSelected = () => {
-        const ids = selectedRows.map(
-            (row) => (row.original as RicePurchaseData).id
-        )
-        bulkDeleteRicePurchases(ids, {
-            onSuccess: () => {
-                table.resetRowSelection()
-                onOpenChange(false)
-            },
-        })
-    }
-            success: () => {
-                table.resetRowSelection()
-                onOpenChange(false)
-                return `Deleted ${selectedRows.length} rice purchase record${selectedRows.length > 1 ? 's' : ''}`
-            },
-            error: 'Error deleting records',
-        })
+    const handleDeleteSelected = async () => {
+        try {
+            const ids = selectedRows
+                .map((row) => (row.original as RicePurchaseData).id)
+                .filter(Boolean) as string[]
+            await bulkDeleteRicePurchases(ids)
+            table.resetRowSelection()
+            onOpenChange(false)
+        } catch (error) {
+            console.error('Error deleting records:', error)
+        }
     }
 
     return (
@@ -65,12 +58,15 @@ export function RiceMultiDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

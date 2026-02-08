@@ -3,26 +3,22 @@ import { OtherPurchase } from '../models/other-purchase.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createOtherPurchaseEntry = async (millId, data, userId) => {
+export const createOtherPurchaseEntry = async (millId, data) => {
     const entry = new OtherPurchase({
         ...data,
         millId,
-        createdBy: userId,
         date: new Date(data.date),
     })
     await entry.save()
     logger.info('Other purchase entry created', {
         id: entry._id,
         millId,
-        userId,
     })
     return entry
 }
 
 export const getOtherPurchaseById = async (millId, id) => {
     const entry = await OtherPurchase.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Other purchase entry not found')
     return entry
 }
@@ -46,27 +42,13 @@ export const getOtherPurchaseList = async (millId, options = {}) => {
     if (search)
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
-            { itemName: { $regex: search, $options: 'i' } },
+            { brokerName: { $regex: search, $options: 'i' } },
+            { otherPurchaseName: { $regex: search, $options: 'i' } },
         ]
 
     const aggregate = OtherPurchase.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
     const result = await OtherPurchase.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
@@ -100,7 +82,7 @@ export const getOtherPurchaseList = async (millId, options = {}) => {
 
 export const getOtherPurchaseSummary = async (millId, options = {}) => {
     const { startDate, endDate } = options
-    const match = { millId }
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     if (startDate || endDate) {
         match.date = {}
         if (startDate) match.date.$gte = new Date(startDate)
@@ -112,8 +94,15 @@ export const getOtherPurchaseSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalQuantity: { $sum: '$quantity' },
-                totalAmount: { $sum: '$amount' },
+                totalQuantity: { $sum: '$otherPurchaseQty' },
+                totalAmount: {
+                    $sum: {
+                        $multiply: [
+                            { $ifNull: ['$otherPurchaseQty', 0] },
+                            { $ifNull: ['$rate', 0] },
+                        ],
+                    },
+                },
             },
         },
         {
@@ -128,18 +117,16 @@ export const getOtherPurchaseSummary = async (millId, options = {}) => {
     return summary || { totalEntries: 0, totalQuantity: 0, totalAmount: 0 }
 }
 
-export const updateOtherPurchaseEntry = async (millId, id, data, userId) => {
-    const updateData = { ...data, updatedBy: userId }
+export const updateOtherPurchaseEntry = async (millId, id, data) => {
+    const updateData = { ...data }
     if (data.date) updateData.date = new Date(data.date)
     const entry = await OtherPurchase.findOneAndUpdate(
         { _id: id, millId },
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Other purchase entry not found')
-    logger.info('Other purchase entry updated', { id, millId, userId })
+    logger.info('Other purchase entry updated', { id, millId })
     return entry
 }
 

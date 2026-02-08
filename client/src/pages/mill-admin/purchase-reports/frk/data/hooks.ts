@@ -20,7 +20,7 @@ interface UseFrkPurchaseListParams {
 }
 
 export const useFrkPurchaseList = (params: UseFrkPurchaseListParams) => {
-    return useQuery({
+    const query = useQuery({
         queryKey: frkPurchaseQueryKeys.list(params.millId, {
             page: params.page,
             pageSize: params.pageSize,
@@ -29,13 +29,25 @@ export const useFrkPurchaseList = (params: UseFrkPurchaseListParams) => {
         queryFn: () => frkPurchaseService.fetchFrkPurchaseList(params),
         enabled: !!params.millId,
     })
+
+    return {
+        data: query.data?.data || [],
+        pagination: (query.data?.pagination as any) || {
+            page: params.page || 1,
+            pageSize: params.pageSize || 10,
+            total: 0,
+            totalPages: 0,
+        },
+        isLoading: query.isLoading,
+        isError: query.isError,
+    }
 }
 
 export const useCreateFrkPurchase = (millId: string) => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: (data: Omit<FrkPurchaseData, 'id'>) =>
+        mutationFn: (data: Omit<FrkPurchaseData, '_id'>) =>
             frkPurchaseService.createFrkPurchase(millId, data),
         onSuccess: () => {
             toast.success('FRK purchase created successfully')
@@ -62,7 +74,7 @@ export const useUpdateFrkPurchase = (millId: string) => {
             data,
         }: {
             purchaseId: string
-            data: Omit<FrkPurchaseData, 'id'>
+            data: Omit<FrkPurchaseData, '_id'>
         }) => frkPurchaseService.updateFrkPurchase(millId, purchaseId, data),
         onSuccess: () => {
             toast.success('FRK purchase updated successfully')

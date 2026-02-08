@@ -10,11 +10,11 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type PaddyPurchase } from '../data/schema'
+import { type PaddyPurchaseData } from '../data/schema'
 import { usePaddy } from './paddy-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<PaddyPurchase>
+    row: Row<PaddyPurchaseData>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {

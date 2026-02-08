@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -10,7 +11,7 @@ import { StaffReportDialogs } from './components/staff-report-dialogs'
 import { StaffReportPrimaryButtons } from './components/staff-report-primary-buttons'
 import { StaffReportProvider } from './components/staff-report-provider'
 import { StaffReportTable } from './components/staff-report-table'
-import { staffReportEntries } from './data/staff-report-entries'
+import { useStaffList } from './data/hooks'
 
 export function StaffReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +19,38 @@ export function StaffReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = useMemo(
+        () => ({
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }),
+        [search]
+    )
+
+    const {
+        data: response,
+        isLoading,
+        isError,
+    } = useStaffList(millId || '', queryParams, { enabled: !!millId })
+
+    const staffData = useMemo(() => {
+        const list = response?.staff || []
+        return Array.isArray(list)
+            ? list.map((staff) => ({
+                  _id: staff._id,
+                  fullName: staff.fullName || '',
+                  post: staff.post,
+                  salary: staff.salary,
+                  phoneNumber: staff.phoneNumber,
+                  email: staff.email,
+                  address: staff.address,
+              }))
+            : []
+    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -48,18 +81,21 @@ export function StaffReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Staff Report Report
+                            Staff Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage staff report transactions and records
+                            Manage staff records and information
                         </p>
                     </div>
                     <StaffReportPrimaryButtons />
                 </div>
                 <StaffReportTable
-                    data={staffReportEntries}
+                    data={staffData}
                     search={search}
                     navigate={navigate}
+                    isLoading={isLoading}
+                    isError={isError}
+                    pagination={response?.pagination}
                 />
             </Main>
 

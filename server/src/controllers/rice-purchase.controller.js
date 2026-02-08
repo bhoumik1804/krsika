@@ -13,8 +13,7 @@ export const createRicePurchase = async (req, res, next) => {
     try {
         const purchase = await createRicePurchaseEntry(
             req.params.millId,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(201).json(
             new ApiResponse(201, { purchase }, 'Rice purchase created')
@@ -62,7 +61,11 @@ export const getRicePurchaseListHandler = async (req, res, next) => {
 
 export const getRicePurchaseSummaryHandler = async (req, res, next) => {
     try {
-        const summary = await getRicePurchaseSummary(req.params.millId)
+        const { startDate, endDate } = req.query
+        const summary = await getRicePurchaseSummary(req.params.millId, {
+            startDate,
+            endDate,
+        })
         res.status(200).json(
             new ApiResponse(200, { summary }, 'Rice purchase summary retrieved')
         )
@@ -76,8 +79,7 @@ export const updateRicePurchaseHandler = async (req, res, next) => {
         const purchase = await updateRicePurchaseEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(200, { purchase }, 'Rice purchase updated')

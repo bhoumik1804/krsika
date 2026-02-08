@@ -1,15 +1,17 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { usePaddyPurchaseList } from '../data/hooks'
 import { type PaddyPurchaseData } from '../data/schema'
+import type {
+    PaddyPurchaseQueryParams,
+    PaddyPurchaseResponse,
+} from '../data/types'
 
 type PaddyDialogType = 'add' | 'edit' | 'delete'
 
-interface QueryParams {
+interface QueryParams extends PaddyPurchaseQueryParams {
     page: number
     limit: number
-    search?: string
-    sortBy?: string
     sortOrder?: 'asc' | 'desc'
 }
 
@@ -17,13 +19,21 @@ type PaddyContextType = {
     open: PaddyDialogType | null
     setOpen: (str: PaddyDialogType | null) => void
     currentRow: PaddyPurchaseData | null
-    setCurrentRow: React.Dispatch<React.SetStateAction<PaddyPurchaseData | null>>
-    data: PaddyPurchaseData[]
+    setCurrentRow: React.Dispatch<
+        React.SetStateAction<PaddyPurchaseData | null>
+    >
+    data: PaddyPurchaseResponse[]
     isLoading: boolean
     isError: boolean
     millId: string
     queryParams: QueryParams
     setQueryParams: React.Dispatch<React.SetStateAction<QueryParams>>
+    pagination: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+    }
 }
 
 const PaddyContext = React.createContext<PaddyContextType | null>(null)
@@ -52,16 +62,37 @@ export function PaddyProvider({
     const [queryParams, setQueryParams] =
         useState<QueryParams>(initialQueryParams)
 
+    const queryParamsForAPI = useMemo(
+        () => ({
+            page: queryParams.page,
+            limit: queryParams.limit,
+            search: queryParams.search,
+            sortBy: queryParams.sortBy,
+            sortOrder: queryParams.sortOrder,
+        }),
+        [queryParams]
+    )
+
     const {
-        data = [],
+        data: apiResponse,
         isLoading,
         isError,
-    } = usePaddyPurchaseList({
-        millId,
-        page: queryParams.page,
-        pageSize: queryParams.limit,
-        search: queryParams.search,
-    })
+    } = usePaddyPurchaseList(millId, queryParamsForAPI, { enabled: !!millId })
+
+    const data = useMemo(() => {
+        const list = apiResponse?.purchases || []
+        return Array.isArray(list) ? list : []
+    }, [apiResponse])
+
+    const pagination = useMemo(
+        () => ({
+            page: apiResponse?.pagination?.page || 1,
+            limit: apiResponse?.pagination?.limit || 10,
+            total: apiResponse?.pagination?.total || 0,
+            totalPages: apiResponse?.pagination?.totalPages || 1,
+        }),
+        [apiResponse?.pagination]
+    )
 
     return (
         <PaddyContext
@@ -76,6 +107,7 @@ export function PaddyProvider({
                 millId,
                 queryParams,
                 setQueryParams,
+                pagination,
             }}
         >
             {children}

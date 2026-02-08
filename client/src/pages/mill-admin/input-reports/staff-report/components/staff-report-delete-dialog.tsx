@@ -1,5 +1,4 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useParams } from 'react-router'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,6 +9,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteStaff } from '../data/hooks'
 import { type StaffReportData } from '../data/schema'
 
 type StaffReportDeleteDialogProps = {
@@ -23,15 +23,18 @@ export function StaffReportDeleteDialog({
     onOpenChange,
     currentRow,
 }: StaffReportDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+    const { millId } = useParams<{ millId: string }>()
+    const deleteMutation = useDeleteStaff(millId || '')
+
+    const handleDelete = async () => {
+        if (!currentRow?._id || !millId) return
+
+        try {
+            await deleteMutation.mutateAsync(currentRow._id)
+            onOpenChange(false)
+        } catch (error: any) {
+            console.error('Delete error:', error)
+        }
     }
 
     return (
@@ -41,18 +44,21 @@ export function StaffReportDeleteDialog({
                     <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
                         Are you sure you want to delete this record for{' '}
-                        <strong>{currentRow?.staffName}</strong>?
+                        <strong>{currentRow?.fullName}</strong>?
                         <br />
                         This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={deleteMutation.isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={deleteMutation.isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
