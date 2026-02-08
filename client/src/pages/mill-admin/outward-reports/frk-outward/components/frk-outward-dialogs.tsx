@@ -1,9 +1,9 @@
 import { FrkOutwardActionDialog } from './frk-outward-action-dialog'
 import { FrkOutwardDeleteDialog } from './frk-outward-delete-dialog'
-import { frkOutward } from './frk-outward-provider'
+import { useFrkOutward } from './frk-outward-provider'
 
 export function FrkOutwardDialogs() {
-    const { open, setOpen, currentRow } = frkOutward()
+    const { open, setOpen } = useFrkOutward()
 
     return (
         <>
@@ -12,14 +12,12 @@ export function FrkOutwardDialogs() {
                 onOpenChange={(isOpen: boolean) =>
                     setOpen(isOpen ? open : null)
                 }
-                currentRow={currentRow}
             />
             <FrkOutwardDeleteDialog
                 open={open === 'delete'}
                 onOpenChange={(isOpen: boolean) =>
                     setOpen(isOpen ? 'delete' : null)
                 }
-                currentRow={currentRow}
             />
         </>
     )

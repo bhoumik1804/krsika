@@ -1,5 +1,3 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,28 +8,32 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { type FrkOutward } from '../data/schema'
+import { useDeleteFrkOutward } from '../data/hooks'
+import { useFrkOutward } from './frk-outward-provider'
 
 type FrkOutwardDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: FrkOutward | null
 }
 
 export function FrkOutwardDeleteDialog({
     open,
     onOpenChange,
-    currentRow,
 }: FrkOutwardDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+    const { millId, currentRow } = useFrkOutward()
+    const deleteMutation = useDeleteFrkOutward()
+
+    const handleDelete = async () => {
+        if (!currentRow) return
+        try {
+            await deleteMutation.mutateAsync({
+                millId,
+                id: currentRow._id,
+            })
+            onOpenChange(false)
+        } catch (error) {
+            // Error is handled by the mutation hook
+        }
     }
 
     return (
@@ -50,6 +52,7 @@ export function FrkOutwardDeleteDialog({
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={deleteMutation.isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
                         Delete

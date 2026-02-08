@@ -3,8 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { fciOrNANOptions, riceTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -38,6 +36,11 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { GovtRiceOutwardSchema, type GovtRiceOutward } from '../data/schema'
+import {
+    useCreateGovtRiceOutward,
+    useUpdateGovtRiceOutward,
+} from '../data/hooks'
+import { useGovtRiceOutward } from './govt-rice-outward-provider'
 
 type GovtRiceOutwardActionDialogProps = {
     open: boolean
@@ -52,56 +55,67 @@ export function GovtRiceOutwardActionDialog({
 }: GovtRiceOutwardActionDialogProps) {
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+    const { millId, setOpen: setDialogOpen } = useGovtRiceOutward()
+    const createMutation = useCreateGovtRiceOutward(millId)
+    const updateMutation = useUpdateGovtRiceOutward(millId)
 
     const form = useForm<GovtRiceOutward>({
         resolver: zodResolver(GovtRiceOutwardSchema),
         defaultValues: {
-            date: '',
+            date: format(new Date(), 'yyyy-MM-dd'),
             lotNo: '',
             fciNan: '',
             riceType: '',
-            gunnyNew: 0,
-            gunnyOld: 0,
-            juteWeight: 0,
+            gunnyNew: undefined,
+            gunnyOld: undefined,
+            juteWeight: undefined,
             truckNo: '',
             truckRst: '',
-            truckWeight: 0,
-            gunnyWeight: 0,
-            netWeight: 0,
+            truckWeight: undefined,
+            gunnyWeight: undefined,
+            netWeight: undefined,
         },
     })
 
     useEffect(() => {
+        if (!open) return
+
         if (currentRow) {
             form.reset(currentRow)
         } else {
             form.reset({
-                date: '',
+                date: format(new Date(), 'yyyy-MM-dd'),
                 lotNo: '',
                 fciNan: '',
                 riceType: '',
-                gunnyNew: 0,
-                gunnyOld: 0,
-                juteWeight: 0,
+                gunnyNew: undefined,
+                gunnyOld: undefined,
+                juteWeight: undefined,
                 truckNo: '',
                 truckRst: '',
-                truckWeight: 0,
-                gunnyWeight: 0,
-                netWeight: 0,
+                truckWeight: undefined,
+                gunnyWeight: undefined,
+                netWeight: undefined,
             })
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = async (data: GovtRiceOutward) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data,
+                })
+            } else {
+                await createMutation.mutateAsync(data)
+            }
+            setDialogOpen(null)
+            onOpenChange(false)
+            form.reset()
+        } catch {
+            // Error is handled by mutation hooks
+        }
     }
 
     return (

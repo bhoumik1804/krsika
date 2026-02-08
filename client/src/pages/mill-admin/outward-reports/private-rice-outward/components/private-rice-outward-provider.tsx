@@ -11,6 +11,7 @@ type PrivateRiceOutwardContextType = {
     setCurrentRow: React.Dispatch<
         React.SetStateAction<PrivateRiceOutward | null>
     >
+    millId: string
 }
 
 const PrivateRiceOutwardContext =
@@ -18,8 +19,10 @@ const PrivateRiceOutwardContext =
 
 export function PrivateRiceOutwardProvider({
     children,
+    millId,
 }: {
     children: React.ReactNode
+    millId: string
 }) {
     const [open, setOpen] = useDialogState<PrivateRiceOutwardDialogType>(null)
     const [currentRow, setCurrentRow] = useState<PrivateRiceOutward | null>(
@@ -28,7 +31,7 @@ export function PrivateRiceOutwardProvider({
 
     return (
         <PrivateRiceOutwardContext
-            value={{ open, setOpen, currentRow, setCurrentRow }}
+            value={{ open, setOpen, currentRow, setCurrentRow, millId }}
         >
             {children}
         </PrivateRiceOutwardContext>

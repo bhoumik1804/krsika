@@ -18,52 +18,73 @@ const PrivateRiceOutwardSchema = new Schema(
             required: true,
             index: true,
         },
+        riceSaleDealNumber: {
+            type: String,
+            trim: true,
+        },
         partyName: {
             type: String,
-            required: true,
+            trim: true,
+        },
+        brokerName: {
+            type: String,
+            trim: true,
+        },
+        lotNo: {
+            type: String,
+            trim: true,
+        },
+        fciNan: {
+            type: String,
             trim: true,
         },
         riceType: {
             type: String,
             trim: true,
         },
+        riceQty: {
+            type: Number,
+            min: 0,
+        },
+        gunnyNew: {
+            type: Number,
+            min: 0,
+        },
+        gunnyOld: {
+            type: Number,
+            min: 0,
+        },
+        gunnyPlastic: {
+            type: Number,
+            min: 0,
+        },
+        juteWeight: {
+            type: Number,
+            min: 0,
+        },
+        plasticWeight: {
+            type: Number,
+            min: 0,
+        },
         truckNumber: {
             type: String,
             trim: true,
-            uppercase: true,
         },
-        riceGunny: {
+        truckRst: {
+            type: String,
+            trim: true,
+        },
+        truckWeight: {
             type: Number,
             min: 0,
         },
-        grossWeight: {
-            type: Number,
-            min: 0,
-        },
-        tareWeight: {
+        gunnyWeight: {
             type: Number,
             min: 0,
         },
         netWeight: {
             type: Number,
             min: 0,
-        },
-        rate: {
-            type: Number,
-            min: 0,
-        },
-        brokerName: {
-            type: String,
-            trim: true,
-        },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
         },
     },
     {

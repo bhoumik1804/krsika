@@ -22,8 +22,8 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type PrivateRiceOutward } from '../data/schema'
+import type { PrivateRiceOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { PrivateRiceOutwardColumns as columns } from './private-rice-outward-columns'
 
@@ -31,9 +31,15 @@ type DataTableProps = {
     data: PrivateRiceOutward[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: PrivateRiceOutwardListResponse['pagination']
 }
 
-export function PrivateRiceOutwardTable({ data, search, navigate }: DataTableProps) {
+export function PrivateRiceOutwardTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -49,11 +55,16 @@ export function PrivateRiceOutwardTable({ data, search, navigate }: DataTablePro
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
+            { columnId: 'partyName', searchKey: 'search', type: 'string' },
         ],
     })
 
@@ -80,11 +91,13 @@ export function PrivateRiceOutwardTable({ data, search, navigate }: DataTablePro
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) ensurePageInRange(table.getPageCount())
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -96,14 +109,7 @@ export function PrivateRiceOutwardTable({ data, search, navigate }: DataTablePro
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
+                searchKey='search'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

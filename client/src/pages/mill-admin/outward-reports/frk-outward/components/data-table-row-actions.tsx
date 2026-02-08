@@ -11,14 +11,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type FrkOutward } from '../data/schema'
-import { frkOutward } from './frk-outward-provider'
+import { useFrkOutward } from './frk-outward-provider'
 
 type DataTableRowActionsProps = {
     row: Row<FrkOutward>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = frkOutward()
+    const { setOpen, setCurrentRow } = useFrkOutward()
     return (
         <>
             <DropdownMenu modal={false}>

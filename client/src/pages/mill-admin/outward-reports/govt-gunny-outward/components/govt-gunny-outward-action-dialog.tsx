@@ -3,8 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -30,6 +28,11 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover'
 import { GovtGunnyOutwardSchema, type GovtGunnyOutward } from '../data/schema'
+import {
+    useCreateGovtGunnyOutward,
+    useUpdateGovtGunnyOutward,
+} from '../data/hooks'
+import { useGovtGunnyOutward } from './govt-gunny-outward-provider'
 
 type GovtGunnyOutwardActionDialogProps = {
     open: boolean
@@ -44,44 +47,55 @@ export function GovtGunnyOutwardActionDialog({
 }: GovtGunnyOutwardActionDialogProps) {
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+    const { millId, setOpen: setDialogOpen } = useGovtGunnyOutward()
+    const createMutation = useCreateGovtGunnyOutward(millId)
+    const updateMutation = useUpdateGovtGunnyOutward(millId)
 
     const form = useForm<GovtGunnyOutward>({
         resolver: zodResolver(GovtGunnyOutwardSchema),
         defaultValues: {
-            date: '',
-            gunnyDm: '',
+            date: format(new Date(), 'yyyy-MM-dd'),
+            gunnyDmNumber: '',
             samitiSangrahan: '',
-            oldGunnyQty: 0,
-            plasticGunnyQty: 0,
+            oldGunnyQty: undefined,
+            plasticGunnyQty: undefined,
             truckNo: '',
         },
     })
 
     useEffect(() => {
+        if (!open) return
+
         if (currentRow) {
             form.reset(currentRow)
         } else {
             form.reset({
-                date: '',
-                gunnyDm: '',
+                date: format(new Date(), 'yyyy-MM-dd'),
+                gunnyDmNumber: '',
                 samitiSangrahan: '',
-                oldGunnyQty: 0,
-                plasticGunnyQty: 0,
+                oldGunnyQty: undefined,
+                plasticGunnyQty: undefined,
                 truckNo: '',
             })
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = async (data: GovtGunnyOutward) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data,
+                })
+            } else {
+                await createMutation.mutateAsync(data)
+            }
+            setDialogOpen(null)
+            onOpenChange(false)
+            form.reset()
+        } catch {
+            // Error is handled by mutation hooks
+        }
     }
 
     return (
@@ -167,7 +181,7 @@ export function GovtGunnyOutwardActionDialog({
                             {/* Gunny DM */}
                             <FormField
                                 control={form.control}
-                                name='gunnyDm'
+                                name='gunnyDmNumber'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Gunny DM Number</FormLabel>

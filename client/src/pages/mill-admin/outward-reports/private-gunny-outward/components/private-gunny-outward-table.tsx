@@ -1,17 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
-    ColumnFiltersState,
-    SortingState,
-    VisibilityState,
+    type VisibilityState,
     flexRender,
     getCoreRowModel,
     getFacetedRowModel,
     getFacetedUniqueValues,
-    getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import type { NavigateFn } from '@/hooks/use-table-url-state'
+import { useTableUrlState } from '@/hooks/use-table-url-state'
 import {
     Table,
     TableBody,
@@ -27,43 +26,88 @@ import { PrivateGunnyOutwardColumns as columns } from './private-gunny-outward-c
 
 interface DataTableProps {
     data: PrivateGunnyOutward[]
+    search: Record<string, unknown>
+    navigate: NavigateFn
+    serverPagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
-export function PrivateGunnyOutwardTable({ data }: DataTableProps) {
+export function PrivateGunnyOutwardTable({
+    data,
+    search,
+    navigate,
+    serverPagination,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [sorting, setSorting] = useState<SortingState>([])
+
+    const {
+        columnFilters,
+        onColumnFiltersChange,
+        pagination,
+        onPaginationChange,
+        ensurePageInRange,
+    } = useTableUrlState({
+        search,
+        navigate,
+        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        globalFilter: { enabled: false },
+        columnFilters: [
+            {
+                columnId: 'partyName',
+                searchKey: 'partyName',
+                type: 'string',
+            },
+        ],
+    })
 
     const table = useReactTable({
         data,
         columns,
         state: {
-            sorting,
-            columnVisibility,
+            pagination,
             rowSelection,
             columnFilters,
+            columnVisibility,
         },
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
+        onPaginationChange,
+        onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
         getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        getPaginationRowModel: serverPagination
+            ? undefined
+            : getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
 
+    // Ensure page is within range when pagination changes
+    useEffect(() => {
+        if (serverPagination) {
+            ensurePageInRange(serverPagination.totalPages)
+        }
+    }, [serverPagination, ensurePageInRange])
+
     return (
         <div className='space-y-4'>
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
+                searchPlaceholder='Search party name...'
                 searchKey='partyName'
             />
             <DataTableBulkActions table={table} />

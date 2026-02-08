@@ -3,26 +3,27 @@ import { GovtRiceOutward } from '../models/govt-rice-outward.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createGovtRiceOutwardEntry = async (millId, data, userId) => {
+// Escape special regex characters to prevent ReDoS
+const escapeRegex = (str) => {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+export const createGovtRiceOutwardEntry = async (millId, data) => {
     const entry = new GovtRiceOutward({
         ...data,
         millId,
-        createdBy: userId,
         date: new Date(data.date),
     })
     await entry.save()
     logger.info('Govt rice outward entry created', {
         id: entry._id,
         millId,
-        userId,
     })
     return entry
 }
 
 export const getGovtRiceOutwardById = async (millId, id) => {
     const entry = await GovtRiceOutward.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Govt rice outward entry not found')
     return entry
 }
@@ -32,41 +33,40 @@ export const getGovtRiceOutwardList = async (millId, options = {}) => {
         page = 1,
         limit = 10,
         search,
+        riceType,
+        lotNo,
         startDate,
         endDate,
         sortBy = 'date',
         sortOrder = 'desc',
     } = options
     const matchStage = { millId: new mongoose.Types.ObjectId(millId) }
+
+    // Date range filtering
     if (startDate || endDate) {
         matchStage.date = {}
         if (startDate) matchStage.date.$gte = new Date(startDate)
         if (endDate) matchStage.date.$lte = new Date(endDate + 'T23:59:59.999Z')
     }
+
+    // Individual field filtering
+    if (riceType)
+        matchStage.riceType = { $regex: escapeRegex(riceType), $options: 'i' }
+    if (lotNo) matchStage.lotNo = { $regex: escapeRegex(lotNo), $options: 'i' }
+
+    // Search across multiple fields
     if (search)
         matchStage.$or = [
-            { partyName: { $regex: search, $options: 'i' } },
-            { vehicleNumber: { $regex: search, $options: 'i' } },
+            { lotNo: { $regex: escapeRegex(search), $options: 'i' } },
+            { fciNan: { $regex: escapeRegex(search), $options: 'i' } },
+            { riceType: { $regex: escapeRegex(search), $options: 'i' } },
+            { truckNo: { $regex: escapeRegex(search), $options: 'i' } },
+            { truckRst: { $regex: escapeRegex(search), $options: 'i' } },
         ]
 
     const aggregate = GovtRiceOutward.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
     const result = await GovtRiceOutward.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
@@ -100,7 +100,7 @@ export const getGovtRiceOutwardList = async (millId, options = {}) => {
 
 export const getGovtRiceOutwardSummary = async (millId, options = {}) => {
     const { startDate, endDate } = options
-    const match = { millId }
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     if (startDate || endDate) {
         match.date = {}
         if (startDate) match.date.$gte = new Date(startDate)
@@ -112,39 +112,58 @@ export const getGovtRiceOutwardSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalBags: { $sum: '$bags' },
-                totalWeight: { $sum: '$weight' },
+                totalGunnyNew: { $sum: '$gunnyNew' },
+                totalGunnyOld: { $sum: '$gunnyOld' },
+                totalJuteWeight: { $sum: '$juteWeight' },
+                totalTruckWeight: { $sum: '$truckWeight' },
+                totalGunnyWeight: { $sum: '$gunnyWeight' },
+                totalNetWeight: { $sum: '$netWeight' },
             },
         },
         {
             $project: {
                 _id: 0,
                 totalEntries: 1,
-                totalBags: 1,
-                totalWeight: { $round: ['$totalWeight', 2] },
+                totalGunnyNew: { $round: ['$totalGunnyNew', 2] },
+                totalGunnyOld: { $round: ['$totalGunnyOld', 2] },
+                totalJuteWeight: { $round: ['$totalJuteWeight', 2] },
+                totalTruckWeight: { $round: ['$totalTruckWeight', 2] },
+                totalGunnyWeight: { $round: ['$totalGunnyWeight', 2] },
+                totalNetWeight: { $round: ['$totalNetWeight', 2] },
             },
         },
     ])
-    return summary || { totalEntries: 0, totalBags: 0, totalWeight: 0 }
+    return (
+        summary || {
+            totalEntries: 0,
+            totalGunnyNew: 0,
+            totalGunnyOld: 0,
+            totalJuteWeight: 0,
+            totalTruckWeight: 0,
+            totalGunnyWeight: 0,
+            totalNetWeight: 0,
+        }
+    )
 }
 
-export const updateGovtRiceOutwardEntry = async (millId, id, data, userId) => {
-    const updateData = { ...data, updatedBy: userId }
+export const updateGovtRiceOutwardEntry = async (millId, id, data) => {
+    const updateData = { ...data }
     if (data.date) updateData.date = new Date(data.date)
     const entry = await GovtRiceOutward.findOneAndUpdate(
         { _id: id, millId },
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Govt rice outward entry not found')
-    logger.info('Govt rice outward entry updated', { id, millId, userId })
+    logger.info('Govt rice outward entry updated', { id, millId })
     return entry
 }
 
 export const deleteGovtRiceOutwardEntry = async (millId, id) => {
-    const entry = await GovtRiceOutward.findOneAndDelete({ _id: id, millId })
+    const entry = await GovtRiceOutward.findOneAndDelete({
+        _id: id,
+        millId,
+    })
     if (!entry) throw new ApiError(404, 'Govt rice outward entry not found')
     logger.info('Govt rice outward entry deleted', { id, millId })
 }

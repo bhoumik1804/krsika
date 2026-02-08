@@ -9,14 +9,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { GovtGunnyOutward } from '../data/schema'
-import { useGovtGunnyOutwardContext } from './govt-gunny-outward-provider'
+import { useGovtGunnyOutward } from './govt-gunny-outward-provider'
 
 interface DataTableRowActionsProps {
     row: Row<GovtGunnyOutward>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = useGovtGunnyOutwardContext()
+    const { setOpen, setCurrentRow } = useGovtGunnyOutward()
 
     return (
         <DropdownMenu>

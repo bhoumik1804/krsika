@@ -85,11 +85,13 @@ export function PrivatePaddyOutwardActionDialog({
     })
 
     useEffect(() => {
+        if (!open) return
+
         if (currentRow) {
             form.reset(currentRow)
         } else {
             form.reset({
-                date: '',
+                date: format(new Date(), 'yyyy-MM-dd'),
                 paddySaleDealNumber: '',
                 partyName: '',
                 brokerName: '',
@@ -107,7 +109,7 @@ export function PrivatePaddyOutwardActionDialog({
                 netWeight: undefined,
             })
         }
-    }, [currentRow, form, open])
+    }, [currentRow, open, form])
 
     const onSubmit = async (data: PrivatePaddyOutward) => {
         try {

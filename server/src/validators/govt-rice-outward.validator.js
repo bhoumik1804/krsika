@@ -7,35 +7,15 @@ import { z } from 'zod'
 
 // Common fields schema
 const govtRiceOutwardBaseSchema = {
-    date: z
-        .string({
-            required_error: 'Date is required',
-        })
-        .datetime({ offset: true })
-        .or(
-            z
-                .string()
-                .regex(
-                    /^\d{4}-\d{2}-\d{2}$/,
-                    'Invalid date format (YYYY-MM-DD)'
-                )
-        ),
-    lotNo: z.string().trim().max(100, 'Lot number is too long').optional(),
-    fciNan: z.string().trim().max(100, 'FCI NAN is too long').optional(),
-    riceType: z.string().trim().max(100, 'Rice type is too long').optional(),
-    gunnyNew: z
-        .number()
-        .int('Gunny new must be a whole number')
-        .min(0, 'Gunny new cannot be negative')
-        .optional(),
-    gunnyOld: z
-        .number()
-        .int('Gunny old must be a whole number')
-        .min(0, 'Gunny old cannot be negative')
-        .optional(),
+    date: z.string(),
+    lotNo: z.string().trim().optional(),
+    fciNan: z.string().trim().optional(),
+    riceType: z.string().trim().optional(),
+    gunnyNew: z.number().min(0, 'Gunny new cannot be negative').optional(),
+    gunnyOld: z.number().min(0, 'Gunny old cannot be negative').optional(),
     juteWeight: z.number().min(0, 'Jute weight cannot be negative').optional(),
-    truckNo: z.string().trim().max(20, 'Truck number is too long').optional(),
-    truckRst: z.string().trim().max(50, 'Truck RST is too long').optional(),
+    truckNo: z.string().trim().optional(),
+    truckRst: z.string().trim().optional(),
     truckWeight: z
         .number()
         .min(0, 'Truck weight cannot be negative')
@@ -57,7 +37,7 @@ export const createGovtRiceOutwardSchema = z.object({
     }),
 })
 
-// Update govt rice outward schema (all fields optional except id)
+// Update govt rice outward schema
 export const updateGovtRiceOutwardSchema = z.object({
     body: z.object({
         date: govtRiceOutwardBaseSchema.date.optional(),

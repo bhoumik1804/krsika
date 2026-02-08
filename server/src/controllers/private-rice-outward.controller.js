@@ -13,8 +13,7 @@ export const createPrivateRiceOutward = async (req, res, next) => {
     try {
         const entry = await createPrivateRiceOutwardEntry(
             req.params.millId,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(201).json(
             new ApiResponse(201, { entry }, 'Private rice outward created')
@@ -40,11 +39,27 @@ export const getPrivateRiceOutwardByIdHandler = async (req, res, next) => {
 
 export const getPrivateRiceOutwardListHandler = async (req, res, next) => {
     try {
-        const { page, limit, search, sortBy, sortOrder } = req.query
+        const {
+            page,
+            limit,
+            search,
+            riceType,
+            partyName,
+            brokerName,
+            startDate,
+            endDate,
+            sortBy,
+            sortOrder,
+        } = req.query
         const result = await getPrivateRiceOutwardList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
+            riceType,
+            partyName,
+            brokerName,
+            startDate,
+            endDate,
             sortBy,
             sortOrder,
         })
@@ -62,7 +77,11 @@ export const getPrivateRiceOutwardListHandler = async (req, res, next) => {
 
 export const getPrivateRiceOutwardSummaryHandler = async (req, res, next) => {
     try {
-        const summary = await getPrivateRiceOutwardSummary(req.params.millId)
+        const { startDate, endDate } = req.query
+        const summary = await getPrivateRiceOutwardSummary(req.params.millId, {
+            startDate,
+            endDate,
+        })
         res.status(200).json(
             new ApiResponse(
                 200,
@@ -80,8 +99,7 @@ export const updatePrivateRiceOutwardHandler = async (req, res, next) => {
         const entry = await updatePrivateRiceOutwardEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(200, { entry }, 'Private rice outward updated')

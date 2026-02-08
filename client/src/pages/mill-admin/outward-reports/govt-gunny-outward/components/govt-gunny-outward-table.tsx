@@ -1,8 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
-    ColumnFiltersState,
-    SortingState,
-    VisibilityState,
+    type SortingState,
+    type VisibilityState,
     flexRender,
     getCoreRowModel,
     getFacetedRowModel,
@@ -12,6 +11,8 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { cn } from '@/lib/utils'
+import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
     Table,
     TableBody,
@@ -22,65 +23,114 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type GovtGunnyOutward } from '../data/schema'
+import type { GovtGunnyOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { GovtGunnyOutwardColumns as columns } from './govt-gunny-outward-columns'
 
-interface DataTableProps {
+type DataTableProps = {
     data: GovtGunnyOutward[]
+    search: Record<string, unknown>
+    navigate: NavigateFn
+    pagination?: GovtGunnyOutwardListResponse['pagination']
 }
 
-export function GovtGunnyOutwardTable({ data }: DataTableProps) {
+export function GovtGunnyOutwardTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [sorting, setSorting] = useState<SortingState>([])
 
+    const {
+        columnFilters,
+        onColumnFiltersChange,
+        pagination,
+        onPaginationChange,
+        ensurePageInRange,
+    } = useTableUrlState({
+        search,
+        navigate,
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
+        globalFilter: { enabled: false },
+        columnFilters: [
+            { columnId: 'samitiSangrahan', searchKey: 'samitiSangrahan', type: 'string' },
+        ],
+    })
+
+    // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
         columns,
         state: {
             sorting,
-            columnVisibility,
+            pagination,
             rowSelection,
             columnFilters,
+            columnVisibility,
         },
         enableRowSelection: true,
+        onPaginationChange,
+        onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
+        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
     })
 
+    useEffect(() => {
+        if (!serverPagination) ensurePageInRange(table.getPageCount())
+    }, [table, ensurePageInRange, serverPagination])
+
     return (
-        <div className='space-y-4'>
+        <div
+            className={cn(
+                'max-sm:has-[div[role="toolbar"]]:mb-16',
+                'flex flex-1 flex-col gap-4'
+            )}
+        >
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='samitiSangrahan'
+                searchKey='search'
             />
-            <DataTableBulkActions table={table} />
             <div className='overflow-hidden rounded-md border'>
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
+                            <TableRow
+                                key={headerGroup.id}
+                                className='group/row'
+                            >
                                 {headerGroup.headers.map((header) => {
                                     return (
                                         <TableHead
                                             key={header.id}
                                             colSpan={header.colSpan}
-                                            className={
+                                            className={cn(
+                                                'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
                                                 header.column.columnDef.meta
-                                                    ?.className ?? ''
-                                            }
+                                                    ?.className,
+                                                header.column.columnDef.meta
+                                                    ?.thClassName
+                                            )}
                                         >
                                             {header.isPlaceholder
                                                 ? null
@@ -103,14 +153,18 @@ export function GovtGunnyOutwardTable({ data }: DataTableProps) {
                                     data-state={
                                         row.getIsSelected() && 'selected'
                                     }
+                                    className='group/row'
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell
                                             key={cell.id}
-                                            className={
+                                            className={cn(
+                                                'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
                                                 cell.column.columnDef.meta
-                                                    ?.className ?? ''
-                                            }
+                                                    ?.className,
+                                                cell.column.columnDef.meta
+                                                    ?.tdClassName
+                                            )}
                                         >
                                             {flexRender(
                                                 cell.column.columnDef.cell,
@@ -133,7 +187,8 @@ export function GovtGunnyOutwardTable({ data }: DataTableProps) {
                     </TableBody>
                 </Table>
             </div>
-            <DataTablePagination table={table} />
+            <DataTablePagination table={table} className='mt-auto' />
+            <DataTableBulkActions table={table} />
         </div>
     )
 }

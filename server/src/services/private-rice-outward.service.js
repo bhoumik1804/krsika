@@ -3,26 +3,27 @@ import { PrivateRiceOutward } from '../models/private-rice-outward.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createPrivateRiceOutwardEntry = async (millId, data, userId) => {
+// Escape special regex characters to prevent ReDoS
+const escapeRegex = (str) => {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+export const createPrivateRiceOutwardEntry = async (millId, data) => {
     const entry = new PrivateRiceOutward({
         ...data,
         millId,
-        createdBy: userId,
         date: new Date(data.date),
     })
     await entry.save()
     logger.info('Private rice outward entry created', {
         id: entry._id,
         millId,
-        userId,
     })
     return entry
 }
 
 export const getPrivateRiceOutwardById = async (millId, id) => {
     const entry = await PrivateRiceOutward.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Private rice outward entry not found')
     return entry
 }
@@ -32,41 +33,51 @@ export const getPrivateRiceOutwardList = async (millId, options = {}) => {
         page = 1,
         limit = 10,
         search,
+        riceType,
+        partyName,
+        brokerName,
         startDate,
         endDate,
         sortBy = 'date',
         sortOrder = 'desc',
     } = options
     const matchStage = { millId: new mongoose.Types.ObjectId(millId) }
+
+    // Date range filtering
     if (startDate || endDate) {
         matchStage.date = {}
         if (startDate) matchStage.date.$gte = new Date(startDate)
         if (endDate) matchStage.date.$lte = new Date(endDate + 'T23:59:59.999Z')
     }
+
+    // Individual field filtering
+    if (riceType)
+        matchStage.riceType = { $regex: escapeRegex(riceType), $options: 'i' }
+    if (partyName)
+        matchStage.partyName = { $regex: escapeRegex(partyName), $options: 'i' }
+    if (brokerName)
+        matchStage.brokerName = {
+            $regex: escapeRegex(brokerName),
+            $options: 'i',
+        }
+
     if (search)
         matchStage.$or = [
-            { partyName: { $regex: search, $options: 'i' } },
-            { vehicleNumber: { $regex: search, $options: 'i' } },
+            { partyName: { $regex: escapeRegex(search), $options: 'i' } },
+            { truckNumber: { $regex: escapeRegex(search), $options: 'i' } },
+            { riceType: { $regex: escapeRegex(search), $options: 'i' } },
+            {
+                riceSaleDealNumber: {
+                    $regex: escapeRegex(search),
+                    $options: 'i',
+                },
+            },
+            { truckRst: { $regex: escapeRegex(search), $options: 'i' } },
         ]
 
     const aggregate = PrivateRiceOutward.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
     const result = await PrivateRiceOutward.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
@@ -100,7 +111,7 @@ export const getPrivateRiceOutwardList = async (millId, options = {}) => {
 
 export const getPrivateRiceOutwardSummary = async (millId, options = {}) => {
     const { startDate, endDate } = options
-    const match = { millId }
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     if (startDate || endDate) {
         match.date = {}
         if (startDate) match.date.$gte = new Date(startDate)
@@ -112,44 +123,67 @@ export const getPrivateRiceOutwardSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalBags: { $sum: '$bags' },
-                totalWeight: { $sum: '$weight' },
+                totalRiceQty: { $sum: '$riceQty' },
+                totalGunnyNew: { $sum: '$gunnyNew' },
+                totalGunnyOld: { $sum: '$gunnyOld' },
+                totalGunnyPlastic: { $sum: '$gunnyPlastic' },
+                totalJuteWeight: { $sum: '$juteWeight' },
+                totalPlasticWeight: { $sum: '$plasticWeight' },
+                totalTruckWeight: { $sum: '$truckWeight' },
+                totalGunnyWeight: { $sum: '$gunnyWeight' },
+                totalNetWeight: { $sum: '$netWeight' },
             },
         },
         {
             $project: {
                 _id: 0,
                 totalEntries: 1,
-                totalBags: 1,
-                totalWeight: { $round: ['$totalWeight', 2] },
+                totalRiceQty: { $round: ['$totalRiceQty', 2] },
+                totalGunnyNew: { $round: ['$totalGunnyNew', 2] },
+                totalGunnyOld: { $round: ['$totalGunnyOld', 2] },
+                totalGunnyPlastic: { $round: ['$totalGunnyPlastic', 2] },
+                totalJuteWeight: { $round: ['$totalJuteWeight', 2] },
+                totalPlasticWeight: { $round: ['$totalPlasticWeight', 2] },
+                totalTruckWeight: { $round: ['$totalTruckWeight', 2] },
+                totalGunnyWeight: { $round: ['$totalGunnyWeight', 2] },
+                totalNetWeight: { $round: ['$totalNetWeight', 2] },
             },
         },
     ])
-    return summary || { totalEntries: 0, totalBags: 0, totalWeight: 0 }
+    return (
+        summary || {
+            totalEntries: 0,
+            totalRiceQty: 0,
+            totalGunnyNew: 0,
+            totalGunnyOld: 0,
+            totalGunnyPlastic: 0,
+            totalJuteWeight: 0,
+            totalPlasticWeight: 0,
+            totalTruckWeight: 0,
+            totalGunnyWeight: 0,
+            totalNetWeight: 0,
+        }
+    )
 }
 
-export const updatePrivateRiceOutwardEntry = async (
-    millId,
-    id,
-    data,
-    userId
-) => {
-    const updateData = { ...data, updatedBy: userId }
+export const updatePrivateRiceOutwardEntry = async (millId, id, data) => {
+    const updateData = { ...data }
     if (data.date) updateData.date = new Date(data.date)
     const entry = await PrivateRiceOutward.findOneAndUpdate(
         { _id: id, millId },
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Private rice outward entry not found')
-    logger.info('Private rice outward entry updated', { id, millId, userId })
+    logger.info('Private rice outward entry updated', { id, millId })
     return entry
 }
 
 export const deletePrivateRiceOutwardEntry = async (millId, id) => {
-    const entry = await PrivateRiceOutward.findOneAndDelete({ _id: id, millId })
+    const entry = await PrivateRiceOutward.findOneAndDelete({
+        _id: id,
+        millId,
+    })
     if (!entry) throw new ApiError(404, 'Private rice outward entry not found')
     logger.info('Private rice outward entry deleted', { id, millId })
 }

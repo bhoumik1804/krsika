@@ -33,22 +33,18 @@ const GovtRiceOutwardSchema = new Schema(
         gunnyNew: {
             type: Number,
             min: 0,
-            default: 0,
         },
         gunnyOld: {
             type: Number,
             min: 0,
-            default: 0,
         },
         juteWeight: {
             type: Number,
             min: 0,
-            default: 0,
         },
         truckNo: {
             type: String,
             trim: true,
-            uppercase: true,
         },
         truckRst: {
             type: String,
@@ -57,26 +53,14 @@ const GovtRiceOutwardSchema = new Schema(
         truckWeight: {
             type: Number,
             min: 0,
-            default: 0,
         },
         gunnyWeight: {
             type: Number,
             min: 0,
-            default: 0,
         },
         netWeight: {
             type: Number,
             min: 0,
-            default: 0,
-        },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
         },
     },
     {

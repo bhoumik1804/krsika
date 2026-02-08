@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -169,7 +168,7 @@ export function PartyReportActionDialog({
                                     control={form.control}
                                     name='address'
                                     render={({ field }) => (
-                                        <FormItem className='col-span-2'>
+                                        <FormItem>
                                             <FormLabel>Address</FormLabel>
                                             <FormControl>
                                                 <Input

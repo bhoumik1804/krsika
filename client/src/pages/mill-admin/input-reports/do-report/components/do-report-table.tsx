@@ -112,11 +112,12 @@ export function DoReportTable({
         getPaginationRowModel: getPaginationRowModel(),
     })
 
+    // Ensure page is within range when using server-side pagination
     useEffect(() => {
-        if (!serverPagination) {
-            ensurePageInRange(table.getPageCount())
+        if (serverPagination) {
+            ensurePageInRange(serverPagination.totalPages)
         }
-    }, [table, ensurePageInRange, serverPagination])
+    }, [serverPagination, ensurePageInRange])
 
     return (
         <div

@@ -7,45 +7,44 @@ import { z } from 'zod'
 
 // Common fields schema
 const privateRiceOutwardBaseSchema = {
-    date: z
-        .string({
-            required_error: 'Date is required',
-        })
-        .datetime({ offset: true })
-        .or(
-            z
-                .string()
-                .regex(
-                    /^\d{4}-\d{2}-\d{2}$/,
-                    'Invalid date format (YYYY-MM-DD)'
-                )
-        ),
-    partyName: z
-        .string({
-            required_error: 'Party name is required',
-        })
-        .trim()
-        .min(1, 'Party name is required')
-        .max(200, 'Party name is too long'),
-    riceType: z.string().trim().max(100, 'Rice type is too long').optional(),
-    truckNumber: z
-        .string()
-        .trim()
-        .max(20, 'Truck number is too long')
-        .optional(),
-    riceGunny: z.number().min(0, 'Rice gunny cannot be negative').optional(),
-    grossWeight: z
-        .number()
-        .min(0, 'Gross weight cannot be negative')
-        .optional(),
-    tareWeight: z.number().min(0, 'Tare weight cannot be negative').optional(),
-    netWeight: z.number().min(0, 'Net weight cannot be negative').optional(),
-    rate: z.number().min(0, 'Rate cannot be negative').optional(),
+    date: z.string(),
+    riceSaleDealNumber: z.string().trim().optional(),
+    partyName: z.string().trim().max(200, 'Party name is too long').optional(),
     brokerName: z
         .string()
         .trim()
         .max(200, 'Broker name is too long')
         .optional(),
+    lotNo: z.string().trim().optional(),
+    fciNan: z.string().trim().optional(),
+    riceType: z.string().trim().max(100, 'Rice type is too long').optional(),
+    riceQty: z.number().min(0, 'Rice quantity cannot be negative').optional(),
+    gunnyNew: z.number().min(0, 'Gunny new cannot be negative').optional(),
+    gunnyOld: z.number().min(0, 'Gunny old cannot be negative').optional(),
+    gunnyPlastic: z
+        .number()
+        .min(0, 'Gunny plastic cannot be negative')
+        .optional(),
+    juteWeight: z.number().min(0, 'Jute weight cannot be negative').optional(),
+    plasticWeight: z
+        .number()
+        .min(0, 'Plastic weight cannot be negative')
+        .optional(),
+    truckNumber: z
+        .string()
+        .trim()
+        .max(20, 'Truck number is too long')
+        .optional(),
+    truckRst: z.string().trim().optional(),
+    truckWeight: z
+        .number()
+        .min(0, 'Truck weight cannot be negative')
+        .optional(),
+    gunnyWeight: z
+        .number()
+        .min(0, 'Gunny weight cannot be negative')
+        .optional(),
+    netWeight: z.number().min(0, 'Net weight cannot be negative').optional(),
 }
 
 // Create private rice outward schema
@@ -58,23 +57,27 @@ export const createPrivateRiceOutwardSchema = z.object({
     }),
 })
 
-// Update private rice outward schema (all fields optional except id)
+// Update private rice outward schema
 export const updatePrivateRiceOutwardSchema = z.object({
     body: z.object({
         date: privateRiceOutwardBaseSchema.date.optional(),
-        partyName: z
-            .string()
-            .trim()
-            .max(200, 'Party name is too long')
-            .optional(),
-        riceType: privateRiceOutwardBaseSchema.riceType,
-        truckNumber: privateRiceOutwardBaseSchema.truckNumber,
-        riceGunny: privateRiceOutwardBaseSchema.riceGunny,
-        grossWeight: privateRiceOutwardBaseSchema.grossWeight,
-        tareWeight: privateRiceOutwardBaseSchema.tareWeight,
-        netWeight: privateRiceOutwardBaseSchema.netWeight,
-        rate: privateRiceOutwardBaseSchema.rate,
+        riceSaleDealNumber: privateRiceOutwardBaseSchema.riceSaleDealNumber,
+        partyName: privateRiceOutwardBaseSchema.partyName,
         brokerName: privateRiceOutwardBaseSchema.brokerName,
+        lotNo: privateRiceOutwardBaseSchema.lotNo,
+        fciNan: privateRiceOutwardBaseSchema.fciNan,
+        riceType: privateRiceOutwardBaseSchema.riceType,
+        riceQty: privateRiceOutwardBaseSchema.riceQty,
+        gunnyNew: privateRiceOutwardBaseSchema.gunnyNew,
+        gunnyOld: privateRiceOutwardBaseSchema.gunnyOld,
+        gunnyPlastic: privateRiceOutwardBaseSchema.gunnyPlastic,
+        juteWeight: privateRiceOutwardBaseSchema.juteWeight,
+        plasticWeight: privateRiceOutwardBaseSchema.plasticWeight,
+        truckNumber: privateRiceOutwardBaseSchema.truckNumber,
+        truckRst: privateRiceOutwardBaseSchema.truckRst,
+        truckWeight: privateRiceOutwardBaseSchema.truckWeight,
+        gunnyWeight: privateRiceOutwardBaseSchema.gunnyWeight,
+        netWeight: privateRiceOutwardBaseSchema.netWeight,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),

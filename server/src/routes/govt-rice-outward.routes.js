@@ -1,4 +1,4 @@
-import express from 'express'
+import { Router } from 'express'
 import {
     createGovtRiceOutward,
     getGovtRiceOutwardByIdHandler,
@@ -20,57 +20,65 @@ import {
     summaryGovtRiceOutwardSchema,
 } from '../validators/govt-rice-outward.validator.js'
 
-const router = express.Router({ mergeParams: true })
-
-// All routes require authentication
-router.use(authenticate)
+const router = Router({ mergeParams: true })
 
 /**
  * Govt Rice Outward Routes
  * Base path: /api/mills/:millId/govt-rice-outward
  */
 
-// GET /api/mills/:millId/govt-rice-outward/summary - Get summary statistics
+// Get govt rice outward summary (must be before /:id route)
 router.get(
     '/summary',
+    authenticate,
     validate(summaryGovtRiceOutwardSchema),
     getGovtRiceOutwardSummaryHandler
 )
 
-// GET /api/mills/:millId/govt-rice-outward - Get list with pagination
-router.get(
-    '/',
-    validate(listGovtRiceOutwardSchema),
-    getGovtRiceOutwardListHandler
-)
-
-// GET /api/mills/:millId/govt-rice-outward/:id - Get by ID
-router.get(
-    '/:id',
-    validate(getGovtRiceOutwardByIdSchema),
-    getGovtRiceOutwardByIdHandler
-)
-
-// POST /api/mills/:millId/govt-rice-outward - Create new entry
-router.post('/', validate(createGovtRiceOutwardSchema), createGovtRiceOutward)
-
-// PUT /api/mills/:millId/govt-rice-outward/:id - Update entry
-router.put(
-    '/:id',
-    validate(updateGovtRiceOutwardSchema),
-    updateGovtRiceOutwardHandler
-)
-
-// DELETE /api/mills/:millId/govt-rice-outward/bulk - Bulk delete entries
+// Bulk delete govt rice outward entries (must be before /:id route)
 router.delete(
     '/bulk',
+    authenticate,
     validate(bulkDeleteGovtRiceOutwardSchema),
     bulkDeleteGovtRiceOutwardHandler
 )
 
-// DELETE /api/mills/:millId/govt-rice-outward/:id - Delete entry
+// Get govt rice outward list with pagination
+router.get(
+    '/',
+    authenticate,
+    validate(listGovtRiceOutwardSchema),
+    getGovtRiceOutwardListHandler
+)
+
+// Create a new govt rice outward entry
+router.post(
+    '/',
+    authenticate,
+    validate(createGovtRiceOutwardSchema),
+    createGovtRiceOutward
+)
+
+// Get govt rice outward entry by ID
+router.get(
+    '/:id',
+    authenticate,
+    validate(getGovtRiceOutwardByIdSchema),
+    getGovtRiceOutwardByIdHandler
+)
+
+// Update a govt rice outward entry
+router.put(
+    '/:id',
+    authenticate,
+    validate(updateGovtRiceOutwardSchema),
+    updateGovtRiceOutwardHandler
+)
+
+// Delete a govt rice outward entry
 router.delete(
     '/:id',
+    authenticate,
     validate(deleteGovtRiceOutwardSchema),
     deleteGovtRiceOutwardHandler
 )

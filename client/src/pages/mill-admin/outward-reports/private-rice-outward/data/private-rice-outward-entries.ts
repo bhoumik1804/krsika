@@ -40,7 +40,7 @@ export const privateRiceOutwardEntries: PrivateRiceOutward[] = Array.from(
 
         return {
             date: faker.date.recent({ days: 60 }).toISOString().split('T')[0],
-            chawalAutoNumber: `CSA-${faker.number.int({ min: 1000, max: 9999 })}`,
+            riceSaleDealNumber: `SALE-${faker.number.int({ min: 1000, max: 9999 })}`,
             partyName: faker.person.fullName(),
             brokerName: faker.person.fullName(),
             lotNo: `LOT-${faker.number.int({ min: 1000, max: 9999 })}`,
@@ -56,11 +56,11 @@ export const privateRiceOutwardEntries: PrivateRiceOutward[] = Array.from(
             gunnyPlastic,
             juteWeight,
             plasticWeight,
-            truckNo: `${faker.location.state({ abbreviated: true })}-${faker.number.int({ min: 10, max: 99 })}-${faker.string.alpha({ length: 2, casing: 'upper' })}-${faker.number.int({ min: 1000, max: 9999 })}`,
+            truckNumber: `${faker.location.state({ abbreviated: true })}-${faker.number.int({ min: 10, max: 99 })}-${faker.string.alpha({ length: 2, casing: 'upper' })}-${faker.number.int({ min: 1000, max: 9999 })}`,
             truckRst: `RST-${faker.number.int({ min: 10000, max: 99999 })}`,
-            trkWt,
-            gunnyWt,
-            finalWt,
+            truckWeight: trkWt,
+            gunnyWeight: gunnyWt,
+            netWeight: finalWt,
         }
     }
 )

@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
+import type { NavigateFn } from '@/hooks/use-table-url-state'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
@@ -39,14 +40,18 @@ export function DoReport() {
 
     const doReportData = useMemo(() => response?.reports ?? [], [response])
 
-    const navigate = (opts: { search: unknown; replace?: boolean }) => {
+    const navigate: NavigateFn = (opts) => {
         if (typeof opts.search === 'function') {
             const newSearch = opts.search(search)
-            setSearchParams(newSearch as Record<string, string>)
+            setSearchParams(newSearch as Record<string, string>, {
+                replace: opts.replace,
+            })
         } else if (opts.search === true) {
             // Keep current params
         } else {
-            setSearchParams(opts.search as Record<string, string>)
+            setSearchParams(opts.search as Record<string, string>, {
+                replace: opts.replace,
+            })
         }
     }
 

@@ -20,7 +20,6 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { useCreateStaff, useUpdateStaff } from '../data/hooks'
 import { staffReportSchema, type StaffReportData } from '../data/schema'
 import { staffReport } from './staff-report-provider'
@@ -237,24 +236,24 @@ export function StaffReportActionDialog({
                                     </FormItem>
                                 )}
                             />
+                            <FormField
+                                control={form.control}
+                                name='address'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Address</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder='Enter address'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                         </div>
-                        <FormField
-                            control={form.control}
-                            name='address'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Address</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder='Enter address'
-                                            rows={3}
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+
                         <DialogFooter>
                             <Button
                                 type='button'

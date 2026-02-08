@@ -3,8 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -29,26 +27,30 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import { useCreateFrkOutward, useUpdateFrkOutward } from '../data/hooks'
 import { frkOutwardSchema, type FrkOutward } from '../data/schema'
+import { useFrkOutward } from './frk-outward-provider'
 
 type FrkOutwardActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: FrkOutward | null
 }
 
 export function FrkOutwardActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: FrkOutwardActionDialogProps) {
+    const { millId, currentRow } = useFrkOutward()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    const createMutation = useCreateFrkOutward()
+    const updateMutation = useUpdateFrkOutward()
 
     const form = useForm<FrkOutward>({
         resolver: zodResolver(frkOutwardSchema),
         defaultValues: {
-            date: '',
+            date: format(new Date(), 'yyyy-MM-dd'),
             partyName: '',
             gunnyPlastic: 0,
             plasticWeight: 0,
@@ -65,7 +67,7 @@ export function FrkOutwardActionDialog({
             form.reset(currentRow)
         } else {
             form.reset({
-                date: '',
+                date: format(new Date(), 'yyyy-MM-dd'),
                 partyName: '',
                 gunnyPlastic: 0,
                 plasticWeight: 0,
@@ -78,16 +80,27 @@ export function FrkOutwardActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = async (data: FrkOutward) => {
+        try {
+            if (isEditing) {
+                const { _id, ...updatePayload } = data
+                await updateMutation.mutateAsync({
+                    millId,
+                    id: currentRow._id,
+                    payload: updatePayload,
+                })
+            } else {
+                const { _id, ...createPayload } = data
+                await createMutation.mutateAsync({
+                    millId,
+                    payload: createPayload,
+                })
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            // Error is handled by the mutation hooks
+        }
     }
 
     return (
@@ -351,7 +364,13 @@ export function FrkOutwardActionDialog({
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
+                            <Button
+                                type='submit'
+                                disabled={
+                                    createMutation.isPending ||
+                                    updateMutation.isPending
+                                }
+                            >
                                 {isEditing ? 'Update' : 'Add'}
                             </Button>
                         </DialogFooter>

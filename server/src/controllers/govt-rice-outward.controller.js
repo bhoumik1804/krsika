@@ -13,8 +13,7 @@ export const createGovtRiceOutward = async (req, res, next) => {
     try {
         const entry = await createGovtRiceOutwardEntry(
             req.params.millId,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(201).json(
             new ApiResponse(201, { entry }, 'Govt rice outward created')
@@ -40,11 +39,25 @@ export const getGovtRiceOutwardByIdHandler = async (req, res, next) => {
 
 export const getGovtRiceOutwardListHandler = async (req, res, next) => {
     try {
-        const { page, limit, search, sortBy, sortOrder } = req.query
+        const {
+            page,
+            limit,
+            search,
+            riceType,
+            lotNo,
+            startDate,
+            endDate,
+            sortBy,
+            sortOrder,
+        } = req.query
         const result = await getGovtRiceOutwardList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
+            riceType,
+            lotNo,
+            startDate,
+            endDate,
             sortBy,
             sortOrder,
         })
@@ -62,7 +75,11 @@ export const getGovtRiceOutwardListHandler = async (req, res, next) => {
 
 export const getGovtRiceOutwardSummaryHandler = async (req, res, next) => {
     try {
-        const summary = await getGovtRiceOutwardSummary(req.params.millId)
+        const { startDate, endDate } = req.query
+        const summary = await getGovtRiceOutwardSummary(req.params.millId, {
+            startDate,
+            endDate,
+        })
         res.status(200).json(
             new ApiResponse(
                 200,
@@ -80,8 +97,7 @@ export const updateGovtRiceOutwardHandler = async (req, res, next) => {
         const entry = await updateGovtRiceOutwardEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(200, { entry }, 'Govt rice outward updated')

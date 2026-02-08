@@ -2,8 +2,9 @@ import { z } from 'zod'
 
 // Schema for private rice outward records
 export const PrivateRiceOutwardSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
-    chawalAutoNumber: z.string().optional(),
+    riceSaleDealNumber: z.string().optional(),
     partyName: z.string().optional(),
     brokerName: z.string().optional(),
     lotNo: z.string().optional(),
@@ -15,11 +16,11 @@ export const PrivateRiceOutwardSchema = z.object({
     gunnyPlastic: z.number().optional(),
     juteWeight: z.number().optional(),
     plasticWeight: z.number().optional(),
-    truckNo: z.string().optional(),
+    truckNumber: z.string().optional(),
     truckRst: z.string().optional(),
-    trkWt: z.number().optional(),
-    gunnyWt: z.number().optional(),
-    finalWt: z.number().optional(),
+    truckWeight: z.number().optional(),
+    gunnyWeight: z.number().optional(),
+    netWeight: z.number().optional(),
 })
 
 export type PrivateRiceOutward = z.infer<typeof PrivateRiceOutwardSchema>

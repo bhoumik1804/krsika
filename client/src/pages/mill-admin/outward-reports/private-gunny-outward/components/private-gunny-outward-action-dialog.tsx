@@ -3,8 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -30,9 +28,14 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover'
 import {
+    useCreatePrivateGunnyOutward,
+    useUpdatePrivateGunnyOutward,
+} from '../data/hooks'
+import {
     PrivateGunnyOutwardSchema,
     type PrivateGunnyOutward,
 } from '../data/schema'
+import { usePrivateGunnyOutward } from './private-gunny-outward-provider'
 
 type PrivateGunnyOutwardActionDialogProps = {
     open: boolean
@@ -45,14 +48,19 @@ export function PrivateGunnyOutwardActionDialog({
     onOpenChange,
     currentRow,
 }: PrivateGunnyOutwardActionDialogProps) {
+    const { millId } = usePrivateGunnyOutward()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    const createMutation = useCreatePrivateGunnyOutward(millId)
+    const updateMutation = useUpdatePrivateGunnyOutward(millId)
 
     const form = useForm<PrivateGunnyOutward>({
         resolver: zodResolver(PrivateGunnyOutwardSchema),
         defaultValues: {
+            _id: '',
             date: '',
-            gunnyPurchaseNumber: '',
+            gunnyPurchaseDealNumber: '',
             partyName: '',
             newGunnyQty: undefined,
             oldGunnyQty: undefined,
@@ -66,8 +74,9 @@ export function PrivateGunnyOutwardActionDialog({
             form.reset(currentRow)
         } else {
             form.reset({
-                date: '',
-                gunnyPurchaseNumber: '',
+                _id: '',
+                date: format(new Date(), 'yyyy-MM-dd'),
+                gunnyPurchaseDealNumber: '',
                 partyName: '',
                 newGunnyQty: undefined,
                 oldGunnyQty: undefined,
@@ -77,16 +86,25 @@ export function PrivateGunnyOutwardActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = async (data: PrivateGunnyOutward) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                // Exclude _id from update payload (sent as separate id param)
+                const { _id, ...updatePayload } = data
+                await updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    payload: updatePayload,
+                })
+            } else {
+                // Exclude _id when creating new entry
+                const { _id, ...createPayload } = data
+                await createMutation.mutateAsync(createPayload)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            // Error handling is done in the mutation hooks
+        }
     }
 
     return (
@@ -169,16 +187,18 @@ export function PrivateGunnyOutwardActionDialog({
                                 )}
                             />
 
-                            {/* Buy Auto No */}
+                            {/* Gunny Purchase Deal Number */}
                             <FormField
                                 control={form.control}
-                                name='gunnyPurchaseNumber'
+                                name='gunnyPurchaseDealNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Buy Auto Number</FormLabel>
+                                        <FormLabel>
+                                            Gunny Purchase Number
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='GBA-1234'
+                                                placeholder='GPN-1234'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -306,11 +326,26 @@ export function PrivateGunnyOutwardActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={
+                                    createMutation.isPending ||
+                                    updateMutation.isPending
+                                }
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                            <Button
+                                type='submit'
+                                disabled={
+                                    createMutation.isPending ||
+                                    updateMutation.isPending
+                                }
+                            >
+                                {createMutation.isPending ||
+                                updateMutation.isPending
+                                    ? 'Saving...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

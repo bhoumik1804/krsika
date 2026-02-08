@@ -16,8 +16,10 @@ import doReportRoutes from './do-report.routes.js'
 import financialPaymentRoutes from './financial-payment.routes.js'
 import financialReceiptRoutes from './financial-receipt.routes.js'
 import frkInwardRoutes from './frk-inward.routes.js'
+import frkOutwardRoutes from './frk-outward.routes.js'
 import frkPurchaseRoutes from './frk-purchase.routes.js'
 import frkSaleRoutes from './frk-sale.routes.js'
+import govtGunnyOutwardRoutes from './govt-gunny-outward.routes.js'
 import govtPaddyInwardRoutes from './govt-paddy-inward.routes.js'
 import govtRiceOutwardRoutes from './govt-rice-outward.routes.js'
 import gunnyInwardRoutes from './gunny-inward.routes.js'
@@ -38,6 +40,7 @@ import outwardBalancePartyRoutes from './outward-balance-party.routes.js'
 import paddyPurchaseRoutes from './paddy-purchase.routes.js'
 import partyTransactionRoutes from './party-transaction.routes.js'
 import partyRoutes from './party.routes.js'
+import privateGunnyOutwardRoutes from './private-gunny-outward.routes.js'
 import privatePaddyInwardRoutes from './private-paddy-inward.routes.js'
 import privatePaddyOutwardRoutes from './private-paddy-outward.routes.js'
 import privateRiceOutwardRoutes from './private-rice-outward.routes.js'
@@ -70,6 +73,7 @@ router.use('/mills/:millId/daily-production', dailyProductionRoutes)
 router.use('/mills/:millId/daily-purchase-deals', dailyPurchaseDealRoutes)
 router.use('/mills/:millId/daily-sales-deals', dailySalesDealRoutes)
 router.use('/mills/:millId/govt-paddy-inward', govtPaddyInwardRoutes)
+router.use('/mills/:millId/govt-gunny-outward', govtGunnyOutwardRoutes)
 router.use('/mills/:millId/govt-rice-outward', govtRiceOutwardRoutes)
 router.use('/mills/:millId/milling-paddy', millingPaddyRoutes)
 router.use('/mills/:millId/paddy-purchase', paddyPurchaseRoutes)
@@ -99,10 +103,12 @@ router.use('/mills/:millId/broker-transactions', brokerTransactionRoutes)
 router.use('/mills/:millId/rice-inward', riceInwardRoutes)
 router.use('/mills/:millId/gunny-inward', gunnyInwardRoutes)
 router.use('/mills/:millId/frk-inward', frkInwardRoutes)
+router.use('/mills/:millId/frk-outward', frkOutwardRoutes)
 router.use('/mills/:millId/other-inward', otherInwardRoutes)
 
 // Outward Reports
 router.use('/mills/:millId/private-paddy-outward', privatePaddyOutwardRoutes)
+router.use('/mills/:millId/private-gunny-outward', privateGunnyOutwardRoutes)
 router.use('/mills/:millId/private-rice-outward', privateRiceOutwardRoutes)
 
 // Purchase Reports
