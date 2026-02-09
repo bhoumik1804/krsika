@@ -5,6 +5,7 @@ import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
 import { MODULE_SLUGS } from '../constants/module.slugs.enum.js'
 import { PERMISSION_ACTIONS } from '../constants/permission.actions.enum.js'
 import { ROLES } from '../constants/user.roles.enum.js'
+import env from '../config/env.js'
 
 // ---------------------------------------------------------
 // Sub-Schemas
@@ -125,6 +126,8 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 }
 
 userSchema.methods.generateAccessToken = function () {
+    // Convert milliseconds to seconds for JWT
+    const expiresInSeconds = Math.floor(env.ACCESS_TOKEN_EXPIRY / 1000)
     return jwt.sign(
         {
             id: this._id,
@@ -133,14 +136,16 @@ userSchema.methods.generateAccessToken = function () {
             role: this.role,
             millId: this.millId,
         },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN }
+        env.ACCESS_TOKEN_SECRET,
+        { expiresIn: expiresInSeconds }
     )
 }
 
 userSchema.methods.generateRefreshToken = function () {
-    return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN_SECRET, {
-        expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
+    // Convert milliseconds to seconds for JWT
+    const expiresInSeconds = Math.floor(env.REFRESH_TOKEN_EXPIRY / 1000)
+    return jwt.sign({ id: this._id }, env.REFRESH_TOKEN_SECRET, {
+        expiresIn: expiresInSeconds,
     })
 }
 
