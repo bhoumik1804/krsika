@@ -8,12 +8,22 @@ interface FetchBrokerListParams {
     search?: string
 }
 
+export interface BrokerListResponse {
+    brokers: BrokerReportData[]
+    pagination: {
+        page: number
+        pageSize: number
+        total: number
+        pages: number
+    }
+}
+
 interface ApiResponse<T> {
     data: T
 }
 
 export const brokerService = {
-    fetchBrokerList: async (params: FetchBrokerListParams) => {
+    fetchBrokerList: async (params: FetchBrokerListParams): Promise<BrokerListResponse> => {
         const queryParams = new URLSearchParams()
         if (params.page) queryParams.append('page', params.page.toString())
         if (params.pageSize)
@@ -21,12 +31,9 @@ export const brokerService = {
         if (params.search) queryParams.append('search', params.search)
 
         const response = await apiClient.get<
-            ApiResponse<{
-                brokers: BrokerReportData[]
-                pagination: Record<string, unknown>
-            }>
+            ApiResponse<BrokerListResponse>
         >(`/mills/${params.millId}/brokers?${queryParams.toString()}`)
-        return response.data.data.brokers
+        return response.data.data
     },
 
     createBroker: async (

@@ -1,7 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import type { BrokerReportData } from './schema'
-import { brokerService } from './service'
+import { brokerService, type BrokerListResponse } from './service'
+
+// Re-export types
+export type { BrokerListResponse }
 
 // Query key factory for brokers
 const brokerQueryKeys = {
@@ -11,7 +14,7 @@ const brokerQueryKeys = {
         [...brokerQueryKeys.byMill(millId), 'list', filters] as const,
 }
 
-interface UseBrokerListParams {
+export interface UseBrokerListParams {
     millId: string
     page?: number
     pageSize?: number
@@ -19,7 +22,7 @@ interface UseBrokerListParams {
 }
 
 export const useBrokerList = (params: UseBrokerListParams) => {
-    return useQuery({
+    return useQuery<BrokerListResponse, Error>({
         queryKey: brokerQueryKeys.list(params.millId, {
             page: params.page,
             pageSize: params.pageSize,
