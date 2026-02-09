@@ -16,11 +16,12 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type Staff } from '../data/schema'
+// import { type Staff } from '../data/schema'
 import { useStaff } from './staff-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<Staff>
+    // row: Row<Staff>
+    row : Row<any>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {

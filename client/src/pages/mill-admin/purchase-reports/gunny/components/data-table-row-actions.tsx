@@ -10,11 +10,11 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type GunnyPurchase } from '../data/schema'
+import { type GunnyPurchaseData } from '../data/schema'
 import { useGunny } from './gunny-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<GunnyPurchase>
+    row: Row<GunnyPurchaseData>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {

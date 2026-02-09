@@ -1,13 +1,13 @@
 import { faker } from '@faker-js/faker'
 import { gunnyDeliveryTypeOptions } from '@/constants/purchase-form'
-import { type GunnyPurchase } from './schema'
+import { type GunnyPurchaseData } from './schema'
 
 // Set a fixed seed for consistent data generation
 faker.seed(54323)
 
-export const gunnyPurchases: GunnyPurchase[] = Array.from(
+export const gunnyPurchases: GunnyPurchaseData[] = Array.from(
     { length: 50 },
-    (): GunnyPurchase => {
+    (): GunnyPurchaseData => {
         return {
             date: faker.date.recent({ days: 60 }).toISOString().split('T')[0],
             partyName: faker.person.fullName(),

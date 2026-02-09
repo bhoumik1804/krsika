@@ -51,8 +51,8 @@ export function LabourGroupReportTable({
     search,
     navigate,
     pagination: serverPagination,
-    isLoading,
-    isError,
+    // isLoading,
+    // isError,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(

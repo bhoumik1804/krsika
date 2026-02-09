@@ -3,7 +3,7 @@ import { GunnyInwardDeleteDialog } from './gunny-inward-delete-dialog'
 import { gunnyInward } from './gunny-inward-provider'
 
 export function GunnyInwardDialogs() {
-    const { open, setOpen, currentRow, setCurrentRow } = gunnyInward()
+    const { open, setOpen, setCurrentRow } = gunnyInward()
 
     const handleActionDialogClose = (isOpen: boolean) => {
         if (!isOpen) {

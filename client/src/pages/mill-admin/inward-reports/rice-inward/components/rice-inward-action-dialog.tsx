@@ -105,7 +105,7 @@ export function RiceInwardActionDialog({
     const onSubmit = (data: RiceInward) => {
         if (isEditing && currentRow?._id) {
             updateMutation.mutate(
-                { id: currentRow._id, data },
+                { id: currentRow._id, data: { ...data, _id: currentRow._id } },
                 {
                     onSuccess: () => {
                         toast.success('Updated successfully')
