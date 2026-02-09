@@ -1,6 +1,5 @@
 import { apiClient } from '@/lib/api-client'
 import type { GunnyPurchaseData } from './schema'
-import type { GunnyPurchaseListResponse } from './types'
 
 interface FetchGunnyPurchaseListParams {
     millId: string

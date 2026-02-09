@@ -5,8 +5,7 @@ export const accessTokenCookieOptions = {
     secure: env.NODE_ENV === 'production',
     sameSite: 'strict',
     path: '/',
-    // maxAge: 15 * 60 * 1000, // 15 minutes
-    maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
+    maxAge: env.ACCESS_TOKEN_EXPIRY, // Uses env config (milliseconds)
 }
 
 export const refreshTokenCookieOptions = {
@@ -14,7 +13,7 @@ export const refreshTokenCookieOptions = {
     secure: env.NODE_ENV === 'production',
     sameSite: 'strict',
     path: '/',
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: env.REFRESH_TOKEN_EXPIRY, // Uses env config (milliseconds)
 }
 
 export const clearCookieOptions = {

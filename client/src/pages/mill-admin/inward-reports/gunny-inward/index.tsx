@@ -17,7 +17,7 @@ import { GunnyInwardTable } from './components/gunny-inward-table'
 
 function GunnyInwardContent() {
     const [searchParams, setSearchParams] = useSearchParams()
-    const { data, isLoading, error, queryParams, setQueryParams, pagination } =
+    const { data, isLoading, error, setQueryParams } =
         gunnyInward()
 
     const search = Object.fromEntries(searchParams.entries())

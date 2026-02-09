@@ -23,6 +23,7 @@ export const frkOutwardEntries: FrkOutward[] = Array.from(
         const netWeight = truckWeight - gunnyWeight
 
         return {
+            _id: faker.string.uuid(),
             date: faker.date.recent({ days: 60 }).toISOString().split('T')[0],
             partyName: faker.person.fullName(),
             gunnyPlastic,

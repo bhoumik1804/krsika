@@ -1,6 +1,6 @@
 import { StaffActionDialog } from './staff-action-dialog'
 import { StaffBulkAttendanceDialog } from './staff-bulk-attendance-dialog'
-import { StaffDeleteDialog } from './staff-delete-dialog'
+// import { StaffDeleteDialog } from './staff-delete-dialog'
 import { StaffMarkAttendanceDialog } from './staff-mark-attendance-dialog'
 import { useStaff } from './staff-provider'
 import { StaffViewAttendanceDialog } from './staff-view-attendance-dialog'
@@ -29,17 +29,17 @@ export function StaffDialogs() {
                         currentRow={currentRow}
                     />
 
-                    <StaffDeleteDialog
+                    {/* <StaffDeleteDialog
                         key={`staff-delete-${currentRow._id}`}
-                        open={open === 'delete'}
-                        onOpenChange={() => {
-                            setOpen('delete')
-                            setTimeout(() => {
-                                setCurrentRow(null)
-                            }, 500)
-                        }}
-                        currentRow={currentRow}
-                    />
+                        // open={open === 'delete'}
+                        // onOpenChange={() => {
+                        //     setOpen('delete')
+                        //     setTimeout(() => {
+                        //         setCurrentRow(null)
+                        //     }, 500)
+                        // }}
+                        // currentRow={currentRow}
+                    /> */}
 
                     <StaffMarkAttendanceDialog
                         key={`staff-attendance-${currentRow._id}`}
@@ -47,26 +47,26 @@ export function StaffDialogs() {
 
                     <StaffViewAttendanceDialog
                         key={`staff-view-attendance-${currentRow._id}`}
-                        open={open === 'view-attendance'}
-                        onOpenChange={() => {
-                            setOpen('view-attendance')
-                            setTimeout(() => {
-                                setCurrentRow(null)
-                            }, 500)
-                        }}
-                        currentRow={currentRow}
+                        // open={open === 'view-attendance'}
+                        // onOpenChange={() => {
+                        //     setOpen('view-attendance')
+                        //     setTimeout(() => {
+                        //         setCurrentRow(null)
+                        //     }, 500)
+                        // }}
+                        // currentRow={currentRow}
                     />
 
                     <StaffBulkAttendanceDialog
                         key={`staff-bulk-attendance-${currentRow._id}`}
-                        open={open === 'bulk-attendance'}
-                        onOpenChange={() => {
-                            setOpen('bulk-attendance')
-                            setTimeout(() => {
-                                setCurrentRow(null)
-                            }, 500)
-                        }}
-                        currentRow={currentRow}
+                        // open={open === 'bulk-attendance'}
+                        // onOpenChange={() => {
+                        //     setOpen('bulk-attendance')
+                        //     setTimeout(() => {
+                        //         setCurrentRow(null)
+                        //     }, 500)
+                        // }}
+                        // currentRow={currentRow}
                     />
                 </>
             )}

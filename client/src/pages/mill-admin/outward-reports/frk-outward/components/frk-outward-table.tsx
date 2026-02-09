@@ -5,6 +5,7 @@ import {
     getCoreRowModel,
     getFacetedRowModel,
     getFacetedUniqueValues,
+    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'

@@ -10,11 +10,11 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type FrkPurchase } from '../data/schema'
+import { type FrkPurchaseData } from '../data/schema'
 import { useFrk } from './frk-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<FrkPurchase>
+    row: Row<FrkPurchaseData>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {

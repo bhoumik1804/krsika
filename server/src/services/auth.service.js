@@ -5,6 +5,7 @@ import { User } from '../models/user.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 import { createMillEntry } from './mills.service.js'
+import env from '../config/env.js'
 
 /**
  * Register a new user (Signup)
@@ -330,7 +331,7 @@ export const generateUserTokens = async (user) => {
  * Refresh Access Token
  */
 export const refreshAccessToken = async (refreshToken) => {
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
+    const decoded = jwt.verify(refreshToken, env.REFRESH_TOKEN_SECRET)
     const user = await User.findById(decoded.id)
 
     if (!user || user.refreshToken !== refreshToken)

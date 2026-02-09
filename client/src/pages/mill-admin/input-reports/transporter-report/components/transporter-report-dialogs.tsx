@@ -3,7 +3,7 @@ import { TransporterReportDeleteDialog } from './transporter-report-delete-dialo
 import { useTransporterReport } from './transporter-report-provider'
 
 export function TransporterReportDialogs() {
-    const { open, setOpen } = useTransporterReport()
+    const { open,currentRow, setOpen } = useTransporterReport()
 
     return (
         <>
@@ -12,12 +12,14 @@ export function TransporterReportDialogs() {
                 onOpenChange={(isOpen: boolean) =>
                     setOpen(isOpen ? open : null)
                 }
+                currentRow={currentRow}
             />
             <TransporterReportDeleteDialog
                 open={open === 'delete'}
                 onOpenChange={(isOpen: boolean) =>
                     setOpen(isOpen ? 'delete' : null)
                 }
+                currentRow={currentRow}
             />
         </>
     )
