@@ -47,7 +47,6 @@ export function ProfileForm() {
             name: user?.fullName || '',
             email: user?.email || '',
             role: user?.role || '',
-            post: user?.post || '', // Assuming 'post' is available on user object or handled similarly
         },
         mode: 'onChange',
     })

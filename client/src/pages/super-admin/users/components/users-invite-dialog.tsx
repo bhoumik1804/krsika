@@ -27,7 +27,6 @@ import { roles } from '../data/data'
 import { useInviteUser } from '../data/hooks'
 import { handleFormError } from '@/lib/handle-form-error'
 import { handleServerError } from '@/lib/handle-server-error'
-import { toast } from 'sonner'
 
 const formSchema = z.object({
     email: z.string().email('Please enter a valid email address.'),
