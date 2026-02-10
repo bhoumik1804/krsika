@@ -4,6 +4,7 @@
  */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { handleServerError } from '@/lib/handle-server-error'
 import {
     fetchUsersList,
     fetchUserById,
@@ -105,10 +106,6 @@ export const useCreateUser = () => {
             queryClient.invalidateQueries({
                 queryKey: usersKeys.summaries(),
             })
-            toast.success('User created successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to create user')
         },
     })
 }
@@ -134,9 +131,6 @@ export const useUpdateUser = () => {
             })
             toast.success('User updated successfully')
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to update user')
-        },
     })
 }
 
@@ -158,9 +152,6 @@ export const useInviteUser = () => {
                 queryKey: usersKeys.summaries(),
             })
             toast.success('Invitation sent successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to send invitation')
         },
     })
 }
@@ -187,7 +178,7 @@ export const useSuspendUser = () => {
             toast.success('User suspended successfully')
         },
         onError: (error) => {
-            toast.error(error.message || 'Failed to suspend user')
+            handleServerError(error)
         },
     })
 }
@@ -214,7 +205,7 @@ export const useReactivateUser = () => {
             toast.success('User reactivated successfully')
         },
         onError: (error) => {
-            toast.error(error.message || 'Failed to reactivate user')
+            handleServerError(error)
         },
     })
 }
@@ -239,7 +230,7 @@ export const useDeleteUser = () => {
             toast.success('User deleted successfully')
         },
         onError: (error) => {
-            toast.error(error.message || 'Failed to delete user')
+            handleServerError(error)
         },
     })
 }
@@ -264,7 +255,7 @@ export const useBulkDeleteUsers = () => {
             toast.success(`${ids.length} users deleted successfully`)
         },
         onError: (error) => {
-            toast.error(error.message || 'Failed to delete users')
+            handleServerError(error)
         },
     })
 }
@@ -292,7 +283,7 @@ export const useExportUsers = () => {
             toast.success('Users exported successfully')
         },
         onError: (error) => {
-            toast.error(error.message || 'Failed to export users')
+            handleServerError(error)
         },
     })
 }

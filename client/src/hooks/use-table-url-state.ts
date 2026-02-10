@@ -9,9 +9,9 @@ type SearchRecord = Record<string, unknown>
 
 export type NavigateFn = (opts: {
     search:
-        | true
-        | SearchRecord
-        | ((prev: SearchRecord) => Partial<SearchRecord> | SearchRecord)
+    | true
+    | SearchRecord
+    | ((prev: SearchRecord) => Partial<SearchRecord> | SearchRecord)
     replace?: boolean
 }) => void
 
@@ -32,20 +32,20 @@ type UseTableUrlStateParams = {
     }
     columnFilters?: Array<
         | {
-              columnId: string
-              searchKey: string
-              type?: 'string'
-              // Optional transformers for custom types
-              serialize?: (value: unknown) => unknown
-              deserialize?: (value: unknown) => unknown
-          }
+            columnId: string
+            searchKey: string
+            type?: 'string'
+            // Optional transformers for custom types
+            serialize?: (value: unknown) => unknown
+            deserialize?: (value: unknown) => unknown
+        }
         | {
-              columnId: string
-              searchKey: string
-              type: 'array'
-              serialize?: (value: unknown) => unknown
-              deserialize?: (value: unknown) => unknown
-          }
+            columnId: string
+            searchKey: string
+            type: 'array'
+            serialize?: (value: unknown) => unknown
+            deserialize?: (value: unknown) => unknown
+        }
     >
 }
 
@@ -110,7 +110,13 @@ export function useTableUrlState(
                 }
             } else {
                 // default to array type
-                const value = (deserialize(raw) as unknown[]) ?? []
+                // Handle case where URL param is a single string instead of an array
+                let value = (deserialize(raw) as unknown[]) ?? []
+
+                if (typeof raw === 'string') {
+                    value = [raw]
+                }
+
                 if (Array.isArray(value) && value.length > 0) {
                     collected.push({ id: cfg.columnId, value })
                 }
@@ -130,14 +136,14 @@ export function useTableUrlState(
             typeof rawPage === 'number'
                 ? rawPage
                 : typeof rawPage === 'string'
-                  ? parseInt(rawPage, 10) || defaultPage
-                  : defaultPage
+                    ? parseInt(rawPage, 10) || defaultPage
+                    : defaultPage
         const pageSizeNum =
             typeof rawPageSize === 'number'
                 ? rawPageSize
                 : typeof rawPageSize === 'string'
-                  ? parseInt(rawPageSize, 10) || defaultPageSize
-                  : defaultPageSize
+                    ? parseInt(rawPageSize, 10) || defaultPageSize
+                    : defaultPageSize
         return {
             pageIndex: Math.max(0, pageNum - 1),
             pageSize: validatePageSize(pageSizeNum),
@@ -192,21 +198,21 @@ export function useTableUrlState(
     const onGlobalFilterChange: OnChangeFn<string> | undefined =
         globalFilterEnabled
             ? (updater) => {
-                  const next =
-                      typeof updater === 'function'
-                          ? updater(globalFilter ?? '')
-                          : updater
-                  const value = trimGlobal ? next.trim() : next
-                  setGlobalFilter(value)
-                  navigate({
-                      search: (prev) =>
-                          filterUndefined({
-                              ...(prev as SearchRecord),
-                              [pageKey]: undefined,
-                              [globalFilterKey]: value ? value : undefined,
-                          }),
-                  })
-              }
+                const next =
+                    typeof updater === 'function'
+                        ? updater(globalFilter ?? '')
+                        : updater
+                const value = trimGlobal ? next.trim() : next
+                setGlobalFilter(value)
+                navigate({
+                    search: (prev) =>
+                        filterUndefined({
+                            ...(prev as SearchRecord),
+                            [pageKey]: undefined,
+                            [globalFilterKey]: value ? value : undefined,
+                        }),
+                })
+            }
             : undefined
 
     const onColumnFiltersChange: OnChangeFn<ColumnFiltersState> = (updater) => {
@@ -255,8 +261,8 @@ export function useTableUrlState(
             typeof currentPage === 'number'
                 ? currentPage
                 : typeof currentPage === 'string'
-                  ? parseInt(currentPage, 10) || defaultPage
-                  : defaultPage
+                    ? parseInt(currentPage, 10) || defaultPage
+                    : defaultPage
         if (pageCount > 0 && pageNum > pageCount) {
             navigate({
                 replace: true,

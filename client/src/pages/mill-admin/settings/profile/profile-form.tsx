@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
+import { toast } from 'sonner'
+import { useUser, useUpdateProfile } from '@/pages/landing/hooks'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -33,30 +34,46 @@ const profileFormSchema = z.object({
     ),
 })
 type ProfileFormValues = z.infer<typeof profileFormSchema>
-const defaultValues: Partial<ProfileFormValues> = {
-    name: 'shadcn',
-    email: 'm@example.com',
-    role: 'mill-admin',
-    millInfo: [
-        {
-            name: 'Main Mill',
-            address: '123 Mill Road, Industrial Area',
-            otherInfo: 'Primary processing unit',
-            id: 'MILL-001',
-        },
-    ],
-}
+
 const roleLabels: Record<string, string> = {
     'super-admin': 'Super Admin',
     'mill-admin': 'Mill Admin',
     'mill-staff': 'Mill Staff',
 }
+
 export function ProfileForm() {
+    const { user } = useUser()
+    const { updateProfileAsync, isLoading } = useUpdateProfile()
+
     const form = useForm<ProfileFormValues>({
         resolver: zodResolver(profileFormSchema),
-        defaultValues,
+        defaultValues: {
+            name: user?.fullName || '',
+            email: user?.email || '',
+            role: user?.role || '',
+            millInfo: [
+                {
+                    name: 'Main Mill',
+                    address: '123 Mill Road, Industrial Area',
+                    otherInfo: 'Primary processing unit',
+                    id: user?.millId || '',
+                },
+            ],
+        },
         mode: 'onChange',
     })
+
+    async function onSubmit(data: ProfileFormValues) {
+        try {
+            await updateProfileAsync({
+                fullName: data.name,
+                // mill info update logic might need separate API/handling if supported
+            })
+            toast.success('Profile updated successfully')
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to update profile')
+        }
+    }
     const { fields } = useFieldArray({
         name: 'millInfo',
         control: form.control,
@@ -64,7 +81,7 @@ export function ProfileForm() {
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit((data) => showSubmittedData(data))}
+                onSubmit={form.handleSubmit(onSubmit)}
                 className='space-y-8'
             >
                 <div className='grid gap-4 md:grid-cols-2'>
@@ -95,6 +112,7 @@ export function ProfileForm() {
                                         type='email'
                                         placeholder='your@email.com'
                                         {...field}
+                                        readOnly
                                     />
                                 </FormControl>
                                 <FormDescription>
@@ -213,7 +231,10 @@ export function ProfileForm() {
                         </Card>
                     ))}
                 </div>
-                <Button type='submit'>Update profile</Button>
+
+                <Button type='submit' disabled={isLoading}>
+                    {isLoading ? 'Updating...' : 'Update profile'}
+                </Button>
             </form>
         </Form>
     )

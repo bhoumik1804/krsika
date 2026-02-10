@@ -24,10 +24,17 @@ export const initiateGoogleLogin = () => {
  * Fetch current authenticated user
  * Used by React Query to get user data
  */
-export const fetchUser = async (): Promise<User> => {
-    const response =
-        await apiClient.get<ApiResponse<{ user: User }>>('/auth/me')
-    return response.data.data.user
+export const fetchUser = async (): Promise<User | null> => {
+    try {
+        const response =
+            await apiClient.get<ApiResponse<{ user: User }>>('/auth/me')
+        return response.data.data.user
+    } catch (error: any) {
+        if (error.response?.status === 401) {
+            return null
+        }
+        throw error
+    }
 }
 
 /**
@@ -83,8 +90,9 @@ export const refreshToken = async (): Promise<User> => {
  * Update user profile
  */
 export const updateProfile = async (data: {
-    name?: string
+    fullName?: string
     avatar?: string
+    [key: string]: any
 }): Promise<User> => {
     const response = await apiClient.put<ApiResponse<{ user: User }>>(
         '/auth/profile',

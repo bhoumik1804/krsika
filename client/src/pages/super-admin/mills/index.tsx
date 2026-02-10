@@ -102,9 +102,7 @@ export function Mills() {
                     </div>
                     <MillsPrimaryButtons />
                 </div>
-                {isLoading ? (
-                    <LoadingSpinner className='h-full w-full' />
-                ) : isError ? (
+                {isError ? (
                     <div className='py-10 text-center text-destructive'>
                         Failed to load mills data
                     </div>
@@ -114,6 +112,7 @@ export function Mills() {
                         search={search}
                         navigate={navigate}
                         pagination={millsResponse?.pagination}
+                        isLoading={isLoading}
                     />
                 )}
             </Main>
