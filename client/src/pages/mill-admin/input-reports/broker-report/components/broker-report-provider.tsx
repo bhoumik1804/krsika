@@ -55,7 +55,7 @@ export function BrokerReportProvider({
         useState<QueryParams>(initialQueryParams)
 
     const {
-        data = [],
+        data,
         isLoading,
         isError,
     } = useBrokerList({
@@ -65,6 +65,8 @@ export function BrokerReportProvider({
         search: queryParams.search,
     })
 
+    const brokers = data?.brokers ?? []
+
     return (
         <BrokerReportContext
             value={{
@@ -72,7 +74,7 @@ export function BrokerReportProvider({
                 setOpen,
                 currentRow,
                 setCurrentRow,
-                data,
+                data: brokers,
                 isLoading,
                 isError,
                 millId,
