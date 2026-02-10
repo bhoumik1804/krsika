@@ -1,6 +1,7 @@
 /**
  * Gunny Purchase Types
  * TypeScript type definitions for Gunny Purchase module
+ * Aligned with backend API response structure
  */
 
 // ==========================================
@@ -20,6 +21,7 @@ export interface CreateGunnyPurchaseRequest {
 }
 
 export interface UpdateGunnyPurchaseRequest {
+    id: string
     date?: string
     partyName?: string
     deliveryType?: string
@@ -55,7 +57,7 @@ export interface GunnyPurchaseResponse {
 }
 
 export interface GunnyPurchaseListResponse {
-    purchases: Array<GunnyPurchaseResponse & { _id: string }>
+    purchases: GunnyPurchaseResponse[]
     pagination: {
         page: number
         limit: number

@@ -1,80 +1,99 @@
-import { apiClient } from '@/lib/api-client'
-import type { GunnyPurchaseData } from './schema'
+/**
+ * Gunny Purchase Service
+ * API client for Gunny Purchase CRUD operations (Mill Admin)
+ * Uses centralized axios instance with cookie-based auth
+ */
+import apiClient, { type ApiResponse } from '@/lib/api-client'
+import type {
+    GunnyPurchaseResponse,
+    GunnyPurchaseListResponse,
+    CreateGunnyPurchaseRequest,
+    UpdateGunnyPurchaseRequest,
+    GunnyPurchaseQueryParams,
+} from './types'
 
-interface FetchGunnyPurchaseListParams {
-    millId: string
-    page?: number
-    pageSize?: number
-    search?: string
+// ==========================================
+// API Endpoints
+// ==========================================
+
+const getGunnyEndpoint = (millId: string) => `/mills/${millId}/gunny-purchase`
+
+// ==========================================
+// Gunny Purchase CRUD API Functions
+// ==========================================
+
+/**
+ * Fetch all gunny purchases with pagination and filters
+ */
+export const fetchGunnyPurchaseList = async (
+    millId: string,
+    params?: GunnyPurchaseQueryParams
+): Promise<GunnyPurchaseListResponse> => {
+    const response = await apiClient.get<
+        ApiResponse<GunnyPurchaseListResponse>
+    >(getGunnyEndpoint(millId), { params })
+    return response.data.data
 }
 
-interface ApiResponse<T> {
-    data: T
+/**
+ * Fetch a single gunny purchase by ID
+ */
+export const fetchGunnyPurchaseById = async (
+    millId: string,
+    id: string
+): Promise<GunnyPurchaseResponse> => {
+    const response = await apiClient.get<ApiResponse<GunnyPurchaseResponse>>(
+        `${getGunnyEndpoint(millId)}/${id}`
+    )
+    return response.data.data
 }
 
-export const gunnyPurchaseService = {
-    fetchGunnyPurchaseList: async (params: FetchGunnyPurchaseListParams) => {
-        const queryParams = new URLSearchParams()
-        if (params.page) queryParams.append('page', params.page.toString())
-        if (params.pageSize)
-            queryParams.append('pageSize', params.pageSize.toString())
-        if (params.search) queryParams.append('search', params.search)
+/**
+ * Create a new gunny purchase
+ */
+export const createGunnyPurchase = async (
+    millId: string,
+    data: CreateGunnyPurchaseRequest
+): Promise<GunnyPurchaseResponse> => {
+    const response = await apiClient.post<ApiResponse<GunnyPurchaseResponse>>(
+        getGunnyEndpoint(millId),
+        data
+    )
+    return response.data.data
+}
 
-        const response = await apiClient.get<
-            ApiResponse<{
-                purchases: Array<GunnyPurchaseData & { _id: string }>
-                pagination: Record<string, unknown>
-            }>
-        >(`/mills/${params.millId}/gunny-purchase?${queryParams.toString()}`)
+/**
+ * Update an existing gunny purchase
+ */
+export const updateGunnyPurchase = async (
+    millId: string,
+    { id, ...data }: UpdateGunnyPurchaseRequest
+): Promise<GunnyPurchaseResponse> => {
+    const response = await apiClient.put<ApiResponse<GunnyPurchaseResponse>>(
+        `${getGunnyEndpoint(millId)}/${id}`,
+        data
+    )
+    return response.data.data
+}
 
-        // Map _id to id for consistency
-        const data = response.data.data.purchases.map((item) => ({
-            ...item,
-            id: item._id,
-        }))
+/**
+ * Delete a gunny purchase
+ */
+export const deleteGunnyPurchase = async (
+    millId: string,
+    id: string
+): Promise<void> => {
+    await apiClient.delete(`${getGunnyEndpoint(millId)}/${id}`)
+}
 
-        return {
-            data,
-            pagination: response.data.data.pagination,
-        }
-    },
-
-    createGunnyPurchase: async (
-        millId: string,
-        data: Omit<GunnyPurchaseData, 'id'>
-    ) => {
-        const response = await apiClient.post<ApiResponse<GunnyPurchaseData>>(
-            `/mills/${millId}/gunny-purchase`,
-            data
-        )
-        return response.data.data
-    },
-
-    updateGunnyPurchase: async (
-        millId: string,
-        purchaseId: string,
-        data: Omit<GunnyPurchaseData, 'id'>
-    ) => {
-        const response = await apiClient.put<ApiResponse<GunnyPurchaseData>>(
-            `/mills/${millId}/gunny-purchase/${purchaseId}`,
-            data
-        )
-        return response.data.data
-    },
-
-    deleteGunnyPurchase: async (millId: string, purchaseId: string) => {
-        const response = await apiClient.delete<
-            ApiResponse<{ success: boolean }>
-        >(`/mills/${millId}/gunny-purchase/${purchaseId}`)
-        return response.data.data
-    },
-
-    bulkDeleteGunnyPurchases: async (millId: string, purchaseIds: string[]) => {
-        const response = await apiClient.delete<
-            ApiResponse<{ success: boolean }>
-        >(`/mills/${millId}/gunny-purchase/bulk`, {
-            data: { ids: purchaseIds },
-        })
-        return response.data.data
-    },
+/**
+ * Bulk delete gunny purchases
+ */
+export const bulkDeleteGunnyPurchases = async (
+    millId: string,
+    ids: string[]
+): Promise<void> => {
+    await apiClient.delete(`${getGunnyEndpoint(millId)}/bulk`, {
+        data: { ids },
+    })
 }
