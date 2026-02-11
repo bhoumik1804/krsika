@@ -36,7 +36,11 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { useCreateGunnyPurchase, useUpdateGunnyPurchase } from '../data/hooks'
-import { gunnyPurchaseSchema, type GunnyPurchaseData } from '../data/schema'
+import {
+    gunnyPurchaseFormSchema,
+    type GunnyPurchaseFormData,
+    type GunnyPurchaseData,
+} from '../data/schema'
 import { useGunny } from './gunny-provider'
 
 type GunnyActionDialogProps = {
@@ -60,8 +64,8 @@ export function GunnyActionDialog({
     const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<GunnyPurchaseData>({
-        resolver: zodResolver(gunnyPurchaseSchema),
+    const form = useForm<GunnyPurchaseFormData>({
+        resolver: zodResolver(gunnyPurchaseFormSchema),
         defaultValues: {
             date: format(new Date(), 'yyyy-MM-dd'),
             partyName: '',
@@ -72,13 +76,15 @@ export function GunnyActionDialog({
             oldGunnyRate: undefined,
             plasticGunnyQty: undefined,
             plasticGunnyRate: undefined,
-        } as GunnyPurchaseData,
+        },
     })
 
     useEffect(() => {
         if (open) {
             if (currentRow) {
-                form.reset(currentRow)
+                // Extract only form fields when editing
+                const { _id, ...formData } = currentRow
+                form.reset(formData)
             } else {
                 form.reset({
                     date: format(new Date(), 'yyyy-MM-dd'),
@@ -90,17 +96,17 @@ export function GunnyActionDialog({
                     oldGunnyRate: undefined,
                     plasticGunnyQty: undefined,
                     plasticGunnyRate: undefined,
-                } as GunnyPurchaseData)
+                })
             }
         }
     }, [currentRow, open, form])
 
-    const onSubmit = async (data: GunnyPurchaseData) => {
+    const onSubmit = async (data: GunnyPurchaseFormData) => {
         try {
             if (isEditing && currentRow?._id) {
                 await updateGunnyPurchase({
-                    purchaseId: currentRow._id,
-                    data,
+                    id: currentRow._id,
+                    ...data,
                 })
             } else {
                 await createGunnyPurchase(data)

@@ -12,6 +12,15 @@ import {
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
+    Combobox,
+    ComboboxInput,
+    ComboboxContent,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxEmpty,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
+import {
     Dialog,
     DialogContent,
     DialogDescription,
@@ -43,6 +52,49 @@ import {
 import { useCreatePaddyPurchase, useUpdatePaddyPurchase } from '../data/hooks'
 import { paddyPurchaseSchema, type PaddyPurchaseData } from '../data/schema'
 import { usePaddy } from './paddy-provider'
+
+// Dummy data for parties with IDs
+const dummyParties = [
+    { id: 1, name: 'Rajesh Traders' },
+    { id: 2, name: 'Sharma Rice Mill' },
+    { id: 3, name: 'Krishna Enterprises' },
+    { id: 4, name: 'Patel Commodities' },
+    { id: 5, name: 'Gupta & Sons' },
+    { id: 6, name: 'Verma Trading Co.' },
+    { id: 7, name: 'Singh Brothers' },
+    { id: 8, name: 'Mehta Grain Suppliers' },
+    { id: 9, name: 'Kumar & Associates' },
+    { id: 10, name: 'Patil Enterprises' },
+    { id: 11, name: 'Shah Trading Corp' },
+    { id: 12, name: 'Desai Rice Mill' },
+    { id: 13, name: 'Joshi Commodities' },
+    { id: 14, name: 'Nair Grain Traders' },
+    { id: 15, name: 'Reddy & Sons' },
+    { id: 16, name: 'Agarwal Enterprises' },
+    { id: 17, name: 'Tiwari Trading Co.' },
+]
+
+// Dummy data for brokers with IDs
+const dummyBrokers = [
+    { id: 1, name: 'Amit Kumar' },
+    { id: 2, name: 'Suresh Jain' },
+    { id: 3, name: 'Rakesh Agarwal' },
+    { id: 4, name: 'Vikas Sharma' },
+    { id: 5, name: 'Manoj Gupta' },
+    { id: 6, name: 'Ashok Yadav' },
+    { id: 7, name: 'Deepak Singh' },
+    { id: 8, name: 'Ramesh Patil' },
+]
+
+// Optimized: Extract names for Combobox items
+const partyNames = dummyParties.map((p) => p.name)
+const brokerNames = dummyBrokers.map((b) => b.name)
+
+// Utility functions to get ID by name (useful for API submissions)
+export const getPartyIdByName = (name: string) =>
+    dummyParties.find((p) => p.name === name)?.id
+export const getBrokerIdByName = (name: string) =>
+    dummyBrokers.find((b) => b.name === name)?.id
 
 type PaddyActionDialogProps = {
     open: boolean
@@ -245,10 +297,36 @@ export function PaddyActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
-                                                />
+                                                <Combobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    items={partyNames}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder='Search party...'
+                                                        showClear
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxList>
+                                                            <ComboboxCollection>
+                                                                {(party) => (
+                                                                    <ComboboxItem
+                                                                        value={
+                                                                            party
+                                                                        }
+                                                                    >
+                                                                        {party}
+                                                                    </ComboboxItem>
+                                                                )}
+                                                            </ComboboxCollection>
+                                                            <ComboboxEmpty>
+                                                                No parties found
+                                                            </ComboboxEmpty>
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -261,10 +339,36 @@ export function PaddyActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter broker name'
-                                                    {...field}
-                                                />
+                                                <Combobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    items={brokerNames}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder='Search broker...'
+                                                        showClear
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxList>
+                                                            <ComboboxCollection>
+                                                                {(broker) => (
+                                                                    <ComboboxItem
+                                                                        value={
+                                                                            broker
+                                                                        }
+                                                                    >
+                                                                        {broker}
+                                                                    </ComboboxItem>
+                                                                )}
+                                                            </ComboboxCollection>
+                                                            <ComboboxEmpty>
+                                                                No brokers found
+                                                            </ComboboxEmpty>
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
