@@ -41,7 +41,7 @@ export function PaddyPurchaseReport() {
     const purchaseData = useMemo(() => {
         if (!response?.data) return []
         return response.data.map((item) => ({
-            id: item._id,
+            id: item.id || item._id,
             ...item,
             createdAt: new Date(item.createdAt),
             updatedAt: new Date(item.updatedAt),

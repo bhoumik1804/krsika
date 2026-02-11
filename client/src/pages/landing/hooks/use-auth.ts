@@ -54,7 +54,7 @@ export const useUser = (options: UseUserOptions = {}) => {
         enabled,
         refetchOnWindowFocus,
         retry,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 0, // Always consider data stale to force refetch on refresh/refocus
         gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
     })
 

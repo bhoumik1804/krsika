@@ -23,7 +23,11 @@ export const createStaffEntry = async (millId, data, adminId) => {
         phoneNumber: data.phoneNumber,
         password: data.password,
         millId,
-        role: 'mill-staff',
+        role: data.role || 'mill-staff',
+        post: data.post,
+        salary: data.salary,
+        address: data.address,
+        permissions: data.permissions || [],
         isActive: data.isActive !== false,
     })
 
@@ -149,6 +153,11 @@ export const updateStaffEntry = async (millId, staffId, data, adminId) => {
     if (data.fullName) staff.fullName = data.fullName
     if (data.phoneNumber !== undefined) staff.phoneNumber = data.phoneNumber
     if (data.isActive !== undefined) staff.isActive = data.isActive
+    if (data.post !== undefined) staff.post = data.post
+    if (data.salary !== undefined) staff.salary = data.salary
+    if (data.address !== undefined) staff.address = data.address
+    if (data.permissions !== undefined) staff.permissions = data.permissions
+    if (data.role !== undefined) staff.role = data.role
 
     await staff.save()
 

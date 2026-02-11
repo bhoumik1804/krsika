@@ -32,6 +32,14 @@ export const createStaffSchema = z.object({
             .string()
             .min(8, 'Password must be at least 8 characters')
             .optional(),
+        role: z.string().optional(),
+        post: z.string().optional(),
+        salary: z.union([z.number(), z.string()]).optional(),
+        address: z.string().optional(),
+        permissions: z.array(z.object({
+            moduleSlug: z.string(),
+            actions: z.array(z.string())
+        })).optional(),
         isActive: z.boolean().default(true).optional(),
     }),
     query: z.record(z.any()).optional().default({}),
@@ -63,6 +71,14 @@ export const updateStaffSchema = z.object({
             .max(15, 'Phone number must be at most 15 digits')
             .optional()
             .or(z.literal('')),
+        role: z.string().optional(),
+        post: z.string().optional(),
+        salary: z.union([z.number(), z.string()]).optional(),
+        address: z.string().optional(),
+        permissions: z.array(z.object({
+            moduleSlug: z.string(),
+            actions: z.array(z.string())
+        })).optional(),
         isActive: z.boolean().optional(),
     }),
     query: z.record(z.any()).optional(),
