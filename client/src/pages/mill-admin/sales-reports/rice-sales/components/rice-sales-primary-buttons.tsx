@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { riceSales } from './rice-sales-provider'
+import { useRiceSales } from './rice-sales-provider'
 
 export function RiceSalesPrimaryButtons() {
-    const { setOpen } = riceSales()
+    const { setOpen } = useRiceSales()
 
     return (
         <Button onClick={() => setOpen('add')}>
