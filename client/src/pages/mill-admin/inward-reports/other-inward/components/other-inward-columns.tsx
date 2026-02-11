@@ -53,7 +53,7 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'purchaseDealId',
+        accessorKey: 'otherPurchaseDealNumber',
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
@@ -61,7 +61,9 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
             />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('purchaseDealId')}</div>
+            <div className='text-nowrap'>
+                {row.getValue('otherPurchaseDealNumber')}
+            </div>
         ),
     },
     {
@@ -131,24 +133,24 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
         ),
     },
     {
-        accessorKey: 'juteWeight',
+        accessorKey: 'juteGunnyWeight',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Jute Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('juteWeight') as number)?.toFixed(2)}
+                {(row.getValue('juteGunnyWeight') as number)?.toFixed(2)}
             </div>
         ),
     },
     {
-        accessorKey: 'plasticWeight',
+        accessorKey: 'plasticGunnyWeight',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Plastic Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('plasticWeight') as number)?.toFixed(2)}
+                {(row.getValue('plasticGunnyWeight') as number)?.toFixed(2)}
             </div>
         ),
     },

@@ -18,7 +18,7 @@ const OtherInwardSchema = new Schema(
             required: true,
             index: true,
         },
-        purchaseDealId: {
+        otherPurchaseDealNumber: {
             type: String,
             trim: true,
         },
@@ -54,11 +54,11 @@ const OtherInwardSchema = new Schema(
             type: Number,
             min: 0,
         },
-        juteWeight: {
+        juteGunnyWeight: {
             type: Number,
             min: 0,
         },
-        plasticWeight: {
+        plasticGunnyWeight: {
             type: Number,
             min: 0,
         },

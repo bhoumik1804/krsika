@@ -40,7 +40,7 @@ export const getOtherInwardList = async (millId, options = {}) => {
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
             { itemName: { $regex: search, $options: 'i' } },
-            { purchaseDealId: { $regex: search, $options: 'i' } },
+            { otherPurchaseDealNumber: { $regex: search, $options: 'i' } },
             { truckNumber: { $regex: search, $options: 'i' } },
         ]
 
