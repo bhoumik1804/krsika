@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -13,6 +14,17 @@ import {
 } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    Combobox,
+    ComboboxInput,
+    ComboboxContent,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxEmpty,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import {
     Dialog,
     DialogContent,
@@ -66,6 +78,93 @@ export function RiceActionDialog({
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    // Lazy loading state for party and broker
+    const [partyPage, setPartyPage] = useState(1)
+    const [brokerPage, setBrokerPage] = useState(1)
+    const [allParties, setAllParties] = useState<string[]>([])
+    const [allBrokers, setAllBrokers] = useState<string[]>([])
+    const [hasMoreParties, setHasMoreParties] = useState(true)
+    const [hasMoreBrokers, setHasMoreBrokers] = useState(true)
+    const [isLoadingMoreParties, setIsLoadingMoreParties] = useState(false)
+    const [isLoadingMoreBrokers, setIsLoadingMoreBrokers] = useState(false)
+
+    // Dynamic limit: 10 for first page, 5 for subsequent pages
+    const partyLimit = partyPage === 1 ? 10 : 5
+    const brokerLimit = brokerPage === 1 ? 10 : 5
+
+    // Fetch party list from API with pagination
+    const { data: partyListData } = usePartyList(
+        millId,
+        {
+            page: partyPage,
+            limit: partyLimit,
+            sortBy: 'partyName',
+            sortOrder: 'asc',
+        },
+        { enabled: open && !!millId }
+    )
+
+    // Fetch broker list from API with pagination
+    const { data: brokerListData } = useBrokerList({
+        millId: open ? millId : '',
+        page: brokerPage,
+        pageSize: brokerLimit,
+    })
+
+    // Extract party names from API response and accumulate
+    React.useEffect(() => {
+        if (partyListData?.parties) {
+            const newParties = partyListData.parties.map((party) => party.partyName)
+            setAllParties((prev) => Array.from(new Set([...prev, ...newParties])))
+            setHasMoreParties(partyListData.parties.length === partyLimit)
+            setIsLoadingMoreParties(false)
+        }
+    }, [partyListData, partyLimit])
+
+    // Extract broker names from API response and accumulate
+    React.useEffect(() => {
+        if (brokerListData?.brokers) {
+            const newBrokers = brokerListData.brokers.map((broker) => broker.brokerName)
+            setAllBrokers((prev) => Array.from(new Set([...prev, ...newBrokers])))
+            setHasMoreBrokers(brokerListData.brokers.length === brokerLimit)
+            setIsLoadingMoreBrokers(false)
+        }
+    }, [brokerListData, brokerLimit])
+
+    // Reset accumulated data when dialog opens
+    useEffect(() => {
+        if (open) {
+            setAllParties([])
+            setAllBrokers([])
+            setPartyPage(1)
+            setBrokerPage(1)
+            setHasMoreParties(true)
+            setHasMoreBrokers(true)
+        }
+    }, [open])
+
+    // Handle scroll for party list
+    const handlePartyScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const target = e.currentTarget
+        const bottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 5
+
+        if (bottom && hasMoreParties && !isLoadingMoreParties) {
+            setIsLoadingMoreParties(true)
+            setPartyPage((prev) => prev + 1)
+        }
+    }
+
+    // Handle scroll for broker list
+    const handleBrokerScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const target = e.currentTarget
+        const bottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 5
+
+        if (bottom && hasMoreBrokers && !isLoadingMoreBrokers) {
+            setIsLoadingMoreBrokers(true)
+            setBrokerPage((prev) => prev + 1)
+        }
+    }
 
     const form = useForm<RicePurchaseData>({
         resolver: zodResolver(ricePurchaseSchema),
@@ -191,11 +290,11 @@ export function RiceActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
+                                                                    new Date(
+                                                                        field.value
+                                                                    ),
+                                                                    'MMM dd, yyyy'
+                                                                )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -209,17 +308,17 @@ export function RiceActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                      field.value
-                                                                  )
+                                                                    field.value
+                                                                )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -240,10 +339,35 @@ export function RiceActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
-                                                />
+                                                <Combobox
+                                                    value={field.value}
+                                                    onValueChange={field.onChange}
+                                                    items={allParties}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder='Search party...'
+                                                        showClear
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxList onScroll={handlePartyScroll}>
+                                                            <ComboboxCollection>
+                                                                {(party) => (
+                                                                    <ComboboxItem value={party}>
+                                                                        {party}
+                                                                    </ComboboxItem>
+                                                                )}
+                                                            </ComboboxCollection>
+                                                            <ComboboxEmpty>
+                                                                No parties found
+                                                            </ComboboxEmpty>
+                                                            {isLoadingMoreParties && (
+                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                    Loading more...
+                                                                </div>
+                                                            )}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -256,10 +380,35 @@ export function RiceActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter broker name'
-                                                    {...field}
-                                                />
+                                                <Combobox
+                                                    value={field.value}
+                                                    onValueChange={field.onChange}
+                                                    items={allBrokers}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder='Search broker...'
+                                                        showClear
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxList onScroll={handleBrokerScroll}>
+                                                            <ComboboxCollection>
+                                                                {(broker) => (
+                                                                    <ComboboxItem value={broker}>
+                                                                        {broker}
+                                                                    </ComboboxItem>
+                                                                )}
+                                                            </ComboboxCollection>
+                                                            <ComboboxEmpty>
+                                                                No brokers found
+                                                            </ComboboxEmpty>
+                                                            {isLoadingMoreBrokers && (
+                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                    Loading more...
+                                                                </div>
+                                                            )}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -814,8 +963,8 @@ export function RiceActionDialog({
                                         ? 'Updating...'
                                         : 'Adding...'
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}
+                                        ? 'Update'
+                                        : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>
