@@ -7,70 +7,24 @@ import { z } from 'zod'
 
 // Common fields schema
 const riceSaleBaseSchema = {
-    date: z
-        .string({
-            required_error: 'Date is required',
-        })
-        .datetime({ offset: true })
-        .or(
-            z
-                .string()
-                .regex(
-                    /^\d{4}-\d{2}-\d{2}$/,
-                    'Invalid date format (YYYY-MM-DD)'
-                )
-        ),
-    partyName: z.string().trim().max(200, 'Party name is too long').optional(),
-    brokerName: z
-        .string()
-        .trim()
-        .max(200, 'Broker name is too long')
-        .optional(),
-    deliveryType: z
-        .string()
-        .trim()
-        .max(100, 'Delivery type is too long')
-        .optional(),
-    lotOrOther: z
-        .string()
-        .trim()
-        .max(100, 'Lot or other is too long')
-        .optional(),
-    fciOrNAN: z.string().trim().max(100, 'FCI or NAN is too long').optional(),
-    riceType: z.string().trim().max(100, 'Rice type is too long').optional(),
-    riceQty: z.number().min(0, 'Rice quantity cannot be negative').optional(),
-    riceRatePerQuintal: z
-        .number()
-        .min(0, 'Rice rate per quintal cannot be negative')
-        .optional(),
-    discountPercent: z
-        .number()
-        .min(0, 'Discount percent cannot be negative')
-        .max(100, 'Discount percent cannot exceed 100')
-        .optional(),
-    brokeragePerQuintal: z
-        .number()
-        .min(0, 'Brokerage per quintal cannot be negative')
-        .optional(),
-    gunnyType: z.string().trim().max(100, 'Gunny type is too long').optional(),
-    newGunnyRate: z
-        .number()
-        .min(0, 'New gunny rate cannot be negative')
-        .optional(),
-    oldGunnyRate: z
-        .number()
-        .min(0, 'Old gunny rate cannot be negative')
-        .optional(),
-    plasticGunnyRate: z
-        .number()
-        .min(0, 'Plastic gunny rate cannot be negative')
-        .optional(),
-    frkType: z.string().trim().max(100, 'FRK type is too long').optional(),
-    frkRatePerQuintal: z
-        .number()
-        .min(0, 'FRK rate per quintal cannot be negative')
-        .optional(),
-    lotNumber: z.string().trim().max(100, 'Lot number is too long').optional(),
+    date: z.string().min(1, 'Date is required'),
+    partyName: z.string().optional(),
+    brokerName: z.string().optional(),
+    deliveryType: z.string().optional(),
+    lotOrOther: z.string().optional(),
+    fciOrNAN: z.string().optional(),
+    riceType: z.string().optional(),
+    riceQty: z.number().optional(),
+    riceRatePerQuintal: z.number().optional(),
+    discountPercent: z.number().optional(),
+    brokeragePerQuintal: z.number().optional(),
+    gunnyType: z.string().optional(),
+    newGunnyRate: z.number().optional(),
+    oldGunnyRate: z.number().optional(),
+    plasticGunnyRate: z.number().optional(),
+    frkType: z.string().optional(),
+    frkRatePerQuintal: z.number().optional(),
+    lotNumber: z.string().optional(),
 }
 
 // Create rice sale schema
@@ -83,27 +37,10 @@ export const createRiceSaleSchema = z.object({
     }),
 })
 
-// Update rice sale schema (all fields optional except id)
+// Update rice sale schema
 export const updateRiceSaleSchema = z.object({
     body: z.object({
-        date: riceSaleBaseSchema.date.optional(),
-        partyName: riceSaleBaseSchema.partyName,
-        brokerName: riceSaleBaseSchema.brokerName,
-        deliveryType: riceSaleBaseSchema.deliveryType,
-        lotOrOther: riceSaleBaseSchema.lotOrOther,
-        fciOrNAN: riceSaleBaseSchema.fciOrNAN,
-        riceType: riceSaleBaseSchema.riceType,
-        riceQty: riceSaleBaseSchema.riceQty,
-        riceRatePerQuintal: riceSaleBaseSchema.riceRatePerQuintal,
-        discountPercent: riceSaleBaseSchema.discountPercent,
-        brokeragePerQuintal: riceSaleBaseSchema.brokeragePerQuintal,
-        gunnyType: riceSaleBaseSchema.gunnyType,
-        newGunnyRate: riceSaleBaseSchema.newGunnyRate,
-        oldGunnyRate: riceSaleBaseSchema.oldGunnyRate,
-        plasticGunnyRate: riceSaleBaseSchema.plasticGunnyRate,
-        frkType: riceSaleBaseSchema.frkType,
-        frkRatePerQuintal: riceSaleBaseSchema.frkRatePerQuintal,
-        lotNumber: riceSaleBaseSchema.lotNumber,
+        ...riceSaleBaseSchema,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
@@ -148,15 +85,6 @@ export const listRiceSaleSchema = z.object({
         page: z.coerce.number().int().min(1).default(1).optional(),
         limit: z.coerce.number().int().min(1).max(100).default(10).optional(),
         search: z.string().trim().optional(),
-        partyName: z.string().trim().optional(),
-        brokerName: z.string().trim().optional(),
-        deliveryType: z.string().trim().optional(),
-        lotOrOther: z.string().trim().optional(),
-        fciOrNAN: z.string().trim().optional(),
-        riceType: z.string().trim().optional(),
-        gunnyType: z.string().trim().optional(),
-        frkType: z.string().trim().optional(),
-        lotNumber: z.string().trim().optional(),
         startDate: z
             .string()
             .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
@@ -166,16 +94,7 @@ export const listRiceSaleSchema = z.object({
             .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
             .optional(),
         sortBy: z
-            .enum([
-                'date',
-                'partyName',
-                'brokerName',
-                'riceType',
-                'riceQty',
-                'riceRatePerQuintal',
-                'lotNumber',
-                'createdAt',
-            ])
+            .enum(['date', 'partyName', 'createdAt'])
             .default('date')
             .optional(),
         sortOrder: z.enum(['asc', 'desc']).default('desc').optional(),

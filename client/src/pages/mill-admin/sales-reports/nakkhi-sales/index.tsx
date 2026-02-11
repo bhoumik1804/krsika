@@ -10,7 +10,7 @@ import { NakkhiSalesDialogs } from './components/nakkhi-sales-dialogs'
 import { NakkhiSalesPrimaryButtons } from './components/nakkhi-sales-primary-buttons'
 import { NakkhiSalesProvider } from './components/nakkhi-sales-provider'
 import { NakkhiSalesTable } from './components/nakkhi-sales-table'
-import { nakkhiSalesEntries } from './data/nakkhi-sales-entries'
+import { useNakkhiSalesList } from './data/hooks'
 
 export function NakkhiSalesReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +18,17 @@ export function NakkhiSalesReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    // API Integration
+    const {
+        data: apiResponse,
+        isLoading,
+        isError,
+    } = useNakkhiSalesList(millId || '', {
+        page: Number(search.page) || 1,
+        limit: Number(search.pageSize) || 10,
+        search: search.partyName as string,
+    })
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -31,7 +42,12 @@ export function NakkhiSalesReport() {
     }
 
     return (
-        <NakkhiSalesProvider>
+        <NakkhiSalesProvider
+            millId={millId || ''}
+            apiResponse={apiResponse}
+            isLoading={isLoading}
+            isError={isError}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -56,11 +72,23 @@ export function NakkhiSalesReport() {
                     </div>
                     <NakkhiSalesPrimaryButtons />
                 </div>
-                <NakkhiSalesTable
-                    data={nakkhiSalesEntries}
-                    search={search}
-                    navigate={navigate}
-                />
+                {isLoading ? (
+                    <div className='flex items-center justify-center py-10'>
+                        <div className='text-muted-foreground'>Loading...</div>
+                    </div>
+                ) : isError ? (
+                    <div className='flex items-center justify-center py-10'>
+                        <div className='text-destructive'>
+                            Error loading data
+                        </div>
+                    </div>
+                ) : (
+                    <NakkhiSalesTable
+                        data={apiResponse?.sales || []}
+                        search={search}
+                        navigate={navigate}
+                    />
+                )}
             </Main>
 
             <NakkhiSalesDialogs />

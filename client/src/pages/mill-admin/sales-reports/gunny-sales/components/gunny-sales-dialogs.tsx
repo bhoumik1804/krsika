@@ -1,9 +1,9 @@
 import { GunnySalesActionDialog } from './gunny-sales-action-dialog'
 import { GunnySalesDeleteDialog } from './gunny-sales-delete-dialog'
-import { gunnySales } from './gunny-sales-provider'
+import { useGunnySales } from './gunny-sales-provider'
 
 export function GunnySalesDialogs() {
-    const { open, setOpen, currentRow } = gunnySales()
+    const { open, setOpen, currentRow } = useGunnySales()
 
     return (
         <>

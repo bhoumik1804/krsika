@@ -23,12 +23,12 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
-import { type KhandaSales } from '../data/schema'
+import type { KhandaSalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { khandaSalesColumns as columns } from './khanda-sales-columns'
 
 type DataTableProps = {
-    data: KhandaSales[]
+    data: KhandaSalesResponse[]
     search: Record<string, unknown>
     navigate: NavigateFn
 }

@@ -1,25 +1,55 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { RiceSalesDialogs } from './components/rice-sales-dialogs'
 import { RiceSalesPrimaryButtons } from './components/rice-sales-primary-buttons'
-import { RiceSalesProvider } from './components/rice-sales-provider'
+import {
+    RiceSalesProvider,
+    useRiceSales,
+} from './components/rice-sales-provider'
 import { RiceSalesTable } from './components/rice-sales-table'
-import { riceSalesEntries } from './data/rice-sales-entries'
+import { useRiceSalesList } from './data/hooks'
 
 export function RiceSalesReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+
+    // Extract query params from URL
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
+
+    // Call GET API here
+    const {
+        data: apiResponse,
+        isLoading,
+        isError,
+    } = useRiceSalesList(millId || '', queryParams, { enabled: !!millId })
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
-    const search = Object.fromEntries(searchParams.entries())
-
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
+        const search = Object.fromEntries(searchParams.entries())
         if (typeof opts.search === 'function') {
             const newSearch = opts.search(search)
             setSearchParams(newSearch as Record<string, string>)
@@ -31,7 +61,13 @@ export function RiceSalesReport() {
     }
 
     return (
-        <RiceSalesProvider>
+        <RiceSalesProvider
+            millId={millId || ''}
+            initialQueryParams={queryParams}
+            apiResponse={apiResponse}
+            isLoading={isLoading}
+            isError={isError}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -56,14 +92,47 @@ export function RiceSalesReport() {
                     </div>
                     <RiceSalesPrimaryButtons />
                 </div>
-                <RiceSalesTable
-                    data={riceSalesEntries}
-                    search={search}
-                    navigate={navigate}
-                />
+                <RiceSalesContent navigate={navigate} />
             </Main>
 
             <RiceSalesDialogs />
         </RiceSalesProvider>
+    )
+}
+
+// Separate component to use context hook
+function RiceSalesContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const context = useRiceSales()
+
+    if (context.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (context.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                Failed to load rice sales data. Please try again later.
+            </div>
+        )
+    }
+
+    return (
+        <RiceSalesTable
+            data={context.data}
+            search={Object.fromEntries(
+                Object.entries(context.queryParams || {})
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => [key, String(value)])
+            )}
+            navigate={navigate}
+        />
     )
 }

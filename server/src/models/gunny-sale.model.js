@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose'
 import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
+import { dealNumberPlugin } from '../utils/dealNumberPlugin.js'
 
 /**
  * Gunny Sale Schema
@@ -23,30 +24,29 @@ const GunnySaleSchema = new Schema(
             required: true,
             trim: true,
         },
-        gunnyType: {
-            type: String,
-            trim: true,
-        },
-        totalGunny: {
+        newGunnyQty: {
             type: Number,
             min: 0,
         },
-        rate: {
+        newGunnyRate: {
             type: Number,
             min: 0,
         },
-        amount: {
+        oldGunnyQty: {
             type: Number,
             min: 0,
         },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
+        oldGunnyRate: {
+            type: Number,
+            min: 0,
         },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
+        plasticGunnyQty: {
+            type: Number,
+            min: 0,
+        },
+        plasticGunnyRate: {
+            type: Number,
+            min: 0,
         },
     },
     {
@@ -66,6 +66,12 @@ GunnySaleSchema.virtual('formattedDate').get(function () {
 // Ensure virtuals are included in JSON output
 GunnySaleSchema.set('toJSON', { virtuals: true })
 GunnySaleSchema.set('toObject', { virtuals: true })
+
+// Apply deal number plugin (auto-generates gunnySalesDealNumber)
+GunnySaleSchema.plugin(dealNumberPlugin, {
+    fieldName: 'gunnySalesDealNumber',
+    prefix: 'GNS',
+})
 
 // Add aggregate paginate plugin
 GunnySaleSchema.plugin(aggregatePaginate)

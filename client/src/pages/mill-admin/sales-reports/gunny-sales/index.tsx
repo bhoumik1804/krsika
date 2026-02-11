@@ -10,7 +10,7 @@ import { GunnySalesDialogs } from './components/gunny-sales-dialogs'
 import { GunnySalesPrimaryButtons } from './components/gunny-sales-primary-buttons'
 import { GunnySalesProvider } from './components/gunny-sales-provider'
 import { GunnySalesTable } from './components/gunny-sales-table'
-import { gunnySalesEntries } from './data/gunny-sales-entries'
+import { useGunnySalesList } from './data/hooks'
 
 export function GunnySalesReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +18,17 @@ export function GunnySalesReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    // API Integration
+    const {
+        data: apiResponse,
+        isLoading,
+        isError,
+    } = useGunnySalesList(millId || '', {
+        page: Number(search.page) || 1,
+        limit: Number(search.pageSize) || 10,
+        search: search.partyName as string,
+    })
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -31,7 +42,12 @@ export function GunnySalesReport() {
     }
 
     return (
-        <GunnySalesProvider>
+        <GunnySalesProvider
+            millId={millId || ''}
+            apiResponse={apiResponse}
+            isLoading={isLoading}
+            isError={isError}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -56,11 +72,23 @@ export function GunnySalesReport() {
                     </div>
                     <GunnySalesPrimaryButtons />
                 </div>
-                <GunnySalesTable
-                    data={gunnySalesEntries}
-                    search={search}
-                    navigate={navigate}
-                />
+                {isLoading ? (
+                    <div className='flex items-center justify-center py-10'>
+                        <div className='text-muted-foreground'>Loading...</div>
+                    </div>
+                ) : isError ? (
+                    <div className='flex items-center justify-center py-10'>
+                        <div className='text-destructive'>
+                            Error loading data
+                        </div>
+                    </div>
+                ) : (
+                    <GunnySalesTable
+                        data={apiResponse?.sales || []}
+                        search={search}
+                        navigate={navigate}
+                    />
+                )}
             </Main>
 
             <GunnySalesDialogs />

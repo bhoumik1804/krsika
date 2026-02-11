@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose'
 import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
+import { dealNumberPlugin } from '../utils/dealNumberPlugin.js'
 
 /**
  * Rice Purchase Schema
@@ -96,6 +97,12 @@ RicePurchaseSchema.virtual('formattedDate').get(function () {
 // Ensure virtuals are included in JSON output
 RicePurchaseSchema.set('toJSON', { virtuals: true })
 RicePurchaseSchema.set('toObject', { virtuals: true })
+
+// Apply deal number plugin (auto-generates ricePurchaseDealNumber)
+RicePurchaseSchema.plugin(dealNumberPlugin, {
+    fieldName: 'ricePurchaseDealNumber',
+    prefix: 'RCP',
+})
 
 // Add aggregate paginate plugin
 RicePurchaseSchema.plugin(aggregatePaginate)

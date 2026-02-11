@@ -24,11 +24,12 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
 import { type RiceSales } from '../data/schema'
+import { type RiceSalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { riceSalesColumns as columns } from './rice-sales-columns'
 
 type DataTableProps = {
-    data: RiceSales[]
+    data: RiceSales[] | RiceSalesResponse[]
     search: Record<string, unknown>
     navigate: NavigateFn
 }

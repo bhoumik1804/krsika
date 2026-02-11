@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { khandaSales } from './khanda-sales-provider'
+import { useKhandaSales } from './khanda-sales-provider'
 
 export function KhandaSalesPrimaryButtons() {
-    const { setOpen } = khandaSales()
+    const { setOpen } = useKhandaSales()
 
     return (
         <Button onClick={() => setOpen('add')}>

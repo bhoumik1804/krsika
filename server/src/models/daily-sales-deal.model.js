@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose'
 import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
+import { dealNumberPlugin } from '../utils/dealNumberPlugin.js'
 
 /**
  * Daily Sales Deal Schema
@@ -141,6 +142,12 @@ DailySalesDealSchema.virtual('formattedDate').get(function () {
 // Ensure virtuals are included in JSON output
 DailySalesDealSchema.set('toJSON', { virtuals: true })
 DailySalesDealSchema.set('toObject', { virtuals: true })
+
+// Apply deal number plugin (auto-generates dailySalesDealNumber)
+DailySalesDealSchema.plugin(dealNumberPlugin, {
+    fieldName: 'dailySalesDealNumber',
+    prefix: 'DSD',
+})
 
 // Add aggregate paginate plugin
 DailySalesDealSchema.plugin(aggregatePaginate)

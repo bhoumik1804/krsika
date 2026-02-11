@@ -25,6 +25,7 @@ import govtRiceOutwardRoutes from './govt-rice-outward.routes.js'
 import gunnyInwardRoutes from './gunny-inward.routes.js'
 import gunnyPurchaseRoutes from './gunny-purchase.routes.js'
 import gunnySaleRoutes from './gunny-sale.routes.js'
+import khandaSaleRoutes from './khanda-sale.routes.js'
 import labourGroupRoutes from './labour-group.routes.js'
 import labourInwardRoutes from './labour-inward.routes.js'
 import labourMillingRoutes from './labour-milling.routes.js'
@@ -33,6 +34,7 @@ import labourOutwardRoutes from './labour-outward.routes.js'
 import millingPaddyRoutes from './milling-paddy.routes.js'
 import millingRiceRoutes from './milling-rice.routes.js'
 import millsRoutes from './mills.routes.js'
+import nakkhiSaleRoutes from './nakkhi-sale.routes.js'
 import otherInwardRoutes from './other-inward.routes.js'
 import otherPurchaseRoutes from './other-purchase.routes.js'
 import otherSaleRoutes from './other-sale.routes.js'
@@ -121,6 +123,8 @@ router.use('/mills/:millId/other-purchase', otherPurchaseRoutes)
 router.use('/mills/:millId/gunny-sales', gunnySaleRoutes)
 router.use('/mills/:millId/frk-sales', frkSaleRoutes)
 router.use('/mills/:millId/other-sales', otherSaleRoutes)
+router.use('/mills/:millId/khanda-sales', khandaSaleRoutes)
+router.use('/mills/:millId/nakkhi-sales', nakkhiSaleRoutes)
 
 // Balance Lifting Reports
 router.use('/mills/:millId/balance-lifting-party', balanceLiftingPartyRoutes)

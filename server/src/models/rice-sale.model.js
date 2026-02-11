@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose'
 import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
+import { dealNumberPlugin } from '../utils/dealNumberPlugin.js'
 
 /**
  * Rice Sale Schema
@@ -105,6 +106,12 @@ RiceSaleSchema.index({ millId: 1, gunnyType: 1 })
 RiceSaleSchema.index({ millId: 1, frkType: 1 })
 RiceSaleSchema.index({ millId: 1, lotNumber: 1 })
 RiceSaleSchema.index({ millId: 1, createdAt: -1 })
+
+// Apply deal number plugin (auto-generates riceSalesDealNumber)
+RiceSaleSchema.plugin(dealNumberPlugin, {
+    fieldName: 'riceSalesDealNumber',
+    prefix: 'RCS',
+})
 
 // Apply aggregate paginate plugin
 RiceSaleSchema.plugin(aggregatePaginate)
