@@ -31,6 +31,12 @@ import { type Staff } from '../data/schema'
 
 // Module and action constants
 const MODULE_CATEGORIES = [
+    // {
+    //     title: 'Dashboard',
+    //     modules: [
+    //         { slug: 'dashboard-overview', label: 'Overview' },
+    //     ],
+    // },
     {
         title: 'Purchase Reports',
         modules: [
@@ -39,6 +45,12 @@ const MODULE_CATEGORIES = [
             { slug: 'gunny-purchase-report', label: 'Gunny Purchase' },
             { slug: 'frk-purchase-report', label: 'FRK Purchase' },
             { slug: 'other-purchase-report', label: 'Other Purchase' },
+        ],
+    },
+    {
+        title: 'Staff Management',
+        modules: [
+            { slug: 'staff-directory', label: 'Staff Directory' },
         ],
     },
     {

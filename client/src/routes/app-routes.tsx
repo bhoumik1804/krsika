@@ -1325,7 +1325,7 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: 'manage/staff',
-                        element: <LazyRoute Component={MillStaffStaff} />,
+                        element: <LazyRoute Component={MillStaffStaff} moduleSlug='staff-directory' />,
                     },
                     {
                         path: 'transaction/broker',

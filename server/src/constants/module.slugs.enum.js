@@ -3,6 +3,9 @@
  * Defines the functional modules available in the mill management system
  */
 export const MODULE_SLUGS = Object.freeze({
+    // Dashboard
+    // DASHBOARD_OVERVIEW: 'dashboard-overview',
+
     // Purchase Reports
     PADDY_PURCHASE_REPORT: 'paddy-purchase-report',
     RICE_PURCHASE_REPORT: 'rice-purchase-report',
@@ -26,6 +29,7 @@ export const MODULE_SLUGS = Object.freeze({
     DO_REPORT: 'do-report',
     VEHICLE_REPORT: 'vehicle-report',
     STAFF_REPORT: 'staff-report',
+    STAFF_DIRECTORY: 'staff-directory',
     LABOUR_GROUP_REPORT: 'labour-group-report',
 
     // Daily & Stock
