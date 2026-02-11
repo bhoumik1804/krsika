@@ -38,6 +38,11 @@ export interface PaginatedResponse<T> {
 
 // export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES]
 
+export interface Permission {
+    moduleSlug: string
+    actions: string[]
+}
+
 export interface User {
     _id: string
     email: string
@@ -46,7 +51,7 @@ export interface User {
     role: UserRole
     millId?: string
     isActive: boolean
-    permissions?: string[]
+    permissions?: Permission[]
     lastLogin?: string
 }
 

@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { type PaddyPurchase } from '../data/schema'
 import { usePaddy } from './paddy-provider'
+import { usePermission } from '@/hooks/use-permission'
 
 type DataTableRowActionsProps = {
     row: Row<PaddyPurchase>
@@ -19,6 +20,15 @@ type DataTableRowActionsProps = {
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     const { setOpen, setCurrentRow } = usePaddy()
+    const { can } = usePermission()
+
+    const canEdit = can('paddy-purchase-report', 'edit')
+    const canDelete = can('paddy-purchase-report', 'delete')
+
+    if (!canEdit && !canDelete) {
+        return null
+    }
+
     return (
         <>
             <DropdownMenu modal={false}>
@@ -32,30 +42,34 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align='end' className='w-[160px]'>
-                    <DropdownMenuItem
-                        onClick={() => {
-                            setCurrentRow(row.original)
-                            setOpen('edit')
-                        }}
-                    >
-                        Edit
-                        <DropdownMenuShortcut>
-                            <Wrench size={16} />
-                        </DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                        onClick={() => {
-                            setCurrentRow(row.original)
-                            setOpen('delete')
-                        }}
-                        className='text-red-500!'
-                    >
-                        Delete
-                        <DropdownMenuShortcut>
-                            <Trash2 size={16} />
-                        </DropdownMenuShortcut>
-                    </DropdownMenuItem>
+                    {canEdit && (
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setCurrentRow(row.original)
+                                setOpen('edit')
+                            }}
+                        >
+                            Edit
+                            <DropdownMenuShortcut>
+                                <Wrench size={16} />
+                            </DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                    )}
+                    {canEdit && canDelete && <DropdownMenuSeparator />}
+                    {canDelete && (
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setCurrentRow(row.original)
+                                setOpen('delete')
+                            }}
+                            className='text-red-500!'
+                        >
+                            Delete
+                            <DropdownMenuShortcut>
+                                <Trash2 size={16} />
+                            </DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
         </>

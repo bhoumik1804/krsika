@@ -34,10 +34,30 @@ import {
     type NavGroup as NavGroupProps,
 } from './types'
 
+import { usePermission } from '@/hooks/use-permission'
+
 export function NavGroup({ title, items }: NavGroupProps) {
     const { state, isMobile } = useSidebar()
+    const { can } = usePermission()
     const location = useLocation()
     const href = location.pathname
+
+    // Filter items based on permissions
+    const visibleItems = items.filter((item) => {
+        // If it's a collapsible with sub-items, check if any sub-item is visible
+        if (item.items) {
+            const hasVisibleSubItems = item.items.some((subItem) =>
+                can(subItem.moduleSlug, 'view')
+            )
+            return hasVisibleSubItems
+        }
+        // Otherwise check the item itself
+        return can(item.moduleSlug, 'view')
+    })
+
+    // If no items are visible, don't render the group
+    if (visibleItems.length === 0) return null
+
     return (
         <SidebarGroup>
             <SidebarGroupLabel>
@@ -49,7 +69,7 @@ export function NavGroup({ title, items }: NavGroupProps) {
                 </LongText>
             </SidebarGroupLabel>
             <SidebarMenu>
-                {items.map((item) => {
+                {visibleItems.map((item) => {
                     const key = `${item.title}-${item.url}`
 
                     if (!item.items)
@@ -116,6 +136,7 @@ function SidebarMenuCollapsible({
     href: string
 }) {
     const { setOpenMobile } = useSidebar()
+    const { can } = usePermission()
     return (
         <Collapsible
             asChild
@@ -138,30 +159,36 @@ function SidebarMenuCollapsible({
                 </CollapsibleTrigger>
                 <CollapsibleContent className='CollapsibleContent'>
                     <SidebarMenuSub>
-                        {item.items.map((subItem) => (
-                            <SidebarMenuSubItem key={subItem.title}>
-                                <SidebarMenuSubButton
-                                    asChild
-                                    isActive={checkIsActive(href, subItem)}
-                                >
-                                    <Link
-                                        to={subItem.url}
-                                        onClick={() => setOpenMobile(false)}
+                        {item.items
+                            .filter((subItem) =>
+                                can(subItem.moduleSlug, 'view')
+                            )
+                            .map((subItem) => (
+                                <SidebarMenuSubItem key={subItem.title}>
+                                    <SidebarMenuSubButton
+                                        asChild
+                                        isActive={checkIsActive(href, subItem)}
                                     >
-                                        {subItem.icon && <subItem.icon />}
-                                        <LongText
-                                            className='max-w-40'
-                                            contentClassName='truncate'
+                                        <Link
+                                            to={subItem.url}
+                                            onClick={() => setOpenMobile(false)}
                                         >
-                                            {subItem.title}
-                                        </LongText>
-                                        {subItem.badge && (
-                                            <NavBadge>{subItem.badge}</NavBadge>
-                                        )}
-                                    </Link>
-                                </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                        ))}
+                                            {subItem.icon && <subItem.icon />}
+                                            <LongText
+                                                className='max-w-40'
+                                                contentClassName='truncate'
+                                            >
+                                                {subItem.title}
+                                            </LongText>
+                                            {subItem.badge && (
+                                                <NavBadge>
+                                                    {subItem.badge}
+                                                </NavBadge>
+                                            )}
+                                        </Link>
+                                    </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                            ))}
                     </SidebarMenuSub>
                 </CollapsibleContent>
             </SidebarMenuItem>
@@ -176,6 +203,7 @@ function SidebarMenuCollapsedDropdown({
     item: NavCollapsible
     href: string
 }) {
+    const { can } = usePermission()
     return (
         <SidebarMenuItem>
             <DropdownMenu>
@@ -200,30 +228,32 @@ function SidebarMenuCollapsedDropdown({
                         {item.title} {item.badge ? `(${item.badge})` : ''}
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {item.items.map((sub) => (
-                        <DropdownMenuItem
-                            key={`${sub.title}-${sub.url}`}
-                            asChild
-                        >
-                            <Link
-                                to={sub.url}
-                                className={`${checkIsActive(href, sub) ? 'bg-secondary' : ''}`}
+                    {item.items
+                        .filter((sub) => can(sub.moduleSlug, 'view'))
+                        .map((sub) => (
+                            <DropdownMenuItem
+                                key={`${sub.title}-${sub.url}`}
+                                asChild
                             >
-                                {sub.icon && <sub.icon />}
-                                <LongText
-                                    className='max-w-48'
-                                    contentClassName='truncate'
+                                <Link
+                                    to={sub.url}
+                                    className={`${checkIsActive(href, sub) ? 'bg-secondary' : ''}`}
                                 >
-                                    {sub.title}
-                                </LongText>
-                                {sub.badge && (
-                                    <span className='ms-auto text-xs'>
-                                        {sub.badge}
-                                    </span>
-                                )}
-                            </Link>
-                        </DropdownMenuItem>
-                    ))}
+                                    {sub.icon && <sub.icon />}
+                                    <LongText
+                                        className='max-w-48'
+                                        contentClassName='truncate'
+                                    >
+                                        {sub.title}
+                                    </LongText>
+                                    {sub.badge && (
+                                        <span className='ms-auto text-xs'>
+                                            {sub.badge}
+                                        </span>
+                                    )}
+                                </Link>
+                            </DropdownMenuItem>
+                        ))}
                 </DropdownMenuContent>
             </DropdownMenu>
         </SidebarMenuItem>

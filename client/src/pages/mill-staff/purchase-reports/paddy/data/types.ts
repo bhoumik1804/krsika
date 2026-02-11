@@ -53,6 +53,7 @@ export interface UpdatePaddyPurchaseRequest {
 // ==========================================
 
 export interface PaddyPurchaseResponse {
+    id?: string
     _id: string
     millId: string
     date: string

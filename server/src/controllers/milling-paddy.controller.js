@@ -51,7 +51,7 @@ export const getMillingPaddyListHandler = async (req, res, next) => {
         res.status(200).json(
             new ApiResponse(
                 200,
-                { entries: result.data, pagination: result.pagination },
+                { data: result.data, pagination: result.pagination },
                 'Milling paddy list retrieved'
             )
         )
