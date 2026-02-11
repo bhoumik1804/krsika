@@ -1,10 +1,20 @@
 import { useEffect, useState } from 'react'
+import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    Combobox,
+    ComboboxInput,
+    ComboboxContent,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxEmpty,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -30,6 +40,7 @@ import {
 import { frkPurchaseSchema, type FrkPurchaseData } from '../data/schema'
 import { useCreateFrkPurchase, useUpdateFrkPurchase } from '../data/hooks'
 import { useFrk } from './frk-provider'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 
 type FrkActionDialogProps = {
     open: boolean
@@ -45,6 +56,72 @@ export function FrkActionDialog({
         useCreateFrkPurchase(millId)
     const { mutateAsync: updateFrkPurchase, isPending: isUpdating } =
         useUpdateFrkPurchase(millId)
+
+    const [partyPage, setPartyPage] = useState(1)
+    const [allParties, setAllParties] = useState<string[]>([])
+    const [hasMoreParties, setHasMoreParties] = useState(true)
+    const [isLoadingMoreParties, setIsLoadingMoreParties] = useState(false)
+
+    // Dynamic limit: 10 for first page, 5 for subsequent pages
+    const partyLimit = partyPage === 1 ? 10 : 5
+
+    // Fetch party list from API with pagination
+    const { data: partyListData } = usePartyList(
+        millId,
+        {
+            page: partyPage,
+            limit: partyLimit,
+            sortBy: 'partyName',
+            sortOrder: 'asc',
+        },
+        { enabled: open && !!millId }
+    )
+
+    // Extract party names from API response and accumulate
+    React.useEffect(() => {
+        if (partyListData?.parties) {
+            console.log(
+                'Party data received:',
+                partyListData.parties.length,
+                'parties on page',
+                partyPage
+            )
+            const newParties = partyListData.parties.map(
+                (party) => party.partyName
+            )
+            setAllParties((prev) => {
+                // Only add if not already in the list
+                const combined = [...prev, ...newParties]
+                return Array.from(new Set(combined))
+            })
+            // Check if there are more parties to load
+            setHasMoreParties(partyListData.parties.length === partyLimit)
+            setIsLoadingMoreParties(false)
+        }
+    }, [partyListData, partyLimit, partyPage])
+
+    // Reset accumulated data when dialog opens
+    useEffect(() => {
+        if (open) {
+            setAllParties([])
+            setPartyPage(1)
+            setHasMoreParties(true)
+            setIsLoadingMoreParties(false)
+        }
+    }, [open])
+
+    // Handle scroll for party list
+    const handlePartyScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const target = e.currentTarget
+        const bottom =
+            target.scrollHeight - target.scrollTop <= target.clientHeight + 5
+
+        if (bottom && hasMoreParties && !isLoadingMoreParties) {
+            console.log('Loading more parties... Current page:', partyPage)
+            setIsLoadingMoreParties(true)
+            setPartyPage((prev) => prev + 1)
+        }
+    }
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -132,11 +209,11 @@ export function FrkActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
+                                                                    new Date(
+                                                                        field.value
+                                                                    ),
+                                                                    'MMM dd, yyyy'
+                                                                )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -150,17 +227,17 @@ export function FrkActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                      field.value
-                                                                  )
+                                                                    field.value
+                                                                )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -181,10 +258,45 @@ export function FrkActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
-                                                />
+                                                <Combobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    items={allParties}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder='Search party...'
+                                                        showClear
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxList
+                                                            onScroll={
+                                                                handlePartyScroll
+                                                            }
+                                                        >
+                                                            <ComboboxCollection>
+                                                                {(party) => (
+                                                                    <ComboboxItem
+                                                                        value={
+                                                                            party
+                                                                        }
+                                                                    >
+                                                                        {party}
+                                                                    </ComboboxItem>
+                                                                )}
+                                                            </ComboboxCollection>
+                                                            <ComboboxEmpty>
+                                                                No parties found
+                                                            </ComboboxEmpty>
+                                                            {isLoadingMoreParties && (
+                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                    Loading more...
+                                                                </div>
+                                                            )}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -304,8 +416,8 @@ export function FrkActionDialog({
                                         ? 'Updating...'
                                         : 'Adding...'
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}
+                                        ? 'Update'
+                                        : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>
