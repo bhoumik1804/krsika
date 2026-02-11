@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
-import { useOtherPurchaseList } from '../data/hooks'
 import { type OtherPurchase } from '../data/schema'
 
 type OtherDialogType = 'add' | 'edit' | 'delete'
@@ -38,6 +37,15 @@ interface OtherProviderProps {
     children: React.ReactNode
     millId: string
     initialQueryParams?: QueryParams
+    apiData?: OtherPurchase[]
+    apiPagination?: {
+        page: number
+        pageSize: number
+        total: number
+        totalPages: number
+    }
+    isLoading?: boolean
+    isError?: boolean
     onQueryParamsChange?: (params: QueryParams) => void
 }
 
@@ -53,6 +61,10 @@ export function OtherProvider({
     children,
     millId,
     initialQueryParams = defaultQueryParams,
+    apiData = [],
+    apiPagination = { page: 1, pageSize: 10, total: 0, totalPages: 0 },
+    isLoading = false,
+    isError = false,
     onQueryParamsChange,
 }: OtherProviderProps) {
     const [open, setOpen] = useDialogState<OtherDialogType>(null)
@@ -74,42 +86,54 @@ export function OtherProvider({
         onQueryParamsChange?.(queryParams)
     }, [queryParams, onQueryParamsChange])
 
-    const {
-        data = [],
-        pagination = { page: 1, pageSize: 10, total: 0, totalPages: 0 },
-        isLoading,
-        isError,
-    } = useOtherPurchaseList({
-        millId,
-        page: queryParams.page,
-        pageSize: queryParams.limit,
-        search: queryParams.search,
-    })
-
-    return (
-        <OtherContext
-            value={{
-                open,
-                setOpen,
-                currentRow,
-                setCurrentRow,
-                data,
-                isLoading,
-                isError,
-                millId,
-                queryParams,
-                setQueryParams,
-                pagination: {
-                    page: pagination.page || 1,
-                    pageSize: pagination.pageSize || 10,
-                    total: pagination.total || 0,
-                    totalPages: pagination.totalPages || 0,
-                },
-            }}
-        >
-            {children}
-        </OtherContext>
+    // Memoized pagination to prevent flickering
+    const pagination = useMemo(
+        () => ({
+            page: apiPagination.page || 1,
+            pageSize: apiPagination.pageSize || 10,
+            total: apiPagination.total || 0,
+            totalPages: apiPagination.totalPages || 0,
+        }),
+        [
+            apiPagination.page,
+            apiPagination.pageSize,
+            apiPagination.total,
+            apiPagination.totalPages,
+        ]
     )
+
+    // Memoized context value to prevent flickering
+    const contextValue = useMemo(
+        () => ({
+            open,
+            setOpen,
+            currentRow,
+            setCurrentRow,
+            data: apiData,
+            isLoading,
+            isError,
+            millId,
+            queryParams,
+            setQueryParams,
+            pagination,
+        }),
+        [
+            open,
+            currentRow,
+            apiData,
+            isLoading,
+            isError,
+            millId,
+            queryParams.page,
+            queryParams.limit,
+            queryParams.search,
+            queryParams.sortBy,
+            queryParams.sortOrder,
+            pagination,
+        ]
+    )
+
+    return <OtherContext value={contextValue}>{children}</OtherContext>
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

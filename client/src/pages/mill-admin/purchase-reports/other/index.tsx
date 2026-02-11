@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -12,6 +12,7 @@ import { OtherDialogs } from './components/other-dialogs'
 import { OtherPrimaryButtons } from './components/other-primary-buttons'
 import { OtherProvider, useOther } from './components/other-provider'
 import { OtherTable } from './components/other-table'
+import { useOtherPurchaseList } from './data/hooks'
 
 export function OtherPurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -35,6 +36,19 @@ export function OtherPurchaseReport() {
         }
     }, [searchParams])
 
+    // Call GET API here
+    const {
+        data: apiData,
+        pagination: apiPagination,
+        isLoading,
+        isError,
+    } = useOtherPurchaseList({
+        millId: millId || '',
+        page: queryParams.page,
+        pageSize: queryParams.limit,
+        search: queryParams.search,
+    })
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     // Convert URLSearchParams to record
@@ -51,33 +65,40 @@ export function OtherPurchaseReport() {
         }
     }
 
-    const handleQueryParamsChange = (params: {
-        page: number
-        limit: number
-        search?: string
-        sortBy?: string
-        sortOrder?: 'asc' | 'desc'
-    }) => {
-        const newParams: Record<string, string> = {
-            page: params.page.toString(),
-            limit: params.limit.toString(),
-        }
-        if (params.search) {
-            newParams.search = params.search
-        }
-        if (params.sortBy) {
-            newParams.sortBy = params.sortBy
-        }
-        if (params.sortOrder) {
-            newParams.sortOrder = params.sortOrder
-        }
-        setSearchParams(newParams, { replace: true })
-    }
+    const handleQueryParamsChange = useCallback(
+        (params: {
+            page: number
+            limit: number
+            search?: string
+            sortBy?: string
+            sortOrder?: 'asc' | 'desc'
+        }) => {
+            const newParams: Record<string, string> = {
+                page: params.page.toString(),
+                limit: params.limit.toString(),
+            }
+            if (params.search) {
+                newParams.search = params.search
+            }
+            if (params.sortBy) {
+                newParams.sortBy = params.sortBy
+            }
+            if (params.sortOrder) {
+                newParams.sortOrder = params.sortOrder
+            }
+            setSearchParams(newParams, { replace: true })
+        },
+        [setSearchParams]
+    )
 
     return (
         <OtherProvider
             millId={millId || ''}
             initialQueryParams={queryParams}
+            apiData={apiData}
+            apiPagination={apiPagination}
+            isLoading={isLoading}
+            isError={isError}
             onQueryParamsChange={handleQueryParamsChange}
         >
             <Header fixed>

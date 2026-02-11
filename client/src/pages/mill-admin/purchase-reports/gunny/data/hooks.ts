@@ -1,58 +1,92 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+/**
+ * Gunny Purchase Hooks
+ * React Query hooks for Gunny Purchase data management (Mill Admin)
+ */
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import type { GunnyPurchaseData } from './schema'
-import { gunnyPurchaseService } from './service'
+import {
+    fetchGunnyPurchaseList,
+    fetchGunnyPurchaseById,
+    createGunnyPurchase,
+    updateGunnyPurchase,
+    deleteGunnyPurchase,
+    bulkDeleteGunnyPurchases,
+} from './service'
+import type {
+    GunnyPurchaseResponse,
+    GunnyPurchaseListResponse,
+    CreateGunnyPurchaseRequest,
+    UpdateGunnyPurchaseRequest,
+    GunnyPurchaseQueryParams,
+} from './types'
 
-// Query key factory for gunny purchases
-const gunnyPurchaseQueryKeys = {
+// ==========================================
+// Query Keys
+// ==========================================
+
+export const gunnyPurchaseKeys = {
     all: ['gunny-purchases'] as const,
-    byMill: (millId: string) =>
-        [...gunnyPurchaseQueryKeys.all, millId] as const,
-    list: (millId: string, filters?: Record<string, unknown>) =>
-        [...gunnyPurchaseQueryKeys.byMill(millId), 'list', filters] as const,
+    byMill: (millId: string) => [...gunnyPurchaseKeys.all, millId] as const,
+    list: (millId: string, params?: GunnyPurchaseQueryParams) =>
+        [...gunnyPurchaseKeys.byMill(millId), 'list', params] as const,
+    details: () => [...gunnyPurchaseKeys.all, 'detail'] as const,
+    detail: (millId: string, id: string) =>
+        [...gunnyPurchaseKeys.details(), millId, id] as const,
 }
 
-interface UseGunnyPurchaseListParams {
-    millId: string
-    page?: number
-    pageSize?: number
-    search?: string
-}
+// ==========================================
+// Query Hooks
+// ==========================================
 
-export const useGunnyPurchaseList = (params: UseGunnyPurchaseListParams) => {
-    const query = useQuery({
-        queryKey: gunnyPurchaseQueryKeys.list(params.millId, {
-            page: params.page,
-            pageSize: params.pageSize,
-            search: params.search,
-        }),
-        queryFn: () => gunnyPurchaseService.fetchGunnyPurchaseList(params),
-        enabled: !!params.millId,
+/**
+ * Hook to fetch gunny purchases list with pagination and filters
+ */
+export const useGunnyPurchaseList = (
+    millId: string,
+    params?: GunnyPurchaseQueryParams,
+    options?: { enabled?: boolean }
+) => {
+    return useQuery<GunnyPurchaseListResponse, Error>({
+        queryKey: gunnyPurchaseKeys.list(millId, params),
+        queryFn: () => fetchGunnyPurchaseList(millId, params),
+        enabled: (options?.enabled ?? true) && !!millId,
+        staleTime: 5 * 60 * 1000, // 5 minutes
     })
-
-    return {
-        data: query.data?.data || [],
-        pagination: (query.data?.pagination as any) || {
-            page: params.page || 1,
-            pageSize: params.pageSize || 10,
-            total: 0,
-            totalPages: 0,
-        },
-        isLoading: query.isLoading,
-        isError: query.isError,
-    }
 }
 
+/**
+ * Hook to fetch a single gunny purchase
+ */
+export const useGunnyPurchaseDetail = (
+    millId: string,
+    id: string,
+    options?: { enabled?: boolean }
+) => {
+    return useQuery<GunnyPurchaseResponse, Error>({
+        queryKey: gunnyPurchaseKeys.detail(millId, id),
+        queryFn: () => fetchGunnyPurchaseById(millId, id),
+        enabled: (options?.enabled ?? true) && !!millId && !!id,
+        staleTime: 5 * 60 * 1000, // 5 minutes
+    })
+}
+
+// ==========================================
+// Mutation Hooks
+// ==========================================
+
+/**
+ * Hook to create a new gunny purchase
+ */
 export const useCreateGunnyPurchase = (millId: string) => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: (data: Omit<GunnyPurchaseData, 'id'>) =>
-            gunnyPurchaseService.createGunnyPurchase(millId, data),
+        mutationFn: (data: CreateGunnyPurchaseRequest) =>
+            createGunnyPurchase(millId, data),
         onSuccess: () => {
             toast.success('Gunny purchase created successfully')
             queryClient.invalidateQueries({
-                queryKey: gunnyPurchaseQueryKeys.byMill(millId),
+                queryKey: gunnyPurchaseKeys.byMill(millId),
             })
         },
         onError: (error: unknown) => {
@@ -65,23 +99,19 @@ export const useCreateGunnyPurchase = (millId: string) => {
     })
 }
 
+/**
+ * Hook to update a gunny purchase
+ */
 export const useUpdateGunnyPurchase = (millId: string) => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: (params: {
-            purchaseId: string
-            data: Omit<GunnyPurchaseData, 'id'>
-        }) =>
-            gunnyPurchaseService.updateGunnyPurchase(
-                millId,
-                params.purchaseId,
-                params.data
-            ),
+        mutationFn: (params: UpdateGunnyPurchaseRequest) =>
+            updateGunnyPurchase(millId, params),
         onSuccess: () => {
             toast.success('Gunny purchase updated successfully')
             queryClient.invalidateQueries({
-                queryKey: gunnyPurchaseQueryKeys.byMill(millId),
+                queryKey: gunnyPurchaseKeys.byMill(millId),
             })
         },
         onError: (error: unknown) => {
@@ -94,16 +124,18 @@ export const useUpdateGunnyPurchase = (millId: string) => {
     })
 }
 
+/**
+ * Hook to delete a gunny purchase
+ */
 export const useDeleteGunnyPurchase = (millId: string) => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: (purchaseId: string) =>
-            gunnyPurchaseService.deleteGunnyPurchase(millId, purchaseId),
+        mutationFn: (id: string) => deleteGunnyPurchase(millId, id),
         onSuccess: () => {
             toast.success('Gunny purchase deleted successfully')
             queryClient.invalidateQueries({
-                queryKey: gunnyPurchaseQueryKeys.byMill(millId),
+                queryKey: gunnyPurchaseKeys.byMill(millId),
             })
         },
         onError: (error: unknown) => {
@@ -116,16 +148,18 @@ export const useDeleteGunnyPurchase = (millId: string) => {
     })
 }
 
+/**
+ * Hook to bulk delete gunny purchases
+ */
 export const useBulkDeleteGunnyPurchases = (millId: string) => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: (purchaseIds: string[]) =>
-            gunnyPurchaseService.bulkDeleteGunnyPurchases(millId, purchaseIds),
+        mutationFn: (ids: string[]) => bulkDeleteGunnyPurchases(millId, ids),
         onSuccess: () => {
             toast.success('Gunny purchases deleted successfully')
             queryClient.invalidateQueries({
-                queryKey: gunnyPurchaseQueryKeys.byMill(millId),
+                queryKey: gunnyPurchaseKeys.byMill(millId),
             })
         },
         onError: (error: unknown) => {

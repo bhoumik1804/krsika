@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -12,13 +12,15 @@ import { GunnyDialogs } from './components/gunny-dialogs'
 import { GunnyPrimaryButtons } from './components/gunny-primary-buttons'
 import { GunnyProvider, useGunny } from './components/gunny-provider'
 import { GunnyTable } from './components/gunny-table'
+import { useGunnyPurchaseList } from './data/hooks'
+import type { GunnyPurchaseQueryParams } from './data/types'
 
 export function GunnyPurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
-    const queryParams = useMemo(() => {
+    const queryParams = useMemo((): GunnyPurchaseQueryParams => {
         const search = Object.fromEntries(searchParams.entries())
         const allowedPageSizes = [10, 20, 30, 40, 50]
         const rawLimit = search.limit
@@ -34,6 +36,13 @@ export function GunnyPurchaseReport() {
             sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
         }
     }, [searchParams])
+
+    // Call GET API here
+    const {
+        data: apiResponse,
+        isLoading,
+        isError,
+    } = useGunnyPurchaseList(millId || '', queryParams)
 
     const sidebarData = getMillAdminSidebarData(millId || '')
 
@@ -51,33 +60,33 @@ export function GunnyPurchaseReport() {
         }
     }
 
-    const handleQueryParamsChange = (params: {
-        page: number
-        limit: number
-        search?: string
-        sortBy?: string
-        sortOrder?: 'asc' | 'desc'
-    }) => {
-        const newParams: Record<string, string> = {
-            page: params.page.toString(),
-            limit: params.limit.toString(),
-        }
-        if (params.search) {
-            newParams.search = params.search
-        }
-        if (params.sortBy) {
-            newParams.sortBy = params.sortBy
-        }
-        if (params.sortOrder) {
-            newParams.sortOrder = params.sortOrder
-        }
-        setSearchParams(newParams, { replace: true })
-    }
+    const handleQueryParamsChange = useCallback(
+        (params: GunnyPurchaseQueryParams) => {
+            const newParams: Record<string, string> = {
+                page: params.page?.toString() || '1',
+                limit: params.limit?.toString() || '10',
+            }
+            if (params.search) {
+                newParams.search = params.search
+            }
+            if (params.sortBy) {
+                newParams.sortBy = params.sortBy
+            }
+            if (params.sortOrder) {
+                newParams.sortOrder = params.sortOrder
+            }
+            setSearchParams(newParams, { replace: true })
+        },
+        [setSearchParams]
+    )
 
     return (
         <GunnyProvider
             millId={millId || ''}
             initialQueryParams={queryParams}
+            apiData={apiResponse}
+            isLoading={isLoading}
+            isError={isError}
             onQueryParamsChange={handleQueryParamsChange}
         >
             <Header fixed>

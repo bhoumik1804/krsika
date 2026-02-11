@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
-import { useRicePurchaseList } from '../data/hooks'
 import { type RicePurchaseData } from '../data/schema'
 
 type RiceDialogType = 'add' | 'edit' | 'delete'
@@ -38,6 +37,15 @@ interface RiceProviderProps {
     children: React.ReactNode
     millId: string
     initialQueryParams?: QueryParams
+    apiData?: RicePurchaseData[]
+    apiPagination?: {
+        page: number
+        pageSize: number
+        total: number
+        totalPages: number
+    }
+    isLoading?: boolean
+    isError?: boolean
 }
 
 const defaultQueryParams: QueryParams = {
@@ -52,48 +60,62 @@ export function RiceProvider({
     children,
     millId,
     initialQueryParams = defaultQueryParams,
+    apiData = [],
+    apiPagination = { page: 1, pageSize: 10, total: 0, totalPages: 0 },
+    isLoading = false,
+    isError = false,
 }: RiceProviderProps) {
     const [open, setOpen] = useDialogState<RiceDialogType>(null)
     const [currentRow, setCurrentRow] = useState<RicePurchaseData | null>(null)
     const [queryParams, setQueryParams] =
         useState<QueryParams>(initialQueryParams)
 
-    const {
-        data = [],
-        pagination = { page: 1, pageSize: 10, total: 0, totalPages: 0 },
-        isLoading,
-        isError,
-    } = useRicePurchaseList({
-        millId,
-        page: queryParams.page,
-        pageSize: queryParams.limit,
-        search: queryParams.search,
-    })
-
-    return (
-        <RiceContext
-            value={{
-                open,
-                setOpen,
-                currentRow,
-                setCurrentRow,
-                data,
-                isLoading,
-                isError,
-                millId,
-                queryParams,
-                setQueryParams,
-                pagination: {
-                    page: pagination.page || 1,
-                    pageSize: pagination.pageSize || 10,
-                    total: pagination.total || 0,
-                    totalPages: pagination.totalPages || 0,
-                },
-            }}
-        >
-            {children}
-        </RiceContext>
+    const pagination = useMemo(
+        () => ({
+            page: apiPagination.page || 1,
+            pageSize: apiPagination.pageSize || 10,
+            total: apiPagination.total || 0,
+            totalPages: apiPagination.totalPages || 0,
+        }),
+        [
+            apiPagination.page,
+            apiPagination.pageSize,
+            apiPagination.total,
+            apiPagination.totalPages,
+        ]
     )
+
+    const contextValue = useMemo(
+        () => ({
+            open,
+            setOpen,
+            currentRow,
+            setCurrentRow,
+            data: apiData,
+            isLoading,
+            isError,
+            millId,
+            queryParams,
+            setQueryParams,
+            pagination,
+        }),
+        [
+            open,
+            currentRow,
+            apiData,
+            isLoading,
+            isError,
+            millId,
+            queryParams.page,
+            queryParams.limit,
+            queryParams.search,
+            queryParams.sortBy,
+            queryParams.sortOrder,
+            pagination,
+        ]
+    )
+
+    return <RiceContext value={contextValue}>{children}</RiceContext>
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
