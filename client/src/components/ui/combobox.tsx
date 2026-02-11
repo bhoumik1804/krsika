@@ -109,7 +109,7 @@ function ComboboxContent({
                 align={align}
                 alignOffset={alignOffset}
                 anchor={anchor}
-                className='isolate z-50'
+                className='isolate z-[100]'
             >
                 <ComboboxPrimitive.Popup
                     data-slot='combobox-content'
@@ -130,9 +130,16 @@ function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
         <ComboboxPrimitive.List
             data-slot='combobox-list'
             className={cn(
-                'max-h-60 scroll-py-1 overflow-y-auto overscroll-contain p-1 data-empty:p-0',
+                'max-h-48 scroll-py-1 overflow-y-auto overflow-x-hidden overscroll-contain p-1 data-empty:p-0 pointer-events-auto touch-action-pan-y',
                 className
             )}
+            style={{
+                scrollbarWidth: 'thin',
+                WebkitOverflowScrolling: 'touch' as any
+            }}
+            onWheel={(e) => {
+                e.stopPropagation();
+            }}
             {...props}
         />
     )
@@ -147,7 +154,7 @@ function ComboboxItem({
         <ComboboxPrimitive.Item
             data-slot='combobox-item'
             className={cn(
-                "relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none hover:bg-accent hover:text-accent-foreground data-highlighted:bg-accent data-highlighted:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+                "relative flex w-full cursor-pointer items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none pointer-events-auto hover:bg-accent hover:text-accent-foreground data-highlighted:bg-accent data-highlighted:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
                 className
             )}
             {...props}
