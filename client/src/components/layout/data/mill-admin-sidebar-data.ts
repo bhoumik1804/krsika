@@ -198,10 +198,10 @@ export const getMillAdminSidebarData = (millId: string): SidebarData => ({
                     title: 'Sales Reports',
                     icon: Receipt,
                     items: [
-                        {
-                            title: 'DO Sales Report',
-                            url: `/mill/${millId}/sales/do/report`,
-                        },
+                        // {
+                        //     title: 'DO Sales Report',
+                        //     url: `/mill/${millId}/sales/do/report`,
+                        // },
                         {
                             title: 'Paddy Sales Report (from Mill)',
                             url: `/mill/${millId}/sales/paddy/report`,
