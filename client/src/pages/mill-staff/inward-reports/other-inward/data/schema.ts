@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 export const otherInwardSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
     purchaseDealId: z.string().optional(),
     itemName: z.string().optional(),
