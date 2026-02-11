@@ -6,7 +6,6 @@ import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillStaffSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
-import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -123,9 +122,7 @@ export function MillStaffStaff() {
                         <TabsTrigger value='suspended'>Suspended</TabsTrigger>
                     </TabsList>
                     <TabsContent value='all' className='space-y-4'>
-                        {isLoading ? (
-                            <LoadingSpinner className='h-full w-full' />
-                        ) : isError ? (
+                        {isError ? (
                             <div className='py-10 text-center text-destructive'>
                                 Failed to load staff data
                             </div>
@@ -134,30 +131,25 @@ export function MillStaffStaff() {
                                 data={staffData}
                                 search={search}
                                 navigate={navigate}
+                                isLoading={isLoading}
                             />
                         )}
                     </TabsContent>
                     <TabsContent value='active' className='space-y-4'>
-                        {isLoading ? (
-                            <LoadingSpinner className='h-full w-full' />
-                        ) : (
-                            <StaffTable
-                                data={activeStaff}
-                                search={search}
-                                navigate={navigate}
-                            />
-                        )}
+                        <StaffTable
+                            data={activeStaff}
+                            search={search}
+                            navigate={navigate}
+                            isLoading={isLoading}
+                        />
                     </TabsContent>
                     <TabsContent value='suspended' className='space-y-4'>
-                        {isLoading ? (
-                            <LoadingSpinner className='h-full w-full' />
-                        ) : (
-                            <StaffTable
-                                data={suspendedStaff}
-                                search={search}
-                                navigate={navigate}
-                            />
-                        )}
+                        <StaffTable
+                            data={suspendedStaff}
+                            search={search}
+                            navigate={navigate}
+                            isLoading={isLoading}
+                        />
                     </TabsContent>
                 </Tabs>
             </Main>

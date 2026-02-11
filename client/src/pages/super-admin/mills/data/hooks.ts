@@ -5,6 +5,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { MILL_STATUS } from '@/constants'
 import { toast } from 'sonner'
+import { handleServerError } from '@/lib/handle-server-error'
 import {
     fetchMillsList,
     fetchMillById,
@@ -106,10 +107,6 @@ export const useCreateMill = () => {
             queryClient.invalidateQueries({
                 queryKey: millsKeys.summaries(),
             })
-            toast.success('Mill created successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to create mill')
         },
     })
 }
@@ -134,9 +131,6 @@ export const useUpdateMill = () => {
                 queryKey: millsKeys.summaries(),
             })
             toast.success('Mill updated successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to update mill')
         },
     })
 }
@@ -168,7 +162,7 @@ export const useVerifyMill = () => {
             )
         },
         onError: (error) => {
-            toast.error(error.message || 'Failed to verify mill')
+            handleServerError(error)
         },
     })
 }
@@ -195,7 +189,7 @@ export const useSuspendMill = () => {
             toast.success('Mill suspended successfully')
         },
         onError: (error) => {
-            toast.error(error.message || 'Failed to suspend mill')
+            handleServerError(error)
         },
     })
 }
@@ -222,7 +216,7 @@ export const useReactivateMill = () => {
             toast.success('Mill reactivated successfully')
         },
         onError: (error) => {
-            toast.error(error.message || 'Failed to reactivate mill')
+            handleServerError(error)
         },
     })
 }
@@ -247,7 +241,7 @@ export const useDeleteMill = () => {
             toast.success('Mill deleted successfully')
         },
         onError: (error) => {
-            toast.error(error.message || 'Failed to delete mill')
+            handleServerError(error)
         },
     })
 }
@@ -272,7 +266,7 @@ export const useBulkDeleteMills = () => {
             toast.success(`${ids.length} mills deleted successfully`)
         },
         onError: (error) => {
-            toast.error(error.message || 'Failed to delete mills')
+            handleServerError(error)
         },
     })
 }

@@ -24,18 +24,44 @@ import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { useCreateMill, useUpdateMill, useVerifyMill } from '../data/hooks'
 import type { Mill, MillStatus } from '../data/schema'
+import { handleFormError } from '@/lib/handle-form-error'
+import { handleServerError } from '@/lib/handle-server-error'
+import { toast } from 'sonner'
 
 const formSchema = z.object({
-    millName: z.string().min(1, 'Mill name is required.'),
-    gstNumber: z.string().min(1, 'GST number is required.'),
-    panNumber: z.string().min(1, 'PAN number is required.'),
-    mnmNumber: z.string().min(1, 'Mill Manager Number is required.'),
-    email: z.email('Valid email is required.'),
-    phone: z.string().min(1, 'Phone number is required.'),
-    address: z.string().optional(),
-    city: z.string().min(1, 'City is required.'),
-    state: z.string().min(1, 'State is required.'),
-    pincode: z.string().min(1, 'Pincode is required.'),
+    millName: z
+        .string()
+        .min(1, 'Mill name is required')
+        .max(200, 'Mill name is too long (max 200 characters)'),
+    gstNumber: z
+        .string()
+        .min(15, 'GST number must be exactly 15 characters')
+        .max(15, 'GST number must be exactly 15 characters'),
+    panNumber: z
+        .string()
+        .min(10, 'PAN number must be exactly 10 characters')
+        .max(10, 'PAN number must be exactly 10 characters'),
+    mnmNumber: z
+        .string()
+        .regex(
+            /^[A-Z]{2}\d{6}$/,
+            'MNM number must start with 2 uppercase letters followed by 6 digits (e.g., MA123456)'
+        ),
+    email: z
+        .string()
+        .email('Invalid email format')
+        .max(255, 'Email is too long'),
+    phone: z
+        .string()
+        .min(10, 'Phone number must be at least 10 characters')
+        .max(20, 'Phone number is too long'),
+    address: z.string().max(500, 'Address is too long').optional(),
+    city: z.string().max(100, 'City name is too long').optional(),
+    state: z.string().max(100, 'State name is too long').optional(),
+    pincode: z
+        .string()
+        .regex(/^\d{6}$/, 'Pincode must be exactly 6 digits')
+        .optional(),
     status: z.enum(['pending-verification', 'active', 'suspended', 'rejected']),
 })
 type MillForm = z.infer<typeof formSchema>
@@ -112,17 +138,25 @@ export function MillsActionDialog({
             status: values.status,
         }
 
-        if (isEdit && currentRow) {
-            await updateMill.mutateAsync({
-                id: currentRow.id,
-                ...millData,
-            })
-        } else {
-            await createMill.mutateAsync(millData)
-        }
 
-        form.reset()
-        onOpenChange(false)
+        try {
+            if (isEdit && currentRow) {
+                await updateMill.mutateAsync({
+                    id: currentRow.id,
+                    ...millData,
+                })
+            } else {
+                await createMill.mutateAsync(millData)
+            }
+            toast.success(isEdit ? 'Mill updated successfully' : 'Mill created successfully')
+            form.reset()
+            onOpenChange(false)
+        } catch (error) {
+            const handled = handleFormError(error, form)
+            if (!handled) {
+                handleServerError(error)
+            }
+        }
     }
 
     const handleVerify = async () => {
@@ -409,7 +443,7 @@ export function MillsActionDialog({
                             ((currentRow as any)?.status ===
                                 'pending-verification' ||
                                 (currentRow as any)?.status ===
-                                    'PENDING_VERIFICATION') && (
+                                'PENDING_VERIFICATION') && (
                                 <Button
                                     type='button'
                                     variant='default'

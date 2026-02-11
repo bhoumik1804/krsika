@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { toast } from 'sonner'
+import { USER_ROLES } from '@/constants'
 import { Menu, X, Wheat } from 'lucide-react'
 import { Link, useNavigate } from 'react-router'
 import { getRedirectPath } from '@/lib/auth-utils'
@@ -38,10 +40,18 @@ export function Navbar() {
         })
     }
 
+
+
     const handleGoToDashboard = () => {
         if (user) {
+            // Check if user is inactive OR is a guest user (pending approval)
+            if (!user.isActive || user.role === USER_ROLES.GUEST_USER) {
+                toast.error('Your account is pending approval by admin.', {
+                    description: 'Please wait for approval to access the dashboard.',
+                })
+                return
+            }
             const path = getRedirectPath(user)
-            alert(`Redirecting to ${path}...`) // Optional: Show a message before redirecting
             navigate(path)
         }
     }

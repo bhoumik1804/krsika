@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import {
     type SortingState,
     type VisibilityState,
@@ -31,9 +32,10 @@ type DataTableProps = {
     data: Staff[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    isLoading?: boolean
 }
 
-export function StaffTable({ data, search, navigate }: DataTableProps) {
+export function StaffTable({ data, search, navigate, isLoading }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -140,10 +142,10 @@ export function StaffTable({ data, search, navigate }: DataTableProps) {
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}
@@ -151,7 +153,16 @@ export function StaffTable({ data, search, navigate }: DataTableProps) {
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className='h-24 text-center'
+                                >
+                                    <LoadingSpinner className='mx-auto' />
+                                </TableCell>
+                            </TableRow>
+                        ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}

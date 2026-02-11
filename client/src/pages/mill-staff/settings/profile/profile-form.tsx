@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
+import { toast } from 'sonner'
+import { useUser, useUpdateProfile } from '@/pages/landing/hooks'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,12 +28,8 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>
 
-const defaultValues: Partial<ProfileFormValues> = {
-    name: 'shadcn',
-    email: 'm@example.com',
-    role: 'mill-staff',
-    post: 'Accountant',
-}
+
+
 
 const roleLabels: Record<string, string> = {
     'super-admin': 'Super Admin',
@@ -41,16 +38,35 @@ const roleLabels: Record<string, string> = {
 }
 
 export function ProfileForm() {
+    const { user } = useUser()
+    const { updateProfileAsync, isLoading } = useUpdateProfile()
+
     const form = useForm<ProfileFormValues>({
         resolver: zodResolver(profileFormSchema),
-        defaultValues,
+        defaultValues: {
+            name: user?.fullName || '',
+            email: user?.email || '',
+            role: user?.role || '',
+        },
         mode: 'onChange',
     })
+
+    async function onSubmit(data: ProfileFormValues) {
+        try {
+            await updateProfileAsync({
+                fullName: data.name,
+                // post update might need backend support if it's editable
+            })
+            toast.success('Profile updated successfully')
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to update profile')
+        }
+    }
 
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit((data) => showSubmittedData(data))}
+                onSubmit={form.handleSubmit(onSubmit)}
                 className='space-y-8'
             >
                 <div className='grid gap-4 md:grid-cols-2'>
@@ -81,6 +97,7 @@ export function ProfileForm() {
                                         type='email'
                                         placeholder='your@email.com'
                                         {...field}
+                                        readOnly
                                     />
                                 </FormControl>
                                 <FormDescription>
@@ -124,7 +141,9 @@ export function ProfileForm() {
                     )}
                 />
 
-                <Button type='submit'>Update profile</Button>
+                <Button type='submit' disabled={isLoading}>
+                    {isLoading ? 'Updating...' : 'Update profile'}
+                </Button>
             </form>
         </Form>
     )

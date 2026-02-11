@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import {
     type SortingState,
     type VisibilityState,
@@ -43,6 +44,7 @@ type DataTableProps = {
     search: Record<string, unknown>
     navigate: NavigateFn
     pagination?: PaginationInfo
+    isLoading?: boolean
 }
 
 export function MillsTable({
@@ -50,6 +52,7 @@ export function MillsTable({
     search,
     navigate,
     pagination: serverPagination,
+    isLoading,
 }: DataTableProps) {
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
@@ -162,10 +165,10 @@ export function MillsTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}
@@ -173,7 +176,16 @@ export function MillsTable({
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className='h-24 text-center'
+                                >
+                                    <LoadingSpinner className='mx-auto' />
+                                </TableCell>
+                            </TableRow>
+                        ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}

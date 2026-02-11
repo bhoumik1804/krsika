@@ -26,6 +26,7 @@ import { roles } from '../data/data'
 import { type User } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { usersColumns as columns } from './users-columns'
+import { LoadingSpinner } from '@/components/loading-spinner'
 
 interface PaginationInfo {
     page: number
@@ -43,6 +44,7 @@ type DataTableProps = {
     search: Record<string, unknown>
     navigate: NavigateFn
     pagination?: PaginationInfo
+    isLoading?: boolean
 }
 
 export function UsersTable({
@@ -50,6 +52,7 @@ export function UsersTable({
     search,
     navigate,
     pagination: serverPagination,
+    isLoading,
 }: DataTableProps) {
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
@@ -172,10 +175,10 @@ export function UsersTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}
@@ -183,7 +186,16 @@ export function UsersTable({
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className='h-24 text-center'
+                                >
+                                    <LoadingSpinner className='mx-auto' />
+                                </TableCell>
+                            </TableRow>
+                        ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}

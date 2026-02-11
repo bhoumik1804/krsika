@@ -62,7 +62,7 @@ export const useUser = (options: UseUserOptions = {}) => {
     useEffect(() => {
         if (query.data) {
             setUser(query.data)
-        } else if (query.isError) {
+        } else if (query.data === null || query.isError) {
             setUser(null)
         }
     }, [query.data, query.isError, setUser])

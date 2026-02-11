@@ -25,6 +25,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { roles } from '../data/data'
 import { useInviteUser } from '../data/hooks'
+import { handleFormError } from '@/lib/handle-form-error'
+import { handleServerError } from '@/lib/handle-server-error'
 
 const formSchema = z.object({
     email: z.string().email('Please enter a valid email address.'),
@@ -63,7 +65,10 @@ export function UsersInviteDialog({
             form.reset()
             onOpenChange(false)
         } catch (error) {
-            // Error handled by mutation hook
+            const handled = handleFormError(error, form)
+            if (!handled) {
+                handleServerError(error)
+            }
         }
     }
 

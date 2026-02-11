@@ -6,7 +6,6 @@ export const footerData = {
     footerLinks: {
         product: [
             { label: 'Features', href: '#features' },
-            { label: 'Pricing', href: '#pricing' },
             { label: 'Demo', href: '#demo' },
             { label: 'Changelog', href: '/changelog' },
             { label: 'Roadmap', href: '/roadmap' },
