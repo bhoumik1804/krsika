@@ -89,7 +89,7 @@ export function PaddyActionDialog({
     const brokerLimit = brokerPage === 1 ? 10 : 5
 
     // Fetch party list from API with pagination
-    const { data: partyListData, isLoading: isLoadingParties } = usePartyList(
+    const { data: partyListData } = usePartyList(
         millId,
         {
             page: partyPage,
@@ -662,7 +662,7 @@ export function PaddyActionDialog({
                                                                 .valueAsNumber
                                                         field.onChange(
                                                             isNaN(val)
-                                                                ? ''
+                                                                ? undefined
                                                                 : val
                                                         )
                                                     }}
@@ -696,7 +696,7 @@ export function PaddyActionDialog({
                                                                 .valueAsNumber
                                                         field.onChange(
                                                             isNaN(val)
-                                                                ? ''
+                                                                ? undefined
                                                                 : val
                                                         )
                                                     }}
@@ -727,7 +727,7 @@ export function PaddyActionDialog({
                                                                 .valueAsNumber
                                                         field.onChange(
                                                             isNaN(val)
-                                                                ? ''
+                                                                ? undefined
                                                                 : val
                                                         )
                                                     }}
@@ -758,7 +758,7 @@ export function PaddyActionDialog({
                                                                 .valueAsNumber
                                                         field.onChange(
                                                             isNaN(val)
-                                                                ? ''
+                                                                ? undefined
                                                                 : val
                                                         )
                                                     }}
