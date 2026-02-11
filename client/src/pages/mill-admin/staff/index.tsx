@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from 'react'
 import { UserCog } from 'lucide-react'
 import { useParams, useSearchParams } from 'react-router'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -16,28 +17,56 @@ import { useStaffList } from './data/hooks'
 
 export function MillAdminStaff() {
     const { millId } = useParams<{ millId: string }>()
-    const sidebarData = getMillAdminSidebarData(millId || '')
+    const sidebarData = useMemo(
+        () => getMillAdminSidebarData(millId || ''),
+        [millId]
+    )
     const [searchParams, setSearchParams] = useSearchParams()
 
-    const search = Object.fromEntries(searchParams.entries())
+    const search = useMemo(
+        () => Object.fromEntries(searchParams.entries()),
+        [searchParams]
+    )
 
     // Fetch staff data
     const { data: staffListResponse, isLoading } = useStaffList(millId || '')
-    const staff = staffListResponse?.data || []
+    const staff = useMemo(
+        () =>
+            Array.isArray(staffListResponse?.data)
+                ? staffListResponse.data
+                : [],
+        [staffListResponse?.data]
+    )
 
-    const navigate = (opts: { search: unknown; replace?: boolean }) => {
-        if (typeof opts.search === 'function') {
-            const newSearch = opts.search(search)
-            setSearchParams(newSearch as Record<string, string>)
-        } else if (opts.search === true) {
-            // Keep current params
-        } else {
-            setSearchParams(opts.search as Record<string, string>)
-        }
-    }
+    const navigate = useCallback(
+        (opts: { search: unknown; replace?: boolean }) => {
+            if (typeof opts.search === 'function') {
+                setSearchParams((prev) => {
+                    const currentSearch = Object.fromEntries(prev.entries())
+                    const newSearch = (
+                        opts.search as (
+                            s: Record<string, string>
+                        ) => Record<string, string>
+                    )(currentSearch)
+                    return newSearch
+                })
+            } else if (opts.search === true) {
+                // Keep current params
+            } else {
+                setSearchParams(opts.search as Record<string, string>)
+            }
+        },
+        [setSearchParams]
+    )
 
-    const activeStaff = staff.filter((s) => s.isActive === true)
-    const inactiveStaff = staff.filter((s) => s.isActive === false)
+    const activeStaff = useMemo(
+        () => staff.filter((s) => s.isActive === true),
+        [staff]
+    )
+    const inactiveStaff = useMemo(
+        () => staff.filter((s) => s.isActive === false),
+        [staff]
+    )
 
     return (
         <StaffProvider>

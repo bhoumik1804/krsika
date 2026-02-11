@@ -12,7 +12,12 @@ export interface CreateStaffRequest {
     email: string
     phoneNumber: string
     password: string
+    role?: string
+    post?: string
+    salary?: number
+    address?: string
     isActive?: boolean
+    permissions?: Permission[]
 }
 
 export interface UpdateStaffRequest {
@@ -20,7 +25,12 @@ export interface UpdateStaffRequest {
     fullName?: string
     email?: string
     phoneNumber?: string
+    role?: string
+    post?: string
+    salary?: number
+    address?: string
     isActive?: boolean
+    permissions?: Permission[]
 }
 
 // ==========================================
@@ -40,14 +50,17 @@ export interface Permission {
 export interface StaffResponse {
     _id: string
     millId: string
-    fullName: string
+    fullName?: string
     email: string
-    phoneNumber: string
+    phoneNumber?: string
+    role?: string
     avatar?: string
-    attendanceHistory: AttendanceRecord[]
+    post?: string
+    salary?: number
+    address?: string
+    attendanceHistory?: AttendanceRecord[]
     isActive: boolean
     permissions?: Permission[]
-    lastLogin?: string
     createdAt: string
     updatedAt: string
 }

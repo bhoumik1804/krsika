@@ -11,6 +11,10 @@ export const staffSchema = z.object({
     email: z.string().email(),
     phoneNumber: z.string().optional(),
     avatar: z.string().optional(),
+    role: z.string().optional(),
+    post: z.string().optional(),
+    salary: z.number().optional(),
+    address: z.string().optional(),
     isActive: z.boolean().default(true),
     permissions: z
         .array(
@@ -20,17 +24,16 @@ export const staffSchema = z.object({
             })
         )
         .optional(),
-    lastLogin: z.string().optional(),
     attendanceHistory: z
         .array(
             z.object({
                 date: z.string(),
                 status: z.enum(['P', 'A', 'H']),
-                createdAt: z.string(),
-                updatedAt: z.string(),
             })
         )
         .optional(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
 })
 export type Staff = z.infer<typeof staffSchema>
 
