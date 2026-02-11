@@ -15,9 +15,7 @@ import {
 } from 'lucide-react'
 import { type SidebarData } from '../types'
 
-export const getMillStaffSidebarData = (
-    millId: string
-): SidebarData => ({
+export const getMillStaffSidebarData = (millId: string): SidebarData => ({
     user: {
         name: 'Staff Member',
         email: 'staff@yourmill.com',
@@ -83,11 +81,11 @@ export const getMillStaffSidebarData = (
                     url: `/staff/${millId}/sales/rice/report`,
                     icon: FileBarChart,
                 },
-                {
-                    title: 'Paddy Sales Report',
-                    url: `/staff/${millId}/sales/paddy/report`,
-                    icon: FileBarChart,
-                },
+                // {
+                //     title: 'Paddy Sales Report',
+                //     url: `/staff/${millId}/sales/paddy/report`,
+                //     icon: FileBarChart,
+                // },
                 {
                     title: 'Gunny Sales Report',
                     url: `/staff/${millId}/sales/gunny/report`,
@@ -427,10 +425,10 @@ export const getMillStaffSidebarData = (
             url: `/staff/${millId}/settings/appearance`,
             icon: Palette,
         },
-        {
-            title: 'Help',
-            url: `/staff/${millId}/help`,
-            icon: HelpCircle,
-        },
+        // {
+        //     title: 'Help',
+        //     url: `/staff/${millId}/help`,
+        //     icon: HelpCircle,
+        // },
     ],
 })
