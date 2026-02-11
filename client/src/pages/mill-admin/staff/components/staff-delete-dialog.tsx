@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import { AlertTriangle } from 'lucide-react'
-import { showSubmittedData } from '@/lib/show-submitted-data'
+import { useParams } from 'react-router'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { useDeleteStaff } from '../data/hooks'
 import { type StaffResponse } from '../data/types'
 
 type StaffDeleteDialogProps = {
@@ -20,16 +21,21 @@ export function StaffDeleteDialog({
     onOpenChange,
     currentRow,
 }: StaffDeleteDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
     const [value, setValue] = useState('')
+    const { mutateAsync: deleteStaff, isPending } = useDeleteStaff(millId || '')
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (value.trim() !== currentRow.fullName) return
 
-        onOpenChange(false)
-        showSubmittedData(
-            currentRow,
-            'The following staff member has been deleted:'
-        )
+        try {
+            await deleteStaff(currentRow._id)
+            onOpenChange(false)
+            setValue('')
+        } catch (error) {
+            // Error handled by hook
+            console.error('Delete error:', error)
+        }
     }
 
     return (
@@ -37,7 +43,7 @@ export function StaffDeleteDialog({
             open={open}
             onOpenChange={onOpenChange}
             handleConfirm={handleDelete}
-            disabled={value.trim() !== currentRow.fullName}
+            disabled={value.trim() !== currentRow.fullName || isPending}
             title={
                 <span className='text-destructive'>
                     <AlertTriangle
@@ -58,8 +64,8 @@ export function StaffDeleteDialog({
                         from the system. This cannot be undone.
                     </p>
 
-                    <Label className='my-2'>
-                        Full Name:
+                    <Label className='my-2 flex flex-col items-start gap-2'>
+                        <span className='text-nowrap'>Full Name:</span>
                         <Input
                             value={value}
                             onChange={(e) => setValue(e.target.value)}
@@ -76,7 +82,7 @@ export function StaffDeleteDialog({
                     </Alert>
                 </div>
             }
-            confirmText='Delete'
+            confirmText={isPending ? 'Deleting...' : 'Delete'}
             destructive
         />
     )

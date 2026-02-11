@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useParams } from 'react-router'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
     Dialog,
     DialogContent,
@@ -22,9 +23,32 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { PasswordInput } from '@/components/password-input'
 import { useCreateStaff, useUpdateStaff } from '../data/hooks'
 import { type Staff } from '../data/schema'
+
+// Module and action constants
+const MODULES = [
+    { slug: 'purchases', label: 'Purchases' },
+    { slug: 'sales', label: 'Sales' },
+    { slug: 'inward', label: 'Inward' },
+    { slug: 'outward', label: 'Outward' },
+    { slug: 'milling', label: 'Milling' },
+] as const
+
+const ACTIONS = [
+    { value: 'view', label: 'View' },
+    { value: 'create', label: 'Create' },
+    { value: 'edit', label: 'Edit' },
+    { value: 'delete', label: 'Delete' },
+] as const
+
+const permissionSchema = z.object({
+    moduleSlug: z.string(),
+    actions: z.array(z.string()),
+})
 
 const formSchema = z
     .object({
@@ -32,18 +56,19 @@ const formSchema = z
             .string()
             .min(2, 'Full Name must be at least 2 characters.')
             .max(100, 'Full Name must be at most 100 characters.'),
-        phoneNumber: z
-            .string()
-            .min(10, 'Phone number must be at least 10 digits.')
-            .max(15, 'Phone number must be at most 15 digits.')
-            .optional()
-            .or(z.literal('')),
+        phoneNumber: z.string().optional(),
         email: z.email({
             error: (iss) =>
                 iss.input === '' ? 'Email is required.' : undefined,
         }),
         password: z.string().transform((pwd) => pwd.trim()),
         confirmPassword: z.string().transform((pwd) => pwd.trim()),
+        role: z.string().optional(),
+        post: z.string().optional(),
+        salary: z.union([z.string(), z.number()]).optional(),
+        address: z.string().optional(),
+        permissions: z.array(permissionSchema),
+        isActive: z.boolean(),
         isEdit: z.boolean(),
     })
     .refine(
@@ -122,6 +147,12 @@ export function StaffActionDialog({
                   ...currentRow,
                   password: '',
                   confirmPassword: '',
+                  role: currentRow?.role || '',
+                  post: currentRow?.post || '',
+                  salary: currentRow?.salary || 0,
+                  address: currentRow?.address || '',
+                  permissions: currentRow?.permissions || [],
+                  isActive: currentRow?.isActive ?? true,
                   isEdit,
               }
             : {
@@ -130,19 +161,42 @@ export function StaffActionDialog({
                   phoneNumber: '',
                   password: '',
                   confirmPassword: '',
+                  role: '',
+                  post: '',
+                  salary: 0,
+                  address: '',
+                  permissions: [],
+                  isActive: true,
                   isEdit,
               },
     })
 
     const onSubmit = async (values: StaffForm) => {
         try {
+            // Filter permissions to only include those with at least one action
+            const filteredPermissions = values.permissions.filter(
+                (p) => p.actions.length > 0
+            )
+
+            // Parse salary - convert string to number if needed
+            const parsedSalary = values.salary
+                ? typeof values.salary === 'string'
+                    ? parseFloat(values.salary) || undefined
+                    : values.salary
+                : undefined
+
             if (isEdit && currentRow) {
                 await updateMutation.mutateAsync({
                     id: currentRow._id,
                     fullName: values.fullName,
                     email: values.email,
                     phoneNumber: values.phoneNumber || '',
-                    isActive: currentRow.isActive,
+                    role: values.role || undefined,
+                    post: values.post || undefined,
+                    salary: parsedSalary,
+                    address: values.address || undefined,
+                    permissions: filteredPermissions,
+                    isActive: values.isActive,
                 })
             } else {
                 await createMutation.mutateAsync({
@@ -150,6 +204,12 @@ export function StaffActionDialog({
                     email: values.email,
                     phoneNumber: values.phoneNumber || '',
                     password: values.password,
+                    role: values.role || undefined,
+                    post: values.post || undefined,
+                    salary: parsedSalary,
+                    address: values.address || undefined,
+                    permissions: filteredPermissions,
+                    isActive: values.isActive,
                 })
             }
             form.reset()
@@ -158,6 +218,45 @@ export function StaffActionDialog({
             // Error is already handled by the mutation's onError
             console.error('Staff operation failed:', error)
         }
+    }
+
+    // Helper function to toggle permission action
+    const togglePermissionAction = (moduleSlug: string, action: string) => {
+        const currentPermissions = form.getValues('permissions') || []
+        const moduleIndex = currentPermissions.findIndex(
+            (p) => p.moduleSlug === moduleSlug
+        )
+
+        if (moduleIndex === -1) {
+            // Module doesn't exist, add it with this action
+            form.setValue('permissions', [
+                ...currentPermissions,
+                { moduleSlug, actions: [action] },
+            ])
+        } else {
+            // Module exists, toggle the action
+            const modulePermission = currentPermissions[moduleIndex]
+            const actionIndex = modulePermission.actions.indexOf(action)
+
+            if (actionIndex === -1) {
+                // Add action
+                modulePermission.actions.push(action)
+            } else {
+                // Remove action
+                modulePermission.actions.splice(actionIndex, 1)
+            }
+
+            form.setValue('permissions', [...currentPermissions])
+        }
+    }
+
+    // Helper to check if an action is selected for a module
+    const isActionSelected = (moduleSlug: string, action: string) => {
+        const permissions = form.watch('permissions') || []
+        const modulePermission = permissions.find(
+            (p) => p.moduleSlug === moduleSlug
+        )
+        return modulePermission?.actions.includes(action) ?? false
     }
 
     const isPasswordTouched = !!form.formState.dirtyFields.password
@@ -170,7 +269,7 @@ export function StaffActionDialog({
                 onOpenChange(state)
             }}
         >
-            <DialogContent className='sm:max-w-lg'>
+            <DialogContent className='sm:max-w-3xl'>
                 <DialogHeader className='text-start'>
                     <DialogTitle>
                         {isEdit ? 'Edit Staff' : 'Add New Staff'}
@@ -182,110 +281,271 @@ export function StaffActionDialog({
                         Click save when you&apos;re done.
                     </DialogDescription>
                 </DialogHeader>
-                <div className='h-105 w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3'>
+                <div className='max-h-[70vh] w-full overflow-y-auto py-1 pe-3'>
                     <Form {...form}>
                         <form
                             id='staff-form'
                             onSubmit={form.handleSubmit(onSubmit)}
                             className='space-y-4 px-0.5'
                         >
-                            <FormField
-                                control={form.control}
-                                name='fullName'
-                                render={({ field }) => (
-                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                                        <FormLabel className='col-span-2 text-end'>
-                                            Full Name
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder='John Doe'
-                                                className='col-span-4'
-                                                autoComplete='off'
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage className='col-span-4 col-start-3' />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name='email'
-                                render={({ field }) => (
-                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                                        <FormLabel className='col-span-2 text-end'>
-                                            Email
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder='john.doe@gmail.com'
-                                                className='col-span-4'
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage className='col-span-4 col-start-3' />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name='phoneNumber'
-                                render={({ field }) => (
-                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                                        <FormLabel className='col-span-2 text-end'>
-                                            Phone Number
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder='+123456789'
-                                                className='col-span-4'
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage className='col-span-4 col-start-3' />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name='password'
-                                render={({ field }) => (
-                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                                        <FormLabel className='col-span-2 text-end'>
-                                            Password
-                                        </FormLabel>
-                                        <FormControl>
-                                            <PasswordInput
-                                                placeholder='e.g., S3cur3P@ssw0rd'
-                                                className='col-span-4'
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage className='col-span-4 col-start-3' />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name='confirmPassword'
-                                render={({ field }) => (
-                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                                        <FormLabel className='col-span-2 text-end'>
-                                            Confirm Password
-                                        </FormLabel>
-                                        <FormControl>
-                                            <PasswordInput
-                                                disabled={!isPasswordTouched}
-                                                placeholder='e.g., S3cur3P@ssw0rd'
-                                                className='col-span-4'
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage className='col-span-4 col-start-3' />
-                                    </FormItem>
-                                )}
-                            />
+                            <div className='grid grid-cols-2 gap-4'>
+                                {/* Left Column */}
+                                <div className='space-y-4'>
+                                    <FormField
+                                        control={form.control}
+                                        name='fullName'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Full Name</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder='John Doe'
+                                                        autoComplete='off'
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='email'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Email</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder='john.doe@gmail.com'
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='phoneNumber'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Phone Number
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder='+123456789'
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='password'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Password</FormLabel>
+                                                <FormControl>
+                                                    <PasswordInput
+                                                        placeholder='e.g., S3cur3P@ssw0rd'
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='confirmPassword'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Confirm Password
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <PasswordInput
+                                                        disabled={
+                                                            !isPasswordTouched
+                                                        }
+                                                        placeholder='e.g., S3cur3P@ssw0rd'
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                {/* Right Column */}
+                                <div className='space-y-4'>
+                                    <FormField
+                                        control={form.control}
+                                        name='role'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Role</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder='e.g., Manager'
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='post'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Post</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder='e.g., Senior Accountant'
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='salary'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Salary</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type='number'
+                                                        placeholder='e.g., 50000'
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='address'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Address</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder='e.g., 123 Main St'
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='isActive'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Status</FormLabel>
+                                                <FormControl>
+                                                    <RadioGroup
+                                                        onValueChange={(
+                                                            value
+                                                        ) =>
+                                                            field.onChange(
+                                                                value ===
+                                                                    'active'
+                                                            )
+                                                        }
+                                                        defaultValue={
+                                                            field.value
+                                                                ? 'active'
+                                                                : 'inactive'
+                                                        }
+                                                        className='flex gap-4'
+                                                    >
+                                                        <div className='flex items-center space-x-2'>
+                                                            <RadioGroupItem
+                                                                value='active'
+                                                                id='active'
+                                                            />
+                                                            <Label htmlFor='active'>
+                                                                Active
+                                                            </Label>
+                                                        </div>
+                                                        <div className='flex items-center space-x-2'>
+                                                            <RadioGroupItem
+                                                                value='inactive'
+                                                                id='inactive'
+                                                            />
+                                                            <Label htmlFor='inactive'>
+                                                                Inactive
+                                                            </Label>
+                                                        </div>
+                                                    </RadioGroup>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Permissions Section - Full Width */}
+                            <div className='space-y-3 pt-2'>
+                                <FormLabel className='text-sm font-medium'>
+                                    Permissions
+                                </FormLabel>
+                                <div className='rounded-md border p-3'>
+                                    <div className='grid grid-cols-2 gap-4'>
+                                        {MODULES.map((module) => (
+                                            <div
+                                                key={module.slug}
+                                                className='space-y-2'
+                                            >
+                                                <Label className='text-sm font-medium'>
+                                                    {module.label}
+                                                </Label>
+                                                <div className='flex flex-wrap gap-3'>
+                                                    {ACTIONS.map((action) => (
+                                                        <div
+                                                            key={`${module.slug}-${action.value}`}
+                                                            className='flex items-center space-x-2'
+                                                        >
+                                                            <Checkbox
+                                                                id={`${module.slug}-${action.value}`}
+                                                                checked={isActionSelected(
+                                                                    module.slug,
+                                                                    action.value
+                                                                )}
+                                                                onCheckedChange={() =>
+                                                                    togglePermissionAction(
+                                                                        module.slug,
+                                                                        action.value
+                                                                    )
+                                                                }
+                                                            />
+                                                            <Label
+                                                                htmlFor={`${module.slug}-${action.value}`}
+                                                                className='text-sm font-normal'
+                                                            >
+                                                                {action.label}
+                                                            </Label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                     </Form>
                 </div>
