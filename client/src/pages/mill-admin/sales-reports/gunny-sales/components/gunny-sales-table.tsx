@@ -23,12 +23,12 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
-import { type GunnySales } from '../data/schema'
+import type { GunnySalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { gunnySalesColumns as columns } from './gunny-sales-columns'
 
 type DataTableProps = {
-    data: GunnySales[]
+    data: GunnySalesResponse[]
     search: Record<string, unknown>
     navigate: NavigateFn
 }

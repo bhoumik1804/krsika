@@ -1,26 +1,26 @@
 import mongoose from 'mongoose'
-import { OtherSale } from '../models/other-sale.model.js'
+import { KhandaSale } from '../models/khanda-sale.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createOtherSaleEntry = async (millId, data) => {
-    const entry = new OtherSale({
+export const createKhandaSaleEntry = async (millId, data) => {
+    const entry = new KhandaSale({
         ...data,
         millId,
         date: new Date(data.date),
     })
     await entry.save()
-    logger.info('Other sale entry created', { id: entry._id, millId })
+    logger.info('Khanda sale entry created', { id: entry._id, millId })
     return entry
 }
 
-export const getOtherSaleById = async (millId, id) => {
-    const entry = await OtherSale.findOne({ _id: id, millId })
-    if (!entry) throw new ApiError(404, 'Other sale entry not found')
+export const getKhandaSaleById = async (millId, id) => {
+    const entry = await KhandaSale.findOne({ _id: id, millId })
+    if (!entry) throw new ApiError(404, 'Khanda sale entry not found')
     return entry
 }
 
-export const getOtherSaleList = async (millId, options = {}) => {
+export const getKhandaSaleList = async (millId, options = {}) => {
     const {
         page = 1,
         limit = 10,
@@ -40,14 +40,13 @@ export const getOtherSaleList = async (millId, options = {}) => {
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
             { brokerName: { $regex: search, $options: 'i' } },
-            { otherSaleName: { $regex: search, $options: 'i' } },
         ]
 
-    const aggregate = OtherSale.aggregate([
+    const aggregate = KhandaSale.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
     ])
-    const result = await OtherSale.aggregatePaginate(aggregate, {
+    const result = await KhandaSale.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
         limit: parseInt(limit, 10),
         customLabels: {
@@ -77,7 +76,7 @@ export const getOtherSaleList = async (millId, options = {}) => {
     }
 }
 
-export const getOtherSaleSummary = async (millId, options = {}) => {
+export const getKhandaSaleSummary = async (millId, options = {}) => {
     const { startDate, endDate } = options
     const match = { millId: new mongoose.Types.ObjectId(millId) }
     if (startDate || endDate) {
@@ -85,48 +84,48 @@ export const getOtherSaleSummary = async (millId, options = {}) => {
         if (startDate) match.date.$gte = new Date(startDate)
         if (endDate) match.date.$lte = new Date(endDate + 'T23:59:59.999Z')
     }
-    const [summary] = await OtherSale.aggregate([
+    const [summary] = await KhandaSale.aggregate([
         { $match: match },
         {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalOtherSaleQty: { $sum: '$otherSaleQty' },
+                totalKhandaQty: { $sum: '$khandaQty' },
             },
         },
         {
             $project: {
                 _id: 0,
                 totalEntries: 1,
-                totalOtherSaleQty: { $round: ['$totalOtherSaleQty', 2] },
+                totalKhandaQty: { $round: ['$totalKhandaQty', 2] },
             },
         },
     ])
-    return summary || { totalEntries: 0, totalOtherSaleQty: 0 }
+    return summary || { totalEntries: 0, totalKhandaQty: 0 }
 }
 
-export const updateOtherSaleEntry = async (millId, id, data) => {
+export const updateKhandaSaleEntry = async (millId, id, data) => {
     const updateData = { ...data }
     if (data.date) updateData.date = new Date(data.date)
-    const entry = await OtherSale.findOneAndUpdate(
+    const entry = await KhandaSale.findOneAndUpdate(
         { _id: id, millId },
         updateData,
         { new: true, runValidators: true }
     )
-    if (!entry) throw new ApiError(404, 'Other sale entry not found')
-    logger.info('Other sale entry updated', { id, millId })
+    if (!entry) throw new ApiError(404, 'Khanda sale entry not found')
+    logger.info('Khanda sale entry updated', { id, millId })
     return entry
 }
 
-export const deleteOtherSaleEntry = async (millId, id) => {
-    const entry = await OtherSale.findOneAndDelete({ _id: id, millId })
-    if (!entry) throw new ApiError(404, 'Other sale entry not found')
-    logger.info('Other sale entry deleted', { id, millId })
+export const deleteKhandaSaleEntry = async (millId, id) => {
+    const entry = await KhandaSale.findOneAndDelete({ _id: id, millId })
+    if (!entry) throw new ApiError(404, 'Khanda sale entry not found')
+    logger.info('Khanda sale entry deleted', { id, millId })
 }
 
-export const bulkDeleteOtherSaleEntries = async (millId, ids) => {
-    const result = await OtherSale.deleteMany({ _id: { $in: ids }, millId })
-    logger.info('Other sale entries bulk deleted', {
+export const bulkDeleteKhandaSaleEntries = async (millId, ids) => {
+    const result = await KhandaSale.deleteMany({ _id: { $in: ids }, millId })
+    logger.info('Khanda sale entries bulk deleted', {
         millId,
         count: result.deletedCount,
     })

@@ -1,62 +1,60 @@
 import { z } from 'zod'
 
 /**
- * Other Sale Validators
+ * Nakkhi Sale Validators
  * Zod schemas for request validation
  */
 
 // Common fields schema
-const otherSaleBaseSchema = {
+const nakkhiSaleBaseSchema = {
     date: z.string().min(1, 'Date is required'),
-    partyName: z.string().min(1, 'Party name is required'),
+    partyName: z.string().optional(),
     brokerName: z.string().optional(),
-    otherSaleName: z.string().optional(),
-    otherSaleQty: z.number().optional(),
-    qtyType: z.string().optional(),
-    rate: z.number().optional(),
+    nakkhiQty: z.number().optional(),
+    nakkhiRate: z.number().optional(),
     discountPercent: z.number().optional(),
-    gst: z.number().optional(),
+    brokeragePerQuintal: z.number().optional(),
 }
 
-// Create other sale schema
-export const createOtherSaleSchema = z.object({
+// Create nakkhi sale schema
+export const createNakkhiSaleSchema = z.object({
     body: z.object({
-        ...otherSaleBaseSchema,
+        ...nakkhiSaleBaseSchema,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
     }),
 })
 
-// Update other sale schema
-export const updateOtherSaleSchema = z.object({
+// Update nakkhi sale schema
+export const updateNakkhiSaleSchema = z.object({
     body: z.object({
-        ...otherSaleBaseSchema,
+        ...nakkhiSaleBaseSchema,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
-        id: z.string({ required_error: 'Other sale ID is required' }),
-    }),
-})
-
-// Get other sale by ID schema
-export const getOtherSaleByIdSchema = z.object({
-    params: z.object({
-        millId: z.string({ required_error: 'Mill ID is required' }),
-        id: z.string({ required_error: 'Other sale ID is required' }),
+        id: z.string({ required_error: 'Nakkhi sale ID is required' }),
     }),
 })
 
-// Delete other sale schema
-export const deleteOtherSaleSchema = z.object({
+// Get nakkhi sale by ID schema
+export const getNakkhiSaleByIdSchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
-        id: z.string({ required_error: 'Other sale ID is required' }),
+        id: z.string({ required_error: 'Nakkhi sale ID is required' }),
+    }),
+})
+
+// Delete nakkhi sale schema
+export const deleteNakkhiSaleSchema = z.object({
+    params: z.object({
+        millId: z.string({ required_error: 'Mill ID is required' }),
+        id: z.string({ required_error: 'Nakkhi sale ID is required' }),
     }),
 })
 
 // Bulk delete schema
-export const bulkDeleteOtherSaleSchema = z.object({
+export const bulkDeleteNakkhiSaleSchema = z.object({
     body: z.object({
         ids: z
             .array(z.string(), { required_error: 'IDs array is required' })
@@ -68,7 +66,7 @@ export const bulkDeleteOtherSaleSchema = z.object({
 })
 
 // List query params schema
-export const getOtherSaleListSchema = z.object({
+export const listNakkhiSaleSchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
     }),
@@ -93,7 +91,7 @@ export const getOtherSaleListSchema = z.object({
 })
 
 // Summary query params schema
-export const getOtherSaleSummarySchema = z.object({
+export const summaryNakkhiSaleSchema = z.object({
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
     }),

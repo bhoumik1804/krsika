@@ -1,9 +1,9 @@
 import { NakkhiSalesActionDialog } from './nakkhi-sales-action-dialog'
 import { NakkhiSalesDeleteDialog } from './nakkhi-sales-delete-dialog'
-import { nakkhiSales } from './nakkhi-sales-provider'
+import { useNakkhiSales } from './nakkhi-sales-provider'
 
 export function NakkhiSalesDialogs() {
-    const { open, setOpen, currentRow } = nakkhiSales()
+    const { open, setOpen, currentRow } = useNakkhiSales()
 
     return (
         <>

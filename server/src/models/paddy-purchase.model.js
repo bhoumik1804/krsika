@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose'
 import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
+import { dealNumberPlugin } from '../utils/dealNumberPlugin.js'
 
 /**
  * Paddy Purchase Schema
@@ -109,6 +110,12 @@ PaddyPurchaseSchema.index({ millId: 1, paddyType: 1 })
 PaddyPurchaseSchema.index({ millId: 1, deliveryType: 1 })
 PaddyPurchaseSchema.index({ millId: 1, gunnyType: 1 })
 PaddyPurchaseSchema.index({ millId: 1, createdAt: -1 })
+
+// Apply deal number plugin (auto-generates paddyPurchaseDealNumber)
+PaddyPurchaseSchema.plugin(dealNumberPlugin, {
+    fieldName: 'paddyPurchaseDealNumber',
+    prefix: 'PDP',
+})
 
 // Apply aggregate paginate plugin
 PaddyPurchaseSchema.plugin(aggregatePaginate)

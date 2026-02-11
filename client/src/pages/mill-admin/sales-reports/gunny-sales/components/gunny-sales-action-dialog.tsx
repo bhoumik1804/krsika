@@ -3,8 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -29,7 +27,9 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import { useCreateGunnySales, useUpdateGunnySales } from '../data/hooks'
 import { gunnySalesSchema, type GunnySales } from '../data/schema'
+import { useGunnySales } from './gunny-sales-provider'
 
 type GunnySalesActionDialogProps = {
     open: boolean
@@ -42,7 +42,14 @@ export function GunnySalesActionDialog({
     onOpenChange,
     currentRow,
 }: GunnySalesActionDialogProps) {
+    const { millId } = useGunnySales()
+    const { mutateAsync: createGunnySales, isPending: isCreating } =
+        useCreateGunnySales(millId)
+    const { mutateAsync: updateGunnySales, isPending: isUpdating } =
+        useUpdateGunnySales(millId)
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
     const form = useForm<GunnySales>({
@@ -60,25 +67,40 @@ export function GunnySalesActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    partyName: '',
+                    newGunnyQty: undefined,
+                    newGunnyRate: undefined,
+                    oldGunnyQty: undefined,
+                    oldGunnyRate: undefined,
+                    plasticGunnyQty: undefined,
+                    plasticGunnyRate: undefined,
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating sale...' : 'Adding sale...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Gunny sale updated successfully'
-                    : 'Gunny sale added successfully'
-            },
-            error: isEditing ? 'Failed to update sale' : 'Failed to add sale',
-        })
+    const onSubmit = async (data: GunnySales) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateGunnySales({
+                    _id: currentRow._id,
+                    ...data,
+                })
+            } else {
+                await createGunnySales(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            // Error handling is managed by mutation hooks (onSuccess/onError)
+            console.error('Form submission error:', error)
+        }
     }
 
     return (
@@ -387,11 +409,18 @@ export function GunnySalesActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Sale
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

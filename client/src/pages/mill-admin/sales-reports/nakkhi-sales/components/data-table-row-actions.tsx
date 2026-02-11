@@ -10,15 +10,15 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type NakkhiSales } from '../data/schema'
-import { nakkhiSales } from './nakkhi-sales-provider'
+import type { NakkhiSalesResponse } from '../data/types'
+import { useNakkhiSales } from './nakkhi-sales-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<NakkhiSales>
+    row: Row<NakkhiSalesResponse>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = nakkhiSales()
+    const { setOpen, setCurrentRow } = useNakkhiSales()
     return (
         <>
             <DropdownMenu modal={false}>

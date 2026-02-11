@@ -11,11 +11,7 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 
 export const createOtherSale = async (req, res, next) => {
     try {
-        const sale = await createOtherSaleEntry(
-            req.params.millId,
-            req.body,
-            req.user._id
-        )
+        const sale = await createOtherSaleEntry(req.params.millId, req.body)
         res.status(201).json(
             new ApiResponse(201, { sale }, 'Other sale created')
         )
@@ -59,7 +55,11 @@ export const getOtherSaleListHandler = async (req, res, next) => {
 
 export const getOtherSaleSummaryHandler = async (req, res, next) => {
     try {
-        const summary = await getOtherSaleSummary(req.params.millId)
+        const { startDate, endDate } = req.query
+        const summary = await getOtherSaleSummary(req.params.millId, {
+            startDate,
+            endDate,
+        })
         res.status(200).json(
             new ApiResponse(200, { summary }, 'Other sale summary retrieved')
         )
@@ -73,8 +73,7 @@ export const updateOtherSaleHandler = async (req, res, next) => {
         const sale = await updateOtherSaleEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(200, { sale }, 'Other sale updated')
@@ -103,7 +102,7 @@ export const bulkDeleteOtherSaleHandler = async (req, res, next) => {
             new ApiResponse(
                 200,
                 { deletedCount },
-                `${deletedCount} sales deleted`
+                `${deletedCount} other sales deleted`
             )
         )
     } catch (error) {

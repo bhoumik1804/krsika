@@ -3,8 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -29,7 +27,9 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import { useCreateNakkhiSales, useUpdateNakkhiSales } from '../data/hooks'
 import { nakkhiSalesSchema, type NakkhiSales } from '../data/schema'
+import { useNakkhiSales } from './nakkhi-sales-provider'
 
 type NakkhiSalesActionDialogProps = {
     open: boolean
@@ -42,7 +42,14 @@ export function NakkhiSalesActionDialog({
     onOpenChange,
     currentRow,
 }: NakkhiSalesActionDialogProps) {
+    const { millId } = useNakkhiSales()
+    const { mutateAsync: createNakkhiSales, isPending: isCreating } =
+        useCreateNakkhiSales(millId)
+    const { mutateAsync: updateNakkhiSales, isPending: isUpdating } =
+        useUpdateNakkhiSales(millId)
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
     const form = useForm<NakkhiSales>({
@@ -59,27 +66,39 @@ export function NakkhiSalesActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    partyName: '',
+                    brokerName: '',
+                    nakkhiQty: undefined,
+                    nakkhiRate: undefined,
+                    discountPercent: undefined,
+                    brokeragePerQuintal: undefined,
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating sale...' : 'Adding sale...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Sale updated successfully'
-                    : 'Sale added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update sale'
-                : 'Failed to add sale',
-        })
+    const onSubmit = async (data: NakkhiSales) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateNakkhiSales({
+                    _id: currentRow._id,
+                    ...data,
+                })
+            } else {
+                await createNakkhiSales(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            // Error handling is managed by mutation hooks (onSuccess/onError)
+            console.error('Form submission error:', error)
+        }
     }
 
     return (
@@ -90,8 +109,7 @@ export function NakkhiSalesActionDialog({
                         {isEditing ? 'Edit' : 'Add'} Nakkhi Sale
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the sale details
-                        below
+                        {isEditing ? 'Update' : 'Enter'} the sale details below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -109,7 +127,9 @@ export function NakkhiSalesActionDialog({
                                             <FormLabel>Date</FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
-                                                onOpenChange={setDatePopoverOpen}
+                                                onOpenChange={
+                                                    setDatePopoverOpen
+                                                }
                                             >
                                                 <PopoverTrigger asChild>
                                                     <FormControl>
@@ -209,15 +229,15 @@ export function NakkhiSalesActionDialog({
                                                     placeholder='0.00'
                                                     {...field}
                                                     onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -242,15 +262,15 @@ export function NakkhiSalesActionDialog({
                                                     placeholder='0.00'
                                                     {...field}
                                                     onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -265,9 +285,7 @@ export function NakkhiSalesActionDialog({
                                     name='discountPercent'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Discount (%)
-                                            </FormLabel>
+                                            <FormLabel>Discount (%)</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -275,15 +293,15 @@ export function NakkhiSalesActionDialog({
                                                     placeholder='0.00'
                                                     {...field}
                                                     onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -308,15 +326,15 @@ export function NakkhiSalesActionDialog({
                                                     placeholder='0.00'
                                                     {...field}
                                                     onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -333,11 +351,18 @@ export function NakkhiSalesActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Sale
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

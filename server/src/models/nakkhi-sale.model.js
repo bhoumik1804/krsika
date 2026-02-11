@@ -3,10 +3,10 @@ import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
 import { dealNumberPlugin } from '../utils/dealNumberPlugin.js'
 
 /**
- * Other Sale Schema
- * Tracks other sale entries for a mill
+ * Nakkhi Sale Schema
+ * Tracks nakkhi sale entries for a mill
  */
-const OtherSaleSchema = new Schema(
+const NakkhiSaleSchema = new Schema(
     {
         millId: {
             type: Schema.Types.ObjectId,
@@ -21,26 +21,17 @@ const OtherSaleSchema = new Schema(
         },
         partyName: {
             type: String,
-            required: true,
             trim: true,
         },
         brokerName: {
             type: String,
             trim: true,
         },
-        otherSaleName: {
-            type: String,
-            trim: true,
-        },
-        otherSaleQty: {
+        nakkhiQty: {
             type: Number,
             min: 0,
         },
-        qtyType: {
-            type: String,
-            trim: true,
-        },
-        rate: {
+        nakkhiRate: {
             type: Number,
             min: 0,
         },
@@ -49,7 +40,7 @@ const OtherSaleSchema = new Schema(
             min: 0,
             max: 100,
         },
-        gst: {
+        brokeragePerQuintal: {
             type: Number,
             min: 0,
         },
@@ -60,25 +51,26 @@ const OtherSaleSchema = new Schema(
 )
 
 // Compound indexes for common queries
-OtherSaleSchema.index({ millId: 1, date: -1 })
-OtherSaleSchema.index({ millId: 1, partyName: 1 })
+NakkhiSaleSchema.index({ millId: 1, date: -1 })
+NakkhiSaleSchema.index({ millId: 1, partyName: 1 })
+NakkhiSaleSchema.index({ millId: 1, brokerName: 1 })
 
 // Virtual for formatted date
-OtherSaleSchema.virtual('formattedDate').get(function () {
+NakkhiSaleSchema.virtual('formattedDate').get(function () {
     return this.date.toISOString().split('T')[0]
 })
 
 // Ensure virtuals are included in JSON output
-OtherSaleSchema.set('toJSON', { virtuals: true })
-OtherSaleSchema.set('toObject', { virtuals: true })
+NakkhiSaleSchema.set('toJSON', { virtuals: true })
+NakkhiSaleSchema.set('toObject', { virtuals: true })
 
-// Apply deal number plugin (auto-generates otherSalesDealNumber)
-OtherSaleSchema.plugin(dealNumberPlugin, {
-    fieldName: 'otherSalesDealNumber',
-    prefix: 'OTS',
+// Apply deal number plugin (auto-generates nakkhiSalesDealNumber)
+NakkhiSaleSchema.plugin(dealNumberPlugin, {
+    fieldName: 'nakkhiSalesDealNumber',
+    prefix: 'NKS',
 })
 
 // Add aggregate paginate plugin
-OtherSaleSchema.plugin(aggregatePaginate)
+NakkhiSaleSchema.plugin(aggregatePaginate)
 
-export const OtherSale = model('OtherSale', OtherSaleSchema)
+export const NakkhiSale = model('NakkhiSale', NakkhiSaleSchema)
