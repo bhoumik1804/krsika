@@ -1,4 +1,9 @@
-export const requirePermission = (...permissions) => {
+/**
+ * Middleware to check if user has required permissions
+ * @param {string} module - The module slug (e.g., 'paddy-purchase-report')
+ * @param {...string} requiredActions - The actions required (e.g., 'view', 'create')
+ */
+export const requirePermission = (module, ...requiredActions) => {
     return (req, res, next) => {
         if (!req.user) {
             const error = new Error('Authentication required')
@@ -6,18 +11,31 @@ export const requirePermission = (...permissions) => {
             return next(error)
         }
 
-        // super-admin have all permissions
-        if (['super-admin'].includes(req.user.role)) {
+        // super-admin and mill-admin have all permissions
+        if (['super-admin', 'mill-admin'].includes(req.user.role)) {
             return next()
         }
 
-        // Check if mill-staff has required permission
-        const hasPermission = permissions.some((permission) =>
-            req.user.permissions?.includes(permission)
+        // Check if mill-staff has required permission for the module
+        const modulePermission = req.user.permissions?.find(
+            (p) => p.moduleSlug === module
         )
 
-        if (!hasPermission) {
-            const error = new Error('Insufficient permissions')
+        if (!modulePermission) {
+            const error = new Error(`Permission denied for module: ${module}`)
+            error.statusCode = 403
+            return next(error)
+        }
+
+        // Check if all required actions are granted
+        const hasAllActions = requiredActions.every((action) =>
+            modulePermission.actions.includes(action)
+        )
+
+        if (!hasAllActions) {
+            const error = new Error(
+                `Insufficient actions for module: ${module}`
+            )
             error.statusCode = 403
             return next(error)
         }

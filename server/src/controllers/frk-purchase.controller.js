@@ -50,7 +50,7 @@ export const getFrkPurchaseListHandler = async (req, res, next) => {
         res.status(200).json(
             new ApiResponse(
                 200,
-                { purchases: result.data, pagination: result.pagination },
+                { data: result.data, pagination: result.pagination },
                 'FRK purchase list retrieved'
             )
         )
