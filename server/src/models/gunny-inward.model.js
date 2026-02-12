@@ -23,7 +23,7 @@ const GunnyInwardSchema = new Schema(
             required: true,
             trim: true,
         },
-        purchaseDealId: {
+        gunnyPurchaseDealNumber: {
             type: String,
             trim: true,
         },

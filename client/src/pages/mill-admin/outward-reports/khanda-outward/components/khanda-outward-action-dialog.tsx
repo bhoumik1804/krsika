@@ -53,7 +53,7 @@ export function KhandaOutwardActionDialog({
             partyName: '',
             brokerName: '',
             gunnyPlastic: undefined,
-            plasticWeight: undefined,
+            plasticGunnyWeight: undefined,
             truckNo: '',
             truckRst: '',
             truckWeight: undefined,
@@ -72,7 +72,7 @@ export function KhandaOutwardActionDialog({
                 partyName: '',
                 brokerName: '',
                 gunnyPlastic: undefined,
-                plasticWeight: undefined,
+                plasticGunnyWeight: undefined,
                 truckNo: '',
                 truckRst: '',
                 truckWeight: undefined,
@@ -248,7 +248,7 @@ export function KhandaOutwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='plasticWeight'
+                                name='plasticGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Plastic Weight</FormLabel>

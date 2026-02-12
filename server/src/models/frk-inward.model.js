@@ -18,7 +18,7 @@ const FrkInwardSchema = new Schema(
             required: true,
             index: true,
         },
-        purchaseDealId: {
+        frkPurchaseDealNumber: {
             type: String,
             trim: true,
         },

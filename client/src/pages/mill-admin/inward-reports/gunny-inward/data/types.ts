@@ -46,7 +46,7 @@ export type GunnyInwardFormValues = z.infer<typeof gunnyInwardFormSchema>
 // Create/Update Request Types
 export interface CreateGunnyInwardRequest {
     date: string
-    purchaseDealId?: string
+    gunnyPurchaseDealNumber?: string
     partyName?: string
     delivery?: string
     samitiSangrahan?: string

@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for KodhaOutward records
 export const kodhaOutwardSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
     kodhaSaleDealNumber: z.string().optional(),
     partyName: z.string().optional(),
@@ -10,7 +11,7 @@ export const kodhaOutwardSchema = z.object({
     oil: z.number().optional(),
     brokerage: z.number().optional(),
     gunnyPlastic: z.number().optional(),
-    plasticWeight: z.number().optional(),
+    plasticGunnyWeight: z.number().optional(),
     truckNo: z.string().optional(),
     truckRst: z.string().optional(),
     truckWeight: z.number().optional(),

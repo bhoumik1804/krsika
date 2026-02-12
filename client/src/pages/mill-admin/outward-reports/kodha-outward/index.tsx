@@ -3,6 +3,7 @@ import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -10,7 +11,7 @@ import { KodhaOutwardDialogs } from './components/kodha-outward-dialogs'
 import { KodhaOutwardPrimaryButtons } from './components/kodha-outward-primary-buttons'
 import { KodhaOutwardProvider } from './components/kodha-outward-provider'
 import { KodhaOutwardTable } from './components/kodha-outward-table'
-import { kodhaOutwardEntries } from './data/kodha-outward-entries'
+import { useKodhaOutwardList } from './data/hooks'
 
 export function KodhaOutwardReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +19,27 @@ export function KodhaOutwardReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    const queryParams = {
+        page: search.page ? parseInt(search.page as string, 10) : 1,
+        limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+        search: search.search as string | undefined,
+        sortBy: search.sortBy as
+            | 'date'
+            | 'partyName'
+            | 'brokerName'
+            | 'truckNo'
+            | 'netWeight'
+            | 'createdAt'
+            | undefined,
+        sortOrder: search.sortOrder as 'asc' | 'desc' | undefined,
+    }
+
+    const {
+        data: apiData,
+        isLoading,
+        error,
+    } = useKodhaOutwardList(millId || '', queryParams)
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -30,8 +52,50 @@ export function KodhaOutwardReport() {
         }
     }
 
+    if (isLoading) {
+        return (
+            <>
+                <Header fixed>
+                    <Search />
+                    <div className='ms-auto flex items-center space-x-4'>
+                        <ThemeSwitch />
+                        <ConfigDrawer />
+                        <ProfileDropdown
+                            user={sidebarData.user}
+                            links={sidebarData.profileLinks}
+                        />
+                    </div>
+                </Header>
+                <Main className='flex flex-1 items-center justify-center'>
+                    <LoadingSpinner />
+                </Main>
+            </>
+        )
+    }
+
+    if (error) {
+        return (
+            <>
+                <Header fixed>
+                    <Search />
+                    <div className='ms-auto flex items-center space-x-4'>
+                        <ThemeSwitch />
+                        <ConfigDrawer />
+                        <ProfileDropdown
+                            user={sidebarData.user}
+                            links={sidebarData.profileLinks}
+                        />
+                    </div>
+                </Header>
+                <Main className='flex flex-1 items-center justify-center'>
+                    <p className='text-destructive'>Error loading data</p>
+                </Main>
+            </>
+        )
+    }
+
     return (
-        <KodhaOutwardProvider>
+        <KodhaOutwardProvider millId={millId || ''} apiData={apiData}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -57,9 +121,10 @@ export function KodhaOutwardReport() {
                     <KodhaOutwardPrimaryButtons />
                 </div>
                 <KodhaOutwardTable
-                    data={kodhaOutwardEntries}
+                    data={apiData?.entries || []}
                     search={search}
                     navigate={navigate}
+                    pagination={apiData?.pagination}
                 />
             </Main>
             <KodhaOutwardDialogs />

@@ -53,7 +53,7 @@ export function FrkOutwardActionDialog({
             date: format(new Date(), 'yyyy-MM-dd'),
             partyName: '',
             gunnyPlastic: 0,
-            plasticWeight: 0,
+            plasticGunnyWeight: 0,
             truckNo: '',
             truckRst: '',
             truckWeight: 0,
@@ -70,7 +70,7 @@ export function FrkOutwardActionDialog({
                 date: format(new Date(), 'yyyy-MM-dd'),
                 partyName: '',
                 gunnyPlastic: 0,
-                plasticWeight: 0,
+                plasticGunnyWeight: 0,
                 truckNo: '',
                 truckRst: '',
                 truckWeight: 0,
@@ -223,7 +223,7 @@ export function FrkOutwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='plasticWeight'
+                                name='plasticGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>

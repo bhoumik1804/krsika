@@ -53,7 +53,7 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'purchaseDealId',
+        accessorKey: 'frkPurchaseDealNumber',
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
@@ -61,7 +61,9 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
             />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('purchaseDealId')}</div>
+            <div className='text-nowrap'>
+                {row.getValue('frkPurchaseDealNumber')}
+            </div>
         ),
     },
     {

@@ -53,7 +53,7 @@ export function FrkInwardActionDialog({
 
     const getDefaultValues = () => ({
         date: format(new Date(), 'yyyy-MM-dd'),
-        purchaseDealId: '',
+        frkPurchaseDealNumber: '',
         partyName: '',
         gunnyPlastic: undefined,
         plasticWeight: undefined,
@@ -177,13 +177,15 @@ export function FrkInwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='purchaseDealId'
+                                name='frkPurchaseDealNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Purchase Deal ID</FormLabel>
+                                        <FormLabel>
+                                            FRK Purchase Deal Number
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter Deal ID'
+                                                placeholder='Enter Deal Number'
                                                 {...field}
                                                 value={field.value || ''}
                                             />

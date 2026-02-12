@@ -10,7 +10,6 @@ import { KhandaOutwardDialogs } from './components/khanda-outward-dialogs'
 import { KhandaOutwardPrimaryButtons } from './components/khanda-outward-primary-buttons'
 import { KhandaOutwardProvider } from './components/khanda-outward-provider'
 import { KhandaOutwardTable } from './components/khanda-outward-table'
-import { khandaOutwardEntries } from './data/khanda-outward-entries'
 
 export function KhandaOutwardReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -57,7 +56,7 @@ export function KhandaOutwardReport() {
                     <KhandaOutwardPrimaryButtons />
                 </div>
                 <KhandaOutwardTable
-                    data={khandaOutwardEntries}
+                    data={[]}
                     search={search}
                     navigate={navigate}
                 />

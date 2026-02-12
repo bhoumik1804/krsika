@@ -3,7 +3,7 @@ import { BhusaOutwardDeleteDialog } from './bhusa-outward-delete-dialog'
 import { bhusaOutward } from './bhusa-outward-provider'
 
 export function BhusaOutwardDialogs() {
-    const { open, setOpen, currentRow } = bhusaOutward()
+    const { open, setOpen, currentRow, millId } = bhusaOutward()
 
     return (
         <>
@@ -13,6 +13,7 @@ export function BhusaOutwardDialogs() {
                     setOpen(isOpen ? open : null)
                 }
                 currentRow={currentRow}
+                millId={millId}
             />
             <BhusaOutwardDeleteDialog
                 open={open === 'delete'}
@@ -20,6 +21,7 @@ export function BhusaOutwardDialogs() {
                     setOpen(isOpen ? 'delete' : null)
                 }
                 currentRow={currentRow}
+                millId={millId}
             />
         </>
     )

@@ -41,7 +41,7 @@ export type RiceInwardFormValues = z.infer<typeof riceInwardFormSchema>
 // Create/Update Request Types
 export interface CreateRiceInwardRequest {
     date: string
-    ricePurchaseNumber?: string
+    ricePurchaseDealNumber?: string
     partyName?: string
     brokerName?: string
     riceType?: string

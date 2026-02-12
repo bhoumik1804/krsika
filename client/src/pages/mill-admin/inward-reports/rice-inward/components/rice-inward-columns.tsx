@@ -53,16 +53,16 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'ricePurchaseNumber',
+        accessorKey: 'ricePurchaseDealNumber',
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Rice Purchase Number'
+                title='Rice Purchase Deal Number'
             />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
-                {row.getValue('ricePurchaseNumber')}
+                {row.getValue('ricePurchaseDealNumber')}
             </div>
         ),
     },

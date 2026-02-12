@@ -1,14 +1,17 @@
 import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { type KodhaOutward } from '../data/schema'
+import type { KodhaOutwardListResponse } from '../data/types'
 
 type KodhaOutwardDialogType = 'add' | 'edit' | 'delete' | 'delete-multi'
 
 type KodhaOutwardContextType = {
+    millId: string
     open: KodhaOutwardDialogType | null
     setOpen: (str: KodhaOutwardDialogType | null) => void
     currentRow: KodhaOutward | null
     setCurrentRow: React.Dispatch<React.SetStateAction<KodhaOutward | null>>
+    apiData: KodhaOutwardListResponse | undefined
 }
 
 const KodhaOutwardContext = React.createContext<KodhaOutwardContextType | null>(
@@ -17,15 +20,26 @@ const KodhaOutwardContext = React.createContext<KodhaOutwardContextType | null>(
 
 export function KodhaOutwardProvider({
     children,
+    millId,
+    apiData,
 }: {
     children: React.ReactNode
+    millId: string
+    apiData: KodhaOutwardListResponse | undefined
 }) {
     const [open, setOpen] = useDialogState<KodhaOutwardDialogType>(null)
     const [currentRow, setCurrentRow] = useState<KodhaOutward | null>(null)
 
     return (
         <KodhaOutwardContext.Provider
-            value={{ open, setOpen, currentRow, setCurrentRow }}
+            value={{
+                millId,
+                open,
+                setOpen,
+                currentRow,
+                setCurrentRow,
+                apiData,
+            }}
         >
             {children}
         </KodhaOutwardContext.Provider>

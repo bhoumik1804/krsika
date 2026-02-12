@@ -7,7 +7,6 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -27,13 +26,28 @@ import { type OtherOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { otherOutwardColumns as columns } from './other-outward-columns'
 
+type PaginationInfo = {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasPrevPage: boolean
+    hasNextPage: boolean
+}
+
 type DataTableProps = {
     data: OtherOutward[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: PaginationInfo
 }
 
-export function OtherOutwardTable({ data, search, navigate }: DataTableProps) {
+export function OtherOutwardTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -68,13 +82,14 @@ export function OtherOutwardTable({ data, search, navigate }: DataTableProps) {
             columnFilters,
             columnVisibility,
         },
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: true,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -83,8 +98,10 @@ export function OtherOutwardTable({ data, search, navigate }: DataTableProps) {
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (serverPagination?.totalPages) {
+            ensurePageInRange(serverPagination.totalPages)
+        }
+    }, [serverPagination?.totalPages, ensurePageInRange])
 
     return (
         <div
