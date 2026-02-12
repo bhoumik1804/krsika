@@ -1,12 +1,21 @@
 import { useEffect, useState } from 'react'
+import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    Combobox,
+    ComboboxInput,
+    ComboboxContent,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxEmpty,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -36,13 +45,16 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import {otherPurchaseAndSalesQtyTypeOptions} from '@/constants/purchase-form'
+import { useCreateOtherPurchase, useUpdateOtherPurchase } from '../data/hooks'
 import { otherPurchaseSchema, type OtherPurchase } from '../data/schema'
+import { useOther } from './other-provider'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 
 type OtherActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: OtherPurchase | null
+    currentRow?: OtherPurchase | null
 }
 
 export function OtherActionDialog({
@@ -50,7 +62,132 @@ export function OtherActionDialog({
     onOpenChange,
     currentRow,
 }: OtherActionDialogProps) {
+    const { millId } = useOther()
+    const { mutateAsync: createOtherPurchase, isPending: isCreating } =
+        useCreateOtherPurchase(millId)
+    const { mutateAsync: updateOtherPurchase, isPending: isUpdating } =
+        useUpdateOtherPurchase(millId)
+
+    const [partyPage, setPartyPage] = useState(1)
+    const [brokerPage, setBrokerPage] = useState(1)
+    const [allParties, setAllParties] = useState<string[]>([])
+    const [allBrokers, setAllBrokers] = useState<string[]>([])
+    const [hasMoreParties, setHasMoreParties] = useState(true)
+    const [hasMoreBrokers, setHasMoreBrokers] = useState(true)
+    const [isLoadingMoreParties, setIsLoadingMoreParties] = useState(false)
+    const [isLoadingMoreBrokers, setIsLoadingMoreBrokers] = useState(false)
+
+    // Dynamic limit: 10 for first page, 5 for subsequent pages
+    const partyLimit = partyPage === 1 ? 10 : 5
+    const brokerLimit = brokerPage === 1 ? 10 : 5
+
+    // Fetch party list from API with pagination
+    const { data: partyListData } = usePartyList(
+        millId,
+        {
+            page: partyPage,
+            limit: partyLimit,
+            sortBy: 'partyName',
+            sortOrder: 'asc',
+        },
+        { enabled: open && !!millId }
+    )
+
+    // Fetch broker list from API with pagination
+    const { data: brokerListData } = useBrokerList({
+        millId: open ? millId : '',
+        page: brokerPage,
+        pageSize: brokerLimit,
+    })
+
+    // Extract party names from API response and accumulate
+    React.useEffect(() => {
+        if (partyListData?.parties) {
+            console.log(
+                'Party data received:',
+                partyListData.parties.length,
+                'parties on page',
+                partyPage
+            )
+            const newParties = partyListData.parties.map(
+                (party) => party.partyName
+            )
+            setAllParties((prev) => {
+                // Only add if not already in the list
+                const combined = [...prev, ...newParties]
+                return Array.from(new Set(combined))
+            })
+            // Check if there are more parties to load
+            setHasMoreParties(partyListData.parties.length === partyLimit)
+            setIsLoadingMoreParties(false)
+        }
+    }, [partyListData, partyLimit, partyPage])
+
+    // Extract broker names from API response and accumulate
+    React.useEffect(() => {
+        if (brokerListData?.brokers) {
+            console.log(
+                'Broker data received:',
+                brokerListData.brokers.length,
+                'brokers on page',
+                brokerPage
+            )
+            const newBrokers = brokerListData.brokers.map(
+                (broker) => broker.brokerName
+            )
+            setAllBrokers((prev) => {
+                // Only add if not already in the list
+                const combined = [...prev, ...newBrokers]
+                return Array.from(new Set(combined))
+            })
+            // Check if there are more brokers to load
+            setHasMoreBrokers(brokerListData.brokers.length === brokerLimit)
+            setIsLoadingMoreBrokers(false)
+        }
+    }, [brokerListData, brokerLimit, brokerPage])
+
+    // Reset accumulated data when dialog opens
+    useEffect(() => {
+        if (open) {
+            setAllParties([])
+            setAllBrokers([])
+            setPartyPage(1)
+            setBrokerPage(1)
+            setHasMoreParties(true)
+            setHasMoreBrokers(true)
+            setIsLoadingMoreParties(false)
+            setIsLoadingMoreBrokers(false)
+        }
+    }, [open])
+
+    // Handle scroll for party list
+    const handlePartyScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const target = e.currentTarget
+        const bottom =
+            target.scrollHeight - target.scrollTop <= target.clientHeight + 5
+
+        if (bottom && hasMoreParties && !isLoadingMoreParties) {
+            console.log('Loading more parties... Current page:', partyPage)
+            setIsLoadingMoreParties(true)
+            setPartyPage((prev) => prev + 1)
+        }
+    }
+
+    // Handle scroll for broker list
+    const handleBrokerScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const target = e.currentTarget
+        const bottom =
+            target.scrollHeight - target.scrollTop <= target.clientHeight + 5
+
+        if (bottom && hasMoreBrokers && !isLoadingMoreBrokers) {
+            console.log('Loading more brokers... Current page:', brokerPage)
+            setIsLoadingMoreBrokers(true)
+            setBrokerPage((prev) => prev + 1)
+        }
+    }
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
     const form = useForm<OtherPurchase>({
@@ -60,36 +197,49 @@ export function OtherActionDialog({
             partyName: '',
             brokerName: '',
             otherPurchaseName: '',
-            otherPurchaseQty: undefined,
+            otherPurchaseQty: 0,
             qtyType: '',
-            rate: undefined,
-            discountPercent: undefined,
-            gst: undefined,
+            rate: 0,
+            discountPercent: 0,
+            gst: 0,
         } as OtherPurchase,
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    partyName: '',
+                    brokerName: '',
+                    otherPurchaseName: '',
+                    otherPurchaseQty: 0,
+                    qtyType: '',
+                    rate: 0,
+                    discountPercent: 0,
+                    gst: 0,
+                } as OtherPurchase)
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Purchase updated successfully'
-                    : 'Purchase added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update purchase'
-                : 'Failed to add purchase',
-        })
+    const onSubmit = async (data: OtherPurchase) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateOtherPurchase({
+                    purchaseId: currentRow._id,
+                    data,
+                })
+            } else {
+                await createOtherPurchase(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            console.error('Form submission error:', error)
+        }
     }
 
     return (
@@ -119,7 +269,9 @@ export function OtherActionDialog({
                                             <FormLabel>Date</FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
-                                                onOpenChange={setDatePopoverOpen}
+                                                onOpenChange={
+                                                    setDatePopoverOpen
+                                                }
                                             >
                                                 <PopoverTrigger asChild>
                                                     <FormControl>
@@ -130,11 +282,11 @@ export function OtherActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
+                                                                    new Date(
+                                                                        field.value
+                                                                    ),
+                                                                    'MMM dd, yyyy'
+                                                                )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -148,17 +300,17 @@ export function OtherActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                      field.value
-                                                                  )
+                                                                    field.value
+                                                                )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -179,10 +331,45 @@ export function OtherActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
-                                                />
+                                                <Combobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    items={allParties}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder='Search party...'
+                                                        showClear
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxList
+                                                            onScroll={
+                                                                handlePartyScroll
+                                                            }
+                                                        >
+                                                            <ComboboxCollection>
+                                                                {(party) => (
+                                                                    <ComboboxItem
+                                                                        value={
+                                                                            party
+                                                                        }
+                                                                    >
+                                                                        {party}
+                                                                    </ComboboxItem>
+                                                                )}
+                                                            </ComboboxCollection>
+                                                            <ComboboxEmpty>
+                                                                No parties found
+                                                            </ComboboxEmpty>
+                                                            {isLoadingMoreParties && (
+                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                    Loading more...
+                                                                </div>
+                                                            )}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -195,10 +382,45 @@ export function OtherActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter broker name'
-                                                    {...field}
-                                                />
+                                                <Combobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    items={allBrokers}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder='Search broker...'
+                                                        showClear
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxList
+                                                            onScroll={
+                                                                handleBrokerScroll
+                                                            }
+                                                        >
+                                                            <ComboboxCollection>
+                                                                {(broker) => (
+                                                                    <ComboboxItem
+                                                                        value={
+                                                                            broker
+                                                                        }
+                                                                    >
+                                                                        {broker}
+                                                                    </ComboboxItem>
+                                                                )}
+                                                            </ComboboxCollection>
+                                                            <ComboboxEmpty>
+                                                                No brokers found
+                                                            </ComboboxEmpty>
+                                                            {isLoadingMoreBrokers && (
+                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                    Loading more...
+                                                                </div>
+                                                            )}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -209,13 +431,12 @@ export function OtherActionDialog({
                                     name='otherPurchaseName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Item Name
-                                            </FormLabel>
+                                            <FormLabel>Item Name</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter item name'
                                                     {...field}
+                                                    value={field.value || ''}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -234,16 +455,17 @@ export function OtherActionDialog({
                                                     step='0.01'
                                                     placeholder='0.00'
                                                     {...field}
+                                                    value={field.value ?? ''}
                                                     onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? undefined
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -258,12 +480,10 @@ export function OtherActionDialog({
                                     name='qtyType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Quantity Type
-                                            </FormLabel>
+                                            <FormLabel>Quantity Type</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                value={field.value || ''}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
@@ -301,18 +521,19 @@ export function OtherActionDialog({
                                                 <Input
                                                     type='number'
                                                     step='0.01'
-                                                    placeholder='0.00'
+                                                    placeholder=''
                                                     {...field}
-                                                   onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                    value={field.value ?? ''}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? undefined
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -334,16 +555,17 @@ export function OtherActionDialog({
                                                     step='0.01'
                                                     placeholder='0.00'
                                                     {...field}
-                                                   onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                    value={field.value ?? ''}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? undefined
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -365,16 +587,17 @@ export function OtherActionDialog({
                                                     step='0.01'
                                                     placeholder='0.00'
                                                     {...field}
+                                                    value={field.value ?? ''}
                                                     onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? undefined
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -391,11 +614,19 @@ export function OtherActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Purchase
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                        ? 'Update'
+                                        : 'Add'}{' '}
+                                Purchase
                             </Button>
                         </DialogFooter>
                     </form>

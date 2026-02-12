@@ -1,13 +1,5 @@
-/**
- * Nakkhi Sales Types
- * TypeScript type definitions for Nakkhi Sales module
- */
-
-// ==========================================
 // API Request Types
-// ==========================================
-
-export interface CreateNakkhiSaleRequest {
+export type CreateNakkhiSalesRequest = {
     date: string
     partyName?: string
     brokerName?: string
@@ -17,8 +9,8 @@ export interface CreateNakkhiSaleRequest {
     brokeragePerQuintal?: number
 }
 
-export interface UpdateNakkhiSaleRequest {
-    id: string
+export type UpdateNakkhiSalesRequest = {
+    _id: string
     date?: string
     partyName?: string
     brokerName?: string
@@ -28,11 +20,8 @@ export interface UpdateNakkhiSaleRequest {
     brokeragePerQuintal?: number
 }
 
-// ==========================================
 // API Response Types
-// ==========================================
-
-export interface NakkhiSaleResponse {
+export type NakkhiSalesResponse = {
     _id: string
     millId: string
     date: string
@@ -42,18 +31,12 @@ export interface NakkhiSaleResponse {
     nakkhiRate?: number
     discountPercent?: number
     brokeragePerQuintal?: number
-    createdBy: string
-    createdByUser?: {
-        fullName: string
-        email: string
-    }
-    updatedBy?: string
     createdAt: string
     updatedAt: string
 }
 
-export interface NakkhiSaleListResponse {
-    data: NakkhiSaleResponse[]
+export type NakkhiSalesListResponse = {
+    sales?: NakkhiSalesResponse[]
     pagination: {
         page: number
         limit: number
@@ -66,55 +49,16 @@ export interface NakkhiSaleListResponse {
     }
 }
 
-export interface NakkhiSaleSummaryResponse {
-    totalEntries: number
-    totalNakkhiQty: number
-    totalBrokerage: number
-    avgNakkhiRate: number
-    avgDiscountPercent: number
-}
-
-// ==========================================
-// Query Parameters
-// ==========================================
-
-export interface NakkhiSaleQueryParams {
+export type NakkhiSalesQueryParams = {
     page?: number
     limit?: number
     search?: string
-    partyName?: string
-    brokerName?: string
-    startDate?: string
-    endDate?: string
     sortBy?: string
     sortOrder?: 'asc' | 'desc'
 }
 
-export interface NakkhiSaleSummaryQueryParams {
-    startDate?: string
-    endDate?: string
-}
-
-// ==========================================
-// Form Types
-// ==========================================
-
-export interface NakkhiSaleFormData {
-    date: string
-    partyName: string
-    brokerName: string
-    nakkhiQty: number | null
-    nakkhiRate: number | null
-    discountPercent: number | null
-    brokeragePerQuintal: number | null
-}
-
-// ==========================================
-// Dialog State Types
-// ==========================================
-
-export interface NakkhiSaleDialogState {
-    open: 'create' | 'edit' | 'delete' | 'bulk-delete' | null
-    currentRow: NakkhiSaleResponse | null
-    selectedRows: NakkhiSaleResponse[]
+export type NakkhiSalesSummaryResponse = {
+    totalRecords: number
+    totalQuantity: number
+    totalAmount: number
 }

@@ -11,14 +11,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type PrivatePaddyOutward } from '../data/schema'
-import { privatePaddyOutward } from './private-paddy-outward-provider'
+import { usePrivatePaddyOutward } from './private-paddy-outward-provider'
 
 type DataTableRowActionsProps = {
     row: Row<PrivatePaddyOutward>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = privatePaddyOutward()
+    const { setOpen, setCurrentRow } = usePrivatePaddyOutward()
     return (
         <>
             <DropdownMenu modal={false}>

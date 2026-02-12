@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for GovtPaddyInward records
 export const govtPaddyInwardSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
     doNumber: z.string().min(1, 'DO Number is required'),
     committeeName: z.string().min(1, 'Committee Name is required'),

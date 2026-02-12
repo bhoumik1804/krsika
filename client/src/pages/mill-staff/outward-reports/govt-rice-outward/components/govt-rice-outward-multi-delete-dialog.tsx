@@ -1,6 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,6 +9,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeleteGovtRiceOutward } from '../data/hooks'
+import { type GovtRiceOutward } from '../data/schema'
+import { useGovtRiceOutward } from './govt-rice-outward-provider'
 
 type GovtRiceOutwardMultiDeleteDialogProps<TData> = {
     table: Table<TData>
@@ -24,17 +25,22 @@ export function GovtRiceOutwardMultiDeleteDialog<TData>({
     onOpenChange,
 }: GovtRiceOutwardMultiDeleteDialogProps<TData>) {
     const selectedRows = table.getFilteredSelectedRowModel().rows
+    const { millId } = useGovtRiceOutward()
+    const bulkDeleteMutation = useBulkDeleteGovtRiceOutward(millId)
 
-    const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                table.resetRowSelection()
-                onOpenChange(false)
-                return `Deleted ${selectedRows.length} record${selectedRows.length > 1 ? 's' : ''}`
-            },
-            error: 'Error deleting records',
-        })
+    const handleDeleteSelected = async () => {
+        const ids = selectedRows
+            .map((row) => (row.original as GovtRiceOutward)._id)
+            .filter((id): id is string => !!id)
+        if (!ids.length) return
+
+        try {
+            await bulkDeleteMutation.mutateAsync(ids)
+            table.resetRowSelection()
+            onOpenChange(false)
+        } catch {
+            // Error is handled by mutation hook
+        }
     }
 
     return (

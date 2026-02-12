@@ -1,128 +1,75 @@
-/**
- * Broker Report Service
- * API client for Broker CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
-import apiClient, { type ApiResponse } from '@/lib/api-client'
-import type {
-    BrokerResponse,
-    BrokerListResponse,
-    BrokerSummaryResponse,
-    CreateBrokerRequest,
-    UpdateBrokerRequest,
-    BrokerQueryParams,
-} from './types'
+import { apiClient } from '@/lib/api-client'
+import type { BrokerReportData } from './schema'
 
-// ==========================================
-// API Endpoints
-// ==========================================
-
-const BROKER_ENDPOINT = (millId: string) => `/mills/${millId}/brokers`
-
-// ==========================================
-// Broker API Functions
-// ==========================================
-
-/**
- * Fetch all brokers with pagination and filters
- */
-export const fetchBrokerList = async (
-    millId: string,
-    params?: BrokerQueryParams
-): Promise<BrokerListResponse> => {
-    const response = await apiClient.get<ApiResponse<BrokerListResponse>>(
-        BROKER_ENDPOINT(millId),
-        { params }
-    )
-    return response.data.data
-}
-
-/**
- * Fetch a single broker by ID
- */
-export const fetchBrokerById = async (
-    millId: string,
-    id: string
-): Promise<BrokerResponse> => {
-    const response = await apiClient.get<ApiResponse<BrokerResponse>>(
-        `${BROKER_ENDPOINT(millId)}/${id}`
-    )
-    return response.data.data
-}
-
-/**
- * Fetch broker summary/statistics
- */
-export const fetchBrokerSummary = async (
+interface FetchBrokerListParams {
     millId: string
-): Promise<BrokerSummaryResponse> => {
-    const response = await apiClient.get<ApiResponse<BrokerSummaryResponse>>(
-        `${BROKER_ENDPOINT(millId)}/summary`
-    )
-    return response.data.data
+    page?: number
+    pageSize?: number
+    search?: string
 }
 
-/**
- * Create a new broker
- */
-export const createBroker = async (
-    millId: string,
-    data: CreateBrokerRequest
-): Promise<BrokerResponse> => {
-    const response = await apiClient.post<ApiResponse<BrokerResponse>>(
-        BROKER_ENDPOINT(millId),
-        data
-    )
-    return response.data.data
+export interface BrokerListResponse {
+    brokers: BrokerReportData[]
+    pagination: {
+        page: number
+        pageSize: number
+        total: number
+        pages: number
+    }
 }
 
-/**
- * Update an existing broker
- */
-export const updateBroker = async (
-    millId: string,
-    { id, ...data }: UpdateBrokerRequest
-): Promise<BrokerResponse> => {
-    const response = await apiClient.put<ApiResponse<BrokerResponse>>(
-        `${BROKER_ENDPOINT(millId)}/${id}`,
-        data
-    )
-    return response.data.data
+interface ApiResponse<T> {
+    data: T
 }
 
-/**
- * Delete a broker
- */
-export const deleteBroker = async (
-    millId: string,
-    id: string
-): Promise<void> => {
-    await apiClient.delete(`${BROKER_ENDPOINT(millId)}/${id}`)
-}
+export const brokerService = {
+    fetchBrokerList: async (params: FetchBrokerListParams): Promise<BrokerListResponse> => {
+        const queryParams = new URLSearchParams()
+        if (params.page) queryParams.append('page', params.page.toString())
+        if (params.pageSize)
+            queryParams.append('pageSize', params.pageSize.toString())
+        if (params.search) queryParams.append('search', params.search)
 
-/**
- * Bulk delete brokers
- */
-export const bulkDeleteBroker = async (
-    millId: string,
-    ids: string[]
-): Promise<void> => {
-    await apiClient.delete(`${BROKER_ENDPOINT(millId)}/bulk`, {
-        data: { ids },
-    })
-}
+        const response = await apiClient.get<
+            ApiResponse<BrokerListResponse>
+        >(`/mills/${params.millId}/brokers?${queryParams.toString()}`)
+        return response.data.data
+    },
 
-/**
- * Export brokers to CSV/Excel
- */
-export const exportBroker = async (
-    millId: string,
-    params?: BrokerQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(`${BROKER_ENDPOINT(millId)}/export`, {
-        params: { ...params, format },
-        responseType: 'blob',
-    })
-    return response.data
+    createBroker: async (
+        millId: string,
+        data: Omit<BrokerReportData, 'id'>
+    ) => {
+        const response = await apiClient.post<ApiResponse<BrokerReportData>>(
+            `/mills/${millId}/brokers`,
+            data
+        )
+        return response.data.data
+    },
+
+    updateBroker: async (
+        millId: string,
+        brokerId: string,
+        data: Omit<BrokerReportData, 'id'>
+    ) => {
+        const response = await apiClient.patch<ApiResponse<BrokerReportData>>(
+            `/mills/${millId}/brokers/${brokerId}`,
+            data
+        )
+        return response.data.data
+    },
+
+    deleteBroker: async (millId: string, brokerId: string) => {
+        const response = await apiClient.delete<
+            ApiResponse<{ success: boolean }>
+        >(`/mills/${millId}/brokers/${brokerId}`)
+        return response.data.data
+    },
+
+    bulkDeleteBrokers: async (millId: string, brokerIds: string[]) => {
+        const response = await apiClient.post<
+            ApiResponse<{ success: boolean }>
+        >(`/mills/${millId}/brokers/bulk-delete`, { ids: brokerIds })
+        return response.data.data
+    },
 }

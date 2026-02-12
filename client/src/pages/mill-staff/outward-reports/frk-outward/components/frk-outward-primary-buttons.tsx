@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { frkOutward } from './frk-outward-provider'
+import { useFrkOutward } from './frk-outward-provider'
 
 export function FrkOutwardPrimaryButtons() {
-    const { setOpen } = frkOutward()
+    const { setOpen } = useFrkOutward()
 
     return (
         <Button onClick={() => setOpen('add')}>

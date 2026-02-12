@@ -3,15 +3,20 @@ import { LabourGroupReportDeleteDialog } from './labour-group-report-delete-dial
 import { labourGroupReport } from './labour-group-report-provider'
 
 export function LabourGroupReportDialogs() {
-    const { open, setOpen, currentRow } = labourGroupReport()
+    const { open, setOpen, currentRow, setCurrentRow } = labourGroupReport()
+
+    const handleDialogChange = (isOpen: boolean) => {
+        if (!isOpen) {
+            setCurrentRow(null)
+        }
+        setOpen(isOpen ? open : null)
+    }
 
     return (
         <>
             <LabourGroupReportActionDialog
                 open={open === 'add' || open === 'edit'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? open : null)
-                }
+                onOpenChange={handleDialogChange}
                 currentRow={currentRow}
             />
             <LabourGroupReportDeleteDialog

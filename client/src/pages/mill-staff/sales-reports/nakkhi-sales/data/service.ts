@@ -1,136 +1,80 @@
-/**
- * Nakkhi Sales Service
- * API client for Nakkhi Sales CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
-import apiClient, { type ApiResponse } from '@/lib/api-client'
+import { apiClient, type ApiResponse } from '@/lib/api-client'
 import type {
-    NakkhiSaleResponse,
-    NakkhiSaleListResponse,
-    NakkhiSaleSummaryResponse,
-    CreateNakkhiSaleRequest,
-    UpdateNakkhiSaleRequest,
-    NakkhiSaleQueryParams,
-    NakkhiSaleSummaryQueryParams,
+    CreateNakkhiSalesRequest,
+    UpdateNakkhiSalesRequest,
+    NakkhiSalesResponse,
+    NakkhiSalesListResponse,
+    NakkhiSalesQueryParams,
+    NakkhiSalesSummaryResponse,
 } from './types'
 
-// ==========================================
-// API Endpoints
-// ==========================================
+const BASE_PATH = '/mills'
 
-const NAKKHI_SALES_ENDPOINT = (millId: string) =>
-    `/mills/${millId}/nakkhi-sales`
-
-// ==========================================
-// Nakkhi Sales CRUD API Functions
-// ==========================================
-
-/**
- * Fetch all nakkhi sales with pagination and filters
- */
 export const fetchNakkhiSalesList = async (
     millId: string,
-    params?: NakkhiSaleQueryParams
-): Promise<NakkhiSaleListResponse> => {
-    const response = await apiClient.get<ApiResponse<NakkhiSaleListResponse>>(
-        NAKKHI_SALES_ENDPOINT(millId),
+    params?: NakkhiSalesQueryParams
+): Promise<NakkhiSalesListResponse> => {
+    const response = await apiClient.get<ApiResponse<NakkhiSalesListResponse>>(
+        `${BASE_PATH}/${millId}/nakkhi-sales`,
         { params }
     )
     return response.data.data
 }
 
-/**
- * Fetch a single nakkhi sale by ID
- */
-export const fetchNakkhiSaleById = async (
+export const fetchNakkhiSalesById = async (
     millId: string,
     id: string
-): Promise<NakkhiSaleResponse> => {
-    const response = await apiClient.get<ApiResponse<NakkhiSaleResponse>>(
-        `${NAKKHI_SALES_ENDPOINT(millId)}/${id}`
+): Promise<NakkhiSalesResponse> => {
+    const response = await apiClient.get<ApiResponse<NakkhiSalesResponse>>(
+        `${BASE_PATH}/${millId}/nakkhi-sales/${id}`
     )
     return response.data.data
 }
 
-/**
- * Fetch nakkhi sales summary/statistics
- */
 export const fetchNakkhiSalesSummary = async (
-    millId: string,
-    params?: NakkhiSaleSummaryQueryParams
-): Promise<NakkhiSaleSummaryResponse> => {
+    millId: string
+): Promise<NakkhiSalesSummaryResponse> => {
     const response = await apiClient.get<
-        ApiResponse<NakkhiSaleSummaryResponse>
-    >(`${NAKKHI_SALES_ENDPOINT(millId)}/summary`, { params })
+        ApiResponse<NakkhiSalesSummaryResponse>
+    >(`${BASE_PATH}/${millId}/nakkhi-sales/summary`)
     return response.data.data
 }
 
-/**
- * Create a new nakkhi sale
- */
-export const createNakkhiSale = async (
+export const createNakkhiSales = async (
     millId: string,
-    data: CreateNakkhiSaleRequest
-): Promise<NakkhiSaleResponse> => {
-    const response = await apiClient.post<ApiResponse<NakkhiSaleResponse>>(
-        NAKKHI_SALES_ENDPOINT(millId),
+    data: CreateNakkhiSalesRequest
+): Promise<NakkhiSalesResponse> => {
+    const response = await apiClient.post<ApiResponse<NakkhiSalesResponse>>(
+        `${BASE_PATH}/${millId}/nakkhi-sales`,
         data
     )
     return response.data.data
 }
 
-/**
- * Update an existing nakkhi sale
- */
-export const updateNakkhiSale = async (
+export const updateNakkhiSales = async (
     millId: string,
-    { id, ...data }: UpdateNakkhiSaleRequest
-): Promise<NakkhiSaleResponse> => {
-    const response = await apiClient.put<ApiResponse<NakkhiSaleResponse>>(
-        `${NAKKHI_SALES_ENDPOINT(millId)}/${id}`,
-        data
+    data: UpdateNakkhiSalesRequest
+): Promise<NakkhiSalesResponse> => {
+    const { _id, ...payload } = data
+    const response = await apiClient.put<ApiResponse<NakkhiSalesResponse>>(
+        `${BASE_PATH}/${millId}/nakkhi-sales/${_id}`,
+        payload
     )
     return response.data.data
 }
 
-/**
- * Delete a nakkhi sale
- */
-export const deleteNakkhiSale = async (
+export const deleteNakkhiSales = async (
     millId: string,
     id: string
 ): Promise<void> => {
-    await apiClient.delete(`${NAKKHI_SALES_ENDPOINT(millId)}/${id}`)
+    await apiClient.delete(`${BASE_PATH}/${millId}/nakkhi-sales/${id}`)
 }
 
-/**
- * Bulk delete nakkhi sales
- */
 export const bulkDeleteNakkhiSales = async (
     millId: string,
     ids: string[]
-): Promise<{ deletedCount: number }> => {
-    const response = await apiClient.delete<
-        ApiResponse<{ deletedCount: number }>
-    >(`${NAKKHI_SALES_ENDPOINT(millId)}/bulk`, {
+): Promise<void> => {
+    await apiClient.delete(`${BASE_PATH}/${millId}/nakkhi-sales`, {
         data: { ids },
     })
-    return response.data.data
-}
-
-/**
- * Export nakkhi sales data
- */
-export const exportNakkhiSales = async (
-    millId: string,
-    params?: NakkhiSaleQueryParams
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${NAKKHI_SALES_ENDPOINT(millId)}/export`,
-        {
-            params,
-            responseType: 'blob',
-        }
-    )
-    return response.data
 }

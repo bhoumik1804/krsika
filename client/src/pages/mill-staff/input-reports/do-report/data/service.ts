@@ -77,6 +77,19 @@ export const createDoReport = async (
 }
 
 /**
+ * Bulk create DO reports
+ */
+export const bulkCreateDoReport = async (
+    millId: string,
+    data: CreateDoReportRequest[]
+): Promise<{ reports: DoReportResponse[]; count: number }> => {
+    const response = await apiClient.post<
+        ApiResponse<{ reports: DoReportResponse[]; count: number }>
+    >(`${DO_REPORT_ENDPOINT(millId)}/bulk`, data)
+    return response.data.data
+}
+
+/**
  * Update an existing DO report
  */
 export const updateDoReport = async (

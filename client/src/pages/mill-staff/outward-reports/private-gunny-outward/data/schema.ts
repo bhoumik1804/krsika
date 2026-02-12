@@ -2,8 +2,9 @@ import { z } from 'zod'
 
 // Schema for private gunny outward records
 export const PrivateGunnyOutwardSchema = z.object({
+    _id: z.string(),
     date: z.string(),
-    gunnyPurchaseNumber: z.string().optional(),
+    gunnyPurchaseDealNumber: z.string().optional(),
     partyName: z.string().optional(),
     newGunnyQty: z.number().optional(),
     oldGunnyQty: z.number().optional(),

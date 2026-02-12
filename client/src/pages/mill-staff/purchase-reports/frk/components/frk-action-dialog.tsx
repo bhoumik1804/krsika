@@ -1,12 +1,20 @@
 import { useEffect, useState } from 'react'
+import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    Combobox,
+    ComboboxInput,
+    ComboboxContent,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxEmpty,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -29,23 +37,97 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-import { frkPurchaseSchema, type FrkPurchase } from '../data/schema'
+import { frkPurchaseSchema, type FrkPurchaseData } from '../data/schema'
+import { useCreateFrkPurchase, useUpdateFrkPurchase } from '../data/hooks'
+import { useFrk } from './frk-provider'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 
 type FrkActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: FrkPurchase | null
 }
 
 export function FrkActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: FrkActionDialogProps) {
+    const { currentRow, millId } = useFrk()
+    const { mutateAsync: createFrkPurchase, isPending: isCreating } =
+        useCreateFrkPurchase(millId)
+    const { mutateAsync: updateFrkPurchase, isPending: isUpdating } =
+        useUpdateFrkPurchase(millId)
+
+    const [partyPage, setPartyPage] = useState(1)
+    const [allParties, setAllParties] = useState<string[]>([])
+    const [hasMoreParties, setHasMoreParties] = useState(true)
+    const [isLoadingMoreParties, setIsLoadingMoreParties] = useState(false)
+
+    // Dynamic limit: 10 for first page, 5 for subsequent pages
+    const partyLimit = partyPage === 1 ? 10 : 5
+
+    // Fetch party list from API with pagination
+    const { data: partyListData } = usePartyList(
+        millId,
+        {
+            page: partyPage,
+            limit: partyLimit,
+            sortBy: 'partyName',
+            sortOrder: 'asc',
+        },
+        { enabled: open && !!millId }
+    )
+
+    // Extract party names from API response and accumulate
+    React.useEffect(() => {
+        if (partyListData?.parties) {
+            console.log(
+                'Party data received:',
+                partyListData.parties.length,
+                'parties on page',
+                partyPage
+            )
+            const newParties = partyListData.parties.map(
+                (party) => party.partyName
+            )
+            setAllParties((prev) => {
+                // Only add if not already in the list
+                const combined = [...prev, ...newParties]
+                return Array.from(new Set(combined))
+            })
+            // Check if there are more parties to load
+            setHasMoreParties(partyListData.parties.length === partyLimit)
+            setIsLoadingMoreParties(false)
+        }
+    }, [partyListData, partyLimit, partyPage])
+
+    // Reset accumulated data when dialog opens
+    useEffect(() => {
+        if (open) {
+            setAllParties([])
+            setPartyPage(1)
+            setHasMoreParties(true)
+            setIsLoadingMoreParties(false)
+        }
+    }, [open])
+
+    // Handle scroll for party list
+    const handlePartyScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const target = e.currentTarget
+        const bottom =
+            target.scrollHeight - target.scrollTop <= target.clientHeight + 5
+
+        if (bottom && hasMoreParties && !isLoadingMoreParties) {
+            console.log('Loading more parties... Current page:', partyPage)
+            setIsLoadingMoreParties(true)
+            setPartyPage((prev) => prev + 1)
+        }
+    }
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<FrkPurchase>({
+    const form = useForm<FrkPurchaseData>({
         resolver: zodResolver(frkPurchaseSchema),
         defaultValues: {
             date: format(new Date(), 'yyyy-MM-dd'),
@@ -53,31 +135,38 @@ export function FrkActionDialog({
             frkQty: undefined,
             frkRate: undefined,
             gst: undefined,
-        } as FrkPurchase,
+        } as FrkPurchaseData,
     })
 
     useEffect(() => {
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                partyName: '',
+                frkQty: undefined,
+                frkRate: undefined,
+                gst: undefined,
+            } as FrkPurchaseData)
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Purchase updated successfully'
-                    : 'Purchase added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update purchase'
-                : 'Failed to add purchase',
-        })
+    const onSubmit = async (data: FrkPurchaseData) => {
+        try {
+            if (isEditing) {
+                await updateFrkPurchase({
+                    purchaseId: currentRow?._id || '',
+                    data,
+                })
+            } else {
+                await createFrkPurchase(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            console.error('Error submitting form:', error)
+        }
     }
 
     return (
@@ -120,11 +209,11 @@ export function FrkActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
+                                                                    new Date(
+                                                                        field.value
+                                                                    ),
+                                                                    'MMM dd, yyyy'
+                                                                )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -138,17 +227,17 @@ export function FrkActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                      field.value
-                                                                  )
+                                                                    field.value
+                                                                )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -169,10 +258,45 @@ export function FrkActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
-                                                />
+                                                <Combobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    items={allParties}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder='Search party...'
+                                                        showClear
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxList
+                                                            onScroll={
+                                                                handlePartyScroll
+                                                            }
+                                                        >
+                                                            <ComboboxCollection>
+                                                                {(party) => (
+                                                                    <ComboboxItem
+                                                                        value={
+                                                                            party
+                                                                        }
+                                                                    >
+                                                                        {party}
+                                                                    </ComboboxItem>
+                                                                )}
+                                                            </ComboboxCollection>
+                                                            <ComboboxEmpty>
+                                                                No parties found
+                                                            </ComboboxEmpty>
+                                                            {isLoadingMoreParties && (
+                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                    Loading more...
+                                                                </div>
+                                                            )}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -185,7 +309,7 @@ export function FrkActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Quantity (Qtl)
+                                                FRK Quantity (Qtl)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -217,9 +341,7 @@ export function FrkActionDialog({
                                     name='frkRate'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Rate (per Qtl)
-                                            </FormLabel>
+                                            <FormLabel>FRK Rate (per Qtl)</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -284,11 +406,18 @@ export function FrkActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Purchase
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                        ? 'Update'
+                                        : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

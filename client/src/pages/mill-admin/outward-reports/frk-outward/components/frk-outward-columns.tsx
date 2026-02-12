@@ -42,7 +42,7 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
             const date = row.getValue('date')
             return (
                 <div className='ps-3 text-nowrap'>
-                    {format(new Date(date as string), 'MMM dd, yyyy')}
+                    {format(new Date(date as string), 'yyyy-MM-dd')}
                 </div>
             )
         },
@@ -131,7 +131,7 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
             <DataTableColumnHeader column={column} title='Net Weight' />
         ),
         cell: ({ row }) => (
-            <div className='text-right font-bold'>
+            <div className='text-right'>
                 {(row.getValue('netWeight') as number)?.toFixed(2)}
             </div>
         ),

@@ -1,9 +1,9 @@
 import { BrokerReportActionDialog } from './broker-report-action-dialog'
 import { BrokerReportDeleteDialog } from './broker-report-delete-dialog'
-import { brokerReport } from './broker-report-provider'
+import { useBrokerReport } from './broker-report-provider'
 
 export function BrokerReportDialogs() {
-    const { open, setOpen, currentRow } = brokerReport()
+    const { open, setOpen, currentRow } = useBrokerReport()
 
     return (
         <>

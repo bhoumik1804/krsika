@@ -24,7 +24,12 @@ export interface VehicleResponse {
     _id: string
     millId: string
     truckNo: string
-    createdBy: string
+    vehicleType?: string
+    transporterName?: string
+    driverName?: string
+    driverPhone?: string
+    capacity?: number
+    createdBy?: string
     createdAt: string
     updatedAt: string
 }

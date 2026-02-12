@@ -39,11 +39,11 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
     {
         accessorKey: 'fullName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Staff Name' />
+            <DataTableColumnHeader column={column} title='Full Name' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36 ps-3'>
-                {row.getValue('fullName') || '-'}
+                {row.getValue('fullName')}
             </LongText>
         ),
         meta: {
@@ -55,20 +55,27 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
         enableHiding: false,
     },
     {
+        accessorKey: 'post',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Post' />
+        ),
+        cell: ({ row }) => (
+            <div className='text-nowrap'>{row.getValue('post') || '-'}</div>
+        ),
+    },
+    {
         accessorKey: 'salary',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Salary' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                {row.getValue('salary') ||'-'}
-            </div>
+            <div className='text-left'>{row.getValue('salary')}</div>
         ),
     },
     {
         accessorKey: 'phoneNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Phone Number' />
+            <DataTableColumnHeader column={column} title='Phone' />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>

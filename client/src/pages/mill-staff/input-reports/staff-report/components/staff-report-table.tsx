@@ -7,6 +7,7 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -25,22 +26,33 @@ import { type StaffReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { staffReportColumns as columns } from './staff-report-columns'
 
+type Pagination = {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasPrevPage: boolean
+    hasNextPage: boolean
+    prevPage: number | null
+    nextPage: number | null
+}
+
 type DataTableProps = {
-    data: StaffReportData[] | any[]
+    data: StaffReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    totalRows?: number
     isLoading?: boolean
     isError?: boolean
+    pagination?: Pagination
 }
 
 export function StaffReportTable({
     data,
     search,
     navigate,
-    totalRows,
-    // isLoading,
-    // isError,
+    isLoading,
+    isError,
+    pagination: serverPagination,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -62,9 +74,16 @@ export function StaffReportTable({
             pageSizeKey: 'limit',
             defaultPage: 1,
             defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
         },
         globalFilter: { enabled: false },
-        columnFilters: [],
+        columnFilters: [
+            {
+                columnId: 'fullName',
+                searchKey: 'search',
+                type: 'string',
+            },
+        ],
     })
 
     // eslint-disable-next-line react-hooks/incompatible-library
@@ -84,27 +103,22 @@ export function StaffReportTable({
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        // DO NOT use getPaginationRowModel() - pagination is handled server-side
+        // Use server-side pagination info when available
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
+        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-        // Set manual pageCount for server-side pagination
-        pageCount:
-            totalRows !== undefined
-                ? Math.ceil(totalRows / (pagination.pageSize || 10))
-                : undefined,
-        manualPagination: true,
     })
 
     useEffect(() => {
-        if (totalRows !== undefined) {
-            ensurePageInRange(
-                Math.ceil(totalRows / (pagination.pageSize || 10))
-            )
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
         }
-    }, [totalRows, pagination.pageSize, ensurePageInRange])
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -115,9 +129,8 @@ export function StaffReportTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
-                searchKey='partyName'
-                filters={[]}
+                searchPlaceholder='Search staff...'
+                searchKey='fullName'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>
@@ -154,7 +167,25 @@ export function StaffReportTable({
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className='h-24 text-center'
+                                >
+                                    Loading...
+                                </TableCell>
+                            </TableRow>
+                        ) : isError ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className='h-24 text-center text-destructive'
+                                >
+                                    Error loading data
+                                </TableCell>
+                            </TableRow>
+                        ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}

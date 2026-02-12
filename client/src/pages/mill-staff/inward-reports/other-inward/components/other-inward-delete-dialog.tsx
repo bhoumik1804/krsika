@@ -1,4 +1,3 @@
-import { toast } from 'sonner'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -9,6 +8,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteOtherInward } from '../data/hooks'
 import { useOtherInward } from './other-inward-provider'
 
 type OtherInwardDeleteDialogProps = {
@@ -20,11 +20,18 @@ export function OtherInwardDeleteDialog({
     open,
     onOpenChange,
 }: OtherInwardDeleteDialogProps) {
-    const { currentRow } = useOtherInward()
+    const { currentRow, millId } = useOtherInward()
+    const { mutateAsync: deleteOtherInward, isPending } =
+        useDeleteOtherInward(millId)
 
-    const handleDelete = () => {
-        toast.success(`Record for ${currentRow?.itemName} deleted successfully`)
-        onOpenChange(false)
+    const handleDelete = async () => {
+        if (!currentRow?._id) return
+        try {
+            await deleteOtherInward(currentRow._id)
+            onOpenChange(false)
+        } catch (error) {
+            console.error('Delete error:', error)
+        }
     }
 
     return (
@@ -44,12 +51,15 @@ export function OtherInwardDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         className='bg-red-500 hover:bg-red-600'
+                        disabled={isPending}
                     >
-                        Delete
+                        {isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

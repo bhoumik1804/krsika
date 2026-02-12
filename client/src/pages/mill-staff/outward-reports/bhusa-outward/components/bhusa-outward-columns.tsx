@@ -1,5 +1,6 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
-// '
+import '@/constants'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -43,7 +44,9 @@ export const bhusaOutwardColumns: ColumnDef<BhusaOutward>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -61,11 +64,7 @@ export const bhusaOutwardColumns: ColumnDef<BhusaOutward>[] = [
                 title='Bhusa Sale Deal Number'
             />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm'>
-                {row.getValue('bhusaSaleDealNumber')}
-            </div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('bhusaSaleDealNumber')}</div>,
     },
     {
         accessorKey: 'partyName',
@@ -114,20 +113,14 @@ export const bhusaOutwardColumns: ColumnDef<BhusaOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Truck No' />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm text-nowrap'>
-                {row.getValue('truckNo')}
-            </div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('truckNo')}</div>,
     },
     {
         accessorKey: 'truckRst',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='RST No' />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm'>{row.getValue('truckRst')}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('truckRst')}</div>,
     },
     {
         accessorKey: 'truckWeight',

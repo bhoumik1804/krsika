@@ -1,35 +1,84 @@
 import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
-import { type NakkhiSales } from '../data/schema'
+import type {
+    NakkhiSalesListResponse,
+    NakkhiSalesQueryParams,
+    NakkhiSalesResponse,
+} from '../data/types'
 
 type NakkhiSalesDialogType = 'add' | 'edit' | 'delete'
 
 type NakkhiSalesContextType = {
     open: NakkhiSalesDialogType | null
     setOpen: (str: NakkhiSalesDialogType | null) => void
-    currentRow: NakkhiSales | null
-    setCurrentRow: React.Dispatch<React.SetStateAction<NakkhiSales | null>>
+    currentRow: NakkhiSalesResponse | null
+    setCurrentRow: React.Dispatch<
+        React.SetStateAction<NakkhiSalesResponse | null>
+    >
+    millId: string
+    apiResponse: NakkhiSalesListResponse | undefined
+    queryParams: NakkhiSalesQueryParams
+    setQueryParams: React.Dispatch<React.SetStateAction<NakkhiSalesQueryParams>>
+    isLoading: boolean
+    isError: boolean
 }
 
-const NakkhiSalesContext = React.createContext<NakkhiSalesContextType | null>(null)
+const NakkhiSalesContext = React.createContext<NakkhiSalesContextType | null>(
+    null
+)
 
-export function NakkhiSalesProvider({ children }: { children: React.ReactNode }) {
+type NakkhiSalesProviderProps = {
+    children: React.ReactNode
+    millId: string
+    apiResponse?: NakkhiSalesListResponse
+    isLoading?: boolean
+    isError?: boolean
+}
+
+export function NakkhiSalesProvider({
+    children,
+    millId,
+    apiResponse,
+    isLoading = false,
+    isError = false,
+}: NakkhiSalesProviderProps) {
     const [open, setOpen] = useDialogState<NakkhiSalesDialogType>(null)
-    const [currentRow, setCurrentRow] = useState<NakkhiSales | null>(null)
+    const [currentRow, setCurrentRow] = useState<NakkhiSalesResponse | null>(
+        null
+    )
+    const [queryParams, setQueryParams] = useState<NakkhiSalesQueryParams>({
+        page: 1,
+        limit: 10,
+    })
 
     return (
-        <NakkhiSalesContext value={ { open, setOpen, currentRow, setCurrentRow } }>
+        <NakkhiSalesContext
+            value={{
+                open,
+                setOpen,
+                currentRow,
+                setCurrentRow,
+                millId,
+                apiResponse,
+                queryParams,
+                setQueryParams,
+                isLoading,
+                isError,
+            }}
+        >
             {children}
         </NakkhiSalesContext>
     )
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const nakkhiSales = () => {
+export const useNakkhiSales = () => {
     const context = React.useContext(NakkhiSalesContext)
 
     if (!context) {
-        throw new Error('nakkhiSales has to be used within <NakkhiSalesContext>')
+        throw new Error(
+            'useNakkhiSales has to be used within <NakkhiSalesProvider>'
+        )
     }
 
     return context

@@ -111,18 +111,3 @@ export const bulkDeleteVehicle = async (
         data: { ids },
     })
 }
-
-/**
- * Export vehicles to CSV/Excel
- */
-export const exportVehicle = async (
-    millId: string,
-    params?: VehicleQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(`${VEHICLE_ENDPOINT(millId)}/export`, {
-        params: { ...params, format },
-        responseType: 'blob',
-    })
-    return response.data
-}

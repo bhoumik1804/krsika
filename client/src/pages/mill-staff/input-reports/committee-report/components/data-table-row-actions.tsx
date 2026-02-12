@@ -11,14 +11,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type CommitteeReportData } from '../data/schema'
-import { committeeReport } from './committee-report-provider'
+import { useCommitteeReport } from './committee-report-provider'
 
 type DataTableRowActionsProps = {
     row: Row<CommitteeReportData>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = committeeReport()
+    const { setOpen, setCurrentRow } = useCommitteeReport()
     return (
         <>
             <DropdownMenu modal={false}>

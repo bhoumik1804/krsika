@@ -5,20 +5,37 @@ import { type RiceInward } from '../data/schema'
 type RiceInwardDialogType = 'add' | 'edit' | 'delete'
 
 type RiceInwardContextType = {
+    millId: string
     open: RiceInwardDialogType | null
     setOpen: (str: RiceInwardDialogType | null) => void
     currentRow: RiceInward | null
     setCurrentRow: React.Dispatch<React.SetStateAction<RiceInward | null>>
 }
 
-const RiceInwardContext = React.createContext<RiceInwardContextType | null>(null)
+const RiceInwardContext = React.createContext<RiceInwardContextType | null>(
+    null
+)
 
-export function RiceInwardProvider({ children }: { children: React.ReactNode }) {
+export function RiceInwardProvider({
+    millId,
+    children,
+}: {
+    millId: string
+    children: React.ReactNode
+}) {
     const [open, setOpen] = useDialogState<RiceInwardDialogType>(null)
     const [currentRow, setCurrentRow] = useState<RiceInward | null>(null)
 
     return (
-        <RiceInwardContext value={ { open, setOpen, currentRow, setCurrentRow } }>
+        <RiceInwardContext
+            value={{
+                millId,
+                open,
+                setOpen,
+                currentRow,
+                setCurrentRow,
+            }}
+        >
             {children}
         </RiceInwardContext>
     )

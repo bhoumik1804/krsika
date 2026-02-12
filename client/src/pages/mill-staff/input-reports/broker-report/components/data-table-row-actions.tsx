@@ -11,14 +11,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type BrokerReportData } from '../data/schema'
-import { brokerReport } from './broker-report-provider'
+import { useBrokerReport } from './broker-report-provider'
 
 type DataTableRowActionsProps = {
     row: Row<BrokerReportData>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = brokerReport()
+    const { setOpen, setCurrentRow } = useBrokerReport()
     return (
         <>
             <DropdownMenu modal={false}>

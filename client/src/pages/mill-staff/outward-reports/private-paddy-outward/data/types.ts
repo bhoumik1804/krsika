@@ -1,82 +1,7 @@
-/**
- * Private Paddy Outward Types
- * TypeScript type definitions for Private Paddy Outward module
- */
-
-// ==========================================
-// API Request Types
-// ==========================================
-
-export interface CreatePrivatePaddyOutwardRequest {
-    date: string
-    paddySaleDealNumber?: string
-    partyName?: string
-    brokerName?: string
-    paddyType?: string
-    doQty?: number
-    gunnyNew?: number
-    gunnyOld?: number
-    gunnyPlastic?: number
-    juteWeight?: number
-    plasticWeight?: number
-    truckNumber?: string
-    rstNumber?: string
-    truckWeight?: number
-    gunnyWeight?: number
-    netWeight?: number
-}
-
-export interface UpdatePrivatePaddyOutwardRequest {
-    id: string
-    date?: string
-    paddySaleDealNumber?: string
-    partyName?: string
-    brokerName?: string
-    paddyType?: string
-    doQty?: number
-    gunnyNew?: number
-    gunnyOld?: number
-    gunnyPlastic?: number
-    juteWeight?: number
-    plasticWeight?: number
-    truckNumber?: string
-    rstNumber?: string
-    truckWeight?: number
-    gunnyWeight?: number
-    netWeight?: number
-}
-
-// ==========================================
-// API Response Types
-// ==========================================
-
-export interface PrivatePaddyOutwardResponse {
-    _id: string
-    millId: string
-    date: string
-    paddySaleDealNumber?: string
-    partyName?: string
-    brokerName?: string
-    paddyType?: string
-    doQty?: number
-    gunnyNew?: number
-    gunnyOld?: number
-    gunnyPlastic?: number
-    juteWeight?: number
-    plasticWeight?: number
-    truckNumber?: string
-    rstNumber?: string
-    truckWeight?: number
-    gunnyWeight?: number
-    netWeight?: number
-    createdBy: string
-    updatedBy?: string
-    createdAt: string
-    updatedAt: string
-}
+import type { PrivatePaddyOutward } from './schema'
 
 export interface PrivatePaddyOutwardListResponse {
-    data: PrivatePaddyOutwardResponse[]
+    entries: PrivatePaddyOutward[]
     pagination: {
         page: number
         limit: number
@@ -91,7 +16,7 @@ export interface PrivatePaddyOutwardListResponse {
 
 export interface PrivatePaddyOutwardSummaryResponse {
     totalEntries: number
-    totalDoQty: number
+    totalPaddyQty: number
     totalGunnyNew: number
     totalGunnyOld: number
     totalGunnyPlastic: number
@@ -102,53 +27,31 @@ export interface PrivatePaddyOutwardSummaryResponse {
     totalNetWeight: number
 }
 
-// ==========================================
-// Query Parameters
-// ==========================================
-
 export interface PrivatePaddyOutwardQueryParams {
     page?: number
     limit?: number
     search?: string
+    paddyType?: string
     partyName?: string
     brokerName?: string
-    paddyType?: string
-    paddySaleDealNumber?: string
     startDate?: string
     endDate?: string
-    sortBy?: string
+    sortBy?:
+        | 'date'
+        | 'partyName'
+        | 'brokerName'
+        | 'truckNumber'
+        | 'paddyType'
+        | 'netWeight'
+        | 'createdAt'
     sortOrder?: 'asc' | 'desc'
 }
 
-// ==========================================
-// Form Types
-// ==========================================
+export type CreatePrivatePaddyOutwardRequest = Omit<
+    PrivatePaddyOutward,
+    '_id' | 'createdAt' | 'updatedAt'
+>
 
-export interface PrivatePaddyOutwardFormData {
-    date: string
-    paddySaleDealNumber?: string
-    partyName?: string
-    brokerName?: string
-    paddyType?: string
-    doQty?: number
-    gunnyNew?: number
-    gunnyOld?: number
-    gunnyPlastic?: number
-    juteWeight?: number
-    plasticWeight?: number
-    truckNumber?: string
-    rstNumber?: string
-    truckWeight?: number
-    gunnyWeight?: number
-    netWeight?: number
-}
-
-// ==========================================
-// Dialog State Types
-// ==========================================
-
-export interface PrivatePaddyOutwardDialogState {
-    open: 'create' | 'edit' | 'delete' | 'bulk-delete' | null
-    currentRow: PrivatePaddyOutwardResponse | null
-    selectedRows: PrivatePaddyOutwardResponse[]
-}
+export type UpdatePrivatePaddyOutwardRequest = Partial<
+    Omit<PrivatePaddyOutward, '_id' | 'createdAt' | 'updatedAt'>
+>

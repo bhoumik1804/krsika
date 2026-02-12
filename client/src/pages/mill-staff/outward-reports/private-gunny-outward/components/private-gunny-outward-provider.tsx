@@ -8,6 +8,7 @@ interface PrivateGunnyOutwardContextType {
     setOpen: (str: PrivateGunnyOutwardDialogType | null) => void
     currentRow: PrivateGunnyOutward | null
     setCurrentRow: (row: PrivateGunnyOutward | null) => void
+    millId: string
 }
 
 const PrivateGunnyOutwardContext =
@@ -15,10 +16,12 @@ const PrivateGunnyOutwardContext =
 
 interface PrivateGunnyOutwardProviderProps {
     children: ReactNode
+    millId: string
 }
 
 export function PrivateGunnyOutwardProvider({
     children,
+    millId,
 }: PrivateGunnyOutwardProviderProps) {
     const [open, setOpen] = useState<PrivateGunnyOutwardDialogType | null>(null)
     const [currentRow, setCurrentRow] = useState<PrivateGunnyOutward | null>(
@@ -27,18 +30,18 @@ export function PrivateGunnyOutwardProvider({
 
     return (
         <PrivateGunnyOutwardContext.Provider
-            value={{ open, setOpen, currentRow, setCurrentRow }}
+            value={{ open, setOpen, currentRow, setCurrentRow, millId }}
         >
             {children}
         </PrivateGunnyOutwardContext.Provider>
     )
 }
 
-export const usePrivateGunnyOutwardContext = () => {
+export const usePrivateGunnyOutward = () => {
     const context = useContext(PrivateGunnyOutwardContext)
     if (!context) {
         throw new Error(
-            'usePrivateGunnyOutwardContext must be used within a PrivateGunnyOutwardProvider'
+            'usePrivateGunnyOutward must be used within a PrivateGunnyOutwardProvider'
         )
     }
     return context

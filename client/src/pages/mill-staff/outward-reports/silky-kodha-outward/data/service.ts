@@ -1,130 +1,80 @@
-/**
- * Silky Kodha Outward Service
- * API client for Silky Kodha Outward CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
-import apiClient, { type ApiResponse } from '@/lib/api-client'
+import apiClient from '@/lib/api-client'
 import type {
-    SilkyKodhaOutwardResponse,
-    SilkyKodhaOutwardListResponse,
-    SilkyKodhaOutwardSummaryResponse,
     CreateSilkyKodhaOutwardRequest,
-    UpdateSilkyKodhaOutwardRequest,
+    SilkyKodhaOutwardListResponse,
     SilkyKodhaOutwardQueryParams,
+    SilkyKodhaOutwardSummaryResponse,
+    UpdateSilkyKodhaOutwardRequest,
 } from './types'
 
-// ==========================================
-// API Endpoints
-// ==========================================
+const BASE_PATH = '/mills'
 
-const SILKY_KODHA_OUTWARD_ENDPOINT = (millId: string) =>
-    `/mills/${millId}/silky-kodha-outward`
-
-// ==========================================
-// Silky Kodha Outward API Functions
-// ==========================================
-
-/**
- * Fetch all silky kodha outward entries with pagination and filters
- */
-export const fetchSilkyKodhaOutwardList = async (
+export async function fetchSilkyKodhaOutwardList(
     millId: string,
-    params?: SilkyKodhaOutwardQueryParams
-): Promise<SilkyKodhaOutwardListResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<SilkyKodhaOutwardListResponse>
-    >(SILKY_KODHA_OUTWARD_ENDPOINT(millId), { params })
+    params: SilkyKodhaOutwardQueryParams = {}
+): Promise<SilkyKodhaOutwardListResponse> {
+    const response = await apiClient.get(
+        `${BASE_PATH}/${millId}/silky-kodha-outward`,
+        { params }
+    )
     return response.data.data
 }
 
-/**
- * Fetch a single silky kodha outward entry by ID
- */
-export const fetchSilkyKodhaOutwardById = async (
+export async function fetchSilkyKodhaOutwardSummary(
     millId: string,
-    id: string
-): Promise<SilkyKodhaOutwardResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<SilkyKodhaOutwardResponse>
-    >(`${SILKY_KODHA_OUTWARD_ENDPOINT(millId)}/${id}`)
+    params: Pick<SilkyKodhaOutwardQueryParams, 'startDate' | 'endDate'> = {}
+): Promise<SilkyKodhaOutwardSummaryResponse> {
+    const response = await apiClient.get(
+        `${BASE_PATH}/${millId}/silky-kodha-outward/summary`,
+        { params }
+    )
     return response.data.data
 }
 
-/**
- * Fetch silky kodha outward summary/statistics
- */
-export const fetchSilkyKodhaOutwardSummary = async (
-    millId: string,
-    params?: Pick<SilkyKodhaOutwardQueryParams, 'startDate' | 'endDate'>
-): Promise<SilkyKodhaOutwardSummaryResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<SilkyKodhaOutwardSummaryResponse>
-    >(`${SILKY_KODHA_OUTWARD_ENDPOINT(millId)}/summary`, { params })
-    return response.data.data
-}
-
-/**
- * Create a new silky kodha outward entry
- */
-export const createSilkyKodhaOutward = async (
+export async function createSilkyKodhaOutward(
     millId: string,
     data: CreateSilkyKodhaOutwardRequest
-): Promise<SilkyKodhaOutwardResponse> => {
-    const response = await apiClient.post<
-        ApiResponse<SilkyKodhaOutwardResponse>
-    >(SILKY_KODHA_OUTWARD_ENDPOINT(millId), data)
+) {
+    const response = await apiClient.post(
+        `${BASE_PATH}/${millId}/silky-kodha-outward`,
+        data
+    )
     return response.data.data
 }
 
-/**
- * Update an existing silky kodha outward entry
- */
-export const updateSilkyKodhaOutward = async (
-    millId: string,
-    { id, ...data }: UpdateSilkyKodhaOutwardRequest
-): Promise<SilkyKodhaOutwardResponse> => {
-    const response = await apiClient.put<
-        ApiResponse<SilkyKodhaOutwardResponse>
-    >(`${SILKY_KODHA_OUTWARD_ENDPOINT(millId)}/${id}`, data)
+export async function getSilkyKodhaOutwardById(millId: string, id: string) {
+    const response = await apiClient.get(
+        `${BASE_PATH}/${millId}/silky-kodha-outward/${id}`
+    )
     return response.data.data
 }
 
-/**
- * Delete a silky kodha outward entry
- */
-export const deleteSilkyKodhaOutward = async (
+export async function updateSilkyKodhaOutward(
     millId: string,
-    id: string
-): Promise<void> => {
-    await apiClient.delete(`${SILKY_KODHA_OUTWARD_ENDPOINT(millId)}/${id}`)
+    id: string,
+    data: UpdateSilkyKodhaOutwardRequest
+) {
+    const response = await apiClient.put(
+        `${BASE_PATH}/${millId}/silky-kodha-outward/${id}`,
+        data
+    )
+    return response.data.data
 }
 
-/**
- * Bulk delete silky kodha outward entries
- */
-export const bulkDeleteSilkyKodhaOutward = async (
+export async function deleteSilkyKodhaOutward(millId: string, id: string) {
+    const response = await apiClient.delete(
+        `${BASE_PATH}/${millId}/silky-kodha-outward/${id}`
+    )
+    return response.data.data
+}
+
+export async function bulkDeleteSilkyKodhaOutward(
     millId: string,
     ids: string[]
-): Promise<void> => {
-    await apiClient.delete(`${SILKY_KODHA_OUTWARD_ENDPOINT(millId)}/bulk`, {
-        data: { ids },
-    })
-}
-
-/**
- * Export silky kodha outward entries to CSV/Excel
- */
-export const exportSilkyKodhaOutward = async (
-    millId: string,
-    params?: SilkyKodhaOutwardQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${SILKY_KODHA_OUTWARD_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
+) {
+    const response = await apiClient.delete(
+        `${BASE_PATH}/${millId}/silky-kodha-outward/bulk`,
+        { data: { ids } }
     )
-    return response.data
+    return response.data.data
 }

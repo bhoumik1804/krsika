@@ -11,7 +11,7 @@ import { StaffReportDialogs } from './components/staff-report-dialogs'
 import { StaffReportPrimaryButtons } from './components/staff-report-primary-buttons'
 import { StaffReportProvider } from './components/staff-report-provider'
 import { StaffReportTable } from './components/staff-report-table'
-import { useStaffReportList } from './data/hooks'
+import { useStaffList } from './data/hooks'
 
 export function StaffReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -35,16 +35,21 @@ export function StaffReport() {
         data: response,
         isLoading,
         isError,
-    } = useStaffReportList(millId || '', queryParams, { enabled: !!millId })
+    } = useStaffList(millId || '', queryParams, { enabled: !!millId })
 
-    const staffReportData = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
+    const staffData = useMemo(() => {
+        const list = response?.staff || []
+        return Array.isArray(list)
+            ? list.map((staff) => ({
+                  _id: staff._id,
+                  fullName: staff.fullName || '',
+                  post: staff.post,
+                  salary: staff.salary,
+                  phoneNumber: staff.phoneNumber,
+                  email: staff.email,
+                  address: staff.address,
+              }))
+            : []
     }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
@@ -76,21 +81,21 @@ export function StaffReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Staff Report Report
+                            Staff Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage staff report transactions and records
+                            Manage staff records and information
                         </p>
                     </div>
                     <StaffReportPrimaryButtons />
                 </div>
                 <StaffReportTable
-                    data={staffReportData}
+                    data={staffData}
                     search={search}
                     navigate={navigate}
                     isLoading={isLoading}
                     isError={isError}
-                    totalRows={response?.pagination?.total}
+                    pagination={response?.pagination}
                 />
             </Main>
 

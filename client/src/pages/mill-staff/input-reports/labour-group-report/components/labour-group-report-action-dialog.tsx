@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useParams } from 'react-router'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -19,12 +21,11 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useCreateLabourGroup, useUpdateLabourGroup } from '../data/hooks'
 import {
     labourGroupReportSchema,
     type LabourGroupReportData,
 } from '../data/schema'
-import { useCreateLabourGroup, useUpdateLabourGroup } from '../data/hooks'
-import { useUser } from '@/pages/landing/hooks/use-auth'
 
 type LabourGroupReportActionDialogProps = {
     open: boolean
@@ -37,12 +38,11 @@ export function LabourGroupReportActionDialog({
     onOpenChange,
     currentRow,
 }: LabourGroupReportActionDialogProps) {
-    const { user } = useUser()
-    const millId = user?.millId as any
-    const createMutation = useCreateLabourGroup(millId)
-    const updateMutation = useUpdateLabourGroup(millId)
+    const { millId } = useParams<{ millId: string }>()
+    const isEditing = !!currentRow
+    const createMutation = useCreateLabourGroup(millId || '')
+    const updateMutation = useUpdateLabourGroup(millId || '')
     const isLoading = createMutation.isPending || updateMutation.isPending
-    const isEditing = !!currentRow?._id
 
     const form = useForm<LabourGroupReportData>({
         resolver: zodResolver(labourGroupReportSchema),
@@ -55,29 +55,57 @@ export function LabourGroupReportActionDialog({
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                labourTeamName: '',
+            })
         }
     }, [currentRow, form])
 
     const onSubmit = async (data: LabourGroupReportData) => {
         try {
-            if (isEditing && currentRow?._id) {
+            if (!millId) {
+                toast.error('Mill ID not found')
+                return
+            }
+
+            // Transform labourTeamName to groupName for API
+            const payload = {
+                groupName: data.labourTeamName,
+            }
+
+            if (currentRow?._id) {
                 await updateMutation.mutateAsync({
                     id: currentRow._id,
-                    ...data,
+                    ...payload,
                 })
             } else {
-                await createMutation.mutateAsync(data)
+                await createMutation.mutateAsync(payload)
             }
             onOpenChange(false)
-            form.reset()
-        } catch (error) {
+            form.reset({
+                labourTeamName: '',
+            })
+        } catch (error: any) {
+            const errorMessage =
+                error?.response?.data?.message ||
+                error?.message ||
+                'An error occurred'
+            toast.error(errorMessage)
             console.error('Error submitting form:', error)
         }
     }
 
+    const handleDialogClose = (isOpen: boolean) => {
+        if (!isOpen) {
+            form.reset({
+                labourTeamName: '',
+            })
+        }
+        onOpenChange(isOpen)
+    }
+
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={handleDialogClose}>
             <DialogContent className='max-w-md'>
                 <DialogHeader>
                     <DialogTitle>
@@ -102,6 +130,7 @@ export function LabourGroupReportActionDialog({
                                     <FormControl>
                                         <Input
                                             placeholder='Enter labour team name'
+                                            disabled={isLoading}
                                             {...field}
                                         />
                                     </FormControl>
@@ -113,19 +142,17 @@ export function LabourGroupReportActionDialog({
                             <Button
                                 type='button'
                                 variant='outline'
-                                onClick={() => onOpenChange(false)}
+                                onClick={() => handleDialogClose(false)}
                                 disabled={isLoading}
                             >
                                 Cancel
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
-                                    ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                    ? 'Loading...'
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'} Labour Group
+                                      ? 'Update Labour Group'
+                                      : 'Add Labour Group'}
                             </Button>
                         </DialogFooter>
                     </form>

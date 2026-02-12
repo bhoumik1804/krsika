@@ -53,18 +53,20 @@ export const GovtGunnyOutwardColumns: ColumnDef<GovtGunnyOutward>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'gunnyDm',
+        accessorKey: 'gunnyDmNumber',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Gunny DM No.' />
         ),
         cell: ({ row }) => (
-            <div className='font-mono text-sm'>{row.getValue('gunnyDm')}</div>
+            <div className='font-mono text-sm'>
+                {row.getValue('gunnyDmNumber')}
+            </div>
         ),
     },
     {
         accessorKey: 'samitiSangrahan',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Organization' />
+            <DataTableColumnHeader column={column} title='Samiti Sangrahan' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-40'>

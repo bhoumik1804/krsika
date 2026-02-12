@@ -1,13 +1,5 @@
-/**
- * Labour Group Report Types
- * TypeScript type definitions for Labour Group Report module
- */
-
-// ==========================================
 // API Request Types
-// ==========================================
-
-export interface CreateLabourGroupRequest {
+export type CreateLabourGroupRequest = {
     groupName: string
     leaderName?: string
     phone?: string
@@ -15,9 +7,8 @@ export interface CreateLabourGroupRequest {
     workType?: string
 }
 
-export interface UpdateLabourGroupRequest {
-    id?: string
-    _id?: string
+export type UpdateLabourGroupRequest = {
+    id: string
     groupName?: string
     leaderName?: string
     phone?: string
@@ -25,11 +16,8 @@ export interface UpdateLabourGroupRequest {
     workType?: string
 }
 
-// ==========================================
 // API Response Types
-// ==========================================
-
-export interface LabourGroupResponse {
+export type LabourGroupResponse = {
     _id: string
     millId: string
     groupName: string
@@ -37,13 +25,12 @@ export interface LabourGroupResponse {
     phone?: string
     memberCount?: number
     workType?: string
-    createdBy: string
     createdAt: string
     updatedAt: string
 }
 
-export interface LabourGroupListResponse {
-    data: LabourGroupResponse[]
+export type LabourGroupListResponse = {
+    labourGroups?: LabourGroupResponse[]
     pagination: {
         page: number
         limit: number
@@ -56,19 +43,14 @@ export interface LabourGroupListResponse {
     }
 }
 
-export interface LabourGroupSummaryResponse {
-    totalGroups: number
-    totalMembers: number
-}
-
-// ==========================================
-// Query Parameter Types
-// ==========================================
-
-export interface LabourGroupQueryParams {
+export type LabourGroupQueryParams = {
     page?: number
     limit?: number
     search?: string
     sortBy?: string
     sortOrder?: 'asc' | 'desc'
+}
+
+export type LabourGroupSummaryResponse = {
+    totalLabourGroups: number
 }

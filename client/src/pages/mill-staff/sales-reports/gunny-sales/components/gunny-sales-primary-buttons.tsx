@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { gunnySales } from './gunny-sales-provider'
+import { useGunnySales } from './gunny-sales-provider'
 
 export function GunnySalesPrimaryButtons() {
-    const { setOpen } = gunnySales()
+    const { setOpen } = useGunnySales()
 
     return (
         <Button onClick={() => setOpen('add')}>

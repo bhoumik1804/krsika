@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useGovtGunnyOutwardContext } from './govt-gunny-outward-provider'
+import { useGovtGunnyOutward } from './govt-gunny-outward-provider'
 
 export function GovtGunnyOutwardPrimaryButtons() {
-    const { setOpen } = useGovtGunnyOutwardContext()
+    const { setOpen } = useGovtGunnyOutward()
     return (
         <div className='flex gap-2'>
             <Button onClick={() => setOpen('add')} className='space-x-1'>

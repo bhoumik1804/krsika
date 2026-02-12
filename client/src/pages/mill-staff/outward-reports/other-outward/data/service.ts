@@ -1,133 +1,77 @@
-/**
- * Other Outward Service
- * API client for Other Outward CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
-import apiClient, { type ApiResponse } from '@/lib/api-client'
+import apiClient from '@/lib/api-client'
 import type {
-    OtherOutwardResponse,
-    OtherOutwardListResponse,
-    OtherOutwardSummaryResponse,
     CreateOtherOutwardRequest,
-    UpdateOtherOutwardRequest,
+    OtherOutwardListResponse,
     OtherOutwardQueryParams,
+    OtherOutwardSummaryResponse,
+    UpdateOtherOutwardRequest,
 } from './types'
 
-// ==========================================
-// API Endpoints
-// ==========================================
+const BASE_PATH = '/mills'
 
-const OTHER_OUTWARD_ENDPOINT = (millId: string) =>
-    `/mills/${millId}/other-outward`
-
-// ==========================================
-// Other Outward API Functions
-// ==========================================
-
-/**
- * Fetch all other outward entries with pagination and filters
- */
-export const fetchOtherOutwardList = async (
+export async function fetchOtherOutwardList(
     millId: string,
-    params?: OtherOutwardQueryParams
-): Promise<OtherOutwardListResponse> => {
-    const response = await apiClient.get<ApiResponse<OtherOutwardListResponse>>(
-        OTHER_OUTWARD_ENDPOINT(millId),
+    params: OtherOutwardQueryParams = {}
+): Promise<OtherOutwardListResponse> {
+    const response = await apiClient.get(
+        `${BASE_PATH}/${millId}/other-outward`,
         { params }
     )
     return response.data.data
 }
 
-/**
- * Fetch a single other outward entry by ID
- */
-export const fetchOtherOutwardById = async (
+export async function fetchOtherOutwardSummary(
     millId: string,
-    id: string
-): Promise<OtherOutwardResponse> => {
-    const response = await apiClient.get<ApiResponse<OtherOutwardResponse>>(
-        `${OTHER_OUTWARD_ENDPOINT(millId)}/${id}`
+    params: Pick<OtherOutwardQueryParams, 'startDate' | 'endDate'> = {}
+): Promise<OtherOutwardSummaryResponse> {
+    const response = await apiClient.get(
+        `${BASE_PATH}/${millId}/other-outward/summary`,
+        { params }
     )
     return response.data.data
 }
 
-/**
- * Fetch other outward summary/statistics
- */
-export const fetchOtherOutwardSummary = async (
-    millId: string,
-    params?: Pick<OtherOutwardQueryParams, 'startDate' | 'endDate'>
-): Promise<OtherOutwardSummaryResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<OtherOutwardSummaryResponse>
-    >(`${OTHER_OUTWARD_ENDPOINT(millId)}/summary`, { params })
-    return response.data.data
-}
-
-/**
- * Create a new other outward entry
- */
-export const createOtherOutward = async (
+export async function createOtherOutward(
     millId: string,
     data: CreateOtherOutwardRequest
-): Promise<OtherOutwardResponse> => {
-    const response = await apiClient.post<ApiResponse<OtherOutwardResponse>>(
-        OTHER_OUTWARD_ENDPOINT(millId),
+) {
+    const response = await apiClient.post(
+        `${BASE_PATH}/${millId}/other-outward`,
         data
     )
     return response.data.data
 }
 
-/**
- * Update an existing other outward entry
- */
-export const updateOtherOutward = async (
-    millId: string,
-    { id, ...data }: UpdateOtherOutwardRequest
-): Promise<OtherOutwardResponse> => {
-    const response = await apiClient.put<ApiResponse<OtherOutwardResponse>>(
-        `${OTHER_OUTWARD_ENDPOINT(millId)}/${id}`,
-        data
-    )
-    return response.data.data
-}
-
-/**
- * Delete an other outward entry
- */
-export const deleteOtherOutward = async (
-    millId: string,
-    id: string
-): Promise<void> => {
-    await apiClient.delete(`${OTHER_OUTWARD_ENDPOINT(millId)}/${id}`)
-}
-
-/**
- * Bulk delete other outward entries
- */
-export const bulkDeleteOtherOutward = async (
-    millId: string,
-    ids: string[]
-): Promise<void> => {
-    await apiClient.delete(`${OTHER_OUTWARD_ENDPOINT(millId)}/bulk`, {
-        data: { ids },
-    })
-}
-
-/**
- * Export other outward entries to CSV/Excel
- */
-export const exportOtherOutward = async (
-    millId: string,
-    params?: OtherOutwardQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
+export async function getOtherOutwardById(millId: string, id: string) {
     const response = await apiClient.get(
-        `${OTHER_OUTWARD_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
+        `${BASE_PATH}/${millId}/other-outward/${id}`
     )
-    return response.data
+    return response.data.data
+}
+
+export async function updateOtherOutward(
+    millId: string,
+    id: string,
+    data: UpdateOtherOutwardRequest
+) {
+    const response = await apiClient.put(
+        `${BASE_PATH}/${millId}/other-outward/${id}`,
+        data
+    )
+    return response.data.data
+}
+
+export async function deleteOtherOutward(millId: string, id: string) {
+    const response = await apiClient.delete(
+        `${BASE_PATH}/${millId}/other-outward/${id}`
+    )
+    return response.data.data
+}
+
+export async function bulkDeleteOtherOutward(millId: string, ids: string[]) {
+    const response = await apiClient.delete(
+        `${BASE_PATH}/${millId}/other-outward/bulk`,
+        { data: { ids } }
+    )
+    return response.data.data
 }

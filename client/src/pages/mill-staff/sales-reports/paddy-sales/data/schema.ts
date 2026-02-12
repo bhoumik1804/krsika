@@ -19,8 +19,7 @@ export const paddySalesSchema = z.object({
     discountPercent: z.number().optional(),
     brokerage: z.number().optional(),
     // Gunny fields
-    gunnyType: z.string().optional(),
-    //gunnyType == सहित (भाव में) then show below rates
+    gunnyOption: z.string().optional(),
     newGunnyRate: z.number().optional(),
     oldGunnyRate: z.number().optional(),
     plasticGunnyRate: z.number().optional(),

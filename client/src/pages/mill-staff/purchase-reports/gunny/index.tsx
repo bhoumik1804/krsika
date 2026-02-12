@@ -1,52 +1,53 @@
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { useGunnyPurchaseList } from '../../purchases/gunny-purchase/data/hooks'
 import { GunnyDialogs } from './components/gunny-dialogs'
 import { GunnyPrimaryButtons } from './components/gunny-primary-buttons'
-import { GunnyProvider } from './components/gunny-provider'
+import { GunnyProvider, useGunny } from './components/gunny-provider'
 import { GunnyTable } from './components/gunny-table'
+import { useGunnyPurchaseList } from './data/hooks'
+import type { GunnyPurchaseQueryParams } from './data/types'
 
 export function GunnyPurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+
+    // Extract query params from URL
+    const queryParams = useMemo((): GunnyPurchaseQueryParams => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
+
+    // Call GET API here
+    const {
+        data: apiResponse,
+        isLoading,
+        isError,
+    } = useGunnyPurchaseList(millId || '', queryParams)
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
-
-    const queryParams = useMemo(
-        () => ({
-            page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
-            search: search.search as string | undefined,
-            sortBy: (search.sortBy as string) || 'createdAt',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
-
-    const {
-        data: response,
-        isLoading,
-        isError,
-    } = useGunnyPurchaseList(millId || '', queryParams, { enabled: !!millId })
-
-    const purchaseData = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
-    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -59,26 +60,35 @@ export function GunnyPurchaseReport() {
         }
     }
 
-    if (isLoading) {
-        return (
-            <Main className='flex flex-1 items-center justify-center'>
-                <div className='text-muted-foreground'>Loading...</div>
-            </Main>
-        )
-    }
-
-    if (isError) {
-        return (
-            <Main className='flex flex-1 items-center justify-center'>
-                <div className='text-destructive'>
-                    Error loading gunny purchase data
-                </div>
-            </Main>
-        )
-    }
+    const handleQueryParamsChange = useCallback(
+        (params: GunnyPurchaseQueryParams) => {
+            const newParams: Record<string, string> = {
+                page: params.page?.toString() || '1',
+                limit: params.limit?.toString() || '10',
+            }
+            if (params.search) {
+                newParams.search = params.search
+            }
+            if (params.sortBy) {
+                newParams.sortBy = params.sortBy
+            }
+            if (params.sortOrder) {
+                newParams.sortOrder = params.sortOrder
+            }
+            setSearchParams(newParams, { replace: true })
+        },
+        [setSearchParams]
+    )
 
     return (
-        <GunnyProvider>
+        <GunnyProvider
+            millId={millId || ''}
+            initialQueryParams={queryParams}
+            apiData={apiResponse}
+            isLoading={isLoading}
+            isError={isError}
+            onQueryParamsChange={handleQueryParamsChange}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -103,14 +113,47 @@ export function GunnyPurchaseReport() {
                     </div>
                     <GunnyPrimaryButtons />
                 </div>
-                <GunnyTable
-                    data={purchaseData}
-                    search={search}
-                    navigate={navigate}
-                />
+                <GunnyPurchaseContent navigate={navigate} />
             </Main>
 
             <GunnyDialogs />
         </GunnyProvider>
+    )
+}
+
+// Separate component to use context hook
+function GunnyPurchaseContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const context = useGunny()
+
+    if (context.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (context.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                Failed to load gunny purchase data. Please try again later.
+            </div>
+        )
+    }
+
+    return (
+        <GunnyTable
+            data={context.data}
+            search={Object.fromEntries(
+                Object.entries(context.queryParams || {})
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => [key, String(value)])
+            )}
+            navigate={navigate}
+        />
     )
 }

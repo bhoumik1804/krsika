@@ -1,64 +1,46 @@
 /**
  * Party Report Service
- * API client for Party CRUD operations
- * Uses centralized axios instance with cookie-based auth
+ * API client for Party Report operations (Mill Admin)
  */
 import apiClient, { type ApiResponse } from '@/lib/api-client'
-import type {
-    PartyResponse,
-    PartyListResponse,
-    PartySummaryResponse,
-    CreatePartyRequest,
-    UpdatePartyRequest,
-    PartyQueryParams,
-} from './types'
+import type { PartyReportData } from './schema'
 
 // ==========================================
-// API Endpoints
+// Types
 // ==========================================
 
-const PARTY_ENDPOINT = (millId: string) => `/mills/${millId}/parties`
+export interface PartyListResponse {
+    parties: PartyReportData[]
+    pagination: {
+        page: number
+        limit: number
+        total: number
+        pages: number
+    }
+}
+
+export interface PartyQueryParams {
+    page?: number
+    limit?: number
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+}
 
 // ==========================================
-// Party API Functions
+// API Functions
 // ==========================================
 
 /**
- * Fetch all parties with pagination and filters
+ * Fetch parties list for a specific mill with pagination and filters
  */
 export const fetchPartyList = async (
     millId: string,
     params?: PartyQueryParams
 ): Promise<PartyListResponse> => {
-    const response = await apiClient.get<ApiResponse<PartyListResponse>>(
-        PARTY_ENDPOINT(millId),
-        { params }
-    )
-    return response.data.data
-}
-
-/**
- * Fetch a single party by ID
- */
-export const fetchPartyById = async (
-    millId: string,
-    id: string
-): Promise<PartyResponse> => {
-    const response = await apiClient.get<ApiResponse<PartyResponse>>(
-        `${PARTY_ENDPOINT(millId)}/${id}`
-    )
-    return response.data.data
-}
-
-/**
- * Fetch party summary/statistics
- */
-export const fetchPartySummary = async (
-    millId: string
-): Promise<PartySummaryResponse> => {
-    const response = await apiClient.get<ApiResponse<PartySummaryResponse>>(
-        `${PARTY_ENDPOINT(millId)}/summary`
-    )
+    const response = await apiClient.get<
+        ApiResponse<{ parties: PartyReportData[]; pagination: any }>
+    >(`/mills/${millId}/parties`, { params })
     return response.data.data
 }
 
@@ -67,27 +49,26 @@ export const fetchPartySummary = async (
  */
 export const createParty = async (
     millId: string,
-    data: CreatePartyRequest
-): Promise<PartyResponse> => {
-    const response = await apiClient.post<ApiResponse<PartyResponse>>(
-        PARTY_ENDPOINT(millId),
-        data
-    )
-    return response.data.data
+    data: Partial<PartyReportData>
+): Promise<PartyReportData> => {
+    const response = await apiClient.post<
+        ApiResponse<{ party: PartyReportData }>
+    >(`/mills/${millId}/parties`, data)
+    return response.data.data.party
 }
 
 /**
- * Update an existing party
+ * Update a party
  */
 export const updateParty = async (
     millId: string,
-    { id, ...data }: UpdatePartyRequest
-): Promise<PartyResponse> => {
-    const response = await apiClient.put<ApiResponse<PartyResponse>>(
-        `${PARTY_ENDPOINT(millId)}/${id}`,
-        data
-    )
-    return response.data.data
+    partyId: string,
+    data: Partial<PartyReportData>
+): Promise<PartyReportData> => {
+    const response = await apiClient.put<
+        ApiResponse<{ party: PartyReportData }>
+    >(`/mills/${millId}/parties/${partyId}`, data)
+    return response.data.data.party
 }
 
 /**
@@ -95,34 +76,19 @@ export const updateParty = async (
  */
 export const deleteParty = async (
     millId: string,
-    id: string
+    partyId: string
 ): Promise<void> => {
-    await apiClient.delete(`${PARTY_ENDPOINT(millId)}/${id}`)
+    await apiClient.delete(`/mills/${millId}/parties/${partyId}`)
 }
 
 /**
  * Bulk delete parties
  */
-export const bulkDeleteParty = async (
+export const bulkDeleteParties = async (
     millId: string,
-    ids: string[]
+    partyIds: string[]
 ): Promise<void> => {
-    await apiClient.delete(`${PARTY_ENDPOINT(millId)}/bulk`, {
-        data: { ids },
+    await apiClient.post(`/mills/${millId}/parties/bulk-delete`, {
+        ids: partyIds,
     })
-}
-
-/**
- * Export parties to CSV/Excel
- */
-export const exportParty = async (
-    millId: string,
-    params?: PartyQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(`${PARTY_ENDPOINT(millId)}/export`, {
-        params: { ...params, format },
-        responseType: 'blob',
-    })
-    return response.data
 }

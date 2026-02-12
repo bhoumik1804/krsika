@@ -1,132 +1,72 @@
-/**
- * Staff Report Service
- * API client for Staff Report CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
-import apiClient, { type ApiResponse } from '@/lib/api-client'
-import type {
-    StaffReportResponse,
-    StaffReportListResponse,
-    StaffReportSummaryResponse,
-    CreateStaffReportRequest,
-    UpdateStaffReportRequest,
-    StaffReportQueryParams,
+import { apiClient, type ApiResponse } from '@/lib/api-client'
+import {
+    type CreateStaffRequest,
+    type UpdateStaffRequest,
+    type StaffResponse,
+    type StaffListResponse,
+    type StaffQueryParams,
 } from './types'
 
-// ==========================================
-// API Endpoints
-// ==========================================
+const BASE_PATH = '/mills'
 
-const STAFF_REPORT_ENDPOINT = (millId: string) =>
-    `/mills/${millId}/staff-reports`
-
-// ==========================================
-// Staff Report API Functions
-// ==========================================
-
-/**
- * Fetch all staff reports with pagination and filters
- */
-export const fetchStaffReportList = async (
+export const fetchStaffList = async (
     millId: string,
-    params?: StaffReportQueryParams
-): Promise<StaffReportListResponse> => {
-    const response = await apiClient.get<ApiResponse<StaffReportListResponse>>(
-        STAFF_REPORT_ENDPOINT(millId),
-        { params }
+    params?: StaffQueryParams
+): Promise<StaffListResponse> => {
+    const response = await apiClient.get<ApiResponse<StaffListResponse>>(
+        `${BASE_PATH}/${millId}/staff-reports`,
+        {
+            params,
+        }
     )
     return response.data.data
 }
 
-/**
- * Fetch a single staff report by ID
- */
-export const fetchStaffReportById = async (
+export const fetchStaffById = async (
     millId: string,
     id: string
-): Promise<StaffReportResponse> => {
-    const response = await apiClient.get<ApiResponse<StaffReportResponse>>(
-        `${STAFF_REPORT_ENDPOINT(millId)}/${id}`
+): Promise<StaffResponse> => {
+    const response = await apiClient.get(
+        `${BASE_PATH}/${millId}/staff-reports/${id}`
     )
     return response.data.data
 }
 
-/**
- * Fetch staff report summary/statistics
- */
-export const fetchStaffReportSummary = async (
-    millId: string
-): Promise<StaffReportSummaryResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<StaffReportSummaryResponse>
-    >(`${STAFF_REPORT_ENDPOINT(millId)}/summary`)
-    return response.data.data
-}
-
-/**
- * Create a new staff report
- */
-export const createStaffReport = async (
+export const createStaff = async (
     millId: string,
-    data: CreateStaffReportRequest
-): Promise<StaffReportResponse> => {
-    const response = await apiClient.post<ApiResponse<StaffReportResponse>>(
-        STAFF_REPORT_ENDPOINT(millId),
+    data: CreateStaffRequest
+): Promise<StaffResponse> => {
+    const response = await apiClient.post(
+        `${BASE_PATH}/${millId}/staff-reports`,
         data
     )
     return response.data.data
 }
 
-/**
- * Update an existing staff report
- */
-export const updateStaffReport = async (
+export const updateStaff = async (
     millId: string,
-    { id, ...data }: UpdateStaffReportRequest
-): Promise<StaffReportResponse> => {
-    const response = await apiClient.put<ApiResponse<StaffReportResponse>>(
-        `${STAFF_REPORT_ENDPOINT(millId)}/${id}`,
-        data
+    data: UpdateStaffRequest
+): Promise<StaffResponse> => {
+    const { id, ...payload } = data
+    const response = await apiClient.put(
+        `${BASE_PATH}/${millId}/staff-reports/${id}`,
+        payload
     )
     return response.data.data
 }
 
-/**
- * Delete a staff report
- */
-export const deleteStaffReport = async (
+export const deleteStaff = async (
     millId: string,
     id: string
 ): Promise<void> => {
-    await apiClient.delete(`${STAFF_REPORT_ENDPOINT(millId)}/${id}`)
+    await apiClient.delete(`${BASE_PATH}/${millId}/staff-reports/${id}`)
 }
 
-/**
- * Bulk delete staff reports
- */
-export const bulkDeleteStaffReport = async (
+export const bulkDeleteStaff = async (
     millId: string,
     ids: string[]
 ): Promise<void> => {
-    await apiClient.delete(`${STAFF_REPORT_ENDPOINT(millId)}/bulk`, {
+    await apiClient.delete(`${BASE_PATH}/${millId}/staff-reports`, {
         data: { ids },
     })
-}
-
-/**
- * Export staff reports to CSV/Excel
- */
-export const exportStaffReport = async (
-    millId: string,
-    params?: StaffReportQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${STAFF_REPORT_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
-    )
-    return response.data
 }

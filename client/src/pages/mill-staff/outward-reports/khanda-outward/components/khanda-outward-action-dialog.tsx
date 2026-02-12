@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -29,69 +28,75 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import { useCreateKhandaOutward, useUpdateKhandaOutward } from '../data/hooks'
 import { khandaOutwardSchema, type KhandaOutward } from '../data/schema'
 
 type KhandaOutwardActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
     currentRow: KhandaOutward | null
+    millId: string
 }
 
 export function KhandaOutwardActionDialog({
     open,
     onOpenChange,
     currentRow,
+    millId,
 }: KhandaOutwardActionDialogProps) {
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
+    const createMutation = useCreateKhandaOutward(millId)
+    const updateMutation = useUpdateKhandaOutward(millId)
+
+    const defaultValues = useMemo(
+        () => ({
+            date: currentRow?.date || format(new Date(), 'yyyy-MM-dd'),
+            khandaSaleDealNumber: currentRow?.khandaSaleDealNumber || '',
+            partyName: currentRow?.partyName || '',
+            brokerName: currentRow?.brokerName || '',
+            gunnyPlastic: currentRow?.gunnyPlastic,
+            plasticGunnyWeight: currentRow?.plasticGunnyWeight,
+            truckNo: currentRow?.truckNo || '',
+            truckRst: currentRow?.truckRst || '',
+            truckWeight: currentRow?.truckWeight,
+            gunnyWeight: currentRow?.gunnyWeight,
+            netWeight: currentRow?.netWeight,
+        }),
+        [currentRow]
+    )
+
     const form = useForm<KhandaOutward>({
         resolver: zodResolver(khandaOutwardSchema),
-        defaultValues: {
-            date: '',
-            khandaSaleDealNumber: '',
-            partyName: '',
-            brokerName: '',
-            gunnyPlastic: undefined,
-            plasticWeight: undefined,
-            truckNo: '',
-            truckRst: '',
-            truckWeight: undefined,
-            gunnyWeight: undefined,
-            netWeight: undefined,
-        },
+        defaultValues,
     })
 
-    useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
+    const onSubmit = (data: KhandaOutward) => {
+        if (isEditing && currentRow?._id) {
+            toast.promise(
+                updateMutation.mutateAsync({ id: currentRow._id, data }),
+                {
+                    loading: 'Updating...',
+                    success: () => {
+                        onOpenChange(false)
+                        form.reset()
+                        return 'Updated successfully'
+                    },
+                    error: 'Failed to update',
+                }
+            )
         } else {
-            form.reset({
-                date: '',
-                khandaSaleDealNumber: '',
-                partyName: '',
-                brokerName: '',
-                gunnyPlastic: undefined,
-                plasticWeight: undefined,
-                truckNo: '',
-                truckRst: '',
-                truckWeight: undefined,
-                gunnyWeight: undefined,
-                netWeight: undefined,
+            toast.promise(createMutation.mutateAsync(data), {
+                loading: 'Adding...',
+                success: () => {
+                    onOpenChange(false)
+                    form.reset()
+                    return 'Added successfully'
+                },
+                error: 'Failed to add',
             })
         }
-    }, [currentRow, form])
-
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
     }
 
     return (
@@ -248,7 +253,7 @@ export function KhandaOutwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='plasticWeight'
+                                name='plasticGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Plastic Weight</FormLabel>

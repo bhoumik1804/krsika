@@ -37,14 +37,14 @@ export function LabourGroupReport() {
         isError,
     } = useLabourGroupList(millId || '', queryParams, { enabled: !!millId })
 
-    const labourGroupReportData = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
+    const labourGroupData = useMemo(() => {
+        const list = response?.labourGroups || []
+        return Array.isArray(list)
+            ? list.map((group) => ({
+                  _id: group._id,
+                  labourTeamName: group.groupName || '',
+              }))
+            : []
     }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
@@ -85,12 +85,12 @@ export function LabourGroupReport() {
                     <LabourGroupReportPrimaryButtons />
                 </div>
                 <LabourGroupReportTable
-                    data={labourGroupReportData}
+                    data={labourGroupData}
                     search={search}
                     navigate={navigate}
                     isLoading={isLoading}
                     isError={isError}
-                    totalRows={response?.pagination?.total}
+                    pagination={response?.pagination}
                 />
             </Main>
 

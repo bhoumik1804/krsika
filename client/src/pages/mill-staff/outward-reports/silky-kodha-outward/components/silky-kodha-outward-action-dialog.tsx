@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -29,7 +28,12 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import {
+    useCreateSilkyKodhaOutward,
+    useUpdateSilkyKodhaOutward,
+} from '../data/hooks'
 import { silkyKodhaOutwardSchema, type SilkyKodhaOutward } from '../data/schema'
+import { silkyKodhaOutward } from './silky-kodha-outward-provider'
 
 type SilkyKodhaOutwardActionDialogProps = {
     open: boolean
@@ -42,13 +46,16 @@ export function SilkyKodhaOutwardActionDialog({
     onOpenChange,
     currentRow,
 }: SilkyKodhaOutwardActionDialogProps) {
+    const { millId } = silkyKodhaOutward()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<SilkyKodhaOutward>({
-        resolver: zodResolver(silkyKodhaOutwardSchema),
-        defaultValues: {
-            date: '',
+    const createMutation = useCreateSilkyKodhaOutward(millId)
+    const updateMutation = useUpdateSilkyKodhaOutward(millId)
+
+    const getDefaultValues = useMemo(
+        () => ({
+            date: format(new Date(), 'yyyy-MM-dd'),
             silkyKodhaSaleDealNumber: '',
             partyName: '',
             brokerName: '',
@@ -62,42 +69,51 @@ export function SilkyKodhaOutwardActionDialog({
             truckWeight: undefined,
             gunnyWeight: undefined,
             netWeight: undefined,
-        },
+        }),
+        []
+    )
+
+    const form = useForm<SilkyKodhaOutward>({
+        resolver: zodResolver(silkyKodhaOutwardSchema),
+        defaultValues: getDefaultValues,
     })
 
     useEffect(() => {
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset({
-                date: '',
-                silkyKodhaSaleDealNumber: '',
-                partyName: '',
-                brokerName: '',
-                rate: undefined,
-                oil: undefined,
-                brokerage: undefined,
-                gunnyPlastic: undefined,
-                plasticWeight: undefined,
-                truckNo: '',
-                truckRst: '',
-                truckWeight: undefined,
-                gunnyWeight: undefined,
-                netWeight: undefined,
+            form.reset(getDefaultValues)
+        }
+    }, [currentRow, form, getDefaultValues])
+
+    const onSubmit = (data: SilkyKodhaOutward) => {
+        if (isEditing && currentRow?._id) {
+            const { _id, ...updateData } = data
+            updateMutation.mutate(
+                { id: currentRow._id, data: updateData },
+                {
+                    onSuccess: () => {
+                        toast.success('Updated successfully')
+                        onOpenChange(false)
+                        form.reset(getDefaultValues)
+                    },
+                    onError: (error) => {
+                        toast.error(error.message || 'Failed to update')
+                    },
+                }
+            )
+        } else {
+            createMutation.mutate(data, {
+                onSuccess: () => {
+                    toast.success('Added successfully')
+                    onOpenChange(false)
+                    form.reset(getDefaultValues)
+                },
+                onError: (error) => {
+                    toast.error(error.message || 'Failed to add')
+                },
             })
         }
-    }, [currentRow, form])
-
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
     }
 
     return (

@@ -23,29 +23,17 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
-import { type KhandaSales } from '../data/schema'
+import type { KhandaSalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { khandaSalesColumns as columns } from './khanda-sales-columns'
 
 type DataTableProps = {
-    data: KhandaSales[]
+    data: KhandaSalesResponse[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading?: boolean
-    isError?: boolean
-    totalPages?: number
-    totalItems?: number
 }
 
-export function KhandaSalesTable({
-    data,
-    search,
-    navigate,
-    // isLoading,
-    // isError,
-    // totalPages,
-    // totalItems,
-}: DataTableProps) {
+export function KhandaSalesTable({ data, search, navigate }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

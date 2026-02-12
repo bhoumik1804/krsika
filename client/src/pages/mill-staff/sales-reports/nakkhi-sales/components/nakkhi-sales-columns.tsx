@@ -2,10 +2,10 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { type NakkhiSales } from '../data/schema'
+import type { NakkhiSalesResponse } from '../data/types'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const nakkhiSalesColumns: ColumnDef<NakkhiSales>[] = [
+export const nakkhiSalesColumns: ColumnDef<NakkhiSalesResponse>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -57,7 +57,9 @@ export const nakkhiSalesColumns: ColumnDef<NakkhiSales>[] = [
             <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('partyName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('partyName') || '-'}
+            </div>
         ),
     },
     {
@@ -66,7 +68,9 @@ export const nakkhiSalesColumns: ColumnDef<NakkhiSales>[] = [
             <DataTableColumnHeader column={column} title='Broker Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('brokerName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('brokerName') || '-'}
+            </div>
         ),
     },
     {
@@ -90,10 +94,12 @@ export const nakkhiSalesColumns: ColumnDef<NakkhiSales>[] = [
     {
         accessorKey: 'discountPercent',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Batav %' />
+            <DataTableColumnHeader column={column} title='Discount %' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.discountPercent || 0}%</div>
+            <div className='text-right'>
+                {row.original.discountPercent || '-'}%
+            </div>
         ),
     },
     {
@@ -102,7 +108,9 @@ export const nakkhiSalesColumns: ColumnDef<NakkhiSales>[] = [
             <DataTableColumnHeader column={column} title='Brokerage' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.brokeragePerQuintal|| 0}</div>
+            <div className='text-right'>
+                ₹{row.original.brokeragePerQuintal || '-'}
+            </div>
         ),
     },
     {

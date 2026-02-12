@@ -12,11 +12,11 @@ import { GovtRiceOutwardPrimaryButtons } from './components/govt-rice-outward-pr
 import { GovtRiceOutwardProvider } from './components/govt-rice-outward-provider'
 import { GovtRiceOutwardTable } from './components/govt-rice-outward-table'
 import { useGovtRiceOutwardList } from './data/hooks'
+import type { GovtRiceOutwardQueryParams } from './data/types'
 
-export function GovtRiceOutwardReport() {
+function GovtRiceOutwardContent() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
-    const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
 
@@ -24,28 +24,26 @@ export function GovtRiceOutwardReport() {
         () => ({
             page: search.page ? parseInt(search.page as string, 10) : 1,
             limit: search.limit ? parseInt(search.limit as string, 10) : 10,
-            search: search.search as string | undefined,
-            sortBy: (search.sortBy as string) || 'createdAt',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+            search: search.search ? (search.search as string) : undefined,
+            startDate: search.startDate
+                ? (search.startDate as string)
+                : undefined,
+            endDate: search.endDate ? (search.endDate as string) : undefined,
+            sortBy:
+                (search.sortBy as GovtRiceOutwardQueryParams['sortBy']) ||
+                'date',
+            sortOrder:
+                (search.sortOrder as GovtRiceOutwardQueryParams['sortOrder']) ||
+                'desc',
         }),
         [search]
     )
 
     const {
-        data: response,
+        data: listData,
         isLoading,
-        isError,
-    } = useGovtRiceOutwardList(millId || '', queryParams, { enabled: !!millId })
-
-    const data = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
-    }, [response])
+        error,
+    } = useGovtRiceOutwardList(millId || '', queryParams)
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -58,8 +56,80 @@ export function GovtRiceOutwardReport() {
         }
     }
 
+    const data = listData?.entries ?? []
+    const serverPagination = listData?.pagination
+
+    if (isLoading) {
+        return (
+            <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
+                <div className='flex flex-wrap items-end justify-between gap-2'>
+                    <div>
+                        <h2 className='text-2xl font-bold tracking-tight'>
+                            Govt Rice Outward Report
+                        </h2>
+                        <p className='text-muted-foreground'>
+                            Manage govt rice outward transactions and records
+                        </p>
+                    </div>
+                </div>
+                <div className='flex items-center justify-center rounded-md border border-dashed p-8'>
+                    <p className='text-muted-foreground'>Loading...</p>
+                </div>
+            </Main>
+        )
+    }
+
+    if (error) {
+        return (
+            <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
+                <div className='flex flex-wrap items-end justify-between gap-2'>
+                    <div>
+                        <h2 className='text-2xl font-bold tracking-tight'>
+                            Govt Rice Outward Report
+                        </h2>
+                        <p className='text-muted-foreground'>
+                            Manage govt rice outward transactions and records
+                        </p>
+                    </div>
+                </div>
+                <div className='flex items-center justify-center rounded-md border border-dashed border-destructive p-8'>
+                    <p className='text-destructive'>
+                        Error loading data: {error.message}
+                    </p>
+                </div>
+            </Main>
+        )
+    }
+
     return (
-        <GovtRiceOutwardProvider>
+        <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
+            <div className='flex flex-wrap items-end justify-between gap-2'>
+                <div>
+                    <h2 className='text-2xl font-bold tracking-tight'>
+                        Govt Rice Outward Report
+                    </h2>
+                    <p className='text-muted-foreground'>
+                        Manage govt rice outward transactions and records
+                    </p>
+                </div>
+                <GovtRiceOutwardPrimaryButtons />
+            </div>
+            <GovtRiceOutwardTable
+                data={data}
+                search={search}
+                navigate={navigate}
+                pagination={serverPagination}
+            />
+        </Main>
+    )
+}
+
+export function GovtRiceOutwardReport() {
+    const { millId } = useParams<{ millId: string }>()
+    const sidebarData = getMillAdminSidebarData(millId || '')
+
+    return (
+        <GovtRiceOutwardProvider millId={millId || ''}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -72,28 +142,7 @@ export function GovtRiceOutwardReport() {
                 </div>
             </Header>
 
-            <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
-                <div className='flex flex-wrap items-end justify-between gap-2'>
-                    <div>
-                        <h2 className='text-2xl font-bold tracking-tight'>
-                            Govt Rice Outward Report
-                        </h2>
-                        <p className='text-muted-foreground'>
-                            Manage govt rice outward transactions and records
-                        </p>
-                    </div>
-                    <GovtRiceOutwardPrimaryButtons />
-                </div>
-                <GovtRiceOutwardTable
-                    data={data}
-                    search={search}
-                    navigate={navigate}
-                    isLoading={isLoading}
-                    isError={isError}
-                    totalPages={response?.pagination?.totalPages}
-                    totalItems={response?.pagination?.total}
-                />
-            </Main>
+            <GovtRiceOutwardContent />
 
             <GovtRiceOutwardDialogs />
         </GovtRiceOutwardProvider>

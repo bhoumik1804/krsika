@@ -1,56 +1,45 @@
-/**
- * Gunny Sales Types
- * TypeScript type definitions for Gunny Sales module
- */
-
-// ==========================================
 // API Request Types
-// ==========================================
-
-export interface CreateGunnySaleRequest {
+export type CreateGunnySalesRequest = {
     date: string
-    partyName: string
-    gunnyType?: string
-    totalGunny?: number
-    rate?: number
-    amount?: number
+    partyName?: string
+    newGunnyQty?: number
+    newGunnyRate?: number
+    oldGunnyQty?: number
+    oldGunnyRate?: number
+    plasticGunnyQty?: number
+    plasticGunnyRate?: number
 }
 
-export interface UpdateGunnySaleRequest {
-    id: string
+export type UpdateGunnySalesRequest = {
+    _id: string
     date?: string
     partyName?: string
-    gunnyType?: string
-    totalGunny?: number
-    rate?: number
-    amount?: number
+    newGunnyQty?: number
+    newGunnyRate?: number
+    oldGunnyQty?: number
+    oldGunnyRate?: number
+    plasticGunnyQty?: number
+    plasticGunnyRate?: number
 }
 
-// ==========================================
 // API Response Types
-// ==========================================
-
-export interface GunnySaleResponse {
+export type GunnySalesResponse = {
     _id: string
     millId: string
     date: string
-    partyName: string
-    gunnyType?: string
-    totalGunny?: number
-    rate?: number
-    amount?: number
-    createdBy: string
-    createdByUser?: {
-        fullName: string
-        email: string
-    }
-    updatedBy?: string
+    partyName?: string
+    newGunnyQty?: number
+    newGunnyRate?: number
+    oldGunnyQty?: number
+    oldGunnyRate?: number
+    plasticGunnyQty?: number
+    plasticGunnyRate?: number
     createdAt: string
     updatedAt: string
 }
 
-export interface GunnySaleListResponse {
-    data: GunnySaleResponse[]
+export type GunnySalesListResponse = {
+    sales?: GunnySalesResponse[]
     pagination: {
         page: number
         limit: number
@@ -63,22 +52,18 @@ export interface GunnySaleListResponse {
     }
 }
 
-export interface GunnySaleSummaryResponse {
-    totalEntries: number
-    totalGunny: number
-    totalAmount: number
-}
-
-// ==========================================
-// Query Parameter Types
-// ==========================================
-
-export interface GunnySaleQueryParams {
+export type GunnySalesQueryParams = {
     page?: number
     limit?: number
     search?: string
-    startDate?: string
-    endDate?: string
     sortBy?: string
     sortOrder?: 'asc' | 'desc'
+}
+
+export type GunnySalesSummaryResponse = {
+    totalRecords: number
+    totalNewGunnyQty: number
+    totalOldGunnyQty: number
+    totalPlasticGunnyQty: number
+    totalAmount: number
 }

@@ -1,13 +1,5 @@
-/**
- * Khanda Sales Types
- * TypeScript type definitions for Khanda Sales module
- */
-
-// ==========================================
 // API Request Types
-// ==========================================
-
-export interface CreateKhandaSaleRequest {
+export type CreateKhandaSalesRequest = {
     date: string
     partyName?: string
     brokerName?: string
@@ -17,8 +9,8 @@ export interface CreateKhandaSaleRequest {
     brokeragePerQuintal?: number
 }
 
-export interface UpdateKhandaSaleRequest {
-    id: string
+export type UpdateKhandaSalesRequest = {
+    _id: string
     date?: string
     partyName?: string
     brokerName?: string
@@ -28,11 +20,8 @@ export interface UpdateKhandaSaleRequest {
     brokeragePerQuintal?: number
 }
 
-// ==========================================
 // API Response Types
-// ==========================================
-
-export interface KhandaSaleResponse {
+export type KhandaSalesResponse = {
     _id: string
     millId: string
     date: string
@@ -42,18 +31,12 @@ export interface KhandaSaleResponse {
     khandaRate?: number
     discountPercent?: number
     brokeragePerQuintal?: number
-    createdBy: string
-    createdByUser?: {
-        fullName: string
-        email: string
-    }
-    updatedBy?: string
     createdAt: string
     updatedAt: string
 }
 
-export interface KhandaSaleListResponse {
-    data: KhandaSaleResponse[]
+export type KhandaSalesListResponse = {
+    sales?: KhandaSalesResponse[]
     pagination: {
         page: number
         limit: number
@@ -66,55 +49,16 @@ export interface KhandaSaleListResponse {
     }
 }
 
-export interface KhandaSaleSummaryResponse {
-    totalEntries: number
-    totalKhandaQty: number
-    totalBrokerage: number
-    avgKhandaRate: number
-    avgDiscountPercent: number
-}
-
-// ==========================================
-// Query Parameters
-// ==========================================
-
-export interface KhandaSaleQueryParams {
+export type KhandaSalesQueryParams = {
     page?: number
     limit?: number
     search?: string
-    partyName?: string
-    brokerName?: string
-    startDate?: string
-    endDate?: string
     sortBy?: string
     sortOrder?: 'asc' | 'desc'
 }
 
-export interface KhandaSaleSummaryQueryParams {
-    startDate?: string
-    endDate?: string
-}
-
-// ==========================================
-// Form Types
-// ==========================================
-
-export interface KhandaSaleFormData {
-    date: string
-    partyName: string
-    brokerName: string
-    khandaQty: number | null
-    khandaRate: number | null
-    discountPercent: number | null
-    brokeragePerQuintal: number | null
-}
-
-// ==========================================
-// Dialog State Types
-// ==========================================
-
-export interface KhandaSaleDialogState {
-    open: 'create' | 'edit' | 'delete' | 'bulk-delete' | null
-    currentRow: KhandaSaleResponse | null
-    selectedRows: KhandaSaleResponse[]
+export type KhandaSalesSummaryResponse = {
+    totalRecords: number
+    totalQuantity: number
+    totalAmount: number
 }

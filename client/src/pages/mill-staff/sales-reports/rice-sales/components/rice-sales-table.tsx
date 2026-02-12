@@ -24,28 +24,17 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
 import { type RiceSales } from '../data/schema'
+import { type RiceSalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { riceSalesColumns as columns } from './rice-sales-columns'
 
 type DataTableProps = {
-    data: RiceSales[]
+    data: RiceSales[] | RiceSalesResponse[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading?: boolean
-    isError?: boolean
-    totalPages?: number
-    totalItems?: number
 }
 
-export function RiceSalesTable({
-    data,
-    search,
-    navigate,
-    // isLoading,
-    // isError,
-    // totalPages,
-    // totalItems,
-}: DataTableProps) {
+export function RiceSalesTable({ data, search, navigate }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

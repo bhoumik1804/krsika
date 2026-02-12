@@ -11,11 +11,13 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { PrivateGunnyOutward } from '../data/schema'
+import { usePrivateGunnyOutward } from './private-gunny-outward-provider'
+import { useDeletePrivateGunnyOutward } from '../data/hooks'
 
 interface Props {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: PrivateGunnyOutward
+    currentRow: PrivateGunnyOutward | null
 }
 
 export function PrivateGunnyOutwardDeleteDialog({
@@ -23,6 +25,19 @@ export function PrivateGunnyOutwardDeleteDialog({
     onOpenChange,
     currentRow,
 }: Props) {
+    const { millId } = usePrivateGunnyOutward()
+    const deleteMutation = useDeletePrivateGunnyOutward(millId)
+
+    const handleDelete = async () => {
+        if (!currentRow?._id) return
+        try {
+            await deleteMutation.mutateAsync(currentRow._id)
+            onOpenChange(false)
+        } catch (error) {
+            // Error handling is done in the mutation hook
+        }
+    }
+
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
@@ -33,16 +48,19 @@ export function PrivateGunnyOutwardDeleteDialog({
                     <AlertDialogDescription>
                         This action cannot be undone. This will permanently
                         delete the record for{' '}
-                        <strong>{currentRow?.truckNo}</strong> on{' '}
+                        <strong>{currentRow?.gunnyPurchaseDealNumber}</strong>
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={deleteMutation.isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
-                        onClick={() => onOpenChange(false)}
+                        onClick={handleDelete}
+                        disabled={deleteMutation.isPending}
                     >
-                        Delete
+                        {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

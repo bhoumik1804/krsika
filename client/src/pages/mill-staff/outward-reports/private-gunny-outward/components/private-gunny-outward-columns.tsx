@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -41,9 +42,14 @@ export const PrivateGunnyOutwardColumns: ColumnDef<PrivateGunnyOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Date' />
         ),
-        cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
-        ),
+        cell: ({ row }) => {
+            const date = row.getValue('date')
+            const formatted =
+                typeof date === 'string'
+                    ? format(new Date(date), 'MMM dd, yyyy')
+                    : '-'
+            return <div className='ps-3 text-nowrap'>{formatted}</div>
+        },
         meta: {
             className: cn(
                 'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
@@ -53,7 +59,7 @@ export const PrivateGunnyOutwardColumns: ColumnDef<PrivateGunnyOutward>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'gunnyBuyAuto',
+        accessorKey: 'gunnyPurchaseDealNumber',
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
@@ -62,7 +68,7 @@ export const PrivateGunnyOutwardColumns: ColumnDef<PrivateGunnyOutward>[] = [
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>
-                {row.getValue('gunnyBuyAuto')}
+                {row.getValue('gunnyPurchaseDealNumber')}
             </div>
         ),
     },

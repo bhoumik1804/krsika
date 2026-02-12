@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     paddyTypeOptions,
     paddyPurchaseTypeOptions,
@@ -42,9 +41,14 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import {
+    useCreatePrivatePaddyInward,
+    useUpdatePrivatePaddyInward,
+} from '../data/hooks'
+import {
     privatePaddyInwardSchema,
     type PrivatePaddyInward,
 } from '../data/schema'
+import { privatePaddyInward } from './private-paddy-inward-provider'
 
 type PrivatePaddyInwardActionDialogProps = {
     open: boolean
@@ -57,12 +61,15 @@ export function PrivatePaddyInwardActionDialog({
     onOpenChange,
     currentRow,
 }: PrivatePaddyInwardActionDialogProps) {
+    const { millId } = privatePaddyInward()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<PrivatePaddyInward>({
-        resolver: zodResolver(privatePaddyInwardSchema),
-        defaultValues: {
+    const createMutation = useCreatePrivatePaddyInward(millId)
+    const updateMutation = useUpdatePrivatePaddyInward(millId)
+
+    const getDefaultValues = useMemo(
+        () => ({
             date: format(new Date(), 'yyyy-MM-dd'),
             partyName: '',
             brokerName: '',
@@ -87,52 +94,50 @@ export function PrivatePaddyInwardActionDialog({
             paddySarna: undefined,
             paddyMahamaya: undefined,
             paddyRbGold: undefined,
-        },
+        }),
+        []
+    )
+
+    const form = useForm<PrivatePaddyInward>({
+        resolver: zodResolver(privatePaddyInwardSchema),
+        defaultValues: getDefaultValues,
     })
 
     useEffect(() => {
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset({
-                date: format(new Date(), 'yyyy-MM-dd'),
-                partyName: '',
-                brokerName: '',
-                paddyPurchaseDealNumber: '',
-                purchaseType: undefined,
-                gunnyOption: undefined,
-                doNumber: '',
-                committeeName: '',
-                truckNumber: '',
-                balanceDo: undefined,
-                gunnyNew: undefined,
-                gunnyOld: undefined,
-                gunnyPlastic: undefined,
-                juteWeight: undefined,
-                plasticWeight: undefined,
-                gunnyWeight: undefined,
-                rstNumber: undefined,
-                truckLoadWeight: undefined,
-                paddyType: undefined,
-                paddyMota: undefined,
-                paddyPatla: undefined,
-                paddySarna: undefined,
-                paddyMahamaya: undefined,
-                paddyRbGold: undefined,
+            form.reset(getDefaultValues)
+        }
+    }, [currentRow, form, getDefaultValues])
+
+    const onSubmit = (data: PrivatePaddyInward) => {
+        if (isEditing && currentRow?._id) {
+            updateMutation.mutate(
+                { id: currentRow._id, data },
+                {
+                    onSuccess: () => {
+                        toast.success('Updated successfully')
+                        onOpenChange(false)
+                        form.reset(getDefaultValues)
+                    },
+                    onError: (error) => {
+                        toast.error(error.message || 'Failed to update')
+                    },
+                }
+            )
+        } else {
+            createMutation.mutate(data, {
+                onSuccess: () => {
+                    toast.success('Added successfully')
+                    onOpenChange(false)
+                    form.reset(getDefaultValues)
+                },
+                onError: (error) => {
+                    toast.error(error.message || 'Failed to add')
+                },
             })
         }
-    }, [currentRow, form])
-
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
     }
 
     return (
@@ -219,7 +224,9 @@ export function PrivatePaddyInwardActionDialog({
                                 name='paddyPurchaseDealNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Deal ID</FormLabel>
+                                        <FormLabel>
+                                            Paddy Purchase Deal Number
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder='Enter Deal ID'

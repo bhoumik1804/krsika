@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 export const privatePaddyOutwardSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
     paddySaleDealNumber: z.string().optional(),
     partyName: z.string().optional(),

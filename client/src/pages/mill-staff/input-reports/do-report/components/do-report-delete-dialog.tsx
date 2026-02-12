@@ -1,3 +1,4 @@
+import { useParams } from 'react-router'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -8,9 +9,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { type DoReportData } from '../data/schema'
 import { useDeleteDoReport } from '../data/hooks'
-import { useUser } from '@/pages/landing/hooks/use-auth'
+import { type DoReportData } from '../data/schema'
+import { doReport } from './do-report-provider'
 
 type DoReportDeleteDialogProps = {
     open: boolean
@@ -23,23 +24,33 @@ export function DoReportDeleteDialog({
     onOpenChange,
     currentRow,
 }: DoReportDeleteDialogProps) {
-    const { user } = useUser()
-    const millId = user?.millId as any
-    const deleteMutation = useDeleteDoReport(millId)
+    const { setCurrentRow } = doReport()
+    const { millId } = useParams<{ millId: string }>()
+    const { mutate: deleteDoReport, isPending: isDeleting } = useDeleteDoReport(
+        millId || ''
+    )
 
-    const handleDelete = async () => {
-        if (!currentRow?._id) return
-        
-        try {
-            await deleteMutation.mutateAsync(currentRow._id)
-            onOpenChange(false)
-        } catch (error: any) {
-            console.error('Delete error:', error)
+    const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        if (currentRow?._id) {
+            deleteDoReport(currentRow._id, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    setCurrentRow(null)
+                },
+            })
         }
     }
 
+    const handleDialogClose = (isOpen: boolean) => {
+        if (!isOpen) {
+            setCurrentRow(null)
+        }
+        onOpenChange(isOpen)
+    }
+
     return (
-        <AlertDialog open={open} onOpenChange={onOpenChange}>
+        <AlertDialog open={open} onOpenChange={handleDialogClose}>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Delete Record?</AlertDialogTitle>
@@ -50,13 +61,15 @@ export function DoReportDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel disabled={deleteMutation.isPending}>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
-                        disabled={deleteMutation.isPending}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

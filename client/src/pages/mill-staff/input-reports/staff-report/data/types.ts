@@ -1,50 +1,40 @@
-/**
- * Staff Report Types
- * TypeScript type definitions for Staff Report module
- */
-
-// ==========================================
 // API Request Types
-// ==========================================
-
-export interface CreateStaffReportRequest {
+export type CreateStaffRequest = {
     fullName: string
+    post?: string
     salary?: number
     phoneNumber?: string
     email?: string
     address?: string
 }
 
-export interface UpdateStaffReportRequest {
+export type UpdateStaffRequest = {
     id: string
-    fullName?: string
+    fullName: string
+    post?: string
     salary?: number
     phoneNumber?: string
     email?: string
     address?: string
 }
 
-// ==========================================
 // API Response Types
-// ==========================================
-
-export interface StaffReportResponse {
+export type StaffResponse = {
     _id: string
     millId: string
     fullName: string
-    designation?: string
-    department?: string
-    phone?: string
-    email?: string
-    joiningDate?: string
+    post?: string
     salary?: number
-    createdBy: string
+    phoneNumber?: string
+    email?: string
+    address?: string
     createdAt: string
     updatedAt: string
 }
 
-export interface StaffReportListResponse {
-    data: StaffReportResponse[]
+export type StaffListResponse = {
+    staff?: StaffResponse[]
+    staffs?: StaffResponse[]
     pagination: {
         page: number
         limit: number
@@ -57,16 +47,7 @@ export interface StaffReportListResponse {
     }
 }
 
-export interface StaffReportSummaryResponse {
-    totalStaff: number
-    totalSalary: number
-}
-
-// ==========================================
-// Query Parameter Types
-// ==========================================
-
-export interface StaffReportQueryParams {
+export type StaffQueryParams = {
     page?: number
     limit?: number
     search?: string

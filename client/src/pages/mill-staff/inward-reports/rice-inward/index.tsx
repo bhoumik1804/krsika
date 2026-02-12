@@ -1,82 +1,49 @@
-import { useMemo } from 'react';
-import { useRiceInwardList } from '@/pages/mill-staff/inwards/rice-inward/data/hooks';
-import { useParams, useSearchParams } from 'react-router';
-import { ConfigDrawer } from '@/components/config-drawer';
-import { getMillAdminSidebarData } from '@/components/layout/data';
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { LoadingSpinner } from '@/components/loading-spinner';
-import { ProfileDropdown } from '@/components/profile-dropdown';
-import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
-import { RiceInwardDialogs } from './components/rice-inward-dialogs';
-import { RiceInwardPrimaryButtons } from './components/rice-inward-primary-buttons';
-import { RiceInwardProvider } from './components/rice-inward-provider';
-import { RiceInwardTable } from './components/rice-inward-table';
+import { useMemo } from 'react'
+import { useParams, useSearchParams } from 'react-router'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { getMillAdminSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { RiceInwardDialogs } from './components/rice-inward-dialogs'
+import { RiceInwardPrimaryButtons } from './components/rice-inward-primary-buttons'
+import { RiceInwardProvider } from './components/rice-inward-provider'
+import { RiceInwardTable } from './components/rice-inward-table'
+import { useRiceInwardList } from './data/hooks'
+import type { RiceInwardQueryParams } from './data/types'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export function RiceInwardReport() {
-    const { millId } = useParams<{ millId: string }>()
+function RiceInwardContent({ millId }: { millId: string }) {
     const [searchParams, setSearchParams] = useSearchParams()
-    const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
 
-    // Extract query params from URL
-    const queryParams = useMemo(
-        () => ({
+    const queryParams: RiceInwardQueryParams = useMemo(() => {
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
             page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            limit,
             search: search.search as string | undefined,
-            startDate: search.startDate as string | undefined,
-            endDate: search.endDate as string | undefined,
-            sortBy: (search.sortBy as string) || 'date',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
+            sortBy: search.sortBy as string | undefined,
+            sortOrder: search.sortOrder as 'asc' | 'desc' | undefined,
+        }
+    }, [search])
 
-    // Fetch rice inward data using the hook
     const {
-        data: inwardResponse,
+        data: listData,
         isLoading,
-        isError,
-    } = useRiceInwardList(millId || '', queryParams, { enabled: !!millId })
+        error,
+    } = useRiceInwardList(millId, queryParams)
 
-    // Transform API response to table format
-    const inwardData = useMemo(() => {
-        if (!inwardResponse?.data) return []
-        return inwardResponse.data.map((item) => ({
-            id: item._id,
-            date: item.date,
-            partyName: item.partyName ?? '',
-            riceType: item.riceType ?? '',
-            truckNumber: item.truckNumber ?? '',
-            riceGunny: item.riceGunny ?? 0,
-            frk: item.frk ?? 0,
-            sampleWeight: item.sampleWeight ?? 0,
-            grossWeight: item.grossWeight ?? 0,
-            tareWeight: item.tareWeight ?? 0,
-            netWeight: item.netWeight ?? 0,
-            brokerName: item.brokerName ?? '',
-        }))
-    }, [inwardResponse])
+    const data = listData?.entries ?? []
+    const pagination = listData?.pagination
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -89,20 +56,23 @@ export function RiceInwardReport() {
         }
     }
 
-    return (
-        <RiceInwardProvider>
-            <Header fixed>
-                <Search />
-                <div className='ms-auto flex items-center space-x-4'>
-                    <ThemeSwitch />
-                    <ConfigDrawer />
-                    <ProfileDropdown
-                        user={sidebarData.user}
-                        links={sidebarData.profileLinks}
-                    />
+    if (error) {
+        return (
+            <Main className='flex flex-1 flex-col items-center justify-center'>
+                <div className='text-center'>
+                    <h2 className='text-2xl font-bold text-destructive'>
+                        Error loading data
+                    </h2>
+                    <p className='mt-2 text-muted-foreground'>
+                        {error.message || 'Failed to load rice inward records'}
+                    </p>
                 </div>
-            </Header>
+            </Main>
+        )
+    }
 
+    return (
+        <>
             <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
@@ -116,21 +86,57 @@ export function RiceInwardReport() {
                     <RiceInwardPrimaryButtons />
                 </div>
                 {isLoading ? (
-                    <LoadingSpinner className='h-full w-full' />
-                ) : isError ? (
-                    <div className='py-10 text-center text-destructive'>
-                        Failed to load rice inward data
+                    <div className='flex items-center justify-center py-8'>
+                        <LoadingSpinner />
                     </div>
                 ) : (
                     <RiceInwardTable
-                        data={inwardData}
+                        data={data}
                         search={search}
                         navigate={navigate}
+                        pagination={pagination}
                     />
                 )}
             </Main>
 
             <RiceInwardDialogs />
-        </RiceInwardProvider>
+        </>
+    )
+}
+
+export function RiceInwardReport() {
+    const { millId } = useParams<{ millId: string }>()
+    const sidebarData = getMillAdminSidebarData(millId || '')
+
+    if (!millId) {
+        return (
+            <Main className='flex flex-1 flex-col items-center justify-center'>
+                <div className='text-center'>
+                    <h2 className='text-2xl font-bold text-destructive'>
+                        Mill ID is required
+                    </h2>
+                </div>
+            </Main>
+        )
+    }
+
+    return (
+        <>
+            <Header fixed>
+                <Search />
+                <div className='ms-auto flex items-center space-x-4'>
+                    <ThemeSwitch />
+                    <ConfigDrawer />
+                    <ProfileDropdown
+                        user={sidebarData.user}
+                        links={sidebarData.profileLinks}
+                    />
+                </div>
+            </Header>
+
+            <RiceInwardProvider millId={millId}>
+                <RiceInwardContent millId={millId} />
+            </RiceInwardProvider>
+        </>
     )
 }

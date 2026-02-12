@@ -1,13 +1,5 @@
-/**
- * Rice Sales Types
- * TypeScript type definitions for Rice Sales module
- */
-
-// ==========================================
 // API Request Types
-// ==========================================
-
-export interface CreateRiceSaleRequest {
+export type CreateRiceSalesRequest = {
     date: string
     partyName?: string
     brokerName?: string
@@ -28,8 +20,8 @@ export interface CreateRiceSaleRequest {
     lotNumber?: string
 }
 
-export interface UpdateRiceSaleRequest {
-    id: string
+export type UpdateRiceSalesRequest = {
+    _id: string
     date?: string
     partyName?: string
     brokerName?: string
@@ -50,11 +42,8 @@ export interface UpdateRiceSaleRequest {
     lotNumber?: string
 }
 
-// ==========================================
 // API Response Types
-// ==========================================
-
-export interface RiceSaleResponse {
+export type RiceSalesResponse = {
     _id: string
     millId: string
     date: string
@@ -75,18 +64,12 @@ export interface RiceSaleResponse {
     frkType?: string
     frkRatePerQuintal?: number
     lotNumber?: string
-    createdBy: string
-    createdByUser?: {
-        fullName: string
-        email: string
-    }
-    updatedBy?: string
     createdAt: string
     updatedAt: string
 }
 
-export interface RiceSaleListResponse {
-    data: RiceSaleResponse[]
+export type RiceSalesListResponse = {
+    sales?: RiceSalesResponse[]
     pagination: {
         page: number
         limit: number
@@ -99,77 +82,16 @@ export interface RiceSaleListResponse {
     }
 }
 
-export interface RiceSaleSummaryResponse {
-    totalEntries: number
-    totalRiceQty: number
-    totalBrokerage: number
-    avgRiceRatePerQuintal: number
-    avgDiscountPercent: number
-    totalNewGunnyRate: number
-    totalOldGunnyRate: number
-    totalPlasticGunnyRate: number
-    totalFrkRatePerQuintal: number
-}
-
-// ==========================================
-// Query Parameters
-// ==========================================
-
-export interface RiceSaleQueryParams {
+export type RiceSalesQueryParams = {
     page?: number
     limit?: number
     search?: string
-    partyName?: string
-    brokerName?: string
-    deliveryType?: string
-    lotOrOther?: string
-    fciOrNAN?: string
-    riceType?: string
-    gunnyType?: string
-    frkType?: string
-    lotNumber?: string
-    startDate?: string
-    endDate?: string
     sortBy?: string
     sortOrder?: 'asc' | 'desc'
 }
 
-export interface RiceSaleSummaryQueryParams {
-    startDate?: string
-    endDate?: string
-}
-
-// ==========================================
-// Form Types
-// ==========================================
-
-export interface RiceSaleFormData {
-    date: string
-    partyName: string
-    brokerName: string
-    deliveryType: string
-    lotOrOther: string
-    fciOrNAN: string
-    riceType: string
-    riceQty: number | null
-    riceRatePerQuintal: number | null
-    discountPercent: number | null
-    brokeragePerQuintal: number | null
-    gunnyType: string
-    newGunnyRate: number | null
-    oldGunnyRate: number | null
-    plasticGunnyRate: number | null
-    frkType: string
-    frkRatePerQuintal: number | null
-    lotNumber: string
-}
-
-// ==========================================
-// Dialog State Types
-// ==========================================
-
-export interface RiceSaleDialogState {
-    open: 'create' | 'edit' | 'delete' | 'bulk-delete' | null
-    currentRow: RiceSaleResponse | null
-    selectedRows: RiceSaleResponse[]
+export type RiceSalesSummaryResponse = {
+    totalRecords: number
+    totalQuantity: number
+    totalAmount: number
 }

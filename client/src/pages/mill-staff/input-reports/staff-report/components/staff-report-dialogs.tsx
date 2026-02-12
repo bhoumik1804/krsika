@@ -3,15 +3,20 @@ import { StaffReportDeleteDialog } from './staff-report-delete-dialog'
 import { staffReport } from './staff-report-provider'
 
 export function StaffReportDialogs() {
-    const { open, setOpen, currentRow } = staffReport()
+    const { open, setOpen, currentRow, setCurrentRow } = staffReport()
+
+    const handleDialogChange = (isOpen: boolean) => {
+        if (!isOpen) {
+            setCurrentRow(null)
+        }
+        setOpen(isOpen ? open : null)
+    }
 
     return (
         <>
             <StaffReportActionDialog
                 open={open === 'add' || open === 'edit'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? open : null)
-                }
+                onOpenChange={handleDialogChange}
                 currentRow={currentRow}
             />
             <StaffReportDeleteDialog

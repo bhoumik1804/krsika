@@ -12,7 +12,6 @@ import {
     updateVehicle,
     deleteVehicle,
     bulkDeleteVehicle,
-    exportVehicle,
 } from './service'
 import type {
     VehicleResponse,
@@ -55,7 +54,7 @@ export const useVehicleList = (
         queryKey: vehicleKeys.list(millId, params),
         queryFn: () => fetchVehicleList(millId, params),
         enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 5 * 60 * 1000,
     })
 }
 
@@ -71,7 +70,7 @@ export const useVehicleDetail = (
         queryKey: vehicleKeys.detail(millId, id),
         queryFn: () => fetchVehicleById(millId, id),
         enabled: options?.enabled ?? (!!millId && !!id),
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 5 * 60 * 1000,
     })
 }
 
@@ -86,7 +85,7 @@ export const useVehicleSummary = (
         queryKey: vehicleKeys.summary(millId),
         queryFn: () => fetchVehicleSummary(millId),
         enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 5 * 60 * 1000,
     })
 }
 
@@ -129,7 +128,9 @@ export const useUpdateVehicle = (millId: string) => {
             queryClient.invalidateQueries({
                 queryKey: vehicleKeys.lists(),
             })
-            queryClient.setQueryData(vehicleKeys.detail(millId, data._id), data)
+            queryClient.invalidateQueries({
+                queryKey: vehicleKeys.detail(millId, data._id),
+            })
             queryClient.invalidateQueries({
                 queryKey: vehicleKeys.summaries(),
             })
@@ -172,37 +173,17 @@ export const useBulkDeleteVehicle = (millId: string) => {
 
     return useMutation<void, Error, string[]>({
         mutationFn: (ids) => bulkDeleteVehicle(millId, ids),
-        onSuccess: (_, ids) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: vehicleKeys.lists(),
             })
             queryClient.invalidateQueries({
                 queryKey: vehicleKeys.summaries(),
             })
-            toast.success(`${ids.length} vehicles deleted successfully`)
+            toast.success('Vehicles deleted successfully')
         },
         onError: (error) => {
             toast.error(error.message || 'Failed to delete vehicles')
-        },
-    })
-}
-
-/**
- * Hook to export vehicles
- */
-export const useExportVehicle = (millId: string) => {
-    return useMutation<
-        Blob,
-        Error,
-        { params?: VehicleQueryParams; format?: 'csv' | 'xlsx' }
-    >({
-        mutationFn: ({ params, format }) =>
-            exportVehicle(millId, params, format),
-        onSuccess: () => {
-            toast.success('Export completed successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to export data')
         },
     })
 }

@@ -10,15 +10,15 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type GunnySales } from '../data/schema'
-import { gunnySales } from './gunny-sales-provider'
+import type { GunnySalesResponse } from '../data/types'
+import { useGunnySales } from './gunny-sales-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<GunnySales>
+    row: Row<GunnySalesResponse>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = gunnySales()
+    const { setOpen, setCurrentRow } = useGunnySales()
     return (
         <>
             <DropdownMenu modal={false}>

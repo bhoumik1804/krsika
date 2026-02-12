@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
+import type { NavigateFn } from '@/hooks/use-table-url-state'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
@@ -37,24 +38,20 @@ export function DoReport() {
         isError,
     } = useDoReportList(millId || '', queryParams, { enabled: !!millId })
 
-    const doReportData = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
-    }, [response])
+    const doReportData = useMemo(() => response?.reports ?? [], [response])
 
-    const navigate = (opts: { search: unknown; replace?: boolean }) => {
+    const navigate: NavigateFn = (opts) => {
         if (typeof opts.search === 'function') {
             const newSearch = opts.search(search)
-            setSearchParams(newSearch as Record<string, string>)
+            setSearchParams(newSearch as Record<string, string>, {
+                replace: opts.replace,
+            })
         } else if (opts.search === true) {
             // Keep current params
         } else {
-            setSearchParams(opts.search as Record<string, string>)
+            setSearchParams(opts.search as Record<string, string>, {
+                replace: opts.replace,
+            })
         }
     }
 
@@ -76,7 +73,7 @@ export function DoReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Do Report Report
+                            DO Report
                         </h2>
                         <p className='text-muted-foreground'>
                             Manage do report transactions and records
@@ -90,7 +87,7 @@ export function DoReport() {
                     navigate={navigate}
                     isLoading={isLoading}
                     isError={isError}
-                    totalRows={response?.pagination?.total}
+                    pagination={response?.pagination}
                 />
             </Main>
 

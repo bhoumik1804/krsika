@@ -19,12 +19,12 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useCreateTransporter, useUpdateTransporter } from '../data/hooks'
 import {
     transporterReportSchema,
     type TransporterReportData,
 } from '../data/schema'
-import { useCreateTransporter, useUpdateTransporter } from '../data/hooks'
-import { useUser } from '@/pages/landing/hooks/use-auth'
+import { useTransporterReport } from './transporter-report-provider'
 
 type TransporterReportActionDialogProps = {
     open: boolean
@@ -35,14 +35,15 @@ type TransporterReportActionDialogProps = {
 export function TransporterReportActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: TransporterReportActionDialogProps) {
-    const { user } = useUser()
-    const millId = user?.millId as any
-    const createMutation = useCreateTransporter(millId)
-    const updateMutation = useUpdateTransporter(millId)
-    const isLoading = createMutation.isPending || updateMutation.isPending
-    const isEditing = !!currentRow?._id
+    const { currentRow, millId } = useTransporterReport()
+    const { mutate: createTransporter, isPending: isCreating } =
+        useCreateTransporter(millId)
+    const { mutate: updateTransporter, isPending: isUpdating } =
+        useUpdateTransporter(millId, currentRow?.id || '')
+
+    const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
 
     const form = useForm<TransporterReportData>({
         resolver: zodResolver(transporterReportSchema),
@@ -63,20 +64,21 @@ export function TransporterReportActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = async (data: TransporterReportData) => {
-        try {
-            if (isEditing && currentRow?._id) {
-                await updateMutation.mutateAsync({
-                    id: currentRow._id,
-                    ...data,
-                })
-            } else {
-                await createMutation.mutateAsync(data)
-            }
-            onOpenChange(false)
-            form.reset()
-        } catch (error) {
-            console.error('Error submitting form:', error)
+    const onSubmit = (data: TransporterReportData) => {
+        if (isEditing) {
+            updateTransporter(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
+        } else {
+            createTransporter(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
         }
     }
 
@@ -138,9 +140,7 @@ export function TransporterReportActionDialog({
                                     name='phone'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Phone
-                                            </FormLabel>
+                                            <FormLabel>Phone</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter phone number'
@@ -172,10 +172,8 @@ export function TransporterReportActionDialog({
                                     control={form.control}
                                     name='address'
                                     render={({ field }) => (
-                                        <FormItem className='col-span-2'>
-                                            <FormLabel>
-                                                Address
-                                            </FormLabel>
+                                        <FormItem>
+                                            <FormLabel>Address</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter address'
@@ -204,7 +202,8 @@ export function TransporterReportActionDialog({
                                         : 'Adding...'
                                     : isEditing
                                       ? 'Update'
-                                      : 'Add'} Transporter
+                                      : 'Add'}{' '}
+                                Transporter
                             </Button>
                         </DialogFooter>
                     </form>

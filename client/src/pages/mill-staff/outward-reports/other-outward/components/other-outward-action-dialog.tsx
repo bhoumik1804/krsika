@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -37,27 +36,32 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { useCreateOtherOutward, useUpdateOtherOutward } from '../data/hooks'
 import { otherOutwardSchema, type OtherOutward } from '../data/schema'
 
 type OtherOutwardActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
     currentRow: OtherOutward | null
+    millId: string
 }
 
 export function OtherOutwardActionDialog({
     open,
     onOpenChange,
     currentRow,
+    millId,
 }: OtherOutwardActionDialogProps) {
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<OtherOutward>({
-        resolver: zodResolver(otherOutwardSchema),
-        defaultValues: {
-            date: '',
-            itemSaleDealNumber: '',
+    const createMutation = useCreateOtherOutward(millId)
+    const updateMutation = useUpdateOtherOutward(millId)
+
+    const defaultValues = useMemo(
+        () => ({
+            date: format(new Date(), 'yyyy-MM-dd'),
+            otherSaleDealNumber: '',
             itemName: '',
             quantity: undefined,
             quantityType: '',
@@ -66,52 +70,64 @@ export function OtherOutwardActionDialog({
             gunnyNew: undefined,
             gunnyOld: undefined,
             gunnyPlastic: undefined,
-            juteWeight: undefined,
-            plasticWeight: undefined,
+            juteGunnyWeight: undefined,
+            plasticGunnyWeight: undefined,
             truckNo: '',
             truckRst: '',
             truckWeight: undefined,
             gunnyWeight: undefined,
             netWeight: undefined,
-        },
+        }),
+        []
+    )
+
+    const form = useForm<OtherOutward>({
+        resolver: zodResolver(otherOutwardSchema),
+        defaultValues,
     })
 
     useEffect(() => {
         if (currentRow) {
-            form.reset(currentRow)
-        } else {
             form.reset({
-                date: '',
-                itemSaleDealNumber: '',
-                itemName: '',
-                quantity: undefined,
-                quantityType: '',
-                partyName: '',
-                brokerName: '',
-                gunnyNew: undefined,
-                gunnyOld: undefined,
-                gunnyPlastic: undefined,
-                juteWeight: undefined,
-                plasticWeight: undefined,
-                truckNo: '',
-                truckRst: '',
-                truckWeight: undefined,
-                gunnyWeight: undefined,
-                netWeight: undefined,
+                ...currentRow,
+                date: currentRow.date
+                    ? format(new Date(currentRow.date), 'yyyy-MM-dd')
+                    : '',
+            })
+        } else {
+            form.reset(defaultValues)
+        }
+    }, [currentRow, form, defaultValues])
+
+    const onSubmit = (data: OtherOutward) => {
+        const { _id, ...submitData } = data
+        if (isEditing && currentRow?._id) {
+            toast.promise(
+                updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data: submitData,
+                }),
+                {
+                    loading: 'Updating...',
+                    success: () => {
+                        onOpenChange(false)
+                        form.reset(defaultValues)
+                        return 'Updated successfully'
+                    },
+                    error: 'Failed to update',
+                }
+            )
+        } else {
+            toast.promise(createMutation.mutateAsync(submitData), {
+                loading: 'Adding...',
+                success: () => {
+                    onOpenChange(false)
+                    form.reset(defaultValues)
+                    return 'Added successfully'
+                },
+                error: 'Failed to add',
             })
         }
-    }, [currentRow, form])
-
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
     }
 
     return (
@@ -194,11 +210,11 @@ export function OtherOutwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='itemSaleDealNumber'
+                                name='otherSaleDealNumber'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Item Sale Deal Number
+                                            Other Sale Deal Number
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -388,7 +404,7 @@ export function OtherOutwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='juteWeight'
+                                name='juteGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Jute Gunny Weight</FormLabel>
@@ -413,7 +429,7 @@ export function OtherOutwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='plasticWeight'
+                                name='plasticGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>

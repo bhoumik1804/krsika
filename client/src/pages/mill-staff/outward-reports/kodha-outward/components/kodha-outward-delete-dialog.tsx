@@ -1,5 +1,4 @@
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,21 +9,27 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteKodhaOutward } from '../data/hooks'
 import { type KodhaOutward } from '../data/schema'
 
 type KodhaOutwardDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
     currentRow: KodhaOutward | null
+    millId: string
 }
 
 export function KodhaOutwardDeleteDialog({
     open,
     onOpenChange,
     currentRow,
+    millId,
 }: KodhaOutwardDeleteDialogProps) {
+    const deleteMutation = useDeleteKodhaOutward(millId)
+
     const handleDelete = () => {
-        toast.promise(sleep(2000), {
+        if (!currentRow?._id) return
+        toast.promise(deleteMutation.mutateAsync(currentRow._id), {
             loading: 'Deleting...',
             success: () => {
                 onOpenChange(false)

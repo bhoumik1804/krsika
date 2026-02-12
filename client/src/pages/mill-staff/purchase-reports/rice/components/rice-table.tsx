@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -7,7 +7,6 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -22,12 +21,13 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { type RicePurchase } from '../data/schema'
+import { type RicePurchaseData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { riceColumns as columns } from './rice-columns'
+import { useRice } from './rice-provider'
 
 type DataTableProps = {
-    data: RicePurchase[]
+    data: RicePurchaseData[]
     search: Record<string, unknown>
     navigate: NavigateFn
 }
@@ -39,15 +39,33 @@ export function RiceTable({ data, search, navigate }: DataTableProps) {
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const { queryParams, setQueryParams, pagination } = useRice()
 
-    // Synced with URL states
-    const {
-        columnFilters,
-        onColumnFiltersChange,
-        pagination,
-        onPaginationChange,
-        ensurePageInRange,
-    } = useTableUrlState({
+    // Pagination state from provider (server-side)
+    const paginationState = {
+        pageIndex: (queryParams.page || 1) - 1,
+        pageSize: queryParams.limit || 10,
+    }
+
+    const handlePaginationChange = (updater: any) => {
+        const newPageIndex =
+            typeof updater === 'function'
+                ? updater(paginationState).pageIndex
+                : updater.pageIndex
+        const newPageSize =
+            typeof updater === 'function'
+                ? updater(paginationState).pageSize
+                : updater.pageSize
+
+        setQueryParams((prev) => ({
+            ...prev,
+            page: newPageIndex + 1,
+            limit: newPageSize,
+        }))
+    }
+
+    // Only handle column filters (pagination is server-side)
+    const { columnFilters, onColumnFiltersChange } = useTableUrlState({
         search,
         navigate,
         pagination: { defaultPage: 1, defaultPageSize: 10 },
@@ -68,28 +86,25 @@ export function RiceTable({ data, search, navigate }: DataTableProps) {
         columns,
         state: {
             sorting,
-            pagination,
+            pagination: paginationState,
             rowSelection,
             columnFilters,
             columnVisibility,
         },
         enableRowSelection: true,
-        onPaginationChange,
+        onPaginationChange: handlePaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        pageCount: pagination.totalPages,
+        manualPagination: true,
     })
-
-    useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
 
     return (
         <div

@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for Other Purchase records
 export const otherPurchaseSchema = z.object({
+    _id: z.string().optional(),
     date: z.string().min(1, 'Date is required'),
     partyName: z.string().optional(),
     brokerName: z.string().optional(),

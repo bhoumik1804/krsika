@@ -22,7 +22,6 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type PrivatePaddyInward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { privatePaddyInwardColumns as columns } from './private-paddy-inward-columns'
@@ -31,9 +30,24 @@ type DataTableProps = {
     data: PrivatePaddyInward[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
-export function PrivatePaddyInwardTable({ data, search, navigate }: DataTableProps) {
+export function PrivatePaddyInwardTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -49,11 +63,16 @@ export function PrivatePaddyInwardTable({ data, search, navigate }: DataTablePro
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
+            { columnId: 'partyName', searchKey: 'search', type: 'string' },
         ],
     })
 
@@ -68,6 +87,8 @@ export function PrivatePaddyInwardTable({ data, search, navigate }: DataTablePro
             columnFilters,
             columnVisibility,
         },
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
@@ -83,8 +104,10 @@ export function PrivatePaddyInwardTable({ data, search, navigate }: DataTablePro
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -97,13 +120,6 @@ export function PrivatePaddyInwardTable({ data, search, navigate }: DataTablePro
                 table={table}
                 searchPlaceholder='Search...'
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>
