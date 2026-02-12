@@ -3,7 +3,7 @@ import { OtherOutwardDeleteDialog } from './other-outward-delete-dialog'
 import { otherOutward } from './other-outward-provider'
 
 export function OtherOutwardDialogs() {
-    const { open, setOpen, currentRow } = otherOutward()
+    const { open, setOpen, currentRow, millId } = otherOutward()
 
     return (
         <>
@@ -13,6 +13,7 @@ export function OtherOutwardDialogs() {
                     setOpen(isOpen ? open : null)
                 }
                 currentRow={currentRow}
+                millId={millId}
             />
             <OtherOutwardDeleteDialog
                 open={open === 'delete'}
@@ -20,6 +21,7 @@ export function OtherOutwardDialogs() {
                     setOpen(isOpen ? 'delete' : null)
                 }
                 currentRow={currentRow}
+                millId={millId}
             />
         </>
     )

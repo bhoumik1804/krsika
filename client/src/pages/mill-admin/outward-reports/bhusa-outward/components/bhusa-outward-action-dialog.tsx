@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -29,26 +28,31 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import { useCreateBhusaOutward, useUpdateBhusaOutward } from '../data/hooks'
 import { bhusaOutwardSchema, type BhusaOutward } from '../data/schema'
 
 type BhusaOutwardActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
     currentRow: BhusaOutward | null
+    millId: string
 }
 
 export function BhusaOutwardActionDialog({
     open,
     onOpenChange,
     currentRow,
+    millId,
 }: BhusaOutwardActionDialogProps) {
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<BhusaOutward>({
-        resolver: zodResolver(bhusaOutwardSchema),
-        defaultValues: {
-            date: '',
+    const createMutation = useCreateBhusaOutward(millId)
+    const updateMutation = useUpdateBhusaOutward(millId)
+
+    const defaultValues = useMemo(
+        () => ({
+            date: format(new Date(), 'yyyy-MM-dd'),
             bhusaSaleDealNumber: '',
             partyName: '',
             brokerName: '',
@@ -57,37 +61,51 @@ export function BhusaOutwardActionDialog({
             truckNo: '',
             truckRst: '',
             truckWeight: undefined,
-        },
+        }),
+        []
+    )
+
+    const form = useForm<BhusaOutward>({
+        resolver: zodResolver(bhusaOutwardSchema),
+        defaultValues,
     })
 
     useEffect(() => {
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset({
-                date: '',
-                bhusaSaleDealNumber: '',
-                partyName: '',
-                brokerName: '',
-                rate: undefined,
-                brokerage: undefined,
-                truckNo: '',
-                truckRst: '',
-                truckWeight: undefined,
+            form.reset(defaultValues)
+        }
+    }, [currentRow, form, defaultValues])
+
+    const onSubmit = (values: BhusaOutward) => {
+        if (isEditing && currentRow?._id) {
+            toast.promise(
+                updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data: values,
+                }),
+                {
+                    loading: 'Updating...',
+                    success: () => {
+                        onOpenChange(false)
+                        form.reset(defaultValues)
+                        return 'Updated successfully'
+                    },
+                    error: 'Failed to update',
+                }
+            )
+        } else {
+            toast.promise(createMutation.mutateAsync(values), {
+                loading: 'Adding...',
+                success: () => {
+                    onOpenChange(false)
+                    form.reset(defaultValues)
+                    return 'Added successfully'
+                },
+                error: 'Failed to add',
             })
         }
-    }, [currentRow, form])
-
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
     }
 
     return (

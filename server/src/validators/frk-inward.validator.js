@@ -8,10 +8,10 @@ import { z } from 'zod'
 // Common fields schema - matches FrkInward model
 const frkInwardBaseSchema = {
     date: z.string(),
-    purchaseDealId: z
+    frkPurchaseDealNumber: z
         .string()
         .trim()
-        .max(100, 'Purchase deal ID is too long')
+        .max(100, 'FRK purchase deal number is too long')
         .optional(),
     partyName: z.string().trim().max(200, 'Party name is too long').optional(),
     gunnyPlastic: z.number().min(0, 'Cannot be negative').optional(),
@@ -41,7 +41,7 @@ export const createFrkInwardSchema = z.object({
 export const updateFrkInwardSchema = z.object({
     body: z.object({
         date: frkInwardBaseSchema.date.optional(),
-        purchaseDealId: frkInwardBaseSchema.purchaseDealId,
+        frkPurchaseDealNumber: frkInwardBaseSchema.frkPurchaseDealNumber,
         partyName: frkInwardBaseSchema.partyName,
         gunnyPlastic: frkInwardBaseSchema.gunnyPlastic,
         plasticWeight: frkInwardBaseSchema.plasticWeight,

@@ -1,5 +1,4 @@
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,7 +9,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteSilkyKodhaOutward } from '../data/hooks'
 import { type SilkyKodhaOutward } from '../data/schema'
+import { silkyKodhaOutward } from './silky-kodha-outward-provider'
 
 type SilkyKodhaOutwardDeleteDialogProps = {
     open: boolean
@@ -23,14 +24,20 @@ export function SilkyKodhaOutwardDeleteDialog({
     onOpenChange,
     currentRow,
 }: SilkyKodhaOutwardDeleteDialogProps) {
+    const { millId } = silkyKodhaOutward()
+    const deleteMutation = useDeleteSilkyKodhaOutward(millId)
+
     const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
+        if (!currentRow?._id) return
+
+        deleteMutation.mutate(currentRow._id, {
+            onSuccess: () => {
+                toast.success('Deleted successfully')
                 onOpenChange(false)
-                return 'Deleted successfully'
             },
-            error: 'Failed to delete',
+            onError: (error) => {
+                toast.error(error.message || 'Failed to delete')
+            },
         })
     }
 

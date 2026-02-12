@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -29,26 +28,31 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import { useCreateKodhaOutward, useUpdateKodhaOutward } from '../data/hooks'
 import { kodhaOutwardSchema, type KodhaOutward } from '../data/schema'
 
 type KodhaOutwardActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
     currentRow: KodhaOutward | null
+    millId: string
 }
 
 export function KodhaOutwardActionDialog({
     open,
     onOpenChange,
     currentRow,
+    millId,
 }: KodhaOutwardActionDialogProps) {
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<KodhaOutward>({
-        resolver: zodResolver(kodhaOutwardSchema),
-        defaultValues: {
-            date: '',
+    const createMutation = useCreateKodhaOutward(millId)
+    const updateMutation = useUpdateKodhaOutward(millId)
+
+    const defaultValues = useMemo(
+        () => ({
+            date: format(new Date(), 'yyyy-MM-dd'),
             kodhaSaleDealNumber: '',
             partyName: '',
             brokerName: '',
@@ -56,48 +60,57 @@ export function KodhaOutwardActionDialog({
             oil: undefined,
             brokerage: undefined,
             gunnyPlastic: undefined,
-            plasticWeight: undefined,
+            plasticGunnyWeight: undefined,
             truckNo: '',
             truckRst: '',
             truckWeight: undefined,
             gunnyWeight: undefined,
             netWeight: undefined,
-        },
+        }),
+        []
+    )
+
+    const form = useForm<KodhaOutward>({
+        resolver: zodResolver(kodhaOutwardSchema),
+        defaultValues,
     })
 
     useEffect(() => {
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset({
-                date: '',
-                kodhaSaleDealNumber: '',
-                partyName: '',
-                brokerName: '',
-                rate: undefined,
-                oil: undefined,
-                brokerage: undefined,
-                gunnyPlastic: undefined,
-                plasticWeight: undefined,
-                truckNo: '',
-                truckRst: '',
-                truckWeight: undefined,
-                gunnyWeight: undefined,
-                netWeight: undefined,
+            form.reset(defaultValues)
+        }
+    }, [currentRow, form, defaultValues])
+
+    const onSubmit = (values: KodhaOutward) => {
+        if (isEditing && currentRow?._id) {
+            toast.promise(
+                updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data: values,
+                }),
+                {
+                    loading: 'Updating...',
+                    success: () => {
+                        onOpenChange(false)
+                        form.reset(defaultValues)
+                        return 'Updated successfully'
+                    },
+                    error: 'Failed to update',
+                }
+            )
+        } else {
+            toast.promise(createMutation.mutateAsync(values), {
+                loading: 'Adding...',
+                success: () => {
+                    onOpenChange(false)
+                    form.reset(defaultValues)
+                    return 'Added successfully'
+                },
+                error: 'Failed to add',
             })
         }
-    }, [currentRow, form])
-
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
     }
 
     return (
@@ -327,7 +340,7 @@ export function KodhaOutwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='plasticWeight'
+                                name='plasticGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>

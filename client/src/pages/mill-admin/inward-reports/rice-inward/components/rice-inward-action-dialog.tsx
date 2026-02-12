@@ -65,7 +65,7 @@ export function RiceInwardActionDialog({
     const getDefaultValues = useMemo(
         () => ({
             date: format(new Date(), 'yyyy-MM-dd'),
-            ricePurchaseNumber: '',
+            ricePurchaseDealNumber: '',
             partyName: '',
             brokerName: '',
             riceType: undefined,
@@ -212,16 +212,16 @@ export function RiceInwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='ricePurchaseNumber'
+                                name='ricePurchaseDealNumber'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Rice Purchase Number
+                                            Rice Purchase Deal Number
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                id='ricePurchaseNumber'
-                                                placeholder='Enter Deal ID'
+                                                id='ricePurchaseDealNumber'
+                                                placeholder='Enter Deal Number'
                                                 {...field}
                                                 value={field.value || ''}
                                             />

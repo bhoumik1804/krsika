@@ -1,6 +1,5 @@
 import { type Table } from '@tanstack/react-table'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,6 +10,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeleteSilkyKodhaOutward } from '../data/hooks'
+import { type SilkyKodhaOutward } from '../data/schema'
+import { silkyKodhaOutward } from './silky-kodha-outward-provider'
 
 type SilkyKodhaOutwardMultiDeleteDialogProps<TData> = {
     table: Table<TData>
@@ -23,17 +25,28 @@ export function SilkyKodhaOutwardMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: SilkyKodhaOutwardMultiDeleteDialogProps<TData>) {
+    const { millId } = silkyKodhaOutward()
+    const bulkDeleteMutation = useBulkDeleteSilkyKodhaOutward(millId)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
+        const ids = selectedRows
+            .map((row) => (row.original as SilkyKodhaOutward)._id)
+            .filter((id): id is string => !!id)
+
+        if (ids.length === 0) return
+
+        bulkDeleteMutation.mutate(ids, {
+            onSuccess: () => {
+                toast.success(
+                    `Deleted ${ids.length} record${ids.length > 1 ? 's' : ''}`
+                )
                 table.resetRowSelection()
                 onOpenChange(false)
-                return `Deleted ${selectedRows.length} record${selectedRows.length > 1 ? 's' : ''}`
             },
-            error: 'Error deleting records',
+            onError: (error) => {
+                toast.error(error.message || 'Error deleting records')
+            },
         })
     }
 

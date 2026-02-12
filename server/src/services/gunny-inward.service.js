@@ -40,7 +40,7 @@ export const getGunnyInwardList = async (millId, options = {}) => {
     if (search) {
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
-            { purchaseDealId: { $regex: search, $options: 'i' } },
+            { gunnyPurchaseDealNumber: { $regex: search, $options: 'i' } },
             { delivery: { $regex: search, $options: 'i' } },
             { samitiSangrahan: { $regex: search, $options: 'i' } },
         ]

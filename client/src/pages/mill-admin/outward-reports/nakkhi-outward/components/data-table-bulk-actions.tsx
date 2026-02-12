@@ -13,13 +13,15 @@ import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-ta
 import { type NakkhiOutward } from '../data/schema'
 import { NakkhiOutwardMultiDeleteDialog } from './nakkhi-outward-multi-delete-dialog'
 
-type DataTableBulkActionsProps<TData> = {
-    table: Table<TData>
+type DataTableBulkActionsProps = {
+    table: Table<NakkhiOutward>
+    millId: string
 }
 
-export function DataTableBulkActions<TData>({
+export function DataTableBulkActions({
     table,
-}: DataTableBulkActionsProps<TData>) {
+    millId,
+}: DataTableBulkActionsProps) {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
@@ -79,6 +81,7 @@ export function DataTableBulkActions<TData>({
                 table={table}
                 open={showDeleteConfirm}
                 onOpenChange={setShowDeleteConfirm}
+                millId={millId}
             />
         </>
     )

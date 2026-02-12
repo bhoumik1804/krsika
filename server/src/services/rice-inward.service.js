@@ -39,7 +39,7 @@ export const getRiceInwardList = async (millId, options = {}) => {
     if (search)
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
-            { ricePurchaseNumber: { $regex: search, $options: 'i' } },
+            { ricePurchaseDealNumber: { $regex: search, $options: 'i' } },
             { truckNumber: { $regex: search, $options: 'i' } },
             { rstNumber: { $regex: search, $options: 'i' } },
         ]

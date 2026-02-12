@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -7,7 +7,6 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -23,6 +22,7 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BhusaOutward } from '../data/schema'
+import type { BhusaOutwardListResponse } from '../data/types'
 import { bhusaOutwardColumns as columns } from './bhusa-outward-columns'
 import { BhusaOutwardMultiDeleteDialog } from './bhusa-outward-multi-delete-dialog'
 import { bhusaOutward } from './bhusa-outward-provider'
@@ -32,23 +32,28 @@ type DataTableProps = {
     data: BhusaOutward[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: BhusaOutwardListResponse['pagination']
 }
 
-export function BhusaOutwardTable({ data, search, navigate }: DataTableProps) {
+export function BhusaOutwardTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
 
-    const { open, setOpen } = bhusaOutward()
+    const { open, setOpen, millId } = bhusaOutward()
 
     const {
         columnFilters,
         onColumnFiltersChange,
         pagination,
         onPaginationChange,
-        ensurePageInRange,
     } = useTableUrlState({
         search,
         navigate,
@@ -63,6 +68,7 @@ export function BhusaOutwardTable({ data, search, navigate }: DataTableProps) {
     const table = useReactTable({
         data,
         columns,
+        pageCount: serverPagination?.totalPages ?? -1,
         state: {
             sorting,
             pagination,
@@ -70,23 +76,19 @@ export function BhusaOutwardTable({ data, search, navigate }: DataTableProps) {
             columnFilters,
             columnVisibility,
         },
+        manualPagination: true,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
-
-    useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
 
     return (
         <div
@@ -184,6 +186,7 @@ export function BhusaOutwardTable({ data, search, navigate }: DataTableProps) {
                     setOpen(isOpen ? 'delete-multi' : null)
                 }
                 table={table}
+                millId={millId}
             />
         </div>
     )

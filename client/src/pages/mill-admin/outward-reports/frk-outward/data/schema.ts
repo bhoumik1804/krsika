@@ -6,7 +6,7 @@ export const frkOutwardSchema = z.object({
     date: z.string(),
     partyName: z.string().optional(),
     gunnyPlastic: z.number().optional(),
-    plasticWeight: z.number().optional(),
+    plasticGunnyWeight: z.number().optional(),
     truckNo: z.string().optional(),
     truckRst: z.string().optional(),
     truckWeight: z.number().optional(),

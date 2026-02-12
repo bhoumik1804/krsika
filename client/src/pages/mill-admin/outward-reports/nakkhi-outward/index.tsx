@@ -3,6 +3,7 @@ import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -10,7 +11,7 @@ import { NakkhiOutwardDialogs } from './components/nakkhi-outward-dialogs'
 import { NakkhiOutwardPrimaryButtons } from './components/nakkhi-outward-primary-buttons'
 import { NakkhiOutwardProvider } from './components/nakkhi-outward-provider'
 import { NakkhiOutwardTable } from './components/nakkhi-outward-table'
-import { nakkhiOutwardEntries } from './data/nakkhi-outward-entries'
+import { useNakkhiOutwardList } from './data/hooks'
 
 export function NakkhiOutwardReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -30,8 +31,36 @@ export function NakkhiOutwardReport() {
         }
     }
 
+    const {
+        data: apiData,
+        isLoading,
+        isError,
+    } = useNakkhiOutwardList(millId || '', {
+        page: search.page ? Number(search.page) : 1,
+        limit: search.limit ? Number(search.limit) : 10,
+        partyName: search.partyName as string,
+    })
+
+    if (isLoading) {
+        return (
+            <Main className='flex flex-1 items-center justify-center'>
+                <LoadingSpinner />
+            </Main>
+        )
+    }
+
+    if (isError) {
+        return (
+            <Main className='flex flex-1 items-center justify-center'>
+                <p className='text-destructive'>
+                    Failed to load nakkhi outward data
+                </p>
+            </Main>
+        )
+    }
+
     return (
-        <NakkhiOutwardProvider>
+        <NakkhiOutwardProvider millId={millId || ''} apiData={apiData}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -57,13 +86,14 @@ export function NakkhiOutwardReport() {
                     <NakkhiOutwardPrimaryButtons />
                 </div>
                 <NakkhiOutwardTable
-                    data={nakkhiOutwardEntries}
+                    data={apiData?.entries || []}
                     search={search}
                     navigate={navigate}
+                    pagination={apiData?.pagination}
                 />
             </Main>
 
-            <NakkhiOutwardDialogs />
+            <NakkhiOutwardDialogs millId={millId || ''} />
         </NakkhiOutwardProvider>
     )
 }

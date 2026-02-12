@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for BhusaOutward records
 export const bhusaOutwardSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
     bhusaSaleDealNumber: z.string().optional(),
     partyName: z.string().optional(),

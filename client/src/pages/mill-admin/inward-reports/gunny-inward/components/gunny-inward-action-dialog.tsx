@@ -59,7 +59,7 @@ export function GunnyInwardActionDialog({
         }
         return {
             date: format(new Date(), 'yyyy-MM-dd'),
-            purchaseDealId: '',
+            gunnyPurchaseDealNumber: '',
             partyName: '',
             delivery: '',
             samitiSangrahan: '',
@@ -189,14 +189,16 @@ export function GunnyInwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='purchaseDealId'
+                                name='gunnyPurchaseDealNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Purchase Deal ID</FormLabel>
+                                        <FormLabel>
+                                            Gunny Purchase Deal Number
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                id='purchaseDealId'
-                                                placeholder='Enter Deal ID'
+                                                id='gunnyPurchaseDealNumber'
+                                                placeholder='Enter Deal Number'
                                                 {...field}
                                                 value={field.value || ''}
                                             />

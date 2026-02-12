@@ -12,14 +12,14 @@ import {
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
 import { type OtherOutward } from '../data/schema'
 import { OtherOutwardMultiDeleteDialog } from './other-outward-multi-delete-dialog'
+import { otherOutward } from './other-outward-provider'
 
-type DataTableBulkActionsProps<TData> = {
-    table: Table<TData>
+type DataTableBulkActionsProps = {
+    table: Table<OtherOutward>
 }
 
-export function DataTableBulkActions<TData>({
-    table,
-}: DataTableBulkActionsProps<TData>) {
+export function DataTableBulkActions({ table }: DataTableBulkActionsProps) {
+    const { millId } = otherOutward()
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
@@ -79,6 +79,7 @@ export function DataTableBulkActions<TData>({
                 table={table}
                 open={showDeleteConfirm}
                 onOpenChange={setShowDeleteConfirm}
+                millId={millId}
             />
         </>
     )
