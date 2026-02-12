@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -51,8 +50,8 @@ import {
     type GunnyPurchaseFormData,
     type GunnyPurchaseData,
 } from '../data/schema'
-import { useGunny } from './gunny-provider'
-import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
+import { useParams } from 'react-router'
+import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
 
 type GunnyActionDialogProps = {
     open: boolean
@@ -65,77 +64,12 @@ export function GunnyActionDialog({
     onOpenChange,
     currentRow,
 }: GunnyActionDialogProps) {
-    const { millId } = useGunny()
+    const { millId } = useParams<{ millId: string }>()
+    const { party } = usePartyBrokerSelection(millId || '', open)
     const { mutateAsync: createGunnyPurchase, isPending: isCreating } =
-        useCreateGunnyPurchase(millId)
+        useCreateGunnyPurchase(millId || '')
     const { mutateAsync: updateGunnyPurchase, isPending: isUpdating } =
-        useUpdateGunnyPurchase(millId)
-
-    const [partyPage, setPartyPage] = useState(1)
-    const [allParties, setAllParties] = useState<string[]>([])
-    const [hasMoreParties, setHasMoreParties] = useState(true)
-    const [isLoadingMoreParties, setIsLoadingMoreParties] = useState(false)
-
-    // Dynamic limit: 10 for first page, 5 for subsequent pages
-    const partyLimit = partyPage === 1 ? 10 : 5
-
-    // Fetch party list from API with pagination
-    const { data: partyListData } = usePartyList(
-        millId,
-        {
-            page: partyPage,
-            limit: partyLimit,
-            sortBy: 'partyName',
-            sortOrder: 'asc',
-        },
-        { enabled: open && !!millId }
-    )
-
-    // Extract party names from API response and accumulate
-    React.useEffect(() => {
-        if (partyListData?.parties) {
-            console.log(
-                'Party data received:',
-                partyListData.parties.length,
-                'parties on page',
-                partyPage
-            )
-            const newParties = partyListData.parties.map(
-                (party) => party.partyName
-            )
-            setAllParties((prev) => {
-                // Only add if not already in the list
-                const combined = [...prev, ...newParties]
-                return Array.from(new Set(combined))
-            })
-            // Check if there are more parties to load
-            setHasMoreParties(partyListData.parties.length === partyLimit)
-            setIsLoadingMoreParties(false)
-        }
-    }, [partyListData, partyLimit, partyPage])
-
-    // Reset accumulated data when dialog opens
-    useEffect(() => {
-        if (open) {
-            setAllParties([])
-            setPartyPage(1)
-            setHasMoreParties(true)
-            setIsLoadingMoreParties(false)
-        }
-    }, [open])
-
-    // Handle scroll for party list
-    const handlePartyScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        const target = e.currentTarget
-        const bottom =
-            target.scrollHeight - target.scrollTop <= target.clientHeight + 5
-
-        if (bottom && hasMoreParties && !isLoadingMoreParties) {
-            console.log('Loading more parties... Current page:', partyPage)
-            setIsLoadingMoreParties(true)
-            setPartyPage((prev) => prev + 1)
-        }
-    }
+        useUpdateGunnyPurchase(millId || '')
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -289,7 +223,7 @@ export function GunnyActionDialog({
                                                     onValueChange={
                                                         field.onChange
                                                     }
-                                                    items={allParties}
+                                                    items={party.items}
                                                 >
                                                     <ComboboxInput
                                                         placeholder='Search party...'
@@ -298,24 +232,24 @@ export function GunnyActionDialog({
                                                     <ComboboxContent>
                                                         <ComboboxList
                                                             onScroll={
-                                                                handlePartyScroll
+                                                                party.onScroll
                                                             }
                                                         >
                                                             <ComboboxCollection>
-                                                                {(party) => (
+                                                                {(p) => (
                                                                     <ComboboxItem
                                                                         value={
-                                                                            party
+                                                                            p
                                                                         }
                                                                     >
-                                                                        {party}
+                                                                        {p}
                                                                     </ComboboxItem>
                                                                 )}
                                                             </ComboboxCollection>
                                                             <ComboboxEmpty>
                                                                 No parties found
                                                             </ComboboxEmpty>
-                                                            {isLoadingMoreParties && (
+                                                            {party.isLoadingMore && (
                                                                 <div className='py-2 text-center text-xs text-muted-foreground'>
                                                                     Loading more...
                                                                 </div>

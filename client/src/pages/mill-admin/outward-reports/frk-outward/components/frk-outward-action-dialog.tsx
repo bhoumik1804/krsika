@@ -30,6 +30,16 @@ import {
 import { useCreateFrkOutward, useUpdateFrkOutward } from '../data/hooks'
 import { frkOutwardSchema, type FrkOutward } from '../data/schema'
 import { useFrkOutward } from './frk-outward-provider'
+import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
+import {
+    Combobox,
+    ComboboxContent,
+    ComboboxEmpty,
+    ComboboxInput,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 
 type FrkOutwardActionDialogProps = {
     open: boolean
@@ -41,6 +51,7 @@ export function FrkOutwardActionDialog({
     onOpenChange,
 }: FrkOutwardActionDialogProps) {
     const { millId, currentRow } = useFrkOutward()
+    const { party } = usePartyBrokerSelection(millId || '', open)
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -139,11 +150,11 @@ export function FrkOutwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                  new Date(
-                                                                      field.value
-                                                                  ),
-                                                                  'MMM dd, yyyy'
-                                                              )
+                                                                new Date(
+                                                                    field.value
+                                                                ),
+                                                                'MMM dd, yyyy'
+                                                            )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -157,17 +168,17 @@ export function FrkOutwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                  field.value
-                                                              )
+                                                                field.value
+                                                            )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                      date,
-                                                                      'yyyy-MM-dd'
-                                                                  )
+                                                                    date,
+                                                                    'yyyy-MM-dd'
+                                                                )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -188,10 +199,35 @@ export function FrkOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter party name'
-                                                {...field}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={party.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search party...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList onScroll={party.onScroll}>
+                                                        <ComboboxCollection>
+                                                            {(p) => (
+                                                                <ComboboxItem value={p}>
+                                                                    {p}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No parties found
+                                                        </ComboboxEmpty>
+                                                        {party.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

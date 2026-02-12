@@ -44,6 +44,8 @@ import {
     useUpdatePrivateRiceOutward,
 } from '../data/hooks'
 import { usePrivateRiceOutward } from './private-rice-outward-provider'
+import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
+import { Combobox, ComboboxInput, ComboboxContent, ComboboxItem, ComboboxList, ComboboxEmpty, ComboboxCollection } from '@/components/ui/combobox'
 
 type PrivateRiceOutwardActionDialogProps = {
     open: boolean
@@ -59,6 +61,7 @@ export function PrivateRiceOutwardActionDialog({
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
     const { millId, setOpen: setDialogOpen } = usePrivateRiceOutward()
+    const { party, broker } = usePartyBrokerSelection(millId || '', open)
     const createMutation = useCreatePrivateRiceOutward(millId)
     const updateMutation = useUpdatePrivateRiceOutward(millId)
 
@@ -170,11 +173,11 @@ export function PrivateRiceOutwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                  new Date(
-                                                                      field.value
-                                                                  ),
-                                                                  'MMM dd, yyyy'
-                                                              )
+                                                                new Date(
+                                                                    field.value
+                                                                ),
+                                                                'MMM dd, yyyy'
+                                                            )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -188,17 +191,17 @@ export function PrivateRiceOutwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                  field.value
-                                                              )
+                                                                field.value
+                                                            )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                      date,
-                                                                      'yyyy-MM-dd'
-                                                                  )
+                                                                    date,
+                                                                    'yyyy-MM-dd'
+                                                                )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -241,10 +244,35 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter party name'
-                                                {...field}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={party.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search party...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList onScroll={party.onScroll}>
+                                                        <ComboboxCollection>
+                                                            {(p) => (
+                                                                <ComboboxItem value={p}>
+                                                                    {p}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No parties found
+                                                        </ComboboxEmpty>
+                                                        {party.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -259,10 +287,35 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Broker Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter broker name'
-                                                {...field}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={broker.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search broker...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList onScroll={broker.onScroll}>
+                                                        <ComboboxCollection>
+                                                            {(b) => (
+                                                                <ComboboxItem value={b}>
+                                                                    {b}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No brokers found
+                                                        </ComboboxEmpty>
+                                                        {broker.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
