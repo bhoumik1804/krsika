@@ -48,7 +48,6 @@ import {
 } from '@/components/ui/select'
 import { salesDealSchema, type SalesDeal } from '../data/schema'
 import { useParams } from 'react-router'
-import { useSalesDeals } from './sales-deals-provider'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 
 type SalesDealsActionDialogProps = {
@@ -71,7 +70,7 @@ export function SalesDealsActionDialog({
     const brokerLimit = brokerPage === 1 ? 10 : 5
 
     const { data: brokerListData } = useBrokerList({
-        millId: open ? millId : '',
+        millId: open ? (millId ?? '') : '',
         page: brokerPage,
         pageSize: brokerLimit,
     })

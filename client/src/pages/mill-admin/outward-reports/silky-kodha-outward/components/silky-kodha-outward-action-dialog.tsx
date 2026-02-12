@@ -33,7 +33,6 @@ import {
     useUpdateSilkyKodhaOutward,
 } from '../data/hooks'
 import { silkyKodhaOutwardSchema, type SilkyKodhaOutward } from '../data/schema'
-import { silkyKodhaOutward } from './silky-kodha-outward-provider'
 import { useParams } from 'react-router'
 import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
 import {
@@ -62,8 +61,8 @@ export function SilkyKodhaOutwardActionDialog({
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const createMutation = useCreateSilkyKodhaOutward(millId)
-    const updateMutation = useUpdateSilkyKodhaOutward(millId)
+    const createMutation = useCreateSilkyKodhaOutward(millId || '')
+    const updateMutation = useUpdateSilkyKodhaOutward(millId || '')
 
     const getDefaultValues = useMemo(
         () => ({

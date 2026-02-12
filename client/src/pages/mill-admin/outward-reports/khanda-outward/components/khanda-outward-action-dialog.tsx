@@ -30,7 +30,6 @@ import {
 } from '@/components/ui/popover'
 import { useCreateKhandaOutward, useUpdateKhandaOutward } from '../data/hooks'
 import { khandaOutwardSchema, type KhandaOutward } from '../data/schema'
-import { useParams } from 'react-router'
 import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
 import {
     Combobox,
@@ -55,8 +54,7 @@ export function KhandaOutwardActionDialog({
     currentRow,
     millId,
 }: KhandaOutwardActionDialogProps) {
-    const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(millId, open)
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 

@@ -38,7 +38,6 @@ import {
 } from '@/components/ui/select'
 import { useCreateOtherOutward, useUpdateOtherOutward } from '../data/hooks'
 import { otherOutwardSchema, type OtherOutward } from '../data/schema'
-import { useParams } from 'react-router'
 import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
 import { Combobox, ComboboxInput, ComboboxContent, ComboboxItem, ComboboxList, ComboboxEmpty, ComboboxCollection } from '@/components/ui/combobox'
 
@@ -55,7 +54,6 @@ export function OtherOutwardActionDialog({
     currentRow,
     millId,
 }: OtherOutwardActionDialogProps) {
-    const { millId } = useParams<{ millId: string }>()
     const { party, broker } = usePartyBrokerSelection(millId || '', open)
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)

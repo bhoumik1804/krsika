@@ -30,7 +30,6 @@ import {
 } from '@/components/ui/popover'
 import { useCreateBhusaOutward, useUpdateBhusaOutward } from '../data/hooks'
 import { bhusaOutwardSchema, type BhusaOutward } from '../data/schema'
-import { useParams } from 'react-router'
 import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
 import {
     Combobox,
@@ -55,8 +54,7 @@ export function BhusaOutwardActionDialog({
     currentRow,
     millId,
 }: BhusaOutwardActionDialogProps) {
-    const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(millId, open)
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 

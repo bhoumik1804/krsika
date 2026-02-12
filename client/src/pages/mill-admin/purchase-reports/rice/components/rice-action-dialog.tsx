@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -54,7 +53,6 @@ import {
 } from '@/components/ui/select'
 import { useCreateRicePurchase, useUpdateRicePurchase } from '../data/hooks'
 import { ricePurchaseSchema, type RicePurchaseData } from '../data/schema'
-import { useRice } from './rice-provider'
 import { useParams } from 'react-router'
 import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
 
@@ -75,6 +73,11 @@ export function RiceActionDialog({
         useCreateRicePurchase(millId || '')
     const { mutateAsync: updateRicePurchase, isPending: isUpdating } =
         useUpdateRicePurchase(millId || '')
+
+    // local UI state and flags
+    const isEditing = !!currentRow
+    const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+    const isLoading = isCreating || isUpdating
 
     const form = useForm<RicePurchaseData>({
         resolver: zodResolver(ricePurchaseSchema),

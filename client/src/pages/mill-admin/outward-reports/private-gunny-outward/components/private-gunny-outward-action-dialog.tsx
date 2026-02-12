@@ -35,7 +35,6 @@ import {
     PrivateGunnyOutwardSchema,
     type PrivateGunnyOutward,
 } from '../data/schema'
-import { usePrivateGunnyOutward } from './private-gunny-outward-provider'
 import { useParams } from 'react-router'
 import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
 import {
@@ -64,8 +63,8 @@ export function PrivateGunnyOutwardActionDialog({
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const createMutation = useCreatePrivateGunnyOutward(millId)
-    const updateMutation = useUpdatePrivateGunnyOutward(millId)
+    const createMutation = useCreatePrivateGunnyOutward(millId || '')
+    const updateMutation = useUpdatePrivateGunnyOutward(millId || '')
 
     const form = useForm<PrivateGunnyOutward>({
         resolver: zodResolver(PrivateGunnyOutwardSchema),
