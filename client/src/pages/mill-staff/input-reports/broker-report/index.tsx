@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -17,6 +19,7 @@ import {
 import { BrokerReportTable } from './components/broker-report-table'
 
 export function BrokerReport() {
+    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -60,6 +63,7 @@ export function BrokerReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -73,10 +77,10 @@ export function BrokerReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Broker Report
+                            {t('reports.inputReports.broker.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage broker transactions and records
+                            {t('reports.inputReports.broker.subtitle')}
                         </p>
                     </div>
                     <BrokerReportPrimaryButtons />

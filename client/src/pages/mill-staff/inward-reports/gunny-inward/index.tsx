@@ -1,5 +1,7 @@
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -16,9 +18,9 @@ import {
 import { GunnyInwardTable } from './components/gunny-inward-table'
 
 function GunnyInwardContent() {
+    const { t } = useTranslation('millStaff')
     const [searchParams, setSearchParams] = useSearchParams()
-    const { data, isLoading, error, setQueryParams } =
-        gunnyInward()
+    const { data, isLoading, error, setQueryParams } = gunnyInward()
 
     const search = Object.fromEntries(searchParams.entries())
 
@@ -70,10 +72,10 @@ function GunnyInwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Gunny Inward / Samiti-Sangrahan Report
+                            {t('reports.inwardReports.gunny.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage gunny inward transactions and records
+                            {t('reports.inwardReports.gunny.subtitle')}
                         </p>
                     </div>
                     <GunnyInwardPrimaryButtons />
@@ -117,6 +119,7 @@ export function GunnyInwardReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown

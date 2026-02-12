@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 // '
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -9,7 +10,9 @@ import { statusStyles } from '../data/data'
 import { type SalesDeal } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const salesDealsColumns: ColumnDef<SalesDeal>[] = [
+export const getSalesDealsColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<SalesDeal>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,7 +45,10 @@ export const salesDealsColumns: ColumnDef<SalesDeal>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -58,7 +64,10 @@ export const salesDealsColumns: ColumnDef<SalesDeal>[] = [
     {
         accessorKey: 'buyerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Buyer Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.buyerName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -70,7 +79,10 @@ export const salesDealsColumns: ColumnDef<SalesDeal>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.broker')}
+            />
         ),
         cell: ({ row }) => (
             <div className='max-w-36 truncate'>
@@ -81,7 +93,10 @@ export const salesDealsColumns: ColumnDef<SalesDeal>[] = [
     {
         accessorKey: 'commodity',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Commodity' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.commodity')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('commodity')}</div>,
         filterFn: (row, id, value) => {
@@ -91,7 +106,10 @@ export const salesDealsColumns: ColumnDef<SalesDeal>[] = [
     {
         accessorKey: 'quantity',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Quantity (Qtl)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.qtyQtl')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('quantity')}</div>
@@ -100,7 +118,10 @@ export const salesDealsColumns: ColumnDef<SalesDeal>[] = [
     {
         accessorKey: 'rate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rate/Qtl' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.rateQtl')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('rate')}</div>
@@ -109,7 +130,10 @@ export const salesDealsColumns: ColumnDef<SalesDeal>[] = [
     {
         accessorKey: 'totalAmount',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Total Amount' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.totalAmount')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
@@ -120,7 +144,10 @@ export const salesDealsColumns: ColumnDef<SalesDeal>[] = [
     {
         accessorKey: 'status',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Status' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.status')}
+            />
         ),
         cell: ({ row }) => {
             const { status } = row.original

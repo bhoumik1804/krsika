@@ -1,37 +1,23 @@
-import { useMemo } from 'react';
-import { useParams, useSearchParams } from 'react-router';
-import { ConfigDrawer } from '@/components/config-drawer';
-import { getMillAdminSidebarData } from '@/components/layout/data';
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { LoadingSpinner } from '@/components/loading-spinner';
-import { ProfileDropdown } from '@/components/profile-dropdown';
-import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
-import { LabourOutwardDialogs } from './components/labour-outward-dialogs';
-import { LabourOutwardPrimaryButtons } from './components/labour-outward-primary-buttons';
-import { LabourOutwardProvider } from './components/labour-outward-provider';
-import { LabourOutwardTable } from './components/labour-outward-table';
-import { useLabourOutwardList } from './data/hooks';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useParams, useSearchParams } from 'react-router'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
+import { getMillAdminSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { LabourOutwardDialogs } from './components/labour-outward-dialogs'
+import { LabourOutwardPrimaryButtons } from './components/labour-outward-primary-buttons'
+import { LabourOutwardProvider } from './components/labour-outward-provider'
+import { LabourOutwardTable } from './components/labour-outward-table'
+import { useLabourOutwardList } from './data/hooks'
 
 export function LabourOutwardReport() {
+    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -83,6 +69,7 @@ export function LabourOutwardReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -96,10 +83,10 @@ export function LabourOutwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Labour Outward Report
+                            {t('reports.labourCostReports.outward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage labour outward transactions and records
+                            {t('reports.labourCostReports.outward.subtitle')}
                         </p>
                     </div>
                     <LabourOutwardPrimaryButtons />

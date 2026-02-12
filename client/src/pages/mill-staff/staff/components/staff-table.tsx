@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-import { LoadingSpinner } from '@/components/loading-spinner'
+import { useMemo, useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -12,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -23,10 +23,11 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { roles, statuses } from '../data/data'
+import { LoadingSpinner } from '@/components/loading-spinner'
+import { posts, statuses } from '../data/data'
 import { type Staff } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { staffColumns as columns } from './staff-columns'
+import { getStaffColumns } from './staff-columns'
 
 type DataTableProps = {
     data: Staff[]
@@ -35,7 +36,14 @@ type DataTableProps = {
     isLoading?: boolean
 }
 
-export function StaffTable({ data, search, navigate, isLoading }: DataTableProps) {
+export function StaffTable({
+    data,
+    search,
+    navigate,
+    isLoading,
+}: DataTableProps) {
+    const { t } = useTranslation('millStaff')
+    const columns = useMemo(() => getStaffColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -60,8 +68,8 @@ export function StaffTable({ data, search, navigate, isLoading }: DataTableProps
         },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'status', searchKey: 'status', type: 'array' },
-            { columnId: 'role', searchKey: 'role', type: 'array' },
+            { columnId: 'status', searchKey: 'isActive', type: 'array' },
+            { columnId: 'post', searchKey: 'post', type: 'array' },
         ],
     })
 
@@ -112,9 +120,9 @@ export function StaffTable({ data, search, navigate, isLoading }: DataTableProps
                         options: statuses,
                     },
                     {
-                        columnId: 'role',
-                        title: 'Role',
-                        options: roles.map((role) => ({ ...role })),
+                        columnId: 'post',
+                        title: 'Post',
+                        options: posts.map((post) => ({ ...post })),
                     },
                 ]}
             />
@@ -142,10 +150,10 @@ export function StaffTable({ data, search, navigate, isLoading }: DataTableProps
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext()
-                                                )}
+                                                      header.column.columnDef
+                                                          .header,
+                                                      header.getContext()
+                                                  )}
                                         </TableHead>
                                     )
                                 })}

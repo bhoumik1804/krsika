@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +26,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
 import { type InwardEntry } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { inwardsColumns as columns } from './inwards-columns'
+import { getInwardsColumns } from './inwards-columns'
 
 type DataTableProps = {
     data: InwardEntry[]
@@ -34,6 +35,9 @@ type DataTableProps = {
 }
 
 export function InwardsTable({ data, search, navigate }: DataTableProps) {
+    const { t } = useTranslation('millStaff')
+    const columns = useMemo(() => getInwardsColumns(t), [t])
+
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(

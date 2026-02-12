@@ -1,6 +1,7 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import '@/constants'
 import { format } from 'date-fns/format'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -8,7 +9,9 @@ import { LongText } from '@/components/long-text'
 import { type KodhaOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const kodhaOutwardColumns: ColumnDef<KodhaOutward>[] = [
+export const getKodhaOutwardColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<KodhaOutward>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -41,7 +44,10 @@ export const kodhaOutwardColumns: ColumnDef<KodhaOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -61,7 +67,7 @@ export const kodhaOutwardColumns: ColumnDef<KodhaOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Kodha Sale Deal Number'
+                title={t('tableColumns.saleDealNumber')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('kodhaSaleDealNumber')}</div>,
@@ -69,7 +75,10 @@ export const kodhaOutwardColumns: ColumnDef<KodhaOutward>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -81,7 +90,10 @@ export const kodhaOutwardColumns: ColumnDef<KodhaOutward>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -93,7 +105,10 @@ export const kodhaOutwardColumns: ColumnDef<KodhaOutward>[] = [
     {
         accessorKey: 'rate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.rate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('rate')}</div>
@@ -102,7 +117,10 @@ export const kodhaOutwardColumns: ColumnDef<KodhaOutward>[] = [
     {
         accessorKey: 'oil',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='OIL %' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.oilPercent')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('oil')}%</div>
@@ -111,7 +129,10 @@ export const kodhaOutwardColumns: ColumnDef<KodhaOutward>[] = [
     {
         accessorKey: 'brokerage',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Brokerage' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerage')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('brokerage')}</div>
@@ -120,7 +141,10 @@ export const kodhaOutwardColumns: ColumnDef<KodhaOutward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (Plastic)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyPlastic')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -131,7 +155,7 @@ export const kodhaOutwardColumns: ColumnDef<KodhaOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Plastic Gunny Weight'
+                title={t('tableColumns.plasticGunnyWeight')}
             />
         ),
         cell: ({ row }) => (
@@ -141,21 +165,30 @@ export const kodhaOutwardColumns: ColumnDef<KodhaOutward>[] = [
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckNumber')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('truckNo')}</div>,
     },
     {
         accessorKey: 'truckRst',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.rstNo')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('truckRst')}</div>,
     },
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('truckWeight')}</div>
@@ -164,7 +197,10 @@ export const kodhaOutwardColumns: ColumnDef<KodhaOutward>[] = [
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyWeight')}</div>
@@ -173,7 +209,10 @@ export const kodhaOutwardColumns: ColumnDef<KodhaOutward>[] = [
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Net Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.netWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('netWeight')}</div>

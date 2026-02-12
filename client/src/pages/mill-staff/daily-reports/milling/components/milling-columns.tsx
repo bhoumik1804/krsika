@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -7,7 +8,9 @@ import { statusStyles } from '../data/data'
 import { type MillingEntry } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const millingColumns: ColumnDef<MillingEntry>[] = [
+export const getMillingColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<MillingEntry>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -40,7 +43,10 @@ export const millingColumns: ColumnDef<MillingEntry>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -56,7 +62,10 @@ export const millingColumns: ColumnDef<MillingEntry>[] = [
     {
         accessorKey: 'shift',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Shift' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.shift')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('shift')}</div>,
         filterFn: (row, id, value) => {
@@ -66,14 +75,20 @@ export const millingColumns: ColumnDef<MillingEntry>[] = [
     {
         accessorKey: 'paddyType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Paddy Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.paddyType')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('paddyType')}</div>,
     },
     {
         accessorKey: 'paddyQuantity',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Paddy (Qtl)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.paddyQtl')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
@@ -84,7 +99,10 @@ export const millingColumns: ColumnDef<MillingEntry>[] = [
     {
         accessorKey: 'riceYield',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rice (Kg)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.riceKg')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right text-emerald-600 dark:text-emerald-400'>
@@ -95,7 +113,10 @@ export const millingColumns: ColumnDef<MillingEntry>[] = [
     {
         accessorKey: 'branYield',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Bran (Kg)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.branKg')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -106,7 +127,10 @@ export const millingColumns: ColumnDef<MillingEntry>[] = [
     {
         accessorKey: 'status',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Status' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.status')}
+            />
         ),
         cell: ({ row }) => {
             const { status } = row.original

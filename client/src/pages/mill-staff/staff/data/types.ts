@@ -7,9 +7,9 @@
 // Status Types
 // ==========================================
 
-export type StaffStatus = 'active' | 'inactive' | 'suspended'
+export type StaffStatus = 'active' | 'inactive'
 
-export type StaffRole = 'manager' | 'supervisor' | 'operator' | 'accountant'
+export type StaffPost = 'manager' | 'supervisor' | 'operator' | 'accountant'
 
 export type AttendanceStatus = 'P' | 'A' | 'H'
 
@@ -18,14 +18,23 @@ export interface StaffStatusOption {
     value: StaffStatus
 }
 
-export interface StaffRoleOption {
+export interface StaffPostOption {
     label: string
-    value: StaffRole
+    value: StaffPost
 }
 
 export interface AttendanceStatusOption {
     label: string
     value: AttendanceStatus
+}
+
+// ==========================================
+// Permission Types
+// ==========================================
+
+export interface Permission {
+    moduleSlug: string
+    actions: string[]
 }
 
 // ==========================================
@@ -42,26 +51,27 @@ export interface AttendanceRecord {
 // ==========================================
 
 export interface CreateStaffRequest {
-    firstName: string
-    lastName: string
+    fullName: string
     email: string
-    phoneNumber: string
-    status: StaffStatus
-    role: StaffRole
-    isPaymentDone?: boolean
-    isMillVerified?: boolean
+    phoneNumber?: string
+    password?: string
+    post?: string
+    salary?: number
+    address?: string
+    permissions?: Permission[]
+    isActive?: boolean
 }
 
 export interface UpdateStaffRequest {
     id: string
-    firstName?: string
-    lastName?: string
+    fullName?: string
     email?: string
     phoneNumber?: string
-    status?: StaffStatus
-    role?: StaffRole
-    isPaymentDone?: boolean
-    isMillVerified?: boolean
+    post?: string
+    salary?: number
+    address?: string
+    permissions?: Permission[]
+    isActive?: boolean
 }
 
 export interface MarkAttendanceRequest {
@@ -85,22 +95,22 @@ export interface BulkMarkAttendanceRequest {
 export interface StaffResponse {
     _id: string
     millId: string
-    firstName: string
-    lastName: string
+    fullName: string
     email: string
-    phoneNumber: string
-    status: StaffStatus
-    role: StaffRole
+    phoneNumber?: string
+    role: string // "mill-staff"
+    isActive: boolean
+    post?: string
+    salary?: number
+    address?: string
+    permissions: Permission[]
     attendanceHistory: AttendanceRecord[]
-    isPaymentDone: boolean
-    isMillVerified: boolean
-    createdBy: string
     createdAt: string
     updatedAt: string
 }
 
 export interface StaffListResponse {
-    data: StaffResponse[]
+    staffList: StaffResponse[]
     pagination: {
         page: number
         limit: number
@@ -134,19 +144,14 @@ export interface BulkAttendanceSummaryResponse {
 
 export interface StaffSummaryResponse {
     totalStaff: number
-    statusCounts: {
-        active: number
-        inactive: number
-        suspended: number
-    }
-    roleCounts: {
+    activeCount: number
+    inactiveCount: number
+    postCounts?: {
         manager: number
         supervisor: number
         operator: number
         accountant: number
     }
-    paymentPendingCount: number
-    verifiedCount: number
 }
 
 // ==========================================
@@ -157,10 +162,8 @@ export interface StaffQueryParams {
     page?: number
     limit?: number
     search?: string
-    status?: StaffStatus
-    role?: StaffRole
-    isPaymentDone?: boolean
-    isMillVerified?: boolean
+    isActive?: string
+    post?: string
     sortBy?: string
     sortOrder?: 'asc' | 'desc'
 }
@@ -175,14 +178,15 @@ export interface AttendanceSummaryQueryParams {
 // ==========================================
 
 export interface StaffFormData {
-    firstName: string
-    lastName: string
+    fullName: string
     email: string
-    phoneNumber: string
-    status: StaffStatus
-    role: StaffRole
-    isPaymentDone: boolean
-    isMillVerified: boolean
+    phoneNumber?: string
+    password?: string
+    post?: string
+    salary?: number
+    address?: string
+    permissions?: Permission[]
+    isActive: boolean
 }
 
 export interface AttendanceFormData {

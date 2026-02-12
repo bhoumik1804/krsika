@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -6,7 +7,9 @@ import { LongText } from '@/components/long-text'
 import { type BalanceLiftingPurchasesRice } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
+export const getBalanceLiftingPurchasesRiceColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<BalanceLiftingPurchasesRice>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -55,7 +61,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -66,7 +75,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerName')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -77,7 +89,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'deliveryType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Delivery Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.deliveryType')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -88,7 +103,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'lotOrOther',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Lot / Other' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.lotOrOther')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -99,7 +117,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'fciOrNAN',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='FCI / NAN' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.fciOrNAN')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('fciOrNAN') || '-'}</div>
@@ -108,7 +129,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'riceType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rice Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.riceType')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('riceType') || '-'}</div>
@@ -117,7 +141,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'riceQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Qty (Qtl)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.qtyQtl')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.original.riceQty || 0}</div>
@@ -126,7 +153,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'riceRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rate/Qtl' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.rateQtl')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>₹{row.original.riceRate || 0}</div>
@@ -135,7 +165,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'discountPercent',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Discount %' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.discountPercent')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -146,7 +179,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'brokeragePerQuintal',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Brokerage/Qtl' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerageQtl')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -157,7 +193,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'frkType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='FRK Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.frkType')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('frkType') || '-'}</div>
@@ -166,7 +205,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'frkRatePerQuintal',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='FRK Rate/Qtl' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.frkRateQtl')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -177,7 +219,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'lotNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='LOT No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.lotNo')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -188,7 +233,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'gunnyType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyType')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -199,7 +247,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'newGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='New Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.newGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>₹{row.original.newGunnyRate || 0}</div>
@@ -208,7 +259,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'oldGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Old Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.oldGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>₹{row.original.oldGunnyRate || 0}</div>
@@ -217,7 +271,10 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
         accessorKey: 'plasticGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.plasticGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>

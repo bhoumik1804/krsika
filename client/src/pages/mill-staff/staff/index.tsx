@@ -1,8 +1,10 @@
 import { useMemo } from 'react'
 import { UserCog } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillStaffSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -13,7 +15,7 @@ import { StaffDialogs } from './components/staff-dialogs'
 import { StaffProvider } from './components/staff-provider'
 import { StaffTable } from './components/staff-table'
 import { useStaffList } from './data/hooks'
-import type { StaffRole } from './data/types'
+import type { StaffPost } from './data/types'
 
 export function MillStaffStaff() {
     const { millId } = useParams<{ millId: string; staffId: string }>()
@@ -35,12 +37,8 @@ export function MillStaffStaff() {
             page: search.page ? parseInt(search.page as string, 10) : 1,
             limit,
             search: search.search as string | undefined,
-            status: search.status as
-                | 'active'
-                | 'inactive'
-                | 'suspended'
-                | undefined,
-            role: search.role as StaffRole | undefined,
+            isActive: search.isActive as string | undefined,
+            post: search.post as StaffPost | undefined,
             sortBy: (search.sortBy as string) || 'createdAt',
             sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
         }
@@ -66,31 +64,35 @@ export function MillStaffStaff() {
 
     // Transform API response to table format
     const staffData = useMemo(() => {
-        if (!staffResponse?.data) return []
-        return staffResponse.data.map((s) => ({
-            id: s._id,
-            firstName: s.firstName,
-            lastName: s.lastName,
+        if (!staffResponse?.staffList) return []
+        return staffResponse.staffList.map((s) => ({
+            _id: s._id,
+            fullName: s.fullName,
             email: s.email,
             phoneNumber: s.phoneNumber,
-            status: s.status,
             role: s.role,
+            millId: s.millId,
+            isActive: s.isActive,
+            post: s.post,
+            salary: s.salary,
+            address: s.address,
+            permissions: s.permissions,
             attendanceHistory: s.attendanceHistory,
-            isPaymentDone: s.isPaymentDone,
-            isMillVerified: s.isMillVerified,
             createdAt: new Date(s.createdAt),
             updatedAt: new Date(s.updatedAt),
         }))
     }, [staffResponse])
 
-    const activeStaff = staffData.filter((s) => s.status === 'active')
-    const suspendedStaff = staffData.filter((s) => s.status === 'suspended')
+    const activeStaff = staffData.filter((s) => s.isActive)
+    const inactiveStaff = staffData.filter((s) => !s.isActive)
+    const { t } = useTranslation()
 
     return (
         <StaffProvider>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -106,25 +108,31 @@ export function MillStaffStaff() {
                         <div className='flex items-center gap-2'>
                             <UserCog className='h-5 w-5' />
                             <h2 className='text-2xl font-bold tracking-tight'>
-                                Staff Directory
+                                {t('staff.title')}
                             </h2>
                         </div>
                         <p className='text-muted-foreground'>
-                            Manage staff accounts, roles, and attendance.
+                            {t('staff.subtitle')}
                         </p>
                     </div>
                 </div>
 
                 <Tabs defaultValue='all' className='flex-1'>
                     <TabsList className='grid w-full grid-cols-3 md:w-[420px]'>
-                        <TabsTrigger value='all'>All Staff</TabsTrigger>
-                        <TabsTrigger value='active'>Active</TabsTrigger>
-                        <TabsTrigger value='suspended'>Suspended</TabsTrigger>
+                        <TabsTrigger value='all'>
+                            {t('staff.allStaff')}
+                        </TabsTrigger>
+                        <TabsTrigger value='active'>
+                            {t('staff.activeStaff')}
+                        </TabsTrigger>
+                        <TabsTrigger value='inactive'>
+                            {t('staff.inactiveStaff')}
+                        </TabsTrigger>
                     </TabsList>
                     <TabsContent value='all' className='space-y-4'>
                         {isError ? (
                             <div className='py-10 text-center text-destructive'>
-                                Failed to load staff data
+                                {t('staff.failedToLoad')}
                             </div>
                         ) : (
                             <StaffTable
@@ -143,9 +151,9 @@ export function MillStaffStaff() {
                             isLoading={isLoading}
                         />
                     </TabsContent>
-                    <TabsContent value='suspended' className='space-y-4'>
+                    <TabsContent value='inactive' className='space-y-4'>
                         <StaffTable
-                            data={suspendedStaff}
+                            data={inactiveStaff}
                             search={search}
                             navigate={navigate}
                             isLoading={isLoading}

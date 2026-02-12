@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -6,7 +7,9 @@ import { LongText } from '@/components/long-text'
 import { type FrkInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const frkInwardColumns: ColumnDef<FrkInward>[] = [
+export const getFrkInwardColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<FrkInward>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -57,7 +63,7 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='FRK Purchase Deal Number'
+                title={t('tableColumns.purchaseDealNumber')}
             />
         ),
         cell: ({ row }) => (
@@ -69,7 +75,10 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -81,7 +90,10 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (Plastic)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyPlastic')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -92,7 +104,7 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Plastic Gunny Weight'
+                title={t('tableColumns.plasticGunnyWeight')}
             />
         ),
         cell: ({ row }) => (
@@ -104,7 +116,10 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
     {
         accessorKey: 'truckNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('truckNumber')}</div>
@@ -113,7 +128,10 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
     {
         accessorKey: 'rstNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.rstNo')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('rstNumber')}</div>
@@ -122,7 +140,10 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -133,7 +154,10 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -144,7 +168,10 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Net Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.netWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>

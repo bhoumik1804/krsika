@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -6,7 +7,9 @@ import { LongText } from '@/components/long-text'
 import { type GovtPaddyInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const govtPaddyInwardColumns: ColumnDef<GovtPaddyInward>[] = [
+export const getGovtPaddyInwardColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<GovtPaddyInward>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const govtPaddyInwardColumns: ColumnDef<GovtPaddyInward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('date')}</div>
@@ -55,7 +61,10 @@ export const govtPaddyInwardColumns: ColumnDef<GovtPaddyInward>[] = [
     {
         accessorKey: 'doNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='DO Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.doNumber')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>{row.getValue('doNumber')}</LongText>
@@ -64,7 +73,10 @@ export const govtPaddyInwardColumns: ColumnDef<GovtPaddyInward>[] = [
     {
         accessorKey: 'committeeName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Committee Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.committeeName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -75,7 +87,10 @@ export const govtPaddyInwardColumns: ColumnDef<GovtPaddyInward>[] = [
     {
         accessorKey: 'balanceDo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Balance DO' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.balanceDo')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('balanceDo')}</div>
@@ -84,7 +99,10 @@ export const govtPaddyInwardColumns: ColumnDef<GovtPaddyInward>[] = [
     {
         accessorKey: 'gunnyNew',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny New' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyNew')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyNew')}</div>
@@ -93,7 +111,10 @@ export const govtPaddyInwardColumns: ColumnDef<GovtPaddyInward>[] = [
     {
         accessorKey: 'gunnyOld',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Old' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyOld')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyOld')}</div>
@@ -102,7 +123,10 @@ export const govtPaddyInwardColumns: ColumnDef<GovtPaddyInward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Plastic' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyPlastic')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -113,7 +137,7 @@ export const govtPaddyInwardColumns: ColumnDef<GovtPaddyInward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Jute Gunny Weight (kg.)'
+                title={t('tableColumns.juteWeight')}
             />
         ),
         cell: ({ row }) => (
@@ -125,7 +149,7 @@ export const govtPaddyInwardColumns: ColumnDef<GovtPaddyInward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Plastic Gunny Weight (kg.)'
+                title={t('tableColumns.plasticGunnyWeight')}
             />
         ),
         cell: ({ row }) => (
@@ -135,7 +159,10 @@ export const govtPaddyInwardColumns: ColumnDef<GovtPaddyInward>[] = [
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight (kg.)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyWeight')}</div>
@@ -144,7 +171,10 @@ export const govtPaddyInwardColumns: ColumnDef<GovtPaddyInward>[] = [
     {
         accessorKey: 'truckNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('truckNumber')}</div>

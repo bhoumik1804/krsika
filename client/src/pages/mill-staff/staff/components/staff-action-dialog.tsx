@@ -24,20 +24,21 @@ import {
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { roles } from '../data/data'
+import { posts } from '../data/data'
 import { type Staff } from '../data/schema'
 
 const formSchema = z
     .object({
-        firstName: z.string().min(1, 'First Name is required.'),
-        lastName: z.string().min(1, 'Last Name is required.'),
-        phoneNumber: z.string().min(1, 'Phone number is required.'),
+        fullName: z.string().min(2, 'Full Name must be at least 2 characters.'),
+        phoneNumber: z.string().optional(),
         email: z.email({
             error: (iss) =>
                 iss.input === '' ? 'Email is required.' : undefined,
         }),
         password: z.string().transform((pwd) => pwd.trim()),
-        role: z.string().min(1, 'Role is required.'),
+        post: z.string().optional(),
+        salary: z.number().optional(),
+        address: z.string().optional(),
         confirmPassword: z.string().transform((pwd) => pwd.trim()),
         isEdit: z.boolean(),
     })
@@ -109,17 +110,23 @@ export function StaffActionDialog({
         resolver: zodResolver(formSchema),
         defaultValues: isEdit
             ? {
-                  ...currentRow,
+                  fullName: currentRow.fullName,
+                  email: currentRow.email,
+                  phoneNumber: currentRow.phoneNumber || '',
+                  post: currentRow.post || '',
+                  salary: currentRow.salary,
+                  address: currentRow.address || '',
                   password: '',
                   confirmPassword: '',
                   isEdit,
               }
             : {
-                  firstName: '',
-                  lastName: '',
+                  fullName: '',
                   email: '',
-                  role: '',
+                  post: '',
                   phoneNumber: '',
+                  salary: undefined,
+                  address: '',
                   password: '',
                   confirmPassword: '',
                   isEdit,
@@ -163,35 +170,15 @@ export function StaffActionDialog({
                         >
                             <FormField
                                 control={form.control}
-                                name='firstName'
+                                name='fullName'
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            First Name
+                                            Full Name
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='John'
-                                                className='col-span-4'
-                                                autoComplete='off'
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage className='col-span-4 col-start-3' />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name='lastName'
-                                render={({ field }) => (
-                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                                        <FormLabel className='col-span-2 text-end'>
-                                            Last Name
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder='Doe'
+                                                placeholder='John Doe'
                                                 className='col-span-4'
                                                 autoComplete='off'
                                                 {...field}
@@ -241,24 +228,63 @@ export function StaffActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='role'
+                                name='post'
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Role
+                                            Post
                                         </FormLabel>
                                         <SelectDropdown
                                             defaultValue={field.value}
                                             onValueChange={field.onChange}
-                                            placeholder='Select a role'
+                                            placeholder='Select a post'
                                             className='col-span-4'
-                                            items={roles.map(
+                                            items={posts.map(
                                                 ({ label, value }) => ({
                                                     label,
                                                     value,
                                                 })
                                             )}
                                         />
+                                        <FormMessage className='col-span-4 col-start-3' />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='salary'
+                                render={({ field }) => (
+                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                                        <FormLabel className='col-span-2 text-end'>
+                                            Salary
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type='number'
+                                                placeholder='10000'
+                                                className='col-span-4'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className='col-span-4 col-start-3' />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='address'
+                                render={({ field }) => (
+                                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                                        <FormLabel className='col-span-2 text-end'>
+                                            Address
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder='Enter address'
+                                                className='col-span-4'
+                                                {...field}
+                                            />
+                                        </FormControl>
                                         <FormMessage className='col-span-4 col-start-3' />
                                     </FormItem>
                                 )}

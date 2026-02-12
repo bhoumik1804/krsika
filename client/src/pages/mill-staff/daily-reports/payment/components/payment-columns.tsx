@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -8,7 +9,9 @@ import { statusStyles } from '../data/data'
 import { type PaymentEntry } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const paymentColumns: ColumnDef<PaymentEntry>[] = [
+export const getPaymentColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<PaymentEntry>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -41,7 +44,10 @@ export const paymentColumns: ColumnDef<PaymentEntry>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -57,7 +63,10 @@ export const paymentColumns: ColumnDef<PaymentEntry>[] = [
     {
         accessorKey: 'voucherNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Voucher No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.voucherNo')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono font-medium'>
@@ -68,7 +77,10 @@ export const paymentColumns: ColumnDef<PaymentEntry>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party / Purpose' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyPurpose')}
+            />
         ),
         cell: ({ row }) => {
             const { partyName, purpose } = row.original
@@ -88,7 +100,10 @@ export const paymentColumns: ColumnDef<PaymentEntry>[] = [
     {
         accessorKey: 'amount',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Amount' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.amount')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium text-red-600 dark:text-red-400'>
@@ -99,7 +114,10 @@ export const paymentColumns: ColumnDef<PaymentEntry>[] = [
     {
         accessorKey: 'paymentMode',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Mode' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.mode')}
+            />
         ),
         cell: ({ row }) => (
             <Badge variant='outline'>{row.getValue('paymentMode')}</Badge>
@@ -111,7 +129,10 @@ export const paymentColumns: ColumnDef<PaymentEntry>[] = [
     {
         accessorKey: 'status',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Status' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.status')}
+            />
         ),
         cell: ({ row }) => {
             const { status } = row.original

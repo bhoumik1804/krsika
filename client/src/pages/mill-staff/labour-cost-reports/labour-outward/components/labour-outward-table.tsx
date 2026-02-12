@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +26,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { outwardTypes } from '../data/data'
 import { type LabourOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { labourOutwardColumns as columns } from './labour-outward-columns'
+import { getLabourOutwardColumns } from './labour-outward-columns'
 
 type DataTableProps = {
     data: LabourOutward[]
@@ -34,6 +35,8 @@ type DataTableProps = {
 }
 
 export function LabourOutwardTable({ data, search, navigate }: DataTableProps) {
+    const { t } = useTranslation('millStaff')
+    const columns = useMemo(() => getLabourOutwardColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

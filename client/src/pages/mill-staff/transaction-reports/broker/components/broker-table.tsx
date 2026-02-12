@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -22,8 +23,7 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-// import { type BrokerTransaction } from '../data/schema'
-import { brokerTransactionColumns as columns } from './broker-transaction-columns'
+import { getBrokerTransactionColumns } from './broker-transaction-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
@@ -39,6 +39,8 @@ export function BrokerTransactionTable({
     search,
     navigate,
 }: DataTableProps) {
+    const { t } = useTranslation('millStaff')
+    const columns = useMemo(() => getBrokerTransactionColumns(t), [t])
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(

@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -6,7 +7,9 @@ import { LongText } from '@/components/long-text'
 import { type MillingPaddy } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const millingPaddyColumns: ColumnDef<MillingPaddy>[] = [
+export const getMillingPaddyColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<MillingPaddy>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const millingPaddyColumns: ColumnDef<MillingPaddy>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -55,7 +61,10 @@ export const millingPaddyColumns: ColumnDef<MillingPaddy>[] = [
     {
         accessorKey: 'paddyType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Paddy Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.paddyType')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -67,7 +76,10 @@ export const millingPaddyColumns: ColumnDef<MillingPaddy>[] = [
     {
         accessorKey: 'hopperInGunny',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Hopper (In Gunny)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.hopperInGunny')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -80,7 +92,7 @@ export const millingPaddyColumns: ColumnDef<MillingPaddy>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Hopper (In Quintal)'
+                title={t('tableColumns.hopperInQuintal')}
             />
         ),
         cell: ({ row }) => (
@@ -92,7 +104,10 @@ export const millingPaddyColumns: ColumnDef<MillingPaddy>[] = [
     {
         accessorKey: 'riceType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rice Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.riceType')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-32'>{row.getValue('riceType')}</LongText>
@@ -103,7 +118,7 @@ export const millingPaddyColumns: ColumnDef<MillingPaddy>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Rice Quantity (Qtl)'
+                title={t('tableColumns.riceQty')}
             />
         ),
         cell: ({ row }) => (
@@ -115,7 +130,10 @@ export const millingPaddyColumns: ColumnDef<MillingPaddy>[] = [
     {
         accessorKey: 'ricePercentage',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rice (%)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.ricePercent')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -128,7 +146,7 @@ export const millingPaddyColumns: ColumnDef<MillingPaddy>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Khanda Quantity (Qtl)'
+                title={t('tableColumns.khandaQty')}
             />
         ),
         cell: ({ row }) => (
@@ -140,7 +158,10 @@ export const millingPaddyColumns: ColumnDef<MillingPaddy>[] = [
     {
         accessorKey: 'khandaPercentage',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Khanda (%)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.khandaPercent')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>

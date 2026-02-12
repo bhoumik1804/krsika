@@ -1,12 +1,15 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns/format'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type DoReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const doReportColumns: ColumnDef<DoReportData>[] = [
+export const getDoReportColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<DoReportData>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -57,7 +63,10 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
     {
         accessorKey: 'samitiSangrahan',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Samiti Sangrahan' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.samitiSangrahan')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -69,7 +78,10 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
     {
         accessorKey: 'doNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='DO No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.doNo')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -80,7 +92,10 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
     {
         accessorKey: 'dhanMota',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Dhan (Mota)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.dhanMota')}
+            />
         ),
         cell: ({ row }) => {
             const value = row.getValue('dhanMota') as number | undefined
@@ -90,7 +105,10 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
     {
         accessorKey: 'dhanPatla',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Dhan (Patla)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.dhanPatla')}
+            />
         ),
         cell: ({ row }) => {
             const value = row.getValue('dhanPatla') as number | undefined
@@ -100,7 +118,10 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
     {
         accessorKey: 'dhanSarna',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Dhan (Sarna)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.dhanSarna')}
+            />
         ),
         cell: ({ row }) => {
             const value = row.getValue('dhanSarna') as number | undefined
@@ -110,7 +131,10 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
     {
         accessorKey: 'total',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Total' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.total')}
+            />
         ),
         cell: ({ row }) => {
             const total = row.getValue('total') as number | undefined

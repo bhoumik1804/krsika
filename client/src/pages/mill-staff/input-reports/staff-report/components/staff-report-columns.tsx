@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -6,7 +7,9 @@ import { LongText } from '@/components/long-text'
 import { type StaffReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const staffReportColumns: ColumnDef<StaffReportData>[] = [
+export const getStaffReportColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<StaffReportData>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
     {
         accessorKey: 'fullName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Full Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.fullName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36 ps-3'>
@@ -57,7 +63,10 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
     {
         accessorKey: 'post',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Post' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.post')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('post') || '-'}</div>
@@ -66,7 +75,10 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
     {
         accessorKey: 'salary',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Salary' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.salary')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-left'>{row.getValue('salary')}</div>
@@ -75,7 +87,10 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
     {
         accessorKey: 'phoneNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Phone' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.phone')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>
@@ -86,7 +101,10 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
     {
         accessorKey: 'email',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Email' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.email')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-48 text-sm'>
@@ -97,7 +115,10 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
     {
         accessorKey: 'address',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Address' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.address')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-52'>

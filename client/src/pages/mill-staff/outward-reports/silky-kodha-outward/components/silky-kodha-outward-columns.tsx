@@ -1,5 +1,6 @@
 import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,7 +8,9 @@ import { LongText } from '@/components/long-text'
 import { type SilkyKodhaOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const silkyKodhaOutwardColumns: ColumnDef<SilkyKodhaOutward>[] = [
+export const getSilkyKodhaOutwardColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<SilkyKodhaOutward>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -40,7 +43,10 @@ export const silkyKodhaOutwardColumns: ColumnDef<SilkyKodhaOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -60,7 +66,7 @@ export const silkyKodhaOutwardColumns: ColumnDef<SilkyKodhaOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Silky Kodha Sale Deal Number'
+                title={t('tableColumns.saleDealNumber')}
             />
         ),
         cell: ({ row }) => (
@@ -70,7 +76,10 @@ export const silkyKodhaOutwardColumns: ColumnDef<SilkyKodhaOutward>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -82,7 +91,10 @@ export const silkyKodhaOutwardColumns: ColumnDef<SilkyKodhaOutward>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -94,7 +106,10 @@ export const silkyKodhaOutwardColumns: ColumnDef<SilkyKodhaOutward>[] = [
     {
         accessorKey: 'rate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.rate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('rate')}</div>
@@ -103,7 +118,10 @@ export const silkyKodhaOutwardColumns: ColumnDef<SilkyKodhaOutward>[] = [
     {
         accessorKey: 'oil',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='OIL %' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.oilPercent')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('oil')}%</div>
@@ -112,7 +130,10 @@ export const silkyKodhaOutwardColumns: ColumnDef<SilkyKodhaOutward>[] = [
     {
         accessorKey: 'brokerage',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Brokerage' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerage')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('brokerage')}</div>
@@ -121,7 +142,10 @@ export const silkyKodhaOutwardColumns: ColumnDef<SilkyKodhaOutward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (Plastic)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyPlastic')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -132,7 +156,7 @@ export const silkyKodhaOutwardColumns: ColumnDef<SilkyKodhaOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Plastic Gunny Weight'
+                title={t('tableColumns.plasticGunnyWeight')}
             />
         ),
         cell: ({ row }) => (
@@ -142,7 +166,10 @@ export const silkyKodhaOutwardColumns: ColumnDef<SilkyKodhaOutward>[] = [
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('truckNo')}</div>
@@ -151,14 +178,20 @@ export const silkyKodhaOutwardColumns: ColumnDef<SilkyKodhaOutward>[] = [
     {
         accessorKey: 'truckRst',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.rstNo')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('truckRst')}</div>,
     },
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('truckWeight')}</div>
@@ -167,7 +200,10 @@ export const silkyKodhaOutwardColumns: ColumnDef<SilkyKodhaOutward>[] = [
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyWeight')}</div>
@@ -176,7 +212,10 @@ export const silkyKodhaOutwardColumns: ColumnDef<SilkyKodhaOutward>[] = [
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Net Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.netWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('netWeight')}</div>

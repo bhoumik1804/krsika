@@ -1,5 +1,6 @@
 import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,7 +8,9 @@ import { LongText } from '@/components/long-text'
 import { type PrivateGunnyOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const PrivateGunnyOutwardColumns: ColumnDef<PrivateGunnyOutward>[] = [
+export const getPrivateGunnyOutwardColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<PrivateGunnyOutward>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -40,7 +43,10 @@ export const PrivateGunnyOutwardColumns: ColumnDef<PrivateGunnyOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => {
             const date = row.getValue('date')
@@ -63,7 +69,7 @@ export const PrivateGunnyOutwardColumns: ColumnDef<PrivateGunnyOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Gunny Purchase Number'
+                title={t('tableColumns.purchaseDealNumber')}
             />
         ),
         cell: ({ row }) => (
@@ -75,7 +81,10 @@ export const PrivateGunnyOutwardColumns: ColumnDef<PrivateGunnyOutward>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-40'>
@@ -86,7 +95,10 @@ export const PrivateGunnyOutwardColumns: ColumnDef<PrivateGunnyOutward>[] = [
     {
         accessorKey: 'newGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='New Gunny Qty' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.newGunnyQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -97,7 +109,10 @@ export const PrivateGunnyOutwardColumns: ColumnDef<PrivateGunnyOutward>[] = [
     {
         accessorKey: 'oldGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Old Gunny Qty' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.oldGunnyQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -108,7 +123,10 @@ export const PrivateGunnyOutwardColumns: ColumnDef<PrivateGunnyOutward>[] = [
     {
         accessorKey: 'plasticGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Gunny Qty' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.plasticGunnyQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -119,7 +137,10 @@ export const PrivateGunnyOutwardColumns: ColumnDef<PrivateGunnyOutward>[] = [
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>

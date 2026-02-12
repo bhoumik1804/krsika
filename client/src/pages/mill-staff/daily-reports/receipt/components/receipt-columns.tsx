@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -8,7 +9,9 @@ import { statusStyles } from '../data/data'
 import { type ReceiptEntry } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const receiptColumns: ColumnDef<ReceiptEntry>[] = [
+export const getReceiptColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<ReceiptEntry>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -41,7 +44,10 @@ export const receiptColumns: ColumnDef<ReceiptEntry>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -57,7 +63,10 @@ export const receiptColumns: ColumnDef<ReceiptEntry>[] = [
     {
         accessorKey: 'voucherNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Voucher No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.voucherNo')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono font-medium'>
@@ -68,7 +77,10 @@ export const receiptColumns: ColumnDef<ReceiptEntry>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -80,7 +92,10 @@ export const receiptColumns: ColumnDef<ReceiptEntry>[] = [
     {
         accessorKey: 'amount',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Amount' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.amount')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
@@ -91,7 +106,10 @@ export const receiptColumns: ColumnDef<ReceiptEntry>[] = [
     {
         accessorKey: 'paymentMode',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Mode' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.mode')}
+            />
         ),
         cell: ({ row }) => (
             <Badge variant='outline'>{row.getValue('paymentMode')}</Badge>
@@ -103,7 +121,10 @@ export const receiptColumns: ColumnDef<ReceiptEntry>[] = [
     {
         accessorKey: 'status',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Status' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.status')}
+            />
         ),
         cell: ({ row }) => {
             const { status } = row.original

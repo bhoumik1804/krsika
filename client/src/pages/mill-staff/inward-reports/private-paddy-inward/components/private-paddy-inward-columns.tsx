@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -6,7 +7,9 @@ import { LongText } from '@/components/long-text'
 import { type PrivatePaddyInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
+export const getPrivatePaddyInwardColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<PrivatePaddyInward>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('date')}</div>
@@ -57,7 +63,7 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Paddy Purchase Deal Number'
+                title={t('tableColumns.purchaseDealNumber')}
             />
         ),
         cell: ({ row }) => (
@@ -69,7 +75,10 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -80,7 +89,10 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -91,7 +103,10 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
     {
         accessorKey: 'doNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='DO Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.doNumber')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>{row.getValue('doNumber')}</LongText>
@@ -100,7 +115,10 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
     {
         accessorKey: 'committeeName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Committee Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.committeeName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -111,7 +129,10 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
     {
         accessorKey: 'balanceDo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Balance DO' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.balanceDo')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('balanceDo')}</div>
@@ -120,7 +141,10 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
     {
         accessorKey: 'gunnyNew',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny New' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyNew')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyNew')}</div>
@@ -129,7 +153,10 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
     {
         accessorKey: 'gunnyOld',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Old' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyOld')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyOld')}</div>
@@ -138,7 +165,10 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Plastic' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyPlastic')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -149,7 +179,7 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Jute Gunny Weight (kg.)'
+                title={t('tableColumns.juteWeight')}
             />
         ),
         cell: ({ row }) => (
@@ -161,7 +191,7 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Plastic Gunny Weight (kg.)'
+                title={t('tableColumns.plasticGunnyWeight')}
             />
         ),
         cell: ({ row }) => (
@@ -171,7 +201,10 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight (kg.)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyWeight')}</div>
@@ -180,7 +213,10 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
     {
         accessorKey: 'truckNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('truckNumber')}</div>

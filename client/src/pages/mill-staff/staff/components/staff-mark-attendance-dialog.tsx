@@ -38,8 +38,8 @@ export function StaffMarkAttendanceDialog() {
         if (!currentRow || !selectedAttendance) return
 
         const data = {
-            staffId: currentRow.id,
-            staffName: `${currentRow.firstName} ${currentRow.lastName}`,
+            staffId: currentRow._id,
+            staffName: currentRow.fullName,
             attendance: selectedAttendance,
             date: new Date().toLocaleDateString(),
         }
@@ -56,7 +56,7 @@ export function StaffMarkAttendanceDialog() {
                     <DialogDescription>
                         Mark attendance for{' '}
                         <span className='font-semibold text-foreground'>
-                            {currentRow?.firstName} {currentRow?.lastName}
+                            {currentRow?.fullName}
                         </span>
                     </DialogDescription>
                 </DialogHeader>

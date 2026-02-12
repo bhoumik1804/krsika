@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import type { NavigateFn } from '@/hooks/use-table-url-state'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -15,6 +17,7 @@ import { DoReportTable } from './components/do-report-table'
 import { useDoReportList } from './data/hooks'
 
 export function DoReport() {
+    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -60,6 +63,7 @@ export function DoReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -73,10 +77,10 @@ export function DoReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            DO Report
+                            {t('reports.inputReports.do.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage do report transactions and records
+                            {t('reports.inputReports.do.subtitle')}
                         </p>
                     </div>
                     <DoReportPrimaryButtons />

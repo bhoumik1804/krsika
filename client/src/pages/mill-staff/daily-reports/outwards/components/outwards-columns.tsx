@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -8,7 +9,9 @@ import { statusStyles } from '../data/data'
 import { type OutwardEntry } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const outwardsColumns: ColumnDef<OutwardEntry>[] = [
+export const getOutwardsColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<OutwardEntry>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -41,7 +44,10 @@ export const outwardsColumns: ColumnDef<OutwardEntry>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -57,7 +63,10 @@ export const outwardsColumns: ColumnDef<OutwardEntry>[] = [
     {
         accessorKey: 'gatePassNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gate Pass' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gatePass')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono font-medium'>
@@ -68,7 +77,10 @@ export const outwardsColumns: ColumnDef<OutwardEntry>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -80,7 +92,10 @@ export const outwardsColumns: ColumnDef<OutwardEntry>[] = [
     {
         accessorKey: 'item',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Item' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.item')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('item')}</div>,
         filterFn: (row, id, value) => {
@@ -90,7 +105,10 @@ export const outwardsColumns: ColumnDef<OutwardEntry>[] = [
     {
         accessorKey: 'vehicleNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Vehicle No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.vehicleNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -101,7 +119,10 @@ export const outwardsColumns: ColumnDef<OutwardEntry>[] = [
     {
         accessorKey: 'bags',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Bags' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.bags')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('bags')}</div>
@@ -110,7 +131,10 @@ export const outwardsColumns: ColumnDef<OutwardEntry>[] = [
     {
         accessorKey: 'weight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Weight (Kg)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.weightKg')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -121,7 +145,10 @@ export const outwardsColumns: ColumnDef<OutwardEntry>[] = [
     {
         accessorKey: 'status',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Status' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.status')}
+            />
         ),
         cell: ({ row }) => {
             const { status } = row.original

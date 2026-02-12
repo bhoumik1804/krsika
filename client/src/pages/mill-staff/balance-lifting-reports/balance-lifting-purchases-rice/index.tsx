@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -14,6 +16,7 @@ import { BalanceLiftingPurchasesRiceTable } from './components/balance-lifting-p
 import { useBalanceLiftingPurchasesRiceList } from './data/hooks'
 
 export function BalanceLiftingPurchasesRiceReport() {
+    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -65,6 +68,7 @@ export function BalanceLiftingPurchasesRiceReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -78,10 +82,14 @@ export function BalanceLiftingPurchasesRiceReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Rice Purchase Report
+                            {t(
+                                'reports.balanceLiftingReports.purchasesRice.title'
+                            )}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage rice purchase transactions and records
+                            {t(
+                                'reports.balanceLiftingReports.purchasesRice.subtitle'
+                            )}
                         </p>
                     </div>
                     <BalanceLiftingPurchasesRicePrimaryButtons />

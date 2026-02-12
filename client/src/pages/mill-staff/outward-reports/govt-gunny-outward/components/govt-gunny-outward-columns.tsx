@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -6,7 +7,9 @@ import { LongText } from '@/components/long-text'
 import { type GovtGunnyOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const GovtGunnyOutwardColumns: ColumnDef<GovtGunnyOutward>[] = [
+export const getGovtGunnyOutwardColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<GovtGunnyOutward>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const GovtGunnyOutwardColumns: ColumnDef<GovtGunnyOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -55,7 +61,10 @@ export const GovtGunnyOutwardColumns: ColumnDef<GovtGunnyOutward>[] = [
     {
         accessorKey: 'gunnyDmNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny DM No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyDmNo')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>
@@ -66,7 +75,10 @@ export const GovtGunnyOutwardColumns: ColumnDef<GovtGunnyOutward>[] = [
     {
         accessorKey: 'samitiSangrahan',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Samiti Sangrahan' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.samitiSangrahan')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-40'>
@@ -77,7 +89,10 @@ export const GovtGunnyOutwardColumns: ColumnDef<GovtGunnyOutward>[] = [
     {
         accessorKey: 'oldGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Old Gunny Qty' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.oldGunnyQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -88,7 +103,10 @@ export const GovtGunnyOutwardColumns: ColumnDef<GovtGunnyOutward>[] = [
     {
         accessorKey: 'plasticGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Gunny Qty' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.plasticGunnyQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -99,7 +117,10 @@ export const GovtGunnyOutwardColumns: ColumnDef<GovtGunnyOutward>[] = [
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>

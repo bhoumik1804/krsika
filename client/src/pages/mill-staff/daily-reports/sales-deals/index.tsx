@@ -1,35 +1,29 @@
-import { useMemo } from 'react';
-import { useParams, useSearchParams } from 'react-router';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ConfigDrawer } from '@/components/config-drawer';
-import { getMillAdminSidebarData } from '@/components/layout/data';
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { LoadingSpinner } from '@/components/loading-spinner';
-import { ProfileDropdown } from '@/components/profile-dropdown';
-import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
-import { DateRangePicker } from './components/date-range-picker';
-import { useDailySalesDealList, useDailySalesDealSummary } from './data/hooks';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useParams, useSearchParams } from 'react-router'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
+import { getMillAdminSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { DateRangePicker } from './components/date-range-picker'
+import { useDailySalesDealList, useDailySalesDealSummary } from './data/hooks'
 
 export function SalesDealsReport() {
+    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -116,6 +110,7 @@ export function SalesDealsReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -129,10 +124,10 @@ export function SalesDealsReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Sales Deals
+                            {t('dailyReports.salesDealsPage.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Track daily sales transactions by commodity
+                            {t('dailyReports.salesDealsPage.subtitle')}
                         </p>
                     </div>
                     <DateRangePicker

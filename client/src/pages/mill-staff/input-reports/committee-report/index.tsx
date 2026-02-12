@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -17,6 +19,7 @@ import {
 import { CommitteeReportTable } from './components/committee-report-table'
 
 export function CommitteeReport() {
+    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -60,6 +63,7 @@ export function CommitteeReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -73,10 +77,10 @@ export function CommitteeReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Committee Report
+                            {t('reports.inputReports.committee.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage committee transactions and records
+                            {t('reports.inputReports.committee.subtitle')}
                         </p>
                     </div>
                     <CommitteeReportPrimaryButtons />

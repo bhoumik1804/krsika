@@ -1,15 +1,15 @@
 import { type ColumnDef } from '@tanstack/react-table'
-// '
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
-// import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
-// import { statusStyles } from '../data/data'
 import { type BalanceLiftingPurchasesPaddy } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
+export const getBalanceLiftingPurchasesPaddyColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<BalanceLiftingPurchasesPaddy>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,7 +42,10 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -58,7 +61,10 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -70,14 +76,20 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerName')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('brokerName') || '-'}</div>,
     },
     {
         accessorKey: 'deliveryType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Delivery' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.delivery')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('deliveryType')}</div>
@@ -86,7 +98,10 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'purchaseType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Purchase Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.purchaseType')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('purchaseType')}</div>
@@ -95,7 +110,10 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'doNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='DO Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.doNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>
@@ -106,14 +124,20 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'committeeName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Committee' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.committee')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('committeeName') || '-'}</div>,
     },
     {
         accessorKey: 'paddyType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Paddy Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.paddyType')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('paddyType')}</div>
@@ -122,7 +146,10 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'doPaddyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='DO Qty (Qtl)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.doPaddyQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -133,7 +160,10 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'totalPaddyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Total Qty (Qtl)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.totalPaddyQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -144,7 +174,10 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'paddyRatePerQuintal',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rate/Qtl' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.ratePerQuintal')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -155,7 +188,10 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'discountPercent',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Discount %' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.discountPercent')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -166,7 +202,10 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'brokerage',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Brokerage' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerage')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('brokerage') || 0}</div>
@@ -175,7 +214,10 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'gunnyType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunny')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('gunnyType')}</div>
@@ -184,7 +226,10 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'newGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='New Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.newGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -195,7 +240,10 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'oldGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Old Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.oldGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -206,7 +254,10 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
         accessorKey: 'plasticGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.plasticGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>

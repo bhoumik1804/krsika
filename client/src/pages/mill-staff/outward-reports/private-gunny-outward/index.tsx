@@ -1,6 +1,8 @@
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import type { NavigateFn } from '@/hooks/use-table-url-state'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -16,6 +18,7 @@ import { usePrivateGunnyOutwardList } from './data/hooks'
 import type { PrivateGunnyOutwardQueryParams } from './data/types'
 
 function PrivateGunnyOutwardContent() {
+    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -80,10 +83,10 @@ function PrivateGunnyOutwardContent() {
             <div className='flex flex-wrap items-end justify-between gap-2'>
                 <div>
                     <h2 className='text-2xl font-bold tracking-tight'>
-                        Private Gunny Outward Report
+                        {t('reports.outwardReports.privateGunny.title')}
                     </h2>
                     <p className='text-muted-foreground'>
-                        Manage private gunny outward transactions
+                        {t('reports.outwardReports.privateGunny.subtitle')}
                     </p>
                 </div>
                 <PrivateGunnyOutwardPrimaryButtons />
@@ -107,6 +110,7 @@ export function PrivateGunnyOutwardReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
