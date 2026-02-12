@@ -1,5 +1,4 @@
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,21 +9,27 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteBhusaOutward } from '../data/hooks'
 import { type BhusaOutward } from '../data/schema'
 
 type BhusaOutwardDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
     currentRow: BhusaOutward | null
+    millId: string
 }
 
 export function BhusaOutwardDeleteDialog({
     open,
     onOpenChange,
     currentRow,
+    millId,
 }: BhusaOutwardDeleteDialogProps) {
+    const deleteMutation = useDeleteBhusaOutward(millId)
+
     const handleDelete = () => {
-        toast.promise(sleep(2000), {
+        if (!currentRow?._id) return
+        toast.promise(deleteMutation.mutateAsync(currentRow._id), {
             loading: 'Deleting...',
             success: () => {
                 onOpenChange(false)

@@ -1,130 +1,91 @@
-/**
- * Private Paddy Outward Service
- * API client for Private Paddy Outward CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
 import apiClient, { type ApiResponse } from '@/lib/api-client'
+import { privatePaddyOutwardSchema, type PrivatePaddyOutward } from './schema'
 import type {
-    PrivatePaddyOutwardResponse,
-    PrivatePaddyOutwardListResponse,
-    PrivatePaddyOutwardSummaryResponse,
     CreatePrivatePaddyOutwardRequest,
-    UpdatePrivatePaddyOutwardRequest,
+    PrivatePaddyOutwardListResponse,
     PrivatePaddyOutwardQueryParams,
+    PrivatePaddyOutwardSummaryResponse,
+    UpdatePrivatePaddyOutwardRequest,
 } from './types'
 
-// ==========================================
-// API Endpoints
-// ==========================================
-
-const PRIVATE_PADDY_OUTWARD_ENDPOINT = (millId: string) =>
-    `/mills/${millId}/private-paddy-outward`
-
-// ==========================================
-// Private Paddy Outward API Functions
-// ==========================================
+const BASE_PATH = (millId: string) => `/mills/${millId}/private-paddy-outward`
 
 /**
- * Fetch all private paddy outward entries with pagination and filters
+ * Fetch paginated list of private paddy outward entries
  */
-export const fetchPrivatePaddyOutwardList = async (
+export async function fetchPrivatePaddyOutwardList(
     millId: string,
-    params?: PrivatePaddyOutwardQueryParams
-): Promise<PrivatePaddyOutwardListResponse> => {
+    params: PrivatePaddyOutwardQueryParams = {}
+): Promise<PrivatePaddyOutwardListResponse> {
     const response = await apiClient.get<
         ApiResponse<PrivatePaddyOutwardListResponse>
-    >(PRIVATE_PADDY_OUTWARD_ENDPOINT(millId), { params })
+    >(BASE_PATH(millId), { params })
     return response.data.data
 }
 
 /**
- * Fetch a single private paddy outward entry by ID
+ * Fetch private paddy outward summary
  */
-export const fetchPrivatePaddyOutwardById = async (
+export async function fetchPrivatePaddyOutwardSummary(
     millId: string,
-    id: string
-): Promise<PrivatePaddyOutwardResponse> => {
+    params: Pick<PrivatePaddyOutwardQueryParams, 'startDate' | 'endDate'> = {}
+): Promise<PrivatePaddyOutwardSummaryResponse> {
     const response = await apiClient.get<
-        ApiResponse<PrivatePaddyOutwardResponse>
-    >(`${PRIVATE_PADDY_OUTWARD_ENDPOINT(millId)}/${id}`)
-    return response.data.data
-}
-
-/**
- * Fetch private paddy outward summary/statistics
- */
-export const fetchPrivatePaddyOutwardSummary = async (
-    millId: string,
-    params?: Pick<PrivatePaddyOutwardQueryParams, 'startDate' | 'endDate'>
-): Promise<PrivatePaddyOutwardSummaryResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<PrivatePaddyOutwardSummaryResponse>
-    >(`${PRIVATE_PADDY_OUTWARD_ENDPOINT(millId)}/summary`, { params })
-    return response.data.data
+        ApiResponse<{ summary: PrivatePaddyOutwardSummaryResponse }>
+    >(`${BASE_PATH(millId)}/summary`, { params })
+    return response.data.data.summary
 }
 
 /**
  * Create a new private paddy outward entry
  */
-export const createPrivatePaddyOutward = async (
+export async function createPrivatePaddyOutward(
     millId: string,
     data: CreatePrivatePaddyOutwardRequest
-): Promise<PrivatePaddyOutwardResponse> => {
+): Promise<PrivatePaddyOutward> {
+    privatePaddyOutwardSchema.parse(data)
+
     const response = await apiClient.post<
-        ApiResponse<PrivatePaddyOutwardResponse>
-    >(PRIVATE_PADDY_OUTWARD_ENDPOINT(millId), data)
-    return response.data.data
+        ApiResponse<{ entry: PrivatePaddyOutward }>
+    >(BASE_PATH(millId), data)
+    return response.data.data.entry
 }
 
 /**
  * Update an existing private paddy outward entry
  */
-export const updatePrivatePaddyOutward = async (
+export async function updatePrivatePaddyOutward(
     millId: string,
-    { id, ...data }: UpdatePrivatePaddyOutwardRequest
-): Promise<PrivatePaddyOutwardResponse> => {
+    id: string,
+    data: UpdatePrivatePaddyOutwardRequest
+): Promise<PrivatePaddyOutward> {
+    privatePaddyOutwardSchema.parse(data)
+
     const response = await apiClient.put<
-        ApiResponse<PrivatePaddyOutwardResponse>
-    >(`${PRIVATE_PADDY_OUTWARD_ENDPOINT(millId)}/${id}`, data)
-    return response.data.data
+        ApiResponse<{ entry: PrivatePaddyOutward }>
+    >(`${BASE_PATH(millId)}/${id}`, data)
+    return response.data.data.entry
 }
 
 /**
  * Delete a private paddy outward entry
  */
-export const deletePrivatePaddyOutward = async (
+export async function deletePrivatePaddyOutward(
     millId: string,
     id: string
-): Promise<void> => {
-    await apiClient.delete(`${PRIVATE_PADDY_OUTWARD_ENDPOINT(millId)}/${id}`)
+): Promise<void> {
+    await apiClient.delete<ApiResponse<null>>(`${BASE_PATH(millId)}/${id}`)
 }
 
 /**
  * Bulk delete private paddy outward entries
  */
-export const bulkDeletePrivatePaddyOutward = async (
+export async function bulkDeletePrivatePaddyOutward(
     millId: string,
     ids: string[]
-): Promise<void> => {
-    await apiClient.delete(`${PRIVATE_PADDY_OUTWARD_ENDPOINT(millId)}/bulk`, {
-        data: { ids },
-    })
-}
-
-/**
- * Export private paddy outward entries to CSV/Excel
- */
-export const exportPrivatePaddyOutward = async (
-    millId: string,
-    params?: PrivatePaddyOutwardQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${PRIVATE_PADDY_OUTWARD_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
+): Promise<void> {
+    await apiClient.delete<ApiResponse<{ deletedCount: number }>>(
+        `${BASE_PATH(millId)}/bulk`,
+        { data: { ids } }
     )
-    return response.data
 }

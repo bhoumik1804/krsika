@@ -1,233 +1,131 @@
-/**
- * Kodha Outward Hooks
- * React Query hooks for Kodha Outward data management
- */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import {
-    fetchKodhaOutwardList,
-    fetchKodhaOutwardById,
-    fetchKodhaOutwardSummary,
-    createKodhaOutward,
-    updateKodhaOutward,
-    deleteKodhaOutward,
-    bulkDeleteKodhaOutward,
-    exportKodhaOutward,
-} from './service'
+import * as kodhaOutwardService from './service'
 import type {
-    KodhaOutwardResponse,
-    KodhaOutwardListResponse,
-    KodhaOutwardSummaryResponse,
     CreateKodhaOutwardRequest,
-    UpdateKodhaOutwardRequest,
     KodhaOutwardQueryParams,
+    UpdateKodhaOutwardRequest,
 } from './types'
 
-// ==========================================
-// Query Keys
-// ==========================================
-
 export const kodhaOutwardKeys = {
-    all: ['kodha-outward'] as const,
-    lists: () => [...kodhaOutwardKeys.all, 'list'] as const,
-    list: (millId: string, params?: KodhaOutwardQueryParams) =>
-        [...kodhaOutwardKeys.lists(), millId, params] as const,
-    details: () => [...kodhaOutwardKeys.all, 'detail'] as const,
-    detail: (millId: string, id: string) =>
-        [...kodhaOutwardKeys.details(), millId, id] as const,
-    summaries: () => [...kodhaOutwardKeys.all, 'summary'] as const,
-    summary: (
-        millId: string,
-        params?: Pick<KodhaOutwardQueryParams, 'startDate' | 'endDate'>
-    ) => [...kodhaOutwardKeys.summaries(), millId, params] as const,
+    all: (millId: string) => ['kodha-outward', millId] as const,
+    lists: (millId: string) =>
+        [...kodhaOutwardKeys.all(millId), 'list'] as const,
+    list: (millId: string, params: KodhaOutwardQueryParams) =>
+        [...kodhaOutwardKeys.lists(millId), params] as const,
+    summary: (millId: string) =>
+        [...kodhaOutwardKeys.all(millId), 'summary'] as const,
 }
 
-// ==========================================
-// Query Hooks
-// ==========================================
-
-/**
- * Hook to fetch kodha outward list with pagination and filters
- */
-export const useKodhaOutwardList = (
+export function useKodhaOutwardList(
     millId: string,
-    params?: KodhaOutwardQueryParams,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<KodhaOutwardListResponse, Error>({
+    params: KodhaOutwardQueryParams = {}
+) {
+    return useQuery({
         queryKey: kodhaOutwardKeys.list(millId, params),
-        queryFn: () => fetchKodhaOutwardList(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        queryFn: () =>
+            kodhaOutwardService.fetchKodhaOutwardList(millId, params),
+        staleTime: 1000 * 60 * 5,
+        enabled: !!millId,
     })
 }
 
-/**
- * Hook to fetch a single kodha outward entry
- */
-export const useKodhaOutwardDetail = (
+export function useKodhaOutwardSummary(
     millId: string,
-    id: string,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<KodhaOutwardResponse, Error>({
-        queryKey: kodhaOutwardKeys.detail(millId, id),
-        queryFn: () => fetchKodhaOutwardById(millId, id),
-        enabled: options?.enabled ?? (!!millId && !!id),
-        staleTime: 5 * 60 * 1000, // 5 minutes
+    params: Pick<KodhaOutwardQueryParams, 'startDate' | 'endDate'> = {}
+) {
+    return useQuery({
+        queryKey: kodhaOutwardKeys.summary(millId),
+        queryFn: () =>
+            kodhaOutwardService.fetchKodhaOutwardSummary(millId, params),
+        staleTime: 1000 * 60 * 5,
+        enabled: !!millId,
     })
 }
 
-/**
- * Hook to fetch kodha outward summary/statistics
- */
-export const useKodhaOutwardSummary = (
-    millId: string,
-    params?: Pick<KodhaOutwardQueryParams, 'startDate' | 'endDate'>,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<KodhaOutwardSummaryResponse, Error>({
-        queryKey: kodhaOutwardKeys.summary(millId, params),
-        queryFn: () => fetchKodhaOutwardSummary(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    })
-}
-
-// ==========================================
-// Mutation Hooks
-// ==========================================
-
-/**
- * Hook to create a new kodha outward entry
- */
-export const useCreateKodhaOutward = (millId: string) => {
+export function useCreateKodhaOutward(millId: string) {
     const queryClient = useQueryClient()
 
-    return useMutation<KodhaOutwardResponse, Error, CreateKodhaOutwardRequest>({
-        mutationFn: (data) => createKodhaOutward(millId, data),
+    return useMutation({
+        mutationFn: (data: CreateKodhaOutwardRequest) =>
+            kodhaOutwardService.createKodhaOutward(millId, data),
         onSuccess: () => {
-            // Invalidate and refetch list queries
             queryClient.invalidateQueries({
-                queryKey: kodhaOutwardKeys.lists(),
+                queryKey: kodhaOutwardKeys.lists(millId),
             })
-            // Invalidate summary as well
             queryClient.invalidateQueries({
-                queryKey: kodhaOutwardKeys.summaries(),
+                queryKey: kodhaOutwardKeys.summary(millId),
             })
-            toast.success('Kodha outward entry created successfully')
         },
-        onError: (error) => {
+        onError: (error: Error) => {
             toast.error(error.message || 'Failed to create kodha outward entry')
         },
     })
 }
 
-/**
- * Hook to update an existing kodha outward entry
- */
-export const useUpdateKodhaOutward = (millId: string) => {
+export function useUpdateKodhaOutward(millId: string) {
     const queryClient = useQueryClient()
 
-    return useMutation<KodhaOutwardResponse, Error, UpdateKodhaOutwardRequest>({
-        mutationFn: (data) => updateKodhaOutward(millId, data),
-        onSuccess: (data) => {
-            // Invalidate and refetch list queries
+    return useMutation({
+        mutationFn: ({
+            id,
+            data,
+        }: {
+            id: string
+            data: UpdateKodhaOutwardRequest
+        }) => kodhaOutwardService.updateKodhaOutward(millId, id, data),
+        onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: kodhaOutwardKeys.lists(),
+                queryKey: kodhaOutwardKeys.lists(millId),
             })
-            // Update the specific detail cache
-            queryClient.setQueryData(
-                kodhaOutwardKeys.detail(millId, data._id),
-                data
-            )
-            // Invalidate summary
             queryClient.invalidateQueries({
-                queryKey: kodhaOutwardKeys.summaries(),
+                queryKey: kodhaOutwardKeys.summary(millId),
             })
-            toast.success('Kodha outward entry updated successfully')
         },
-        onError: (error) => {
+        onError: (error: Error) => {
             toast.error(error.message || 'Failed to update kodha outward entry')
         },
     })
 }
 
-/**
- * Hook to delete a kodha outward entry
- */
-export const useDeleteKodhaOutward = (millId: string) => {
+export function useDeleteKodhaOutward(millId: string) {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string>({
-        mutationFn: (id) => deleteKodhaOutward(millId, id),
+    return useMutation({
+        mutationFn: (id: string) =>
+            kodhaOutwardService.deleteKodhaOutward(millId, id),
         onSuccess: () => {
-            // Invalidate and refetch list queries
             queryClient.invalidateQueries({
-                queryKey: kodhaOutwardKeys.lists(),
+                queryKey: kodhaOutwardKeys.lists(millId),
             })
-            // Invalidate summary
             queryClient.invalidateQueries({
-                queryKey: kodhaOutwardKeys.summaries(),
+                queryKey: kodhaOutwardKeys.summary(millId),
             })
-            toast.success('Kodha outward entry deleted successfully')
         },
-        onError: (error) => {
+        onError: (error: Error) => {
             toast.error(error.message || 'Failed to delete kodha outward entry')
         },
     })
 }
 
-/**
- * Hook to bulk delete kodha outward entries
- */
-export const useBulkDeleteKodhaOutward = (millId: string) => {
+export function useBulkDeleteKodhaOutward(millId: string) {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string[]>({
-        mutationFn: (ids) => bulkDeleteKodhaOutward(millId, ids),
-        onSuccess: (_, ids) => {
-            // Invalidate and refetch list queries
+    return useMutation({
+        mutationFn: (ids: string[]) =>
+            kodhaOutwardService.bulkDeleteKodhaOutward(millId, ids),
+        onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: kodhaOutwardKeys.lists(),
+                queryKey: kodhaOutwardKeys.lists(millId),
             })
-            // Invalidate summary
             queryClient.invalidateQueries({
-                queryKey: kodhaOutwardKeys.summaries(),
+                queryKey: kodhaOutwardKeys.summary(millId),
             })
-            toast.success(`${ids.length} entries deleted successfully`)
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to delete entries')
-        },
-    })
-}
-
-/**
- * Hook to export kodha outward entries
- */
-export const useExportKodhaOutward = (millId: string) => {
-    return useMutation<
-        Blob,
-        Error,
-        { params?: KodhaOutwardQueryParams; format?: 'csv' | 'xlsx' }
-    >({
-        mutationFn: ({ params, format }) =>
-            exportKodhaOutward(millId, params, format),
-        onSuccess: (blob, { format = 'csv' }) => {
-            // Create download link
-            const url = window.URL.createObjectURL(blob)
-            const link = document.createElement('a')
-            link.href = url
-            link.download = `kodha-outward-${new Date().toISOString().split('T')[0]}.${format}`
-            document.body.appendChild(link)
-            link.click()
-            document.body.removeChild(link)
-            window.URL.revokeObjectURL(url)
-            toast.success('Export completed successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to export data')
+        onError: (error: Error) => {
+            toast.error(
+                error.message || 'Failed to delete kodha outward entries'
+            )
         },
     })
 }

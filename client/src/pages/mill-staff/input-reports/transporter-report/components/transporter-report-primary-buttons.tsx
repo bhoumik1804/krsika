@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { transporterReport } from './transporter-report-provider'
+import { useTransporterReport } from './transporter-report-provider'
 
 export function TransporterReportPrimaryButtons() {
-    const { setOpen } = transporterReport()
+    const { setOpen } = useTransporterReport()
 
     return (
         <Button onClick={() => setOpen('add')}>

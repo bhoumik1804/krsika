@@ -1,27 +1,139 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
-import { type FrkPurchase } from '../data/schema'
+import { type FrkPurchaseData } from '../data/schema'
 
 type FrkDialogType = 'add' | 'edit' | 'delete'
+
+interface QueryParams {
+    page: number
+    limit: number
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+}
 
 type FrkContextType = {
     open: FrkDialogType | null
     setOpen: (str: FrkDialogType | null) => void
-    currentRow: FrkPurchase | null
-    setCurrentRow: React.Dispatch<React.SetStateAction<FrkPurchase | null>>
+    currentRow: FrkPurchaseData | null
+    setCurrentRow: React.Dispatch<React.SetStateAction<FrkPurchaseData | null>>
+    data: FrkPurchaseData[]
+    isLoading: boolean
+    isError: boolean
+    millId: string
+    queryParams: QueryParams
+    setQueryParams: React.Dispatch<React.SetStateAction<QueryParams>>
+    pagination: {
+        page: number
+        pageSize: number
+        total: number
+        totalPages: number
+    }
 }
 
 const FrkContext = React.createContext<FrkContextType | null>(null)
 
-export function FrkProvider({ children }: { children: React.ReactNode }) {
-    const [open, setOpen] = useDialogState<FrkDialogType>(null)
-    const [currentRow, setCurrentRow] = useState<FrkPurchase | null>(null)
+interface FrkProviderProps {
+    children: React.ReactNode
+    millId: string
+    initialQueryParams?: QueryParams
+    apiData?: FrkPurchaseData[]
+    apiPagination?: {
+        page: number
+        pageSize: number
+        total: number
+        totalPages: number
+    }
+    isLoading?: boolean
+    isError?: boolean
+    onQueryParamsChange?: (params: QueryParams) => void
+}
 
-    return (
-        <FrkContext value={{ open, setOpen, currentRow, setCurrentRow }}>
-            {children}
-        </FrkContext>
+const defaultQueryParams: QueryParams = {
+    page: 1,
+    limit: 10,
+    search: undefined,
+    sortBy: 'createdAt',
+    sortOrder: 'desc',
+}
+
+export function FrkProvider({
+    children,
+    millId,
+    initialQueryParams = defaultQueryParams,
+    apiData = [],
+    apiPagination = { page: 1, pageSize: 10, total: 0, totalPages: 0 },
+    isLoading = false,
+    isError = false,
+    onQueryParamsChange,
+}: FrkProviderProps) {
+    const [open, setOpen] = useDialogState<FrkDialogType>(null)
+    const [currentRow, setCurrentRow] = useState<FrkPurchaseData | null>(null)
+    const [queryParams, setQueryParams] =
+        useState<QueryParams>(initialQueryParams)
+
+    // Sync URL params with internal state
+    useEffect(() => {
+        setQueryParams(initialQueryParams)
+    }, [
+        initialQueryParams.page,
+        initialQueryParams.limit,
+        initialQueryParams.search,
+    ])
+
+    // Notify parent when queryParams change
+    useEffect(() => {
+        onQueryParamsChange?.(queryParams)
+    }, [queryParams, onQueryParamsChange])
+
+    // Memoized pagination to prevent flickering
+    const pagination = useMemo(
+        () => ({
+            page: apiPagination.page || 1,
+            pageSize: apiPagination.pageSize || 10,
+            total: apiPagination.total || 0,
+            totalPages: apiPagination.totalPages || 0,
+        }),
+        [
+            apiPagination.page,
+            apiPagination.pageSize,
+            apiPagination.total,
+            apiPagination.totalPages,
+        ]
     )
+
+    // Memoized context value to prevent flickering
+    const contextValue = useMemo(
+        () => ({
+            open,
+            setOpen,
+            currentRow,
+            setCurrentRow,
+            data: apiData,
+            isLoading,
+            isError,
+            millId,
+            queryParams,
+            setQueryParams,
+            pagination,
+        }),
+        [
+            open,
+            currentRow,
+            apiData,
+            isLoading,
+            isError,
+            millId,
+            queryParams.page,
+            queryParams.limit,
+            queryParams.search,
+            queryParams.sortBy,
+            queryParams.sortOrder,
+            pagination,
+        ]
+    )
+
+    return <FrkContext value={contextValue}>{children}</FrkContext>
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

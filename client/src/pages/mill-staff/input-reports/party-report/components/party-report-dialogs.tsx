@@ -1,9 +1,9 @@
 import { PartyReportActionDialog } from './party-report-action-dialog'
 import { PartyReportDeleteDialog } from './party-report-delete-dialog'
-import { partyReport } from './party-report-provider'
+import { usePartyReport } from './party-report-provider'
 
 export function PartyReportDialogs() {
-    const { open, setOpen, currentRow } = partyReport()
+    const { open, setOpen, currentRow } = usePartyReport()
 
     return (
         <>

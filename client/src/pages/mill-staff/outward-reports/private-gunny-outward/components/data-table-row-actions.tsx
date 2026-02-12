@@ -9,14 +9,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { PrivateGunnyOutward } from '../data/schema'
-import { usePrivateGunnyOutwardContext } from './private-gunny-outward-provider'
+import { usePrivateGunnyOutward } from './private-gunny-outward-provider'
 
 interface DataTableRowActionsProps {
     row: Row<PrivateGunnyOutward>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = usePrivateGunnyOutwardContext()
+    const { setOpen, setCurrentRow } = usePrivateGunnyOutward()
 
     return (
         <DropdownMenu>

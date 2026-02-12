@@ -23,29 +23,17 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
-import { type NakkhiSales } from '../data/schema'
+import type { NakkhiSalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { nakkhiSalesColumns as columns } from './nakkhi-sales-columns'
 
 type DataTableProps = {
-    data: NakkhiSales[]
+    data: NakkhiSalesResponse[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading?: boolean
-    isError?: boolean
-    totalPages?: number
-    totalItems?: number
 }
 
-export function NakkhiSalesTable({
-    data,
-    search,
-    navigate,
-    // isLoading,
-    // isError,
-    // totalPages,
-    // totalItems,
-}: DataTableProps) {
+export function NakkhiSalesTable({ data, search, navigate }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

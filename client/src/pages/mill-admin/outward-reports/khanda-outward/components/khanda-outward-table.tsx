@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -7,7 +7,6 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -26,14 +25,23 @@ import { statuses } from '../data/data'
 import { type KhandaOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { khandaOutwardColumns as columns } from './khanda-outward-columns'
+import { KhandaOutwardMultiDeleteDialog } from './khanda-outward-multi-delete-dialog'
+import { khandaOutward } from './khanda-outward-provider'
 
 type DataTableProps = {
     data: KhandaOutward[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: { totalPages: number }
 }
 
-export function KhandaOutwardTable({ data, search, navigate }: DataTableProps) {
+export function KhandaOutwardTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
+    const { millId, open, setOpen } = khandaOutward()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -45,7 +53,6 @@ export function KhandaOutwardTable({ data, search, navigate }: DataTableProps) {
         onColumnFiltersChange,
         pagination,
         onPaginationChange,
-        ensurePageInRange,
     } = useTableUrlState({
         search,
         navigate,
@@ -74,17 +81,14 @@ export function KhandaOutwardTable({ data, search, navigate }: DataTableProps) {
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: true,
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
-
-    useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
 
     return (
         <div
@@ -183,6 +187,14 @@ export function KhandaOutwardTable({ data, search, navigate }: DataTableProps) {
             </div>
             <DataTablePagination table={table} className='mt-auto' />
             <DataTableBulkActions table={table} />
+            <KhandaOutwardMultiDeleteDialog
+                millId={millId}
+                table={table}
+                open={open === 'delete-multi'}
+                onOpenChange={(isOpen) =>
+                    setOpen(isOpen ? 'delete-multi' : null)
+                }
+            />
         </div>
     )
 }

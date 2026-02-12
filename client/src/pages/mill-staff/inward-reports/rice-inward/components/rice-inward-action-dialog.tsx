@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     riceTypeOptions,
     ricePurchaseTypeOptions,
@@ -41,7 +40,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { useCreateRiceInward, useUpdateRiceInward } from '../data/hooks'
 import { riceInwardSchema, type RiceInward } from '../data/schema'
+import { riceInward } from './rice-inward-provider'
 
 type RiceInwardActionDialogProps = {
     open: boolean
@@ -54,14 +55,17 @@ export function RiceInwardActionDialog({
     onOpenChange,
     currentRow,
 }: RiceInwardActionDialogProps) {
+    const { millId } = riceInward()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<RiceInward>({
-        resolver: zodResolver(riceInwardSchema),
-        defaultValues: {
+    const createMutation = useCreateRiceInward(millId)
+    const updateMutation = useUpdateRiceInward(millId)
+
+    const getDefaultValues = useMemo(
+        () => ({
             date: format(new Date(), 'yyyy-MM-dd'),
-            ricePurchaseNumber: '',
+            ricePurchaseDealNumber: '',
             partyName: '',
             brokerName: '',
             riceType: undefined,
@@ -81,49 +85,50 @@ export function RiceInwardActionDialog({
             truckLoadWeight: undefined,
             riceMotaNetWeight: undefined,
             ricePatlaNetWeight: undefined,
-        },
+        }),
+        []
+    )
+
+    const form = useForm<RiceInward>({
+        resolver: zodResolver(riceInwardSchema),
+        defaultValues: getDefaultValues,
     })
 
     useEffect(() => {
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset({
-                date: format(new Date(), 'yyyy-MM-dd'),
-                ricePurchaseNumber: '',
-                partyName: '',
-                brokerName: '',
-                riceType: undefined,
-                balanceInward: undefined,
-                inwardType: undefined,
-                lotNumber: '',
-                frkOrNAN: undefined,
-                gunnyOption: undefined,
-                gunnyNew: undefined,
-                gunnyOld: undefined,
-                gunnyPlastic: undefined,
-                juteWeight: undefined,
-                plasticWeight: undefined,
-                gunnyWeight: undefined,
-                truckNumber: '',
-                rstNumber: '',
-                truckLoadWeight: undefined,
-                riceMotaNetWeight: undefined,
-                ricePatlaNetWeight: undefined,
+            form.reset(getDefaultValues)
+        }
+    }, [currentRow, getDefaultValues])
+
+    const onSubmit = (data: RiceInward) => {
+        if (isEditing && currentRow?._id) {
+            updateMutation.mutate(
+                { id: currentRow._id, data: { ...data, _id: currentRow._id } },
+                {
+                    onSuccess: () => {
+                        toast.success('Updated successfully')
+                        onOpenChange(false)
+                        form.reset(getDefaultValues)
+                    },
+                    onError: (error) => {
+                        toast.error(error.message || 'Failed to update')
+                    },
+                }
+            )
+        } else {
+            createMutation.mutate(data, {
+                onSuccess: () => {
+                    toast.success('Added successfully')
+                    onOpenChange(false)
+                    form.reset(getDefaultValues)
+                },
+                onError: (error) => {
+                    toast.error(error.message || 'Failed to add')
+                },
             })
         }
-    }, [currentRow, form])
-
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
     }
 
     return (
@@ -207,16 +212,18 @@ export function RiceInwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='ricePurchaseNumber'
+                                name='ricePurchaseDealNumber'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Rice Purchase Number
+                                            Rice Purchase Deal Number
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter Deal ID'
+                                                id='ricePurchaseDealNumber'
+                                                placeholder='Enter Deal Number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -231,8 +238,10 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='partyName'
                                                 placeholder='Enter Party Name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -247,8 +256,10 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Broker Name</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='brokerName'
                                                 placeholder='Enter Broker Name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -299,8 +310,10 @@ export function RiceInwardActionDialog({
                                             <FormLabel>LOT No.</FormLabel>
                                             <FormControl>
                                                 <Input
+                                                    id='lotNumber'
                                                     placeholder='Enter LOT No'
                                                     {...field}
+                                                    value={field.value || ''}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -317,9 +330,11 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Balance Inward</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='balanceInward'
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
@@ -412,8 +427,10 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Gunny New</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='gunnyNew'
                                                 type='number'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
@@ -438,8 +455,10 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Gunny Old</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='gunnyOld'
                                                 type='number'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
@@ -464,8 +483,10 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Gunny Plastic</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='gunnyPlastic'
                                                 type='number'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
@@ -492,9 +513,11 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Jute Weight</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='juteWeight'
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
@@ -519,9 +542,11 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Plastic Weight</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='plasticWeight'
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
@@ -548,9 +573,11 @@ export function RiceInwardActionDialog({
                                         </FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='gunnyWeight'
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
@@ -577,8 +604,10 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Truck Number</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='truckNumber'
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -593,8 +622,10 @@ export function RiceInwardActionDialog({
                                         <FormLabel>RST Number</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='rstNumber'
                                                 placeholder='Enter RST Number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -611,9 +642,11 @@ export function RiceInwardActionDialog({
                                         </FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='truckLoadWeight'
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
@@ -676,9 +709,11 @@ export function RiceInwardActionDialog({
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
+                                                    id='riceMotaNetWeight'
                                                     type='number'
                                                     step='0.01'
                                                     {...field}
+                                                    value={field.value ?? ''}
                                                     onChange={(e) => {
                                                         const val =
                                                             e.target
@@ -711,9 +746,11 @@ export function RiceInwardActionDialog({
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
+                                                    id='ricePatlaNetWeight'
                                                     type='number'
                                                     step='0.01'
                                                     {...field}
+                                                    value={field.value ?? ''}
                                                     onChange={(e) => {
                                                         const val =
                                                             e.target

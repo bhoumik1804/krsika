@@ -3,15 +3,22 @@ import { PaddyDeleteDialog } from './paddy-delete-dialog'
 import { usePaddy } from './paddy-provider'
 
 export function PaddyDialogs() {
-    const { open, setOpen, currentRow } = usePaddy()
+    const { open, setOpen, currentRow, setCurrentRow } = usePaddy()
+
+    const handleDialogChange = (isOpen: boolean) => {
+        if (!isOpen) {
+            setCurrentRow(null)
+            setOpen(null)
+        } else {
+            setOpen('add')
+        }
+    }
 
     return (
         <>
             <PaddyActionDialog
                 open={open === 'add' || open === 'edit'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? open : null)
-                }
+                onOpenChange={handleDialogChange}
                 currentRow={currentRow}
             />
             <PaddyDeleteDialog

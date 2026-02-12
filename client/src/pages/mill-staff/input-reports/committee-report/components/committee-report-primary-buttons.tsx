@@ -1,17 +1,12 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { committeeReport } from './committee-report-provider'
+import { useCommitteeReport } from './committee-report-provider'
 
 export function CommitteeReportPrimaryButtons() {
-    const { setOpen, setCurrentRow } = committeeReport()
-
-    const handleAddClick = () => {
-        setCurrentRow(null)
-        setOpen('add')
-    }
+    const { setOpen } = useCommitteeReport()
 
     return (
-        <Button onClick={handleAddClick}>
+        <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
             Add Record
         </Button>

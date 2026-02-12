@@ -1,44 +1,45 @@
-import React, { useState } from 'react'
-import useDialogState from '@/hooks/use-dialog-state'
-import { type FrkOutward } from '../data/schema'
+import { useState, createContext, useContext, ReactNode } from 'react'
+import { FrkOutward } from '../data/schema'
 
 type FrkOutwardDialogType = 'add' | 'edit' | 'delete' | 'delete-multi'
 
-type FrkOutwardContextType = {
+interface FrkOutwardContextType {
     open: FrkOutwardDialogType | null
     setOpen: (str: FrkOutwardDialogType | null) => void
     currentRow: FrkOutward | null
-    setCurrentRow: React.Dispatch<React.SetStateAction<FrkOutward | null>>
+    setCurrentRow: (row: FrkOutward | null) => void
+    millId: string
 }
 
-const FrkOutwardContext = React.createContext<FrkOutwardContextType | null>(
-    null
-)
+const FrkOutwardContext = createContext<FrkOutwardContextType | null>(null)
+
+interface FrkOutwardProviderProps {
+    children: ReactNode
+    millId: string
+}
 
 export function FrkOutwardProvider({
     children,
-}: {
-    children: React.ReactNode
-}) {
-    const [open, setOpen] = useDialogState<FrkOutwardDialogType>(null)
+    millId,
+}: FrkOutwardProviderProps) {
+    const [open, setOpen] = useState<FrkOutwardDialogType | null>(null)
     const [currentRow, setCurrentRow] = useState<FrkOutward | null>(null)
 
     return (
         <FrkOutwardContext.Provider
-            value={{ open, setOpen, currentRow, setCurrentRow }}
+            value={{ open, setOpen, currentRow, setCurrentRow, millId }}
         >
             {children}
         </FrkOutwardContext.Provider>
     )
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const frkOutward = () => {
-    const context = React.useContext(FrkOutwardContext)
-
+export const useFrkOutward = () => {
+    const context = useContext(FrkOutwardContext)
     if (!context) {
-        throw new Error('frkOutward has to be used within <FrkOutwardContext>')
+        throw new Error(
+            'useFrkOutward must be used within a FrkOutwardProvider'
+        )
     }
-
     return context
 }

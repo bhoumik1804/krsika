@@ -3,8 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -37,7 +35,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { useCreateOtherInward, useUpdateOtherInward } from '../data/hooks'
 import { otherInwardSchema, type OtherInward } from '../data/schema'
+import { useOtherInward } from './other-inward-provider'
 
 type OtherInwardActionDialogProps = {
     open: boolean
@@ -50,14 +50,21 @@ export function OtherInwardActionDialog({
     onOpenChange,
     currentRow,
 }: OtherInwardActionDialogProps) {
+    const { millId } = useOtherInward()
+    const { mutateAsync: createOtherInward, isPending: isCreating } =
+        useCreateOtherInward(millId)
+    const { mutateAsync: updateOtherInward, isPending: isUpdating } =
+        useUpdateOtherInward(millId)
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
     const form = useForm<OtherInward>({
         resolver: zodResolver(otherInwardSchema),
         defaultValues: {
             date: format(new Date(), 'yyyy-MM-dd'),
-            purchaseDealId: '',
+            otherPurchaseDealNumber: '',
             itemName: '',
             quantity: undefined,
             quantityType: '',
@@ -66,8 +73,8 @@ export function OtherInwardActionDialog({
             gunnyNew: undefined,
             gunnyOld: undefined,
             gunnyPlastic: undefined,
-            juteWeight: undefined,
-            plasticWeight: undefined,
+            juteGunnyWeight: undefined,
+            plasticGunnyWeight: undefined,
             truckNumber: '',
             rstNumber: '',
             truckWeight: undefined,
@@ -77,41 +84,48 @@ export function OtherInwardActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset({
-                date: format(new Date(), 'yyyy-MM-dd'),
-                purchaseDealId: '',
-                itemName: '',
-                quantity: undefined,
-                quantityType: 'Kg',
-                partyName: '',
-                brokerName: '',
-                gunnyNew: undefined,
-                gunnyOld: undefined,
-                gunnyPlastic: undefined,
-                juteWeight: undefined,
-                plasticWeight: undefined,
-                truckNumber: '',
-                rstNumber: '',
-                truckWeight: undefined,
-                gunnyWeight: undefined,
-                netWeight: undefined,
-            })
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    otherPurchaseDealNumber: '',
+                    itemName: '',
+                    quantity: undefined,
+                    quantityType: 'Kg',
+                    partyName: '',
+                    brokerName: '',
+                    gunnyNew: undefined,
+                    gunnyOld: undefined,
+                    gunnyPlastic: undefined,
+                    juteGunnyWeight: undefined,
+                    plasticGunnyWeight: undefined,
+                    truckNumber: '',
+                    rstNumber: '',
+                    truckWeight: undefined,
+                    gunnyWeight: undefined,
+                    netWeight: undefined,
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = async (data: OtherInward) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateOtherInward({
+                    entryId: currentRow._id,
+                    data,
+                })
+            } else {
+                await createOtherInward(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            console.error('Form submission error:', error)
+        }
     }
 
     return (
@@ -194,7 +208,7 @@ export function OtherInwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='purchaseDealId'
+                                name='otherPurchaseDealNumber'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
@@ -396,7 +410,7 @@ export function OtherInwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='juteWeight'
+                                name='juteGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Jute Gunny Weight</FormLabel>
@@ -421,7 +435,7 @@ export function OtherInwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='plasticWeight'
+                                name='plasticGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
@@ -559,11 +573,18 @@ export function OtherInwardActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

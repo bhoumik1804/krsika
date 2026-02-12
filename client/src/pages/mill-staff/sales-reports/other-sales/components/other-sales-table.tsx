@@ -31,21 +31,9 @@ type DataTableProps = {
     data: OtherSales[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading?: boolean
-    isError?: boolean
-    totalPages?: number
-    totalItems?: number
 }
 
-export function OtherSalesTable({
-    data,
-    search,
-    navigate,
-    // isLoading,
-    // isError,
-    // totalItems,
-    // totalPages,
-}: DataTableProps) {
+export function OtherSalesTable({ data, search, navigate }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

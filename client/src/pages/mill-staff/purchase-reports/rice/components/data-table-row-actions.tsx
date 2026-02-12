@@ -10,11 +10,11 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type RicePurchase } from '../data/schema'
+import { type RicePurchaseData } from '../data/schema'
 import { useRice } from './rice-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<RicePurchase>
+    row: Row<RicePurchaseData>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {

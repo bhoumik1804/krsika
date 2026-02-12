@@ -1,9 +1,9 @@
 import { TransporterReportActionDialog } from './transporter-report-action-dialog'
 import { TransporterReportDeleteDialog } from './transporter-report-delete-dialog'
-import { transporterReport } from './transporter-report-provider'
+import { useTransporterReport } from './transporter-report-provider'
 
 export function TransporterReportDialogs() {
-    const { open, setOpen, currentRow } = transporterReport()
+    const { open,currentRow, setOpen } = useTransporterReport()
 
     return (
         <>

@@ -9,6 +9,7 @@ import {
     fetchDoReportById,
     fetchDoReportSummary,
     createDoReport,
+    bulkCreateDoReport,
     updateDoReport,
     deleteDoReport,
     bulkDeleteDoReport,
@@ -18,7 +19,7 @@ import type {
     DoReportResponse,
     DoReportListResponse,
     DoReportSummaryResponse,
-    // CreateDoReportRequest,
+    CreateDoReportRequest,
     UpdateDoReportRequest,
     DoReportQueryParams,
 } from './types'
@@ -55,7 +56,7 @@ export const useDoReportList = (
         queryKey: doReportKeys.list(millId, params),
         queryFn: () => fetchDoReportList(millId, params),
         enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 5 * 60 * 1000,
     })
 }
 
@@ -71,7 +72,7 @@ export const useDoReportDetail = (
         queryKey: doReportKeys.detail(millId, id),
         queryFn: () => fetchDoReportById(millId, id),
         enabled: options?.enabled ?? (!!millId && !!id),
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 5 * 60 * 1000,
     })
 }
 
@@ -86,7 +87,7 @@ export const useDoReportSummary = (
         queryKey: doReportKeys.summary(millId),
         queryFn: () => fetchDoReportSummary(millId),
         enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 5 * 60 * 1000,
     })
 }
 
@@ -100,7 +101,7 @@ export const useDoReportSummary = (
 export const useCreateDoReport = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<any, Error, any>({
+    return useMutation<DoReportResponse, Error, CreateDoReportRequest>({
         mutationFn: (data) => createDoReport(millId, data),
         onSuccess: () => {
             queryClient.invalidateQueries({
@@ -113,6 +114,33 @@ export const useCreateDoReport = (millId: string) => {
         },
         onError: (error) => {
             toast.error(error.message || 'Failed to create DO report')
+        },
+    })
+}
+
+/**
+ * Hook to bulk create DO reports
+ */
+export const useBulkCreateDoReport = (millId: string) => {
+    const queryClient = useQueryClient()
+
+    return useMutation<
+        { reports: DoReportResponse[]; count: number },
+        Error,
+        CreateDoReportRequest[]
+    >({
+        mutationFn: (data) => bulkCreateDoReport(millId, data),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({
+                queryKey: doReportKeys.lists(),
+            })
+            queryClient.invalidateQueries({
+                queryKey: doReportKeys.summaries(),
+            })
+            toast.success(`${data.count} DO reports created successfully`)
+        },
+        onError: (error) => {
+            toast.error(error.message || 'Failed to create DO reports')
         },
     })
 }

@@ -82,7 +82,7 @@ export function FrkOutwardActionDialog({
 
     const onSubmit = async (data: FrkOutward) => {
         try {
-            if (isEditing) {
+            if (isEditing && currentRow._id) {
                 const { _id, ...updatePayload } = data
                 await updateMutation.mutateAsync({
                     millId,

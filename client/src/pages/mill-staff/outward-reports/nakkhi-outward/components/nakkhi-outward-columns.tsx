@@ -1,5 +1,5 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
-// '
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -43,7 +43,9 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -61,11 +63,7 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
                 title='Nakkhi Sale Deal Number'
             />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm'>
-                {row.getValue('nakkhiSaleDealNumber')}
-            </div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('nakkhiSaleDealNumber')}</div>,
     },
     {
         accessorKey: 'partyName',
@@ -141,20 +139,14 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Truck No' />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm text-nowrap'>
-                {row.getValue('truckNo')}
-            </div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('truckNo')}</div>,
     },
     {
         accessorKey: 'truckRst',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='RST No' />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm'>{row.getValue('truckRst')}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('truckRst')}</div>,
     },
     {
         accessorKey: 'truckWeight',
@@ -180,9 +172,7 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
             <DataTableColumnHeader column={column} title='Net Weight' />
         ),
         cell: ({ row }) => (
-            <div className='text-right font-bold'>
-                {row.getValue('netWeight')}
-            </div>
+            <div className='text-right'>{row.getValue('netWeight')}</div>
         ),
     },
     {

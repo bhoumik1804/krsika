@@ -1,12 +1,12 @@
 import { faker } from '@faker-js/faker'
-import { type FrkPurchase } from './schema'
+import { type FrkPurchaseData } from './schema'
 
 // Set a fixed seed for consistent data generation
 faker.seed(54324)
 
-export const frkPurchases: FrkPurchase[] = Array.from(
+export const frkPurchases: FrkPurchaseData[] = Array.from(
     { length: 50 },
-    (): FrkPurchase => {
+    (): FrkPurchaseData => {
         const frkQty = faker.number.int({ min: 20, max: 300 })
         const frkRate = faker.number.int({ min: 1200, max: 2000 })
         const gst = faker.number.float({ min: 5, max: 18, fractionDigits: 2 })

@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for GovtRiceOutward records
 export const GovtRiceOutwardSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
     lotNo: z.string().optional(),
     fciNan: z.string().optional(),

@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { nakkhiSales } from './nakkhi-sales-provider'
+import { useNakkhiSales } from './nakkhi-sales-provider'
 
 export function NakkhiSalesPrimaryButtons() {
-    const { setOpen } = nakkhiSales()
+    const { setOpen } = useNakkhiSales()
 
     return (
         <Button onClick={() => setOpen('add')}>

@@ -1,76 +1,44 @@
-import { useMemo } from 'react';
-import { useFrkInwardList } from '@/pages/mill-staff/inwards/frk-inward/data/hooks';
-import { useParams, useSearchParams } from 'react-router';
-import { ConfigDrawer } from '@/components/config-drawer';
-import { getMillAdminSidebarData } from '@/components/layout/data';
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { LoadingSpinner } from '@/components/loading-spinner';
-import { ProfileDropdown } from '@/components/profile-dropdown';
-import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
-import { FrkInwardDialogs } from './components/frk-inward-dialogs';
-import { FrkInwardPrimaryButtons } from './components/frk-inward-primary-buttons';
-import { FrkInwardProvider } from './components/frk-inward-provider';
-import { FrkInwardTable } from './components/frk-inward-table';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { useMemo } from 'react'
+import { useParams, useSearchParams } from 'react-router'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { getMillAdminSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { FrkInwardDialogs } from './components/frk-inward-dialogs'
+import { FrkInwardPrimaryButtons } from './components/frk-inward-primary-buttons'
+import { FrkInwardProvider } from './components/frk-inward-provider'
+import { FrkInwardTable } from './components/frk-inward-table'
+import { useFrkInwardList } from './data/hooks'
 
 export function FrkInwardReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
 
-    const search = Object.fromEntries(searchParams.entries())
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
 
-    // Extract query params from URL
-    const queryParams = useMemo(
-        () => ({
+        return {
             page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            limit,
             search: search.search as string | undefined,
             startDate: search.startDate as string | undefined,
             endDate: search.endDate as string | undefined,
-            sortBy: (search.sortBy as string) || 'date',
+            sortBy: (search.sortBy as 'partyName') || 'date',
             sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
+        }
+    }, [searchParams])
 
-    // Fetch FRK inward data using the hook
-    const {
-        data: inwardResponse,
-        isLoading,
-        isError,
-    } = useFrkInwardList(millId || '', queryParams, { enabled: !!millId })
-
-    // Transform API response to table format
-    const inwardData = useMemo(() => {
-        if (!inwardResponse?.data) return []
-        return inwardResponse.data.map((item) => ({
-            id: item._id,
-            date: item.date,
-            partyName: item.partyName ?? '',
-            totalWeight: item.totalWeight ?? 0,
-            rate: item.rate ?? 0,
-            amount: item.amount ?? 0,
-        }))
-    }, [inwardResponse])
+    const search = Object.fromEntries(searchParams.entries())
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -84,7 +52,7 @@ export function FrkInwardReport() {
     }
 
     return (
-        <FrkInwardProvider>
+        <FrkInwardProvider millId={millId || ''}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -109,22 +77,70 @@ export function FrkInwardReport() {
                     </div>
                     <FrkInwardPrimaryButtons />
                 </div>
-                {isLoading ? (
-                    <LoadingSpinner className='h-full w-full' />
-                ) : isError ? (
-                    <div className='py-10 text-center text-destructive'>
-                        Failed to load FRK inward data
-                    </div>
-                ) : (
-                    <FrkInwardTable
-                        data={inwardData}
-                        search={search}
-                        navigate={navigate}
-                    />
-                )}
+                <FrkInwardContent
+                    millId={millId || ''}
+                    queryParams={queryParams}
+                    search={search}
+                    navigate={navigate}
+                />
             </Main>
 
             <FrkInwardDialogs />
         </FrkInwardProvider>
+    )
+}
+
+function FrkInwardContent({
+    millId,
+    queryParams,
+    search,
+    navigate,
+}: {
+    millId: string
+    queryParams: {
+        page: number
+        limit: number
+        search?: string
+        startDate?: string
+        endDate?: string
+        sortBy?: 'date' | 'partyName' | 'netWeight' | 'createdAt'
+        sortOrder?: 'asc' | 'desc'
+    }
+    search: Record<string, string>
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const {
+        data: listData,
+        isLoading,
+        error,
+    } = useFrkInwardList(millId, queryParams)
+
+    const data = listData?.entries ?? []
+    const pagination = listData?.pagination
+
+    if (isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                {error.message ||
+                    'Failed to load FRK inward data. Please try again later.'}
+            </div>
+        )
+    }
+
+    return (
+        <FrkInwardTable
+            data={data}
+            search={search}
+            navigate={navigate}
+            pagination={pagination}
+        />
     )
 }

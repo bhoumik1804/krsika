@@ -1,6 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,6 +9,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeleteFrkOutward } from '../data/hooks'
+import { useFrkOutward } from './frk-outward-provider'
 
 type FrkOutwardMultiDeleteDialogProps<TData> = {
     table: Table<TData>
@@ -23,18 +23,22 @@ export function FrkOutwardMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: FrkOutwardMultiDeleteDialogProps<TData>) {
+    const { millId } = useFrkOutward()
+    const bulkDeleteMutation = useBulkDeleteFrkOutward()
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
-    const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                table.resetRowSelection()
-                onOpenChange(false)
-                return `Deleted ${selectedRows.length} record${selectedRows.length > 1 ? 's' : ''}`
-            },
-            error: 'Error deleting records',
-        })
+    const handleDeleteSelected = async () => {
+        try {
+            const ids = selectedRows.map((row) => (row.original as any)._id)
+            await bulkDeleteMutation.mutateAsync({
+                millId,
+                ids,
+            })
+            table.resetRowSelection()
+            onOpenChange(false)
+        } catch (error) {
+            // Error is handled by the mutation hook
+        }
     }
 
     return (
@@ -55,6 +59,7 @@ export function FrkOutwardMultiDeleteDialog<TData>({
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
+                        disabled={bulkDeleteMutation.isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
                         Delete

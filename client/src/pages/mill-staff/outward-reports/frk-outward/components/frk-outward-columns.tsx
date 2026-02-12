@@ -1,5 +1,5 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
-import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
@@ -22,9 +22,6 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
                 className='translate-y-[2px]'
             />
         ),
-        meta: {
-            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
-        },
         cell: ({ row }) => (
             <Checkbox
                 checked={row.getIsSelected()}
@@ -41,14 +38,13 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Date' />
         ),
-        cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
-        ),
-        meta: {
-            className: cn(
-                'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-                'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
-            ),
+        cell: ({ row }) => {
+            const date = row.getValue('date')
+            return (
+                <div className='ps-3 text-nowrap'>
+                    {format(new Date(date as string), 'yyyy-MM-dd')}
+                </div>
+            )
         },
         enableHiding: false,
     },
@@ -83,7 +79,7 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('plasticWeight') as number).toFixed(3)}
+                {(row.getValue('plasticWeight') as number)?.toFixed(3)}
             </div>
         ),
     },
@@ -114,7 +110,7 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('truckWeight') as number).toFixed(2)}
+                {(row.getValue('truckWeight') as number)?.toFixed(2)}
             </div>
         ),
     },
@@ -125,7 +121,7 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('gunnyWeight') as number).toFixed(2)}
+                {(row.getValue('gunnyWeight') as number)?.toFixed(2)}
             </div>
         ),
     },
@@ -135,8 +131,8 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
             <DataTableColumnHeader column={column} title='Net Weight' />
         ),
         cell: ({ row }) => (
-            <div className='text-right font-bold'>
-                {(row.getValue('netWeight') as number).toFixed(2)}
+            <div className='text-right'>
+                {(row.getValue('netWeight') as number)?.toFixed(2)}
             </div>
         ),
     },

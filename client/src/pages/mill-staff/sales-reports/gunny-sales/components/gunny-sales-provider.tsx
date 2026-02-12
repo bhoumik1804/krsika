@@ -1,35 +1,84 @@
 import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
-import { type GunnySales } from '../data/schema'
+import type {
+    GunnySalesListResponse,
+    GunnySalesQueryParams,
+    GunnySalesResponse,
+} from '../data/types'
 
 type GunnySalesDialogType = 'add' | 'edit' | 'delete'
 
 type GunnySalesContextType = {
     open: GunnySalesDialogType | null
     setOpen: (str: GunnySalesDialogType | null) => void
-    currentRow: GunnySales | null
-    setCurrentRow: React.Dispatch<React.SetStateAction<GunnySales | null>>
+    currentRow: GunnySalesResponse | null
+    setCurrentRow: React.Dispatch<
+        React.SetStateAction<GunnySalesResponse | null>
+    >
+    millId: string
+    apiResponse: GunnySalesListResponse | undefined
+    queryParams: GunnySalesQueryParams
+    setQueryParams: React.Dispatch<React.SetStateAction<GunnySalesQueryParams>>
+    isLoading: boolean
+    isError: boolean
 }
 
-const GunnySalesContext = React.createContext<GunnySalesContextType | null>(null)
+const GunnySalesContext = React.createContext<GunnySalesContextType | null>(
+    null
+)
 
-export function GunnySalesProvider({ children }: { children: React.ReactNode }) {
+type GunnySalesProviderProps = {
+    children: React.ReactNode
+    millId: string
+    apiResponse?: GunnySalesListResponse
+    isLoading?: boolean
+    isError?: boolean
+}
+
+export function GunnySalesProvider({
+    children,
+    millId,
+    apiResponse,
+    isLoading = false,
+    isError = false,
+}: GunnySalesProviderProps) {
     const [open, setOpen] = useDialogState<GunnySalesDialogType>(null)
-    const [currentRow, setCurrentRow] = useState<GunnySales | null>(null)
+    const [currentRow, setCurrentRow] = useState<GunnySalesResponse | null>(
+        null
+    )
+    const [queryParams, setQueryParams] = useState<GunnySalesQueryParams>({
+        page: 1,
+        limit: 10,
+    })
 
     return (
-        <GunnySalesContext value={ { open, setOpen, currentRow, setCurrentRow } }>
+        <GunnySalesContext
+            value={{
+                open,
+                setOpen,
+                currentRow,
+                setCurrentRow,
+                millId,
+                apiResponse,
+                queryParams,
+                setQueryParams,
+                isLoading,
+                isError,
+            }}
+        >
             {children}
         </GunnySalesContext>
     )
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const gunnySales = () => {
+export const useGunnySales = () => {
     const context = React.useContext(GunnySalesContext)
 
     if (!context) {
-        throw new Error('gunnySales has to be used within <GunnySalesContext>')
+        throw new Error(
+            'useGunnySales has to be used within <GunnySalesProvider>'
+        )
     }
 
     return context

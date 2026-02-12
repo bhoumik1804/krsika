@@ -1,5 +1,3 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,7 +8,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteGovtPaddyInward } from '../data/hooks'
 import { type GovtPaddyInward } from '../data/schema'
+import { useGovtPaddyInward } from './govt-paddy-inward-provider'
 
 type GovtPaddyInwardDeleteDialogProps = {
     open: boolean
@@ -23,15 +23,19 @@ export function GovtPaddyInwardDeleteDialog({
     onOpenChange,
     currentRow,
 }: GovtPaddyInwardDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+    const { millId } = useGovtPaddyInward()
+    const { mutateAsync: deleteGovtPaddyInward, isPending } =
+        useDeleteGovtPaddyInward(millId)
+
+    const handleDelete = async () => {
+        if (!currentRow?._id) return
+
+        try {
+            await deleteGovtPaddyInward(currentRow._id)
+            onOpenChange(false)
+        } catch (error) {
+            console.error('Delete error:', error)
+        }
     }
 
     return (
@@ -47,12 +51,15 @@ export function GovtPaddyInwardDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

@@ -1,5 +1,4 @@
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,7 +9,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteRiceInward } from '../data/hooks'
 import { type RiceInward } from '../data/schema'
+import { riceInward } from './rice-inward-provider'
 
 type RiceInwardDeleteDialogProps = {
     open: boolean
@@ -23,14 +24,20 @@ export function RiceInwardDeleteDialog({
     onOpenChange,
     currentRow,
 }: RiceInwardDeleteDialogProps) {
+    const { millId } = riceInward()
+    const deleteMutation = useDeleteRiceInward(millId)
+
     const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
+        if (!currentRow?._id) return
+
+        deleteMutation.mutate(currentRow._id, {
+            onSuccess: () => {
+                toast.success('Deleted successfully')
                 onOpenChange(false)
-                return 'Deleted successfully'
             },
-            error: 'Failed to delete',
+            onError: (error) => {
+                toast.error(error.message || 'Failed to delete')
+            },
         })
     }
 

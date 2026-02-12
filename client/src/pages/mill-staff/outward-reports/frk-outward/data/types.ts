@@ -1,61 +1,20 @@
-/**
- * FRK Outward Types
- * TypeScript type definitions for FRK Outward module
- */
+import { FrkOutward } from './schema'
 
-// ==========================================
-// API Request Types
-// ==========================================
-
-export interface CreateFrkOutwardRequest {
-    date: string
+// Query parameters for fetching FRK outward records
+export interface FrkOutwardQueryParams {
+    page?: number
+    limit?: number
+    search?: string
     partyName?: string
-    gunnyPlastic?: number
-    plasticWeight?: number
-    truckNo?: string
-    truckRst?: string
-    truckWeight?: number
-    gunnyWeight?: number
-    netWeight?: number
+    startDate?: string
+    endDate?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
 }
 
-export interface UpdateFrkOutwardRequest {
-    id: string
-    date?: string
-    partyName?: string
-    gunnyPlastic?: number
-    plasticWeight?: number
-    truckNo?: string
-    truckRst?: string
-    truckWeight?: number
-    gunnyWeight?: number
-    netWeight?: number
-}
-
-// ==========================================
 // API Response Types
-// ==========================================
-
-export interface FrkOutwardResponse {
-    _id: string
-    millId: string
-    date: string
-    partyName?: string
-    gunnyPlastic?: number
-    plasticWeight?: number
-    truckNo?: string
-    truckRst?: string
-    truckWeight?: number
-    gunnyWeight?: number
-    netWeight?: number
-    createdBy: string
-    updatedBy?: string
-    createdAt: string
-    updatedAt: string
-}
-
 export interface FrkOutwardListResponse {
-    data: FrkOutwardResponse[]
+    entries: FrkOutward[]
     pagination: {
         page: number
         limit: number
@@ -69,25 +28,17 @@ export interface FrkOutwardListResponse {
 }
 
 export interface FrkOutwardSummaryResponse {
-    totalEntries: number
-    totalGunnyPlastic: number
-    totalPlasticWeight: number
-    totalTruckWeight: number
-    totalGunnyWeight: number
-    totalNetWeight: number
+    summary: {
+        totalEntries: number
+        totalGunnyPlastic: number
+        totalPlasticWeight: number
+        totalTruckWeight: number
+        totalGunnyWeight: number
+        totalNetWeight: number
+    }
 }
 
-// ==========================================
-// Query Parameters
-// ==========================================
+// Request Types for Mutations
+export type CreateFrkOutwardRequest = Omit<FrkOutward, '_id'>
 
-export interface FrkOutwardQueryParams {
-    page?: number
-    limit?: number
-    search?: string
-    partyName?: string
-    startDate?: string
-    endDate?: string
-    sortBy?: string
-    sortOrder?: 'asc' | 'desc'
-}
+export type UpdateFrkOutwardRequest = Partial<Omit<FrkOutward, '_id'>>

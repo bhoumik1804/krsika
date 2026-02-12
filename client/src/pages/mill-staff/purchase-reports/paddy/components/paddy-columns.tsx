@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 // '
 import { cn } from '@/lib/utils'
@@ -6,10 +7,10 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 // import { statusStyles } from '../data/data'
-import { type PaddyPurchase } from '../data/schema'
+import { type PaddyPurchaseData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const paddyColumns: ColumnDef<PaddyPurchase>[] = [
+export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -45,7 +46,9 @@ export const paddyColumns: ColumnDef<PaddyPurchase>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -148,7 +151,7 @@ export const paddyColumns: ColumnDef<PaddyPurchase>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {row.getValue('paddyRatePerQuintal') || '0.00'}
+                {row.getValue('paddyRatePerQuintal') || 0}
             </div>
         ),
     },
@@ -169,9 +172,7 @@ export const paddyColumns: ColumnDef<PaddyPurchase>[] = [
             <DataTableColumnHeader column={column} title='Brokerage' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                {row.getValue('brokerage') || '0.00'}
-            </div>
+            <div className='text-right'>{row.getValue('brokerage') || 0}</div>
         ),
     },
     {
@@ -190,7 +191,7 @@ export const paddyColumns: ColumnDef<PaddyPurchase>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {row.getValue('newGunnyRate') || '0.00'}
+                {row.getValue('newGunnyRate') || 0}
             </div>
         ),
     },
@@ -201,7 +202,7 @@ export const paddyColumns: ColumnDef<PaddyPurchase>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {row.getValue('oldGunnyRate') || '0.00'}
+                {row.getValue('oldGunnyRate') || 0}
             </div>
         ),
     },
@@ -212,7 +213,7 @@ export const paddyColumns: ColumnDef<PaddyPurchase>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {row.getValue('plasticGunnyRate') || '0.00'}
+                {row.getValue('plasticGunnyRate') || 0}
             </div>
         ),
     },

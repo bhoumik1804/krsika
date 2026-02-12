@@ -7,14 +7,14 @@ import {
     frkTypeOptions,
     gunnyTypeOptions,
 } from '@/constants/purchase-form'
-import { type RicePurchase } from './schema'
+import { type RicePurchaseData } from './schema'
 
 // Set a fixed seed for consistent data generation
 faker.seed(12345)
 
-export const ricePurchases: RicePurchase[] = Array.from(
+export const ricePurchases: RicePurchaseData[] = Array.from(
     { length: 50 },
-    (): RicePurchase => {
+    (): RicePurchaseData => {
         const totalQty = faker.number.float({
             min: 100,
             max: 1000,

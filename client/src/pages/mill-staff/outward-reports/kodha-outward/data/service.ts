@@ -1,133 +1,77 @@
-/**
- * Kodha Outward Service
- * API client for Kodha Outward CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
-import apiClient, { type ApiResponse } from '@/lib/api-client'
+import apiClient from '@/lib/api-client'
 import type {
-    KodhaOutwardResponse,
-    KodhaOutwardListResponse,
-    KodhaOutwardSummaryResponse,
     CreateKodhaOutwardRequest,
-    UpdateKodhaOutwardRequest,
+    KodhaOutwardListResponse,
     KodhaOutwardQueryParams,
+    KodhaOutwardSummaryResponse,
+    UpdateKodhaOutwardRequest,
 } from './types'
 
-// ==========================================
-// API Endpoints
-// ==========================================
+const BASE_PATH = '/mills'
 
-const KODHA_OUTWARD_ENDPOINT = (millId: string) =>
-    `/mills/${millId}/kodha-outward`
-
-// ==========================================
-// Kodha Outward API Functions
-// ==========================================
-
-/**
- * Fetch all kodha outward entries with pagination and filters
- */
-export const fetchKodhaOutwardList = async (
+export async function fetchKodhaOutwardList(
     millId: string,
-    params?: KodhaOutwardQueryParams
-): Promise<KodhaOutwardListResponse> => {
-    const response = await apiClient.get<ApiResponse<KodhaOutwardListResponse>>(
-        KODHA_OUTWARD_ENDPOINT(millId),
+    params: KodhaOutwardQueryParams = {}
+): Promise<KodhaOutwardListResponse> {
+    const response = await apiClient.get(
+        `${BASE_PATH}/${millId}/kodha-outward`,
         { params }
     )
     return response.data.data
 }
 
-/**
- * Fetch a single kodha outward entry by ID
- */
-export const fetchKodhaOutwardById = async (
+export async function fetchKodhaOutwardSummary(
     millId: string,
-    id: string
-): Promise<KodhaOutwardResponse> => {
-    const response = await apiClient.get<ApiResponse<KodhaOutwardResponse>>(
-        `${KODHA_OUTWARD_ENDPOINT(millId)}/${id}`
+    params: Pick<KodhaOutwardQueryParams, 'startDate' | 'endDate'> = {}
+): Promise<KodhaOutwardSummaryResponse> {
+    const response = await apiClient.get(
+        `${BASE_PATH}/${millId}/kodha-outward/summary`,
+        { params }
     )
     return response.data.data
 }
 
-/**
- * Fetch kodha outward summary/statistics
- */
-export const fetchKodhaOutwardSummary = async (
-    millId: string,
-    params?: Pick<KodhaOutwardQueryParams, 'startDate' | 'endDate'>
-): Promise<KodhaOutwardSummaryResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<KodhaOutwardSummaryResponse>
-    >(`${KODHA_OUTWARD_ENDPOINT(millId)}/summary`, { params })
-    return response.data.data
-}
-
-/**
- * Create a new kodha outward entry
- */
-export const createKodhaOutward = async (
+export async function createKodhaOutward(
     millId: string,
     data: CreateKodhaOutwardRequest
-): Promise<KodhaOutwardResponse> => {
-    const response = await apiClient.post<ApiResponse<KodhaOutwardResponse>>(
-        KODHA_OUTWARD_ENDPOINT(millId),
+) {
+    const response = await apiClient.post(
+        `${BASE_PATH}/${millId}/kodha-outward`,
         data
     )
     return response.data.data
 }
 
-/**
- * Update an existing kodha outward entry
- */
-export const updateKodhaOutward = async (
-    millId: string,
-    { id, ...data }: UpdateKodhaOutwardRequest
-): Promise<KodhaOutwardResponse> => {
-    const response = await apiClient.put<ApiResponse<KodhaOutwardResponse>>(
-        `${KODHA_OUTWARD_ENDPOINT(millId)}/${id}`,
-        data
-    )
-    return response.data.data
-}
-
-/**
- * Delete a kodha outward entry
- */
-export const deleteKodhaOutward = async (
-    millId: string,
-    id: string
-): Promise<void> => {
-    await apiClient.delete(`${KODHA_OUTWARD_ENDPOINT(millId)}/${id}`)
-}
-
-/**
- * Bulk delete kodha outward entries
- */
-export const bulkDeleteKodhaOutward = async (
-    millId: string,
-    ids: string[]
-): Promise<void> => {
-    await apiClient.delete(`${KODHA_OUTWARD_ENDPOINT(millId)}/bulk`, {
-        data: { ids },
-    })
-}
-
-/**
- * Export kodha outward entries to CSV/Excel
- */
-export const exportKodhaOutward = async (
-    millId: string,
-    params?: KodhaOutwardQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
+export async function getKodhaOutwardById(millId: string, id: string) {
     const response = await apiClient.get(
-        `${KODHA_OUTWARD_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
+        `${BASE_PATH}/${millId}/kodha-outward/${id}`
     )
-    return response.data
+    return response.data.data
+}
+
+export async function updateKodhaOutward(
+    millId: string,
+    id: string,
+    data: UpdateKodhaOutwardRequest
+) {
+    const response = await apiClient.put(
+        `${BASE_PATH}/${millId}/kodha-outward/${id}`,
+        data
+    )
+    return response.data.data
+}
+
+export async function deleteKodhaOutward(millId: string, id: string) {
+    const response = await apiClient.delete(
+        `${BASE_PATH}/${millId}/kodha-outward/${id}`
+    )
+    return response.data.data
+}
+
+export async function bulkDeleteKodhaOutward(millId: string, ids: string[]) {
+    const response = await apiClient.delete(
+        `${BASE_PATH}/${millId}/kodha-outward/bulk`,
+        { data: { ids } }
+    )
+    return response.data.data
 }

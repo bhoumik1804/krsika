@@ -107,7 +107,9 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {row.getValue('juteWeight') || '-'}
+                {(row.getValue('juteWeight') as number | undefined)?.toFixed(
+                    2
+                ) ?? '-'}
             </div>
         ),
     },
@@ -138,7 +140,9 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {row.getValue('truckWeight') || '-'}
+                {(row.getValue('truckWeight') as number | undefined)?.toFixed(
+                    2
+                ) ?? '-'}
             </div>
         ),
     },
@@ -149,7 +153,9 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {row.getValue('gunnyWeight') || '-'}
+                {(row.getValue('gunnyWeight') as number | undefined)?.toFixed(
+                    2
+                ) ?? '-'}
             </div>
         ),
     },
@@ -160,7 +166,9 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
-                {row.getValue('netWeight') || '-'}
+                {(row.getValue('netWeight') as number | undefined)?.toFixed(
+                    2
+                ) ?? '-'}
             </div>
         ),
     },

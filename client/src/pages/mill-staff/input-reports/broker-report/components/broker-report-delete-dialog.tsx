@@ -8,9 +8,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { type BrokerReportData } from '../data/schema'
 import { useDeleteBroker } from '../data/hooks'
-import { useUser } from '@/pages/landing/hooks/use-auth'
+import { type BrokerReportData } from '../data/schema'
+import { useBrokerReport } from './broker-report-provider'
 
 type BrokerReportDeleteDialogProps = {
     open: boolean
@@ -21,20 +21,19 @@ type BrokerReportDeleteDialogProps = {
 export function BrokerReportDeleteDialog({
     open,
     onOpenChange,
-    currentRow,
 }: BrokerReportDeleteDialogProps) {
-    const { user } = useUser()
-    const millId = user?.millId as any
-    const deleteMutation = useDeleteBroker(millId)
+    const { currentRow, millId } = useBrokerReport()
+    const { mutate: deleteBroker, isPending: isDeleting } =
+        useDeleteBroker(millId)
 
-    const handleDelete = async () => {
-        if (!currentRow?._id) return
-        
-        try {
-            await deleteMutation.mutateAsync(currentRow._id)
-            onOpenChange(false)
-        } catch (error: any) {
-            console.error('Delete error:', error)
+    const handleDelete = (e: React.MouseEvent) => {
+        e.preventDefault() // Prevent default AlertDialog close behavior
+        if (currentRow?.id) {
+            deleteBroker(currentRow.id, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                },
+            })
         }
     }
 
@@ -51,13 +50,15 @@ export function BrokerReportDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel disabled={deleteMutation.isPending}>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
-                        disabled={deleteMutation.isPending}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

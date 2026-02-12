@@ -10,15 +10,15 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type KhandaSales } from '../data/schema'
-import { khandaSales } from './khanda-sales-provider'
+import type { KhandaSalesResponse } from '../data/types'
+import { useKhandaSales } from './khanda-sales-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<KhandaSales>
+    row: Row<KhandaSalesResponse>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = khandaSales()
+    const { setOpen, setCurrentRow } = useKhandaSales()
     return (
         <>
             <DropdownMenu modal={false}>

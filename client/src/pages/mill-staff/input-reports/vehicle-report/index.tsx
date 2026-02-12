@@ -37,13 +37,14 @@ export function VehicleReport() {
         isError,
     } = useVehicleList(millId || '', queryParams, { enabled: !!millId })
 
-    const vehicleReportData = useMemo(() => {
-        if (!response?.vehicles) return []
-        return response.vehicles.map((item) => ({
-            _id: item._id,
-            truckNo: item.truckNo || '',
-        }))
-    }, [response])
+    const vehicleData = useMemo(
+        () =>
+            response?.vehicles.map((vehicle) => ({
+                _id: vehicle._id,
+                truckNo: vehicle.truckNo || '',
+            })) ?? [],
+        [response]
+    )
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -83,7 +84,7 @@ export function VehicleReport() {
                     <VehicleReportPrimaryButtons />
                 </div>
                 <VehicleReportTable
-                    data={vehicleReportData}
+                    data={vehicleData}
                     search={search}
                     navigate={navigate}
                     isLoading={isLoading}

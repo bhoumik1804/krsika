@@ -1,11 +1,12 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { type FrkPurchase } from '../data/schema'
+import { type FrkPurchaseData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const frkColumns: ColumnDef<FrkPurchase>[] = [
+export const frkColumns: ColumnDef<FrkPurchaseData>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -41,7 +42,9 @@ export const frkColumns: ColumnDef<FrkPurchase>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -65,7 +68,10 @@ export const frkColumns: ColumnDef<FrkPurchase>[] = [
     {
         accessorKey: 'frkQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='FRK Quantity' />
+            <DataTableColumnHeader
+                column={column}
+                title='FRK Quantity (in Qtl.)'
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.original.frkQty || 0}</div>

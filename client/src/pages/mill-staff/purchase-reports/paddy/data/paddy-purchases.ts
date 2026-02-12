@@ -5,14 +5,14 @@ import {
     paddyPurchaseTypeOptions,
     gunnyTypeOptions,
 } from '@/constants/purchase-form'
-import { type PaddyPurchase } from './schema'
+import { type PaddyPurchaseData } from './schema'
 
 // Set a fixed seed for consistent data generation
 faker.seed(54321)
 
-export const paddyPurchases: PaddyPurchase[] = Array.from(
+export const paddyPurchases: PaddyPurchaseData[] = Array.from(
     { length: 50 },
-    (): PaddyPurchase => {
+    (): PaddyPurchaseData => {
         const totalQty = faker.number.float({
             min: 100,
             max: 1000,

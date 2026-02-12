@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -29,73 +28,77 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import { useCreateNakkhiOutward, useUpdateNakkhiOutward } from '../data/hooks'
 import { nakkhiOutwardSchema, type NakkhiOutward } from '../data/schema'
 
 type NakkhiOutwardActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
     currentRow: NakkhiOutward | null
+    millId: string
 }
 
 export function NakkhiOutwardActionDialog({
     open,
     onOpenChange,
     currentRow,
+    millId,
 }: NakkhiOutwardActionDialogProps) {
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
+    const createMutation = useCreateNakkhiOutward(millId)
+    const updateMutation = useUpdateNakkhiOutward(millId)
+
+    const defaultValues = useMemo(
+        () => ({
+            date: currentRow?.date || format(new Date(), 'yyyy-MM-dd'),
+            nakkhiSaleDealNumber: currentRow?.nakkhiSaleDealNumber || '',
+            partyName: currentRow?.partyName || '',
+            brokerName: currentRow?.brokerName || '',
+            rate: currentRow?.rate,
+            brokerage: currentRow?.brokerage,
+            gunnyPlastic: currentRow?.gunnyPlastic,
+            plasticGunnyWeight: currentRow?.plasticGunnyWeight,
+            truckNo: currentRow?.truckNo || '',
+            truckRst: currentRow?.truckRst || '',
+            truckWeight: currentRow?.truckWeight,
+            gunnyWeight: currentRow?.gunnyWeight,
+            netWeight: currentRow?.netWeight,
+        }),
+        [currentRow]
+    )
+
     const form = useForm<NakkhiOutward>({
         resolver: zodResolver(nakkhiOutwardSchema),
-        defaultValues: {
-            date: '',
-            nakkhiSaleDealNumber: '',
-            partyName: '',
-            brokerName: '',
-            rate: undefined,
-            brokerage: undefined,
-            gunnyPlastic: undefined,
-            plasticWeight: undefined,
-            truckNo: '',
-            truckRst: '',
-            truckWeight: undefined,
-            gunnyWeight: undefined,
-            netWeight: undefined,
-        },
+        defaultValues,
     })
 
-    useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
+    const onSubmit = (data: NakkhiOutward) => {
+        if (isEditing && currentRow?._id) {
+            toast.promise(
+                updateMutation.mutateAsync({ id: currentRow._id, data }),
+                {
+                    loading: 'Updating...',
+                    success: () => {
+                        onOpenChange(false)
+                        form.reset()
+                        return 'Updated successfully'
+                    },
+                    error: 'Failed to update',
+                }
+            )
         } else {
-            form.reset({
-                date: '',
-                nakkhiSaleDealNumber: '',
-                partyName: '',
-                brokerName: '',
-                rate: undefined,
-                brokerage: undefined,
-                gunnyPlastic: undefined,
-                plasticWeight: undefined,
-                truckNo: '',
-                truckRst: '',
-                truckWeight: undefined,
-                gunnyWeight: undefined,
-                netWeight: undefined,
+            toast.promise(createMutation.mutateAsync(data), {
+                loading: 'Adding...',
+                success: () => {
+                    onOpenChange(false)
+                    form.reset()
+                    return 'Added successfully'
+                },
+                error: 'Failed to add',
             })
         }
-    }, [currentRow, form])
-
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
     }
 
     return (
@@ -300,7 +303,7 @@ export function NakkhiOutwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='plasticWeight'
+                                name='plasticGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useUser } from '@/pages/landing/hooks/use-auth'
+import { useParams } from 'react-router'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -22,6 +22,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { useCreateVehicle, useUpdateVehicle } from '../data/hooks'
 import { vehicleReportSchema, type VehicleReportData } from '../data/schema'
+import { vehicleReport } from './vehicle-report-provider'
 
 type VehicleReportActionDialogProps = {
     open: boolean
@@ -34,12 +35,12 @@ export function VehicleReportActionDialog({
     onOpenChange,
     currentRow,
 }: VehicleReportActionDialogProps) {
-    const { user } = useUser()
-    const millId = user?.millId as any
-    const createMutation = useCreateVehicle(millId)
-    const updateMutation = useUpdateVehicle(millId)
+    const isEditing = !!currentRow
+    const { setCurrentRow } = vehicleReport()
+    const { millId } = useParams<{ millId: string }>()
+    const createMutation = useCreateVehicle(millId || '')
+    const updateMutation = useUpdateVehicle(millId || '')
     const isLoading = createMutation.isPending || updateMutation.isPending
-    const isEditing = !!currentRow?._id
 
     const form = useForm<VehicleReportData>({
         resolver: zodResolver(vehicleReportSchema),
@@ -50,9 +51,14 @@ export function VehicleReportActionDialog({
 
     useEffect(() => {
         if (currentRow) {
-            form.reset(currentRow)
+            form.reset({
+                _id: currentRow._id || '',
+                truckNo: currentRow.truckNo || '',
+            })
         } else {
-            form.reset()
+            form.reset({
+                truckNo: '',
+            })
         }
     }, [currentRow, form])
 
@@ -61,7 +67,7 @@ export function VehicleReportActionDialog({
             truckNo: data.truckNo,
         }
         try {
-            if (isEditing && currentRow?._id) {
+            if (currentRow?._id) {
                 await updateMutation.mutateAsync({
                     id: currentRow._id,
                     ...payload,
@@ -73,14 +79,25 @@ export function VehicleReportActionDialog({
             form.reset({
                 truckNo: '',
             })
+            setCurrentRow(null)
         } catch (error) {
             console.error('Error submitting form:', error)
         }
     }
 
+    const handleDialogClose = (isOpen: boolean) => {
+        if (!isOpen) {
+            setCurrentRow(null)
+            form.reset({
+                truckNo: '',
+            })
+        }
+        onOpenChange(isOpen)
+    }
+
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className='max-w-md'>
+        <Dialog open={open} onOpenChange={handleDialogClose}>
+            <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing ? 'Edit' : 'Add'} Vehicle
@@ -95,28 +112,30 @@ export function VehicleReportActionDialog({
                         onSubmit={form.handleSubmit(onSubmit)}
                         className='space-y-4'
                     >
-                        <FormField
-                            control={form.control}
-                            name='truckNo'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Truck Number</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder='Enter truck number'
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className='grid grid-cols-1 gap-4'>
+                            <FormField
+                                control={form.control}
+                                name='truckNo'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Truck Number</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder='Enter truck number'
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
                         <DialogFooter>
                             <Button
                                 type='button'
                                 variant='outline'
-                                onClick={() => onOpenChange(false)}
-                                disabled={isLoading}
+                                onClick={() => handleDialogClose(false)}
                             >
                                 Cancel
                             </Button>

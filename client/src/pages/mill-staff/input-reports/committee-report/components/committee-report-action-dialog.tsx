@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-// import { toast } from 'sonner'
 import { committeeTypeOptions } from '@/constants/input-form'
 import { Button } from '@/components/ui/button'
 import {
@@ -30,10 +29,14 @@ import {
 } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+    useCreateCommittee,
+    useUpdateCommittee,
+    useBulkCreateCommittees,
+} from '../data/hooks'
 import { committeeReportSchema, type CommitteeReportData } from '../data/schema'
 import { useParseExcel } from '../hooks/use-parse-excel'
-import { useCreateCommittee, useUpdateCommittee, useBulkCreateCommittees } from '../data/hooks'
-import { useUser } from '@/pages/landing/hooks/use-auth'
+import { useCommitteeReport } from './committee-report-provider'
 
 type CommitteeReportActionDialogProps = {
     open: boolean
@@ -44,17 +47,20 @@ type CommitteeReportActionDialogProps = {
 export function CommitteeReportActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: CommitteeReportActionDialogProps) {
-    const { user } = useUser()
-    const millId = user?.millId as any
-    const createMutation = useCreateCommittee(millId)
-    const updateMutation = useUpdateCommittee(millId)
-    const bulkCreateMutation = useBulkCreateCommittees(millId)
-    const isLoading = createMutation.isPending || updateMutation.isPending || bulkCreateMutation.isPending
-    const isEditing = !!currentRow?._id
+    const { currentRow, millId, setCurrentRow } = useCommitteeReport()
+    const { mutate: createCommittee, isPending: isCreating } =
+        useCreateCommittee(millId)
+    const { mutate: updateCommittee, isPending: isUpdating } =
+        useUpdateCommittee(millId)
+    const { mutate: bulkCreateCommittees, isPending: isBulkCreating } =
+        useBulkCreateCommittees(millId)
+
+    const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating || isBulkCreating
     const [uploadedFile, setUploadedFile] = useState<File | null>(null)
-    const [previewData, setPreviewData] = useState<unknown[]>([])
+    const [previewData, setPreviewData] = useState<CommitteeReportData[]>([])
+    const [activeTab, setActiveTab] = useState<string>('manual')
     const { parseFile, parseStats } = useParseExcel()
 
     const form = useForm<CommitteeReportData>({
@@ -65,44 +71,73 @@ export function CommitteeReportActionDialog({
         },
     })
 
-
+    // Reset form when dialog opens or currentRow changes
     useEffect(() => {
         if (open) {
             if (currentRow) {
-                form.reset(currentRow)
+                form.reset({
+                    committeeType: currentRow.committeeType || '',
+                    committeeName: currentRow.committeeName || '',
+                })
+                setActiveTab('manual')
             } else {
-                form.reset()
-                setPreviewData([])
-                setUploadedFile(null)
+                form.reset({
+                    committeeType: '',
+                    committeeName: '',
+                })
+                setActiveTab('manual')
             }
         }
-    }, [currentRow, form, open])
+    }, [open, currentRow, form])
 
-    const onSubmit = async (data: CommitteeReportData) => {
-        try {
-            // Handle bulk upload from file
-            if (previewData.length > 0) {
-                console.log('previewData before mutation:', previewData)
-                console.log('previewData[0] type:', typeof previewData[0], Array.isArray(previewData[0]))
-                console.log('previewData[0]:', previewData[0])
-                await bulkCreateMutation.mutateAsync(previewData as any)
-            } 
-            // Handle single record create/update
-            else if (isEditing && currentRow?._id) {
-                await updateMutation.mutateAsync({
-                    id: currentRow._id,
-                    ...data,
-                })
-            } else {
-                await createMutation.mutateAsync(data)
-            }
-            onOpenChange(false)
+    const onSubmit = (data: CommitteeReportData) => {
+        // Check if we're on the upload tab and have preview data
+        if (activeTab === 'upload' && previewData.length > 0) {
+            // Bulk create from uploaded file
+            bulkCreateCommittees(previewData, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                    setUploadedFile(null)
+                    setPreviewData([])
+                    setCurrentRow(null)
+                },
+            })
+        } else if (isEditing) {
+            updateCommittee(
+                { committeeId: currentRow?._id || '', data },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                        setUploadedFile(null)
+                        setPreviewData([])
+                        setCurrentRow(null)
+                    },
+                }
+            )
+        } else {
+            createCommittee(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                    setUploadedFile(null)
+                    setPreviewData([])
+                    setCurrentRow(null)
+                },
+            })
+        }
+    }
+
+    const handleDialogClose = (isOpen: boolean) => {
+        if (!isOpen) {
+            setCurrentRow(null)
             form.reset()
             setUploadedFile(null)
             setPreviewData([])
-        } catch (error) {
-            console.error('Error submitting form:', error)
+            setActiveTab('manual')
         }
+        onOpenChange(isOpen)
     }
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,15 +147,16 @@ export function CommitteeReportActionDialog({
         setUploadedFile(file)
 
         const result = await parseFile(file)
-        if (result) {
-            setPreviewData(result.data)
+        if (result && result.data) {
+            // Type the parsed data as CommitteeReportData[]
+            setPreviewData(result.data as CommitteeReportData[])
         } else {
             setPreviewData([])
         }
     }
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={handleDialogClose}>
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-x-hidden overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
@@ -136,12 +172,19 @@ export function CommitteeReportActionDialog({
                         onSubmit={form.handleSubmit(onSubmit)}
                         className='space-y-4'
                     >
-                        <Tabs defaultValue='manual' className='w-full'>
+                        <Tabs
+                            value={activeTab}
+                            onValueChange={setActiveTab}
+                            className='w-full'
+                        >
                             <TabsList className='grid w-full grid-cols-2'>
                                 <TabsTrigger value='manual'>
                                     Manual Entry
                                 </TabsTrigger>
-                                <TabsTrigger value='upload'>
+                                <TabsTrigger
+                                    value='upload'
+                                    disabled={isEditing}
+                                >
                                     Upload File
                                 </TabsTrigger>
                             </TabsList>
@@ -159,7 +202,7 @@ export function CommitteeReportActionDialog({
                                                     onValueChange={
                                                         field.onChange
                                                     }
-                                                    value={field.value}
+                                                    defaultValue={field.value}
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger className='w-full'>
@@ -359,19 +402,25 @@ export function CommitteeReportActionDialog({
                             <Button
                                 type='button'
                                 variant='outline'
-                                onClick={() => onOpenChange(false)}
-                                disabled={isLoading}
+                                onClick={() => handleDialogClose(false)}
                             >
                                 Cancel
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
-                                    ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
-                                    : isEditing
-                                      ? 'Update'
-                                      : 'Add'} Committee
+                                    ? activeTab === 'upload' &&
+                                      previewData.length > 0
+                                        ? 'Uploading...'
+                                        : isEditing
+                                          ? 'Updating...'
+                                          : 'Adding...'
+                                    : activeTab === 'upload' &&
+                                        previewData.length > 0
+                                      ? `Upload ${previewData.length} Committee${previewData.length > 1 ? 's' : ''}`
+                                      : isEditing
+                                        ? 'Update'
+                                        : 'Add'}{' '}
+                                {activeTab === 'manual' && 'Committee'}
                             </Button>
                         </DialogFooter>
                     </form>

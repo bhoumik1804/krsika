@@ -7,6 +7,7 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -21,7 +22,6 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-// import { statuses } from '../data/data'
 import { type CommitteeReportData } from '../data/schema'
 import { committeeReportColumns as columns } from './committee-report-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
@@ -30,18 +30,23 @@ type DataTableProps = {
     data: CommitteeReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    totalRows?: number
-    isLoading?: boolean
-    isError?: boolean
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
 export function CommitteeReportTable({
     data,
     search,
     navigate,
-    totalRows,
-    // isLoading,
-    // isError,
+    pagination: serverPagination,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -63,10 +68,11 @@ export function CommitteeReportTable({
             pageSizeKey: 'limit',
             defaultPage: 1,
             defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
         },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
+            { columnId: 'committeeName', searchKey: 'search', type: 'string' },
         ],
     })
 
@@ -81,33 +87,27 @@ export function CommitteeReportTable({
             columnFilters,
             columnVisibility,
         },
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        // DO NOT use getPaginationRowModel() - pagination is handled server-side
+        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-        // Set manual pageCount for server-side pagination
-        pageCount:
-            totalRows !== undefined
-                ? Math.ceil(totalRows / (pagination.pageSize || 10))
-                : undefined,
-        manualPagination: true,
     })
 
     useEffect(() => {
-        if (totalRows !== undefined) {
-            ensurePageInRange(
-                Math.ceil(totalRows / (pagination.pageSize || 10))
-            )
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
         }
-    }, [totalRows, pagination.pageSize, ensurePageInRange])
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -119,8 +119,7 @@ export function CommitteeReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='partyName'
-                filters={[]}
+                searchKey='search'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

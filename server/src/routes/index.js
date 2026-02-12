@@ -26,6 +26,7 @@ import govtRiceOutwardRoutes from './govt-rice-outward.routes.js'
 import gunnyInwardRoutes from './gunny-inward.routes.js'
 import gunnyPurchaseRoutes from './gunny-purchase.routes.js'
 import gunnySaleRoutes from './gunny-sale.routes.js'
+import khandaOutwardRoutes from './khanda-outward.routes.js'
 import khandaSaleRoutes from './khanda-sale.routes.js'
 import kodhaOutwardRoutes from './kodha-outward.routes.js'
 import labourGroupRoutes from './labour-group.routes.js'
@@ -121,6 +122,7 @@ router.use('/mills/:millId/silky-kodha-outward', silkyKodhaOutwardRoutes)
 router.use('/mills/:millId/kodha-outward', kodhaOutwardRoutes)
 router.use('/mills/:millId/bhusa-outward', bhusaOutwardRoutes)
 router.use('/mills/:millId/nakkhi-outward', nakkhiOutwardRoutes)
+router.use('/mills/:millId/khanda-outward', khandaOutwardRoutes)
 router.use('/mills/:millId/other-outward', otherOutwardRoutes)
 
 // Purchase Reports

@@ -53,12 +53,17 @@ export const gunnyInwardColumns: ColumnDef<GunnyInward>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'purchaseDealId',
+        accessorKey: 'gunnyPurchaseDealNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Purchase Deal ID' />
+            <DataTableColumnHeader
+                column={column}
+                title='Gunny Purchase Deal Number'
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('purchaseDealId')}</div>
+            <div className='text-nowrap'>
+                {row.getValue('gunnyPurchaseDealNumber')}
+            </div>
         ),
     },
     {

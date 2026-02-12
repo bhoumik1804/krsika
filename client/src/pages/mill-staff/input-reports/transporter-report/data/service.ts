@@ -1,64 +1,46 @@
 /**
  * Transporter Report Service
- * API client for Transporter CRUD operations
- * Uses centralized axios instance with cookie-based auth
+ * API client for Transporter Report operations (Mill Admin)
  */
 import apiClient, { type ApiResponse } from '@/lib/api-client'
-import type {
-    TransporterResponse,
-    TransporterListResponse,
-    TransporterSummaryResponse,
-    CreateTransporterRequest,
-    UpdateTransporterRequest,
-    TransporterQueryParams,
-} from './types'
+import type { TransporterReportData } from './schema'
 
 // ==========================================
-// API Endpoints
+// Types
 // ==========================================
 
-const TRANSPORTER_ENDPOINT = (millId: string) => `/mills/${millId}/transporters`
+export interface TransporterListResponse {
+    transporters: TransporterReportData[]
+    pagination: {
+        page: number
+        limit: number
+        total: number
+        pages: number
+    }
+}
+
+export interface TransporterQueryParams {
+    page?: number
+    limit?: number
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+}
 
 // ==========================================
-// Transporter API Functions
+// API Functions
 // ==========================================
 
 /**
- * Fetch all transporters with pagination and filters
+ * Fetch transporters list for a specific mill with pagination and filters
  */
 export const fetchTransporterList = async (
     millId: string,
     params?: TransporterQueryParams
 ): Promise<TransporterListResponse> => {
-    const response = await apiClient.get<ApiResponse<TransporterListResponse>>(
-        TRANSPORTER_ENDPOINT(millId),
-        { params }
-    )
-    return response.data.data
-}
-
-/**
- * Fetch a single transporter by ID
- */
-export const fetchTransporterById = async (
-    millId: string,
-    id: string
-): Promise<TransporterResponse> => {
-    const response = await apiClient.get<ApiResponse<TransporterResponse>>(
-        `${TRANSPORTER_ENDPOINT(millId)}/${id}`
-    )
-    return response.data.data
-}
-
-/**
- * Fetch transporter summary/statistics
- */
-export const fetchTransporterSummary = async (
-    millId: string
-): Promise<TransporterSummaryResponse> => {
     const response = await apiClient.get<
-        ApiResponse<TransporterSummaryResponse>
-    >(`${TRANSPORTER_ENDPOINT(millId)}/summary`)
+        ApiResponse<{ transporters: TransporterReportData[]; pagination: any }>
+    >(`/mills/${millId}/transporters`, { params })
     return response.data.data
 }
 
@@ -67,27 +49,26 @@ export const fetchTransporterSummary = async (
  */
 export const createTransporter = async (
     millId: string,
-    data: CreateTransporterRequest
-): Promise<TransporterResponse> => {
-    const response = await apiClient.post<ApiResponse<TransporterResponse>>(
-        TRANSPORTER_ENDPOINT(millId),
-        data
-    )
-    return response.data.data
+    data: Partial<TransporterReportData>
+): Promise<TransporterReportData> => {
+    const response = await apiClient.post<
+        ApiResponse<{ transporter: TransporterReportData }>
+    >(`/mills/${millId}/transporters`, data)
+    return response.data.data.transporter
 }
 
 /**
- * Update an existing transporter
+ * Update a transporter
  */
 export const updateTransporter = async (
     millId: string,
-    { id, ...data }: UpdateTransporterRequest
-): Promise<TransporterResponse> => {
-    const response = await apiClient.put<ApiResponse<TransporterResponse>>(
-        `${TRANSPORTER_ENDPOINT(millId)}/${id}`,
-        data
-    )
-    return response.data.data
+    transporterId: string,
+    data: Partial<TransporterReportData>
+): Promise<TransporterReportData> => {
+    const response = await apiClient.put<
+        ApiResponse<{ transporter: TransporterReportData }>
+    >(`/mills/${millId}/transporters/${transporterId}`, data)
+    return response.data.data.transporter
 }
 
 /**
@@ -95,37 +76,19 @@ export const updateTransporter = async (
  */
 export const deleteTransporter = async (
     millId: string,
-    id: string
+    transporterId: string
 ): Promise<void> => {
-    await apiClient.delete(`${TRANSPORTER_ENDPOINT(millId)}/${id}`)
+    await apiClient.delete(`/mills/${millId}/transporters/${transporterId}`)
 }
 
 /**
  * Bulk delete transporters
  */
-export const bulkDeleteTransporter = async (
+export const bulkDeleteTransporters = async (
     millId: string,
-    ids: string[]
+    transporterIds: string[]
 ): Promise<void> => {
-    await apiClient.delete(`${TRANSPORTER_ENDPOINT(millId)}/bulk`, {
-        data: { ids },
+    await apiClient.post(`/mills/${millId}/transporters/bulk-delete`, {
+        ids: transporterIds,
     })
-}
-
-/**
- * Export transporters to CSV/Excel
- */
-export const exportTransporter = async (
-    millId: string,
-    params?: TransporterQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${TRANSPORTER_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
-    )
-    return response.data
 }

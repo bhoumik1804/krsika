@@ -17,7 +17,7 @@ export function FrkInwardDialogs() {
             {currentRow && (
                 <>
                     <FrkInwardActionDialog
-                        key={`frk-inward-edit-${currentRow.purchaseDealId}`}
+                        key={`frk-inward-edit-${currentRow.frkPurchaseDealNumber}`}
                         open={open === 'edit'}
                         onOpenChange={() => {
                             setOpen(null)
@@ -28,7 +28,7 @@ export function FrkInwardDialogs() {
                         currentRow={currentRow}
                     />
                     <FrkInwardDeleteDialog
-                        key={`frk-inward-delete-${currentRow.purchaseDealId}`}
+                        key={`frk-inward-delete-${currentRow.frkPurchaseDealNumber}`}
                         open={open === 'delete'}
                         onOpenChange={() => {
                             setOpen(null)

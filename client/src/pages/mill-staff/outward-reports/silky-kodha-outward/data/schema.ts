@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for SilkyKodhaOutward records
 export const silkyKodhaOutwardSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
     silkyKodhaSaleDealNumber: z.string().optional(),
     partyName: z.string().optional(),

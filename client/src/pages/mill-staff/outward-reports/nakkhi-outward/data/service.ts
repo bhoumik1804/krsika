@@ -1,131 +1,74 @@
-/**
- * Nakkhi Outward Service
- * API client for Nakkhi Outward CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
-import apiClient, { type ApiResponse } from '@/lib/api-client'
+import apiClient from '@/lib/api-client'
 import type {
-    NakkhiOutwardResponse,
+    NakkhiOutwardQueryParams,
     NakkhiOutwardListResponse,
     NakkhiOutwardSummaryResponse,
     CreateNakkhiOutwardRequest,
     UpdateNakkhiOutwardRequest,
-    NakkhiOutwardQueryParams,
 } from './types'
 
-// ==========================================
-// API Endpoints
-// ==========================================
+const BASE_PATH = '/mills'
 
-const NAKKHI_OUTWARD_ENDPOINT = (millId: string) =>
-    `/mills/${millId}/nakkhi-outward`
-
-// ==========================================
-// Nakkhi Outward API Functions
-// ==========================================
-
-/**
- * Fetch all nakkhi outward entries with pagination and filters
- */
-export const fetchNakkhiOutwardList = async (
+export async function fetchNakkhiOutwardList(
     millId: string,
-    params?: NakkhiOutwardQueryParams
-): Promise<NakkhiOutwardListResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<NakkhiOutwardListResponse>
-    >(NAKKHI_OUTWARD_ENDPOINT(millId), { params })
-    return response.data.data
-}
-
-/**
- * Fetch a single nakkhi outward entry by ID
- */
-export const fetchNakkhiOutwardById = async (
-    millId: string,
-    id: string
-): Promise<NakkhiOutwardResponse> => {
-    const response = await apiClient.get<ApiResponse<NakkhiOutwardResponse>>(
-        `${NAKKHI_OUTWARD_ENDPOINT(millId)}/${id}`
+    params: NakkhiOutwardQueryParams = {}
+): Promise<NakkhiOutwardListResponse> {
+    const response = await apiClient.get(
+        `${BASE_PATH}/${millId}/nakkhi-outward`,
+        { params }
     )
     return response.data.data
 }
 
-/**
- * Fetch nakkhi outward summary/statistics
- */
-export const fetchNakkhiOutwardSummary = async (
+export async function fetchNakkhiOutwardSummary(
     millId: string,
-    params?: Pick<NakkhiOutwardQueryParams, 'startDate' | 'endDate'>
-): Promise<NakkhiOutwardSummaryResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<NakkhiOutwardSummaryResponse>
-    >(`${NAKKHI_OUTWARD_ENDPOINT(millId)}/summary`, { params })
+    params: Pick<NakkhiOutwardQueryParams, 'startDate' | 'endDate'> = {}
+): Promise<NakkhiOutwardSummaryResponse> {
+    const response = await apiClient.get(
+        `${BASE_PATH}/${millId}/nakkhi-outward/summary`,
+        { params }
+    )
     return response.data.data
 }
 
-/**
- * Create a new nakkhi outward entry
- */
-export const createNakkhiOutward = async (
+export async function createNakkhiOutward(
     millId: string,
     data: CreateNakkhiOutwardRequest
-): Promise<NakkhiOutwardResponse> => {
-    const response = await apiClient.post<ApiResponse<NakkhiOutwardResponse>>(
-        NAKKHI_OUTWARD_ENDPOINT(millId),
+) {
+    const response = await apiClient.post(
+        `${BASE_PATH}/${millId}/nakkhi-outward`,
         data
     )
     return response.data.data
 }
 
-/**
- * Update an existing nakkhi outward entry
- */
-export const updateNakkhiOutward = async (
-    millId: string,
-    { id, ...data }: UpdateNakkhiOutwardRequest
-): Promise<NakkhiOutwardResponse> => {
-    const response = await apiClient.put<ApiResponse<NakkhiOutwardResponse>>(
-        `${NAKKHI_OUTWARD_ENDPOINT(millId)}/${id}`,
-        data
-    )
-    return response.data.data
-}
-
-/**
- * Delete a nakkhi outward entry
- */
-export const deleteNakkhiOutward = async (
-    millId: string,
-    id: string
-): Promise<void> => {
-    await apiClient.delete(`${NAKKHI_OUTWARD_ENDPOINT(millId)}/${id}`)
-}
-
-/**
- * Bulk delete nakkhi outward entries
- */
-export const bulkDeleteNakkhiOutward = async (
-    millId: string,
-    ids: string[]
-): Promise<void> => {
-    await apiClient.delete(`${NAKKHI_OUTWARD_ENDPOINT(millId)}/bulk`, {
-        data: { ids },
-    })
-}
-
-/**
- * Export nakkhi outward entries to CSV/Excel
- */
-export const exportNakkhiOutward = async (
-    millId: string,
-    params?: NakkhiOutwardQueryParams
-): Promise<Blob> => {
+export async function getNakkhiOutwardById(millId: string, id: string) {
     const response = await apiClient.get(
-        `${NAKKHI_OUTWARD_ENDPOINT(millId)}/export`,
-        {
-            params,
-            responseType: 'blob',
-        }
+        `${BASE_PATH}/${millId}/nakkhi-outward/${id}`
+    )
+    return response.data.data
+}
+
+export async function updateNakkhiOutward(
+    millId: string,
+    id: string,
+    data: UpdateNakkhiOutwardRequest
+) {
+    const response = await apiClient.put(
+        `${BASE_PATH}/${millId}/nakkhi-outward/${id}`,
+        data
+    )
+    return response.data.data
+}
+
+export async function deleteNakkhiOutward(millId: string, id: string) {
+    await apiClient.delete(`${BASE_PATH}/${millId}/nakkhi-outward/${id}`)
+}
+
+export async function bulkDeleteNakkhiOutward(millId: string, ids: string[]) {
+    const response = await apiClient.delete(
+        `${BASE_PATH}/${millId}/nakkhi-outward/bulk`,
+        { data: { ids } }
     )
     return response.data
 }

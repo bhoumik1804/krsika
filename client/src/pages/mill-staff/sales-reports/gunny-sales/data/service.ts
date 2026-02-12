@@ -1,133 +1,80 @@
-/**
- * Gunny Sales Service
- * API client for Gunny Sales CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
-import apiClient, { type ApiResponse } from '@/lib/api-client'
+import { apiClient, type ApiResponse } from '@/lib/api-client'
 import type {
-    GunnySaleResponse,
-    GunnySaleListResponse,
-    GunnySaleSummaryResponse,
-    CreateGunnySaleRequest,
-    UpdateGunnySaleRequest,
-    GunnySaleQueryParams,
+    CreateGunnySalesRequest,
+    UpdateGunnySalesRequest,
+    GunnySalesResponse,
+    GunnySalesListResponse,
+    GunnySalesQueryParams,
+    GunnySalesSummaryResponse,
 } from './types'
 
-// ==========================================
-// API Endpoints
-// ==========================================
+const BASE_PATH = '/mills'
 
-const GUNNY_SALES_ENDPOINT = (millId: string) => `/mills/${millId}/gunny-sales`
-
-// ==========================================
-// Gunny Sales API Functions
-// ==========================================
-
-/**
- * Fetch all gunny sales entries with pagination and filters
- */
-export const fetchGunnySaleList = async (
+export const fetchGunnySalesList = async (
     millId: string,
-    params?: GunnySaleQueryParams
-): Promise<GunnySaleListResponse> => {
-    const response = await apiClient.get<ApiResponse<GunnySaleListResponse>>(
-        GUNNY_SALES_ENDPOINT(millId),
+    params?: GunnySalesQueryParams
+): Promise<GunnySalesListResponse> => {
+    const response = await apiClient.get<ApiResponse<GunnySalesListResponse>>(
+        `${BASE_PATH}/${millId}/gunny-sales`,
         { params }
     )
     return response.data.data
 }
 
-/**
- * Fetch a single gunny sale entry by ID
- */
-export const fetchGunnySaleById = async (
+export const fetchGunnySalesById = async (
     millId: string,
     id: string
-): Promise<GunnySaleResponse> => {
-    const response = await apiClient.get<ApiResponse<GunnySaleResponse>>(
-        `${GUNNY_SALES_ENDPOINT(millId)}/${id}`
+): Promise<GunnySalesResponse> => {
+    const response = await apiClient.get<ApiResponse<GunnySalesResponse>>(
+        `${BASE_PATH}/${millId}/gunny-sales/${id}`
     )
     return response.data.data
 }
 
-/**
- * Fetch gunny sales summary/statistics
- */
-export const fetchGunnySaleSummary = async (
-    millId: string,
-    params?: Pick<GunnySaleQueryParams, 'startDate' | 'endDate'>
-): Promise<GunnySaleSummaryResponse> => {
-    const response = await apiClient.get<ApiResponse<GunnySaleSummaryResponse>>(
-        `${GUNNY_SALES_ENDPOINT(millId)}/summary`,
-        { params }
-    )
+export const fetchGunnySalesSummary = async (
+    millId: string
+): Promise<GunnySalesSummaryResponse> => {
+    const response = await apiClient.get<
+        ApiResponse<GunnySalesSummaryResponse>
+    >(`${BASE_PATH}/${millId}/gunny-sales/summary`)
     return response.data.data
 }
 
-/**
- * Create a new gunny sale entry
- */
-export const createGunnySale = async (
+export const createGunnySales = async (
     millId: string,
-    data: CreateGunnySaleRequest
-): Promise<GunnySaleResponse> => {
-    const response = await apiClient.post<ApiResponse<GunnySaleResponse>>(
-        GUNNY_SALES_ENDPOINT(millId),
+    data: CreateGunnySalesRequest
+): Promise<GunnySalesResponse> => {
+    const response = await apiClient.post<ApiResponse<GunnySalesResponse>>(
+        `${BASE_PATH}/${millId}/gunny-sales`,
         data
     )
     return response.data.data
 }
 
-/**
- * Update an existing gunny sale entry
- */
-export const updateGunnySale = async (
+export const updateGunnySales = async (
     millId: string,
-    { id, ...data }: UpdateGunnySaleRequest
-): Promise<GunnySaleResponse> => {
-    const response = await apiClient.put<ApiResponse<GunnySaleResponse>>(
-        `${GUNNY_SALES_ENDPOINT(millId)}/${id}`,
-        data
+    data: UpdateGunnySalesRequest
+): Promise<GunnySalesResponse> => {
+    const { _id, ...payload } = data
+    const response = await apiClient.put<ApiResponse<GunnySalesResponse>>(
+        `${BASE_PATH}/${millId}/gunny-sales/${_id}`,
+        payload
     )
     return response.data.data
 }
 
-/**
- * Delete a gunny sale entry
- */
-export const deleteGunnySale = async (
+export const deleteGunnySales = async (
     millId: string,
     id: string
 ): Promise<void> => {
-    await apiClient.delete(`${GUNNY_SALES_ENDPOINT(millId)}/${id}`)
+    await apiClient.delete(`${BASE_PATH}/${millId}/gunny-sales/${id}`)
 }
 
-/**
- * Bulk delete gunny sale entries
- */
-export const bulkDeleteGunnySale = async (
+export const bulkDeleteGunnySales = async (
     millId: string,
     ids: string[]
 ): Promise<void> => {
-    await apiClient.delete(`${GUNNY_SALES_ENDPOINT(millId)}/bulk`, {
+    await apiClient.delete(`${BASE_PATH}/${millId}/gunny-sales`, {
         data: { ids },
     })
-}
-
-/**
- * Export gunny sale entries to CSV/Excel
- */
-export const exportGunnySale = async (
-    millId: string,
-    params?: GunnySaleQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${GUNNY_SALES_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
-    )
-    return response.data
 }

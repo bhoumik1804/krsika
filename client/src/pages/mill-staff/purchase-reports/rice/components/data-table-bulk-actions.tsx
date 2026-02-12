@@ -8,15 +8,14 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
+import { type RicePurchaseData } from '../data/schema'
 import { RiceMultiDeleteDialog } from './rice-multi-delete-dialog'
 
-type DataTableBulkActionsProps<TData> = {
-    table: Table<TData>
+type DataTableBulkActionsProps = {
+    table: Table<RicePurchaseData>
 }
 
-export function DataTableBulkActions<TData>({
-    table,
-}: DataTableBulkActionsProps<TData>) {
+export function DataTableBulkActions({ table }: DataTableBulkActionsProps) {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
     return (

@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -42,7 +43,9 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -53,18 +56,14 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'itemSaleDealNumber',
+        accessorKey: 'otherSaleDealNumber',
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Item Sale Deal Number'
+                title='Other Sale Deal Number'
             />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm'>
-                {row.getValue('itemSaleDealNumber')}
-            </div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('otherSaleDealNumber')}</div>,
     },
     {
         accessorKey: 'itemName',
@@ -146,21 +145,23 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
         ),
     },
     {
-        accessorKey: 'juteWeight',
+        accessorKey: 'juteGunnyWeight',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Jute Weight' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.getValue('juteWeight')}</div>
+            <div className='text-right'>{row.getValue('juteGunnyWeight')}</div>
         ),
     },
     {
-        accessorKey: 'plasticWeight',
+        accessorKey: 'plasticGunnyWeight',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Plastic Weight' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.getValue('plasticWeight')}</div>
+            <div className='text-right'>
+                {row.getValue('plasticGunnyWeight')}
+            </div>
         ),
     },
     {
@@ -169,9 +170,7 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
             <DataTableColumnHeader column={column} title='Truck No' />
         ),
         cell: ({ row }) => (
-            <div className='font-mono text-sm text-nowrap'>
-                {row.getValue('truckNo')}
-            </div>
+            <div className='text-nowrap'>{row.getValue('truckNo')}</div>
         ),
     },
     {
@@ -179,9 +178,7 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='RST No' />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm'>{row.getValue('truckRst')}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('truckRst')}</div>,
     },
     {
         accessorKey: 'truckWeight',
@@ -207,9 +204,7 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
             <DataTableColumnHeader column={column} title='Net Weight' />
         ),
         cell: ({ row }) => (
-            <div className='text-right font-bold'>
-                {row.getValue('netWeight')}
-            </div>
+            <div className='text-right'>{row.getValue('netWeight')}</div>
         ),
     },
     {

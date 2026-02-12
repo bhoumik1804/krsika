@@ -19,9 +19,9 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { brokerReportSchema, type BrokerReportData } from '../data/schema'
 import { useCreateBroker, useUpdateBroker } from '../data/hooks'
-import { useUser } from '@/pages/landing/hooks/use-auth'
+import { brokerReportSchema, type BrokerReportData } from '../data/schema'
+import { useBrokerReport } from './broker-report-provider'
 
 type BrokerReportActionDialogProps = {
     open: boolean
@@ -32,21 +32,19 @@ type BrokerReportActionDialogProps = {
 export function BrokerReportActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: BrokerReportActionDialogProps) {
-    const isEditing = !!currentRow
-    const { user } = useUser()
-    const millId = user?.millId as any
+    const { currentRow, millId } = useBrokerReport()
+    const { mutate: createBroker, isPending: isCreating } =
+        useCreateBroker(millId)
+    const { mutate: updateBroker, isPending: isUpdating } =
+        useUpdateBroker(millId)
 
-    const createMutation = useCreateBroker(millId)
-    const updateMutation = useUpdateBroker(millId)
-    const isLoading = createMutation.isPending || updateMutation.isPending
+    const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
 
     const form = useForm<BrokerReportData>({
         resolver: zodResolver(brokerReportSchema),
         defaultValues: {
-            _id: '',
-            id: '',
             brokerName: '',
             phone: '',
             email: '',
@@ -55,43 +53,31 @@ export function BrokerReportActionDialog({
     })
 
     useEffect(() => {
-        if (open) {
-            if (currentRow) {
-                form.reset(currentRow as any)
-            } else {
-                form.reset({
-                    _id: '',
-                    id: '',
-                    brokerName: '',
-                    phone: '',
-                    email: '',
-                    address: '',
-                })
-            }
+        if (currentRow) {
+            form.reset(currentRow)
+        } else {
+            form.reset()
         }
-    }, [open, currentRow, form])
+    }, [currentRow, form])
 
-    const onSubmit = async (data: any) => {
-        try {
-            if (isEditing && currentRow?._id) {
-                await updateMutation.mutateAsync({ 
-                    id: currentRow._id, 
-                    brokerName: data.brokerName,
-                    phone: data.phone,
-                    email: data.email,
-                    address: data.address,
-                })
-            } else {
-                await createMutation.mutateAsync({
-                    brokerName: data.brokerName,
-                    phone: data.phone,
-                    email: data.email,
-                    address: data.address,
-                })
-            }
-            onOpenChange(false)
-        } catch (error: any) {
-            console.error('Form submission error:', error)
+    const onSubmit = (data: BrokerReportData) => {
+        if (isEditing) {
+            updateBroker(
+                { brokerId: currentRow?.id || '', data },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        } else {
+            createBroker(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
         }
     }
 
@@ -119,9 +105,7 @@ export function BrokerReportActionDialog({
                                     name='brokerName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Broker Name
-                                            </FormLabel>
+                                            <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter broker name'
@@ -137,9 +121,7 @@ export function BrokerReportActionDialog({
                                     name='phone'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Phone
-                                            </FormLabel>
+                                            <FormLabel>Phone</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter phone number'
@@ -171,10 +153,8 @@ export function BrokerReportActionDialog({
                                     control={form.control}
                                     name='address'
                                     render={({ field }) => (
-                                        <FormItem className='col-span-2'>
-                                            <FormLabel>
-                                                Address
-                                            </FormLabel>
+                                        <FormItem>
+                                            <FormLabel>Address</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter address'
@@ -196,7 +176,14 @@ export function BrokerReportActionDialog({
                                 Cancel
                             </Button>
                             <Button type='submit' disabled={isLoading}>
-                                {isLoading ? (isEditing ? 'Updating...' : 'Adding...') : (isEditing ? 'Update' : 'Add')} Broker
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}{' '}
+                                Broker
                             </Button>
                         </DialogFooter>
                     </form>

@@ -7,6 +7,7 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -21,27 +22,21 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-// import { statuses } from '../data/data'
+import { statuses } from '../data/data'
 import { type TransporterReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { transporterReportColumns as columns } from './transporter-report-columns'
 
-interface DataTableProps {
+type DataTableProps = {
     data: TransporterReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    totalRows?: number
-    isLoading?: boolean
-    isError?: boolean
 }
 
 export function TransporterReportTable({
     data,
     search,
     navigate,
-    totalRows,
-    // isLoading,
-    // isError,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -58,15 +53,11 @@ export function TransporterReportTable({
     } = useTableUrlState({
         search,
         navigate,
-        pagination: {
-            pageKey: 'page',
-            pageSizeKey: 'limit',
-            defaultPage: 1,
-            defaultPageSize: 10,
-        },
+        pagination: { defaultPage: 1, defaultPageSize: 10 },
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
+            { columnId: 'status', searchKey: 'status', type: 'array' },
         ],
     })
 
@@ -87,27 +78,17 @@ export function TransporterReportTable({
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        // DO NOT use getPaginationRowModel() - pagination is handled server-side
+        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-        // Set manual pageCount for server-side pagination
-        pageCount:
-            totalRows !== undefined
-                ? Math.ceil(totalRows / (pagination.pageSize || 10))
-                : undefined,
-        manualPagination: true,
     })
 
     useEffect(() => {
-        if (totalRows !== undefined) {
-            ensurePageInRange(
-                Math.ceil(totalRows / (pagination.pageSize || 10))
-            )
-        }
-    }, [totalRows, pagination.pageSize, ensurePageInRange])
+        ensurePageInRange(table.getPageCount())
+    }, [table, ensurePageInRange])
 
     return (
         <div
@@ -120,7 +101,13 @@ export function TransporterReportTable({
                 table={table}
                 searchPlaceholder='Search...'
                 searchKey='partyName'
-                filters={[]}
+                filters={[
+                    {
+                        columnId: 'status',
+                        title: 'Status',
+                        options: statuses,
+                    },
+                ]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

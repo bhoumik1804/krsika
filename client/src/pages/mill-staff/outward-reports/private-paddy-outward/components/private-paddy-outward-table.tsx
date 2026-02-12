@@ -22,8 +22,8 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type PrivatePaddyOutward } from '../data/schema'
+import type { PrivatePaddyOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { PrivatePaddyOutwardColumns as columns } from './private-paddy-outward-columns'
 
@@ -31,19 +31,14 @@ type DataTableProps = {
     data: PrivatePaddyOutward[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading: boolean
-    isError: boolean
-    totalPages?: number
-    totalItems?: number
+    pagination?: PrivatePaddyOutwardListResponse['pagination']
 }
 
 export function PrivatePaddyOutwardTable({
     data,
     search,
     navigate,
-    // isLoading,
-    // isError,
-    // totalPages,
+    pagination: serverPagination,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -60,11 +55,16 @@ export function PrivatePaddyOutwardTable({
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
+            { columnId: 'partyName', searchKey: 'search', type: 'string' },
         ],
     })
 
@@ -91,11 +91,13 @@ export function PrivatePaddyOutwardTable({
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) ensurePageInRange(table.getPageCount())
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -107,14 +109,7 @@ export function PrivatePaddyOutwardTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
+                searchKey='search'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

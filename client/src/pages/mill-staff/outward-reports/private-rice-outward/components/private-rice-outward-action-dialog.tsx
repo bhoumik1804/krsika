@@ -3,8 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { fciOrNANOptions, riceTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -41,6 +39,11 @@ import {
     PrivateRiceOutwardSchema,
     type PrivateRiceOutward,
 } from '../data/schema'
+import {
+    useCreatePrivateRiceOutward,
+    useUpdatePrivateRiceOutward,
+} from '../data/hooks'
+import { usePrivateRiceOutward } from './private-rice-outward-provider'
 
 type PrivateRiceOutwardActionDialogProps = {
     open: boolean
@@ -55,68 +58,79 @@ export function PrivateRiceOutwardActionDialog({
 }: PrivateRiceOutwardActionDialogProps) {
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+    const { millId, setOpen: setDialogOpen } = usePrivateRiceOutward()
+    const createMutation = useCreatePrivateRiceOutward(millId)
+    const updateMutation = useUpdatePrivateRiceOutward(millId)
 
     const form = useForm<PrivateRiceOutward>({
         resolver: zodResolver(PrivateRiceOutwardSchema),
         defaultValues: {
-            date: '',
-            chawalAutoNumber: '',
+            date: format(new Date(), 'yyyy-MM-dd'),
+            riceSaleDealNumber: '',
             partyName: '',
             brokerName: '',
             lotNo: '',
             fciNan: '',
             riceType: '',
-            riceQty: 0,
-            gunnyNew: 0,
-            gunnyOld: 0,
-            gunnyPlastic: 0,
-            juteWeight: 0,
-            plasticWeight: 0,
-            truckNo: '',
+            riceQty: undefined,
+            gunnyNew: undefined,
+            gunnyOld: undefined,
+            gunnyPlastic: undefined,
+            juteWeight: undefined,
+            plasticWeight: undefined,
+            truckNumber: '',
             truckRst: '',
-            trkWt: 0,
-            gunnyWt: 0,
-            finalWt: 0,
+            truckWeight: undefined,
+            gunnyWeight: undefined,
+            netWeight: undefined,
         },
     })
 
     useEffect(() => {
+        if (!open) return
+
         if (currentRow) {
             form.reset(currentRow)
         } else {
             form.reset({
-                date: '',
-                chawalAutoNumber: '',
+                date: format(new Date(), 'yyyy-MM-dd'),
+                riceSaleDealNumber: '',
                 partyName: '',
                 brokerName: '',
                 lotNo: '',
                 fciNan: '',
                 riceType: '',
-                riceQty: 0,
-                gunnyNew: 0,
-                gunnyOld: 0,
-                gunnyPlastic: 0,
-                juteWeight: 0,
-                plasticWeight: 0,
-                truckNo: '',
+                riceQty: undefined,
+                gunnyNew: undefined,
+                gunnyOld: undefined,
+                gunnyPlastic: undefined,
+                juteWeight: undefined,
+                plasticWeight: undefined,
+                truckNumber: '',
                 truckRst: '',
-                trkWt: 0,
-                gunnyWt: 0,
-                finalWt: 0,
+                truckWeight: undefined,
+                gunnyWeight: undefined,
+                netWeight: undefined,
             })
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = async (data: PrivateRiceOutward) => {
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data,
+                })
+            } else {
+                await createMutation.mutateAsync(data)
+            }
+            setDialogOpen(null)
+            onOpenChange(false)
+            form.reset()
+        } catch {
+            // Error is handled by mutation hooks
+        }
     }
 
     return (
@@ -199,16 +213,18 @@ export function PrivateRiceOutwardActionDialog({
                                 )}
                             />
 
-                            {/* Sale Auto Number */}
+                            {/* Sale Deal Number */}
                             <FormField
                                 control={form.control}
-                                name='chawalAutoNumber'
+                                name='riceSaleDealNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Sale Auto Number</FormLabel>
+                                        <FormLabel>
+                                            Rice Sale Deal Number
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='CSA-1234'
+                                                placeholder='SALE-XXXX'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -480,13 +496,13 @@ export function PrivateRiceOutwardActionDialog({
                                 )}
                             />
 
-                            {/* Truck No. */}
+                            {/* Truck Number */}
                             <FormField
                                 control={form.control}
-                                name='truckNo'
+                                name='truckNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck No.</FormLabel>
+                                        <FormLabel>Truck Number</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder='XX-00-XX-0000'
@@ -519,7 +535,7 @@ export function PrivateRiceOutwardActionDialog({
                             {/* Truck Weight */}
                             <FormField
                                 control={form.control}
-                                name='trkWt'
+                                name='truckWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Truck Weight</FormLabel>
@@ -543,7 +559,7 @@ export function PrivateRiceOutwardActionDialog({
                             {/* Gunny Weight */}
                             <FormField
                                 control={form.control}
-                                name='gunnyWt'
+                                name='gunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Gunny Weight</FormLabel>
@@ -567,7 +583,7 @@ export function PrivateRiceOutwardActionDialog({
                             {/* Final/Net Weight */}
                             <FormField
                                 control={form.control}
-                                name='finalWt'
+                                name='netWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Net Weight</FormLabel>

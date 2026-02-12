@@ -1,5 +1,3 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,7 +8,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteFrkInward } from '../data/hooks'
 import { type FrkInward } from '../data/schema'
+import { useFrkInward } from './frk-inward-provider'
 
 type FrkInwardDeleteDialogProps = {
     open: boolean
@@ -23,15 +23,18 @@ export function FrkInwardDeleteDialog({
     onOpenChange,
     currentRow,
 }: FrkInwardDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+    const { millId } = useFrkInward()
+    const { mutateAsync: deleteFrkInward, isPending: isDeleting } =
+        useDeleteFrkInward(millId)
+
+    const handleDelete = async () => {
+        if (!currentRow?._id) return
+        try {
+            await deleteFrkInward(currentRow._id)
+            onOpenChange(false)
+        } catch (error) {
+            console.error('FRK inward delete error:', error)
+        }
     }
 
     return (
@@ -50,9 +53,10 @@ export function FrkInwardDeleteDialog({
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

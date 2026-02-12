@@ -21,6 +21,9 @@ export const transporterReportColumns: ColumnDef<TransporterReportData>[] = [
                 className='translate-y-[2px]'
             />
         ),
+        meta: {
+            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
+        },
         cell: ({ row }) => (
             <Checkbox
                 checked={row.getIsSelected()}
@@ -29,9 +32,6 @@ export const transporterReportColumns: ColumnDef<TransporterReportData>[] = [
                 className='translate-y-[2px]'
             />
         ),
-         meta: {
-            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
-        },
         enableSorting: false,
         enableHiding: false,
     },

@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { privatePaddyOutward } from './private-paddy-outward-provider'
+import { usePrivatePaddyOutward } from './private-paddy-outward-provider'
 
 export function PrivatePaddyOutwardPrimaryButtons() {
-    const { setOpen } = privatePaddyOutward()
+    const { setOpen } = usePrivatePaddyOutward()
 
     return (
         <Button onClick={() => setOpen('add')}>

@@ -3,6 +3,7 @@ import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -10,6 +11,7 @@ import { KhandaOutwardDialogs } from './components/khanda-outward-dialogs'
 import { KhandaOutwardPrimaryButtons } from './components/khanda-outward-primary-buttons'
 import { KhandaOutwardProvider } from './components/khanda-outward-provider'
 import { KhandaOutwardTable } from './components/khanda-outward-table'
+import { useKhandaOutwardList } from './data/hooks'
 
 export function KhandaOutwardReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -29,8 +31,36 @@ export function KhandaOutwardReport() {
         }
     }
 
+    const {
+        data: apiData,
+        isLoading,
+        isError,
+    } = useKhandaOutwardList(millId || '', {
+        page: search.page ? Number(search.page) : 1,
+        limit: search.limit ? Number(search.limit) : 10,
+        partyName: search.partyName as string,
+    })
+
+    if (isLoading) {
+        return (
+            <Main className='flex flex-1 items-center justify-center'>
+                <LoadingSpinner />
+            </Main>
+        )
+    }
+
+    if (isError) {
+        return (
+            <Main className='flex flex-1 items-center justify-center'>
+                <p className='text-destructive'>
+                    Failed to load khanda outward data
+                </p>
+            </Main>
+        )
+    }
+
     return (
-        <KhandaOutwardProvider>
+        <KhandaOutwardProvider millId={millId || ''} apiData={apiData}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -56,13 +86,14 @@ export function KhandaOutwardReport() {
                     <KhandaOutwardPrimaryButtons />
                 </div>
                 <KhandaOutwardTable
-                    data={[]}
+                    data={apiData?.entries || []}
                     search={search}
                     navigate={navigate}
+                    pagination={apiData?.pagination}
                 />
             </Main>
 
-            <KhandaOutwardDialogs />
+            <KhandaOutwardDialogs millId={millId || ''} />
         </KhandaOutwardProvider>
     )
 }

@@ -3,22 +3,33 @@ import { PrivateRiceOutwardDeleteDialog } from './private-rice-outward-delete-di
 import { usePrivateRiceOutward } from './private-rice-outward-provider'
 
 export function PrivateRiceOutwardDialogs() {
-    const { open, setOpen, currentRow } = usePrivateRiceOutward()
+    const { open, setOpen, currentRow, setCurrentRow } =
+        usePrivateRiceOutward()
+
+    const handleActionDialogClose = (isOpen: boolean) => {
+        if (!isOpen) {
+            setCurrentRow(null)
+            setOpen(null)
+        }
+    }
+
+    const handleDeleteDialogClose = (isOpen: boolean) => {
+        if (!isOpen) {
+            setCurrentRow(null)
+            setOpen(null)
+        }
+    }
 
     return (
         <>
             <PrivateRiceOutwardActionDialog
                 open={open === 'add' || open === 'edit'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? open : null)
-                }
+                onOpenChange={handleActionDialogClose}
                 currentRow={currentRow}
             />
             <PrivateRiceOutwardDeleteDialog
                 open={open === 'delete'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? 'delete' : null)
-                }
+                onOpenChange={handleDeleteDialogClose}
                 currentRow={currentRow}
             />
         </>

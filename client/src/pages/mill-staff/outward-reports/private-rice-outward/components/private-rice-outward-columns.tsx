@@ -54,13 +54,13 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'chawalAutoNumber',
+        accessorKey: 'riceSaleDealNumber',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Sale Auto No.' />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>
-                {row.getValue('chawalAutoNumber')}
+                {row.getValue('riceSaleDealNumber')}
             </div>
         ),
     },
@@ -179,13 +179,13 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
         ),
     },
     {
-        accessorKey: 'truckNo',
+        accessorKey: 'truckNumber',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Truck No.' />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
-                {row.getValue('truckNo')}
+                {row.getValue('truckNumber')}
             </div>
         ),
     },
@@ -199,35 +199,35 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
         ),
     },
     {
-        accessorKey: 'trkWt',
+        accessorKey: 'truckWeight',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Truck Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('trkWt') as number)?.toFixed(2)}
+                {(row.getValue('truckWeight') as number)?.toFixed(2)}
             </div>
         ),
     },
     {
-        accessorKey: 'gunnyWt',
+        accessorKey: 'gunnyWeight',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Gunny Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('gunnyWt') as number)?.toFixed(2)}
+                {(row.getValue('gunnyWeight') as number)?.toFixed(2)}
             </div>
         ),
     },
     {
-        accessorKey: 'finalWt',
+        accessorKey: 'netWeight',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Net Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
-                {(row.getValue('finalWt') as number)?.toFixed(2)}
+                {(row.getValue('netWeight') as number)?.toFixed(2)}
             </div>
         ),
     },

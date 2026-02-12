@@ -1,9 +1,9 @@
 import { CommitteeReportActionDialog } from './committee-report-action-dialog'
 import { CommitteeReportDeleteDialog } from './committee-report-delete-dialog'
-import { committeeReport } from './committee-report-provider'
+import { useCommitteeReport } from './committee-report-provider'
 
 export function CommitteeReportDialogs() {
-    const { open, setOpen, currentRow } = committeeReport()
+    const { open, setOpen, currentRow } = useCommitteeReport()
 
     return (
         <>

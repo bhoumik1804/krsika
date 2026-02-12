@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { format } from 'date-fns/format'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -42,7 +43,9 @@ export const khandaOutwardColumns: ColumnDef<KhandaOutward>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -60,11 +63,7 @@ export const khandaOutwardColumns: ColumnDef<KhandaOutward>[] = [
                 title='Khanda Sale Deal Number'
             />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm'>
-                {row.getValue('khandaSaleDealNumber')}
-            </div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('khandaSaleDealNumber')}</div>,
     },
     {
         accessorKey: 'partyName',
@@ -100,7 +99,7 @@ export const khandaOutwardColumns: ColumnDef<KhandaOutward>[] = [
         ),
     },
     {
-        accessorKey: 'plasticWeight',
+        accessorKey: 'plasticGunnyWeight',
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
@@ -108,7 +107,9 @@ export const khandaOutwardColumns: ColumnDef<KhandaOutward>[] = [
             />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.getValue('plasticWeight')}</div>
+            <div className='text-right'>
+                {row.getValue('plasticGunnyWeight')}
+            </div>
         ),
     },
     {
@@ -116,11 +117,7 @@ export const khandaOutwardColumns: ColumnDef<KhandaOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Truck No' />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm text-nowrap'>
-                {row.getValue('truckNo')}
-            </div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('truckNo')}</div>,
     },
     {
         accessorKey: 'truckRst',

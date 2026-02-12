@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -20,32 +20,25 @@ export function BhusaOutwardReport() {
 
     const search = Object.fromEntries(searchParams.entries())
 
-    const queryParams = useMemo(
-        () => ({
-            page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
-            search: search.search as string | undefined,
-            sortBy: (search.sortBy as string) || 'createdAt',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
+    const queryParams = {
+        page: search.page ? parseInt(search.page as string, 10) : 1,
+        limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+        search: search.search as string | undefined,
+        sortBy: search.sortBy as
+            | 'date'
+            | 'partyName'
+            | 'brokerName'
+            | 'truckNo'
+            | 'createdAt'
+            | undefined,
+        sortOrder: search.sortOrder as 'asc' | 'desc' | undefined,
+    }
 
     const {
-        data: response,
+        data: apiData,
         isLoading,
-        isError,
-    } = useBhusaOutwardList(millId || '', queryParams, { enabled: !!millId })
-
-    const data = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
-    }, [response])
+        error,
+    } = useBhusaOutwardList(millId || '', queryParams)
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -58,8 +51,50 @@ export function BhusaOutwardReport() {
         }
     }
 
+    if (isLoading) {
+        return (
+            <>
+                <Header fixed>
+                    <Search />
+                    <div className='ms-auto flex items-center space-x-4'>
+                        <ThemeSwitch />
+                        <ConfigDrawer />
+                        <ProfileDropdown
+                            user={sidebarData.user}
+                            links={sidebarData.profileLinks}
+                        />
+                    </div>
+                </Header>
+                <Main className='flex flex-1 items-center justify-center'>
+                    <LoadingSpinner />
+                </Main>
+            </>
+        )
+    }
+
+    if (error) {
+        return (
+            <>
+                <Header fixed>
+                    <Search />
+                    <div className='ms-auto flex items-center space-x-4'>
+                        <ThemeSwitch />
+                        <ConfigDrawer />
+                        <ProfileDropdown
+                            user={sidebarData.user}
+                            links={sidebarData.profileLinks}
+                        />
+                    </div>
+                </Header>
+                <Main className='flex flex-1 items-center justify-center'>
+                    <p className='text-destructive'>Error loading data</p>
+                </Main>
+            </>
+        )
+    }
+
     return (
-        <BhusaOutwardProvider>
+        <BhusaOutwardProvider millId={millId || ''} apiData={apiData}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -85,13 +120,10 @@ export function BhusaOutwardReport() {
                     <BhusaOutwardPrimaryButtons />
                 </div>
                 <BhusaOutwardTable
-                    data={data}
+                    data={apiData?.entries || []}
                     search={search}
                     navigate={navigate}
-                    isLoading={isLoading}
-                    isError={isError}
-                    totalPages={response?.pagination?.totalPages}
-                    totalItems={response?.pagination?.total}
+                    pagination={apiData?.pagination}
                 />
             </Main>
             <BhusaOutwardDialogs />

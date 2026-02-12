@@ -11,14 +11,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type GovtPaddyInward } from '../data/schema'
-import { govtPaddyInward } from './govt-paddy-inward-provider'
+import { useGovtPaddyInward } from './govt-paddy-inward-provider'
 
 type DataTableRowActionsProps = {
     row: Row<GovtPaddyInward>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = govtPaddyInward()
+    const { setOpen, setCurrentRow } = useGovtPaddyInward()
     return (
         <>
             <DropdownMenu modal={false}>

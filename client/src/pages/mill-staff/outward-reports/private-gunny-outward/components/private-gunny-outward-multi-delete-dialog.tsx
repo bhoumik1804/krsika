@@ -1,3 +1,4 @@
+import { Table } from '@tanstack/react-table'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -8,18 +9,38 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { usePrivateGunnyOutwardContext } from './private-gunny-outward-provider'
+import { usePrivateGunnyOutward } from './private-gunny-outward-provider'
+import { useBulkDeletePrivateGunnyOutward } from '../data/hooks'
+import { PrivateGunnyOutward } from '../data/schema'
 
-interface Props {
+interface Props<TData> {
     open: boolean
     onOpenChange: (open: boolean) => void
+    table: Table<TData>
 }
 
-export function PrivateGunnyOutwardMultiDeleteDialog({
+export function PrivateGunnyOutwardMultiDeleteDialog<TData>({
     open,
     onOpenChange,
-}: Props) {
-    const { setOpen } = usePrivateGunnyOutwardContext()
+    table,
+}: Props<TData>) {
+    const { millId } = usePrivateGunnyOutward()
+    const bulkDeleteMutation = useBulkDeletePrivateGunnyOutward(millId)
+
+    const handleBulkDelete = async () => {
+        const selectedRows = table.getFilteredSelectedRowModel().rows
+        const ids = selectedRows.map(
+            (row) => (row.original as PrivateGunnyOutward)._id
+        )
+
+        try {
+            await bulkDeleteMutation.mutateAsync(ids)
+            table.resetRowSelection()
+            onOpenChange(false)
+        } catch (error) {
+            // Error handling is done in the mutation hook
+        }
+    }
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -30,18 +51,20 @@ export function PrivateGunnyOutwardMultiDeleteDialog({
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                         This action cannot be undone. This will permanently
-                        delete selected records.
+                        delete {table.getFilteredSelectedRowModel().rows.length}{' '}
+                        selected record(s).
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={bulkDeleteMutation.isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
-                        onClick={() => {
-                            setOpen(null)
-                        }}
+                        onClick={handleBulkDelete}
+                        disabled={bulkDeleteMutation.isPending}
                     >
-                        Delete
+                        {bulkDeleteMutation.isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

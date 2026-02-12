@@ -9,7 +9,7 @@ export const govtGunnyOutwardEntries: GovtGunnyOutward[] = Array.from(
     (): GovtGunnyOutward => {
         return {
             date: faker.date.recent({ days: 60 }).toISOString().split('T')[0],
-            gunnyDm: `DM-${faker.number.int({ min: 1000, max: 9999 })}`,
+            gunnyDmNumber: `DM-${faker.number.int({ min: 1000, max: 9999 })}`,
             samitiSangrahan: faker.company.name(),
             oldGunnyQty: faker.number.float({
                 min: 100,

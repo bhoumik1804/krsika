@@ -1,27 +1,50 @@
-import { Table } from '@tanstack/react-table'
+import { useState } from 'react'
+import { type Table } from '@tanstack/react-table'
+import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { GovtGunnyOutward } from '../data/schema'
-import { useGovtGunnyOutwardContext } from './govt-gunny-outward-provider'
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
+import { GovtGunnyOutwardMultiDeleteDialog } from './govt-gunny-outward-multi-delete-dialog'
 
-interface DataTableBulkActionsProps {
-    table: Table<GovtGunnyOutward>
+interface DataTableBulkActionsProps<TData> {
+    table: Table<TData>
 }
 
-export function DataTableBulkActions({ table }: DataTableBulkActionsProps) {
-    const { setOpen } = useGovtGunnyOutwardContext()
-
-    if (table.getFilteredSelectedRowModel().rows.length == 0) return null
+export function DataTableBulkActions<TData>({
+    table,
+}: DataTableBulkActionsProps<TData>) {
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
     return (
-        <div className='flex gap-2'>
-            <Button
-                variant='outline'
-                size='sm'
-                className='ml-auto hidden h-8 lg:flex'
-                onClick={() => setOpen('delete-multi')}
-            >
-                Delete ({table.getFilteredSelectedRowModel().rows.length})
-            </Button>
-        </div>
+        <>
+            <BulkActionsToolbar table={table} entityName='record'>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button
+                            variant='destructive'
+                            size='icon'
+                            onClick={() => setShowDeleteConfirm(true)}
+                            className='size-8'
+                        >
+                            <Trash2 />
+                            <span className='sr-only'>Delete selected</span>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Delete selected records</p>
+                    </TooltipContent>
+                </Tooltip>
+            </BulkActionsToolbar>
+
+            <GovtGunnyOutwardMultiDeleteDialog
+                table={table}
+                open={showDeleteConfirm}
+                onOpenChange={setShowDeleteConfirm}
+            />
+        </>
     )
 }
