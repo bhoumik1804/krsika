@@ -16,7 +16,7 @@ export function StaffDialogs() {
             {currentRow && (
                 <>
                     <StaffActionDialog
-                        key={`staff-edit-${currentRow.id}`}
+                        key={`staff-edit-${currentRow._id}`}
                         open={open === 'edit'}
                         onOpenChange={() => {
                             setOpen('edit')
@@ -28,7 +28,7 @@ export function StaffDialogs() {
                     />
 
                     <StaffDeleteDialog
-                        key={`staff-delete-${currentRow.id}`}
+                        key={`staff-delete-${currentRow._id}`}
                         open={open === 'delete'}
                         onOpenChange={() => {
                             setOpen('delete')
@@ -40,7 +40,7 @@ export function StaffDialogs() {
                     />
 
                     <StaffMarkAttendanceDialog
-                        key={`staff-attendance-${currentRow.id}`}
+                        key={`staff-attendance-${currentRow._id}`}
                     />
                 </>
             )}

@@ -1,11 +1,14 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import type { GunnySalesResponse } from '../data/types'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const gunnySalesColumns: ColumnDef<GunnySalesResponse>[] = [
+export const getGunnySalesColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<GunnySalesResponse>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -38,7 +41,10 @@ export const gunnySalesColumns: ColumnDef<GunnySalesResponse>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -54,7 +60,10 @@ export const gunnySalesColumns: ColumnDef<GunnySalesResponse>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -65,7 +74,10 @@ export const gunnySalesColumns: ColumnDef<GunnySalesResponse>[] = [
     {
         accessorKey: 'newGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='New Gunny Qty' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.newGunnyQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -76,7 +88,10 @@ export const gunnySalesColumns: ColumnDef<GunnySalesResponse>[] = [
     {
         accessorKey: 'newGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='New Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.newGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -87,7 +102,10 @@ export const gunnySalesColumns: ColumnDef<GunnySalesResponse>[] = [
     {
         accessorKey: 'oldGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Old Gunny Qty' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.oldGunnyQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -98,7 +116,10 @@ export const gunnySalesColumns: ColumnDef<GunnySalesResponse>[] = [
     {
         accessorKey: 'oldGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Old Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.oldGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -109,7 +130,10 @@ export const gunnySalesColumns: ColumnDef<GunnySalesResponse>[] = [
     {
         accessorKey: 'plasticGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Gunny Qty' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.plasticGunnyQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -120,7 +144,10 @@ export const gunnySalesColumns: ColumnDef<GunnySalesResponse>[] = [
     {
         accessorKey: 'plasticGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.plasticGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>

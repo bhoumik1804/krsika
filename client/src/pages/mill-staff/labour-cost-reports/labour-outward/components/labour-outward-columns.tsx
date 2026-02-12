@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 // '
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -7,7 +8,9 @@ import { LongText } from '@/components/long-text'
 import { type LabourOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const labourOutwardColumns: ColumnDef<LabourOutward>[] = [
+export const getLabourOutwardColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<LabourOutward>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -40,7 +43,10 @@ export const labourOutwardColumns: ColumnDef<LabourOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -56,7 +62,10 @@ export const labourOutwardColumns: ColumnDef<LabourOutward>[] = [
     {
         accessorKey: 'outwardType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Outward Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.outwardType')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('outwardType')}</div>
@@ -66,7 +75,10 @@ export const labourOutwardColumns: ColumnDef<LabourOutward>[] = [
     {
         accessorKey: 'truckNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -77,7 +89,10 @@ export const labourOutwardColumns: ColumnDef<LabourOutward>[] = [
     {
         accessorKey: 'totalGunny',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Number of Gunny' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.numberGunny')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -90,7 +105,7 @@ export const labourOutwardColumns: ColumnDef<LabourOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Number of Gunny Bundle'
+                title={t('tableColumns.numberGunnyBundle')}
             />
         ),
         cell: ({ row }) => (
@@ -102,7 +117,10 @@ export const labourOutwardColumns: ColumnDef<LabourOutward>[] = [
     {
         accessorKey: 'loadingRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Loading Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.loadingRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('loadingRate')}</div>
@@ -111,7 +129,10 @@ export const labourOutwardColumns: ColumnDef<LabourOutward>[] = [
     {
         accessorKey: 'dhulaiRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Dhulai Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.dhulaiRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('dhulaiRate')}</div>
@@ -120,7 +141,10 @@ export const labourOutwardColumns: ColumnDef<LabourOutward>[] = [
     {
         accessorKey: 'labourGroupName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Labour Group Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.labourGroupName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>

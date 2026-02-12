@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -7,7 +8,9 @@ import { statusStyles } from '../data/data'
 import { type ProductionEntry } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const productionColumns: ColumnDef<ProductionEntry>[] = [
+export const getProductionColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<ProductionEntry>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -40,7 +43,10 @@ export const productionColumns: ColumnDef<ProductionEntry>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -56,7 +62,10 @@ export const productionColumns: ColumnDef<ProductionEntry>[] = [
     {
         accessorKey: 'itemName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Item' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.item')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-medium'>{row.getValue('itemName')}</div>
@@ -68,14 +77,20 @@ export const productionColumns: ColumnDef<ProductionEntry>[] = [
     {
         accessorKey: 'itemType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Variety' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.variety')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('itemType')}</div>,
     },
     {
         accessorKey: 'bags',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Bags' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.bags')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('bags')}</div>
@@ -84,7 +99,10 @@ export const productionColumns: ColumnDef<ProductionEntry>[] = [
     {
         accessorKey: 'weight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Weight (Kg)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.weightKg')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -95,14 +113,20 @@ export const productionColumns: ColumnDef<ProductionEntry>[] = [
     {
         accessorKey: 'warehouse',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Warehouse' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.warehouse')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('warehouse')}</div>,
     },
     {
         accessorKey: 'status',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Status' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.status')}
+            />
         ),
         cell: ({ row }) => {
             const { status } = row.original

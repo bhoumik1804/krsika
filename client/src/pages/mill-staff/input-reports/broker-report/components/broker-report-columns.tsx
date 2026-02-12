@@ -1,11 +1,14 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
+import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BrokerReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
-import { cn } from '@/lib/utils'
 
-export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
+export const getBrokerReportColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<BrokerReportData>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -29,44 +32,56 @@ export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
                 className='translate-y-[2px]'
             />
         ),
-         meta: {
-                    className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
-                },
-                enableSorting: false,
-                enableHiding: false,
+        meta: {
+            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
+        },
+        enableSorting: false,
+        enableHiding: false,
     },
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerName')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('brokerName')}</div>,
         meta: {
-                    className: cn(
-                        'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-                        'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
-                    ),
-                },
-                enableHiding: false,
+            className: cn(
+                'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
+                'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+            ),
+        },
+        enableHiding: false,
     },
     {
         accessorKey: 'phone',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Phone' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.phone')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('phone')}</div>,
     },
     {
         accessorKey: 'email',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Email' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.email')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('email')}</div>,
     },
     {
         accessorKey: 'address',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Address' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.address')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('address')}</div>,
     },

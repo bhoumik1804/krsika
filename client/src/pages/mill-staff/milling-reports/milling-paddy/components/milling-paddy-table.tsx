@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { paddyTypeOptions } from '@/constants/purchase-form'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
@@ -25,7 +26,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type MillingPaddy } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { millingPaddyColumns as columns } from './milling-paddy-columns'
+import { getMillingPaddyColumns } from './milling-paddy-columns'
 
 type DataTableProps = {
     data: MillingPaddy[]
@@ -45,6 +46,9 @@ export function MillingPaddyTable({
     // isError,
     // totalPages,
 }: DataTableProps) {
+    const { t } = useTranslation('millStaff')
+    const columns = useMemo(() => getMillingPaddyColumns(t), [t])
+
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

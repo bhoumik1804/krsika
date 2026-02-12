@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type PrivatePaddyInward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { privatePaddyInwardColumns as columns } from './private-paddy-inward-columns'
+import { getPrivatePaddyInwardColumns } from './private-paddy-inward-columns'
 
 type DataTableProps = {
     data: PrivatePaddyInward[]
@@ -48,6 +49,8 @@ export function PrivatePaddyInwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('millStaff')
+    const columns = useMemo(() => getPrivatePaddyInwardColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

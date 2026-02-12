@@ -29,11 +29,11 @@ export const frkPurchaseService = {
             queryParams.append('limit', params.pageSize.toString())
         if (params.search) queryParams.append('search', params.search)
 
-        const response = await apiClient.get<ApiResponse<FrkPurchaseListResponse>>(
-            `/mills/${params.millId}/frk-purchase?${queryParams.toString()}`
-        )
+        const response = await apiClient.get<
+            ApiResponse<FrkPurchaseListResponse>
+        >(`/mills/${params.millId}/frk-purchase?${queryParams.toString()}`)
 
-        const data: FrkPurchaseData[] = response.data.data.purchases || []
+        const data: FrkPurchaseData[] = response.data.data.data || []
 
         const pagination: PaginationData = response.data.data.pagination || {
             page: params.page || 1,

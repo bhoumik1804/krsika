@@ -1,5 +1,6 @@
 import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 // '
 import { cn } from '@/lib/utils'
 // import { Badge } from '@/components/ui/badge'
@@ -10,7 +11,9 @@ import { LongText } from '@/components/long-text'
 import { type PaddyPurchaseData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
+export const getPaddyColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<PaddyPurchaseData>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -43,7 +46,10 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -61,7 +67,10 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -73,14 +82,20 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerName')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('brokerName') || '-'}</div>,
     },
     {
         accessorKey: 'deliveryType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Delivery' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.delivery')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('deliveryType')}</div>
@@ -89,7 +104,10 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'purchaseType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Purchase Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.purchaseType')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('purchaseType')}</div>
@@ -98,7 +116,10 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'doNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='DO Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.doNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>
@@ -109,14 +130,20 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'committeeName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Committee' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.committee')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('committeeName') || '-'}</div>,
     },
     {
         accessorKey: 'paddyType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Paddy Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.paddyType')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('paddyType')}</div>
@@ -125,7 +152,10 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'doPaddyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='DO Qty (Qtl)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.doQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -136,7 +166,10 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'totalPaddyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Total Qty (Qtl)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.totalQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -147,7 +180,10 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'paddyRatePerQuintal',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rate/Qtl' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.rateQtl')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -158,7 +194,10 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'discountPercent',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Discount %' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.discount')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -169,7 +208,10 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'brokerage',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Brokerage' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerage')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('brokerage') || 0}</div>
@@ -178,7 +220,10 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'gunnyType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunny')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('gunnyType')}</div>
@@ -187,7 +232,10 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'newGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='New Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.newGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -198,7 +246,10 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'oldGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Old Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.oldGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -209,7 +260,10 @@ export const paddyColumns: ColumnDef<PaddyPurchaseData>[] = [
     {
         accessorKey: 'plasticGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.plasticGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,8 +25,8 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
 import { type BalanceLiftingPurchasesPaddy } from '../data/schema'
+import { getBalanceLiftingPurchasesPaddyColumns } from './balance-lifting-purchases-paddy-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { paddyColumns as columns } from './balance-lifting-purchases-paddy-columns'
 
 type DataTableProps = {
     data: BalanceLiftingPurchasesPaddy[]
@@ -33,7 +34,16 @@ type DataTableProps = {
     navigate: NavigateFn
 }
 
-export function BalanceLiftingPurchasesPaddyTable({ data, search, navigate }: DataTableProps) {
+export function BalanceLiftingPurchasesPaddyTable({
+    data,
+    search,
+    navigate,
+}: DataTableProps) {
+    const { t } = useTranslation('millStaff')
+    const columns = useMemo(
+        () => getBalanceLiftingPurchasesPaddyColumns(t),
+        [t]
+    )
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(

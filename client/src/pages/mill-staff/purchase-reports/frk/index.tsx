@@ -1,6 +1,8 @@
 import { useMemo, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -15,6 +17,7 @@ import { FrkTable } from './components/frk-table'
 import { useFrkPurchaseList } from './data/hooks'
 
 export function FrkPurchaseReport() {
+    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -104,6 +107,7 @@ export function FrkPurchaseReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -117,10 +121,10 @@ export function FrkPurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            FRK Purchase Report
+                            {t('reports.purchaseReports.frk.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage FRK purchase transactions and records
+                            {t('reports.purchaseReports.frk.subtitle')}
                         </p>
                     </div>
                     <FrkPrimaryButtons />

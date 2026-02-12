@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 // '
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -9,7 +10,9 @@ import { statusStyles } from '../data/data'
 import { type StockOverview } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const stockOverviewColumns: ColumnDef<StockOverview>[] = [
+export const getStockOverviewColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<StockOverview>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,7 +45,10 @@ export const stockOverviewColumns: ColumnDef<StockOverview>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -58,7 +64,10 @@ export const stockOverviewColumns: ColumnDef<StockOverview>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -70,7 +79,10 @@ export const stockOverviewColumns: ColumnDef<StockOverview>[] = [
     {
         accessorKey: 'vehicleNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Vehicle Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.vehicleNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -81,7 +93,10 @@ export const stockOverviewColumns: ColumnDef<StockOverview>[] = [
     {
         accessorKey: 'bags',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Bags' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.bags')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('bags')}</div>
@@ -90,7 +105,10 @@ export const stockOverviewColumns: ColumnDef<StockOverview>[] = [
     {
         accessorKey: 'weight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Weight (Qtl)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.weightQtl')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -101,7 +119,10 @@ export const stockOverviewColumns: ColumnDef<StockOverview>[] = [
     {
         accessorKey: 'rate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rate/Qtl' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.rateQtl')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('rate')}</div>
@@ -110,7 +131,10 @@ export const stockOverviewColumns: ColumnDef<StockOverview>[] = [
     {
         accessorKey: 'amount',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Total Amount' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.totalAmount')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
@@ -121,7 +145,10 @@ export const stockOverviewColumns: ColumnDef<StockOverview>[] = [
     {
         accessorKey: 'status',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Status' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.status')}
+            />
         ),
         cell: ({ row }) => {
             const { status } = row.original

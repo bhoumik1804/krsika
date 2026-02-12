@@ -34,6 +34,6 @@ export interface PaginationData {
 }
 
 export interface FrkPurchaseListResponse {
-    purchases: FrkPurchaseResponse[]
+    data: FrkPurchaseResponse[]
     pagination: PaginationData
 }

@@ -1,7 +1,9 @@
 import { ShoppingCart, Receipt, IndianRupee } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillStaffSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -64,6 +66,7 @@ const PAYMENT_CATEGORIES: DealItem[] = [
 ]
 
 export function DailyReportsOverview() {
+    const { t } = useTranslation()
     const { millId } = useParams<{ millId: string; staffId: string }>()
     const sidebarData = getMillStaffSidebarData(millId || '')
 
@@ -72,6 +75,7 @@ export function DailyReportsOverview() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -84,10 +88,10 @@ export function DailyReportsOverview() {
             <Main className='flex flex-1 flex-col gap-6 sm:gap-8'>
                 <div className='flex flex-col gap-2'>
                     <h1 className='text-3xl font-bold tracking-tight'>
-                        Daily Reports
+                        {t('dailyReports.title')}
                     </h1>
                     <p className='text-muted-foreground'>
-                        View detailed daily reports for various mill operations
+                        {t('dailyReports.subtitle')}
                     </p>
                 </div>
 
@@ -96,7 +100,7 @@ export function DailyReportsOverview() {
                     <div className='flex items-center gap-2'>
                         <ShoppingCart className='h-5 w-5 text-blue-600' />
                         <h2 className='text-xl font-semibold'>
-                            Purchase Deals
+                            {t('dailyReports.purchaseDeals')}
                         </h2>
                     </div>
                     <div className='grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
@@ -115,7 +119,7 @@ export function DailyReportsOverview() {
                                         {deal.quantity}
                                     </div>
                                     <p className='text-xs text-muted-foreground'>
-                                        units
+                                        {t('common.units')}
                                     </p>
                                 </CardContent>
                             </Card>
@@ -127,7 +131,9 @@ export function DailyReportsOverview() {
                 <div className='flex flex-col gap-3'>
                     <div className='flex items-center gap-2'>
                         <Receipt className='h-5 w-5 text-green-600' />
-                        <h2 className='text-xl font-semibold'>Sales Deals</h2>
+                        <h2 className='text-xl font-semibold'>
+                            {t('dailyReports.salesDeals')}
+                        </h2>
                     </div>
                     <div className='grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
                         {SALES_DEALS_DATA.map((deal) => (
@@ -145,7 +151,7 @@ export function DailyReportsOverview() {
                                         {deal.quantity}
                                     </div>
                                     <p className='text-xs text-muted-foreground'>
-                                        units
+                                        {t('common.units')}
                                     </p>
                                 </CardContent>
                             </Card>
@@ -155,7 +161,9 @@ export function DailyReportsOverview() {
 
                 {/* Other Deals Section */}
                 <div className='flex flex-col gap-3'>
-                    <h2 className='text-xl font-semibold'>Other Reports</h2>
+                    <h2 className='text-xl font-semibold'>
+                        {t('dailyReports.otherReports')}
+                    </h2>
                     <div className='grid gap-3 md:grid-cols-2 lg:grid-cols-4'>
                         {OTHER_DEALS.map((deal) => (
                             <Card
@@ -172,7 +180,7 @@ export function DailyReportsOverview() {
                                         {deal.quantity}
                                     </div>
                                     <p className='text-xs text-muted-foreground'>
-                                        items
+                                        {t('common.items')}
                                     </p>
                                 </CardContent>
                             </Card>
@@ -184,7 +192,9 @@ export function DailyReportsOverview() {
                 <div className='flex flex-col gap-3'>
                     <div className='flex items-center gap-2'>
                         <IndianRupee className='h-5 w-5 text-orange-600' />
-                        <h2 className='text-xl font-semibold'>Payments</h2>
+                        <h2 className='text-xl font-semibold'>
+                            {t('dailyReports.payments')}
+                        </h2>
                     </div>
                     <div className='grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
                         {PAYMENT_CATEGORIES.map((category) => (
@@ -202,7 +212,7 @@ export function DailyReportsOverview() {
                                         {category.quantity}
                                     </div>
                                     <p className='text-xs text-muted-foreground'>
-                                        amount
+                                        {t('common.amount')}
                                     </p>
                                 </CardContent>
                             </Card>

@@ -1,51 +1,46 @@
 import { z } from 'zod'
 
-// Staff status
-const staffStatusSchema = z.union([
-    z.literal('active'),
-    z.literal('inactive'),
-    z.literal('suspended'),
-])
-export type StaffStatus = z.infer<typeof staffStatusSchema>
+// ==========================================
+// Staff Schema (aligned with User model)
+// ==========================================
 
-// Staff roles
-const staffRoleSchema = z.union([
-    z.literal('manager'),
-    z.literal('supervisor'),
-    z.literal('operator'),
-    z.literal('accountant'),
-])
-
-// Attendance enum
-const attendanceStatusSchema = z.union([
-    z.literal('P'), // Present
-    z.literal('A'), // Absent
-    z.literal('H'), // Holiday
-])
-export type AttendanceStatus = z.infer<typeof attendanceStatusSchema>
-
-// Attendance record per day
-const attendanceRecordSchema = z.object({
-    date: z.string(), // YYYY-MM-DD format
-    status: attendanceStatusSchema,
-})
-export type AttendanceRecord = z.infer<typeof attendanceRecordSchema>
-
-// Staff schema
-const staffSchema = z.object({
-    id: z.string(),
-    firstName: z.string(),
-    lastName: z.string(),
-    email: z.string(),
-    phoneNumber: z.string(),
-    status: staffStatusSchema,
-    role: staffRoleSchema,
-    attendanceHistory: z.array(attendanceRecordSchema).optional(), // history for calendar
-    isPaymentDone: z.boolean(),
-    isMillVerified: z.boolean(),
+export const staffSchema = z.object({
+    _id: z.string(),
+    millId: z.string(),
+    fullName: z.string(),
+    email: z.string().email(),
+    phoneNumber: z.string().optional(),
+    avatar: z.string().optional(),
+    role: z.string().optional(),
+    post: z.string().optional(),
+    salary: z.number().optional(),
+    address: z.string().optional(),
+    isActive: z.boolean().default(true),
+    permissions: z
+        .array(
+            z.object({
+                moduleSlug: z.string(),
+                actions: z.array(z.string()),
+            })
+        )
+        .optional(),
+    attendanceHistory: z
+        .array(
+            z.object({
+                date: z.string(),
+                status: z.enum(['P', 'A', 'H']),
+            })
+        )
+        .optional(),
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date(),
 })
 export type Staff = z.infer<typeof staffSchema>
+
+// Staff status for display
+export type StaffStatus = 'active' | 'inactive'
+
+// Attendance status
+export type AttendanceStatus = 'P' | 'A' | 'H'
 
 export const staffListSchema = z.array(staffSchema)

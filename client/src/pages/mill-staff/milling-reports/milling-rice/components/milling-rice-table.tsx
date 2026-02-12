@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { riceTypeOptions } from '@/constants/purchase-form'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
@@ -25,7 +26,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type MillingRice } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { millingRiceColumns as columns } from './milling-rice-columns'
+import { getMillingRiceColumns } from './milling-rice-columns'
 
 type DataTableProps = {
     data: MillingRice[]
@@ -46,6 +47,9 @@ export function MillingRiceTable({
     // totalPages,
     // totalItems,
 }: DataTableProps) {
+    const { t } = useTranslation('millStaff')
+    const columns = useMemo(() => getMillingRiceColumns(t), [t])
+
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

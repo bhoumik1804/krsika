@@ -1,11 +1,14 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BalanceLiftingPurchasesGunny } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
+export const getBalanceLiftingPurchasesGunnyColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<BalanceLiftingPurchasesGunny>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -38,7 +41,10 @@ export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -54,25 +60,38 @@ export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('partyName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('partyName') || '-'}
+            </div>
         ),
     },
     {
         accessorKey: 'deliveryType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Delivery Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.deliveryType')}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('deliveryType') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('deliveryType') || '-'}
+            </div>
         ),
     },
     {
         accessorKey: 'newGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='New Gunny Qty' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.newGunnyQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.original.newGunnyQty || 0}</div>
@@ -81,7 +100,10 @@ export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
     {
         accessorKey: 'newGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='New Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.newGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>₹{row.original.newGunnyRate || 0}</div>
@@ -90,7 +112,10 @@ export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
     {
         accessorKey: 'oldGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Old Gunny Qty' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.oldGunnyQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.original.oldGunnyQty || 0}</div>
@@ -99,7 +124,10 @@ export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
     {
         accessorKey: 'oldGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Old Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.oldGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>₹{row.original.oldGunnyRate || 0}</div>
@@ -108,19 +136,29 @@ export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
     {
         accessorKey: 'plasticGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Gunny Qty' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.plasticGunnyQty')}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.plasticGunnyQty || 0}</div>
+            <div className='text-right'>
+                {row.original.plasticGunnyQty || 0}
+            </div>
         ),
     },
     {
         accessorKey: 'plasticGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Gunny Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.plasticGunnyRate')}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.plasticGunnyRate || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.plasticGunnyRate || 0}
+            </div>
         ),
     },
     {

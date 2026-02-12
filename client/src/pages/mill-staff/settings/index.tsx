@@ -1,7 +1,9 @@
 import { Palette, UserCog } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Outlet, useParams } from 'react-router'
 import { Separator } from '@/components/ui/separator'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillStaffSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -14,17 +16,18 @@ export function MillStaffSettings({
 }: {
     children?: React.ReactNode
 }) {
+    const { t } = useTranslation()
     const { millId } = useParams<{ millId: string; staffId: string }>()
     const sidebarData = getMillStaffSidebarData(millId || '')
 
     const sidebarNavItems = [
         {
-            title: 'Profile',
+            title: t('settings.profile'),
             href: `/staff/${millId}/settings`,
             icon: <UserCog size={18} />,
         },
         {
-            title: 'Appearance',
+            title: t('settings.appearance'),
             href: `/staff/${millId}/settings/appearance`,
             icon: <Palette size={18} />,
         },
@@ -35,9 +38,12 @@ export function MillStaffSettings({
             <Header>
                 <div className='flex items-center gap-2'>
                     <UserCog className='h-5 w-5' />
-                    <h1 className='text-lg font-semibold'>Settings</h1>
+                    <h1 className='text-lg font-semibold'>
+                        {t('settings.title')}
+                    </h1>
                 </div>
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -50,10 +56,10 @@ export function MillStaffSettings({
             <Main fixed>
                 <div className='space-y-0.5'>
                     <h1 className='text-2xl font-bold tracking-tight md:text-3xl'>
-                        Settings
+                        {t('settings.title')}
                     </h1>
                     <p className='text-muted-foreground'>
-                        Manage your account and preferences.
+                        {t('settings.subtitle')}
                     </p>
                 </div>
                 <Separator className='my-4 lg:my-6' />

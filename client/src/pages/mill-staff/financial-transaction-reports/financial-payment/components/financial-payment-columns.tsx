@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -6,7 +7,9 @@ import { LongText } from '@/components/long-text'
 import { type FinancialPayment } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const FinancialPaymentColumns: ColumnDef<FinancialPayment>[] = [
+export const getFinancialPaymentColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<FinancialPayment>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const FinancialPaymentColumns: ColumnDef<FinancialPayment>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -55,7 +61,10 @@ export const FinancialPaymentColumns: ColumnDef<FinancialPayment>[] = [
     {
         accessorKey: 'paymentType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Payment Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.paymentType')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('paymentType')}</div>
@@ -64,7 +73,10 @@ export const FinancialPaymentColumns: ColumnDef<FinancialPayment>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -76,28 +88,40 @@ export const FinancialPaymentColumns: ColumnDef<FinancialPayment>[] = [
     {
         accessorKey: 'transporterName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Transporter Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.transporterName')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('transporterName') ?? '-'}</div>,
     },
     {
         accessorKey: 'labourGroupName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Labour Group Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.labourGroupName')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('labourGroupName') ?? '-'}</div>,
     },
     {
         accessorKey: 'staffName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Staff Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.staffName')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('staffName') ?? '-'}</div>,
     },
     {
         accessorKey: 'paymentAmount',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Payment Amount' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.paymentAmount')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
@@ -110,7 +134,10 @@ export const FinancialPaymentColumns: ColumnDef<FinancialPayment>[] = [
     {
         accessorKey: 'remarks',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Remarks' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.remarks')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>

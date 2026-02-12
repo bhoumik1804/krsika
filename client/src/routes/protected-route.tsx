@@ -6,9 +6,8 @@
 import { ReactNode } from 'react'
 import type { UserRole } from '@/constants'
 import { Navigate } from 'react-router'
-import { LoadingSpinner } from '@/components/loading-spinner'
-
 import { usePermission } from '@/hooks/use-permission'
+import { LoadingSpinner } from '@/components/loading-spinner'
 
 interface ProtectedRouteProps {
     children: ReactNode

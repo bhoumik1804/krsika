@@ -1,12 +1,15 @@
 import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type FrkPurchaseData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const frkColumns: ColumnDef<FrkPurchaseData>[] = [
+export const getFrkColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<FrkPurchaseData>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const frkColumns: ColumnDef<FrkPurchaseData>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -57,7 +63,10 @@ export const frkColumns: ColumnDef<FrkPurchaseData>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -70,7 +79,7 @@ export const frkColumns: ColumnDef<FrkPurchaseData>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='FRK Quantity (in Qtl.)'
+                title={t('tableColumns.frkQty')}
             />
         ),
         cell: ({ row }) => (
@@ -80,7 +89,10 @@ export const frkColumns: ColumnDef<FrkPurchaseData>[] = [
     {
         accessorKey: 'frkRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='FRK Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.frkRate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>₹{row.original.frkRate || 0}</div>
@@ -89,7 +101,10 @@ export const frkColumns: ColumnDef<FrkPurchaseData>[] = [
     {
         accessorKey: 'gst',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='GST (%)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gst')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.original.gst || 0}%</div>

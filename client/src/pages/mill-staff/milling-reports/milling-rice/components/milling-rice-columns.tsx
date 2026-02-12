@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -6,7 +7,9 @@ import { LongText } from '@/components/long-text'
 import { type MillingRice } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const millingRiceColumns: ColumnDef<MillingRice>[] = [
+export const getMillingRiceColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<MillingRice>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const millingRiceColumns: ColumnDef<MillingRice>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -55,7 +61,10 @@ export const millingRiceColumns: ColumnDef<MillingRice>[] = [
     {
         accessorKey: 'riceType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rice Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.riceType')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>{row.getValue('riceType')}</LongText>
@@ -65,7 +74,10 @@ export const millingRiceColumns: ColumnDef<MillingRice>[] = [
     {
         accessorKey: 'hopperInGunny',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Hopper (In Gunny)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.hopperInGunny')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -78,7 +90,7 @@ export const millingRiceColumns: ColumnDef<MillingRice>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Hopper (In Quintal)'
+                title={t('tableColumns.hopperInQuintal')}
             />
         ),
         cell: ({ row }) => (
@@ -92,7 +104,7 @@ export const millingRiceColumns: ColumnDef<MillingRice>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Rice Quantity (Qtl)'
+                title={t('tableColumns.riceQty')}
             />
         ),
         cell: ({ row }) => (
@@ -104,7 +116,10 @@ export const millingRiceColumns: ColumnDef<MillingRice>[] = [
     {
         accessorKey: 'ricePercentage',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rice (%)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.ricePercent')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -117,7 +132,7 @@ export const millingRiceColumns: ColumnDef<MillingRice>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Khanda Quantity (Qtl)'
+                title={t('tableColumns.khandaQty')}
             />
         ),
         cell: ({ row }) => (
@@ -129,7 +144,10 @@ export const millingRiceColumns: ColumnDef<MillingRice>[] = [
     {
         accessorKey: 'khandaPercentage',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Khanda (%)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.khandaPercent')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -142,7 +160,7 @@ export const millingRiceColumns: ColumnDef<MillingRice>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Silky Kodha Quantity (Qtl)'
+                title={t('tableColumns.silkyKodhaQty')}
             />
         ),
         cell: ({ row }) => (

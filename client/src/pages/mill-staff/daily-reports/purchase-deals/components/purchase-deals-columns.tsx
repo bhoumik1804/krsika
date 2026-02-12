@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -8,7 +9,9 @@ import { statusStyles } from '../data/data'
 import { type PurchaseDeal } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const purchaseDealsColumns: ColumnDef<PurchaseDeal>[] = [
+export const getPurchaseDealsColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<PurchaseDeal>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -41,7 +44,10 @@ export const purchaseDealsColumns: ColumnDef<PurchaseDeal>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -57,7 +63,10 @@ export const purchaseDealsColumns: ColumnDef<PurchaseDeal>[] = [
     {
         accessorKey: 'farmerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Farmer Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.farmerName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -69,7 +78,10 @@ export const purchaseDealsColumns: ColumnDef<PurchaseDeal>[] = [
     {
         accessorKey: 'commodity',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Commodity' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.commodity')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('commodity')}</div>,
         filterFn: (row, id, value) => {
@@ -79,7 +91,10 @@ export const purchaseDealsColumns: ColumnDef<PurchaseDeal>[] = [
     {
         accessorKey: 'quantity',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Quantity (Qtl)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.qtyQtl')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('quantity')}</div>
@@ -88,7 +103,10 @@ export const purchaseDealsColumns: ColumnDef<PurchaseDeal>[] = [
     {
         accessorKey: 'rate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rate/Qtl' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.rateQtl')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('rate')}</div>
@@ -97,7 +115,10 @@ export const purchaseDealsColumns: ColumnDef<PurchaseDeal>[] = [
     {
         accessorKey: 'totalAmount',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Total Amount' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.totalAmount')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
@@ -108,7 +129,10 @@ export const purchaseDealsColumns: ColumnDef<PurchaseDeal>[] = [
     {
         accessorKey: 'status',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Status' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.status')}
+            />
         ),
         cell: ({ row }) => {
             const { status } = row.original

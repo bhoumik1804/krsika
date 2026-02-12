@@ -69,9 +69,9 @@ export function PaddyProvider({
         useState<QueryParams>(initialQueryParams)
 
     const data = useMemo(() => {
-        const list = apiResponse?.purchases || []
+        const list = apiResponse?.data || []
         return Array.isArray(list) ? list : []
-    }, [apiResponse?.purchases])
+    }, [apiResponse?.data])
 
     const pagination = useMemo(
         () => ({

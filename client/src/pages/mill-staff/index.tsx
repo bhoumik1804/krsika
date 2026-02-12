@@ -7,6 +7,7 @@ import {
     AlertCircle,
     Calendar as CalendarIcon,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -23,6 +24,7 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillStaffSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -117,6 +119,7 @@ function RecentEntries() {
 }
 
 export function MillStaffDashboard() {
+    const { t } = useTranslation()
     const { millId } = useParams<{ millId: string; staffId: string }>()
     const sidebarData = getMillStaffSidebarData(millId || '')
 
@@ -133,9 +136,12 @@ export function MillStaffDashboard() {
             {/* ===== Top Heading ===== */}
             <Header>
                 <div className='flex items-center gap-2'>
-                    <h1 className='text-lg font-semibold'>Staff Dashboard</h1>
+                    <h1 className='text-lg font-semibold'>
+                        {t('dashboard.title')}
+                    </h1>
                 </div>
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -150,25 +156,27 @@ export function MillStaffDashboard() {
                 <div className='flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between'>
                     <div className='mb-6'>
                         <h1 className='text-2xl font-bold tracking-tight'>
-                            Good Morning! 👋
+                            {t('dashboard.goodMorning')}
                         </h1>
                         <p className='text-muted-foreground'>
-                            Here's your overview for today.
+                            {t('dashboard.overview')}
                         </p>
                     </div>
                     <div className='flex flex-wrap items-center gap-2'>
                         <Popover open={isMarkOpen} onOpenChange={setIsMarkOpen}>
                             <PopoverTrigger asChild>
-                                <Button>Mark Attendance</Button>
+                                <Button>{t('dashboard.markAttendance')}</Button>
                             </PopoverTrigger>
                             <PopoverContent align='end' className='w-auto p-4'>
                                 {todayAttendance ? (
                                     <div className='text-sm font-medium'>
-                                        Attendance marked as{' '}
+                                        {t('dashboard.attendanceMarkedAs')}{' '}
                                         <span className='font-bold text-primary capitalize'>
                                             {todayAttendance === 'half-day'
-                                                ? 'Half Day'
-                                                : todayAttendance}
+                                                ? t('dashboard.halfDay')
+                                                : todayAttendance === 'present'
+                                                  ? t('dashboard.present')
+                                                  : t('dashboard.absent')}
                                         </span>
                                     </div>
                                 ) : (
@@ -220,7 +228,7 @@ export function MillStaffDashboard() {
                             <PopoverTrigger asChild>
                                 <Button variant='outline'>
                                     <CalendarIcon className='mr-2 h-4 w-4' />
-                                    Attendance History
+                                    {t('dashboard.attendanceHistory')}
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className='w-auto p-0' align='end'>
@@ -265,9 +273,9 @@ export function MillStaffDashboard() {
                 {/* Recent Entries */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Recent Entries</CardTitle>
+                        <CardTitle>{t('dashboard.recentEntries')}</CardTitle>
                         <CardDescription>
-                            Your latest entries for today
+                            {t('dashboard.yourLatestEntries')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>

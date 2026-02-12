@@ -66,7 +66,7 @@ export type PaddyPurchaseResponse = {
 }
 
 export type PaddyPurchaseListResponse = {
-    purchases?: PaddyPurchaseResponse[]
+    data?: PaddyPurchaseResponse[]
     pagination: {
         page: number
         limit: number

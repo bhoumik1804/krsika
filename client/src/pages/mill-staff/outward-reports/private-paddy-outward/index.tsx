@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -15,6 +17,7 @@ import { usePrivatePaddyOutwardList } from './data/hooks'
 import type { PrivatePaddyOutwardQueryParams } from './data/types'
 
 function PrivatePaddyOutwardContent() {
+    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -65,11 +68,10 @@ function PrivatePaddyOutwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Private Paddy Outward Report
+                            {t('reports.outwardReports.privatePaddy.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage private paddy outward transactions and
-                            records
+                            {t('reports.outwardReports.privatePaddy.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -86,11 +88,10 @@ function PrivatePaddyOutwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Private Paddy Outward Report
+                            {t('reports.outwardReports.privatePaddy.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage private paddy outward transactions and
-                            records
+                            {t('reports.outwardReports.privatePaddy.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -108,10 +109,10 @@ function PrivatePaddyOutwardContent() {
             <div className='flex flex-wrap items-end justify-between gap-2'>
                 <div>
                     <h2 className='text-2xl font-bold tracking-tight'>
-                        Private Paddy Outward Report
+                        {t('reports.outwardReports.privatePaddy.title')}
                     </h2>
                     <p className='text-muted-foreground'>
-                        Manage private paddy outward transactions and records
+                        {t('reports.outwardReports.privatePaddy.subtitle')}
                     </p>
                 </div>
                 <PrivatePaddyOutwardPrimaryButtons />
@@ -135,6 +136,7 @@ export function PrivatePaddyOutwardReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown

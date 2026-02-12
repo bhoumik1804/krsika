@@ -1,5 +1,7 @@
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -15,6 +17,7 @@ import { useOutwardBalanceLiftingRiceList } from './data/hooks'
 import type { OutwardBalanceLiftingRice } from './data/schema'
 
 export function OutwardBalanceLiftingRiceReport() {
+    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -77,6 +80,7 @@ export function OutwardBalanceLiftingRiceReport() {
                 <Header fixed>
                     <Search />
                     <div className='ms-auto flex items-center space-x-4'>
+                        <LanguageSwitch />
                         <ThemeSwitch />
                         <ConfigDrawer />
                         <ProfileDropdown
@@ -99,6 +103,7 @@ export function OutwardBalanceLiftingRiceReport() {
                 <Header fixed>
                     <Search />
                     <div className='ms-auto flex items-center space-x-4'>
+                        <LanguageSwitch />
                         <ThemeSwitch />
                         <ConfigDrawer />
                         <ProfileDropdown
@@ -121,6 +126,7 @@ export function OutwardBalanceLiftingRiceReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -134,11 +140,14 @@ export function OutwardBalanceLiftingRiceReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Outward Balance Lifting Rice Report
+                            {t(
+                                'reports.outwardBalanceLiftingReports.rice.title'
+                            )}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage outward balance lifting rice transactions and
-                            records
+                            {t(
+                                'reports.outwardBalanceLiftingReports.rice.subtitle'
+                            )}
                         </p>
                     </div>
                     <OutwardBalanceLiftingRicePrimaryButtons />

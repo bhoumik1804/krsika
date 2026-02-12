@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { isBefore, startOfToday, isSameDay } from 'date-fns'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent } from '@/components/ui/card'
@@ -43,6 +44,7 @@ export function AttendanceCalendar({
     attendance,
     className,
 }: AttendanceCalendarProps) {
+    const { t } = useTranslation()
     // Group dates by status
     const modifiers = React.useMemo(() => {
         return {
@@ -127,7 +129,9 @@ export function AttendanceCalendar({
                                 statusColors.present.dot
                             )}
                         />
-                        <span className='text-muted-foreground'>Present</span>
+                        <span className='text-muted-foreground'>
+                            {t('attendance.present')}
+                        </span>
                     </div>
                     <div className='flex items-center gap-2'>
                         <div
@@ -136,7 +140,9 @@ export function AttendanceCalendar({
                                 statusColors.absent.dot
                             )}
                         />
-                        <span className='text-muted-foreground'>Absent</span>
+                        <span className='text-muted-foreground'>
+                            {t('attendance.absent')}
+                        </span>
                     </div>
                     <div className='flex items-center gap-2'>
                         <div
@@ -145,7 +151,9 @@ export function AttendanceCalendar({
                                 statusColors.halfDay.dot
                             )}
                         />
-                        <span className='text-muted-foreground'>Half Day</span>
+                        <span className='text-muted-foreground'>
+                            {t('attendance.halfDay')}
+                        </span>
                     </div>
                 </div>
             </CardContent>

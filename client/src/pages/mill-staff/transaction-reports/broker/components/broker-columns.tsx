@@ -1,13 +1,19 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 // '
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BrokerTransaction } from '../data/schema'
 
-export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
+export const getBrokerColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<BrokerTransaction>[] => [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerName')}
+            />
         ),
         cell: ({ row }) => (
             <div className='w-[150px]'>{row.getValue('brokerName')}</div>
@@ -17,7 +23,10 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <div className='w-[150px]'>{row.getValue('partyName')}</div>
@@ -27,7 +36,10 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='w-[100px]'>{row.getValue('date')}</div>
@@ -36,42 +48,60 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
     {
         accessorKey: 'purchaseDeal',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Purchase Deal' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.purchaseDeal')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('purchaseDeal')}</div>,
     },
     {
         accessorKey: 'salesDeal',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Sales Deal' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.salesDeal')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('salesDeal')}</div>,
     },
     {
         accessorKey: 'inward',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Inward' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.inward')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('inward')}</div>,
     },
     {
         accessorKey: 'outward',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Outward' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.outward')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('outward')}</div>,
     },
     {
         accessorKey: 'accountReceipt',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Account (Receipt)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.accountReceipt')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('accountReceipt')}</div>,
     },
     {
         accessorKey: 'accountPayment',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Account (Payment)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.accountPayment')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('accountPayment')}</div>,
     },
@@ -80,7 +110,7 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Account (Brokerage)'
+                title={t('tableColumns.accountBrokerage')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('accountBrokerage')}</div>,
@@ -88,21 +118,30 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
     {
         accessorKey: 'receipt',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Receipt' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.receipt')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('receipt')}</div>,
     },
     {
         accessorKey: 'payment',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Payment' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.payment')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('payment')}</div>,
     },
     {
         accessorKey: 'brokerage',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Brokerage' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerage')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('brokerage')}</div>,
     },

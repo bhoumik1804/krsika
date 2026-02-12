@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -10,6 +10,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -23,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FrkPurchaseData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { frkColumns as columns } from './frk-columns'
+import { getFrkColumns } from './frk-columns'
 import { useFrk } from './frk-provider'
 
 type DataTableProps = {
@@ -33,6 +34,9 @@ type DataTableProps = {
 }
 
 export function FrkTable({ data, search, navigate }: DataTableProps) {
+    const { t } = useTranslation('millStaff')
+    const columns = useMemo(() => getFrkColumns(t), [t])
+
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(

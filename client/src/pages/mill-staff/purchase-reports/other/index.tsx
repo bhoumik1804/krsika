@@ -1,6 +1,8 @@
 import { useMemo, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -15,6 +17,7 @@ import { OtherTable } from './components/other-table'
 import { useOtherPurchaseList } from './data/hooks'
 
 export function OtherPurchaseReport() {
+    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -104,6 +107,7 @@ export function OtherPurchaseReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -117,10 +121,10 @@ export function OtherPurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Other Purchase Report
+                            {t('reports.purchaseReports.other.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage other purchase transactions and records
+                            {t('reports.purchaseReports.other.subtitle')}
                         </p>
                     </div>
                     <OtherPrimaryButtons />

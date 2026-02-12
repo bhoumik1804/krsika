@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -16,6 +18,7 @@ import { usePrivatePaddyInwardList } from './data/hooks'
 import type { PrivatePaddyInwardQueryParams } from './data/types'
 
 function PrivatePaddyInwardContent({ millId }: { millId: string }) {
+    const { t } = useTranslation('millStaff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     const search = Object.fromEntries(searchParams.entries())
@@ -80,10 +83,10 @@ function PrivatePaddyInwardContent({ millId }: { millId: string }) {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Private Paddy Inward Report
+                            {t('reports.inwardReports.privatePaddy.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage paddy inward transactions and records
+                            {t('reports.inwardReports.privatePaddy.subtitle')}
                         </p>
                     </div>
                     <PrivatePaddyInwardPrimaryButtons />
@@ -128,6 +131,7 @@ export function PrivatePaddyInwardReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown

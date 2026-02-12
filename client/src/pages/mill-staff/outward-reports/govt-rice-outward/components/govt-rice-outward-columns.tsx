@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -6,7 +7,9 @@ import { LongText } from '@/components/long-text'
 import { type GovtRiceOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
+export const getGovtRiceOutwardColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<GovtRiceOutward>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -55,7 +61,10 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'lotNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='LOT No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.lotNo')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>{row.getValue('lotNo')}</div>
@@ -64,7 +73,10 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'fciNan',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='FCI/NAN' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.fciNan')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>{row.getValue('fciNan')}</div>
@@ -76,7 +88,10 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'riceType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rice Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.riceType')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-32'>{row.getValue('riceType')}</LongText>
@@ -85,7 +100,10 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'gunnyNew',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (New)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyNew')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyNew')}</div>
@@ -94,7 +112,10 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'gunnyOld',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (Old)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyOld')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyOld')}</div>
@@ -103,7 +124,10 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'juteWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Jute Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.juteWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -116,7 +140,10 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -127,7 +154,10 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'truckRst',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.rstNo')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>{row.getValue('truckRst')}</div>
@@ -136,7 +166,10 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -149,7 +182,10 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -162,7 +198,10 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Net Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.netWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -26,7 +27,7 @@ import { statuses } from '../data/data'
 import { type RiceSales } from '../data/schema'
 import { type RiceSalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { riceSalesColumns as columns } from './rice-sales-columns'
+import { getRiceSalesColumns } from './rice-sales-columns'
 
 type DataTableProps = {
     data: RiceSales[] | RiceSalesResponse[]
@@ -35,6 +36,8 @@ type DataTableProps = {
 }
 
 export function RiceSalesTable({ data, search, navigate }: DataTableProps) {
+    const { t } = useTranslation('millStaff')
+    const columns = useMemo(() => getRiceSalesColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

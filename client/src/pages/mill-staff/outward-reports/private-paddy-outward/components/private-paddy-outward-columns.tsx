@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -6,7 +7,9 @@ import { LongText } from '@/components/long-text'
 import { type PrivatePaddyOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
+export const getPrivatePaddyOutwardColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<PrivatePaddyOutward>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -57,7 +63,7 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Paddy Sale Deal Number'
+                title={t('tableColumns.saleDealNumber')}
             />
         ),
         cell: ({ row }) => (
@@ -69,7 +75,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -81,7 +90,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.brokerName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -93,7 +105,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'paddyType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Paddy Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.paddyType')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-center'>{row.getValue('paddyType')}</div>
@@ -102,7 +117,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'doQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='DO Qty' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.doQty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -113,7 +131,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'gunnyNew',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='New Gunny' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyNew')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyNew')}</div>
@@ -122,7 +143,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'gunnyOld',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Old Gunny' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyOld')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyOld')}</div>
@@ -131,7 +155,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Gunny' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyPlastic')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -140,7 +167,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'juteWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Jute Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.juteWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -153,7 +183,7 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Plastic Gunny Weight'
+                title={t('tableColumns.plasticGunnyWeight')}
             />
         ),
         cell: ({ row }) => (
@@ -165,7 +195,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'truckNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -176,7 +209,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'rstNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.rstNo')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('rstNumber')}</div>
@@ -185,7 +221,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.truckWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -196,7 +235,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.gunnyWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -207,7 +249,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Net Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('tableColumns.netWeight')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
