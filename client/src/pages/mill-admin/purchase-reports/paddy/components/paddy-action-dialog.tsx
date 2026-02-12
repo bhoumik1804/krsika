@@ -53,8 +53,8 @@ import {
 import { useCreatePaddyPurchase, useUpdatePaddyPurchase } from '../data/hooks'
 import { paddyPurchaseSchema, type PaddyPurchaseData } from '../data/schema'
 import { usePaddy } from './paddy-provider'
-import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
-import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { useParams } from 'react-router'
+import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
 
 
 
@@ -69,113 +69,12 @@ export function PaddyActionDialog({
     onOpenChange,
     currentRow,
 }: PaddyActionDialogProps) {
-    const { millId } = usePaddy()
+    const { millId } = useParams<{ millId: string }>()
+    const { party, broker } = usePartyBrokerSelection(millId || '', open)
     const { mutateAsync: createPaddyPurchase, isPending: isCreating } =
-        useCreatePaddyPurchase(millId)
+        useCreatePaddyPurchase(millId || '')
     const { mutateAsync: updatePaddyPurchase, isPending: isUpdating } =
-        useUpdatePaddyPurchase(millId)
-
-    const [partyPage, setPartyPage] = useState(1)
-    const [brokerPage, setBrokerPage] = useState(1)
-    const [allParties, setAllParties] = useState<string[]>([])
-    const [allBrokers, setAllBrokers] = useState<string[]>([])
-    const [hasMoreParties, setHasMoreParties] = useState(true)
-    const [hasMoreBrokers, setHasMoreBrokers] = useState(true)
-    const [isLoadingMoreParties, setIsLoadingMoreParties] = useState(false)
-    const [isLoadingMoreBrokers, setIsLoadingMoreBrokers] = useState(false)
-
-    // Dynamic limit: 10 for first page, 5 for subsequent pages
-    const partyLimit = partyPage === 1 ? 10 : 5
-    const brokerLimit = brokerPage === 1 ? 10 : 5
-
-    // Fetch party list from API with pagination
-    const { data: partyListData } = usePartyList(
-        millId,
-        {
-            page: partyPage,
-            limit: partyLimit,
-            sortBy: 'partyName',
-            sortOrder: 'asc',
-        },
-        { enabled: open && !!millId }
-    )
-
-    // Fetch broker list from API with pagination
-    const { data: brokerListData } = useBrokerList({
-        millId: open ? millId : '',
-        page: brokerPage,
-        pageSize: brokerLimit,
-    })
-
-    // Extract party names from API response and accumulate
-    React.useEffect(() => {
-        if (partyListData?.parties) {
-            console.log('Party data received:', partyListData.parties.length, 'parties on page', partyPage)
-            const newParties = partyListData.parties.map((party) => party.partyName)
-            setAllParties((prev) => {
-                // Only add if not already in the list
-                const combined = [...prev, ...newParties]
-                return Array.from(new Set(combined))
-            })
-            // Check if there are more parties to load
-            setHasMoreParties(partyListData.parties.length === partyLimit)
-            setIsLoadingMoreParties(false)
-        }
-    }, [partyListData, partyLimit, partyPage])
-
-    // Extract broker names from API response and accumulate
-    React.useEffect(() => {
-        if (brokerListData?.brokers) {
-            console.log('Broker data received:', brokerListData.brokers.length, 'brokers on page', brokerPage)
-            const newBrokers = brokerListData.brokers.map((broker) => broker.brokerName)
-            setAllBrokers((prev) => {
-                // Only add if not already in the list
-                const combined = [...prev, ...newBrokers]
-                return Array.from(new Set(combined))
-            })
-            // Check if there are more brokers to load
-            setHasMoreBrokers(brokerListData.brokers.length === brokerLimit)
-            setIsLoadingMoreBrokers(false)
-        }
-    }, [brokerListData, brokerLimit, brokerPage])
-
-    // Reset accumulated data when dialog opens
-    useEffect(() => {
-        if (open) {
-            setAllParties([])
-            setAllBrokers([])
-            setPartyPage(1)
-            setBrokerPage(1)
-            setHasMoreParties(true)
-            setHasMoreBrokers(true)
-            setIsLoadingMoreParties(false)
-            setIsLoadingMoreBrokers(false)
-        }
-    }, [open])
-
-    // Handle scroll for party list
-    const handlePartyScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        const target = e.currentTarget
-        const bottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 5
-
-        if (bottom && hasMoreParties && !isLoadingMoreParties) {
-            console.log('Loading more parties... Current page:', partyPage)
-            setIsLoadingMoreParties(true)
-            setPartyPage((prev) => prev + 1)
-        }
-    }
-
-    // Handle scroll for broker list
-    const handleBrokerScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        const target = e.currentTarget
-        const bottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 5
-
-        if (bottom && hasMoreBrokers && !isLoadingMoreBrokers) {
-            console.log('Loading more brokers... Current page:', brokerPage)
-            setIsLoadingMoreBrokers(true)
-            setBrokerPage((prev) => prev + 1)
-        }
-    }
+        useUpdatePaddyPurchase(millId || '')
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -366,29 +265,29 @@ export function PaddyActionDialog({
                                                     onValueChange={
                                                         field.onChange
                                                     }
-                                                    items={allParties}
+                                                    items={party.items}
                                                 >
                                                     <ComboboxInput
                                                         placeholder='Search party...'
                                                         showClear
                                                     />
                                                     <ComboboxContent>
-                                                        <ComboboxList onScroll={handlePartyScroll}>
+                                                        <ComboboxList onScroll={party.onScroll}>
                                                             <ComboboxCollection>
-                                                                {(party) => (
+                                                                {(p) => (
                                                                     <ComboboxItem
                                                                         value={
-                                                                            party
+                                                                            p
                                                                         }
                                                                     >
-                                                                        {party}
+                                                                        {p}
                                                                     </ComboboxItem>
                                                                 )}
                                                             </ComboboxCollection>
                                                             <ComboboxEmpty>
                                                                 No parties found
                                                             </ComboboxEmpty>
-                                                            {isLoadingMoreParties && (
+                                                            {party.isLoadingMore && (
                                                                 <div className='py-2 text-center text-xs text-muted-foreground'>
                                                                     Loading more...
                                                                 </div>
@@ -413,29 +312,29 @@ export function PaddyActionDialog({
                                                     onValueChange={
                                                         field.onChange
                                                     }
-                                                    items={allBrokers}
+                                                    items={broker.items}
                                                 >
                                                     <ComboboxInput
                                                         placeholder='Search broker...'
                                                         showClear
                                                     />
                                                     <ComboboxContent>
-                                                        <ComboboxList onScroll={handleBrokerScroll}>
+                                                        <ComboboxList onScroll={broker.onScroll}>
                                                             <ComboboxCollection>
-                                                                {(broker) => (
+                                                                {(b) => (
                                                                     <ComboboxItem
                                                                         value={
-                                                                            broker
+                                                                            b
                                                                         }
                                                                     >
-                                                                        {broker}
+                                                                        {b}
                                                                     </ComboboxItem>
                                                                 )}
                                                             </ComboboxCollection>
                                                             <ComboboxEmpty>
                                                                 No brokers found
                                                             </ComboboxEmpty>
-                                                            {isLoadingMoreBrokers && (
+                                                            {broker.isLoadingMore && (
                                                                 <div className='py-2 text-center text-xs text-muted-foreground'>
                                                                     Loading more...
                                                                 </div>

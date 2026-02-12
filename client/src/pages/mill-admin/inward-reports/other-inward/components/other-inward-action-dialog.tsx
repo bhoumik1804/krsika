@@ -38,6 +38,16 @@ import {
 import { useCreateOtherInward, useUpdateOtherInward } from '../data/hooks'
 import { otherInwardSchema, type OtherInward } from '../data/schema'
 import { useOtherInward } from './other-inward-provider'
+import {
+    Combobox,
+    ComboboxInput,
+    ComboboxContent,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxEmpty,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
+import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
 
 type OtherInwardActionDialogProps = {
     open: boolean
@@ -55,6 +65,8 @@ export function OtherInwardActionDialog({
         useCreateOtherInward(millId)
     const { mutateAsync: updateOtherInward, isPending: isUpdating } =
         useUpdateOtherInward(millId)
+
+    const { party, broker } = usePartyBrokerSelection(millId, open)
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -164,11 +176,11 @@ export function OtherInwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                  new Date(
-                                                                      field.value
-                                                                  ),
-                                                                  'MMM dd, yyyy'
-                                                              )
+                                                                new Date(
+                                                                    field.value
+                                                                ),
+                                                                'MMM dd, yyyy'
+                                                            )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -182,17 +194,17 @@ export function OtherInwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                  field.value
-                                                              )
+                                                                field.value
+                                                            )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                      date,
-                                                                      'yyyy-MM-dd'
-                                                                  )
+                                                                    date,
+                                                                    'yyyy-MM-dd'
+                                                                )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -311,10 +323,35 @@ export function OtherInwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter Party Name'
-                                                {...field}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={party.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search Party...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList onScroll={party.onScroll}>
+                                                        <ComboboxCollection>
+                                                            {(p) => (
+                                                                <ComboboxItem value={p}>
+                                                                    {p}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No parties found
+                                                        </ComboboxEmpty>
+                                                        {party.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -327,10 +364,35 @@ export function OtherInwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Broker Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter Broker Name'
-                                                {...field}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={broker.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search Broker...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList onScroll={broker.onScroll}>
+                                                        <ComboboxCollection>
+                                                            {(b) => (
+                                                                <ComboboxItem value={b}>
+                                                                    {b}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No brokers found
+                                                        </ComboboxEmpty>
+                                                        {broker.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -583,8 +645,8 @@ export function OtherInwardActionDialog({
                                         ? 'Updating...'
                                         : 'Adding...'
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}
+                                        ? 'Update'
+                                        : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

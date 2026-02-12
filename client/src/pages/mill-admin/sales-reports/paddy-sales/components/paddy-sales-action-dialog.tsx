@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -13,6 +14,9 @@ import {
 } from '@/constants/sale-form'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -43,6 +47,9 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { paddySalesSchema, type PaddySales } from '../data/schema'
+import { useParams } from 'react-router'
+import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
+import { Combobox, ComboboxInput, ComboboxContent, ComboboxItem, ComboboxList, ComboboxEmpty, ComboboxCollection } from '@/components/ui/combobox'
 
 type PaddySalesActionDialogProps = {
     open: boolean
@@ -55,6 +62,9 @@ export function PaddySalesActionDialog({
     onOpenChange,
     currentRow,
 }: PaddySalesActionDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
+    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -87,6 +97,7 @@ export function PaddySalesActionDialog({
 
     const isDOSale = watchSaleType === paddySaleTypeOptions[0]?.value
     const isGunnySahit = watchGunnyOption === gunnyTypeOptions[1]?.value
+
 
     useEffect(() => {
         if (currentRow) {
@@ -149,11 +160,11 @@ export function PaddySalesActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
+                                                                    new Date(
+                                                                        field.value
+                                                                    ),
+                                                                    'MMM dd, yyyy'
+                                                                )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -167,17 +178,17 @@ export function PaddySalesActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                      field.value
-                                                                  )
+                                                                    field.value
+                                                                )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -198,10 +209,35 @@ export function PaddySalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
-                                                />
+                                                <Combobox
+                                                    value={field.value}
+                                                    onValueChange={field.onChange}
+                                                    items={party.items}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder='Search party...'
+                                                        showClear
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxList onScroll={party.onScroll}>
+                                                            <ComboboxCollection>
+                                                                {(p) => (
+                                                                    <ComboboxItem value={p}>
+                                                                        {p}
+                                                                    </ComboboxItem>
+                                                                )}
+                                                            </ComboboxCollection>
+                                                            <ComboboxEmpty>
+                                                                No parties found
+                                                            </ComboboxEmpty>
+                                                            {party.isLoadingMore && (
+                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                    Loading more...
+                                                                </div>
+                                                            )}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -214,10 +250,35 @@ export function PaddySalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter broker name'
-                                                    {...field}
-                                                />
+                                                <Combobox
+                                                    value={field.value}
+                                                    onValueChange={field.onChange}
+                                                    items={broker.items}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder='Search broker...'
+                                                        showClear
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxList onScroll={broker.onScroll}>
+                                                            <ComboboxCollection>
+                                                                {(b) => (
+                                                                    <ComboboxItem value={b}>
+                                                                        {b}
+                                                                    </ComboboxItem>
+                                                                )}
+                                                            </ComboboxCollection>
+                                                            <ComboboxEmpty>
+                                                                No brokers found
+                                                            </ComboboxEmpty>
+                                                            {broker.isLoadingMore && (
+                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                    Loading more...
+                                                                </div>
+                                                            )}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

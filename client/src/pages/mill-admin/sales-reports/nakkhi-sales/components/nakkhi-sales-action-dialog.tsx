@@ -1,10 +1,20 @@
 import { useEffect, useState } from 'react'
+import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    Combobox,
+    ComboboxInput,
+    ComboboxContent,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxEmpty,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -30,6 +40,8 @@ import {
 import { useCreateNakkhiSales, useUpdateNakkhiSales } from '../data/hooks'
 import { nakkhiSalesSchema, type NakkhiSales } from '../data/schema'
 import { useNakkhiSales } from './nakkhi-sales-provider'
+import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
+import { useParams } from 'react-router'
 
 type NakkhiSalesActionDialogProps = {
     open: boolean
@@ -42,11 +54,12 @@ export function NakkhiSalesActionDialog({
     onOpenChange,
     currentRow,
 }: NakkhiSalesActionDialogProps) {
-    const { millId } = useNakkhiSales()
+    const { millId } = useParams<{ millId: string }>()
+    const { party, broker } = usePartyBrokerSelection(millId || '', open)
     const { mutateAsync: createNakkhiSales, isPending: isCreating } =
-        useCreateNakkhiSales(millId)
+        useCreateNakkhiSales(millId || '')
     const { mutateAsync: updateNakkhiSales, isPending: isUpdating } =
-        useUpdateNakkhiSales(millId)
+        useUpdateNakkhiSales(millId || '')
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -64,6 +77,8 @@ export function NakkhiSalesActionDialog({
             brokeragePerQuintal: undefined,
         } as NakkhiSales,
     })
+
+
 
     useEffect(() => {
         if (open) {
@@ -140,11 +155,11 @@ export function NakkhiSalesActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
+                                                                    new Date(
+                                                                        field.value
+                                                                    ),
+                                                                    'MMM dd, yyyy'
+                                                                )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -158,17 +173,17 @@ export function NakkhiSalesActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                      field.value
-                                                                  )
+                                                                    field.value
+                                                                )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -189,10 +204,35 @@ export function NakkhiSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
-                                                />
+                                                <Combobox
+                                                    value={field.value}
+                                                    onValueChange={field.onChange}
+                                                    items={party.items}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder='Search party...'
+                                                        showClear
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxList onScroll={party.onScroll}>
+                                                            <ComboboxCollection>
+                                                                {(p) => (
+                                                                    <ComboboxItem value={p}>
+                                                                        {p}
+                                                                    </ComboboxItem>
+                                                                )}
+                                                            </ComboboxCollection>
+                                                            <ComboboxEmpty>
+                                                                No parties found
+                                                            </ComboboxEmpty>
+                                                            {party.isLoadingMore && (
+                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                    Loading more...
+                                                                </div>
+                                                            )}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -205,10 +245,35 @@ export function NakkhiSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter broker name'
-                                                    {...field}
-                                                />
+                                                <Combobox
+                                                    value={field.value}
+                                                    onValueChange={field.onChange}
+                                                    items={broker.items}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder='Search broker...'
+                                                        showClear
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxList onScroll={broker.onScroll}>
+                                                            <ComboboxCollection>
+                                                                {(b) => (
+                                                                    <ComboboxItem value={b}>
+                                                                        {b}
+                                                                    </ComboboxItem>
+                                                                )}
+                                                            </ComboboxCollection>
+                                                            <ComboboxEmpty>
+                                                                No brokers found
+                                                            </ComboboxEmpty>
+                                                            {broker.isLoadingMore && (
+                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                    Loading more...
+                                                                </div>
+                                                            )}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -361,8 +426,8 @@ export function NakkhiSalesActionDialog({
                                         ? 'Updating...'
                                         : 'Adding...'
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}
+                                        ? 'Update'
+                                        : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>
