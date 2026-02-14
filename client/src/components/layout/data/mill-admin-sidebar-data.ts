@@ -424,11 +424,11 @@ export const getMillAdminSidebarData = (millId: string): SidebarData => ({
                         },
                     ],
                 },
-                {
-                    title: 'Help Center',
-                    url: `/mill/${millId}/help-center`,
-                    icon: HelpCircle,
-                },
+                // {
+                //     title: 'Help Center',
+                //     url: `/mill/${millId}/help-center`,
+                //     icon: HelpCircle,
+                // },
             ],
         },
     ],
