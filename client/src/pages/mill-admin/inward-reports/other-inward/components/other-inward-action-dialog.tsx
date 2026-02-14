@@ -66,7 +66,12 @@ export function OtherInwardActionDialog({
     const { mutateAsync: updateOtherInward, isPending: isUpdating } =
         useUpdateOtherInward(millId)
 
-    const { party, broker } = usePartyBrokerSelection(millId, open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId,
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -125,13 +130,19 @@ export function OtherInwardActionDialog({
 
     const onSubmit = async (data: OtherInward) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+                brokerName: data.brokerName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateOtherInward({
                     entryId: currentRow._id,
-                    data,
+                    data: submissionData,
                 })
             } else {
-                await createOtherInward(data)
+                await createOtherInward(submissionData)
             }
             onOpenChange(false)
             form.reset()
@@ -230,6 +241,7 @@ export function OtherInwardActionDialog({
                                             <Input
                                                 placeholder='Enter Deal ID'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -246,6 +258,7 @@ export function OtherInwardActionDialog({
                                             <Input
                                                 placeholder='Enter Item Name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -287,7 +300,9 @@ export function OtherInwardActionDialog({
                                             <FormLabel>Qty Type</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
@@ -532,6 +547,7 @@ export function OtherInwardActionDialog({
                                             <Input
                                                 placeholder='Enter Truck No'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -548,6 +564,7 @@ export function OtherInwardActionDialog({
                                             <Input
                                                 placeholder='Enter RST No'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

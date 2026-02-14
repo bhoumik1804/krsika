@@ -75,7 +75,12 @@ export function PrivatePaddyInwardActionDialog({
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const { party, broker } = usePartyBrokerSelection(millId, open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId,
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
 
     const createMutation = useCreatePrivatePaddyInward(millId)
     const updateMutation = useUpdatePrivatePaddyInward(millId)
@@ -124,9 +129,23 @@ export function PrivatePaddyInwardActionDialog({
     }, [currentRow, form, getDefaultValues])
 
     const onSubmit = (data: PrivatePaddyInward) => {
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+            paddyPurchaseDealNumber: data.paddyPurchaseDealNumber || undefined,
+            purchaseType: data.purchaseType || undefined,
+            doNumber: data.doNumber || undefined,
+            committeeName: data.committeeName || undefined,
+            gunnyOption: data.gunnyOption || undefined,
+            truckNumber: data.truckNumber || undefined,
+            rstNumber: data.rstNumber || undefined,
+            paddyType: data.paddyType || undefined,
+        }
+
         if (isEditing && currentRow?._id) {
             updateMutation.mutate(
-                { id: currentRow._id, data },
+                { id: currentRow._id, data: submissionData },
                 {
                     onSuccess: () => {
                         toast.success('Updated successfully')
@@ -139,7 +158,7 @@ export function PrivatePaddyInwardActionDialog({
                 }
             )
         } else {
-            createMutation.mutate(data, {
+            createMutation.mutate(submissionData, {
                 onSuccess: () => {
                     toast.success('Added successfully')
                     onOpenChange(false)
@@ -243,6 +262,7 @@ export function PrivatePaddyInwardActionDialog({
                                             <Input
                                                 placeholder='Enter Deal ID'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -339,7 +359,9 @@ export function PrivatePaddyInwardActionDialog({
                                         <FormLabel>Purchase Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            defaultValue={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -376,6 +398,10 @@ export function PrivatePaddyInwardActionDialog({
                                                         <Input
                                                             placeholder='Enter DO Number'
                                                             {...field}
+                                                            value={
+                                                                field.value ||
+                                                                ''
+                                                            }
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -394,6 +420,10 @@ export function PrivatePaddyInwardActionDialog({
                                                         <Input
                                                             placeholder='Enter Committee Name'
                                                             {...field}
+                                                            value={
+                                                                field.value ||
+                                                                ''
+                                                            }
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -444,7 +474,9 @@ export function PrivatePaddyInwardActionDialog({
                                         <FormLabel>Gunny Option</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            defaultValue={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -647,6 +679,7 @@ export function PrivatePaddyInwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -663,6 +696,7 @@ export function PrivatePaddyInwardActionDialog({
                                             <Input
                                                 placeholder='Enter RST Number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -708,7 +742,9 @@ export function PrivatePaddyInwardActionDialog({
                                         <FormLabel>Paddy Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            defaultValue={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>

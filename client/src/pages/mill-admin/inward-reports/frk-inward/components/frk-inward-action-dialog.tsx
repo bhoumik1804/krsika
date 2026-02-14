@@ -58,7 +58,11 @@ export function FrkInwardActionDialog({
     const { mutateAsync: updateFrkInward, isPending: isUpdating } =
         useUpdateFrkInward(millId)
 
-    const { party } = usePartyBrokerSelection(millId, open)
+    const { party } = usePartyBrokerSelection(
+        millId,
+        open,
+        currentRow?.partyName || undefined
+    )
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -93,7 +97,11 @@ export function FrkInwardActionDialog({
 
     const onSubmit = async (data: FrkInward) => {
         try {
-            const { _id, ...payload } = data
+            const { _id, ...rest } = data
+            const payload = {
+                ...rest,
+                partyName: rest.partyName || undefined,
+            }
             if (isEditing && currentRow?._id) {
                 await updateFrkInward({
                     id: currentRow._id,

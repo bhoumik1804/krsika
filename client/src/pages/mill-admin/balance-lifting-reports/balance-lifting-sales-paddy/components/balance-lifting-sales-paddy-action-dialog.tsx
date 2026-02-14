@@ -57,7 +57,12 @@ export function BalanceLiftingSalesPaddyActionDialog({
     currentRow,
 }: BalanceLiftingSalesPaddyActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -99,7 +104,20 @@ export function BalanceLiftingSalesPaddyActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
+    const onSubmit = (data: BalanceLiftingSalesPaddy) => {
+        // Sanitize data
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+            saleType: data.saleType || undefined,
+            doNumber: data.doNumber || undefined,
+            dhanType: data.dhanType || undefined,
+            deliveryType: data.deliveryType || undefined,
+            gunnyType: data.gunnyType || undefined,
+        }
+        console.log('Submitting:', submissionData)
+
         toast.promise(sleep(2000), {
             loading: isEditing ? 'Updating sale...' : 'Adding sale...',
             success: () => {
@@ -285,7 +303,9 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                             <FormLabel>Sale Type</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
@@ -330,6 +350,10 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                                         <Input
                                                             placeholder='Enter DO number'
                                                             {...field}
+                                                            value={
+                                                                field.value ||
+                                                                ''
+                                                            }
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -440,7 +464,9 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                                 onValueChange={
                                                     field.onChange
                                                 }
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
@@ -538,7 +564,9 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                                 onValueChange={
                                                     field.onChange
                                                 }
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
@@ -640,7 +668,9 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                                 onValueChange={
                                                     field.onChange
                                                 }
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>

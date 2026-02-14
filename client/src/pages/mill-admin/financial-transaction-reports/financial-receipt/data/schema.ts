@@ -2,12 +2,12 @@ import { z } from 'zod'
 
 export const FinancialReceiptSchema = z.object({
     date: z.string(),
-    partyName: z.string().optional(),
-    brokerName: z.string().optional(),
-    salesDealType: z.string().optional(),
-    salesDealNumber: z.string().optional(),
+    partyName: z.string().nullable().optional(),
+    brokerName: z.string().nullable().optional(),
+    salesDealType: z.string().nullable().optional(),
+    salesDealNumber: z.string().nullable().optional(),
     receivedAmount: z.number().optional(),
-    remarks: z.string().optional(),
+    remarks: z.string().nullable().optional(),
 })
 
 export type FinancialReceipt = z.infer<typeof FinancialReceiptSchema>

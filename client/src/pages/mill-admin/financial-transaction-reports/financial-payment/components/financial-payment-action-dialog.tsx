@@ -85,7 +85,12 @@ export function FinancialPaymentActionDialog({
     currentRow,
 }: FinancialPaymentActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -162,7 +167,23 @@ export function FinancialPaymentActionDialog({
         }
     }, [salary, attendance, month, allowedLeave, paymentType, form])
 
-    const onSubmit = () => {
+    const onSubmit = (data: FinancialPayment) => {
+        // Sanitize data
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+            paymentType: data.paymentType || undefined,
+            purchaseDealType: data.purchaseDealType || undefined,
+            transporterName: data.transporterName || undefined,
+            labourType: data.labourType || undefined,
+            labourGroupName: data.labourGroupName || undefined,
+            staffName: data.staffName || undefined,
+            month: data.month || undefined,
+        }
+
+        console.log('Submitting:', submissionData)
+
         toast.promise(sleep(2000), {
             loading: isEditing ? 'Updating...' : 'Adding...',
             success: () => {
@@ -414,7 +435,11 @@ export function FinancialPaymentActionDialog({
                                         <FormItem>
                                             <FormLabel>Deal Number</FormLabel>
                                             <FormControl>
-                                                <Input disabled {...field} />
+                                                <Input
+                                                    disabled
+                                                    {...field}
+                                                    value={field.value || ''}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -470,7 +495,10 @@ export function FinancialPaymentActionDialog({
                                         <FormItem>
                                             <FormLabel>Truck Number</FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    {...field}
+                                                    value={field.value || ''}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -905,7 +933,10 @@ export function FinancialPaymentActionDialog({
                                 <FormItem>
                                     <FormLabel>Remarks</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input
+                                            {...field}
+                                            value={field.value || ''}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

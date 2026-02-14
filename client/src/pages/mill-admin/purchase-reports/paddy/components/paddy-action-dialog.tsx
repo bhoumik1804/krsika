@@ -68,7 +68,12 @@ export function PaddyActionDialog({
     currentRow,
 }: PaddyActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName,
+        currentRow?.brokerName
+    )
     const { mutateAsync: createPaddyPurchase, isPending: isCreating } =
         useCreatePaddyPurchase(millId || '')
     const { mutateAsync: updatePaddyPurchase, isPending: isUpdating } =
@@ -151,17 +156,24 @@ export function PaddyActionDialog({
     }, [isDOPurchase, watchDoPaddyQty, form])
 
     const onSubmit = async (data: PaddyPurchaseData) => {
+        // Sanitize data: Convert nulls to undefined to satisfy backend types
+        const sanitizedData = Object.fromEntries(
+            Object.entries(data).map(([key, value]) => [
+                key,
+                value === null ? undefined : value,
+            ])
+        ) as PaddyPurchaseData
+
         try {
             if (isEditing && currentRow?._id) {
                 await updatePaddyPurchase({
                     _id: currentRow._id,
-                    ...data,
+                    ...sanitizedData,
                 })
             } else {
-                await createPaddyPurchase(data)
+                await createPaddyPurchase(sanitizedData)
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             // Error handling is managed by mutation hooks (onSuccess/onError)
             console.error('Form submission error:', error)

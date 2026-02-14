@@ -61,7 +61,12 @@ export function OtherSalesActionDialog({
     currentRow,
 }: OtherSalesActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName,
+        currentRow?.brokerName
+    )
 
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -102,21 +107,25 @@ export function OtherSalesActionDialog({
                 })
             }
         }
-    }, [currentRow, form, open])
+    }, [currentRow, open, form])
 
     const onSubmit = (data: OtherSales) => {
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+        }
+
         if (isEditing) {
-            updateOtherSalesMutation.mutate(data, {
+            updateOtherSalesMutation.mutate(submissionData, {
                 onSuccess: () => {
                     onOpenChange(false)
-                    form.reset()
                 },
             })
         } else {
-            createOtherSalesMutation.mutate(data, {
+            createOtherSalesMutation.mutate(submissionData, {
                 onSuccess: () => {
                     onOpenChange(false)
-                    form.reset()
                 },
             })
         }

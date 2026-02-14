@@ -53,7 +53,12 @@ export function NakkhiSalesActionDialog({
     currentRow,
 }: NakkhiSalesActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName,
+        currentRow?.brokerName
+    )
     const { mutateAsync: createNakkhiSales, isPending: isCreating } =
         useCreateNakkhiSales(millId || '')
     const { mutateAsync: updateNakkhiSales, isPending: isUpdating } =
@@ -98,16 +103,21 @@ export function NakkhiSalesActionDialog({
 
     const onSubmit = async (data: NakkhiSales) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+                brokerName: data.brokerName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateNakkhiSales({
                     _id: currentRow._id,
-                    ...data,
+                    ...submissionData,
                 })
             } else {
-                await createNakkhiSales(data)
+                await createNakkhiSales(submissionData)
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             // Error handling is managed by mutation hooks (onSuccess/onError)
             console.error('Form submission error:', error)

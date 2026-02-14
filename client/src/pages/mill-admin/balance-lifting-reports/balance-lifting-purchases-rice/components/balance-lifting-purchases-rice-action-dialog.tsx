@@ -61,7 +61,12 @@ export function BalanceLiftingPurchasesRiceActionDialog({
     currentRow,
 }: BalanceLiftingPurchasesRiceActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -111,7 +116,22 @@ export function BalanceLiftingPurchasesRiceActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
+    const onSubmit = (data: BalanceLiftingPurchasesRice) => {
+        // Sanitize data
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+            deliveryType: data.deliveryType || undefined,
+            lotOrOther: data.lotOrOther || undefined,
+            fciOrNAN: data.fciOrNAN || undefined,
+            riceType: data.riceType || undefined,
+            gunnyType: data.gunnyType || undefined,
+            frkType: data.frkType || undefined,
+            lotNumber: data.lotNumber || undefined,
+        }
+        console.log('Submitting:', submissionData)
+
         toast.promise(sleep(2000), {
             loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
             success: () => {
@@ -299,7 +319,9 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                             <FormLabel>Delivery Type</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
@@ -335,7 +357,9 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                             <FormLabel>LOT/Other</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
@@ -380,7 +404,8 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                                             field.onChange
                                                         }
                                                         defaultValue={
-                                                            field.value
+                                                            field.value ||
+                                                            undefined
                                                         }
                                                     >
                                                         <FormControl>
@@ -423,6 +448,10 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                                         <Input
                                                             placeholder='Enter LOT No.'
                                                             {...field}
+                                                            value={
+                                                                field.value ||
+                                                                ''
+                                                            }
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -440,7 +469,8 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                                             field.onChange
                                                         }
                                                         defaultValue={
-                                                            field.value
+                                                            field.value ||
+                                                            undefined
                                                         }
                                                     >
                                                         <FormControl>
@@ -521,7 +551,9 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                             <FormLabel>Rice Type</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
@@ -691,7 +723,9 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                             <FormLabel>Gunny Option</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>

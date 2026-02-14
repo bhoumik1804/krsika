@@ -54,7 +54,12 @@ export function BhusaOutwardActionDialog({
     currentRow,
     millId,
 }: BhusaOutwardActionDialogProps) {
-    const { party, broker } = usePartyBrokerSelection(millId, open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId,
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -82,36 +87,42 @@ export function BhusaOutwardActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset(defaultValues)
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset(defaultValues)
+            }
         }
-    }, [currentRow, form, defaultValues])
+    }, [currentRow, form, defaultValues, open])
 
     const onSubmit = (values: BhusaOutward) => {
+        const submissionData = {
+            ...values,
+            partyName: values.partyName || undefined,
+            brokerName: values.brokerName || undefined,
+        }
+
         if (isEditing && currentRow?._id) {
             toast.promise(
                 updateMutation.mutateAsync({
                     id: currentRow._id,
-                    data: values,
+                    data: submissionData,
                 }),
                 {
                     loading: 'Updating...',
                     success: () => {
                         onOpenChange(false)
-                        form.reset(defaultValues)
                         return 'Updated successfully'
                     },
                     error: 'Failed to update',
                 }
             )
         } else {
-            toast.promise(createMutation.mutateAsync(values), {
+            toast.promise(createMutation.mutateAsync(submissionData), {
                 loading: 'Adding...',
                 success: () => {
                     onOpenChange(false)
-                    form.reset(defaultValues)
                     return 'Added successfully'
                 },
                 error: 'Failed to add',
@@ -209,6 +220,7 @@ export function BhusaOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter deal number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -355,6 +367,7 @@ export function BhusaOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -371,6 +384,7 @@ export function BhusaOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

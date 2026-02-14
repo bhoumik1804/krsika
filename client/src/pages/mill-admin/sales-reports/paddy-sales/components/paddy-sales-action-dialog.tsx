@@ -57,7 +57,12 @@ export function PaddySalesActionDialog({
     currentRow,
 }: PaddySalesActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName,
+        currentRow?.brokerName
+    )
 
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -94,12 +99,33 @@ export function PaddySalesActionDialog({
 
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    partyName: '',
+                    brokerName: '',
+                    saleType: '',
+                    doNumber: '',
+                    dhanMotaQty: undefined,
+                    dhanPatlaQty: undefined,
+                    dhanSarnaQty: undefined,
+                    dhanType: '',
+                    dhanQty: undefined,
+                    paddyRatePerQuintal: undefined,
+                    deliveryType: '',
+                    discountPercent: undefined,
+                    brokerage: undefined,
+                    gunnyOption: '',
+                    newGunnyRate: undefined,
+                    oldGunnyRate: undefined,
+                    plasticGunnyRate: undefined,
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
     const onSubmit = () => {
         // Form submission logic

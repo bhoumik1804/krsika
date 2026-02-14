@@ -46,7 +46,11 @@ export function BalanceLiftingPurchasesFrkActionDialog({
     currentRow,
 }: BalanceLiftingPurchasesFrkActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party } = usePartyBrokerSelection(millId || '', open)
+    const { party } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -69,7 +73,14 @@ export function BalanceLiftingPurchasesFrkActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
+    const onSubmit = (data: BalanceLiftingPurchasesFrk) => {
+        // Sanitize data
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+        }
+        console.log('Submitting:', submissionData)
+
         toast.promise(sleep(2000), {
             loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
             success: () => {

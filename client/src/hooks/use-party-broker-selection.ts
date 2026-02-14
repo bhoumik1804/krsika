@@ -2,7 +2,12 @@ import { useState, useEffect, useCallback, UIEvent } from 'react'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 
-export function usePartyBrokerSelection(millId: string, open: boolean) {
+export function usePartyBrokerSelection(
+    millId: string,
+    open: boolean,
+    initialParty?: string,
+    initialBroker?: string
+) {
     // Party State
     const [partyPage, setPartyPage] = useState(1)
     const [allParties, setAllParties] = useState<string[]>([])
@@ -38,29 +43,54 @@ export function usePartyBrokerSelection(millId: string, open: boolean) {
 
     // Accumulate Parties
     useEffect(() => {
-        if (partyListData?.parties) {
+        if (open && partyListData?.parties) {
             const newParties = partyListData.parties.map((p) => p.partyName)
-            setAllParties((prev) => Array.from(new Set([...prev, ...newParties])))
+
+            if (partyPage === 1) {
+                setAllParties(Array.from(new Set([initialParty, ...newParties].filter(Boolean) as string[])))
+            } else {
+                setAllParties((prev) => Array.from(new Set([...prev, ...newParties])))
+            }
+
             setHasMoreParties(partyListData.parties.length === limit(partyPage))
             setIsLoadingMoreParties(false)
         }
-    }, [partyListData, partyPage])
+    }, [partyListData, partyPage, open, initialParty])
 
     // Accumulate Brokers
     useEffect(() => {
-        if (brokerListData?.brokers) {
+        if (open && brokerListData?.brokers) {
             const newBrokers = brokerListData.brokers.map((b) => b.brokerName)
-            setAllBrokers((prev) => Array.from(new Set([...prev, ...newBrokers])))
+
+            if (brokerPage === 1) {
+                setAllBrokers(Array.from(new Set([initialBroker, ...newBrokers].filter(Boolean) as string[])))
+            } else {
+                setAllBrokers((prev) => Array.from(new Set([...prev, ...newBrokers])))
+            }
+
             setHasMoreBrokers(brokerListData.brokers.length === limit(brokerPage))
             setIsLoadingMoreBrokers(false)
         }
-    }, [brokerListData, brokerPage])
+    }, [brokerListData, brokerPage, open, initialBroker])
 
-    // Reset on Open
+    // Reset and Seed Logic
     useEffect(() => {
         if (open) {
-            setAllParties([])
-            setAllBrokers([])
+            // When opening, seed the initial values if provided
+            setAllParties((prev) => {
+                if (initialParty && !prev.includes(initialParty)) {
+                    return [initialParty, ...prev]
+                }
+                return prev.length === 0 && initialParty ? [initialParty] : prev
+            })
+            setAllBrokers((prev) => {
+                if (initialBroker && !prev.includes(initialBroker)) {
+                    return [initialBroker, ...prev]
+                }
+                return prev.length === 0 && initialBroker ? [initialBroker] : prev
+            })
+        } else {
+            // When closing, reset pagination but keep data to prevent flickering
             setPartyPage(1)
             setBrokerPage(1)
             setHasMoreParties(true)
@@ -68,7 +98,7 @@ export function usePartyBrokerSelection(millId: string, open: boolean) {
             setIsLoadingMoreParties(false)
             setIsLoadingMoreBrokers(false)
         }
-    }, [open])
+    }, [open, initialParty, initialBroker])
 
     const handlePartyScroll = useCallback((e: UIEvent<HTMLDivElement>) => {
         const { scrollHeight, scrollTop, clientHeight } = e.currentTarget
@@ -76,7 +106,7 @@ export function usePartyBrokerSelection(millId: string, open: boolean) {
             setIsLoadingMoreParties(true)
             setPartyPage((prev) => prev + 1)
         }
-    }, [hasMoreParties, isLoadingMoreParties, partyPage])
+    }, [hasMoreParties, isLoadingMoreParties])
 
     const handleBrokerScroll = useCallback((e: UIEvent<HTMLDivElement>) => {
         const { scrollHeight, scrollTop, clientHeight } = e.currentTarget
@@ -84,7 +114,7 @@ export function usePartyBrokerSelection(millId: string, open: boolean) {
             setIsLoadingMoreBrokers(true)
             setBrokerPage((prev) => prev + 1)
         }
-    }, [hasMoreBrokers, isLoadingMoreBrokers, brokerPage])
+    }, [hasMoreBrokers, isLoadingMoreBrokers])
 
     return {
         party: {

@@ -54,7 +54,12 @@ export function FinancialReceiptActionDialog({
     currentRow,
 }: FinancialReceiptActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -79,7 +84,17 @@ export function FinancialReceiptActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
+    const onSubmit = (data: FinancialReceipt) => {
+        // Sanitize data
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+            salesDealType: data.salesDealType || undefined,
+        }
+        console.log('Submitting:', submissionData)
+
+
         toast.promise(sleep(2000), {
             loading: isEditing ? 'Updating...' : 'Adding...',
             success: () => {
@@ -293,6 +308,7 @@ export function FinancialReceiptActionDialog({
                                             <Input
                                                 placeholder='Sales Deal Number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -339,6 +355,7 @@ export function FinancialReceiptActionDialog({
                                             <Input
                                                 placeholder='Enter remarks'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

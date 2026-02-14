@@ -155,11 +155,11 @@ export function GovtRiceOutwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                  new Date(
-                                                                      field.value
-                                                                  ),
-                                                                  'MMM dd, yyyy'
-                                                              )
+                                                                new Date(
+                                                                    field.value
+                                                                ),
+                                                                'MMM dd, yyyy'
+                                                            )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -173,17 +173,17 @@ export function GovtRiceOutwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                  field.value
-                                                              )
+                                                                field.value
+                                                            )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                      date,
-                                                                      'yyyy-MM-dd'
-                                                                  )
+                                                                    date,
+                                                                    'yyyy-MM-dd'
+                                                                )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -209,6 +209,7 @@ export function GovtRiceOutwardActionDialog({
                                             <Input
                                                 placeholder='LOT-1234'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -226,7 +227,9 @@ export function GovtRiceOutwardActionDialog({
                                         <FormControl>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                value={field.value}
+                                                value={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <SelectTrigger className='w-full'>
                                                     <SelectValue placeholder='Select FCI/NAN' />
@@ -263,7 +266,9 @@ export function GovtRiceOutwardActionDialog({
                                         <FormLabel>Rice Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            value={field.value}
+                                            value={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -376,6 +381,7 @@ export function GovtRiceOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -394,6 +400,7 @@ export function GovtRiceOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-12345'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

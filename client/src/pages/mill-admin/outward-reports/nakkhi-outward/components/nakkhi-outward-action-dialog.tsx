@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -54,7 +54,12 @@ export function NakkhiOutwardActionDialog({
     currentRow,
     millId,
 }: NakkhiOutwardActionDialogProps) {
-    const { party, broker } = usePartyBrokerSelection(millId, open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId,
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -85,26 +90,43 @@ export function NakkhiOutwardActionDialog({
         defaultValues,
     })
 
+    useEffect(() => {
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset(defaultValues)
+            }
+        }
+    }, [currentRow, form, open, defaultValues])
+
     const onSubmit = (data: NakkhiOutward) => {
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+        }
+
         if (isEditing && currentRow?._id) {
             toast.promise(
-                updateMutation.mutateAsync({ id: currentRow._id, data }),
+                updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data: submissionData,
+                }),
                 {
                     loading: 'Updating...',
                     success: () => {
                         onOpenChange(false)
-                        form.reset()
                         return 'Updated successfully'
                     },
                     error: 'Failed to update',
                 }
             )
         } else {
-            toast.promise(createMutation.mutateAsync(data), {
+            toast.promise(createMutation.mutateAsync(submissionData), {
                 loading: 'Adding...',
                 success: () => {
                     onOpenChange(false)
-                    form.reset()
                     return 'Added successfully'
                 },
                 error: 'Failed to add',
@@ -202,6 +224,7 @@ export function NakkhiOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter deal number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -399,6 +422,7 @@ export function NakkhiOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -415,6 +439,7 @@ export function NakkhiOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
