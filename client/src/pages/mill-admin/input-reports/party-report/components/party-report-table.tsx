@@ -119,7 +119,7 @@ export function PartyReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='search'
+                searchKey='partyName'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

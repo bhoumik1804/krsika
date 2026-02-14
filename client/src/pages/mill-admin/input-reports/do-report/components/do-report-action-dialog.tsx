@@ -3,7 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { useParams } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -37,22 +36,20 @@ import {
 } from '../data/hooks'
 import { doReportSchema, type DoReportData } from '../data/schema'
 import { useParseExcel } from '../hooks/use-parse-excel'
-import { doReport } from './do-report-provider'
+import { useDoReport } from './do-report-provider'
 
 type DoReportActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: DoReportData | null
+    currentRow?: DoReportData
 }
 
 export function DoReportActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: DoReportActionDialogProps) {
+    const { currentRow, millId, setCurrentRow } = useDoReport()
     const isEditing = !!currentRow
-    const { setCurrentRow } = doReport()
-    const { millId } = useParams<{ millId: string }>()
     const createMutation = useCreateDoReport(millId || '')
     const updateMutation = useUpdateDoReport(millId || '')
     const bulkCreateMutation = useBulkCreateDoReport(millId || '')
@@ -71,9 +68,9 @@ export function DoReportActionDialog({
             date: format(new Date(), 'yyyy-MM-dd'),
             samitiSangrahan: '',
             doNo: '',
-            dhanMota: 0,
-            dhanPatla: 0,
-            dhanSarna: 0,
+            dhanMota: '' as unknown as number,
+            dhanPatla: '' as unknown as number,
+            dhanSarna: '' as unknown as number,
             total: 0,
         },
     })
@@ -96,10 +93,10 @@ export function DoReportActionDialog({
                 date: currentRow.date || '',
                 samitiSangrahan: currentRow.samitiSangrahan || '',
                 doNo: currentRow.doNo || '',
-                dhanMota: currentRow.dhanMota || undefined,
-                dhanPatla: currentRow.dhanPatla || undefined,
-                dhanSarna: currentRow.dhanSarna || undefined,
-                total: currentRow.total || undefined,
+                dhanMota: currentRow.dhanMota || ('' as unknown as number),
+                dhanPatla: currentRow.dhanPatla || ('' as unknown as number),
+                dhanSarna: currentRow.dhanSarna || ('' as unknown as number),
+                total: currentRow.total ?? 0,
             })
             setActiveTab('manual')
         } else {
@@ -107,9 +104,9 @@ export function DoReportActionDialog({
                 date: format(new Date(), 'yyyy-MM-dd'),
                 samitiSangrahan: '',
                 doNo: '',
-                dhanMota: 0,
-                dhanPatla: 0,
-                dhanSarna: 0,
+                dhanMota: '' as unknown as number,
+                dhanPatla: '' as unknown as number,
+                dhanSarna: '' as unknown as number,
                 total: 0,
             })
             setActiveTab('manual')
@@ -155,7 +152,6 @@ export function DoReportActionDialog({
 
     const handleDialogClose = (isOpen: boolean) => {
         if (!isOpen) {
-            setCurrentRow(null)
             form.reset({
                 date: format(new Date(), 'yyyy-MM-dd'),
                 samitiSangrahan: '',
@@ -356,6 +352,9 @@ export function DoReportActionDialog({
                                                         type='number'
                                                         step='0.01'
                                                         {...field}
+                                                        value={
+                                                            field.value ?? ''
+                                                        }
                                                         onWheel={(e) =>
                                                             e.currentTarget.blur()
                                                         }
@@ -390,6 +389,9 @@ export function DoReportActionDialog({
                                                         type='number'
                                                         step='0.01'
                                                         {...field}
+                                                        value={
+                                                            field.value ?? ''
+                                                        }
                                                         onWheel={(e) =>
                                                             e.currentTarget.blur()
                                                         }
@@ -423,6 +425,9 @@ export function DoReportActionDialog({
                                                         type='number'
                                                         step='0.01'
                                                         {...field}
+                                                        value={
+                                                            field.value ?? ''
+                                                        }
                                                         onWheel={(e) =>
                                                             e.currentTarget.blur()
                                                         }

@@ -119,7 +119,7 @@ export function CommitteeReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='search'
+                searchKey='committeeName'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

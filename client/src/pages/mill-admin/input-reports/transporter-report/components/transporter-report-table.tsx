@@ -123,7 +123,7 @@ export function TransporterReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='search'
+                searchKey='transporterName'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

@@ -119,7 +119,7 @@ export function BrokerReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='search'
+                searchKey='brokerName'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>
