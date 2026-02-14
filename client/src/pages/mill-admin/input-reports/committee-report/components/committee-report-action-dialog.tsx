@@ -41,7 +41,7 @@ import { useCommitteeReport } from './committee-report-provider'
 type CommitteeReportActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: CommitteeReportData | null
+    currentRow?: CommitteeReportData
 }
 
 export function CommitteeReportActionDialog({

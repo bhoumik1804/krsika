@@ -1,7 +1,3 @@
-/**
- * Transporter Report Service
- * API client for Transporter Report operations (Mill Admin)
- */
 import apiClient, { type ApiResponse } from '@/lib/api-client'
 import type { TransporterReportData } from './schema'
 
@@ -9,17 +5,8 @@ import type { TransporterReportData } from './schema'
 // Types
 // ==========================================
 
-export interface TransporterListResponse {
-    transporters: TransporterReportData[]
-    pagination: {
-        page: number
-        limit: number
-        total: number
-        pages: number
-    }
-}
-
-export interface TransporterQueryParams {
+interface FetchTransporterListParams {
+    millId: string
     page?: number
     limit?: number
     search?: string
@@ -27,68 +14,75 @@ export interface TransporterQueryParams {
     sortOrder?: 'asc' | 'desc'
 }
 
+export interface TransporterListResponse {
+    transporters: TransporterReportData[]
+    pagination: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
+}
+
 // ==========================================
 // API Functions
 // ==========================================
 
-/**
- * Fetch transporters list for a specific mill with pagination and filters
- */
-export const fetchTransporterList = async (
-    millId: string,
-    params?: TransporterQueryParams
-): Promise<TransporterListResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<{ transporters: TransporterReportData[]; pagination: any }>
-    >(`/mills/${millId}/transporters`, { params })
-    return response.data.data
-}
+export const transporterService = {
+    fetchTransporterList: async (
+        params: FetchTransporterListParams
+    ): Promise<TransporterListResponse> => {
+        const queryParams = new URLSearchParams()
+        if (params.page) queryParams.append('page', params.page.toString())
+        if (params.limit) queryParams.append('limit', params.limit.toString())
+        if (params.search) queryParams.append('search', params.search)
+        if (params.sortBy) queryParams.append('sortBy', params.sortBy)
+        if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder)
 
-/**
- * Create a new transporter
- */
-export const createTransporter = async (
-    millId: string,
-    data: Partial<TransporterReportData>
-): Promise<TransporterReportData> => {
-    const response = await apiClient.post<
-        ApiResponse<{ transporter: TransporterReportData }>
-    >(`/mills/${millId}/transporters`, data)
-    return response.data.data.transporter
-}
+        const response = await apiClient.get<
+            ApiResponse<TransporterListResponse>
+        >(`/mills/${params.millId}/transporters?${queryParams.toString()}`)
+        return response.data.data
+    },
 
-/**
- * Update a transporter
- */
-export const updateTransporter = async (
-    millId: string,
-    transporterId: string,
-    data: Partial<TransporterReportData>
-): Promise<TransporterReportData> => {
-    const response = await apiClient.put<
-        ApiResponse<{ transporter: TransporterReportData }>
-    >(`/mills/${millId}/transporters/${transporterId}`, data)
-    return response.data.data.transporter
-}
+    createTransporter: async (
+        millId: string,
+        data: Partial<TransporterReportData>
+    ): Promise<TransporterReportData> => {
+        const response = await apiClient.post<
+            ApiResponse<{ transporter: TransporterReportData }>
+        >(`/mills/${millId}/transporters`, data)
+        return response.data.data.transporter
+    },
 
-/**
- * Delete a transporter
- */
-export const deleteTransporter = async (
-    millId: string,
-    transporterId: string
-): Promise<void> => {
-    await apiClient.delete(`/mills/${millId}/transporters/${transporterId}`)
-}
+    updateTransporter: async (
+        millId: string,
+        transporterId: string,
+        data: Partial<TransporterReportData>
+    ): Promise<TransporterReportData> => {
+        const response = await apiClient.put<
+            ApiResponse<{ transporter: TransporterReportData }>
+        >(`/mills/${millId}/transporters/${transporterId}`, data)
+        return response.data.data.transporter
+    },
 
-/**
- * Bulk delete transporters
- */
-export const bulkDeleteTransporters = async (
-    millId: string,
-    transporterIds: string[]
-): Promise<void> => {
-    await apiClient.delete(`/mills/${millId}/transporters/bulk`, {
-        data: { ids: transporterIds },
-    })
+    deleteTransporter: async (
+        millId: string,
+        transporterId: string
+    ): Promise<void> => {
+        await apiClient.delete(`/mills/${millId}/transporters/${transporterId}`)
+    },
+
+    bulkDeleteTransporters: async (
+        millId: string,
+        transporterIds: string[]
+    ): Promise<void> => {
+        await apiClient.delete(`/mills/${millId}/transporters/bulk`, {
+            data: { ids: transporterIds },
+        })
+    },
 }

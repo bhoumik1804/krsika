@@ -1,154 +1,128 @@
-/**
- * Party Report Hooks
- * React Query hooks for Party data management (Mill Admin)
- */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import type { PartyReportData } from './schema'
-import {
-    fetchPartyList,
-    createParty,
-    updateParty,
-    deleteParty,
-    bulkDeleteParties,
-    type PartyListResponse,
-    type PartyQueryParams,
-} from './service'
+import { partyService, type PartyListResponse } from './service'
 
-// Re-export types
-export type { PartyQueryParams, PartyListResponse }
-
-// ==========================================
-// Query Keys
-// ==========================================
-
-export const partyKeys = {
-    all: (millId: string) => ['party', millId] as const,
-    lists: (millId: string) => [...partyKeys.all(millId), 'list'] as const,
-    list: (millId: string, params?: PartyQueryParams) =>
-        [...partyKeys.lists(millId), params] as const,
+// Query key factory for parties
+const partyQueryKeys = {
+    all: ['parties'] as const,
+    byMill: (millId: string) => [...partyQueryKeys.all, millId] as const,
+    list: (millId: string, filters?: Record<string, unknown>) =>
+        [...partyQueryKeys.byMill(millId), 'list', filters] as const,
 }
 
-// ==========================================
-// Query Hooks
-// ==========================================
+interface UsePartyListParams {
+    millId: string
+    page?: number
+    limit?: number
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+}
 
-/**
- * Hook to fetch parties list with pagination and filters
- */
-export const usePartyList = (
-    millId: string,
-    params?: PartyQueryParams,
-    options?: { enabled?: boolean }
-) => {
+export const usePartyList = (params: UsePartyListParams) => {
     return useQuery<PartyListResponse, Error>({
-        queryKey: partyKeys.list(millId, params),
-        queryFn: () => fetchPartyList(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        queryKey: partyQueryKeys.list(params.millId, {
+            page: params.page,
+            limit: params.limit,
+            search: params.search,
+            sortBy: params.sortBy,
+            sortOrder: params.sortOrder,
+        }),
+        queryFn: () => partyService.fetchPartyList(params),
+        enabled: !!params.millId,
     })
 }
 
-// ==========================================
-// Mutation Hooks
-// ==========================================
-
-/**
- * Hook to create a new party
- */
 export const useCreateParty = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<PartyReportData, Error, Partial<PartyReportData>>({
-        mutationFn: async (data) => {
-            const promise = createParty(millId, data)
-            toast.promise(promise, {
-                loading: 'Creating party...',
-                success: 'Party created successfully',
-                error: (err) => err.message || 'Failed to create party',
-            })
-            return promise
-        },
+    return useMutation({
+        mutationFn: (data: Partial<PartyReportData>) =>
+            partyService.createParty(millId, data),
         onSuccess: () => {
+            toast.success('Party created successfully')
             queryClient.invalidateQueries({
-                queryKey: partyKeys.lists(millId),
+                queryKey: partyQueryKeys.byMill(millId),
             })
+        },
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to create party'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to update a party
- */
 export const useUpdateParty = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<
-        PartyReportData,
-        Error,
-        { partyId: string; data: Partial<PartyReportData> }
-    >({
-        mutationFn: async ({ partyId, data }) => {
-            const promise = updateParty(millId, partyId, data)
-            toast.promise(promise, {
-                loading: 'Updating party...',
-                success: 'Party updated successfully',
-                error: (err) => err.message || 'Failed to update party',
-            })
-            return promise
-        },
+    return useMutation({
+        mutationFn: ({
+            partyId,
+            data,
+        }: {
+            partyId: string
+            data: Partial<PartyReportData>
+        }) => partyService.updateParty(millId, partyId, data),
         onSuccess: () => {
+            toast.success('Party updated successfully')
             queryClient.invalidateQueries({
-                queryKey: partyKeys.lists(millId),
+                queryKey: partyQueryKeys.byMill(millId),
             })
+        },
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to update party'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to delete a party
- */
 export const useDeleteParty = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string>({
-        mutationFn: async (partyId) => {
-            const promise = deleteParty(millId, partyId)
-            toast.promise(promise, {
-                loading: 'Deleting party...',
-                success: 'Party deleted successfully',
-                error: (err) => err.message || 'Failed to delete party',
-            })
-            return promise
-        },
+    return useMutation({
+        mutationFn: (partyId: string) =>
+            partyService.deleteParty(millId, partyId),
         onSuccess: () => {
+            toast.success('Party deleted successfully')
             queryClient.invalidateQueries({
-                queryKey: partyKeys.lists(millId),
+                queryKey: partyQueryKeys.byMill(millId),
             })
+        },
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to delete party'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to bulk delete parties
- */
 export const useBulkDeleteParties = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string[]>({
-        mutationFn: async (partyIds) => {
-            const promise = bulkDeleteParties(millId, partyIds)
-            toast.promise(promise, {
-                loading: `Deleting ${partyIds.length} part${partyIds.length > 1 ? 'ies' : 'y'}...`,
-                success: `${partyIds.length} part${partyIds.length > 1 ? 'ies' : 'y'} deleted successfully`,
-                error: (err) => err.message || 'Failed to delete parties',
-            })
-            return promise
-        },
+    return useMutation({
+        mutationFn: (partyIds: string[]) =>
+            partyService.bulkDeleteParties(millId, partyIds),
         onSuccess: () => {
+            toast.success('Parties deleted successfully')
             queryClient.invalidateQueries({
-                queryKey: partyKeys.lists(millId),
+                queryKey: partyQueryKeys.byMill(millId),
             })
+        },
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to delete parties'
+            toast.error(errorMessage)
         },
     })
 }
