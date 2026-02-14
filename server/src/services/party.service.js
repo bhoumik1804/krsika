@@ -51,6 +51,11 @@ export const getPartyList = async (millId, options = {}) => {
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
         {
+            $addFields: {
+                id: { $toString: '$_id' },
+            },
+        },
+        {
             $lookup: {
                 from: 'users',
                 localField: 'createdBy',

@@ -36,10 +36,8 @@ export function PartyReportActionDialog({
     const { currentRow, millId } = usePartyReport()
     const { mutate: createParty, isPending: isCreating } =
         useCreateParty(millId)
-    const { mutate: updateParty, isPending: isUpdating } = useUpdateParty(
-        millId,
-        currentRow?.id || ''
-    )
+    const { mutate: updateParty, isPending: isUpdating } =
+        useUpdateParty(millId)
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -64,13 +62,17 @@ export function PartyReportActionDialog({
     }, [currentRow, form])
 
     const onSubmit = (data: PartyReportData) => {
-        if (isEditing) {
-            updateParty(data, {
-                onSuccess: () => {
-                    onOpenChange(false)
-                    form.reset()
-                },
-            })
+        const partyId = currentRow?._id
+        if (isEditing && partyId) {
+            updateParty(
+                { partyId, data },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
         } else {
             createParty(data, {
                 onSuccess: () => {

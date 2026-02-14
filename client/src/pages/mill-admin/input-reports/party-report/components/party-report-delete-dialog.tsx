@@ -28,8 +28,9 @@ export function PartyReportDeleteDialog({
 
     const handleDelete = (e: React.MouseEvent) => {
         e.preventDefault() // Prevent default AlertDialog close behavior
-        if (currentRow?.id) {
-            deleteParty(currentRow.id, {
+        const partyId = currentRow?._id
+        if (partyId) {
+            deleteParty(partyId, {
                 onSuccess: () => {
                     onOpenChange(false)
                 },

@@ -88,7 +88,7 @@ export const bulkDeleteParties = async (
     millId: string,
     partyIds: string[]
 ): Promise<void> => {
-    await apiClient.post(`/mills/${millId}/parties/bulk-delete`, {
-        ids: partyIds,
+    await apiClient.delete(`/mills/${millId}/parties/bulk`, {
+        data: { ids: partyIds },
     })
 }

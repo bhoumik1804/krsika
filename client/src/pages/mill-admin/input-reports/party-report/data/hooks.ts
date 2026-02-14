@@ -76,11 +76,15 @@ export const useCreateParty = (millId: string) => {
 /**
  * Hook to update a party
  */
-export const useUpdateParty = (millId: string, partyId: string) => {
+export const useUpdateParty = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<PartyReportData, Error, Partial<PartyReportData>>({
-        mutationFn: (data) => updateParty(millId, partyId, data),
+    return useMutation<
+        PartyReportData,
+        Error,
+        { partyId: string; data: Partial<PartyReportData> }
+    >({
+        mutationFn: ({ partyId, data }) => updateParty(millId, partyId, data),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: partyKeys.lists(millId),
