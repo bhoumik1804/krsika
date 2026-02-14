@@ -7,7 +7,7 @@ import {
     BarChart3,
     Settings,
     Palette,
-    HelpCircle,
+    // HelpCircle,
     FileBarChart,
     ArrowLeftRight,
     ArrowLeftToLine,
