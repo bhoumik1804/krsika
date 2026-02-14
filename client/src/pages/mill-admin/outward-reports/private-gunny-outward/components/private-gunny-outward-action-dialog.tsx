@@ -59,7 +59,11 @@ export function PrivateGunnyOutwardActionDialog({
     currentRow,
 }: PrivateGunnyOutwardActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party } = usePartyBrokerSelection(millId || '', open)
+    const { party } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -81,38 +85,44 @@ export function PrivateGunnyOutwardActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset({
-                _id: '',
-                date: format(new Date(), 'yyyy-MM-dd'),
-                gunnyPurchaseDealNumber: '',
-                partyName: '',
-                newGunnyQty: undefined,
-                oldGunnyQty: undefined,
-                plasticGunnyQty: undefined,
-                truckNo: '',
-            })
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    _id: '',
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    gunnyPurchaseDealNumber: '',
+                    partyName: '',
+                    newGunnyQty: undefined,
+                    oldGunnyQty: undefined,
+                    plasticGunnyQty: undefined,
+                    truckNo: '',
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
     const onSubmit = async (data: PrivateGunnyOutward) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 // Exclude _id from update payload (sent as separate id param)
-                const { _id, ...updatePayload } = data
+                const { _id, ...updatePayload } = submissionData
                 await updateMutation.mutateAsync({
                     id: currentRow._id,
                     payload: updatePayload,
                 })
             } else {
                 // Exclude _id when creating new entry
-                const { _id, ...createPayload } = data
+                const { _id, ...createPayload } = submissionData
                 await createMutation.mutateAsync(createPayload)
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             // Error handling is done in the mutation hooks
         }
@@ -211,6 +221,7 @@ export function PrivateGunnyOutwardActionDialog({
                                             <Input
                                                 placeholder='GPN-1234'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -349,6 +360,7 @@ export function PrivateGunnyOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

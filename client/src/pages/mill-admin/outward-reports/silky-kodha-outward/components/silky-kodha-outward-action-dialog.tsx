@@ -57,7 +57,12 @@ export function SilkyKodhaOutwardActionDialog({
     currentRow,
 }: SilkyKodhaOutwardActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -90,23 +95,30 @@ export function SilkyKodhaOutwardActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset(getDefaultValues)
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset(getDefaultValues)
+            }
         }
-    }, [currentRow, form, getDefaultValues])
+    }, [currentRow, form, getDefaultValues, open])
 
     const onSubmit = (data: SilkyKodhaOutward) => {
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+        }
+
         if (isEditing && currentRow?._id) {
-            const { _id, ...updateData } = data
+            const { _id, ...updateData } = submissionData
             updateMutation.mutate(
                 { id: currentRow._id, data: updateData },
                 {
                     onSuccess: () => {
                         toast.success('Updated successfully')
                         onOpenChange(false)
-                        form.reset(getDefaultValues)
                     },
                     onError: (error) => {
                         toast.error(error.message || 'Failed to update')
@@ -114,11 +126,10 @@ export function SilkyKodhaOutwardActionDialog({
                 }
             )
         } else {
-            createMutation.mutate(data, {
+            createMutation.mutate(submissionData, {
                 onSuccess: () => {
                     toast.success('Added successfully')
                     onOpenChange(false)
-                    form.reset(getDefaultValues)
                 },
                 onError: (error) => {
                     toast.error(error.message || 'Failed to add')
@@ -217,6 +228,7 @@ export function SilkyKodhaOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter deal number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -439,6 +451,7 @@ export function SilkyKodhaOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -455,6 +468,7 @@ export function SilkyKodhaOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

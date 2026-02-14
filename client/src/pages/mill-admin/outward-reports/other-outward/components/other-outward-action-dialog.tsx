@@ -54,7 +54,12 @@ export function OtherOutwardActionDialog({
     currentRow,
     millId,
 }: OtherOutwardActionDialogProps) {
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -90,42 +95,48 @@ export function OtherOutwardActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset({
-                ...currentRow,
-                date: currentRow.date
-                    ? format(new Date(currentRow.date), 'yyyy-MM-dd')
-                    : '',
-            })
-        } else {
-            form.reset(defaultValues)
+        if (open) {
+            if (currentRow) {
+                form.reset({
+                    ...currentRow,
+                    date: currentRow.date
+                        ? format(new Date(currentRow.date), 'yyyy-MM-dd')
+                        : '',
+                })
+            } else {
+                form.reset(defaultValues)
+            }
         }
-    }, [currentRow, form, defaultValues])
+    }, [currentRow, form, defaultValues, open])
 
     const onSubmit = (data: OtherOutward) => {
         const { _id, ...submitData } = data
+        const submissionData = {
+            ...submitData,
+            partyName: submitData.partyName || undefined,
+            brokerName: submitData.brokerName || undefined,
+        }
+
         if (isEditing && currentRow?._id) {
             toast.promise(
                 updateMutation.mutateAsync({
                     id: currentRow._id,
-                    data: submitData,
+                    data: submissionData,
                 }),
                 {
                     loading: 'Updating...',
                     success: () => {
                         onOpenChange(false)
-                        form.reset(defaultValues)
                         return 'Updated successfully'
                     },
                     error: 'Failed to update',
                 }
             )
         } else {
-            toast.promise(createMutation.mutateAsync(submitData), {
+            toast.promise(createMutation.mutateAsync(submissionData), {
                 loading: 'Adding...',
                 success: () => {
                     onOpenChange(false)
-                    form.reset(defaultValues)
                     return 'Added successfully'
                 },
                 error: 'Failed to add',
@@ -223,6 +234,7 @@ export function OtherOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter deal number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -239,6 +251,7 @@ export function OtherOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter item name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -517,6 +530,7 @@ export function OtherOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -533,6 +547,7 @@ export function OtherOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

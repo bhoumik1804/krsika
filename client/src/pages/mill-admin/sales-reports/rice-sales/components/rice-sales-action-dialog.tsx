@@ -68,7 +68,12 @@ export function RiceSalesActionDialog({
     currentRow,
 }: RiceSalesActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName,
+        currentRow?.brokerName
+    )
     const { mutateAsync: createRiceSales, isPending: isCreating } =
         useCreateRiceSales(millId || '')
     const { mutateAsync: updateRiceSales, isPending: isUpdating } =
@@ -149,16 +154,21 @@ export function RiceSalesActionDialog({
 
     const onSubmit = async (data: RiceSales) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+                brokerName: data.brokerName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateRiceSales({
                     _id: currentRow._id,
-                    ...data,
+                    ...submissionData,
                 })
             } else {
-                await createRiceSales(data)
+                await createRiceSales(submissionData)
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             // Error handling is managed by mutation hooks (onSuccess/onError)
             console.error('Form submission error:', error)

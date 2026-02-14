@@ -4,12 +4,12 @@ import { z } from 'zod'
 export const PrivateGunnyOutwardSchema = z.object({
     _id: z.string(),
     date: z.string(),
-    gunnyPurchaseDealNumber: z.string().optional(),
-    partyName: z.string().optional(),
+    gunnyPurchaseDealNumber: z.string().nullable().optional(),
+    partyName: z.string().nullable().optional(),
     newGunnyQty: z.number().optional(),
     oldGunnyQty: z.number().optional(),
     plasticGunnyQty: z.number().optional(),
-    truckNo: z.string().optional(),
+    truckNo: z.string().nullable().optional(),
 })
 
 export type PrivateGunnyOutward = z.infer<typeof PrivateGunnyOutwardSchema>

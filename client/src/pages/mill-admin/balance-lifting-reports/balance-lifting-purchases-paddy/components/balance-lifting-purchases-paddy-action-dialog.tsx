@@ -59,7 +59,12 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
     currentRow,
 }: BalanceLiftingPurchasesPaddyActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -114,7 +119,21 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
         }
     }, [isDOPurchase, watchDoPaddyQty, form])
 
-    const onSubmit = () => {
+    const onSubmit = (data: BalanceLiftingPurchasesPaddy) => {
+        // Sanitize data
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+            deliveryType: data.deliveryType || undefined,
+            purchaseType: data.purchaseType || undefined,
+            doNumber: data.doNumber || undefined,
+            committeeName: data.committeeName || undefined,
+            paddyType: data.paddyType || undefined,
+            gunnyType: data.gunnyType || undefined,
+        }
+        console.log('Submitting:', submissionData)
+
         toast.promise(sleep(2000), {
             loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
             success: () => {
@@ -305,7 +324,9 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                             </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
@@ -341,7 +362,9 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                             <FormLabel>Purchase Type</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
@@ -384,6 +407,10 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                                         <Input
                                                             placeholder='Enter DO number'
                                                             {...field}
+                                                            value={
+                                                                field.value ||
+                                                                ''
+                                                            }
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -402,6 +429,10 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                                         <Input
                                                             placeholder='Enter committee name'
                                                             {...field}
+                                                            value={
+                                                                field.value ||
+                                                                ''
+                                                            }
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -457,7 +488,9 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                                     onValueChange={
                                                         field.onChange
                                                     }
-                                                    defaultValue={field.value}
+                                                    defaultValue={
+                                                        field.value || undefined
+                                                    }
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger className='w-full'>
@@ -629,7 +662,9 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                             <FormLabel>Gunny Option</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>

@@ -61,7 +61,12 @@ export function OtherActionDialog({
     currentRow,
 }: OtherActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName,
+        currentRow?.brokerName
+    )
     const { mutateAsync: createOtherPurchase, isPending: isCreating } =
         useCreateOtherPurchase(millId || '')
     const { mutateAsync: updateOtherPurchase, isPending: isUpdating } =
@@ -108,16 +113,21 @@ export function OtherActionDialog({
 
     const onSubmit = async (data: OtherPurchase) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+                brokerName: data.brokerName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateOtherPurchase({
                     purchaseId: currentRow._id,
-                    data,
+                    data: submissionData,
                 })
             } else {
-                await createOtherPurchase(data)
+                await createOtherPurchase(submissionData)
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             console.error('Form submission error:', error)
         }

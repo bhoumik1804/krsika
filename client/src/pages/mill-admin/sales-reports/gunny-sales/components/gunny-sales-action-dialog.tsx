@@ -53,7 +53,11 @@ export function GunnySalesActionDialog({
     currentRow,
 }: GunnySalesActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party } = usePartyBrokerSelection(millId || '', open)
+    const { party } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName
+    )
     const { mutateAsync: createGunnySales, isPending: isCreating } =
         useCreateGunnySales(millId || '')
     const { mutateAsync: updateGunnySales, isPending: isUpdating } =
@@ -100,16 +104,20 @@ export function GunnySalesActionDialog({
 
     const onSubmit = async (data: GunnySales) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateGunnySales({
                     _id: currentRow._id,
-                    ...data,
+                    ...submissionData,
                 })
             } else {
-                await createGunnySales(data)
+                await createGunnySales(submissionData)
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             // Error handling is managed by mutation hooks (onSuccess/onError)
             console.error('Form submission error:', error)

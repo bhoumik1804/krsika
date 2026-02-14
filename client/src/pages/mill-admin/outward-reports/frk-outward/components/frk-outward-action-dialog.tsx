@@ -51,7 +51,11 @@ export function FrkOutwardActionDialog({
     onOpenChange,
 }: FrkOutwardActionDialogProps) {
     const { millId, currentRow } = useFrkOutward()
-    const { party } = usePartyBrokerSelection(millId || '', open)
+    const { party } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -74,41 +78,47 @@ export function FrkOutwardActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset({
-                date: format(new Date(), 'yyyy-MM-dd'),
-                partyName: '',
-                gunnyPlastic: 0,
-                plasticGunnyWeight: 0,
-                truckNo: '',
-                truckRst: '',
-                truckWeight: 0,
-                gunnyWeight: 0,
-                netWeight: 0,
-            })
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    partyName: '',
+                    gunnyPlastic: 0,
+                    plasticGunnyWeight: 0,
+                    truckNo: '',
+                    truckRst: '',
+                    truckWeight: 0,
+                    gunnyWeight: 0,
+                    netWeight: 0,
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
     const onSubmit = async (data: FrkOutward) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+            }
+
             if (isEditing && currentRow._id) {
-                const { _id, ...updatePayload } = data
+                const { _id, ...updatePayload } = submissionData
                 await updateMutation.mutateAsync({
                     millId,
                     id: currentRow._id,
                     payload: updatePayload,
                 })
             } else {
-                const { _id, ...createPayload } = data
+                const { _id, ...createPayload } = submissionData
                 await createMutation.mutateAsync({
                     millId,
                     payload: createPayload,
                 })
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             // Error is handled by the mutation hooks
         }

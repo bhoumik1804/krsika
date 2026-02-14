@@ -58,7 +58,12 @@ export function PrivatePaddyOutwardActionDialog({
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
     const { millId, setOpen: setDialogOpen } = usePrivatePaddyOutward()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
     const createMutation = useCreatePrivatePaddyOutward(millId)
     const updateMutation = useUpdatePrivatePaddyOutward(millId)
 
@@ -113,17 +118,22 @@ export function PrivatePaddyOutwardActionDialog({
 
     const onSubmit = async (data: PrivatePaddyOutward) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+                brokerName: data.brokerName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateMutation.mutateAsync({
                     id: currentRow._id,
-                    data: data,
+                    data: submissionData,
                 })
             } else {
-                await createMutation.mutateAsync(data)
+                await createMutation.mutateAsync(submissionData)
             }
             setDialogOpen(null)
             onOpenChange(false)
-            form.reset()
         } catch {
             // Error is handled by mutation hooks
         }
@@ -223,6 +233,7 @@ export function PrivatePaddyOutwardActionDialog({
                                             <Input
                                                 placeholder='SALE-XXXX'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -522,6 +533,7 @@ export function PrivatePaddyOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -540,6 +552,7 @@ export function PrivatePaddyOutwardActionDialog({
                                             <Input
                                                 placeholder='RST0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

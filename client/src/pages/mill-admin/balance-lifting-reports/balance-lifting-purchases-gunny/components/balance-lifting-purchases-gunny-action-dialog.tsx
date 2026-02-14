@@ -56,7 +56,11 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
     currentRow,
 }: BalanceLiftingPurchasesGunnyActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party } = usePartyBrokerSelection(millId || '', open)
+    const { party } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -83,7 +87,15 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
+    const onSubmit = (data: BalanceLiftingPurchasesGunny) => {
+        // Sanitize data
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            deliveryType: data.deliveryType || undefined,
+        }
+        console.log('Submitting:', submissionData)
+
         toast.promise(sleep(2000), {
             loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
             success: () => {
@@ -228,7 +240,9 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                             <FormLabel>Delivery Type</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>

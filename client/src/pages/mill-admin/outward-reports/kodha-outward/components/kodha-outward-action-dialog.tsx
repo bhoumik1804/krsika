@@ -54,7 +54,12 @@ export function KodhaOutwardActionDialog({
     currentRow,
     millId,
 }: KodhaOutwardActionDialogProps) {
-    const { party, broker } = usePartyBrokerSelection(millId, open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId,
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -87,36 +92,42 @@ export function KodhaOutwardActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset(defaultValues)
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset(defaultValues)
+            }
         }
-    }, [currentRow, form, defaultValues])
+    }, [currentRow, form, defaultValues, open])
 
     const onSubmit = (values: KodhaOutward) => {
+        const submissionData = {
+            ...values,
+            partyName: values.partyName || undefined,
+            brokerName: values.brokerName || undefined,
+        }
+
         if (isEditing && currentRow?._id) {
             toast.promise(
                 updateMutation.mutateAsync({
                     id: currentRow._id,
-                    data: values,
+                    data: submissionData,
                 }),
                 {
                     loading: 'Updating...',
                     success: () => {
                         onOpenChange(false)
-                        form.reset(defaultValues)
                         return 'Updated successfully'
                     },
                     error: 'Failed to update',
                 }
             )
         } else {
-            toast.promise(createMutation.mutateAsync(values), {
+            toast.promise(createMutation.mutateAsync(submissionData), {
                 loading: 'Adding...',
                 success: () => {
                     onOpenChange(false)
-                    form.reset(defaultValues)
                     return 'Added successfully'
                 },
                 error: 'Failed to add',
@@ -214,6 +225,7 @@ export function KodhaOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter deal number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -436,6 +448,7 @@ export function KodhaOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -452,6 +465,7 @@ export function KodhaOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

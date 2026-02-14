@@ -53,7 +53,11 @@ export function FrkActionDialog({
 }: FrkActionDialogProps) {
     const { currentRow } = useFrk()
     const { millId } = useParams<{ millId: string }>()
-    const { party } = usePartyBrokerSelection(millId || '', open)
+    const { party } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName
+    )
     const { mutateAsync: createFrkPurchase, isPending: isCreating } =
         useCreateFrkPurchase(millId || '')
     const { mutateAsync: updateFrkPurchase, isPending: isUpdating } =
@@ -75,31 +79,37 @@ export function FrkActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset({
-                date: format(new Date(), 'yyyy-MM-dd'),
-                partyName: '',
-                frkQty: undefined,
-                frkRate: undefined,
-                gst: undefined,
-            } as FrkPurchaseData)
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    partyName: '',
+                    frkQty: undefined,
+                    frkRate: undefined,
+                    gst: undefined,
+                } as FrkPurchaseData)
+            }
         }
     }, [currentRow, open, form])
 
     const onSubmit = async (data: FrkPurchaseData) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+            }
+
             if (isEditing) {
                 await updateFrkPurchase({
                     purchaseId: currentRow?._id || '',
-                    data,
+                    data: submissionData,
                 })
             } else {
-                await createFrkPurchase(data)
+                await createFrkPurchase(submissionData)
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             console.error('Error submitting form:', error)
         }

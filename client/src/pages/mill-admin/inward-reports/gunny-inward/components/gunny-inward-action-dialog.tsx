@@ -59,7 +59,11 @@ export function GunnyInwardActionDialog({
     const { mutate: updateInward, isPending: isUpdating } =
         useUpdateGunnyInward(millId)
 
-    const { party } = usePartyBrokerSelection(millId, open)
+    const { party } = usePartyBrokerSelection(
+        millId,
+        open,
+        currentRow?.partyName || undefined
+    )
     const isLoading = isCreating || isUpdating
     const isEditing = !!currentRow
 
@@ -94,14 +98,18 @@ export function GunnyInwardActionDialog({
     }, [currentRow, open, getDefaultValues])
 
     const onSubmit = (data: GunnyInward) => {
-        console.log('Submitting data:', data)
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+        }
+        console.log('Submitting data:', submissionData)
 
         if (isEditing && currentRow?._id) {
             updateInward(
                 {
                     id: currentRow._id,
                     data: {
-                        ...data,
+                        ...submissionData,
                         _id: currentRow._id,
                     },
                 },
@@ -113,7 +121,7 @@ export function GunnyInwardActionDialog({
                 }
             )
         } else {
-            createInward(data, {
+            createInward(submissionData, {
                 onSuccess: () => {
                     onOpenChange(false)
                     form.reset()

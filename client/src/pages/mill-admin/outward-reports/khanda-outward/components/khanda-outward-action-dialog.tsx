@@ -54,7 +54,12 @@ export function KhandaOutwardActionDialog({
     currentRow,
     millId,
 }: KhandaOutwardActionDialogProps) {
-    const { party, broker } = usePartyBrokerSelection(millId, open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId,
+        open,
+        currentRow?.partyName,
+        currentRow?.brokerName
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -63,19 +68,19 @@ export function KhandaOutwardActionDialog({
 
     const defaultValues = useMemo(
         () => ({
-            date: currentRow?.date || format(new Date(), 'yyyy-MM-dd'),
-            khandaSaleDealNumber: currentRow?.khandaSaleDealNumber || '',
-            partyName: currentRow?.partyName || '',
-            brokerName: currentRow?.brokerName || '',
-            gunnyPlastic: currentRow?.gunnyPlastic,
-            plasticGunnyWeight: currentRow?.plasticGunnyWeight,
-            truckNo: currentRow?.truckNo || '',
-            truckRst: currentRow?.truckRst || '',
-            truckWeight: currentRow?.truckWeight,
-            gunnyWeight: currentRow?.gunnyWeight,
-            netWeight: currentRow?.netWeight,
+            date: format(new Date(), 'yyyy-MM-dd'),
+            khandaSaleDealNumber: '',
+            partyName: '',
+            brokerName: '',
+            gunnyPlastic: undefined,
+            plasticGunnyWeight: undefined,
+            truckNo: '',
+            truckRst: '',
+            truckWeight: undefined,
+            gunnyWeight: undefined,
+            netWeight: undefined,
         }),
-        [currentRow]
+        []
     )
 
     const form = useForm<KhandaOutward>({
@@ -83,26 +88,43 @@ export function KhandaOutwardActionDialog({
         defaultValues,
     })
 
+    useEffect(() => {
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset(defaultValues)
+            }
+        }
+    }, [currentRow, form, open, defaultValues])
+
     const onSubmit = (data: KhandaOutward) => {
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+        }
+
         if (isEditing && currentRow?._id) {
             toast.promise(
-                updateMutation.mutateAsync({ id: currentRow._id, data }),
+                updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data: submissionData,
+                }),
                 {
                     loading: 'Updating...',
                     success: () => {
                         onOpenChange(false)
-                        form.reset()
                         return 'Updated successfully'
                     },
                     error: 'Failed to update',
                 }
             )
         } else {
-            toast.promise(createMutation.mutateAsync(data), {
+            toast.promise(createMutation.mutateAsync(submissionData), {
                 loading: 'Adding...',
                 success: () => {
                     onOpenChange(false)
-                    form.reset()
                     return 'Added successfully'
                 },
                 error: 'Failed to add',

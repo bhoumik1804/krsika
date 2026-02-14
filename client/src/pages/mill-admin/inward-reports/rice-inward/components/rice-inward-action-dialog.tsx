@@ -69,7 +69,12 @@ export function RiceInwardActionDialog({
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const { party, broker } = usePartyBrokerSelection(millId, open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId,
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
 
     const createMutation = useCreateRiceInward(millId)
     const updateMutation = useUpdateRiceInward(millId)
@@ -115,9 +120,18 @@ export function RiceInwardActionDialog({
     }, [currentRow, getDefaultValues])
 
     const onSubmit = (data: RiceInward) => {
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+        }
+
         if (isEditing && currentRow?._id) {
             updateMutation.mutate(
-                { id: currentRow._id, data: { ...data, _id: currentRow._id } },
+                {
+                    id: currentRow._id,
+                    data: { ...submissionData, _id: currentRow._id },
+                },
                 {
                     onSuccess: () => {
                         toast.success('Updated successfully')
@@ -130,7 +144,7 @@ export function RiceInwardActionDialog({
                 }
             )
         } else {
-            createMutation.mutate(data, {
+            createMutation.mutate(submissionData, {
                 onSuccess: () => {
                     toast.success('Added successfully')
                     onOpenChange(false)
@@ -332,7 +346,9 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Inward Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            defaultValue={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -417,7 +433,9 @@ export function RiceInwardActionDialog({
                                         <FormLabel>FRK Status</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            defaultValue={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -451,7 +469,9 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Gunny Option</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            defaultValue={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>

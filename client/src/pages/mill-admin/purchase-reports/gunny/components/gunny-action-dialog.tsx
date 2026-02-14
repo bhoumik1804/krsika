@@ -65,7 +65,11 @@ export function GunnyActionDialog({
     currentRow,
 }: GunnyActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party } = usePartyBrokerSelection(millId || '', open)
+    const { party } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName
+    )
     const { mutateAsync: createGunnyPurchase, isPending: isCreating } =
         useCreateGunnyPurchase(millId || '')
     const { mutateAsync: updateGunnyPurchase, isPending: isUpdating } =
@@ -114,16 +118,20 @@ export function GunnyActionDialog({
 
     const onSubmit = async (data: GunnyPurchaseFormData) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateGunnyPurchase({
                     id: currentRow._id,
-                    ...data,
+                    ...submissionData,
                 })
             } else {
-                await createGunnyPurchase(data)
+                await createGunnyPurchase(submissionData)
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             console.error('Form submission error:', error)
         }

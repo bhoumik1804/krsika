@@ -61,7 +61,12 @@ export function PrivateRiceOutwardActionDialog({
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
     const { millId, setOpen: setDialogOpen } = usePrivateRiceOutward()
-    const { party, broker } = usePartyBrokerSelection(millId || '', open)
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
     const createMutation = useCreatePrivateRiceOutward(millId)
     const updateMutation = useUpdatePrivateRiceOutward(millId)
 
@@ -120,17 +125,22 @@ export function PrivateRiceOutwardActionDialog({
 
     const onSubmit = async (data: PrivateRiceOutward) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+                brokerName: data.brokerName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateMutation.mutateAsync({
                     id: currentRow._id,
-                    data,
+                    data: submissionData,
                 })
             } else {
-                await createMutation.mutateAsync(data)
+                await createMutation.mutateAsync(submissionData)
             }
             setDialogOpen(null)
             onOpenChange(false)
-            form.reset()
         } catch {
             // Error is handled by mutation hooks
         }
@@ -229,6 +239,7 @@ export function PrivateRiceOutwardActionDialog({
                                             <Input
                                                 placeholder='SALE-XXXX'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -333,6 +344,7 @@ export function PrivateRiceOutwardActionDialog({
                                             <Input
                                                 placeholder='LOT-1234'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -349,7 +361,7 @@ export function PrivateRiceOutwardActionDialog({
                                         <FormLabel>FCI/NAN</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            value={field.value}
+                                            value={field.value || ''}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -383,7 +395,7 @@ export function PrivateRiceOutwardActionDialog({
                                         <FormLabel>Rice Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            value={field.value}
+                                            value={field.value || ''}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -560,6 +572,7 @@ export function PrivateRiceOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -578,6 +591,7 @@ export function PrivateRiceOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-12345'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
