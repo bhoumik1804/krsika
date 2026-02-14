@@ -31,15 +31,6 @@ const BrokerSchema = new Schema(
             type: String,
             trim: true,
         },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-        },
     },
     {
         timestamps: true,

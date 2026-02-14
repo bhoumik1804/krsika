@@ -22,10 +22,9 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type BrokerReportData } from '../data/schema'
-import { DataTableBulkActions } from './data-table-bulk-actions'
 import { brokerReportColumns as columns } from './broker-report-columns'
+import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
     data: BrokerReportData[]
@@ -52,8 +51,7 @@ export function BrokerReportTable({ data, search, navigate }: DataTableProps) {
         pagination: { defaultPage: 1, defaultPageSize: 10 },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
+            { columnId: 'brokerName', searchKey: 'brokerName', type: 'string' },
         ],
     })
 
@@ -96,14 +94,7 @@ export function BrokerReportTable({ data, search, navigate }: DataTableProps) {
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
+                searchKey='brokerName'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>
