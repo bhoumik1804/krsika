@@ -22,7 +22,6 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type TransporterReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { transporterReportColumns as columns } from './transporter-report-columns'
@@ -56,8 +55,11 @@ export function TransporterReportTable({
         pagination: { defaultPage: 1, defaultPageSize: 10 },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
+            {
+                columnId: 'transporterName',
+                searchKey: 'transporterName',
+                type: 'string',
+            },
         ],
     })
 
@@ -100,14 +102,7 @@ export function TransporterReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
+                searchKey='transporterName'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

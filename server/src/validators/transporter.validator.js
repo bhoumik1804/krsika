@@ -12,6 +12,12 @@ const transporterBaseSchema = {
         .trim()
         .min(1, 'Transporter name cannot be empty')
         .max(200, 'Transporter name is too long'),
+    gstn: z
+        .string()
+        .trim()
+        .max(15, 'GSTN must be 15 characters')
+        .optional()
+        .or(z.literal('')),
     phone: z.string().trim().max(20, 'Phone number is too long').optional(),
     email: z
         .string()
@@ -21,11 +27,6 @@ const transporterBaseSchema = {
         .optional()
         .or(z.literal('')),
     address: z.string().trim().max(500, 'Address is too long').optional(),
-    vehicleCount: z.coerce
-        .number()
-        .int()
-        .min(0, 'Vehicle count cannot be negative')
-        .optional(),
 }
 
 // Create transporter schema
@@ -42,10 +43,10 @@ export const createTransporterSchema = z.object({
 export const updateTransporterSchema = z.object({
     body: z.object({
         transporterName: transporterBaseSchema.transporterName.optional(),
+        gstn: transporterBaseSchema.gstn,
         phone: transporterBaseSchema.phone,
         email: transporterBaseSchema.email,
         address: transporterBaseSchema.address,
-        vehicleCount: transporterBaseSchema.vehicleCount,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
@@ -91,7 +92,7 @@ export const getTransporterListSchema = z.object({
         limit: z.coerce.number().int().min(1).max(100).default(10).optional(),
         search: z.string().trim().optional(),
         sortBy: z
-            .enum(['transporterName', 'createdAt', 'vehicleCount'])
+            .enum(['transporterName', 'createdAt'])
             .default('transporterName')
             .optional(),
         sortOrder: z.enum(['asc', 'desc']).default('asc').optional(),

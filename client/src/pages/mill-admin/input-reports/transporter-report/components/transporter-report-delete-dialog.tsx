@@ -13,23 +13,24 @@ import { type TransporterReportData } from '../data/schema'
 import { useTransporterReport } from './transporter-report-provider'
 
 type TransporterReportDeleteDialogProps = {
+    currentRow: TransporterReportData
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: TransporterReportData | null
 }
 
 export function TransporterReportDeleteDialog({
+    currentRow,
     open,
     onOpenChange,
 }: TransporterReportDeleteDialogProps) {
-    const { currentRow, millId } = useTransporterReport()
+    const { millId } = useTransporterReport()
     const { mutate: deleteTransporter, isPending: isDeleting } =
         useDeleteTransporter(millId)
 
     const handleDelete = (e: React.MouseEvent) => {
-        e.preventDefault() // Prevent default AlertDialog close behavior
-        if (currentRow?.id) {
-            deleteTransporter(currentRow.id, {
+        e.preventDefault()
+        if (currentRow._id) {
+            deleteTransporter(currentRow._id, {
                 onSuccess: () => {
                     onOpenChange(false)
                 },
@@ -44,7 +45,7 @@ export function TransporterReportDeleteDialog({
                     <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
                         Are you sure you want to delete this record for{' '}
-                        <strong>{currentRow?.transporterName}</strong>?
+                        <strong>{currentRow.transporterName}</strong>?
                         <br />
                         This action cannot be undone.
                     </AlertDialogDescription>

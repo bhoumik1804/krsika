@@ -22,7 +22,6 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type PartyReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { partyReportColumns as columns } from './party-report-columns'
@@ -53,7 +52,6 @@ export function PartyReportTable({ data, search, navigate }: DataTableProps) {
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
         ],
     })
 
@@ -97,13 +95,6 @@ export function PartyReportTable({ data, search, navigate }: DataTableProps) {
                 table={table}
                 searchPlaceholder='Search...'
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

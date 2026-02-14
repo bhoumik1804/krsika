@@ -1,6 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,29 +9,39 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeleteTransporters } from '../data/hooks'
+import { type TransporterReportData } from '../data/schema'
+import { useTransporterReport } from './transporter-report-provider'
 
-type TransporterReportMultiDeleteDialogProps<TData> = {
-    table: Table<TData>
+type TransporterReportMultiDeleteDialogProps = {
+    table: Table<TransporterReportData>
     open: boolean
     onOpenChange: (open: boolean) => void
 }
 
-export function TransporterReportMultiDeleteDialog<TData>({
+export function TransporterReportMultiDeleteDialog({
     table,
     open,
     onOpenChange,
-}: TransporterReportMultiDeleteDialogProps<TData>) {
+}: TransporterReportMultiDeleteDialogProps) {
+    const { millId } = useTransporterReport()
     const selectedRows = table.getFilteredSelectedRowModel().rows
+    const { mutate: bulkDelete, isPending: isDeleting } =
+        useBulkDeleteTransporters(millId)
 
-    const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
+    const handleDeleteSelected = (e: React.MouseEvent) => {
+        e.preventDefault()
+        const ids = selectedRows
+            .map((row) => row.original._id)
+            .filter((id): id is string => !!id)
+
+        if (ids.length === 0) return
+
+        bulkDelete(ids, {
+            onSuccess: () => {
                 table.resetRowSelection()
                 onOpenChange(false)
-                return `Deleted ${selectedRows.length} record${selectedRows.length > 1 ? 's' : ''}`
             },
-            error: 'Error deleting records',
         })
     }
 
@@ -52,12 +60,15 @@ export function TransporterReportMultiDeleteDialog<TData>({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

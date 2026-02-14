@@ -11,11 +11,7 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 
 export const createParty = async (req, res, next) => {
     try {
-        const party = await createPartyEntry(
-            req.params.millId,
-            req.body,
-            req.user._id
-        )
+        const party = await createPartyEntry(req.params.millId, req.body)
         res.status(201).json(
             new ApiResponse(201, { party }, 'Party created successfully')
         )
@@ -73,8 +69,7 @@ export const updatePartyHandler = async (req, res, next) => {
         const party = await updatePartyEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(200, { party }, 'Party updated successfully')

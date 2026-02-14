@@ -18,6 +18,11 @@ const TransporterSchema = new Schema(
             required: true,
             trim: true,
         },
+        gstn: {
+            type: String,
+            trim: true,
+            uppercase: true,
+        },
         phone: {
             type: String,
             trim: true,
@@ -30,20 +35,6 @@ const TransporterSchema = new Schema(
         address: {
             type: String,
             trim: true,
-        },
-        vehicleCount: {
-            type: Number,
-            min: 0,
-            default: 0,
-        },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
         },
     },
     {

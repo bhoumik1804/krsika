@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
@@ -27,63 +26,64 @@ import {
 import { useTransporterReport } from './transporter-report-provider'
 
 type TransporterReportActionDialogProps = {
+    currentRow?: TransporterReportData
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: TransporterReportData | null
 }
 
 export function TransporterReportActionDialog({
+    currentRow,
     open,
     onOpenChange,
 }: TransporterReportActionDialogProps) {
-    const { currentRow, millId } = useTransporterReport()
+    const { millId } = useTransporterReport()
+    const isEditing = !!currentRow
     const { mutate: createTransporter, isPending: isCreating } =
         useCreateTransporter(millId)
     const { mutate: updateTransporter, isPending: isUpdating } =
-        useUpdateTransporter(millId, currentRow?.id || '')
+        useUpdateTransporter(millId, currentRow?._id || '')
 
-    const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
 
     const form = useForm<TransporterReportData>({
         resolver: zodResolver(transporterReportSchema),
-        defaultValues: {
-            transporterName: '',
-            gstn: '',
-            phone: '',
-            email: '',
-            address: '',
-        },
+        defaultValues: isEditing
+            ? { ...currentRow }
+            : {
+                  transporterName: '',
+                  gstn: '',
+                  phone: '',
+                  email: '',
+                  address: '',
+              },
     })
-
-    useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
-        }
-    }, [currentRow, form])
 
     const onSubmit = (data: TransporterReportData) => {
         if (isEditing) {
             updateTransporter(data, {
                 onSuccess: () => {
-                    onOpenChange(false)
                     form.reset()
+                    onOpenChange(false)
                 },
             })
         } else {
             createTransporter(data, {
                 onSuccess: () => {
-                    onOpenChange(false)
                     form.reset()
+                    onOpenChange(false)
                 },
             })
         }
     }
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog
+            open={open}
+            onOpenChange={(state) => {
+                form.reset()
+                onOpenChange(state)
+            }}
+        >
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
@@ -96,6 +96,7 @@ export function TransporterReportActionDialog({
                 </DialogHeader>
                 <Form {...form}>
                     <form
+                        id='transporter-form'
                         onSubmit={form.handleSubmit(onSubmit)}
                         className='space-y-4'
                     >

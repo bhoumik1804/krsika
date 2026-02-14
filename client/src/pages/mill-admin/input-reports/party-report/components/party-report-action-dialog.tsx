@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
@@ -24,42 +23,37 @@ import { partyReportSchema, type PartyReportData } from '../data/schema'
 import { usePartyReport } from './party-report-provider'
 
 type PartyReportActionDialogProps = {
+    currentRow?: PartyReportData
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: PartyReportData | null
 }
 
 export function PartyReportActionDialog({
+    currentRow,
     open,
     onOpenChange,
 }: PartyReportActionDialogProps) {
-    const { currentRow, millId } = usePartyReport()
+    const { millId } = usePartyReport()
+    const isEditing = !!currentRow
     const { mutate: createParty, isPending: isCreating } =
         useCreateParty(millId)
     const { mutate: updateParty, isPending: isUpdating } =
         useUpdateParty(millId)
 
-    const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
 
     const form = useForm<PartyReportData>({
         resolver: zodResolver(partyReportSchema),
-        defaultValues: {
-            partyName: '',
-            gstn: '',
-            phone: '',
-            email: '',
-            address: '',
-        },
+        defaultValues: isEditing
+            ? { ...currentRow }
+            : {
+                  partyName: '',
+                  gstn: '',
+                  phone: '',
+                  email: '',
+                  address: '',
+              },
     })
-
-    useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
-        }
-    }, [currentRow, form])
 
     const onSubmit = (data: PartyReportData) => {
         const partyId = currentRow?._id
@@ -68,23 +62,29 @@ export function PartyReportActionDialog({
                 { partyId, data },
                 {
                     onSuccess: () => {
-                        onOpenChange(false)
                         form.reset()
+                        onOpenChange(false)
                     },
                 }
             )
         } else {
             createParty(data, {
                 onSuccess: () => {
-                    onOpenChange(false)
                     form.reset()
+                    onOpenChange(false)
                 },
             })
         }
     }
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog
+            open={open}
+            onOpenChange={(state) => {
+                form.reset()
+                onOpenChange(state)
+            }}
+        >
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>

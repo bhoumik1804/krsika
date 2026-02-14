@@ -65,15 +65,19 @@ export const useCreateTransporter = (millId: string) => {
         Error,
         Partial<TransporterReportData>
     >({
-        mutationFn: (data) => createTransporter(millId, data),
+        mutationFn: async (data) => {
+            const promise = createTransporter(millId, data)
+            toast.promise(promise, {
+                loading: 'Creating transporter...',
+                success: 'Transporter created successfully',
+                error: (err) => err.message || 'Failed to create transporter',
+            })
+            return promise
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: transporterKeys.lists(millId),
             })
-            toast.success('Transporter created successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to create transporter')
         },
     })
 }
@@ -89,15 +93,19 @@ export const useUpdateTransporter = (millId: string, transporterId: string) => {
         Error,
         Partial<TransporterReportData>
     >({
-        mutationFn: (data) => updateTransporter(millId, transporterId, data),
+        mutationFn: async (data) => {
+            const promise = updateTransporter(millId, transporterId, data)
+            toast.promise(promise, {
+                loading: 'Updating transporter...',
+                success: 'Transporter updated successfully',
+                error: (err) => err.message || 'Failed to update transporter',
+            })
+            return promise
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: transporterKeys.lists(millId),
             })
-            toast.success('Transporter updated successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to update transporter')
         },
     })
 }
@@ -109,15 +117,19 @@ export const useDeleteTransporter = (millId: string) => {
     const queryClient = useQueryClient()
 
     return useMutation<void, Error, string>({
-        mutationFn: (transporterId) => deleteTransporter(millId, transporterId),
+        mutationFn: async (transporterId) => {
+            const promise = deleteTransporter(millId, transporterId)
+            toast.promise(promise, {
+                loading: 'Deleting transporter...',
+                success: 'Transporter deleted successfully',
+                error: (err) => err.message || 'Failed to delete transporter',
+            })
+            return promise
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: transporterKeys.lists(millId),
             })
-            toast.success('Transporter deleted successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to delete transporter')
         },
     })
 }
@@ -129,16 +141,19 @@ export const useBulkDeleteTransporters = (millId: string) => {
     const queryClient = useQueryClient()
 
     return useMutation<void, Error, string[]>({
-        mutationFn: (transporterIds) =>
-            bulkDeleteTransporters(millId, transporterIds),
+        mutationFn: async (transporterIds) => {
+            const promise = bulkDeleteTransporters(millId, transporterIds)
+            toast.promise(promise, {
+                loading: `Deleting ${transporterIds.length} transporter${transporterIds.length > 1 ? 's' : ''}...`,
+                success: `${transporterIds.length} transporter${transporterIds.length > 1 ? 's' : ''} deleted successfully`,
+                error: (err) => err.message || 'Failed to delete transporters',
+            })
+            return promise
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: transporterKeys.lists(millId),
             })
-            toast.success('Transporters deleted successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to delete transporters')
         },
     })
 }
