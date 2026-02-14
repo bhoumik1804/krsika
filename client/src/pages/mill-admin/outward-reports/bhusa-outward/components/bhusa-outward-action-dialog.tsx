@@ -57,8 +57,8 @@ export function BhusaOutwardActionDialog({
     const { party, broker } = usePartyBrokerSelection(
         millId,
         open,
-        currentRow?.partyName,
-        currentRow?.brokerName
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
     )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -220,6 +220,7 @@ export function BhusaOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter deal number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -366,6 +367,7 @@ export function BhusaOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -382,6 +384,7 @@ export function BhusaOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

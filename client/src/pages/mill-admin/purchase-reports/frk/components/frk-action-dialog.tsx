@@ -104,10 +104,16 @@ export function FrkActionDialog({
             if (isEditing) {
                 await updateFrkPurchase({
                     purchaseId: currentRow?._id || '',
-                    data: submissionData,
+                    data: {
+                        ...submissionData,
+                        partyName: submissionData.partyName || '',
+                    },
                 })
             } else {
-                await createFrkPurchase(submissionData)
+                await createFrkPurchase({
+                    ...submissionData,
+                    partyName: submissionData.partyName || '',
+                })
             }
             onOpenChange(false)
         } catch (error) {

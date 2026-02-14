@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -57,8 +57,8 @@ export function KhandaOutwardActionDialog({
     const { party, broker } = usePartyBrokerSelection(
         millId,
         open,
-        currentRow?.partyName,
-        currentRow?.brokerName
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
     )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -222,6 +222,7 @@ export function KhandaOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter khanda sale deal number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -369,6 +370,7 @@ export function KhandaOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -385,6 +387,7 @@ export function KhandaOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

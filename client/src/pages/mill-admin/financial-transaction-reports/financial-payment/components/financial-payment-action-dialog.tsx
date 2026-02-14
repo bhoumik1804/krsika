@@ -435,7 +435,11 @@ export function FinancialPaymentActionDialog({
                                         <FormItem>
                                             <FormLabel>Deal Number</FormLabel>
                                             <FormControl>
-                                                <Input disabled {...field} />
+                                                <Input
+                                                    disabled
+                                                    {...field}
+                                                    value={field.value || ''}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -491,7 +495,10 @@ export function FinancialPaymentActionDialog({
                                         <FormItem>
                                             <FormLabel>Truck Number</FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    {...field}
+                                                    value={field.value || ''}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -926,7 +933,10 @@ export function FinancialPaymentActionDialog({
                                 <FormItem>
                                     <FormLabel>Remarks</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input
+                                            {...field}
+                                            value={field.value || ''}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

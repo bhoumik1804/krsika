@@ -101,6 +101,9 @@ export function GunnyInwardActionDialog({
         const submissionData = {
             ...data,
             partyName: data.partyName || undefined,
+            gunnyPurchaseDealNumber: data.gunnyPurchaseDealNumber || undefined,
+            delivery: data.delivery || undefined,
+            samitiSangrahan: data.samitiSangrahan || undefined,
         }
         console.log('Submitting data:', submissionData)
 

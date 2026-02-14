@@ -308,6 +308,7 @@ export function FinancialReceiptActionDialog({
                                             <Input
                                                 placeholder='Sales Deal Number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -354,6 +355,7 @@ export function FinancialReceiptActionDialog({
                                             <Input
                                                 placeholder='Enter remarks'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

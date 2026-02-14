@@ -133,6 +133,14 @@ export function PrivatePaddyInwardActionDialog({
             ...data,
             partyName: data.partyName || undefined,
             brokerName: data.brokerName || undefined,
+            paddyPurchaseDealNumber: data.paddyPurchaseDealNumber || undefined,
+            purchaseType: data.purchaseType || undefined,
+            doNumber: data.doNumber || undefined,
+            committeeName: data.committeeName || undefined,
+            gunnyOption: data.gunnyOption || undefined,
+            truckNumber: data.truckNumber || undefined,
+            rstNumber: data.rstNumber || undefined,
+            paddyType: data.paddyType || undefined,
         }
 
         if (isEditing && currentRow?._id) {
@@ -671,6 +679,7 @@ export function PrivatePaddyInwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -687,6 +696,7 @@ export function PrivatePaddyInwardActionDialog({
                                             <Input
                                                 placeholder='Enter RST Number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -732,7 +742,9 @@ export function PrivatePaddyInwardActionDialog({
                                         <FormLabel>Paddy Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            defaultValue={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>

@@ -54,7 +54,7 @@ export function FrkOutwardActionDialog({
     const { party } = usePartyBrokerSelection(
         millId || '',
         open,
-        currentRow?.partyName
+        currentRow?.partyName || undefined || undefined
     )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -304,6 +304,7 @@ export function FrkOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -320,6 +321,7 @@ export function FrkOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

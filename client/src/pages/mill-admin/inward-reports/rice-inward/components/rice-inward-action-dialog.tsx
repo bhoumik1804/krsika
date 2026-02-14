@@ -124,6 +124,14 @@ export function RiceInwardActionDialog({
             ...data,
             partyName: data.partyName || undefined,
             brokerName: data.brokerName || undefined,
+            ricePurchaseDealNumber: data.ricePurchaseDealNumber || undefined,
+            riceType: data.riceType || undefined,
+            inwardType: data.inwardType || undefined,
+            lotNumber: data.lotNumber || undefined,
+            frkOrNAN: data.frkOrNAN || undefined,
+            gunnyOption: data.gunnyOption || undefined,
+            truckNumber: data.truckNumber || undefined,
+            rstNumber: data.rstNumber || undefined,
         }
 
         if (isEditing && currentRow?._id) {
@@ -751,7 +759,9 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Rice Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            defaultValue={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>

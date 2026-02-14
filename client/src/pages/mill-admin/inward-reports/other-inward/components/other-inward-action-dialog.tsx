@@ -547,6 +547,7 @@ export function OtherInwardActionDialog({
                                             <Input
                                                 placeholder='Enter Truck No'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -563,6 +564,7 @@ export function OtherInwardActionDialog({
                                             <Input
                                                 placeholder='Enter RST No'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
