@@ -11,14 +11,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type StaffReportData } from '../data/schema'
-import { staffReport } from './staff-report-provider'
+import { useStaffReport } from './staff-report-provider'
 
 type DataTableRowActionsProps = {
     row: Row<StaffReportData>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = staffReport()
+    const { setOpen, setCurrentRow } = useStaffReport()
     return (
         <>
             <DropdownMenu modal={false}>

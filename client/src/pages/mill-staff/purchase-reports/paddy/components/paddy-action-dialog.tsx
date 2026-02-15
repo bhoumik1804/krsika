@@ -3,6 +3,8 @@ import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import {
     paddyTypeOptions,
@@ -53,10 +55,6 @@ import {
 import { useCreatePaddyPurchase, useUpdatePaddyPurchase } from '../data/hooks'
 import { paddyPurchaseSchema, type PaddyPurchaseData } from '../data/schema'
 import { usePaddy } from './paddy-provider'
-import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
-import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
-
-
 
 type PaddyActionDialogProps = {
     open: boolean
@@ -89,29 +87,33 @@ export function PaddyActionDialog({
     const brokerLimit = brokerPage === 1 ? 10 : 5
 
     // Fetch party list from API with pagination
-    const { data: partyListData } = usePartyList(
-        millId,
-        {
-            page: partyPage,
-            limit: partyLimit,
-            sortBy: 'partyName',
-            sortOrder: 'asc',
-        },
-        { enabled: open && !!millId }
-    )
+    const { data: partyListData } = usePartyList({
+        millId: open ? millId : '',
+        page: partyPage,
+        limit: partyLimit,
+        sortBy: 'partyName',
+        sortOrder: 'asc',
+    })
 
     // Fetch broker list from API with pagination
     const { data: brokerListData } = useBrokerList({
         millId: open ? millId : '',
         page: brokerPage,
-        pageSize: brokerLimit,
+        limit: brokerLimit,
     })
 
     // Extract party names from API response and accumulate
     React.useEffect(() => {
         if (partyListData?.parties) {
-            console.log('Party data received:', partyListData.parties.length, 'parties on page', partyPage)
-            const newParties = partyListData.parties.map((party) => party.partyName)
+            console.log(
+                'Party data received:',
+                partyListData.parties.length,
+                'parties on page',
+                partyPage
+            )
+            const newParties = partyListData.parties.map(
+                (party) => party.partyName
+            )
             setAllParties((prev) => {
                 // Only add if not already in the list
                 const combined = [...prev, ...newParties]
@@ -126,8 +128,15 @@ export function PaddyActionDialog({
     // Extract broker names from API response and accumulate
     React.useEffect(() => {
         if (brokerListData?.brokers) {
-            console.log('Broker data received:', brokerListData.brokers.length, 'brokers on page', brokerPage)
-            const newBrokers = brokerListData.brokers.map((broker) => broker.brokerName)
+            console.log(
+                'Broker data received:',
+                brokerListData.brokers.length,
+                'brokers on page',
+                brokerPage
+            )
+            const newBrokers = brokerListData.brokers.map(
+                (broker) => broker.brokerName
+            )
             setAllBrokers((prev) => {
                 // Only add if not already in the list
                 const combined = [...prev, ...newBrokers]
@@ -156,7 +165,8 @@ export function PaddyActionDialog({
     // Handle scroll for party list
     const handlePartyScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const target = e.currentTarget
-        const bottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 5
+        const bottom =
+            target.scrollHeight - target.scrollTop <= target.clientHeight + 5
 
         if (bottom && hasMoreParties && !isLoadingMoreParties) {
             console.log('Loading more parties... Current page:', partyPage)
@@ -168,7 +178,8 @@ export function PaddyActionDialog({
     // Handle scroll for broker list
     const handleBrokerScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const target = e.currentTarget
-        const bottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 5
+        const bottom =
+            target.scrollHeight - target.scrollTop <= target.clientHeight + 5
 
         if (bottom && hasMoreBrokers && !isLoadingMoreBrokers) {
             console.log('Loading more brokers... Current page:', brokerPage)
@@ -312,11 +323,11 @@ export function PaddyActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                    new Date(
-                                                                        field.value
-                                                                    ),
-                                                                    'MMM dd, yyyy'
-                                                                )
+                                                                      new Date(
+                                                                          field.value
+                                                                      ),
+                                                                      'MMM dd, yyyy'
+                                                                  )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -330,17 +341,17 @@ export function PaddyActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                    field.value
-                                                                )
+                                                                      field.value
+                                                                  )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                        date,
-                                                                        'yyyy-MM-dd'
-                                                                    )
+                                                                          date,
+                                                                          'yyyy-MM-dd'
+                                                                      )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -373,7 +384,11 @@ export function PaddyActionDialog({
                                                         showClear
                                                     />
                                                     <ComboboxContent>
-                                                        <ComboboxList onScroll={handlePartyScroll}>
+                                                        <ComboboxList
+                                                            onScroll={
+                                                                handlePartyScroll
+                                                            }
+                                                        >
                                                             <ComboboxCollection>
                                                                 {(party) => (
                                                                     <ComboboxItem
@@ -390,7 +405,8 @@ export function PaddyActionDialog({
                                                             </ComboboxEmpty>
                                                             {isLoadingMoreParties && (
                                                                 <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading more...
+                                                                    Loading
+                                                                    more...
                                                                 </div>
                                                             )}
                                                         </ComboboxList>
@@ -420,7 +436,11 @@ export function PaddyActionDialog({
                                                         showClear
                                                     />
                                                     <ComboboxContent>
-                                                        <ComboboxList onScroll={handleBrokerScroll}>
+                                                        <ComboboxList
+                                                            onScroll={
+                                                                handleBrokerScroll
+                                                            }
+                                                        >
                                                             <ComboboxCollection>
                                                                 {(broker) => (
                                                                     <ComboboxItem
@@ -437,7 +457,8 @@ export function PaddyActionDialog({
                                                             </ComboboxEmpty>
                                                             {isLoadingMoreBrokers && (
                                                                 <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading more...
+                                                                    Loading
+                                                                    more...
                                                                 </div>
                                                             )}
                                                         </ComboboxList>
@@ -931,8 +952,8 @@ export function PaddyActionDialog({
                                         ? 'Updating...'
                                         : 'Adding...'
                                     : isEditing
-                                        ? 'Update'
-                                        : 'Add'}
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

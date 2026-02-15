@@ -22,20 +22,17 @@ export function VehicleReport() {
 
     const queryParams = useMemo(
         () => ({
+            millId: millId || '',
             page: search.page ? parseInt(search.page as string, 10) : 1,
             limit: search.limit ? parseInt(search.limit as string, 10) : 10,
             search: search.search as string | undefined,
             sortBy: (search.sortBy as string) || 'createdAt',
             sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
         }),
-        [search]
+        [search, millId]
     )
 
-    const {
-        data: response,
-        isLoading,
-        isError,
-    } = useVehicleList(millId || '', queryParams, { enabled: !!millId })
+    const { data: response, isLoading, isError } = useVehicleList(queryParams)
 
     const vehicleData = useMemo(
         () =>
@@ -58,7 +55,7 @@ export function VehicleReport() {
     }
 
     return (
-        <VehicleReportProvider>
+        <VehicleReportProvider millId={millId || ''}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>

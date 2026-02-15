@@ -1,144 +1,128 @@
-/**
- * Transporter Report Hooks
- * React Query hooks for Transporter data management (Mill Admin)
- */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import type { TransporterReportData } from './schema'
-import {
-    fetchTransporterList,
-    createTransporter,
-    updateTransporter,
-    deleteTransporter,
-    bulkDeleteTransporters,
-    type TransporterListResponse,
-    type TransporterQueryParams,
-} from './service'
+import { transporterService, type TransporterListResponse } from './service'
 
-// Re-export types
-export type { TransporterQueryParams, TransporterListResponse }
-
-// ==========================================
-// Query Keys
-// ==========================================
-
-export const transporterKeys = {
-    all: (millId: string) => ['transporter', millId] as const,
-    lists: (millId: string) =>
-        [...transporterKeys.all(millId), 'list'] as const,
-    list: (millId: string, params?: TransporterQueryParams) =>
-        [...transporterKeys.lists(millId), params] as const,
+// Query key factory for transporters
+const transporterQueryKeys = {
+    all: ['transporters'] as const,
+    byMill: (millId: string) => [...transporterQueryKeys.all, millId] as const,
+    list: (millId: string, filters?: Record<string, unknown>) =>
+        [...transporterQueryKeys.byMill(millId), 'list', filters] as const,
 }
 
-// ==========================================
-// Query Hooks
-// ==========================================
+interface UseTransporterListParams {
+    millId: string
+    page?: number
+    limit?: number
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+}
 
-/**
- * Hook to fetch transporters list with pagination and filters
- */
-export const useTransporterList = (
-    millId: string,
-    params?: TransporterQueryParams,
-    options?: { enabled?: boolean }
-) => {
+export const useTransporterList = (params: UseTransporterListParams) => {
     return useQuery<TransporterListResponse, Error>({
-        queryKey: transporterKeys.list(millId, params),
-        queryFn: () => fetchTransporterList(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        queryKey: transporterQueryKeys.list(params.millId, {
+            page: params.page,
+            limit: params.limit,
+            search: params.search,
+            sortBy: params.sortBy,
+            sortOrder: params.sortOrder,
+        }),
+        queryFn: () => transporterService.fetchTransporterList(params),
+        enabled: !!params.millId,
     })
 }
 
-// ==========================================
-// Mutation Hooks
-// ==========================================
-
-/**
- * Hook to create a new transporter
- */
 export const useCreateTransporter = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<
-        TransporterReportData,
-        Error,
-        Partial<TransporterReportData>
-    >({
-        mutationFn: (data) => createTransporter(millId, data),
+    return useMutation({
+        mutationFn: (data: Partial<TransporterReportData>) =>
+            transporterService.createTransporter(millId, data),
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: transporterKeys.lists(millId),
-            })
             toast.success('Transporter created successfully')
+            queryClient.invalidateQueries({
+                queryKey: transporterQueryKeys.byMill(millId),
+            })
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to create transporter')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to create transporter'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to update a transporter
- */
-export const useUpdateTransporter = (millId: string, transporterId: string) => {
+export const useUpdateTransporter = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<
-        TransporterReportData,
-        Error,
-        Partial<TransporterReportData>
-    >({
-        mutationFn: (data) => updateTransporter(millId, transporterId, data),
+    return useMutation({
+        mutationFn: ({
+            transporterId,
+            data,
+        }: {
+            transporterId: string
+            data: Partial<TransporterReportData>
+        }) => transporterService.updateTransporter(millId, transporterId, data),
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: transporterKeys.lists(millId),
-            })
             toast.success('Transporter updated successfully')
+            queryClient.invalidateQueries({
+                queryKey: transporterQueryKeys.byMill(millId),
+            })
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to update transporter')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to update transporter'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to delete a transporter
- */
 export const useDeleteTransporter = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string>({
-        mutationFn: (transporterId) => deleteTransporter(millId, transporterId),
+    return useMutation({
+        mutationFn: (transporterId: string) =>
+            transporterService.deleteTransporter(millId, transporterId),
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: transporterKeys.lists(millId),
-            })
             toast.success('Transporter deleted successfully')
+            queryClient.invalidateQueries({
+                queryKey: transporterQueryKeys.byMill(millId),
+            })
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to delete transporter')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to delete transporter'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to bulk delete transporters
- */
 export const useBulkDeleteTransporters = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string[]>({
-        mutationFn: (transporterIds) =>
-            bulkDeleteTransporters(millId, transporterIds),
+    return useMutation({
+        mutationFn: (transporterIds: string[]) =>
+            transporterService.bulkDeleteTransporters(millId, transporterIds),
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: transporterKeys.lists(millId),
-            })
             toast.success('Transporters deleted successfully')
+            queryClient.invalidateQueries({
+                queryKey: transporterQueryKeys.byMill(millId),
+            })
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to delete transporters')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to delete transporters'
+            toast.error(errorMessage)
         },
     })
 }

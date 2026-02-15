@@ -3,7 +3,9 @@ import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useParams } from 'react-router'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -47,8 +49,6 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { salesDealSchema, type SalesDeal } from '../data/schema'
-import { useParams } from 'react-router'
-import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 
 type SalesDealsActionDialogProps = {
     open: boolean
@@ -72,7 +72,7 @@ export function SalesDealsActionDialog({
     const { data: brokerListData } = useBrokerList({
         millId: open ? (millId ?? '') : '',
         page: brokerPage,
-        pageSize: brokerLimit,
+        limit: brokerLimit,
     })
 
     const isEditing = !!currentRow
@@ -85,9 +85,9 @@ export function SalesDealsActionDialog({
             buyerName: '',
             brokerName: '',
             commodity: '',
-            quantity: 0,
-            rate: 0,
-            totalAmount: 0,
+            quantity: '' as unknown as number,
+            rate: '' as unknown as number,
+            totalAmount: '' as unknown as number,
             status: 'pending',
             paymentTerms: '',
             remarks: '',
@@ -97,7 +97,9 @@ export function SalesDealsActionDialog({
     // Extract broker names from API response and accumulate
     React.useEffect(() => {
         if (brokerListData?.brokers) {
-            const newBrokers = brokerListData.brokers.map((broker) => broker.brokerName)
+            const newBrokers = brokerListData.brokers.map(
+                (broker) => broker.brokerName
+            )
             setAllBrokers((prev) => {
                 const combined = [...prev, ...newBrokers]
                 return Array.from(new Set(combined))
@@ -120,7 +122,8 @@ export function SalesDealsActionDialog({
     // Handle scroll for broker list
     const handleBrokerScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const target = e.currentTarget
-        const bottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 5
+        const bottom =
+            target.scrollHeight - target.scrollTop <= target.clientHeight + 5
         if (bottom && hasMoreBrokers && !isLoadingMoreBrokers) {
             setIsLoadingMoreBrokers(true)
             setBrokerPage((prev) => prev + 1)
@@ -268,10 +271,18 @@ export function SalesDealsActionDialog({
                                                     showClear
                                                 />
                                                 <ComboboxContent>
-                                                    <ComboboxList onScroll={handleBrokerScroll}>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            handleBrokerScroll
+                                                        }
+                                                    >
                                                         <ComboboxCollection>
                                                             {(broker) => (
-                                                                <ComboboxItem value={broker}>
+                                                                <ComboboxItem
+                                                                    value={
+                                                                        broker
+                                                                    }
+                                                                >
                                                                     {broker}
                                                                 </ComboboxItem>
                                                             )}

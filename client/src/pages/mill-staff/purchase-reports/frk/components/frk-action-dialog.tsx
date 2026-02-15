@@ -3,6 +3,7 @@ import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -37,20 +38,16 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-import { frkPurchaseSchema, type FrkPurchaseData } from '../data/schema'
 import { useCreateFrkPurchase, useUpdateFrkPurchase } from '../data/hooks'
+import { frkPurchaseSchema, type FrkPurchaseData } from '../data/schema'
 import { useFrk } from './frk-provider'
-import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 
 type FrkActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
 }
 
-export function FrkActionDialog({
-    open,
-    onOpenChange,
-}: FrkActionDialogProps) {
+export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
     const { currentRow, millId } = useFrk()
     const { mutateAsync: createFrkPurchase, isPending: isCreating } =
         useCreateFrkPurchase(millId)
@@ -66,16 +63,13 @@ export function FrkActionDialog({
     const partyLimit = partyPage === 1 ? 10 : 5
 
     // Fetch party list from API with pagination
-    const { data: partyListData } = usePartyList(
-        millId,
-        {
-            page: partyPage,
-            limit: partyLimit,
-            sortBy: 'partyName',
-            sortOrder: 'asc',
-        },
-        { enabled: open && !!millId }
-    )
+    const { data: partyListData } = usePartyList({
+        millId: open ? millId : '',
+        page: partyPage,
+        limit: partyLimit,
+        sortBy: 'partyName',
+        sortOrder: 'asc',
+    })
 
     // Extract party names from API response and accumulate
     React.useEffect(() => {
@@ -209,11 +203,11 @@ export function FrkActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                    new Date(
-                                                                        field.value
-                                                                    ),
-                                                                    'MMM dd, yyyy'
-                                                                )
+                                                                      new Date(
+                                                                          field.value
+                                                                      ),
+                                                                      'MMM dd, yyyy'
+                                                                  )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -227,17 +221,17 @@ export function FrkActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                    field.value
-                                                                )
+                                                                      field.value
+                                                                  )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                        date,
-                                                                        'yyyy-MM-dd'
-                                                                    )
+                                                                          date,
+                                                                          'yyyy-MM-dd'
+                                                                      )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -291,7 +285,8 @@ export function FrkActionDialog({
                                                             </ComboboxEmpty>
                                                             {isLoadingMoreParties && (
                                                                 <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading more...
+                                                                    Loading
+                                                                    more...
                                                                 </div>
                                                             )}
                                                         </ComboboxList>
@@ -341,7 +336,9 @@ export function FrkActionDialog({
                                     name='frkRate'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>FRK Rate (per Qtl)</FormLabel>
+                                            <FormLabel>
+                                                FRK Rate (per Qtl)
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -416,8 +413,8 @@ export function FrkActionDialog({
                                         ? 'Updating...'
                                         : 'Adding...'
                                     : isEditing
-                                        ? 'Update'
-                                        : 'Add'}
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

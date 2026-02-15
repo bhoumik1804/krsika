@@ -26,24 +26,20 @@ import { type DoReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { doReportColumns as columns } from './do-report-columns'
 
-interface PaginationInfo {
-    page: number
-    limit: number
-    total: number
-    totalPages: number
-    hasPrevPage: boolean
-    hasNextPage: boolean
-    prevPage: number | null
-    nextPage: number | null
-}
-
 type DataTableProps = {
     data: DoReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    pagination?: PaginationInfo
-    isLoading?: boolean
-    isError?: boolean
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
 export function DoReportTable({
@@ -95,6 +91,8 @@ export function DoReportTable({
             columnFilters,
             columnVisibility,
         },
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
@@ -102,8 +100,6 @@ export function DoReportTable({
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
         // Use server-side pagination info when available
-        pageCount: serverPagination?.totalPages ?? -1,
-        manualPagination: !!serverPagination,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -114,10 +110,10 @@ export function DoReportTable({
 
     // Ensure page is within range when using server-side pagination
     useEffect(() => {
-        if (serverPagination) {
-            ensurePageInRange(serverPagination.totalPages)
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
         }
-    }, [serverPagination, ensurePageInRange])
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -128,9 +124,8 @@ export function DoReportTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
-                searchKey='search'
-                filters={[]}
+                searchPlaceholder='Search Samiti...'
+                searchKey='samitiSangrahan'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

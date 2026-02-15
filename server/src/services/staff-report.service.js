@@ -50,10 +50,16 @@ export const getStaffReportList = async (millId, options = {}) => {
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
         {
             $project: {
-                password: 0,
-                refreshToken: 0,
-                permissions: 0,
-                attendanceHistory: 0,
+                _id: 1,
+                fullName: 1,
+                email: 1,
+                phone: 1,
+                post: 1,
+                salary: 1,
+                millId: 1,
+                role: 1,
+                createdAt: 1,
+                updatedAt: 1,
             },
         },
     ])

@@ -2,10 +2,22 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    Combobox,
+    ComboboxInput,
+    ComboboxContent,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxEmpty,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -38,16 +50,6 @@ import {
 import { useCreateOtherInward, useUpdateOtherInward } from '../data/hooks'
 import { otherInwardSchema, type OtherInward } from '../data/schema'
 import { useOtherInward } from './other-inward-provider'
-import {
-    Combobox,
-    ComboboxInput,
-    ComboboxContent,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxEmpty,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
-import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
 
 type OtherInwardActionDialogProps = {
     open: boolean
@@ -66,10 +68,30 @@ export function OtherInwardActionDialog({
     const { mutateAsync: updateOtherInward, isPending: isUpdating } =
         useUpdateOtherInward(millId)
 
-    const { party, broker } = usePartyBrokerSelection(
+    const party = usePaginatedList(
         millId,
         open,
-        currentRow?.partyName || undefined,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName || undefined
+    )
+
+    const broker = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
         currentRow?.brokerName || undefined
     )
 
@@ -187,11 +209,11 @@ export function OtherInwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                new Date(
-                                                                    field.value
-                                                                ),
-                                                                'MMM dd, yyyy'
-                                                            )
+                                                                  new Date(
+                                                                      field.value
+                                                                  ),
+                                                                  'MMM dd, yyyy'
+                                                              )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -205,17 +227,17 @@ export function OtherInwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                field.value
-                                                            )
+                                                                  field.value
+                                                              )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                    date,
-                                                                    'yyyy-MM-dd'
-                                                                )
+                                                                      date,
+                                                                      'yyyy-MM-dd'
+                                                                  )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -348,10 +370,16 @@ export function OtherInwardActionDialog({
                                                     showClear
                                                 />
                                                 <ComboboxContent>
-                                                    <ComboboxList onScroll={party.onScroll}>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            party.onScroll
+                                                        }
+                                                    >
                                                         <ComboboxCollection>
                                                             {(p) => (
-                                                                <ComboboxItem value={p}>
+                                                                <ComboboxItem
+                                                                    value={p}
+                                                                >
                                                                     {p}
                                                                 </ComboboxItem>
                                                             )}
@@ -389,10 +417,16 @@ export function OtherInwardActionDialog({
                                                     showClear
                                                 />
                                                 <ComboboxContent>
-                                                    <ComboboxList onScroll={broker.onScroll}>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            broker.onScroll
+                                                        }
+                                                    >
                                                         <ComboboxCollection>
                                                             {(b) => (
-                                                                <ComboboxItem value={b}>
+                                                                <ComboboxItem
+                                                                    value={b}
+                                                                >
                                                                     {b}
                                                                 </ComboboxItem>
                                                             )}
@@ -662,8 +696,8 @@ export function OtherInwardActionDialog({
                                         ? 'Updating...'
                                         : 'Adding...'
                                     : isEditing
-                                        ? 'Update'
-                                        : 'Add'}
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

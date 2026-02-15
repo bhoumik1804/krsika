@@ -2,10 +2,23 @@ import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useParams } from 'react-router'
 import { toast } from 'sonner'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    Combobox,
+    ComboboxContent,
+    ComboboxEmpty,
+    ComboboxInput,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -33,17 +46,6 @@ import {
     useUpdateSilkyKodhaOutward,
 } from '../data/hooks'
 import { silkyKodhaOutwardSchema, type SilkyKodhaOutward } from '../data/schema'
-import { useParams } from 'react-router'
-import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
-import {
-    Combobox,
-    ComboboxContent,
-    ComboboxEmpty,
-    ComboboxInput,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
 
 type SilkyKodhaOutwardActionDialogProps = {
     open: boolean
@@ -57,10 +59,30 @@ export function SilkyKodhaOutwardActionDialog({
     currentRow,
 }: SilkyKodhaOutwardActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(
+    const party = usePaginatedList(
         millId || '',
         open,
-        currentRow?.partyName || undefined,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName || undefined
+    )
+
+    const broker = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
         currentRow?.brokerName || undefined
     )
     const isEditing = !!currentRow
@@ -174,11 +196,11 @@ export function SilkyKodhaOutwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                new Date(
-                                                                    field.value
-                                                                ),
-                                                                'MMM dd, yyyy'
-                                                            )
+                                                                  new Date(
+                                                                      field.value
+                                                                  ),
+                                                                  'MMM dd, yyyy'
+                                                              )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -192,17 +214,17 @@ export function SilkyKodhaOutwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                field.value
-                                                            )
+                                                                  field.value
+                                                              )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                    date,
-                                                                    'yyyy-MM-dd'
-                                                                )
+                                                                      date,
+                                                                      'yyyy-MM-dd'
+                                                                  )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -252,10 +274,16 @@ export function SilkyKodhaOutwardActionDialog({
                                                     showClear
                                                 />
                                                 <ComboboxContent>
-                                                    <ComboboxList onScroll={party.onScroll}>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            party.onScroll
+                                                        }
+                                                    >
                                                         <ComboboxCollection>
                                                             {(p) => (
-                                                                <ComboboxItem value={p}>
+                                                                <ComboboxItem
+                                                                    value={p}
+                                                                >
                                                                     {p}
                                                                 </ComboboxItem>
                                                             )}
@@ -293,10 +321,16 @@ export function SilkyKodhaOutwardActionDialog({
                                                     showClear
                                                 />
                                                 <ComboboxContent>
-                                                    <ComboboxList onScroll={broker.onScroll}>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            broker.onScroll
+                                                        }
+                                                    >
                                                         <ComboboxCollection>
                                                             {(b) => (
-                                                                <ComboboxItem value={b}>
+                                                                <ComboboxItem
+                                                                    value={b}
+                                                                >
                                                                     {b}
                                                                 </ComboboxItem>
                                                             )}

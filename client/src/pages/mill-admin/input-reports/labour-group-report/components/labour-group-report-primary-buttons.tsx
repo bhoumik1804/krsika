@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { labourGroupReport } from './labour-group-report-provider'
+import { useLabourGroupReport } from './labour-group-report-provider'
 
 export function LabourGroupReportPrimaryButtons() {
-    const { setOpen } = labourGroupReport()
+    const { setOpen } = useLabourGroupReport()
 
     return (
         <Button onClick={() => setOpen('add')}>

@@ -3,9 +3,6 @@ import { toast } from 'sonner'
 import type { BrokerReportData } from './schema'
 import { brokerService, type BrokerListResponse } from './service'
 
-// Re-export types
-export type { BrokerListResponse }
-
 // Query key factory for brokers
 const brokerQueryKeys = {
     all: ['brokers'] as const,
@@ -14,19 +11,23 @@ const brokerQueryKeys = {
         [...brokerQueryKeys.byMill(millId), 'list', filters] as const,
 }
 
-export interface UseBrokerListParams {
+interface UseBrokerListParams {
     millId: string
     page?: number
-    pageSize?: number
+    limit?: number
     search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
 }
 
 export const useBrokerList = (params: UseBrokerListParams) => {
     return useQuery<BrokerListResponse, Error>({
         queryKey: brokerQueryKeys.list(params.millId, {
             page: params.page,
-            pageSize: params.pageSize,
+            limit: params.limit,
             search: params.search,
+            sortBy: params.sortBy,
+            sortOrder: params.sortOrder,
         }),
         queryFn: () => brokerService.fetchBrokerList(params),
         enabled: !!params.millId,
@@ -37,7 +38,7 @@ export const useCreateBroker = (millId: string) => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: (data: Omit<BrokerReportData, 'id'>) =>
+        mutationFn: (data: Partial<BrokerReportData>) =>
             brokerService.createBroker(millId, data),
         onSuccess: () => {
             toast.success('Broker created successfully')
@@ -64,7 +65,7 @@ export const useUpdateBroker = (millId: string) => {
             data,
         }: {
             brokerId: string
-            data: Omit<BrokerReportData, 'id'>
+            data: Partial<BrokerReportData>
         }) => brokerService.updateBroker(millId, brokerId, data),
         onSuccess: () => {
             toast.success('Broker updated successfully')

@@ -2,19 +2,12 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { gunnyDeliveryTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import {
-    Combobox,
-    ComboboxInput,
-    ComboboxContent,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxEmpty,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -32,6 +25,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -50,8 +44,7 @@ import {
     type GunnyPurchaseFormData,
     type GunnyPurchaseData,
 } from '../data/schema'
-import { useParams } from 'react-router'
-import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
+import { useGunny } from './gunny-provider'
 
 type GunnyActionDialogProps = {
     open: boolean
@@ -64,16 +57,23 @@ export function GunnyActionDialog({
     onOpenChange,
     currentRow,
 }: GunnyActionDialogProps) {
-    const { millId } = useParams<{ millId: string }>()
-    const { party } = usePartyBrokerSelection(
-        millId || '',
+    const { millId } = useGunny()
+    const { mutateAsync: createGunnyPurchase, isPending: isCreating } =
+        useCreateGunnyPurchase(millId)
+    const { mutateAsync: updateGunnyPurchase, isPending: isUpdating } =
+        useUpdateGunnyPurchase(millId)
+
+    const party = usePaginatedList(
+        millId,
         open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties.map((p: { partyName: string }) => p.partyName),
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
         currentRow?.partyName
     )
-    const { mutateAsync: createGunnyPurchase, isPending: isCreating } =
-        useCreateGunnyPurchase(millId || '')
-    const { mutateAsync: updateGunnyPurchase, isPending: isUpdating } =
-        useUpdateGunnyPurchase(millId || '')
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -118,20 +118,16 @@ export function GunnyActionDialog({
 
     const onSubmit = async (data: GunnyPurchaseFormData) => {
         try {
-            const submissionData = {
-                ...data,
-                partyName: data.partyName || undefined,
-            }
-
             if (isEditing && currentRow?._id) {
                 await updateGunnyPurchase({
                     id: currentRow._id,
-                    ...submissionData,
+                    ...data,
                 })
             } else {
-                await createGunnyPurchase(submissionData)
+                await createGunnyPurchase(data)
             }
             onOpenChange(false)
+            form.reset()
         } catch (error) {
             console.error('Form submission error:', error)
         }
@@ -177,11 +173,11 @@ export function GunnyActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                    new Date(
-                                                                        field.value
-                                                                    ),
-                                                                    'MMM dd, yyyy'
-                                                                )
+                                                                      new Date(
+                                                                          field.value
+                                                                      ),
+                                                                      'MMM dd, yyyy'
+                                                                  )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -195,17 +191,17 @@ export function GunnyActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                    field.value
-                                                                )
+                                                                      field.value
+                                                                  )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                        date,
-                                                                        'yyyy-MM-dd'
-                                                                    )
+                                                                          date,
+                                                                          'yyyy-MM-dd'
+                                                                      )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -226,45 +222,15 @@ export function GunnyActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Combobox
+                                                <PaginatedCombobox
                                                     value={field.value}
                                                     onValueChange={
                                                         field.onChange
                                                     }
-                                                    items={party.items}
-                                                >
-                                                    <ComboboxInput
-                                                        placeholder='Search party...'
-                                                        showClear
-                                                    />
-                                                    <ComboboxContent>
-                                                        <ComboboxList
-                                                            onScroll={
-                                                                party.onScroll
-                                                            }
-                                                        >
-                                                            <ComboboxCollection>
-                                                                {(p) => (
-                                                                    <ComboboxItem
-                                                                        value={
-                                                                            p
-                                                                        }
-                                                                    >
-                                                                        {p}
-                                                                    </ComboboxItem>
-                                                                )}
-                                                            </ComboboxCollection>
-                                                            <ComboboxEmpty>
-                                                                No parties found
-                                                            </ComboboxEmpty>
-                                                            {party.isLoadingMore && (
-                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading more...
-                                                                </div>
-                                                            )}
-                                                        </ComboboxList>
-                                                    </ComboboxContent>
-                                                </Combobox>
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

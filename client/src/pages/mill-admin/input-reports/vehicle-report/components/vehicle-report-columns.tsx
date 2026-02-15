@@ -41,9 +41,7 @@ export const vehicleReportColumns: ColumnDef<VehicleReportData>[] = [
             <DataTableColumnHeader column={column} title='Truck Number' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 font-mono text-sm text-nowrap'>
-                {row.getValue('truckNo')}
-            </div>
+            <div className='text-nowrap'>{row.getValue('truckNo')}</div>
         ),
         meta: {
             className: cn(

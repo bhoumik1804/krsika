@@ -128,8 +128,7 @@ export function VehicleReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='search'
-                filters={[]}
+                searchKey='truckNo'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

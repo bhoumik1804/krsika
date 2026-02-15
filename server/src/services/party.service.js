@@ -3,23 +3,20 @@ import { Party } from '../models/party.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createPartyEntry = async (millId, data, userId) => {
+export const createPartyEntry = async (millId, data) => {
     const party = new Party({
         ...data,
         millId,
-        createdBy: userId,
     })
 
     await party.save()
-    logger.info('Party created', { id: party._id, millId, userId })
+    logger.info('Party created', { id: party._id, millId })
 
     return party
 }
 
 export const getPartyById = async (millId, id) => {
     const party = await Party.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
 
     if (!party) {
         throw new ApiError(404, 'Party not found')
@@ -51,18 +48,8 @@ export const getPartyList = async (millId, options = {}) => {
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
         {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
+            $addFields: {
+                id: { $toString: '$_id' },
             },
         },
     ])
@@ -108,20 +95,18 @@ export const getPartySummary = async (millId) => {
     return summary || { totalParties: 0 }
 }
 
-export const updatePartyEntry = async (millId, id, data, userId) => {
+export const updatePartyEntry = async (millId, id, data) => {
     const party = await Party.findOneAndUpdate(
         { _id: id, millId },
-        { ...data, updatedBy: userId },
+        { ...data },
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
 
     if (!party) {
         throw new ApiError(404, 'Party not found')
     }
 
-    logger.info('Party updated', { id, millId, userId })
+    logger.info('Party updated', { id, millId })
     return party
 }
 

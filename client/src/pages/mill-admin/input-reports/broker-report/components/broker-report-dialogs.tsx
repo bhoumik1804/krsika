@@ -3,24 +3,40 @@ import { BrokerReportDeleteDialog } from './broker-report-delete-dialog'
 import { useBrokerReport } from './broker-report-provider'
 
 export function BrokerReportDialogs() {
-    const { open, setOpen, currentRow } = useBrokerReport()
+    const { open, setOpen, currentRow, setCurrentRow } = useBrokerReport()
 
     return (
         <>
             <BrokerReportActionDialog
-                open={open === 'add' || open === 'edit'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? open : null)
-                }
-                currentRow={currentRow}
+                key='broker-add'
+                open={open === 'add'}
+                onOpenChange={() => setOpen('add')}
             />
-            <BrokerReportDeleteDialog
-                open={open === 'delete'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? 'delete' : null)
-                }
-                currentRow={currentRow}
-            />
+            {currentRow && (
+                <BrokerReportActionDialog
+                    key={`broker-edit-${currentRow._id}`}
+                    open={open === 'edit'}
+                    onOpenChange={() => {
+                        setOpen('edit')
+                        setTimeout(() => {
+                            setCurrentRow(null)
+                        }, 500)
+                    }}
+                    currentRow={currentRow}
+                />
+            )}
+            {currentRow && (
+                <BrokerReportDeleteDialog
+                    open={open === 'delete'}
+                    onOpenChange={() => {
+                        setOpen('delete')
+                        setTimeout(() => {
+                            setCurrentRow(null)
+                        }, 500)
+                    }}
+                    currentRow={currentRow}
+                />
+            )}
         </>
     )
 }

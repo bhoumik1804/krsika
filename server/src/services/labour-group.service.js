@@ -3,17 +3,15 @@ import { LabourGroup } from '../models/labour-group.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createLabourGroupEntry = async (millId, data, userId) => {
-    const labourGroup = new LabourGroup({ ...data, millId, createdBy: userId })
+export const createLabourGroupEntry = async (millId, data) => {
+    const labourGroup = new LabourGroup({ ...data, millId })
     await labourGroup.save()
-    logger.info('Labour group created', { id: labourGroup._id, millId, userId })
+    logger.info('Labour group created', { id: labourGroup._id, millId })
     return labourGroup
 }
 
 export const getLabourGroupById = async (millId, id) => {
     const labourGroup = await LabourGroup.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
 
     if (!labourGroup) throw new ApiError(404, 'Labour group not found')
     return labourGroup
@@ -24,34 +22,21 @@ export const getLabourGroupList = async (millId, options = {}) => {
         page = 1,
         limit = 10,
         search,
-        sortBy = 'groupName',
+        sortBy = 'labourTeamName',
         sortOrder = 'asc',
     } = options
     const matchStage = { millId: new mongoose.Types.ObjectId(millId) }
 
     if (search) {
-        matchStage.$or = [
-            { groupName: { $regex: search, $options: 'i' } },
-            { leaderName: { $regex: search, $options: 'i' } },
-        ]
+        matchStage.$or = [{ labourTeamName: { $regex: search, $options: 'i' } }]
     }
 
     const aggregate = LabourGroup.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
         {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
+            $addFields: {
+                id: { $toString: '$_id' },
             },
         },
     ])
@@ -60,7 +45,7 @@ export const getLabourGroupList = async (millId, options = {}) => {
         page: parseInt(page, 10),
         limit: parseInt(limit, 10),
         customLabels: {
-            docs: 'data',
+            docs: 'reports',
             totalDocs: 'total',
             totalPages: 'totalPages',
             page: 'page',
@@ -73,7 +58,7 @@ export const getLabourGroupList = async (millId, options = {}) => {
     })
 
     return {
-        data: result.data,
+        reports: result.reports, // Ensure consistency with other reports if needed, or keep as reports
         pagination: {
             page: result.page,
             limit: result.limit,
@@ -96,17 +81,15 @@ export const getLabourGroupSummary = async (millId) => {
     return summary || { totalLabourGroups: 0 }
 }
 
-export const updateLabourGroupEntry = async (millId, id, data, userId) => {
+export const updateLabourGroupEntry = async (millId, id, data) => {
     const labourGroup = await LabourGroup.findOneAndUpdate(
         { _id: id, millId },
-        { ...data, updatedBy: userId },
+        { ...data },
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
 
     if (!labourGroup) throw new ApiError(404, 'Labour group not found')
-    logger.info('Labour group updated', { id, millId, userId })
+    logger.info('Labour group updated', { id, millId })
     return labourGroup
 }
 

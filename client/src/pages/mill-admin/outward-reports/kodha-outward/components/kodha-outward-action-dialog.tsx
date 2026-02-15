@@ -2,10 +2,22 @@ import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    Combobox,
+    ComboboxContent,
+    ComboboxEmpty,
+    ComboboxInput,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -30,16 +42,6 @@ import {
 } from '@/components/ui/popover'
 import { useCreateKodhaOutward, useUpdateKodhaOutward } from '../data/hooks'
 import { kodhaOutwardSchema, type KodhaOutward } from '../data/schema'
-import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
-import {
-    Combobox,
-    ComboboxContent,
-    ComboboxEmpty,
-    ComboboxInput,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
 
 type KodhaOutwardActionDialogProps = {
     open: boolean
@@ -54,10 +56,30 @@ export function KodhaOutwardActionDialog({
     currentRow,
     millId,
 }: KodhaOutwardActionDialogProps) {
-    const { party, broker } = usePartyBrokerSelection(
+    const party = usePaginatedList(
         millId,
         open,
-        currentRow?.partyName || undefined,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName || undefined
+    )
+
+    const broker = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
         currentRow?.brokerName || undefined
     )
     const isEditing = !!currentRow
@@ -171,11 +193,11 @@ export function KodhaOutwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                new Date(
-                                                                    field.value
-                                                                ),
-                                                                'MMM dd, yyyy'
-                                                            )
+                                                                  new Date(
+                                                                      field.value
+                                                                  ),
+                                                                  'MMM dd, yyyy'
+                                                              )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -189,17 +211,17 @@ export function KodhaOutwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                field.value
-                                                            )
+                                                                  field.value
+                                                              )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                    date,
-                                                                    'yyyy-MM-dd'
-                                                                )
+                                                                      date,
+                                                                      'yyyy-MM-dd'
+                                                                  )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -249,10 +271,16 @@ export function KodhaOutwardActionDialog({
                                                     showClear
                                                 />
                                                 <ComboboxContent>
-                                                    <ComboboxList onScroll={party.onScroll}>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            party.onScroll
+                                                        }
+                                                    >
                                                         <ComboboxCollection>
                                                             {(p) => (
-                                                                <ComboboxItem value={p}>
+                                                                <ComboboxItem
+                                                                    value={p}
+                                                                >
                                                                     {p}
                                                                 </ComboboxItem>
                                                             )}
@@ -290,10 +318,16 @@ export function KodhaOutwardActionDialog({
                                                     showClear
                                                 />
                                                 <ComboboxContent>
-                                                    <ComboboxList onScroll={broker.onScroll}>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            broker.onScroll
+                                                        }
+                                                    >
                                                         <ComboboxCollection>
                                                             {(b) => (
-                                                                <ComboboxItem value={b}>
+                                                                <ComboboxItem
+                                                                    value={b}
+                                                                >
                                                                     {b}
                                                                 </ComboboxItem>
                                                             )}

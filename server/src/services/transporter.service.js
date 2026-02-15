@@ -3,17 +3,15 @@ import { Transporter } from '../models/transporter.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createTransporterEntry = async (millId, data, userId) => {
-    const transporter = new Transporter({ ...data, millId, createdBy: userId })
+export const createTransporterEntry = async (millId, data) => {
+    const transporter = new Transporter({ ...data, millId })
     await transporter.save()
-    logger.info('Transporter created', { id: transporter._id, millId, userId })
+    logger.info('Transporter created', { id: transporter._id, millId })
     return transporter
 }
 
 export const getTransporterById = async (millId, id) => {
     const transporter = await Transporter.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
 
     if (!transporter) throw new ApiError(404, 'Transporter not found')
     return transporter
@@ -39,21 +37,6 @@ export const getTransporterList = async (millId, options = {}) => {
     const aggregate = Transporter.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
 
     const result = await Transporter.aggregatePaginate(aggregate, {
@@ -96,17 +79,15 @@ export const getTransporterSummary = async (millId) => {
     return summary || { totalTransporters: 0 }
 }
 
-export const updateTransporterEntry = async (millId, id, data, userId) => {
+export const updateTransporterEntry = async (millId, id, data) => {
     const transporter = await Transporter.findOneAndUpdate(
         { _id: id, millId },
-        { ...data, updatedBy: userId },
+        { ...data },
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
 
     if (!transporter) throw new ApiError(404, 'Transporter not found')
-    logger.info('Transporter updated', { id, millId, userId })
+    logger.info('Transporter updated', { id, millId })
     return transporter
 }
 

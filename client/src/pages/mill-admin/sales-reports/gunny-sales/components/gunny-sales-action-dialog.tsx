@@ -2,18 +2,12 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useParams } from 'react-router'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import {
-    Combobox,
-    ComboboxInput,
-    ComboboxContent,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxEmpty,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -31,6 +25,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -38,8 +33,6 @@ import {
 } from '@/components/ui/popover'
 import { useCreateGunnySales, useUpdateGunnySales } from '../data/hooks'
 import { gunnySalesSchema, type GunnySales } from '../data/schema'
-import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
-import { useParams } from 'react-router'
 
 type GunnySalesActionDialogProps = {
     open: boolean
@@ -53,9 +46,17 @@ export function GunnySalesActionDialog({
     currentRow,
 }: GunnySalesActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party } = usePartyBrokerSelection(
+    const party = usePaginatedList(
         millId || '',
         open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
         currentRow?.partyName
     )
     const { mutateAsync: createGunnySales, isPending: isCreating } =
@@ -80,8 +81,6 @@ export function GunnySalesActionDialog({
             plasticGunnyRate: undefined,
         } as GunnySales,
     })
-
-
 
     useEffect(() => {
         if (open) {
@@ -164,11 +163,11 @@ export function GunnySalesActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                    new Date(
-                                                                        field.value
-                                                                    ),
-                                                                    'MMM dd, yyyy'
-                                                                )
+                                                                      new Date(
+                                                                          field.value
+                                                                      ),
+                                                                      'MMM dd, yyyy'
+                                                                  )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -182,17 +181,17 @@ export function GunnySalesActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                    field.value
-                                                                )
+                                                                      field.value
+                                                                  )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                        date,
-                                                                        'yyyy-MM-dd'
-                                                                    )
+                                                                          date,
+                                                                          'yyyy-MM-dd'
+                                                                      )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -213,35 +212,15 @@ export function GunnySalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Combobox
+                                                <PaginatedCombobox
                                                     value={field.value}
-                                                    onValueChange={field.onChange}
-                                                    items={party.items}
-                                                >
-                                                    <ComboboxInput
-                                                        placeholder='Search party...'
-                                                        showClear
-                                                    />
-                                                    <ComboboxContent>
-                                                        <ComboboxList onScroll={party.onScroll}>
-                                                            <ComboboxCollection>
-                                                                {(p) => (
-                                                                    <ComboboxItem value={p}>
-                                                                        {p}
-                                                                    </ComboboxItem>
-                                                                )}
-                                                            </ComboboxCollection>
-                                                            <ComboboxEmpty>
-                                                                No parties found
-                                                            </ComboboxEmpty>
-                                                            {party.isLoadingMore && (
-                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading more...
-                                                                </div>
-                                                            )}
-                                                        </ComboboxList>
-                                                    </ComboboxContent>
-                                                </Combobox>
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -465,8 +444,8 @@ export function GunnySalesActionDialog({
                                         ? 'Updating...'
                                         : 'Adding...'
                                     : isEditing
-                                        ? 'Update'
-                                        : 'Add'}
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

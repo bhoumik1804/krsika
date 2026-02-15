@@ -1,30 +1,18 @@
 // API Request Types
 export type CreateLabourGroupRequest = {
-    groupName: string
-    leaderName?: string
-    phone?: string
-    memberCount?: number
-    workType?: string
+    labourTeamName: string
 }
 
 export type UpdateLabourGroupRequest = {
     id: string
-    groupName?: string
-    leaderName?: string
-    phone?: string
-    memberCount?: number
-    workType?: string
+    labourTeamName?: string
 }
 
 // API Response Types
 export type LabourGroupResponse = {
     _id: string
     millId: string
-    groupName: string
-    leaderName?: string
-    phone?: string
-    memberCount?: number
-    workType?: string
+    labourTeamName: string
     createdAt: string
     updatedAt: string
 }

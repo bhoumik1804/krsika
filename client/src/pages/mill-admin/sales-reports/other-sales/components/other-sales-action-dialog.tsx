@@ -2,18 +2,14 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useParams } from 'react-router'
+import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/sale-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import {
-    Combobox,
-    ComboboxInput,
-    ComboboxContent,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxEmpty,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -31,6 +27,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -43,11 +40,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/sale-form'
-import { otherSalesSchema, type OtherSales } from '../data/schema'
-import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
-import { useParams } from 'react-router'
 import { useCreateOtherSales, useUpdateOtherSales } from '../data/hooks'
+import { otherSalesSchema, type OtherSales } from '../data/schema'
 
 type OtherSalesActionDialogProps = {
     open: boolean
@@ -61,10 +55,30 @@ export function OtherSalesActionDialog({
     currentRow,
 }: OtherSalesActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(
+    const party = usePaginatedList(
         millId || '',
         open,
-        currentRow?.partyName,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName
+    )
+
+    const broker = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
         currentRow?.brokerName
     )
 
@@ -139,8 +153,7 @@ export function OtherSalesActionDialog({
                         {isEditing ? 'Edit' : 'Add'} Other Sale
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the sale details
-                        below
+                        {isEditing ? 'Update' : 'Enter'} the sale details below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -158,7 +171,9 @@ export function OtherSalesActionDialog({
                                             <FormLabel>Date</FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
-                                                onOpenChange={setDatePopoverOpen}
+                                                onOpenChange={
+                                                    setDatePopoverOpen
+                                                }
                                             >
                                                 <PopoverTrigger asChild>
                                                     <FormControl>
@@ -169,11 +184,11 @@ export function OtherSalesActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                    new Date(
-                                                                        field.value
-                                                                    ),
-                                                                    'MMM dd, yyyy'
-                                                                )
+                                                                      new Date(
+                                                                          field.value
+                                                                      ),
+                                                                      'MMM dd, yyyy'
+                                                                  )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -187,17 +202,17 @@ export function OtherSalesActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                    field.value
-                                                                )
+                                                                      field.value
+                                                                  )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                        date,
-                                                                        'yyyy-MM-dd'
-                                                                    )
+                                                                          date,
+                                                                          'yyyy-MM-dd'
+                                                                      )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -218,35 +233,15 @@ export function OtherSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Combobox
+                                                <PaginatedCombobox
                                                     value={field.value}
-                                                    onValueChange={field.onChange}
-                                                    items={party.items}
-                                                >
-                                                    <ComboboxInput
-                                                        placeholder='Search party...'
-                                                        showClear
-                                                    />
-                                                    <ComboboxContent>
-                                                        <ComboboxList onScroll={party.onScroll}>
-                                                            <ComboboxCollection>
-                                                                {(p) => (
-                                                                    <ComboboxItem value={p}>
-                                                                        {p}
-                                                                    </ComboboxItem>
-                                                                )}
-                                                            </ComboboxCollection>
-                                                            <ComboboxEmpty>
-                                                                No parties found
-                                                            </ComboboxEmpty>
-                                                            {party.isLoadingMore && (
-                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading more...
-                                                                </div>
-                                                            )}
-                                                        </ComboboxList>
-                                                    </ComboboxContent>
-                                                </Combobox>
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -259,35 +254,15 @@ export function OtherSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Combobox
+                                                <PaginatedCombobox
                                                     value={field.value}
-                                                    onValueChange={field.onChange}
-                                                    items={broker.items}
-                                                >
-                                                    <ComboboxInput
-                                                        placeholder='Search broker...'
-                                                        showClear
-                                                    />
-                                                    <ComboboxContent>
-                                                        <ComboboxList onScroll={broker.onScroll}>
-                                                            <ComboboxCollection>
-                                                                {(b) => (
-                                                                    <ComboboxItem value={b}>
-                                                                        {b}
-                                                                    </ComboboxItem>
-                                                                )}
-                                                            </ComboboxCollection>
-                                                            <ComboboxEmpty>
-                                                                No brokers found
-                                                            </ComboboxEmpty>
-                                                            {broker.isLoadingMore && (
-                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading more...
-                                                                </div>
-                                                            )}
-                                                        </ComboboxList>
-                                                    </ComboboxContent>
-                                                </Combobox>
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={broker}
+                                                    placeholder='Search broker...'
+                                                    emptyText='No brokers found'
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -298,9 +273,7 @@ export function OtherSalesActionDialog({
                                     name='otherSaleName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Item Name
-                                            </FormLabel>
+                                            <FormLabel>Item Name</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter item name'
@@ -347,9 +320,7 @@ export function OtherSalesActionDialog({
                                     name='qtyType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Quantity Type
-                                            </FormLabel>
+                                            <FormLabel>Quantity Type</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
@@ -483,7 +454,13 @@ export function OtherSalesActionDialog({
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit' disabled={createOtherSalesMutation.isPending || updateOtherSalesMutation.isPending}>
+                            <Button
+                                type='submit'
+                                disabled={
+                                    createOtherSalesMutation.isPending ||
+                                    updateOtherSalesMutation.isPending
+                                }
+                            >
                                 {isEditing ? 'Update' : 'Add'} Sale
                             </Button>
                         </DialogFooter>
