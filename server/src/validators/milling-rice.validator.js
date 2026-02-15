@@ -20,16 +20,46 @@ const millingRiceBaseSchema = {
                     'Invalid date format (YYYY-MM-DD)'
                 )
         ),
-    riceLot: z.string().trim().max(100, 'Rice lot is too long').optional(),
     riceType: z.string().trim().max(100, 'Rice type is too long').optional(),
-    totalPaddy: z.number().min(0, 'Total paddy cannot be negative').optional(),
-    totalRice: z.number().min(0, 'Total rice cannot be negative').optional(),
-    brokenRice: z.number().min(0, 'Broken rice cannot be negative').optional(),
-    khurai: z.number().min(0, 'Khurai cannot be negative').optional(),
-    millRecovery: z
+    hopperInGunny: z
         .number()
-        .min(0, 'Mill recovery cannot be negative')
-        .max(100, 'Mill recovery cannot exceed 100%')
+        .min(0, 'Hopper in gunny cannot be negative')
+        .optional(),
+    hopperInQintal: z
+        .number()
+        .min(0, 'Hopper in quintal cannot be negative')
+        .optional(),
+    riceQuantity: z
+        .number()
+        .min(0, 'Rice quantity cannot be negative')
+        .optional(),
+    ricePercentage: z
+        .number()
+        .min(0, 'Rice percentage cannot be negative')
+        .max(100, 'Rice percentage cannot exceed 100')
+        .optional(),
+    khandaQuantity: z
+        .number()
+        .min(0, 'Khanda quantity cannot be negative')
+        .optional(),
+    khandaPercentage: z
+        .number()
+        .min(0, 'Khanda percentage cannot be negative')
+        .max(100, 'Khanda percentage cannot exceed 100')
+        .optional(),
+    silkyKodhaQuantity: z
+        .number()
+        .min(0, 'Silky kodha quantity cannot be negative')
+        .optional(),
+    silkyKodhaPercentage: z
+        .number()
+        .min(0, 'Silky kodha percentage cannot be negative')
+        .max(100, 'Silky kodha percentage cannot exceed 100')
+        .optional(),
+    wastagePercentage: z
+        .number()
+        .min(0, 'Wastage percentage cannot be negative')
+        .max(100, 'Wastage percentage cannot exceed 100')
         .optional(),
 }
 
@@ -47,13 +77,16 @@ export const createMillingRiceSchema = z.object({
 export const updateMillingRiceSchema = z.object({
     body: z.object({
         date: millingRiceBaseSchema.date.optional(),
-        riceLot: millingRiceBaseSchema.riceLot,
         riceType: millingRiceBaseSchema.riceType,
-        totalPaddy: millingRiceBaseSchema.totalPaddy,
-        totalRice: millingRiceBaseSchema.totalRice,
-        brokenRice: millingRiceBaseSchema.brokenRice,
-        khurai: millingRiceBaseSchema.khurai,
-        millRecovery: millingRiceBaseSchema.millRecovery,
+        hopperInGunny: millingRiceBaseSchema.hopperInGunny,
+        hopperInQintal: millingRiceBaseSchema.hopperInQintal,
+        riceQuantity: millingRiceBaseSchema.riceQuantity,
+        ricePercentage: millingRiceBaseSchema.ricePercentage,
+        khandaQuantity: millingRiceBaseSchema.khandaQuantity,
+        khandaPercentage: millingRiceBaseSchema.khandaPercentage,
+        silkyKodhaQuantity: millingRiceBaseSchema.silkyKodhaQuantity,
+        silkyKodhaPercentage: millingRiceBaseSchema.silkyKodhaPercentage,
+        wastagePercentage: millingRiceBaseSchema.wastagePercentage,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
@@ -107,7 +140,7 @@ export const getMillingRiceListSchema = z.object({
             .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
             .optional(),
         sortBy: z
-            .enum(['date', 'riceLot', 'riceType', 'createdAt'])
+            .enum(['date', 'riceType', 'createdAt'])
             .default('date')
             .optional(),
         sortOrder: z.enum(['asc', 'desc']).default('desc').optional(),

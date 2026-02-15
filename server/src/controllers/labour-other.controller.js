@@ -48,7 +48,7 @@ export const getLabourOtherListHandler = async (req, res, next) => {
         res.status(200).json(
             new ApiResponse(
                 200,
-                { data: result.data, pagination: result.pagination },
+                { entries: result.data, pagination: result.pagination },
                 'Labour other list retrieved'
             )
         )

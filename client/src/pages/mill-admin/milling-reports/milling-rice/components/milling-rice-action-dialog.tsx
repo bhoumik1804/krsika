@@ -3,8 +3,7 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useParams } from 'react-router'
 import { riceTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -37,6 +36,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { useCreateMillingRice, useUpdateMillingRice } from '../data/hooks'
 import { millingRiceSchema, type MillingRice } from '../data/schema'
 
 type MillingRiceActionDialogProps = {
@@ -50,13 +50,17 @@ export function MillingRiceActionDialog({
     onOpenChange,
     currentRow,
 }: MillingRiceActionDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    const createMutation = useCreateMillingRice(millId || '')
+    const updateMutation = useUpdateMillingRice(millId || '')
 
     const form = useForm<MillingRice>({
         resolver: zodResolver(millingRiceSchema),
         defaultValues: {
-            date: '',
+            date: format(new Date(), 'yyyy-MM-dd'),
             riceType: '',
             hopperInGunny: undefined,
             hopperInQintal: undefined,
@@ -74,20 +78,33 @@ export function MillingRiceActionDialog({
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                riceType: '',
+                // Reset other fields to undefined/defaults
+            })
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = (data: MillingRice) => {
+        if (isEditing && currentRow?._id) {
+            updateMutation.mutate(
+                { id: currentRow._id, ...data },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        } else {
+            createMutation.mutate(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
+        }
     }
 
     return (

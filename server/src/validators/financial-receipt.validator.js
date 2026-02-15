@@ -20,28 +20,12 @@ const financialReceiptBaseSchema = {
                     'Invalid date format (YYYY-MM-DD)'
                 )
         ),
-    partyName: z
-        .string({ required_error: 'Party name is required' })
-        .trim()
-        .min(1, 'Party name cannot be empty')
-        .max(200, 'Party name is too long'),
-    receiptMode: z
-        .enum(['Cash', 'Bank', 'Cheque', 'UPI'], {
-            errorMap: () => ({
-                message: 'Receipt mode must be Cash, Bank, Cheque, or UPI',
-            }),
-        })
-        .optional(),
-    bank: z.string().trim().max(200, 'Bank name is too long').optional(),
-    amount: z
-        .number({ required_error: 'Amount is required' })
-        .min(0, 'Amount cannot be negative'),
-    narration: z.string().trim().max(500, 'Narration is too long').optional(),
-    accountHead: z
-        .string()
-        .trim()
-        .max(200, 'Account head is too long')
-        .optional(),
+    partyName: z.string().trim().optional().nullable(),
+    brokerName: z.string().trim().optional().nullable(),
+    salesDealType: z.string().trim().optional().nullable(),
+    salesDealNumber: z.string().trim().optional().nullable(),
+    receivedAmount: z.number().min(0).optional(),
+    remarks: z.string().trim().optional().nullable(),
 }
 
 // Create financial receipt schema
@@ -54,16 +38,10 @@ export const createFinancialReceiptSchema = z.object({
     }),
 })
 
-// Update financial receipt schema (all fields optional except id)
+// Update financial receipt schema
 export const updateFinancialReceiptSchema = z.object({
     body: z.object({
-        date: financialReceiptBaseSchema.date.optional(),
-        partyName: financialReceiptBaseSchema.partyName.optional(),
-        receiptMode: financialReceiptBaseSchema.receiptMode,
-        bank: financialReceiptBaseSchema.bank,
-        amount: financialReceiptBaseSchema.amount.optional(),
-        narration: financialReceiptBaseSchema.narration,
-        accountHead: financialReceiptBaseSchema.accountHead,
+        ...financialReceiptBaseSchema,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
@@ -108,7 +86,8 @@ export const listFinancialReceiptSchema = z.object({
         page: z.coerce.number().int().min(1).default(1).optional(),
         limit: z.coerce.number().int().min(1).max(100).default(10).optional(),
         search: z.string().trim().optional(),
-        receiptMode: z.enum(['Cash', 'Bank', 'Cheque', 'UPI']).optional(),
+        salesDealType: z.string().optional(),
+        partyName: z.string().optional(),
         startDate: z
             .string()
             .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
@@ -118,7 +97,7 @@ export const listFinancialReceiptSchema = z.object({
             .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
             .optional(),
         sortBy: z
-            .enum(['date', 'partyName', 'amount', 'createdAt'])
+            .enum(['date', 'partyName', 'receivedAmount', 'createdAt'])
             .default('date')
             .optional(),
         sortOrder: z.enum(['asc', 'desc']).default('desc').optional(),

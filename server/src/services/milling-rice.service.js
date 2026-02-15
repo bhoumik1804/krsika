@@ -105,8 +105,8 @@ export const getMillingRiceSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalInput: { $sum: '$inputWeight' },
-                totalOutput: { $sum: '$outputWeight' },
+                totalInput: { $sum: '$hopperInQintal' },
+                totalOutput: { $sum: '$riceQuantity' },
             },
         },
         {

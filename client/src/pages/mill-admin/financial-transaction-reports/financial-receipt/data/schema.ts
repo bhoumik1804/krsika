@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 export const FinancialReceiptSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
     partyName: z.string().nullable().optional(),
     brokerName: z.string().nullable().optional(),

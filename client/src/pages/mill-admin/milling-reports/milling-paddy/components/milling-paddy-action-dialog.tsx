@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
+import { useParams } from 'react-router'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import { paddyTypeOptions, riceTypeOptions } from '@/constants/purchase-form'
@@ -37,6 +38,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { useCreateMillingPaddy, useUpdateMillingPaddy } from '../data/hooks'
 import { millingPaddySchema, type MillingPaddy } from '../data/schema'
 
 type MillingPaddyActionDialogProps = {
@@ -50,8 +52,12 @@ export function MillingPaddyActionDialog({
     onOpenChange,
     currentRow,
 }: MillingPaddyActionDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    const createMutation = useCreateMillingPaddy(millId || '')
+    const updateMutation = useUpdateMillingPaddy(millId || '')
 
     const form = useForm<MillingPaddy>({
         resolver: zodResolver(millingPaddySchema),
@@ -79,20 +85,33 @@ export function MillingPaddyActionDialog({
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                paddyType: '',
+                // Reset other fields to undefined/defaults
+            })
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = (data: MillingPaddy) => {
+        if (isEditing && currentRow?._id) {
+            updateMutation.mutate(
+                { id: currentRow._id, ...data },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        } else {
+            createMutation.mutate(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
+        }
     }
 
     return (

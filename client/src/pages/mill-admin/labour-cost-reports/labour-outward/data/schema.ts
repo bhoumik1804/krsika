@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for LabourOutward records (जावक हमाली)
 export const labourOutwardSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(), // दिनांक - DATE_FIELD
     outwardType: z.string().optional(), // जावक प्रकार - OUTWARD_TYP
     truckNumber: z.string().optional(), // ट्रक नं - TRUCK_NUM

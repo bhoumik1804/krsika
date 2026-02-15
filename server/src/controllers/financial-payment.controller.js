@@ -51,7 +51,7 @@ export const getFinancialPaymentListHandler = async (req, res, next) => {
         res.status(200).json(
             new ApiResponse(
                 200,
-                { payments: result.data, pagination: result.pagination },
+                { entries: result.data, pagination: result.pagination },
                 'Financial payment list retrieved'
             )
         )

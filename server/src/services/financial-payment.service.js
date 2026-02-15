@@ -32,7 +32,6 @@ export const getFinancialPaymentList = async (millId, options = {}) => {
         page = 1,
         limit = 10,
         search,
-        status,
         startDate,
         endDate,
         sortBy = 'date',
@@ -40,7 +39,6 @@ export const getFinancialPaymentList = async (millId, options = {}) => {
     } = options
     const matchStage = { millId: new mongoose.Types.ObjectId(millId) }
 
-    if (status) matchStage.status = status
     if (startDate || endDate) {
         matchStage.date = {}
         if (startDate) matchStage.date.$gte = new Date(startDate)
@@ -49,11 +47,15 @@ export const getFinancialPaymentList = async (millId, options = {}) => {
     if (search) {
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
-            { paymentMode: { $regex: search, $options: 'i' } },
-            { referenceNumber: { $regex: search, $options: 'i' } },
+            { paymentType: { $regex: search, $options: 'i' } },
+            { purchaseDealNumber: { $regex: search, $options: 'i' } },
+            { brokerName: { $regex: search, $options: 'i' } },
+            { remarks: { $regex: search, $options: 'i' } },
         ]
     }
 
+    // Use aggregatePaginate directly on the model, not via pipeline first for pagination
+    // But existing code uses aggregatePaginate plugin which accepts an aggregate object
     const aggregate = FinancialPayment.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
@@ -107,7 +109,7 @@ export const getFinancialPaymentList = async (millId, options = {}) => {
 
 export const getFinancialPaymentSummary = async (millId, options = {}) => {
     const { startDate, endDate } = options
-    const match = { millId }
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     if (startDate || endDate) {
         match.date = {}
         if (startDate) match.date.$gte = new Date(startDate)
@@ -120,7 +122,7 @@ export const getFinancialPaymentSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalAmount: { $sum: '$amount' },
+                totalAmount: { $sum: '$paymentAmount' },
             },
         },
         {

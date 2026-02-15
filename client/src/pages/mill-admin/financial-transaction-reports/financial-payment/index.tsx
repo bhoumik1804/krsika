@@ -1,8 +1,10 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -10,16 +12,41 @@ import { FinancialPaymentDialogs } from './components/financial-payment-dialogs'
 import { FinancialPaymentPrimaryButtons } from './components/financial-payment-primary-buttons'
 import { FinancialPaymentProvider } from './components/financial-payment-provider'
 import { FinancialPaymentTable } from './components/financial-payment-table'
-import { FinancialPaymentEntries } from './data/financial-payment-entries'
+import { useFinancialPaymentList } from './data/hooks'
 
 export function FinancialPaymentReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            paymentType: search.paymentType as string | undefined,
+            startDate: search.startDate as string | undefined,
+            endDate: search.endDate as string | undefined,
+            sortBy: (search.sortBy as string) || 'date',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
-    const search = Object.fromEntries(searchParams.entries())
+    const { data, isLoading, isError } = useFinancialPaymentList(
+        millId || '',
+        queryParams
+    )
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
+        const search = Object.fromEntries(searchParams.entries())
         if (typeof opts.search === 'function') {
             const newSearch = opts.search(search)
             setSearchParams(newSearch as Record<string, string>)
@@ -28,6 +55,22 @@ export function FinancialPaymentReport() {
         } else {
             setSearchParams(opts.search as Record<string, string>)
         }
+    }
+
+    if (isLoading) {
+        return (
+            <div className='flex h-screen items-center justify-center'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (isError) {
+        return (
+            <div className='flex h-screen items-center justify-center text-red-500'>
+                Failed to load data. Please try again later.
+            </div>
+        )
     }
 
     return (
@@ -57,9 +100,14 @@ export function FinancialPaymentReport() {
                     <FinancialPaymentPrimaryButtons />
                 </div>
                 <FinancialPaymentTable
-                    data={FinancialPaymentEntries}
-                    search={search}
+                    data={data?.entries || []}
+                    search={Object.fromEntries(
+                        Object.entries(queryParams || {})
+                            .filter(([, value]) => value !== undefined)
+                            .map(([key, value]) => [key, String(value)])
+                    )}
                     navigate={navigate}
+                    pagination={data?.pagination}
                 />
             </Main>
 

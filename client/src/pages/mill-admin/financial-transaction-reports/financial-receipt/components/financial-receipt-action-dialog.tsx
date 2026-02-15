@@ -6,8 +6,6 @@ import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/da
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { useParams } from 'react-router'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { purchaseDealTypes } from '@/constants/purchase-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
@@ -42,6 +40,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import {
+    useCreateFinancialReceipt,
+    useUpdateFinancialReceipt,
+} from '../data/hooks'
 import { FinancialReceiptSchema, type FinancialReceipt } from '../data/schema'
 
 type FinancialReceiptActionDialogProps = {
@@ -106,6 +108,9 @@ export function FinancialReceiptActionDialog({
         }
     }, [currentRow, form])
 
+    const createMutation = useCreateFinancialReceipt()
+    const updateMutation = useUpdateFinancialReceipt()
+
     const onSubmit = (data: FinancialReceipt) => {
         // Sanitize data
         const submissionData = {
@@ -114,17 +119,34 @@ export function FinancialReceiptActionDialog({
             brokerName: data.brokerName || undefined,
             salesDealType: data.salesDealType || undefined,
         }
-        console.log('Submitting:', submissionData)
 
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+        if (isEditing && currentRow._id) {
+            updateMutation.mutate(
+                {
+                    millId: millId || '',
+                    data: { ...submissionData, id: currentRow._id },
+                },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        } else {
+            createMutation.mutate(
+                {
+                    millId: millId || '',
+                    data: submissionData,
+                },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        }
     }
 
     return (

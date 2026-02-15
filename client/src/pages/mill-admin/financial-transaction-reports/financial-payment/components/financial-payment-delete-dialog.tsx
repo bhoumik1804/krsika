@@ -1,5 +1,4 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useParams } from 'react-router'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,6 +9,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteFinancialPayment } from '../data/hooks'
 import { type FinancialPayment } from '../data/schema'
 
 type FinancialPaymentDeleteDialogProps = {
@@ -23,15 +23,20 @@ export function FinancialPaymentDeleteDialog({
     onOpenChange,
     currentRow,
 }: FinancialPaymentDeleteDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
+    const deleteMutation = useDeleteFinancialPayment()
+
     const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+        if (currentRow && currentRow._id) {
+            deleteMutation.mutate(
+                { millId: millId || '', id: currentRow._id },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                    },
+                }
+            )
+        }
     }
 
     return (
@@ -59,4 +64,3 @@ export function FinancialPaymentDeleteDialog({
         </AlertDialog>
     )
 }
-
