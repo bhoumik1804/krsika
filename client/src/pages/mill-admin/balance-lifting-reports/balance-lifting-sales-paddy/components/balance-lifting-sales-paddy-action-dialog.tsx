@@ -2,9 +2,19 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useParams } from 'react-router'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
+import {
+    paddySaleTypeOptions,
+    dhanTypeOptions,
+    deliveryTypeOptions,
+    gunnyTypeOptions,
+} from '@/constants/sale-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -24,6 +34,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -36,14 +47,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import { balanceLiftingSalesPaddySchema, type BalanceLiftingSalesPaddy } from '../data/schema'
-import { useParams } from 'react-router'
-import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
-import { Combobox, ComboboxInput, ComboboxContent, ComboboxItem, ComboboxList, ComboboxEmpty, ComboboxCollection } from '@/components/ui/combobox'
 import {
-    paddySaleTypeOptions, dhanTypeOptions, deliveryTypeOptions,
-    gunnyTypeOptions,
-} from '@/constants/sale-form'
+    balanceLiftingSalesPaddySchema,
+    type BalanceLiftingSalesPaddy,
+} from '../data/schema'
 
 type BalanceLiftingSalesPaddyActionDialogProps = {
     open: boolean
@@ -57,11 +64,31 @@ export function BalanceLiftingSalesPaddyActionDialog({
     currentRow,
 }: BalanceLiftingSalesPaddyActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(
+    const party = usePaginatedList(
         millId || '',
         open,
-        currentRow?.partyName || undefined,
-        currentRow?.brokerName || undefined
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName ?? undefined
+    )
+
+    const broker = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
+        currentRow?.brokerName ?? undefined
     )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -127,9 +154,7 @@ export function BalanceLiftingSalesPaddyActionDialog({
                     ? 'Sale updated successfully'
                     : 'Sale added successfully'
             },
-            error: isEditing
-                ? 'Failed to update sale'
-                : 'Failed to add sale',
+            error: isEditing ? 'Failed to update sale' : 'Failed to add sale',
         })
     }
 
@@ -141,8 +166,7 @@ export function BalanceLiftingSalesPaddyActionDialog({
                         {isEditing ? 'Edit' : 'Add'} Paddy Sale
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the sale details
-                        below
+                        {isEditing ? 'Update' : 'Enter'} the sale details below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -160,7 +184,9 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                             <FormLabel>Date</FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
-                                                onOpenChange={setDatePopoverOpen}
+                                                onOpenChange={
+                                                    setDatePopoverOpen
+                                                }
                                             >
                                                 <PopoverTrigger asChild>
                                                     <FormControl>
@@ -171,11 +197,11 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                    new Date(
-                                                                        field.value
-                                                                    ),
-                                                                    'MMM dd, yyyy'
-                                                                )
+                                                                      new Date(
+                                                                          field.value
+                                                                      ),
+                                                                      'MMM dd, yyyy'
+                                                                  )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -189,17 +215,17 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                    field.value
-                                                                )
+                                                                      field.value
+                                                                  )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                        date,
-                                                                        'yyyy-MM-dd'
-                                                                    )
+                                                                          date,
+                                                                          'yyyy-MM-dd'
+                                                                      )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -220,35 +246,17 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Combobox
-                                                    value={field.value}
-                                                    onValueChange={field.onChange}
-                                                    items={party.items}
-                                                >
-                                                    <ComboboxInput
-                                                        placeholder='Search party...'
-                                                        showClear
-                                                    />
-                                                    <ComboboxContent>
-                                                        <ComboboxList onScroll={party.onScroll}>
-                                                            <ComboboxCollection>
-                                                                {(p) => (
-                                                                    <ComboboxItem value={p}>
-                                                                        {p}
-                                                                    </ComboboxItem>
-                                                                )}
-                                                            </ComboboxCollection>
-                                                            <ComboboxEmpty>
-                                                                No parties found
-                                                            </ComboboxEmpty>
-                                                            {party.isLoadingMore && (
-                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading more...
-                                                                </div>
-                                                            )}
-                                                        </ComboboxList>
-                                                    </ComboboxContent>
-                                                </Combobox>
+                                                <PaginatedCombobox
+                                                    value={
+                                                        field.value ?? undefined
+                                                    }
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -261,35 +269,17 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Combobox
-                                                    value={field.value}
-                                                    onValueChange={field.onChange}
-                                                    items={broker.items}
-                                                >
-                                                    <ComboboxInput
-                                                        placeholder='Search broker...'
-                                                        showClear
-                                                    />
-                                                    <ComboboxContent>
-                                                        <ComboboxList onScroll={broker.onScroll}>
-                                                            <ComboboxCollection>
-                                                                {(b) => (
-                                                                    <ComboboxItem value={b}>
-                                                                        {b}
-                                                                    </ComboboxItem>
-                                                                )}
-                                                            </ComboboxCollection>
-                                                            <ComboboxEmpty>
-                                                                No brokers found
-                                                            </ComboboxEmpty>
-                                                            {broker.isLoadingMore && (
-                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading more...
-                                                                </div>
-                                                            )}
-                                                        </ComboboxList>
-                                                    </ComboboxContent>
-                                                </Combobox>
+                                                <PaginatedCombobox
+                                                    value={
+                                                        field.value ?? undefined
+                                                    }
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={broker}
+                                                    placeholder='Search broker...'
+                                                    emptyText='No brokers found'
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -333,7 +323,6 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                         </FormItem>
                                     )}
                                 />
-
 
                                 {/* DO बिक्री specific fields */}
                                 {isDOSale && (
@@ -457,13 +446,9 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                     name='dhanType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Dhan Type
-                                            </FormLabel>
+                                            <FormLabel>Dhan Type</FormLabel>
                                             <Select
-                                                onValueChange={
-                                                    field.onChange
-                                                }
+                                                onValueChange={field.onChange}
                                                 defaultValue={
                                                     field.value || undefined
                                                 }
@@ -484,9 +469,7 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                                                     option.value
                                                                 }
                                                             >
-                                                                {
-                                                                    option.label
-                                                                }
+                                                                {option.label}
                                                             </SelectItem>
                                                         )
                                                     )}
@@ -557,13 +540,9 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                     name='deliveryType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Delivery Type
-                                            </FormLabel>
+                                            <FormLabel>Delivery Type</FormLabel>
                                             <Select
-                                                onValueChange={
-                                                    field.onChange
-                                                }
+                                                onValueChange={field.onChange}
                                                 defaultValue={
                                                     field.value || undefined
                                                 }
@@ -584,9 +563,7 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                                                     option.value
                                                                 }
                                                             >
-                                                                {
-                                                                    option.label
-                                                                }
+                                                                {option.label}
                                                             </SelectItem>
                                                         )
                                                     )}
@@ -601,9 +578,7 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                     name='discountPercent'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Discount (%)
-                                            </FormLabel>
+                                            <FormLabel>Discount (%)</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -629,9 +604,7 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                     name='brokerage'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Brokerage
-                                            </FormLabel>
+                                            <FormLabel>Brokerage</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -653,7 +626,6 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                     )}
                                 />
 
-
                                 {/* Gunny fields */}
 
                                 <FormField
@@ -661,13 +633,9 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                     name='gunnyType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                Gunny Type
-                                            </FormLabel>
+                                            <FormLabel>Gunny Type</FormLabel>
                                             <Select
-                                                onValueChange={
-                                                    field.onChange
-                                                }
+                                                onValueChange={field.onChange}
                                                 defaultValue={
                                                     field.value || undefined
                                                 }
@@ -688,9 +656,7 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                                                     option.value
                                                                 }
                                                             >
-                                                                {
-                                                                    option.label
-                                                                }
+                                                                {option.label}
                                                             </SelectItem>
                                                         )
                                                     )}
@@ -700,7 +666,6 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                         </FormItem>
                                     )}
                                 />
-
 
                                 {isGunnySahit && (
                                     <>

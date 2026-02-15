@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useCommitteeList } from '@/pages/mill-admin/input-reports/committee-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -22,6 +24,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -50,9 +53,24 @@ export function DoReportActionDialog({
 }: DoReportActionDialogProps) {
     const { currentRow, millId, setCurrentRow } = useDoReport()
     const isEditing = !!currentRow
-    const createMutation = useCreateDoReport(millId || '')
-    const updateMutation = useUpdateDoReport(millId || '')
-    const bulkCreateMutation = useBulkCreateDoReport(millId || '')
+
+    // Paginated committee selection for samitiSangrahan
+    const committee = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useCommitteeList,
+            extractItems: (data) =>
+                data.committees
+                    .map((c) => c.committeeName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'committeeName', sortOrder: 'asc' },
+        },
+        currentRow?.samitiSangrahan
+    )
+    const createMutation = useCreateDoReport(millId)
+    const updateMutation = useUpdateDoReport(millId)
+    const bulkCreateMutation = useBulkCreateDoReport(millId)
     const isLoading =
         createMutation.isPending ||
         updateMutation.isPending ||
@@ -137,9 +155,9 @@ export function DoReportActionDialog({
                 date: format(new Date(), 'yyyy-MM-dd'),
                 samitiSangrahan: '',
                 doNo: '',
-                dhanMota: 0,
-                dhanPatla: 0,
-                dhanSarna: 0,
+                dhanMota: '' as unknown as number,
+                dhanPatla: '' as unknown as number,
+                dhanSarna: '' as unknown as number,
                 total: 0,
             })
             setUploadedFile(null)
@@ -314,9 +332,16 @@ export function DoReportActionDialog({
                                                     Samiti Sangrahan
                                                 </FormLabel>
                                                 <FormControl>
-                                                    <Input
-                                                        placeholder='Enter Samiti Sangrahan'
-                                                        {...field}
+                                                    <PaginatedCombobox
+                                                        value={field.value}
+                                                        onValueChange={
+                                                            field.onChange
+                                                        }
+                                                        paginatedList={
+                                                            committee
+                                                        }
+                                                        placeholder='Search committee...'
+                                                        emptyText='No committees found'
                                                     />
                                                 </FormControl>
                                                 <FormMessage />

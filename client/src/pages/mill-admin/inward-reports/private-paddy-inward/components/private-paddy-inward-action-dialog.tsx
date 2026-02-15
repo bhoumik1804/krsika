@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import {
@@ -9,8 +11,18 @@ import {
     paddyPurchaseTypeOptions,
     gunnyTypeOptions,
 } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    Combobox,
+    ComboboxInput,
+    ComboboxContent,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxEmpty,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -49,16 +61,6 @@ import {
     type PrivatePaddyInward,
 } from '../data/schema'
 import { privatePaddyInward } from './private-paddy-inward-provider'
-import {
-    Combobox,
-    ComboboxInput,
-    ComboboxContent,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxEmpty,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
-import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
 
 type PrivatePaddyInwardActionDialogProps = {
     open: boolean
@@ -75,10 +77,30 @@ export function PrivatePaddyInwardActionDialog({
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const { party, broker } = usePartyBrokerSelection(
+    const party = usePaginatedList(
         millId,
         open,
-        currentRow?.partyName || undefined,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName || undefined
+    )
+
+    const broker = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
         currentRow?.brokerName || undefined
     )
 
@@ -208,11 +230,11 @@ export function PrivatePaddyInwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                new Date(
-                                                                    field.value
-                                                                ),
-                                                                'MMM dd, yyyy'
-                                                            )
+                                                                  new Date(
+                                                                      field.value
+                                                                  ),
+                                                                  'MMM dd, yyyy'
+                                                              )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -226,17 +248,17 @@ export function PrivatePaddyInwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                field.value
-                                                            )
+                                                                  field.value
+                                                              )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                    date,
-                                                                    'yyyy-MM-dd'
-                                                                )
+                                                                      date,
+                                                                      'yyyy-MM-dd'
+                                                                  )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -286,10 +308,16 @@ export function PrivatePaddyInwardActionDialog({
                                                     showClear
                                                 />
                                                 <ComboboxContent>
-                                                    <ComboboxList onScroll={party.onScroll}>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            party.onScroll
+                                                        }
+                                                    >
                                                         <ComboboxCollection>
                                                             {(p) => (
-                                                                <ComboboxItem value={p}>
+                                                                <ComboboxItem
+                                                                    value={p}
+                                                                >
                                                                     {p}
                                                                 </ComboboxItem>
                                                             )}
@@ -327,10 +355,16 @@ export function PrivatePaddyInwardActionDialog({
                                                     showClear
                                                 />
                                                 <ComboboxContent>
-                                                    <ComboboxList onScroll={broker.onScroll}>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            broker.onScroll
+                                                        }
+                                                    >
                                                         <ComboboxCollection>
                                                             {(b) => (
-                                                                <ComboboxItem value={b}>
+                                                                <ComboboxItem
+                                                                    value={b}
+                                                                >
                                                                     {b}
                                                                 </ComboboxItem>
                                                             )}
@@ -387,83 +421,81 @@ export function PrivatePaddyInwardActionDialog({
                             />
                             {form.watch('purchaseType') ===
                                 paddyPurchaseTypeOptions[0].value && (
-                                    <>
-                                        <FormField
-                                            control={form.control}
-                                            name='doNumber'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>DO Number</FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            placeholder='Enter DO Number'
-                                                            {...field}
-                                                            value={
-                                                                field.value ||
-                                                                ''
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name='committeeName'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        Committee Name
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            placeholder='Enter Committee Name'
-                                                            {...field}
-                                                            value={
-                                                                field.value ||
-                                                                ''
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name='balanceDo'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        Balance DO
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            type='number'
-                                                            step='0.01'
-                                                            {...field}
-                                                            onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
-                                                            onWheel={(e) =>
-                                                                e.currentTarget.blur()
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </>
-                                )}
+                                <>
+                                    <FormField
+                                        control={form.control}
+                                        name='doNumber'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>DO Number</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder='Enter DO Number'
+                                                        {...field}
+                                                        value={
+                                                            field.value || ''
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='committeeName'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Committee Name
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder='Enter Committee Name'
+                                                        {...field}
+                                                        value={
+                                                            field.value || ''
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='balanceDo'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Balance DO
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type='number'
+                                                        step='0.01'
+                                                        {...field}
+                                                        onChange={(e) => {
+                                                            const val =
+                                                                e.target
+                                                                    .valueAsNumber
+                                                            field.onChange(
+                                                                isNaN(val)
+                                                                    ? ''
+                                                                    : val
+                                                            )
+                                                        }}
+                                                        onWheel={(e) =>
+                                                            e.currentTarget.blur()
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </>
+                            )}
 
                             {/* Gunny Options */}
                             <FormField
@@ -770,179 +802,179 @@ export function PrivatePaddyInwardActionDialog({
                             />
                             {form.watch('paddyType') ===
                                 paddyTypeOptions[0].value && (
-                                    <FormField
-                                        control={form.control}
-                                        name='paddyMota'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Paddy Mota (Qtl.)
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        {...field}
-                                                        onChange={(e) => {
-                                                            const val =
-                                                                e.target
-                                                                    .valueAsNumber
-                                                            field.onChange(
-                                                                isNaN(val)
-                                                                    ? ''
-                                                                    : val
-                                                            )
-                                                        }}
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                )}
+                                <FormField
+                                    control={form.control}
+                                    name='paddyMota'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Paddy Mota (Qtl.)
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type='number'
+                                                    step='0.01'
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
+                                                    onWheel={(e) =>
+                                                        e.currentTarget.blur()
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
                             {form.watch('paddyType') ===
                                 paddyTypeOptions[1].value && (
-                                    <FormField
-                                        control={form.control}
-                                        name='paddyPatla'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Paddy Patla (Qtl.)
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        {...field}
-                                                        onChange={(e) => {
-                                                            const val =
-                                                                e.target
-                                                                    .valueAsNumber
-                                                            field.onChange(
-                                                                isNaN(val)
-                                                                    ? ''
-                                                                    : val
-                                                            )
-                                                        }}
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                )}
+                                <FormField
+                                    control={form.control}
+                                    name='paddyPatla'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Paddy Patla (Qtl.)
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type='number'
+                                                    step='0.01'
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
+                                                    onWheel={(e) =>
+                                                        e.currentTarget.blur()
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
                             {form.watch('paddyType') ===
                                 paddyTypeOptions[2].value && (
-                                    <FormField
-                                        control={form.control}
-                                        name='paddySarna'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Paddy Sarna (Qtl.)
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        {...field}
-                                                        onChange={(e) => {
-                                                            const val =
-                                                                e.target
-                                                                    .valueAsNumber
-                                                            field.onChange(
-                                                                isNaN(val)
-                                                                    ? ''
-                                                                    : val
-                                                            )
-                                                        }}
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                )}
+                                <FormField
+                                    control={form.control}
+                                    name='paddySarna'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Paddy Sarna (Qtl.)
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type='number'
+                                                    step='0.01'
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
+                                                    onWheel={(e) =>
+                                                        e.currentTarget.blur()
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
                             {form.watch('paddyType') ===
                                 paddyTypeOptions[3].value && (
-                                    <FormField
-                                        control={form.control}
-                                        name='paddyMahamaya'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Paddy Mahamaya (Qtl.)
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        {...field}
-                                                        onChange={(e) => {
-                                                            const val =
-                                                                e.target
-                                                                    .valueAsNumber
-                                                            field.onChange(
-                                                                isNaN(val)
-                                                                    ? ''
-                                                                    : val
-                                                            )
-                                                        }}
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                )}
+                                <FormField
+                                    control={form.control}
+                                    name='paddyMahamaya'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Paddy Mahamaya (Qtl.)
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type='number'
+                                                    step='0.01'
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
+                                                    onWheel={(e) =>
+                                                        e.currentTarget.blur()
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
                             {form.watch('paddyType') ===
                                 paddyTypeOptions[4].value && (
-                                    <FormField
-                                        control={form.control}
-                                        name='paddyRbGold'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Paddy RB Gold (Qtl.)
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        {...field}
-                                                        onChange={(e) => {
-                                                            const val =
-                                                                e.target
-                                                                    .valueAsNumber
-                                                            field.onChange(
-                                                                isNaN(val)
-                                                                    ? ''
-                                                                    : val
-                                                            )
-                                                        }}
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                )}
+                                <FormField
+                                    control={form.control}
+                                    name='paddyRbGold'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Paddy RB Gold (Qtl.)
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type='number'
+                                                    step='0.01'
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
+                                                    onWheel={(e) =>
+                                                        e.currentTarget.blur()
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
                         </div>
                         <DialogFooter>
                             <Button

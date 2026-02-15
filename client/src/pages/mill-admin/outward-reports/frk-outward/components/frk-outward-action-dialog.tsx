@@ -2,9 +2,20 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    Combobox,
+    ComboboxContent,
+    ComboboxEmpty,
+    ComboboxInput,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -30,16 +41,6 @@ import {
 import { useCreateFrkOutward, useUpdateFrkOutward } from '../data/hooks'
 import { frkOutwardSchema, type FrkOutward } from '../data/schema'
 import { useFrkOutward } from './frk-outward-provider'
-import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
-import {
-    Combobox,
-    ComboboxContent,
-    ComboboxEmpty,
-    ComboboxInput,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
 
 type FrkOutwardActionDialogProps = {
     open: boolean
@@ -51,10 +52,18 @@ export function FrkOutwardActionDialog({
     onOpenChange,
 }: FrkOutwardActionDialogProps) {
     const { millId, currentRow } = useFrkOutward()
-    const { party } = usePartyBrokerSelection(
+    const party = usePaginatedList(
         millId || '',
         open,
-        currentRow?.partyName || undefined || undefined
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName || undefined
     )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -160,11 +169,11 @@ export function FrkOutwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                new Date(
-                                                                    field.value
-                                                                ),
-                                                                'MMM dd, yyyy'
-                                                            )
+                                                                  new Date(
+                                                                      field.value
+                                                                  ),
+                                                                  'MMM dd, yyyy'
+                                                              )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -178,17 +187,17 @@ export function FrkOutwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                field.value
-                                                            )
+                                                                  field.value
+                                                              )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                    date,
-                                                                    'yyyy-MM-dd'
-                                                                )
+                                                                      date,
+                                                                      'yyyy-MM-dd'
+                                                                  )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -219,10 +228,16 @@ export function FrkOutwardActionDialog({
                                                     showClear
                                                 />
                                                 <ComboboxContent>
-                                                    <ComboboxList onScroll={party.onScroll}>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            party.onScroll
+                                                        }
+                                                    >
                                                         <ComboboxCollection>
                                                             {(p) => (
-                                                                <ComboboxItem value={p}>
+                                                                <ComboboxItem
+                                                                    value={p}
+                                                                >
                                                                     {p}
                                                                 </ComboboxItem>
                                                             )}

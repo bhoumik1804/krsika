@@ -2,13 +2,17 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useParams } from 'react-router'
 import {
     paddySaleTypeOptions,
     dhanTypeOptions,
     deliveryTypeOptions,
     gunnyTypeOptions,
 } from '@/constants/sale-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -28,6 +32,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -41,9 +46,6 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { paddySalesSchema, type PaddySales } from '../data/schema'
-import { useParams } from 'react-router'
-import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
-import { Combobox, ComboboxInput, ComboboxContent, ComboboxItem, ComboboxList, ComboboxEmpty, ComboboxCollection } from '@/components/ui/combobox'
 
 type PaddySalesActionDialogProps = {
     open: boolean
@@ -57,10 +59,30 @@ export function PaddySalesActionDialog({
     currentRow,
 }: PaddySalesActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { party, broker } = usePartyBrokerSelection(
+    const party = usePaginatedList(
         millId || '',
         open,
-        currentRow?.partyName,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName
+    )
+
+    const broker = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
         currentRow?.brokerName
     )
 
@@ -75,19 +97,19 @@ export function PaddySalesActionDialog({
             brokerName: '',
             saleType: '',
             doNumber: '',
-            dhanMotaQty: undefined,
-            dhanPatlaQty: undefined,
-            dhanSarnaQty: undefined,
+            dhanMotaQty: '' as unknown as number,
+            dhanPatlaQty: '' as unknown as number,
+            dhanSarnaQty: '' as unknown as number,
             dhanType: '',
-            dhanQty: undefined,
-            paddyRatePerQuintal: undefined,
+            dhanQty: '' as unknown as number,
+            paddyRatePerQuintal: '' as unknown as number,
             deliveryType: '',
-            discountPercent: undefined,
-            brokerage: undefined,
+            discountPercent: '' as unknown as number,
+            brokerage: '' as unknown as number,
             gunnyOption: '',
-            newGunnyRate: undefined,
-            oldGunnyRate: undefined,
-            plasticGunnyRate: undefined,
+            newGunnyRate: '' as unknown as number,
+            oldGunnyRate: '' as unknown as number,
+            plasticGunnyRate: '' as unknown as number,
         } as PaddySales,
     })
 
@@ -96,7 +118,6 @@ export function PaddySalesActionDialog({
 
     const isDOSale = watchSaleType === paddySaleTypeOptions[0]?.value
     const isGunnySahit = watchGunnyOption === gunnyTypeOptions[1]?.value
-
 
     useEffect(() => {
         if (open) {
@@ -109,19 +130,19 @@ export function PaddySalesActionDialog({
                     brokerName: '',
                     saleType: '',
                     doNumber: '',
-                    dhanMotaQty: undefined,
-                    dhanPatlaQty: undefined,
-                    dhanSarnaQty: undefined,
+                    dhanMotaQty: '' as unknown as number,
+                    dhanPatlaQty: '' as unknown as number,
+                    dhanSarnaQty: '' as unknown as number,
                     dhanType: '',
-                    dhanQty: undefined,
-                    paddyRatePerQuintal: undefined,
+                    dhanQty: '' as unknown as number,
+                    paddyRatePerQuintal: '' as unknown as number,
                     deliveryType: '',
-                    discountPercent: undefined,
-                    brokerage: undefined,
+                    discountPercent: '' as unknown as number,
+                    brokerage: '' as unknown as number,
                     gunnyOption: '',
-                    newGunnyRate: undefined,
-                    oldGunnyRate: undefined,
-                    plasticGunnyRate: undefined,
+                    newGunnyRate: '' as unknown as number,
+                    oldGunnyRate: '' as unknown as number,
+                    plasticGunnyRate: '' as unknown as number,
                 })
             }
         }
@@ -170,11 +191,11 @@ export function PaddySalesActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                    new Date(
-                                                                        field.value
-                                                                    ),
-                                                                    'MMM dd, yyyy'
-                                                                )
+                                                                      new Date(
+                                                                          field.value
+                                                                      ),
+                                                                      'MMM dd, yyyy'
+                                                                  )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -188,17 +209,17 @@ export function PaddySalesActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                    field.value
-                                                                )
+                                                                      field.value
+                                                                  )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                        date,
-                                                                        'yyyy-MM-dd'
-                                                                    )
+                                                                          date,
+                                                                          'yyyy-MM-dd'
+                                                                      )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -219,35 +240,15 @@ export function PaddySalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Combobox
+                                                <PaginatedCombobox
                                                     value={field.value}
-                                                    onValueChange={field.onChange}
-                                                    items={party.items}
-                                                >
-                                                    <ComboboxInput
-                                                        placeholder='Search party...'
-                                                        showClear
-                                                    />
-                                                    <ComboboxContent>
-                                                        <ComboboxList onScroll={party.onScroll}>
-                                                            <ComboboxCollection>
-                                                                {(p) => (
-                                                                    <ComboboxItem value={p}>
-                                                                        {p}
-                                                                    </ComboboxItem>
-                                                                )}
-                                                            </ComboboxCollection>
-                                                            <ComboboxEmpty>
-                                                                No parties found
-                                                            </ComboboxEmpty>
-                                                            {party.isLoadingMore && (
-                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading more...
-                                                                </div>
-                                                            )}
-                                                        </ComboboxList>
-                                                    </ComboboxContent>
-                                                </Combobox>
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -260,35 +261,15 @@ export function PaddySalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Combobox
+                                                <PaginatedCombobox
                                                     value={field.value}
-                                                    onValueChange={field.onChange}
-                                                    items={broker.items}
-                                                >
-                                                    <ComboboxInput
-                                                        placeholder='Search broker...'
-                                                        showClear
-                                                    />
-                                                    <ComboboxContent>
-                                                        <ComboboxList onScroll={broker.onScroll}>
-                                                            <ComboboxCollection>
-                                                                {(b) => (
-                                                                    <ComboboxItem value={b}>
-                                                                        {b}
-                                                                    </ComboboxItem>
-                                                                )}
-                                                            </ComboboxCollection>
-                                                            <ComboboxEmpty>
-                                                                No brokers found
-                                                            </ComboboxEmpty>
-                                                            {broker.isLoadingMore && (
-                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading more...
-                                                                </div>
-                                                            )}
-                                                        </ComboboxList>
-                                                    </ComboboxContent>
-                                                </Combobox>
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={broker}
+                                                    placeholder='Search broker...'
+                                                    emptyText='No brokers found'
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

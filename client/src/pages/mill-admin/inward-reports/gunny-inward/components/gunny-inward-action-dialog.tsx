@@ -2,10 +2,21 @@ import { useEffect, useState, useMemo } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { gunnyDeliveryTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    Combobox,
+    ComboboxInput,
+    ComboboxContent,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxEmpty,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -31,16 +42,6 @@ import {
 import { useCreateGunnyInward, useUpdateGunnyInward } from '../data/hooks'
 import { gunnyInwardSchema, type GunnyInward } from '../data/schema'
 import { gunnyInward } from './gunny-inward-provider'
-import {
-    Combobox,
-    ComboboxInput,
-    ComboboxContent,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxEmpty,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
-import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
 
 type GunnyInwardActionDialogProps = {
     open: boolean
@@ -59,9 +60,17 @@ export function GunnyInwardActionDialog({
     const { mutate: updateInward, isPending: isUpdating } =
         useUpdateGunnyInward(millId)
 
-    const { party } = usePartyBrokerSelection(
+    const party = usePaginatedList(
         millId,
         open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
         currentRow?.partyName || undefined
     )
     const isLoading = isCreating || isUpdating
@@ -170,9 +179,9 @@ export function GunnyInwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                field.value,
-                                                                'MMM dd, yyyy'
-                                                            )
+                                                                  field.value,
+                                                                  'MMM dd, yyyy'
+                                                              )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -186,17 +195,17 @@ export function GunnyInwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                field.value
-                                                            )
+                                                                  field.value
+                                                              )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                    date,
-                                                                    'yyyy-MM-dd'
-                                                                )
+                                                                      date,
+                                                                      'yyyy-MM-dd'
+                                                                  )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -247,10 +256,16 @@ export function GunnyInwardActionDialog({
                                                     showClear
                                                 />
                                                 <ComboboxContent>
-                                                    <ComboboxList onScroll={party.onScroll}>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            party.onScroll
+                                                        }
+                                                    >
                                                         <ComboboxCollection>
                                                             {(p) => (
-                                                                <ComboboxItem value={p}>
+                                                                <ComboboxItem
+                                                                    value={p}
+                                                                >
                                                                     {p}
                                                                 </ComboboxItem>
                                                             )}
@@ -291,27 +306,27 @@ export function GunnyInwardActionDialog({
                             />
                             {form.watch('delivery') ===
                                 gunnyDeliveryTypeOptions[1].value && (
-                                    <FormField
-                                        control={form.control}
-                                        name='samitiSangrahan'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Samiti Sangrahan
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        id='samitiSangrahan'
-                                                        placeholder='Enter Samiti Name'
-                                                        {...field}
-                                                        value={field.value || ''}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                )}
+                                <FormField
+                                    control={form.control}
+                                    name='samitiSangrahan'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Samiti Sangrahan
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    id='samitiSangrahan'
+                                                    placeholder='Enter Samiti Name'
+                                                    {...field}
+                                                    value={field.value || ''}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
 
                             <FormField
                                 control={form.control}
@@ -419,8 +434,8 @@ export function GunnyInwardActionDialog({
                                         ? 'Updating...'
                                         : 'Adding...'
                                     : isEditing
-                                        ? 'Update'
-                                        : 'Add'}
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

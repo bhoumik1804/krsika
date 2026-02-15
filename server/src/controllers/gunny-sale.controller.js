@@ -11,11 +11,7 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 
 export const createGunnySale = async (req, res, next) => {
     try {
-        const sale = await createGunnySaleEntry(
-            req.params.millId,
-            req.body,
-            req.user._id
-        )
+        const sale = await createGunnySaleEntry(req.params.millId, req.body)
         res.status(201).json(
             new ApiResponse(201, { sale }, 'Gunny sale created')
         )
@@ -37,11 +33,14 @@ export const getGunnySaleByIdHandler = async (req, res, next) => {
 
 export const getGunnySaleListHandler = async (req, res, next) => {
     try {
-        const { page, limit, search, sortBy, sortOrder } = req.query
+        const { page, limit, search, startDate, endDate, sortBy, sortOrder } =
+            req.query
         const result = await getGunnySaleList(req.params.millId, {
             page: page ? parseInt(page, 10) : undefined,
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
+            startDate,
+            endDate,
             sortBy,
             sortOrder,
         })
@@ -59,7 +58,11 @@ export const getGunnySaleListHandler = async (req, res, next) => {
 
 export const getGunnySaleSummaryHandler = async (req, res, next) => {
     try {
-        const summary = await getGunnySaleSummary(req.params.millId)
+        const { startDate, endDate } = req.query
+        const summary = await getGunnySaleSummary(req.params.millId, {
+            startDate,
+            endDate,
+        })
         res.status(200).json(
             new ApiResponse(200, { summary }, 'Gunny sale summary retrieved')
         )
@@ -73,8 +76,7 @@ export const updateGunnySaleHandler = async (req, res, next) => {
         const sale = await updateGunnySaleEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(200, { sale }, 'Gunny sale updated')
