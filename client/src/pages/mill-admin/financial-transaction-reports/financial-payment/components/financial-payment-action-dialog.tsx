@@ -38,24 +38,14 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { FinancialPaymentSchema, type FinancialPayment } from '../data/schema'
+import { useParams } from 'react-router'
+import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
+import { Combobox, ComboboxInput, ComboboxContent, ComboboxItem, ComboboxList, ComboboxEmpty, ComboboxCollection } from '@/components/ui/combobox'
 
 const dealTypeOptions = [
     { label: 'खरीद', value: 'खरीद' },
     { label: 'बिक्री', value: 'बिक्री' },
     { label: 'विनिमय', value: 'विनिमय' },
-]
-
-const partyOptions = [
-    { label: 'राज ट्रेडर्स', value: 'राज ट्रेडर्स' },
-    { label: 'अमित एंटरप्राइजेस', value: 'अमित एंटरप्राइजेस' },
-    { label: 'भारत अनाज', value: 'भारत अनाज' },
-    { label: 'सिंह ब्रदर्स', value: 'सिंह ब्रदर्स' },
-]
-
-const brokerOptions = [
-    { label: 'राजेश ब्रोकर', value: 'राजेश ब्रोकर' },
-    { label: 'अजय कमीशन', value: 'अजय कमीशन' },
-    { label: 'संजय डीलर', value: 'संजय डीलर' },
 ]
 
 const transporterOptions = [
@@ -94,6 +84,13 @@ export function FinancialPaymentActionDialog({
     onOpenChange,
     currentRow,
 }: FinancialPaymentActionDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -170,7 +167,23 @@ export function FinancialPaymentActionDialog({
         }
     }, [salary, attendance, month, allowedLeave, paymentType, form])
 
-    const onSubmit = () => {
+    const onSubmit = (data: FinancialPayment) => {
+        // Sanitize data
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+            paymentType: data.paymentType || undefined,
+            purchaseDealType: data.purchaseDealType || undefined,
+            transporterName: data.transporterName || undefined,
+            labourType: data.labourType || undefined,
+            labourGroupName: data.labourGroupName || undefined,
+            staffName: data.staffName || undefined,
+            month: data.month || undefined,
+        }
+
+        console.log('Submitting:', submissionData)
+
         toast.promise(sleep(2000), {
             loading: isEditing ? 'Updating...' : 'Adding...',
             success: () => {
@@ -218,11 +231,11 @@ export function FinancialPaymentActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                  new Date(
-                                                                      field.value
-                                                                  ),
-                                                                  'MMM dd, yyyy'
-                                                              )
+                                                                new Date(
+                                                                    field.value
+                                                                ),
+                                                                'MMM dd, yyyy'
+                                                            )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -236,17 +249,17 @@ export function FinancialPaymentActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                  field.value
-                                                              )
+                                                                field.value
+                                                            )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                      date,
-                                                                      'yyyy-MM-dd'
-                                                                  )
+                                                                    date,
+                                                                    'yyyy-MM-dd'
+                                                                )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -303,32 +316,37 @@ export function FinancialPaymentActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value || ''}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {partyOptions.map(
-                                                        (option) => (
-                                                            <SelectItem
-                                                                key={
-                                                                    option.value
-                                                                }
-                                                                value={
-                                                                    option.value
-                                                                }
-                                                            >
-                                                                {option.label}
-                                                            </SelectItem>
-                                                        )
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
+                                            <FormControl>
+                                                <Combobox
+                                                    value={field.value}
+                                                    onValueChange={field.onChange}
+                                                    items={party.items}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder='Search party...'
+                                                        showClear
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxList onScroll={party.onScroll}>
+                                                            <ComboboxCollection>
+                                                                {(p) => (
+                                                                    <ComboboxItem value={p}>
+                                                                        {p}
+                                                                    </ComboboxItem>
+                                                                )}
+                                                            </ComboboxCollection>
+                                                            <ComboboxEmpty>
+                                                                No parties found
+                                                            </ComboboxEmpty>
+                                                            {party.isLoadingMore && (
+                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                    Loading more...
+                                                                </div>
+                                                            )}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
+                                            </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -339,32 +357,37 @@ export function FinancialPaymentActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value || ''}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {brokerOptions.map(
-                                                        (option) => (
-                                                            <SelectItem
-                                                                key={
-                                                                    option.value
-                                                                }
-                                                                value={
-                                                                    option.value
-                                                                }
-                                                            >
-                                                                {option.label}
-                                                            </SelectItem>
-                                                        )
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
+                                            <FormControl>
+                                                <Combobox
+                                                    value={field.value}
+                                                    onValueChange={field.onChange}
+                                                    items={broker.items}
+                                                >
+                                                    <ComboboxInput
+                                                        placeholder='Search broker...'
+                                                        showClear
+                                                    />
+                                                    <ComboboxContent>
+                                                        <ComboboxList onScroll={broker.onScroll}>
+                                                            <ComboboxCollection>
+                                                                {(b) => (
+                                                                    <ComboboxItem value={b}>
+                                                                        {b}
+                                                                    </ComboboxItem>
+                                                                )}
+                                                            </ComboboxCollection>
+                                                            <ComboboxEmpty>
+                                                                No brokers found
+                                                            </ComboboxEmpty>
+                                                            {broker.isLoadingMore && (
+                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                    Loading more...
+                                                                </div>
+                                                            )}
+                                                        </ComboboxList>
+                                                    </ComboboxContent>
+                                                </Combobox>
+                                            </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -412,7 +435,11 @@ export function FinancialPaymentActionDialog({
                                         <FormItem>
                                             <FormLabel>Deal Number</FormLabel>
                                             <FormControl>
-                                                <Input disabled {...field} />
+                                                <Input
+                                                    disabled
+                                                    {...field}
+                                                    value={field.value || ''}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -468,7 +495,10 @@ export function FinancialPaymentActionDialog({
                                         <FormItem>
                                             <FormLabel>Truck Number</FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    {...field}
+                                                    value={field.value || ''}
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -489,9 +519,9 @@ export function FinancialPaymentActionDialog({
                                                         field.onChange(
                                                             e.target.value
                                                                 ? parseFloat(
-                                                                      e.target
-                                                                          .value
-                                                                  )
+                                                                    e.target
+                                                                        .value
+                                                                )
                                                                 : undefined
                                                         )
                                                     }
@@ -516,9 +546,9 @@ export function FinancialPaymentActionDialog({
                                                         field.onChange(
                                                             e.target.value
                                                                 ? parseFloat(
-                                                                      e.target
-                                                                          .value
-                                                                  )
+                                                                    e.target
+                                                                        .value
+                                                                )
                                                                 : undefined
                                                         )
                                                     }
@@ -545,9 +575,9 @@ export function FinancialPaymentActionDialog({
                                                         field.onChange(
                                                             e.target.value
                                                                 ? parseFloat(
-                                                                      e.target
-                                                                          .value
-                                                                  )
+                                                                    e.target
+                                                                        .value
+                                                                )
                                                                 : undefined
                                                         )
                                                     }
@@ -745,9 +775,9 @@ export function FinancialPaymentActionDialog({
                                                         field.onChange(
                                                             e.target.value
                                                                 ? parseInt(
-                                                                      e.target
-                                                                          .value
-                                                                  )
+                                                                    e.target
+                                                                        .value
+                                                                )
                                                                 : undefined
                                                         )
                                                     }
@@ -772,9 +802,9 @@ export function FinancialPaymentActionDialog({
                                                         field.onChange(
                                                             e.target.value
                                                                 ? parseFloat(
-                                                                      e.target
-                                                                          .value
-                                                                  )
+                                                                    e.target
+                                                                        .value
+                                                                )
                                                                 : undefined
                                                         )
                                                     }
@@ -821,9 +851,9 @@ export function FinancialPaymentActionDialog({
                                                         field.onChange(
                                                             e.target.value
                                                                 ? parseFloat(
-                                                                      e.target
-                                                                          .value
-                                                                  )
+                                                                    e.target
+                                                                        .value
+                                                                )
                                                                 : undefined
                                                         )
                                                     }
@@ -850,9 +880,9 @@ export function FinancialPaymentActionDialog({
                                                         field.onChange(
                                                             e.target.value
                                                                 ? parseFloat(
-                                                                      e.target
-                                                                          .value
-                                                                  )
+                                                                    e.target
+                                                                        .value
+                                                                )
                                                                 : undefined
                                                         )
                                                     }
@@ -882,8 +912,8 @@ export function FinancialPaymentActionDialog({
                                                     field.onChange(
                                                         e.target.value
                                                             ? parseFloat(
-                                                                  e.target.value
-                                                              )
+                                                                e.target.value
+                                                            )
                                                             : undefined
                                                     )
                                                 }
@@ -903,7 +933,10 @@ export function FinancialPaymentActionDialog({
                                 <FormItem>
                                     <FormLabel>Remarks</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input
+                                            {...field}
+                                            value={field.value || ''}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

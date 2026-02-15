@@ -30,6 +30,16 @@ import {
 import { useCreateFrkOutward, useUpdateFrkOutward } from '../data/hooks'
 import { frkOutwardSchema, type FrkOutward } from '../data/schema'
 import { useFrkOutward } from './frk-outward-provider'
+import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
+import {
+    Combobox,
+    ComboboxContent,
+    ComboboxEmpty,
+    ComboboxInput,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 
 type FrkOutwardActionDialogProps = {
     open: boolean
@@ -41,6 +51,11 @@ export function FrkOutwardActionDialog({
     onOpenChange,
 }: FrkOutwardActionDialogProps) {
     const { millId, currentRow } = useFrkOutward()
+    const { party } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -63,41 +78,47 @@ export function FrkOutwardActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset({
-                date: format(new Date(), 'yyyy-MM-dd'),
-                partyName: '',
-                gunnyPlastic: 0,
-                plasticGunnyWeight: 0,
-                truckNo: '',
-                truckRst: '',
-                truckWeight: 0,
-                gunnyWeight: 0,
-                netWeight: 0,
-            })
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    partyName: '',
+                    gunnyPlastic: 0,
+                    plasticGunnyWeight: 0,
+                    truckNo: '',
+                    truckRst: '',
+                    truckWeight: 0,
+                    gunnyWeight: 0,
+                    netWeight: 0,
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
     const onSubmit = async (data: FrkOutward) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+            }
+
             if (isEditing && currentRow._id) {
-                const { _id, ...updatePayload } = data
+                const { _id, ...updatePayload } = submissionData
                 await updateMutation.mutateAsync({
                     millId,
                     id: currentRow._id,
                     payload: updatePayload,
                 })
             } else {
-                const { _id, ...createPayload } = data
+                const { _id, ...createPayload } = submissionData
                 await createMutation.mutateAsync({
                     millId,
                     payload: createPayload,
                 })
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             // Error is handled by the mutation hooks
         }
@@ -139,11 +160,11 @@ export function FrkOutwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                  new Date(
-                                                                      field.value
-                                                                  ),
-                                                                  'MMM dd, yyyy'
-                                                              )
+                                                                new Date(
+                                                                    field.value
+                                                                ),
+                                                                'MMM dd, yyyy'
+                                                            )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -157,17 +178,17 @@ export function FrkOutwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                  field.value
-                                                              )
+                                                                field.value
+                                                            )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                      date,
-                                                                      'yyyy-MM-dd'
-                                                                  )
+                                                                    date,
+                                                                    'yyyy-MM-dd'
+                                                                )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -188,10 +209,35 @@ export function FrkOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter party name'
-                                                {...field}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={party.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search party...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList onScroll={party.onScroll}>
+                                                        <ComboboxCollection>
+                                                            {(p) => (
+                                                                <ComboboxItem value={p}>
+                                                                    {p}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No parties found
+                                                        </ComboboxEmpty>
+                                                        {party.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -258,6 +304,7 @@ export function FrkOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -274,6 +321,7 @@ export function FrkOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

@@ -30,6 +30,16 @@ import {
 import { useCreateFrkInward, useUpdateFrkInward } from '../data/hooks'
 import { frkInwardSchema, type FrkInward } from '../data/schema'
 import { useFrkInward } from './frk-inward-provider'
+import {
+    Combobox,
+    ComboboxInput,
+    ComboboxContent,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxEmpty,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
+import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
 
 type FrkInwardActionDialogProps = {
     open: boolean
@@ -47,6 +57,12 @@ export function FrkInwardActionDialog({
         useCreateFrkInward(millId)
     const { mutateAsync: updateFrkInward, isPending: isUpdating } =
         useUpdateFrkInward(millId)
+
+    const { party } = usePartyBrokerSelection(
+        millId,
+        open,
+        currentRow?.partyName || undefined
+    )
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -81,7 +97,11 @@ export function FrkInwardActionDialog({
 
     const onSubmit = async (data: FrkInward) => {
         try {
-            const { _id, ...payload } = data
+            const { _id, ...rest } = data
+            const payload = {
+                ...rest,
+                partyName: rest.partyName || undefined,
+            }
             if (isEditing && currentRow?._id) {
                 await updateFrkInward({
                     id: currentRow._id,
@@ -133,11 +153,11 @@ export function FrkInwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                  new Date(
-                                                                      field.value
-                                                                  ),
-                                                                  'MMM dd, yyyy'
-                                                              )
+                                                                new Date(
+                                                                    field.value
+                                                                ),
+                                                                'MMM dd, yyyy'
+                                                            )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -151,17 +171,17 @@ export function FrkInwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                  field.value
-                                                              )
+                                                                field.value
+                                                            )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                      date,
-                                                                      'yyyy-MM-dd'
-                                                                  )
+                                                                    date,
+                                                                    'yyyy-MM-dd'
+                                                                )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -201,11 +221,35 @@ export function FrkInwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter Party Name'
-                                                {...field}
-                                                value={field.value || ''}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={party.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search Party...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList onScroll={party.onScroll}>
+                                                        <ComboboxCollection>
+                                                            {(p) => (
+                                                                <ComboboxItem value={p}>
+                                                                    {p}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No parties found
+                                                        </ComboboxEmpty>
+                                                        {party.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -412,8 +456,8 @@ export function FrkInwardActionDialog({
                                         ? 'Updating...'
                                         : 'Adding...'
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}
+                                        ? 'Update'
+                                        : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

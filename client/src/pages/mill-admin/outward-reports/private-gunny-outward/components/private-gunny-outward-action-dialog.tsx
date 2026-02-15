@@ -35,7 +35,17 @@ import {
     PrivateGunnyOutwardSchema,
     type PrivateGunnyOutward,
 } from '../data/schema'
-import { usePrivateGunnyOutward } from './private-gunny-outward-provider'
+import { useParams } from 'react-router'
+import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
+import {
+    Combobox,
+    ComboboxContent,
+    ComboboxEmpty,
+    ComboboxInput,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 
 type PrivateGunnyOutwardActionDialogProps = {
     open: boolean
@@ -48,12 +58,17 @@ export function PrivateGunnyOutwardActionDialog({
     onOpenChange,
     currentRow,
 }: PrivateGunnyOutwardActionDialogProps) {
-    const { millId } = usePrivateGunnyOutward()
+    const { millId } = useParams<{ millId: string }>()
+    const { party } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const createMutation = useCreatePrivateGunnyOutward(millId)
-    const updateMutation = useUpdatePrivateGunnyOutward(millId)
+    const createMutation = useCreatePrivateGunnyOutward(millId || '')
+    const updateMutation = useUpdatePrivateGunnyOutward(millId || '')
 
     const form = useForm<PrivateGunnyOutward>({
         resolver: zodResolver(PrivateGunnyOutwardSchema),
@@ -70,38 +85,44 @@ export function PrivateGunnyOutwardActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset({
-                _id: '',
-                date: format(new Date(), 'yyyy-MM-dd'),
-                gunnyPurchaseDealNumber: '',
-                partyName: '',
-                newGunnyQty: undefined,
-                oldGunnyQty: undefined,
-                plasticGunnyQty: undefined,
-                truckNo: '',
-            })
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    _id: '',
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    gunnyPurchaseDealNumber: '',
+                    partyName: '',
+                    newGunnyQty: undefined,
+                    oldGunnyQty: undefined,
+                    plasticGunnyQty: undefined,
+                    truckNo: '',
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
     const onSubmit = async (data: PrivateGunnyOutward) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 // Exclude _id from update payload (sent as separate id param)
-                const { _id, ...updatePayload } = data
+                const { _id, ...updatePayload } = submissionData
                 await updateMutation.mutateAsync({
                     id: currentRow._id,
                     payload: updatePayload,
                 })
             } else {
                 // Exclude _id when creating new entry
-                const { _id, ...createPayload } = data
+                const { _id, ...createPayload } = submissionData
                 await createMutation.mutateAsync(createPayload)
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             // Error handling is done in the mutation hooks
         }
@@ -144,11 +165,11 @@ export function PrivateGunnyOutwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                  new Date(
-                                                                      field.value
-                                                                  ),
-                                                                  'MMM dd, yyyy'
-                                                              )
+                                                                new Date(
+                                                                    field.value
+                                                                ),
+                                                                'MMM dd, yyyy'
+                                                            )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -162,17 +183,17 @@ export function PrivateGunnyOutwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                  field.value
-                                                              )
+                                                                field.value
+                                                            )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                      date,
-                                                                      'yyyy-MM-dd'
-                                                                  )
+                                                                    date,
+                                                                    'yyyy-MM-dd'
+                                                                )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -200,6 +221,7 @@ export function PrivateGunnyOutwardActionDialog({
                                             <Input
                                                 placeholder='GPN-1234'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -215,10 +237,35 @@ export function PrivateGunnyOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter party name'
-                                                {...field}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={party.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search party...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList onScroll={party.onScroll}>
+                                                        <ComboboxCollection>
+                                                            {(p) => (
+                                                                <ComboboxItem value={p}>
+                                                                    {p}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No parties found
+                                                        </ComboboxEmpty>
+                                                        {party.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -313,6 +360,7 @@ export function PrivateGunnyOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -341,11 +389,11 @@ export function PrivateGunnyOutwardActionDialog({
                                 }
                             >
                                 {createMutation.isPending ||
-                                updateMutation.isPending
+                                    updateMutation.isPending
                                     ? 'Saving...'
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}
+                                        ? 'Update'
+                                        : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

@@ -38,22 +38,9 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { FinancialReceiptSchema, type FinancialReceipt } from '../data/schema'
-
-const partyOptions = [
-    { label: 'राज ट्रेडर्स', value: 'राज ट्रेडर्स' },
-    { label: 'अमित एंटरप्राइजेस', value: 'अमित एंटरप्राइजेस' },
-    { label: 'भारत अनाज', value: 'भारत अनाज' },
-    { label: 'सिंह ब्रदर्स', value: 'सिंह ब्रदर्स' },
-    { label: 'पटेल इंडस्ट्रीज', value: 'पटेल इंडस्ट्रीज' },
-]
-
-const brokerOptions = [
-    { label: 'राजेश ब्रोकर', value: 'राजेश ब्रोकर' },
-    { label: 'अजय कमीशन', value: 'अजय कमीशन' },
-    { label: 'संजय डीलर', value: 'संजय डीलर' },
-    { label: 'मोहित एजेंसी', value: 'मोहित एजेंसी' },
-    { label: 'विजय बिज़नेस', value: 'विजय बिज़नेस' },
-]
+import { useParams } from 'react-router'
+import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
+import { Combobox, ComboboxInput, ComboboxContent, ComboboxItem, ComboboxList, ComboboxEmpty, ComboboxCollection } from '@/components/ui/combobox'
 
 type FinancialReceiptActionDialogProps = {
     open: boolean
@@ -66,6 +53,13 @@ export function FinancialReceiptActionDialog({
     onOpenChange,
     currentRow,
 }: FinancialReceiptActionDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
+    const { party, broker } = usePartyBrokerSelection(
+        millId || '',
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -90,7 +84,17 @@ export function FinancialReceiptActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
+    const onSubmit = (data: FinancialReceipt) => {
+        // Sanitize data
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+            salesDealType: data.salesDealType || undefined,
+        }
+        console.log('Submitting:', submissionData)
+
+
         toast.promise(sleep(2000), {
             loading: isEditing ? 'Updating...' : 'Adding...',
             success: () => {
@@ -138,11 +142,11 @@ export function FinancialReceiptActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                  new Date(
-                                                                      field.value
-                                                                  ),
-                                                                  'MMM dd, yyyy'
-                                                              )
+                                                                new Date(
+                                                                    field.value
+                                                                ),
+                                                                'MMM dd, yyyy'
+                                                            )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -156,17 +160,17 @@ export function FinancialReceiptActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                  field.value
-                                                              )
+                                                                field.value
+                                                            )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                      date,
-                                                                      'yyyy-MM-dd'
-                                                                  )
+                                                                    date,
+                                                                    'yyyy-MM-dd'
+                                                                )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -186,26 +190,37 @@ export function FinancialReceiptActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value || ''}
-                                        >
-                                            <FormControl>
-                                                <SelectTrigger className='w-full'>
-                                                    <SelectValue placeholder='Select a party' />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent className='w-full'>
-                                                {partyOptions.map((option) => (
-                                                    <SelectItem
-                                                        key={option.value}
-                                                        value={option.value}
-                                                    >
-                                                        {option.label}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                        <FormControl>
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={party.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search party...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList onScroll={party.onScroll}>
+                                                        <ComboboxCollection>
+                                                            {(p) => (
+                                                                <ComboboxItem value={p}>
+                                                                    {p}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No parties found
+                                                        </ComboboxEmpty>
+                                                        {party.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
+                                        </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -216,26 +231,37 @@ export function FinancialReceiptActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Broker Name</FormLabel>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value || ''}
-                                        >
-                                            <FormControl>
-                                                <SelectTrigger className='w-full'>
-                                                    <SelectValue placeholder='Select a broker' />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent className='w-full'>
-                                                {brokerOptions.map((option) => (
-                                                    <SelectItem
-                                                        key={option.value}
-                                                        value={option.value}
-                                                    >
-                                                        {option.label}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                        <FormControl>
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={broker.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search broker...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList onScroll={broker.onScroll}>
+                                                        <ComboboxCollection>
+                                                            {(b) => (
+                                                                <ComboboxItem value={b}>
+                                                                    {b}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No brokers found
+                                                        </ComboboxEmpty>
+                                                        {broker.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
+                                        </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -282,6 +308,7 @@ export function FinancialReceiptActionDialog({
                                             <Input
                                                 placeholder='Sales Deal Number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -328,6 +355,7 @@ export function FinancialReceiptActionDialog({
                                             <Input
                                                 placeholder='Enter remarks'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

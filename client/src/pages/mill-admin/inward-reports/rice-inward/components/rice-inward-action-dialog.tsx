@@ -43,6 +43,16 @@ import {
 import { useCreateRiceInward, useUpdateRiceInward } from '../data/hooks'
 import { riceInwardSchema, type RiceInward } from '../data/schema'
 import { riceInward } from './rice-inward-provider'
+import {
+    Combobox,
+    ComboboxInput,
+    ComboboxContent,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxEmpty,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
+import { usePartyBrokerSelection } from '@/hooks/use-party-broker-selection'
 
 type RiceInwardActionDialogProps = {
     open: boolean
@@ -58,6 +68,13 @@ export function RiceInwardActionDialog({
     const { millId } = riceInward()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    const { party, broker } = usePartyBrokerSelection(
+        millId,
+        open,
+        currentRow?.partyName || undefined,
+        currentRow?.brokerName || undefined
+    )
 
     const createMutation = useCreateRiceInward(millId)
     const updateMutation = useUpdateRiceInward(millId)
@@ -103,9 +120,26 @@ export function RiceInwardActionDialog({
     }, [currentRow, getDefaultValues])
 
     const onSubmit = (data: RiceInward) => {
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+            ricePurchaseDealNumber: data.ricePurchaseDealNumber || undefined,
+            riceType: data.riceType || undefined,
+            inwardType: data.inwardType || undefined,
+            lotNumber: data.lotNumber || undefined,
+            frkOrNAN: data.frkOrNAN || undefined,
+            gunnyOption: data.gunnyOption || undefined,
+            truckNumber: data.truckNumber || undefined,
+            rstNumber: data.rstNumber || undefined,
+        }
+
         if (isEditing && currentRow?._id) {
             updateMutation.mutate(
-                { id: currentRow._id, data: { ...data, _id: currentRow._id } },
+                {
+                    id: currentRow._id,
+                    data: { ...submissionData, _id: currentRow._id },
+                },
                 {
                     onSuccess: () => {
                         toast.success('Updated successfully')
@@ -118,7 +152,7 @@ export function RiceInwardActionDialog({
                 }
             )
         } else {
-            createMutation.mutate(data, {
+            createMutation.mutate(submissionData, {
                 onSuccess: () => {
                     toast.success('Added successfully')
                     onOpenChange(false)
@@ -168,11 +202,11 @@ export function RiceInwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                  new Date(
-                                                                      field.value
-                                                                  ),
-                                                                  'MMM dd, yyyy'
-                                                              )
+                                                                new Date(
+                                                                    field.value
+                                                                ),
+                                                                'MMM dd, yyyy'
+                                                            )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -186,17 +220,17 @@ export function RiceInwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                  field.value
-                                                              )
+                                                                field.value
+                                                            )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                      date,
-                                                                      'yyyy-MM-dd'
-                                                                  )
+                                                                    date,
+                                                                    'yyyy-MM-dd'
+                                                                )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -237,12 +271,35 @@ export function RiceInwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                id='partyName'
-                                                placeholder='Enter Party Name'
-                                                {...field}
-                                                value={field.value || ''}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={party.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search Party...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList onScroll={party.onScroll}>
+                                                        <ComboboxCollection>
+                                                            {(p) => (
+                                                                <ComboboxItem value={p}>
+                                                                    {p}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No parties found
+                                                        </ComboboxEmpty>
+                                                        {party.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -255,12 +312,35 @@ export function RiceInwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Broker Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                id='brokerName'
-                                                placeholder='Enter Broker Name'
-                                                {...field}
-                                                value={field.value || ''}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={broker.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search Broker...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList onScroll={broker.onScroll}>
+                                                        <ComboboxCollection>
+                                                            {(b) => (
+                                                                <ComboboxItem value={b}>
+                                                                    {b}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No brokers found
+                                                        </ComboboxEmpty>
+                                                        {broker.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -274,7 +354,9 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Inward Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            defaultValue={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -302,25 +384,25 @@ export function RiceInwardActionDialog({
                             {/* Conditional LOT No */}
                             {form.watch('inwardType') ===
                                 ricePurchaseTypeOptions[0].value && (
-                                <FormField
-                                    control={form.control}
-                                    name='lotNumber'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>LOT No.</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    id='lotNumber'
-                                                    placeholder='Enter LOT No'
-                                                    {...field}
-                                                    value={field.value || ''}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            )}
+                                    <FormField
+                                        control={form.control}
+                                        name='lotNumber'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>LOT No.</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        id='lotNumber'
+                                                        placeholder='Enter LOT No'
+                                                        {...field}
+                                                        value={field.value || ''}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                )}
 
                             <FormField
                                 control={form.control}
@@ -359,7 +441,9 @@ export function RiceInwardActionDialog({
                                         <FormLabel>FRK Status</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            defaultValue={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -393,7 +477,9 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Gunny Option</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            defaultValue={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -673,7 +759,9 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Rice Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            defaultValue={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -699,78 +787,78 @@ export function RiceInwardActionDialog({
                             />
                             {form.watch('riceType') ===
                                 riceTypeOptions[0].value && (
-                                <FormField
-                                    control={form.control}
-                                    name='riceMotaNetWeight'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Rice Mota Net Wt (Qtl)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    id='riceMotaNetWeight'
-                                                    type='number'
-                                                    step='0.01'
-                                                    {...field}
-                                                    value={field.value ?? ''}
-                                                    onChange={(e) => {
-                                                        const val =
-                                                            e.target
-                                                                .valueAsNumber
-                                                        field.onChange(
-                                                            isNaN(val)
-                                                                ? ''
-                                                                : val
-                                                        )
-                                                    }}
-                                                    onWheel={(e) =>
-                                                        e.currentTarget.blur()
-                                                    }
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            )}
+                                    <FormField
+                                        control={form.control}
+                                        name='riceMotaNetWeight'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Rice Mota Net Wt (Qtl)
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        id='riceMotaNetWeight'
+                                                        type='number'
+                                                        step='0.01'
+                                                        {...field}
+                                                        value={field.value ?? ''}
+                                                        onChange={(e) => {
+                                                            const val =
+                                                                e.target
+                                                                    .valueAsNumber
+                                                            field.onChange(
+                                                                isNaN(val)
+                                                                    ? ''
+                                                                    : val
+                                                            )
+                                                        }}
+                                                        onWheel={(e) =>
+                                                            e.currentTarget.blur()
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                )}
                             {form.watch('riceType') ===
                                 riceTypeOptions[1].value && (
-                                <FormField
-                                    control={form.control}
-                                    name='ricePatlaNetWeight'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Rice Patla Net Wt (Qtl)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    id='ricePatlaNetWeight'
-                                                    type='number'
-                                                    step='0.01'
-                                                    {...field}
-                                                    value={field.value ?? ''}
-                                                    onChange={(e) => {
-                                                        const val =
-                                                            e.target
-                                                                .valueAsNumber
-                                                        field.onChange(
-                                                            isNaN(val)
-                                                                ? ''
-                                                                : val
-                                                        )
-                                                    }}
-                                                    onWheel={(e) =>
-                                                        e.currentTarget.blur()
-                                                    }
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            )}
+                                    <FormField
+                                        control={form.control}
+                                        name='ricePatlaNetWeight'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Rice Patla Net Wt (Qtl)
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        id='ricePatlaNetWeight'
+                                                        type='number'
+                                                        step='0.01'
+                                                        {...field}
+                                                        value={field.value ?? ''}
+                                                        onChange={(e) => {
+                                                            const val =
+                                                                e.target
+                                                                    .valueAsNumber
+                                                            field.onChange(
+                                                                isNaN(val)
+                                                                    ? ''
+                                                                    : val
+                                                            )
+                                                        }}
+                                                        onWheel={(e) =>
+                                                            e.currentTarget.blur()
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                )}
                         </div>
                         <div className='flex justify-end gap-2'>
                             <Button
