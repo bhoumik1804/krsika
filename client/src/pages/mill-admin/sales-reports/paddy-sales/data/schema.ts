@@ -4,6 +4,7 @@ import { z } from 'zod'
 export const paddySalesSchema = z.object({
     _id: z.string().optional(),
     date: z.string().min(1, 'Date is required'),
+    paddySalesDealNumber: z.string().optional(),
     partyName: z.string(),
     brokerName: z.string(),
     saleType: z.string(), // DO बिक्री / अन्य (मिल से बिक्री)

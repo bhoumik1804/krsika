@@ -4,6 +4,7 @@ import { paddySalesSchema } from './schema'
 export type PaddySales = z.infer<typeof paddySalesSchema>
 
 export interface PaddySalesResponse extends PaddySales {
+    paddySalesDealNumber?: string
     _id: string
     createdAt: string
     updatedAt: string

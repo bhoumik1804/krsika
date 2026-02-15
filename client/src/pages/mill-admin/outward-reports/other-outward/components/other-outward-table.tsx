@@ -21,7 +21,6 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type OtherOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { otherOutwardColumns as columns } from './other-outward-columns'
@@ -67,7 +66,6 @@ export function OtherOutwardTable({
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
         ],
     })
 
@@ -114,13 +112,7 @@ export function OtherOutwardTable({
                 table={table}
                 searchPlaceholder='Search...'
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
+                filters={[]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

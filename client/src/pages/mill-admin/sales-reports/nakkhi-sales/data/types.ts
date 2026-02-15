@@ -31,6 +31,7 @@ export type NakkhiSalesResponse = {
     nakkhiRate?: number
     discountPercent?: number
     brokeragePerQuintal?: number
+    nakkhiSalesDealNumber?: string
     createdAt: string
     updatedAt: string
 }

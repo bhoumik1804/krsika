@@ -10,9 +10,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeletePrivateGunnyOutward } from '../data/hooks'
 import { PrivateGunnyOutward } from '../data/schema'
 import { usePrivateGunnyOutward } from './private-gunny-outward-provider'
-import { useDeletePrivateGunnyOutward } from '../data/hooks'
 
 interface Props {
     open: boolean
@@ -48,7 +48,7 @@ export function PrivateGunnyOutwardDeleteDialog({
                     <AlertDialogDescription>
                         This action cannot be undone. This will permanently
                         delete the record for{' '}
-                        <strong>{currentRow?.gunnyPurchaseDealNumber}</strong>
+                        <strong>{currentRow?.gunnySaleDealNumber}</strong>
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

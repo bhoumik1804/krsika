@@ -13,7 +13,7 @@ export type GovtRiceOutwardQueryParams = {
 }
 
 export type GovtRiceOutwardListResponse = {
-    entries: GovtRiceOutward[]
+    data: GovtRiceOutward[]
     pagination: {
         page: number
         limit: number

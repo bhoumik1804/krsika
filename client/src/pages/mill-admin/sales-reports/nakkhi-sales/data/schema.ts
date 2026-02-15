@@ -10,6 +10,7 @@ export const nakkhiSalesSchema = z.object({
     nakkhiRate: z.number().optional(),
     discountPercent: z.number().optional(),
     brokeragePerQuintal: z.number().optional(),
+    nakkhiSalesDealNumber: z.string().optional(),
 })
 
 export type NakkhiSales = z.infer<typeof nakkhiSalesSchema>

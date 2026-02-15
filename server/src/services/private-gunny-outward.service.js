@@ -34,7 +34,7 @@ export const getPrivateGunnyOutwardList = async (millId, options = {}) => {
         limit = 10,
         search,
         partyName,
-        gunnyPurchaseDealNumber,
+        gunnySaleDealNumber,
         startDate,
         endDate,
         sortBy = 'date',
@@ -52,9 +52,9 @@ export const getPrivateGunnyOutwardList = async (millId, options = {}) => {
     // Individual field filtering
     if (partyName)
         matchStage.partyName = { $regex: escapeRegex(partyName), $options: 'i' }
-    if (gunnyPurchaseDealNumber)
-        matchStage.gunnyPurchaseDealNumber = {
-            $regex: escapeRegex(gunnyPurchaseDealNumber),
+    if (gunnySaleDealNumber)
+        matchStage.gunnySaleDealNumber = {
+            $regex: escapeRegex(gunnySaleDealNumber),
             $options: 'i',
         }
 
@@ -63,7 +63,7 @@ export const getPrivateGunnyOutwardList = async (millId, options = {}) => {
         matchStage.$or = [
             { partyName: { $regex: escapeRegex(search), $options: 'i' } },
             {
-                gunnyPurchaseDealNumber: {
+                gunnySaleDealNumber: {
                     $regex: escapeRegex(search),
                     $options: 'i',
                 },
@@ -71,9 +71,15 @@ export const getPrivateGunnyOutwardList = async (millId, options = {}) => {
             { truckNo: { $regex: escapeRegex(search), $options: 'i' } },
         ]
 
+    const sortStage = { [sortBy]: sortOrder === 'asc' ? 1 : -1 }
+    // Add secondary sort by createdAt to handle entries with same date
+    if (sortBy === 'date') {
+        sortStage.createdAt = -1
+    }
+
     const aggregate = PrivateGunnyOutward.aggregate([
         { $match: matchStage },
-        { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
+        { $sort: sortStage },
     ])
     const result = await PrivateGunnyOutward.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),

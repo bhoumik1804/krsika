@@ -8,15 +8,6 @@ import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
-    Combobox,
-    ComboboxContent,
-    ComboboxEmpty,
-    ComboboxInput,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
-import {
     Dialog,
     DialogContent,
     DialogDescription,
@@ -33,6 +24,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -218,41 +210,13 @@ export function FrkOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
-                                            <Combobox
-                                                value={field.value}
+                                            <PaginatedCombobox
+                                                value={field.value || undefined}
                                                 onValueChange={field.onChange}
-                                                items={party.items}
-                                            >
-                                                <ComboboxInput
-                                                    placeholder='Search party...'
-                                                    showClear
-                                                />
-                                                <ComboboxContent>
-                                                    <ComboboxList
-                                                        onScroll={
-                                                            party.onScroll
-                                                        }
-                                                    >
-                                                        <ComboboxCollection>
-                                                            {(p) => (
-                                                                <ComboboxItem
-                                                                    value={p}
-                                                                >
-                                                                    {p}
-                                                                </ComboboxItem>
-                                                            )}
-                                                        </ComboboxCollection>
-                                                        <ComboboxEmpty>
-                                                            No parties found
-                                                        </ComboboxEmpty>
-                                                        {party.isLoadingMore && (
-                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                Loading more...
-                                                            </div>
-                                                        )}
-                                                    </ComboboxList>
-                                                </ComboboxContent>
-                                            </Combobox>
+                                                paginatedList={party}
+                                                placeholder='Search party...'
+                                                emptyText='No parties found'
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
