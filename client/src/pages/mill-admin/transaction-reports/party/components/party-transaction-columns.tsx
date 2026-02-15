@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-// '
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -23,7 +22,7 @@ export const partyTransactionColumns: ColumnDef<PartyTransaction>[] = [
             />
         ),
         meta: {
-            className: cn('sticky start-0 z-10 rounded-tl-[inherit]'),
+            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
         },
         cell: ({ row }) => (
             <Checkbox
@@ -33,6 +32,7 @@ export const partyTransactionColumns: ColumnDef<PartyTransaction>[] = [
                 className='translate-y-[2px]'
             />
         ),
+
         enableSorting: false,
         enableHiding: false,
     },

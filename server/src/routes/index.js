@@ -59,6 +59,7 @@ import silkyKodhaOutwardRoutes from './silky-kodha-outward.routes.js'
 import staffReportRoutes from './staff-report.routes.js'
 import staffRoutes from './staff.routes.js'
 import stockTransactionRoutes from './stock-transaction.routes.js'
+import transactionReportRoutes from './transaction-report.routes.js'
 import transporterRoutes from './transporter.routes.js'
 import usersRoutes from './users.routes.js'
 import vehicleRoutes from './vehicle.routes.js'
@@ -88,6 +89,7 @@ router.use('/mills/:millId/paddy-purchase', paddyPurchaseRoutes)
 router.use('/mills/:millId/private-paddy-inward', privatePaddyInwardRoutes)
 router.use('/mills/:millId/rice-sales', riceSaleRoutes)
 router.use('/mills/:millId/stock-transactions', stockTransactionRoutes)
+router.use('/mills/:millId/transaction-reports', transactionReportRoutes)
 router.use('/mills/:millId/staff', staffRoutes)
 
 // Labour Cost Reports

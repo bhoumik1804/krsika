@@ -2,10 +2,10 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { type BrokerTransaction } from '../data/schema'
-import { DataTableRowActions } from './data-table-row-actions'
+import { type PartyTransaction } from '../data/schema'
 
-export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
+/** Read-only columns for Party Transaction Report (aggregated from deals) */
+export const partyTransactionReportColumns: ColumnDef<PartyTransaction>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -32,7 +32,6 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
                 className='translate-y-[2px]'
             />
         ),
-
         enableSorting: false,
         enableHiding: false,
     },
@@ -41,7 +40,9 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Party Name' />
         ),
-        cell: ({ row }) => <div>{row.getValue('partyName')}</div>,
+        cell: ({ row }) => (
+            <div className='font-medium'>{row.getValue('partyName')}</div>
+        ),
         meta: {
             className: cn(
                 'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
@@ -53,10 +54,9 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader column={column} title='Broker' />
         ),
-        cell: ({ row }) => <div>{row.getValue('brokerName')}</div>,
-        enableHiding: false,
+        cell: ({ row }) => <div>{row.getValue('brokerName') || '-'}</div>,
     },
     {
         accessorKey: 'date',
@@ -70,76 +70,76 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Purchase Deal' />
         ),
-        cell: ({ row }) => <div>{row.getValue('purchaseDeal')}</div>,
+        cell: ({ row }) => (
+            <div className='text-right'>
+                {Number(row.getValue('purchaseDeal') || 0).toLocaleString()}
+            </div>
+        ),
     },
     {
         accessorKey: 'salesDeal',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Sales Deal' />
         ),
-        cell: ({ row }) => <div>{row.getValue('salesDeal')}</div>,
+        cell: ({ row }) => (
+            <div className='text-right'>
+                {Number(row.getValue('salesDeal') || 0).toLocaleString()}
+            </div>
+        ),
     },
     {
         accessorKey: 'inward',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Inward' />
+            <DataTableColumnHeader column={column} title='Inward (Kg)' />
         ),
-        cell: ({ row }) => <div>{row.getValue('inward')}</div>,
+        cell: ({ row }) => (
+            <div className='text-right'>
+                {Number(row.getValue('inward') || 0).toLocaleString()}
+            </div>
+        ),
     },
     {
         accessorKey: 'outward',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Outward' />
+            <DataTableColumnHeader column={column} title='Outward (Kg)' />
         ),
-        cell: ({ row }) => <div>{row.getValue('outward')}</div>,
-    },
-    {
-        accessorKey: 'accountReceipt',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Account (Receipt)' />
+        cell: ({ row }) => (
+            <div className='text-right'>
+                {Number(row.getValue('outward') || 0).toLocaleString()}
+            </div>
         ),
-        cell: ({ row }) => <div>{row.getValue('accountReceipt')}</div>,
-    },
-    {
-        accessorKey: 'accountPayment',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Account (Payment)' />
-        ),
-        cell: ({ row }) => <div>{row.getValue('accountPayment')}</div>,
-    },
-    {
-        accessorKey: 'accountBrokerage',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title='Account (Brokerage)'
-            />
-        ),
-        cell: ({ row }) => <div>{row.getValue('accountBrokerage')}</div>,
     },
     {
         accessorKey: 'receipt',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Receipt' />
         ),
-        cell: ({ row }) => <div>{row.getValue('receipt')}</div>,
+        cell: ({ row }) => (
+            <div className='text-right'>
+                {Number(row.getValue('receipt') || 0).toLocaleString()}
+            </div>
+        ),
     },
     {
         accessorKey: 'payment',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Payment' />
         ),
-        cell: ({ row }) => <div>{row.getValue('payment')}</div>,
+        cell: ({ row }) => (
+            <div className='text-right'>
+                {Number(row.getValue('payment') || 0).toLocaleString()}
+            </div>
+        ),
     },
     {
         accessorKey: 'brokerage',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Brokerage' />
         ),
-        cell: ({ row }) => <div>{row.getValue('brokerage')}</div>,
-    },
-    {
-        id: 'actions',
-        cell: DataTableRowActions,
+        cell: ({ row }) => (
+            <div className='text-right'>
+                {Number(row.getValue('brokerage') || 0).toLocaleString()}
+            </div>
+        ),
     },
 ]

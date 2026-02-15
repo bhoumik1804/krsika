@@ -2,10 +2,10 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { type BrokerReportData } from '../data/schema'
-import { DataTableRowActions } from './data-table-row-actions'
+import { type BrokerTransaction } from '../data/schema'
 
-export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
+/** Read-only columns for Broker Transaction Report (aggregated from deals) */
+export const brokerTransactionReportColumns: ColumnDef<BrokerTransaction>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -32,7 +32,6 @@ export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
                 className='translate-y-[2px]'
             />
         ),
-
         enableSorting: false,
         enableHiding: false,
     },
@@ -41,7 +40,9 @@ export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Broker Name' />
         ),
-        cell: ({ row }) => <div>{row.getValue('brokerName')}</div>,
+        cell: ({ row }) => (
+            <div className='font-medium'>{row.getValue('brokerName')}</div>
+        ),
         meta: {
             className: cn(
                 'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
@@ -51,35 +52,50 @@ export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'gstn',
+        accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='GSTN' />
+            <DataTableColumnHeader column={column} title='Party' />
         ),
-        cell: ({ row }) => <div>{row.getValue('gstn')}</div>,
+        cell: ({ row }) => <div>{row.getValue('partyName') || '-'}</div>,
     },
     {
-        accessorKey: 'phone',
+        accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Phone' />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
-        cell: ({ row }) => <div>{row.getValue('phone')}</div>,
+        cell: ({ row }) => <div>{row.getValue('date')}</div>,
     },
     {
-        accessorKey: 'email',
+        accessorKey: 'purchaseDeal',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Email' />
+            <DataTableColumnHeader column={column} title='Purchase Deal' />
         ),
-        cell: ({ row }) => <div>{row.getValue('email')}</div>,
+        cell: ({ row }) => (
+            <div className='text-right'>
+                {Number(row.getValue('purchaseDeal') || 0).toLocaleString()}
+            </div>
+        ),
     },
     {
-        accessorKey: 'address',
+        accessorKey: 'salesDeal',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Address' />
+            <DataTableColumnHeader column={column} title='Sales Deal' />
         ),
-        cell: ({ row }) => <div>{row.getValue('address')}</div>,
+        cell: ({ row }) => (
+            <div className='text-right'>
+                {Number(row.getValue('salesDeal') || 0).toLocaleString()}
+            </div>
+        ),
     },
     {
-        id: 'actions',
-        cell: DataTableRowActions,
+        accessorKey: 'brokerage',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Brokerage' />
+        ),
+        cell: ({ row }) => (
+            <div className='text-right'>
+                {Number(row.getValue('brokerage') || 0).toLocaleString()}
+            </div>
+        ),
     },
 ]
