@@ -50,6 +50,7 @@ export const getStaffReportList = async (millId, options = {}) => {
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
         {
             $project: {
+                id: { $toString: '$_id' },
                 password: 0,
                 refreshToken: 0,
                 permissions: 0,

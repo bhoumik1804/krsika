@@ -129,7 +129,6 @@ export function VehicleReportTable({
                 table={table}
                 searchPlaceholder='Search...'
                 searchKey='truckNo'
-                filters={[]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

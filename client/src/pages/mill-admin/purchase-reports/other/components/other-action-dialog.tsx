@@ -3,6 +3,8 @@ import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
@@ -48,8 +50,6 @@ import {
 import { useCreateOtherPurchase, useUpdateOtherPurchase } from '../data/hooks'
 import { otherPurchaseSchema, type OtherPurchase } from '../data/schema'
 import { useOther } from './other-provider'
-import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
-import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 
 type OtherActionDialogProps = {
     open: boolean
@@ -82,22 +82,19 @@ export function OtherActionDialog({
     const brokerLimit = brokerPage === 1 ? 10 : 5
 
     // Fetch party list from API with pagination
-    const { data: partyListData } = usePartyList(
-        millId,
-        {
-            page: partyPage,
-            limit: partyLimit,
-            sortBy: 'partyName',
-            sortOrder: 'asc',
-        },
-        { enabled: open && !!millId }
-    )
+    const { data: partyListData } = usePartyList({
+        millId: open ? millId : '',
+        page: partyPage,
+        limit: partyLimit,
+        sortBy: 'partyName',
+        sortOrder: 'asc',
+    })
 
     // Fetch broker list from API with pagination
     const { data: brokerListData } = useBrokerList({
         millId: open ? millId : '',
         page: brokerPage,
-        pageSize: brokerLimit,
+        limit: brokerLimit,
     })
 
     // Extract party names from API response and accumulate
@@ -282,11 +279,11 @@ export function OtherActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                    new Date(
-                                                                        field.value
-                                                                    ),
-                                                                    'MMM dd, yyyy'
-                                                                )
+                                                                      new Date(
+                                                                          field.value
+                                                                      ),
+                                                                      'MMM dd, yyyy'
+                                                                  )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -300,17 +297,17 @@ export function OtherActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                    field.value
-                                                                )
+                                                                      field.value
+                                                                  )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                        date,
-                                                                        'yyyy-MM-dd'
-                                                                    )
+                                                                          date,
+                                                                          'yyyy-MM-dd'
+                                                                      )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -364,7 +361,8 @@ export function OtherActionDialog({
                                                             </ComboboxEmpty>
                                                             {isLoadingMoreParties && (
                                                                 <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading more...
+                                                                    Loading
+                                                                    more...
                                                                 </div>
                                                             )}
                                                         </ComboboxList>
@@ -415,7 +413,8 @@ export function OtherActionDialog({
                                                             </ComboboxEmpty>
                                                             {isLoadingMoreBrokers && (
                                                                 <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading more...
+                                                                    Loading
+                                                                    more...
                                                                 </div>
                                                             )}
                                                         </ComboboxList>
@@ -624,8 +623,8 @@ export function OtherActionDialog({
                                         ? 'Updating...'
                                         : 'Adding...'
                                     : isEditing
-                                        ? 'Update'
-                                        : 'Add'}{' '}
+                                      ? 'Update'
+                                      : 'Add'}{' '}
                                 Purchase
                             </Button>
                         </DialogFooter>

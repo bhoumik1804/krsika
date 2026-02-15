@@ -41,7 +41,7 @@ export function TransporterReportActionDialog({
     const { mutate: createTransporter, isPending: isCreating } =
         useCreateTransporter(millId)
     const { mutate: updateTransporter, isPending: isUpdating } =
-        useUpdateTransporter(millId, currentRow?._id || '')
+        useUpdateTransporter(millId)
 
     const isLoading = isCreating || isUpdating
 
@@ -59,13 +59,17 @@ export function TransporterReportActionDialog({
     })
 
     const onSubmit = (data: TransporterReportData) => {
-        if (isEditing) {
-            updateTransporter(data, {
-                onSuccess: () => {
-                    form.reset()
-                    onOpenChange(false)
-                },
-            })
+        const transporterId = currentRow?._id
+        if (isEditing && transporterId) {
+            updateTransporter(
+                { transporterId, data },
+                {
+                    onSuccess: () => {
+                        form.reset()
+                        onOpenChange(false)
+                    },
+                }
+            )
         } else {
             createTransporter(data, {
                 onSuccess: () => {

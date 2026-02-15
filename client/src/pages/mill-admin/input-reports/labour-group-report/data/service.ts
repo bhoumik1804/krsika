@@ -74,7 +74,7 @@ export const bulkDeleteLabourGroup = async (
     millId: string,
     ids: string[]
 ): Promise<void> => {
-    await apiClient.delete(`${BASE_PATH}/${millId}/labour-groups`, {
+    await apiClient.delete(`${BASE_PATH}/${millId}/labour-groups/bulk`, {
         data: { ids },
     })
 }

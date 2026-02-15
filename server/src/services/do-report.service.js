@@ -49,13 +49,18 @@ export const getDoReportList = async (millId, options = {}) => {
     const aggregate = DoReport.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
+        {
+            $addFields: {
+                id: { $toString: '$_id' },
+            },
+        },
     ])
 
     const result = await DoReport.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
         limit: parseInt(limit, 10),
         customLabels: {
-            docs: 'data',
+            docs: 'reports',
             totalDocs: 'total',
             totalPages: 'totalPages',
             page: 'page',
@@ -68,7 +73,7 @@ export const getDoReportList = async (millId, options = {}) => {
     })
 
     return {
-        data: result.data,
+        reports: result.reports,
         pagination: {
             page: result.page,
             limit: result.limit,

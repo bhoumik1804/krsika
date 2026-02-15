@@ -13,36 +13,10 @@ const LabourGroupSchema = new Schema(
             required: true,
             index: true,
         },
-        groupName: {
+        labourTeamName: {
             type: String,
             required: true,
             trim: true,
-        },
-        leaderName: {
-            type: String,
-            trim: true,
-        },
-        phone: {
-            type: String,
-            trim: true,
-        },
-        memberCount: {
-            type: Number,
-            min: 0,
-            default: 0,
-        },
-        workType: {
-            type: String,
-            trim: true,
-        },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
         },
     },
     {

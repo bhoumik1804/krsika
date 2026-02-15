@@ -7,23 +7,11 @@ import { z } from 'zod'
 
 // Common fields schema
 const labourGroupBaseSchema = {
-    groupName: z
-        .string({ required_error: 'Group name is required' })
+    labourTeamName: z
+        .string({ required_error: 'Labour team name is required' })
         .trim()
-        .min(1, 'Group name cannot be empty')
-        .max(200, 'Group name is too long'),
-    leaderName: z
-        .string()
-        .trim()
-        .max(200, 'Leader name is too long')
-        .optional(),
-    phone: z.string().trim().max(20, 'Phone number is too long').optional(),
-    memberCount: z.coerce
-        .number()
-        .int()
-        .min(0, 'Member count cannot be negative')
-        .optional(),
-    workType: z.string().trim().max(100, 'Work type is too long').optional(),
+        .min(1, 'Labour team name cannot be empty')
+        .max(200, 'Labour team name is too long'),
 }
 
 // Create labour group schema
@@ -39,11 +27,7 @@ export const createLabourGroupSchema = z.object({
 // Update labour group schema
 export const updateLabourGroupSchema = z.object({
     body: z.object({
-        groupName: labourGroupBaseSchema.groupName.optional(),
-        leaderName: labourGroupBaseSchema.leaderName,
-        phone: labourGroupBaseSchema.phone,
-        memberCount: labourGroupBaseSchema.memberCount,
-        workType: labourGroupBaseSchema.workType,
+        labourTeamName: labourGroupBaseSchema.labourTeamName.optional(),
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
@@ -89,8 +73,8 @@ export const getLabourGroupListSchema = z.object({
         limit: z.coerce.number().int().min(1).max(100).default(10).optional(),
         search: z.string().trim().optional(),
         sortBy: z
-            .enum(['groupName', 'leaderName', 'createdAt', 'memberCount'])
-            .default('groupName')
+            .enum(['labourTeamName', 'createdAt'])
+            .default('labourTeamName')
             .optional(),
         sortOrder: z.enum(['asc', 'desc']).default('asc').optional(),
     }),

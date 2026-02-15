@@ -1,113 +1,68 @@
-/**
- * Vehicle Report Service
- * API client for Vehicle CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
 import apiClient, { type ApiResponse } from '@/lib/api-client'
-import type {
-    VehicleResponse,
-    VehicleListResponse,
-    VehicleSummaryResponse,
-    CreateVehicleRequest,
-    UpdateVehicleRequest,
-    VehicleQueryParams,
-} from './types'
+import type { VehicleReportData } from './schema'
 
-// ==========================================
-// API Endpoints
-// ==========================================
-
-const VEHICLE_ENDPOINT = (millId: string) => `/mills/${millId}/vehicles`
-
-// ==========================================
-// Vehicle API Functions
-// ==========================================
-
-/**
- * Fetch all vehicles with pagination and filters
- */
-export const fetchVehicleList = async (
-    millId: string,
-    params?: VehicleQueryParams
-): Promise<VehicleListResponse> => {
-    const response = await apiClient.get<ApiResponse<VehicleListResponse>>(
-        VEHICLE_ENDPOINT(millId),
-        { params }
-    )
-    return response.data.data
+export interface VehicleListResponse {
+    vehicles: VehicleReportData[]
+    pagination: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
-/**
- * Fetch a single vehicle by ID
- */
-export const fetchVehicleById = async (
-    millId: string,
-    id: string
-): Promise<VehicleResponse> => {
-    const response = await apiClient.get<ApiResponse<VehicleResponse>>(
-        `${VEHICLE_ENDPOINT(millId)}/${id}`
-    )
-    return response.data.data
-}
+export const vehicleService = {
+    fetchVehicleList: async (params: {
+        millId: string
+        page?: number
+        limit?: number
+        search?: string
+        sortBy?: string
+        sortOrder?: 'asc' | 'desc'
+    }): Promise<VehicleListResponse> => {
+        const { millId, ...queryParams } = params
+        const response = await apiClient.get<ApiResponse<VehicleListResponse>>(
+            `/mills/${millId}/vehicles`,
+            { params: queryParams }
+        )
+        return response.data.data
+    },
 
-/**
- * Fetch vehicle summary/statistics
- */
-export const fetchVehicleSummary = async (
-    millId: string
-): Promise<VehicleSummaryResponse> => {
-    const response = await apiClient.get<ApiResponse<VehicleSummaryResponse>>(
-        `${VEHICLE_ENDPOINT(millId)}/summary`
-    )
-    return response.data.data
-}
+    createVehicle: async (
+        millId: string,
+        data: Partial<VehicleReportData>
+    ): Promise<VehicleReportData> => {
+        const response = await apiClient.post<
+            ApiResponse<{ vehicle: VehicleReportData }>
+        >(`/mills/${millId}/vehicles`, data)
+        return response.data.data.vehicle
+    },
 
-/**
- * Create a new vehicle
- */
-export const createVehicle = async (
-    millId: string,
-    data: CreateVehicleRequest
-): Promise<VehicleResponse> => {
-    const response = await apiClient.post<ApiResponse<VehicleResponse>>(
-        VEHICLE_ENDPOINT(millId),
-        data
-    )
-    return response.data.data
-}
+    updateVehicle: async (
+        millId: string,
+        vehicleId: string,
+        data: Partial<VehicleReportData>
+    ): Promise<VehicleReportData> => {
+        const response = await apiClient.put<
+            ApiResponse<{ vehicle: VehicleReportData }>
+        >(`/mills/${millId}/vehicles/${vehicleId}`, data)
+        return response.data.data.vehicle
+    },
 
-/**
- * Update an existing vehicle
- */
-export const updateVehicle = async (
-    millId: string,
-    { id, ...data }: UpdateVehicleRequest
-): Promise<VehicleResponse> => {
-    const response = await apiClient.put<ApiResponse<VehicleResponse>>(
-        `${VEHICLE_ENDPOINT(millId)}/${id}`,
-        data
-    )
-    return response.data.data
-}
+    deleteVehicle: async (millId: string, vehicleId: string): Promise<void> => {
+        await apiClient.delete(`/mills/${millId}/vehicles/${vehicleId}`)
+    },
 
-/**
- * Delete a vehicle
- */
-export const deleteVehicle = async (
-    millId: string,
-    id: string
-): Promise<void> => {
-    await apiClient.delete(`${VEHICLE_ENDPOINT(millId)}/${id}`)
-}
-
-/**
- * Bulk delete vehicles
- */
-export const bulkDeleteVehicle = async (
-    millId: string,
-    ids: string[]
-): Promise<void> => {
-    await apiClient.delete(`${VEHICLE_ENDPOINT(millId)}/bulk`, {
-        data: { ids },
-    })
+    bulkDeleteVehicles: async (
+        millId: string,
+        vehicleIds: string[]
+    ): Promise<void> => {
+        await apiClient.delete(`/mills/${millId}/vehicles/bulk`, {
+            data: { ids: vehicleIds },
+        })
+    },
 }

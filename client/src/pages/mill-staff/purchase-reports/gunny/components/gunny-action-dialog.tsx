@@ -3,6 +3,7 @@ import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { gunnyDeliveryTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
@@ -52,7 +53,6 @@ import {
     type GunnyPurchaseData,
 } from '../data/schema'
 import { useGunny } from './gunny-provider'
-import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 
 type GunnyActionDialogProps = {
     open: boolean
@@ -80,16 +80,13 @@ export function GunnyActionDialog({
     const partyLimit = partyPage === 1 ? 10 : 5
 
     // Fetch party list from API with pagination
-    const { data: partyListData } = usePartyList(
-        millId,
-        {
-            page: partyPage,
-            limit: partyLimit,
-            sortBy: 'partyName',
-            sortOrder: 'asc',
-        },
-        { enabled: open && !!millId }
-    )
+    const { data: partyListData } = usePartyList({
+        millId: open ? millId : '',
+        page: partyPage,
+        limit: partyLimit,
+        sortBy: 'partyName',
+        sortOrder: 'asc',
+    })
 
     // Extract party names from API response and accumulate
     React.useEffect(() => {
@@ -235,11 +232,11 @@ export function GunnyActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                    new Date(
-                                                                        field.value
-                                                                    ),
-                                                                    'MMM dd, yyyy'
-                                                                )
+                                                                      new Date(
+                                                                          field.value
+                                                                      ),
+                                                                      'MMM dd, yyyy'
+                                                                  )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -253,17 +250,17 @@ export function GunnyActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                    field.value
-                                                                )
+                                                                      field.value
+                                                                  )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                        date,
-                                                                        'yyyy-MM-dd'
-                                                                    )
+                                                                          date,
+                                                                          'yyyy-MM-dd'
+                                                                      )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -317,7 +314,8 @@ export function GunnyActionDialog({
                                                             </ComboboxEmpty>
                                                             {isLoadingMoreParties && (
                                                                 <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading more...
+                                                                    Loading
+                                                                    more...
                                                                 </div>
                                                             )}
                                                         </ComboboxList>

@@ -13,17 +13,17 @@ import { useBulkDeleteTransporters } from '../data/hooks'
 import { type TransporterReportData } from '../data/schema'
 import { useTransporterReport } from './transporter-report-provider'
 
-type TransporterReportMultiDeleteDialogProps = {
-    table: Table<TransporterReportData>
+type TransporterReportMultiDeleteDialogProps<TData> = {
+    table: Table<TData>
     open: boolean
     onOpenChange: (open: boolean) => void
 }
 
-export function TransporterReportMultiDeleteDialog({
+export function TransporterReportMultiDeleteDialog<TData>({
     table,
     open,
     onOpenChange,
-}: TransporterReportMultiDeleteDialogProps) {
+}: TransporterReportMultiDeleteDialogProps<TData>) {
     const { millId } = useTransporterReport()
     const selectedRows = table.getFilteredSelectedRowModel().rows
     const { mutate: bulkDelete, isPending: isDeleting } =
@@ -32,7 +32,7 @@ export function TransporterReportMultiDeleteDialog({
     const handleDeleteSelected = (e: React.MouseEvent) => {
         e.preventDefault()
         const ids = selectedRows
-            .map((row) => row.original._id)
+            .map((row) => (row.original as TransporterReportData)._id)
             .filter((id): id is string => !!id)
 
         if (ids.length === 0) return
