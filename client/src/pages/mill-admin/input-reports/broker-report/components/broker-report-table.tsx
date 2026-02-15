@@ -72,7 +72,7 @@ export function BrokerReportTable({
         },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'brokerName', searchKey: 'search', type: 'string' },
+            { columnId: 'brokerName', searchKey: 'brokerName', type: 'string' },
         ],
     })
 
@@ -87,6 +87,7 @@ export function BrokerReportTable({
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
         pageCount: serverPagination?.totalPages ?? -1,
         manualPagination: !!serverPagination,
         enableRowSelection: true,

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const ricePurchaseSchema = z.object({
-    id: z.string().optional(),
+    _id: z.string().optional(),
     date: z.string().min(1, 'Date is required'),
     partyName: z.string().optional(),
     brokerName: z.string().optional(),

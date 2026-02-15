@@ -21,7 +21,7 @@ export interface CreateGunnyPurchaseRequest {
 }
 
 export interface UpdateGunnyPurchaseRequest {
-    id: string
+    _id: string
     date?: string
     partyName?: string
     deliveryType?: string
@@ -39,7 +39,6 @@ export interface UpdateGunnyPurchaseRequest {
 
 export interface GunnyPurchaseResponse {
     _id: string
-    id?: string
     millId: string
     date: string
     partyName?: string

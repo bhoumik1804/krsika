@@ -38,7 +38,7 @@ export interface UpdateOtherPurchaseRequest {
 export interface OtherPurchaseResponse {
     _id: string
     id?: string
-    millId: string
+    millId?: string
     date: string
     partyName?: string
     brokerName?: string
@@ -48,8 +48,8 @@ export interface OtherPurchaseResponse {
     rate?: number
     discountPercent?: number
     gst?: number
-    createdAt: string
-    updatedAt: string
+    createdAt?: string
+    updatedAt?: string
 }
 
 export interface PaginationMeta {

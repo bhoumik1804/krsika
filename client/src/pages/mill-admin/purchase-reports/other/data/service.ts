@@ -1,5 +1,6 @@
 import { apiClient } from '@/lib/api-client'
 import type { OtherPurchase } from './schema'
+import type { PaginationMeta } from './types'
 
 interface FetchOtherPurchaseListParams {
     millId: string
@@ -23,18 +24,12 @@ export const otherPurchaseService = {
         const response = await apiClient.get<
             ApiResponse<{
                 purchases: Array<OtherPurchase & { _id: string }>
-                pagination: Record<string, unknown>
+                pagination: PaginationMeta
             }>
         >(`/mills/${params.millId}/other-purchase?${queryParams.toString()}`)
 
-        // Map _id to id for consistency
-        const data = response.data.data.purchases.map((item) => ({
-            ...item,
-            id: item._id,
-        }))
-
         return {
-            data,
+            purchases: response.data.data.purchases,
             pagination: response.data.data.pagination,
         }
     },

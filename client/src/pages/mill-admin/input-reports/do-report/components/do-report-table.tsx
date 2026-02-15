@@ -74,7 +74,7 @@ export function DoReportTable({
         columnFilters: [
             {
                 columnId: 'samitiSangrahan',
-                searchKey: 'search',
+                searchKey: 'samitiSangrahan',
                 type: 'string',
             },
         ],
@@ -91,6 +91,7 @@ export function DoReportTable({
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
         pageCount: serverPagination?.totalPages ?? -1,
         manualPagination: !!serverPagination,
         enableRowSelection: true,

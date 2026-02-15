@@ -80,7 +80,7 @@ export function LabourGroupReportTable({
         columnFilters: [
             {
                 columnId: 'labourTeamName',
-                searchKey: 'search',
+                searchKey: 'labourTeamName',
                 type: 'string',
             },
         ],
@@ -97,6 +97,7 @@ export function LabourGroupReportTable({
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,

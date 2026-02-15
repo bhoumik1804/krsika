@@ -163,9 +163,9 @@ export function RiceActionDialog({
 
     const onSubmit = async (data: RicePurchaseData) => {
         try {
-            if (isEditing && currentRow?.id) {
+            if (isEditing && currentRow?._id) {
                 await updateRicePurchase({
-                    purchaseId: currentRow.id,
+                    purchaseId: currentRow._id,
                     data,
                 })
             } else {

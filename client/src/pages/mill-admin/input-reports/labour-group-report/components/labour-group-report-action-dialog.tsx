@@ -74,7 +74,7 @@ export function LabourGroupReportActionDialog({
 
             if (currentRow?._id) {
                 await updateMutation.mutateAsync({
-                    id: currentRow._id,
+                    _id: currentRow._id,
                     ...payload,
                 })
             } else {

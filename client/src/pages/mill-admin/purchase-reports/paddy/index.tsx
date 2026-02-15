@@ -1,4 +1,4 @@
-import { useMemo} from 'react'
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -12,7 +12,6 @@ import { PaddyDialogs } from './components/paddy-dialogs'
 import { PaddyPrimaryButtons } from './components/paddy-primary-buttons'
 import { PaddyProvider, usePaddy } from './components/paddy-provider'
 import { PaddyTable } from './components/paddy-table'
-import { usePaddyPurchaseList } from './data/hooks'
 
 export function PaddyPurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -36,12 +35,7 @@ export function PaddyPurchaseReport() {
         }
     }, [searchParams])
 
-    // Call GET API here
-    const {
-        data: apiResponse,
-        isLoading,
-        isError,
-    } = usePaddyPurchaseList(millId || '', queryParams, { enabled: !!millId })
+    // Call GET API here -> Removed as logic is inside provider
 
     const sidebarData = getMillAdminSidebarData(millId || '')
 
@@ -58,13 +52,7 @@ export function PaddyPurchaseReport() {
     }
 
     return (
-        <PaddyProvider
-            millId={millId || ''}
-            initialQueryParams={queryParams}
-            apiResponse={apiResponse}
-            isLoading={isLoading}
-            isError={isError}
-        >
+        <PaddyProvider millId={millId || ''} initialQueryParams={queryParams}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -124,6 +112,7 @@ function PaddyPurchaseContent({
     return (
         <PaddyTable
             data={context.data}
+            pagination={context.pagination}
             search={Object.fromEntries(
                 Object.entries(context.queryParams || {})
                     .filter(([, value]) => value !== undefined)

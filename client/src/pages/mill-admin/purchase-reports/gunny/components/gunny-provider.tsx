@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
+import { useGunnyPurchaseList } from '../data/hooks'
 import type { GunnyPurchaseData } from '../data/schema'
 import type {
     GunnyPurchaseQueryParams,
@@ -59,11 +60,10 @@ export function GunnyProvider({
     children,
     millId,
     initialQueryParams = defaultQueryParams,
-    apiData,
-    isLoading = false,
-    isError = false,
-    onQueryParamsChange,
-}: GunnyProviderProps) {
+}: Omit<
+    GunnyProviderProps,
+    'apiData' | 'isLoading' | 'isError' | 'onQueryParamsChange'
+>) {
     const [open, setOpen] = useDialogState<GunnyDialogType>(null)
     const [currentRow, setCurrentRow] = useState<GunnyPurchaseData | null>(null)
     const [queryParams, setQueryParams] =
@@ -78,15 +78,21 @@ export function GunnyProvider({
         initialQueryParams.search,
     ])
 
-    // Notify parent when queryParams change
-    useEffect(() => {
-        onQueryParamsChange?.(queryParams)
-    }, [queryParams, onQueryParamsChange])
+    const {
+        data: apiResponse,
+        isLoading,
+        isError,
+    } = useGunnyPurchaseList({
+        millId,
+        page: queryParams.page,
+        limit: queryParams.limit,
+        search: queryParams.search,
+    })
 
     // Transform API response to table format (memoized to prevent flickering)
     const transformedData = useMemo(
         () =>
-            (apiData?.purchases || []).map((item) => ({
+            (apiResponse?.purchases || []).map((item) => ({
                 _id: item._id,
                 date: item.date,
                 partyName: item.partyName,
@@ -98,12 +104,12 @@ export function GunnyProvider({
                 plasticGunnyQty: item.plasticGunnyQty,
                 plasticGunnyRate: item.plasticGunnyRate,
             })),
-        [apiData?.purchases]
+        [apiResponse?.purchases]
     )
 
     const pagination = useMemo(
         () =>
-            apiData?.pagination || {
+            apiResponse?.pagination || {
                 page: queryParams.page || 1,
                 limit: queryParams.limit || 10,
                 total: 0,
@@ -113,7 +119,7 @@ export function GunnyProvider({
                 prevPage: null,
                 nextPage: null,
             },
-        [apiData?.pagination, queryParams.page, queryParams.limit]
+        [apiResponse?.pagination, queryParams.page, queryParams.limit]
     )
 
     const contextValue = useMemo(

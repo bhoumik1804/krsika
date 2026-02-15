@@ -18,7 +18,7 @@ export interface CreateDoReportRequest {
 }
 
 export interface UpdateDoReportRequest {
-    id: string
+    _id: string
     date?: string
     samitiSangrahan?: string
     doNo?: string

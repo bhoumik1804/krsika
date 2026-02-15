@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -7,6 +7,7 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -24,54 +25,52 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type PaddyPurchaseData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { paddyColumns as columns } from './paddy-columns'
-import { usePaddy } from './paddy-provider'
 
 type DataTableProps = {
     data: PaddyPurchaseData[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+    }
 }
 
-export function PaddyTable({ data, search, navigate }: DataTableProps) {
+export function PaddyTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-    const { queryParams, setQueryParams, pagination } = usePaddy()
-
-    // Pagination state from provider (server-side)
-    const paginationState = {
-        pageIndex: (queryParams.page || 1) - 1,
-        pageSize: queryParams.limit || 10,
-    }
-
-    const handlePaginationChange = (updater: any) => {
-        const newPageIndex =
-            typeof updater === 'function'
-                ? updater(paginationState).pageIndex
-                : updater.pageIndex
-        const newPageSize =
-            typeof updater === 'function'
-                ? updater(paginationState).pageSize
-                : updater.pageSize
-
-        setQueryParams((prev) => ({
-            ...prev,
-            page: newPageIndex + 1,
-            limit: newPageSize,
-        }))
-    }
 
     // Only handle column filters (pagination is server-side)
-    const { columnFilters, onColumnFiltersChange } = useTableUrlState({
+    const {
+        columnFilters,
+        onColumnFiltersChange,
+        pagination,
+        onPaginationChange,
+        ensurePageInRange,
+    } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
+            { columnId: 'partyName', searchKey: 'search', type: 'string' },
         ],
     })
 
@@ -79,15 +78,18 @@ export function PaddyTable({ data, search, navigate }: DataTableProps) {
     const table = useReactTable({
         data,
         columns,
+        getRowId: (row) => row._id || '',
         state: {
             sorting,
-            pagination: paginationState,
+            pagination,
             rowSelection,
             columnFilters,
             columnVisibility,
         },
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
-        onPaginationChange: handlePaginationChange,
+        onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
@@ -97,9 +99,14 @@ export function PaddyTable({ data, search, navigate }: DataTableProps) {
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-        pageCount: pagination.totalPages,
-        manualPagination: true,
+        getPaginationRowModel: getPaginationRowModel(),
     })
+
+    useEffect(() => {
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div

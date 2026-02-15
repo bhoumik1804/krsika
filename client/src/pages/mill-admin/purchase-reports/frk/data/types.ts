@@ -1,3 +1,5 @@
+import type { FrkPurchaseData } from './schema'
+
 // API Request/Response types for FRK Purchase
 
 export interface FrkPurchaseRequest {
@@ -34,6 +36,6 @@ export interface PaginationData {
 }
 
 export interface FrkPurchaseListResponse {
-    data: FrkPurchaseResponse[]
+    data: FrkPurchaseData[]
     pagination: PaginationData
 }

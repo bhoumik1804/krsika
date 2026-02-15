@@ -72,7 +72,7 @@ export function PartyReportTable({
         },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'search', type: 'string' },
+            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
         ],
     })
 
@@ -87,6 +87,7 @@ export function PartyReportTable({
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
         pageCount: serverPagination?.totalPages ?? -1,
         manualPagination: !!serverPagination,
         enableRowSelection: true,

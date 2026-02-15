@@ -144,7 +144,7 @@ export function DoReportActionDialog({
                 await bulkCreateMutation.mutateAsync(previewData)
             } else if (currentRow?._id) {
                 await updateMutation.mutateAsync({
-                    id: currentRow._id,
+                    _id: currentRow._id,
                     ...payload,
                 })
             } else {
