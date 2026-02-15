@@ -111,10 +111,10 @@ export const bulkCreateDoReport = async (
  */
 export const updateDoReport = async (
     millId: string,
-    { id, ...data }: UpdateDoReportRequest
+    { _id, ...data }: UpdateDoReportRequest
 ): Promise<DoReportResponse> => {
     const response = await apiClient.put<ApiResponse<DoReportResponse>>(
-        `${DO_REPORT_ENDPOINT(millId)}/${id}`,
+        `${DO_REPORT_ENDPOINT(millId)}/${_id}`,
         data
     )
     return response.data.data

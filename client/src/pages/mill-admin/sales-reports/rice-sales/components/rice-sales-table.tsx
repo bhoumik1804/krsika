@@ -22,7 +22,6 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type RiceSales } from '../data/schema'
 import { type RiceSalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
@@ -54,7 +53,6 @@ export function RiceSalesTable({ data, search, navigate }: DataTableProps) {
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
         ],
     })
 
@@ -81,6 +79,7 @@ export function RiceSalesTable({ data, search, navigate }: DataTableProps) {
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        getRowId: (row) => row._id || '',
     })
 
     useEffect(() => {
@@ -98,13 +97,7 @@ export function RiceSalesTable({ data, search, navigate }: DataTableProps) {
                 table={table}
                 searchPlaceholder='Search...'
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
+                filters={[]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

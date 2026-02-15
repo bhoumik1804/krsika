@@ -4,6 +4,7 @@ import { z } from 'zod'
 export const otherPurchaseSchema = z.object({
     _id: z.string().optional(),
     date: z.string().min(1, 'Date is required'),
+    otherPurchaseDealNumber: z.string().optional(),
     partyName: z.string().optional(),
     brokerName: z.string().optional(),
     otherPurchaseName: z.string().optional(),

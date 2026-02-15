@@ -4,6 +4,7 @@ import { z } from 'zod'
 export const brokerReportSchema = z.object({
     _id: z.string().optional(),
     brokerName: z.string().min(1, 'Broker name is required'),
+    gstn: z.string().optional(),
     phone: z.string().optional(),
     email: z.string().optional(),
     address: z.string().optional(),

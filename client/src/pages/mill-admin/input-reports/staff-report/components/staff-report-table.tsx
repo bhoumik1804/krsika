@@ -74,7 +74,7 @@ export function StaffReportTable({
         columnFilters: [
             {
                 columnId: 'fullName',
-                searchKey: 'search',
+                searchKey: 'fullName',
                 type: 'string',
             },
         ],
@@ -97,6 +97,7 @@ export function StaffReportTable({
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
+        getRowId: (row) => row._id || '',
         // Use server-side pagination info when available
         pageCount: serverPagination?.totalPages ?? -1,
         manualPagination: !!serverPagination,

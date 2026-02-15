@@ -4,7 +4,7 @@ export type CreateLabourGroupRequest = {
 }
 
 export type UpdateLabourGroupRequest = {
-    id: string
+    _id: string
     labourTeamName?: string
 }
 

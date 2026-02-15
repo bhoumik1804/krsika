@@ -98,15 +98,6 @@ const MillingPaddySchema = new Schema(
             max: 100,
             default: 0,
         },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-        },
     },
     {
         timestamps: true,

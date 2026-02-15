@@ -3,12 +3,18 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { useLabourGroupList } from '@/pages/mill-admin/input-reports/labour-group-report/data/hooks'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
+import { useStaffList } from '@/pages/mill-admin/input-reports/staff-report/data/hooks'
+import { useTransporterList } from '@/pages/mill-admin/input-reports/transporter-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { useParams } from 'react-router'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
-import { paymentTypeOptions } from '@/constants/purchase-form'
+import {
+    paymentTypeOptions,
+    labourTypeOptions,
+    purchaseDealTypes,
+    monthOptions,
+} from '@/constants/purchase-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -42,38 +48,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import {
+    useCreateFinancialPayment,
+    useUpdateFinancialPayment,
+} from '../data/hooks'
 import { FinancialPaymentSchema, type FinancialPayment } from '../data/schema'
-
-const dealTypeOptions = [
-    { label: 'खरीद', value: 'खरीद' },
-    { label: 'बिक्री', value: 'बिक्री' },
-    { label: 'विनिमय', value: 'विनिमय' },
-]
-
-const transporterOptions = [
-    { label: 'सिंह ट्रांसपोर्ट', value: 'सिंह ट्रांसपोर्ट' },
-    { label: 'गुप्ता लॉजिस्टिक्स', value: 'गुप्ता लॉजिस्टिक्स' },
-]
-
-const labourTypeOptions = [
-    { label: 'आढ़क हमाली', value: 'आढ़क हमाली' },
-    { label: 'आवक हमाली', value: 'आवक हमाली' },
-]
-
-const labourGroupOptions = [
-    { label: 'राम हमाल', value: 'राम हमाल' },
-    { label: 'श्याम ग्रुप', value: 'श्याम ग्रुप' },
-]
-
-const staffOptions = [
-    { label: 'रमेश कुमार', value: 'रमेश कुमार', salary: 25000 },
-    { label: 'सुरेश पटेल', value: 'सुरेश पटेल', salary: 30000 },
-]
-
-const monthOptions = [
-    { label: 'जनवरी', value: 'जनवरी', days: 31 },
-    { label: 'फरवरी', value: 'फरवरी', days: 28 },
-]
 
 type FinancialPaymentActionDialogProps = {
     open: boolean
@@ -112,6 +91,41 @@ export function FinancialPaymentActionDialog({
                     .filter(Boolean) as string[],
         },
         currentRow?.brokerName ?? undefined
+    )
+
+    const transporter = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: (params) => useTransporterList(params),
+            extractItems: (data) =>
+                data.transporters?.map((t) => t.transporterName) || [],
+            hookParams: { sortBy: 'transporterName', sortOrder: 'asc' },
+        },
+        currentRow?.transporterName ?? undefined
+    )
+
+    const labourGroup = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: (params) => useLabourGroupList(params.millId, params),
+            extractItems: (data) =>
+                data.labourGroups?.map((lg) => lg.labourTeamName) || [],
+            hookParams: { sortBy: 'labourTeamName', sortOrder: 'asc' },
+        },
+        currentRow?.labourGroupName ?? undefined
+    )
+
+    const staffList = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: (params) => useStaffList(params),
+            extractItems: (data) => data.staff?.map((s) => s.fullName) || [],
+            hookParams: { sortBy: 'fullName', sortOrder: 'asc' },
+        },
+        currentRow?.staffName ?? undefined
     )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -160,20 +174,18 @@ export function FinancialPaymentActionDialog({
         }
     }, [currentRow, form])
 
-    // Auto-populate salary
+    // Auto-populate salary (Note: This is a simplified logic, real implementation might need a detail fetch)
     useEffect(() => {
-        if (staffName && paymentType === 'वेतन/मजदूरी भुगतान') {
-            const staff = staffOptions.find((s) => s.value === staffName)
-            if (staff) {
-                form.setValue('salary', staff.salary)
-            }
+        if (staffName && paymentType === 'वेतन / एडवांस भुगतान') {
+            // We might need to fetch the specific staff details to get the salary
+            // For now keeping it logic empty or fetch from list if possible
         }
     }, [staffName, paymentType, form])
 
     // Calculate payable salary
     useEffect(() => {
         if (
-            paymentType === 'वेतन/मजदूरी भुगतान' &&
+            paymentType === 'वेतन / एडवांस भुगतान' &&
             salary &&
             attendance &&
             month &&
@@ -188,6 +200,9 @@ export function FinancialPaymentActionDialog({
             }
         }
     }, [salary, attendance, month, allowedLeave, paymentType, form])
+
+    const createMutation = useCreateFinancialPayment()
+    const updateMutation = useUpdateFinancialPayment()
 
     const onSubmit = (data: FinancialPayment) => {
         // Sanitize data
@@ -204,17 +219,33 @@ export function FinancialPaymentActionDialog({
             month: data.month || undefined,
         }
 
-        console.log('Submitting:', submissionData)
-
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+        if (isEditing && currentRow._id) {
+            updateMutation.mutate(
+                {
+                    millId: millId || '',
+                    data: { ...submissionData, id: currentRow._id },
+                },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        } else {
+            createMutation.mutate(
+                {
+                    millId: millId || '',
+                    data: submissionData,
+                },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        }
     }
 
     return (
@@ -389,12 +420,12 @@ export function FinancialPaymentActionDialog({
                                                 defaultValue={field.value || ''}
                                             >
                                                 <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue />
+                                                    <SelectTrigger className='w-full'>
+                                                        <SelectValue placeholder='Select deal type' />
                                                     </SelectTrigger>
                                                 </FormControl>
-                                                <SelectContent>
-                                                    {dealTypeOptions.map(
+                                                <SelectContent className='w-full'>
+                                                    {purchaseDealTypes.map(
                                                         (option) => (
                                                             <SelectItem
                                                                 key={
@@ -444,32 +475,19 @@ export function FinancialPaymentActionDialog({
                                             <FormLabel>
                                                 Transporter Name
                                             </FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value || ''}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {transporterOptions.map(
-                                                        (option) => (
-                                                            <SelectItem
-                                                                key={
-                                                                    option.value
-                                                                }
-                                                                value={
-                                                                    option.value
-                                                                }
-                                                            >
-                                                                {option.label}
-                                                            </SelectItem>
-                                                        )
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
+                                            <FormControl>
+                                                <PaginatedCombobox
+                                                    value={
+                                                        field.value ?? undefined
+                                                    }
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={transporter}
+                                                    placeholder='Search transporter...'
+                                                    emptyText='No transporters found'
+                                                />
+                                            </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -622,32 +640,19 @@ export function FinancialPaymentActionDialog({
                                             <FormLabel>
                                                 Labour Group Name
                                             </FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value || ''}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {labourGroupOptions.map(
-                                                        (option) => (
-                                                            <SelectItem
-                                                                key={
-                                                                    option.value
-                                                                }
-                                                                value={
-                                                                    option.value
-                                                                }
-                                                            >
-                                                                {option.label}
-                                                            </SelectItem>
-                                                        )
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
+                                            <FormControl>
+                                                <PaginatedCombobox
+                                                    value={
+                                                        field.value ?? undefined
+                                                    }
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={labourGroup}
+                                                    placeholder='Search labour group...'
+                                                    emptyText='No labour groups found'
+                                                />
+                                            </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -655,7 +660,7 @@ export function FinancialPaymentActionDialog({
                             </div>
                         )}
 
-                        {paymentType === 'वेतन/मजदूरी भुगतान' && (
+                        {paymentType === 'वेतन / एडवांस भुगतान' && (
                             <div className='grid grid-cols-2 gap-4'>
                                 <FormField
                                     control={form.control}
@@ -663,32 +668,19 @@ export function FinancialPaymentActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Staff Name</FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value || ''}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {staffOptions.map(
-                                                        (option) => (
-                                                            <SelectItem
-                                                                key={
-                                                                    option.value
-                                                                }
-                                                                value={
-                                                                    option.value
-                                                                }
-                                                            >
-                                                                {option.label}
-                                                            </SelectItem>
-                                                        )
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
+                                            <FormControl>
+                                                <PaginatedCombobox
+                                                    value={
+                                                        field.value ?? undefined
+                                                    }
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={staffList}
+                                                    placeholder='Search staff...'
+                                                    emptyText='No staff found'
+                                                />
+                                            </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}

@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useCommitteeList } from '@/pages/mill-admin/input-reports/committee-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { paddyTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -23,6 +25,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -62,6 +65,21 @@ export function GovtPaddyInwardActionDialog({
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    // Paginated committee selection for committeeName
+    const committee = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useCommitteeList,
+            extractItems: (data) =>
+                data.committees
+                    .map((c) => c.committeeName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'committeeName', sortOrder: 'asc' },
+        },
+        currentRow?.committeeName
+    )
 
     const getDefaultValues = useMemo(
         (): GovtPaddyInward => ({
@@ -225,11 +243,12 @@ export function GovtPaddyInwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Committee Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                id='committeeName'
-                                                placeholder='Enter Committee Name'
-                                                {...field}
-                                                value={field.value || ''}
+                                            <PaginatedCombobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                paginatedList={committee}
+                                                placeholder='Search committee...'
+                                                emptyText='No committees found'
                                             />
                                         </FormControl>
                                         <FormMessage />

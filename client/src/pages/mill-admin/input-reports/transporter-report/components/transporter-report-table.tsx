@@ -74,7 +74,7 @@ export function TransporterReportTable({
         columnFilters: [
             {
                 columnId: 'transporterName',
-                searchKey: 'search',
+                searchKey: 'transporterName',
                 type: 'string',
             },
         ],
@@ -91,6 +91,7 @@ export function TransporterReportTable({
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
         pageCount: serverPagination?.totalPages ?? -1,
         manualPagination: !!serverPagination,
         enableRowSelection: true,

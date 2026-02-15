@@ -56,7 +56,7 @@ function GovtRiceOutwardContent() {
         }
     }
 
-    const data = listData?.entries ?? []
+    const data = listData?.data ?? []
     const serverPagination = listData?.pagination
 
     if (isLoading) {

@@ -73,7 +73,9 @@ export function PaginatedCombobox({
                 <ComboboxList onScroll={paginatedList.onScroll}>
                     <ComboboxCollection>
                         {(item) => (
-                            <ComboboxItem value={item}>{item}</ComboboxItem>
+                            <ComboboxItem key={item} value={item}>
+                                {item}
+                            </ComboboxItem>
                         )}
                     </ComboboxCollection>
                     <ComboboxEmpty>{emptyText}</ComboboxEmpty>

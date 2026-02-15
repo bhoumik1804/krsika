@@ -8,13 +8,23 @@ export interface OtherSalesQueryParams {
     search?: string
 }
 
+// Matches server response: { sales: [...], pagination: {...} }
 export interface OtherSalesListResponse {
-    otherSales: OtherSales[]
-    total: number
+    sales: OtherSales[]
+    pagination: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
 export interface OtherSalesResponse {
-    otherSale: OtherSales
+    sale: OtherSales
 }
 
 export type CreateOtherSalesRequest = Omit<OtherSales, '_id'>

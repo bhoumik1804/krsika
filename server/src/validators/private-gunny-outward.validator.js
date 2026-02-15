@@ -8,7 +8,7 @@ import { z } from 'zod'
 // Common fields schema
 const privateGunnyOutwardBaseSchema = {
     date: z.string(),
-    gunnyPurchaseDealNumber: z.string().trim().optional(),
+    gunnySaleDealNumber: z.string().trim().optional(),
     partyName: z.string().trim().optional(),
     newGunnyQty: z
         .number()
@@ -39,8 +39,7 @@ export const createPrivateGunnyOutwardSchema = z.object({
 export const updatePrivateGunnyOutwardSchema = z.object({
     body: z.object({
         date: privateGunnyOutwardBaseSchema.date.optional(),
-        gunnyPurchaseDealNumber:
-            privateGunnyOutwardBaseSchema.gunnyPurchaseDealNumber,
+        gunnySaleDealNumber: privateGunnyOutwardBaseSchema.gunnySaleDealNumber,
         partyName: privateGunnyOutwardBaseSchema.partyName,
         newGunnyQty: privateGunnyOutwardBaseSchema.newGunnyQty,
         oldGunnyQty: privateGunnyOutwardBaseSchema.oldGunnyQty,
@@ -97,7 +96,7 @@ export const listPrivateGunnyOutwardSchema = z.object({
         limit: z.coerce.number().int().min(1).max(100).default(10).optional(),
         search: z.string().trim().optional(),
         partyName: z.string().trim().optional(),
-        gunnyPurchaseDealNumber: z.string().trim().optional(),
+        gunnySaleDealNumber: z.string().trim().optional(),
         startDate: z
             .string()
             .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
@@ -110,7 +109,7 @@ export const listPrivateGunnyOutwardSchema = z.object({
             .enum([
                 'date',
                 'partyName',
-                'gunnyPurchaseDealNumber',
+                'gunnySaleDealNumber',
                 'newGunnyQty',
                 'oldGunnyQty',
                 'createdAt',

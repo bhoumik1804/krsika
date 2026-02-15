@@ -30,9 +30,24 @@ type DataTableProps = {
     data: LabourOther[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
-export function LabourOtherTable({ data, search, navigate }: DataTableProps) {
+export function LabourOtherTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -48,10 +63,20 @@ export function LabourOtherTable({ data, search, navigate }: DataTableProps) {
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'labourType', searchKey: 'labourType', type: 'string' },
+            {
+                columnId: 'labourType',
+                searchKey: 'labourType',
+                type: 'string',
+            },
         ],
     })
 
@@ -66,6 +91,9 @@ export function LabourOtherTable({ data, search, navigate }: DataTableProps) {
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
@@ -81,8 +109,10 @@ export function LabourOtherTable({ data, search, navigate }: DataTableProps) {
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div

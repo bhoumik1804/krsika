@@ -12,7 +12,6 @@ import { RiceDialogs } from './components/rice-dialogs'
 import { RicePrimaryButtons } from './components/rice-primary-buttons'
 import { RiceProvider, useRice } from './components/rice-provider'
 import { RiceTable } from './components/rice-table'
-import { useRicePurchaseList } from './data/hooks'
 
 export function RicePurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -36,18 +35,7 @@ export function RicePurchaseReport() {
         }
     }, [searchParams])
 
-    // Call GET API here
-    const {
-        data: apiData,
-        pagination: apiPagination,
-        isLoading,
-        isError,
-    } = useRicePurchaseList({
-        millId: millId || '',
-        page: queryParams.page,
-        pageSize: queryParams.limit,
-        search: queryParams.search,
-    })
+    // Call GET API here -> Removed as it is now inside the provider
 
     const sidebarData = getMillAdminSidebarData(millId || '')
 
@@ -64,14 +52,7 @@ export function RicePurchaseReport() {
     }
 
     return (
-        <RiceProvider
-            millId={millId || ''}
-            initialQueryParams={queryParams}
-            apiData={apiData}
-            apiPagination={apiPagination}
-            isLoading={isLoading}
-            isError={isError}
-        >
+        <RiceProvider millId={millId || ''} initialQueryParams={queryParams}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -131,6 +112,7 @@ function RicePurchaseContent({
     return (
         <RiceTable
             data={context.data}
+            pagination={context.pagination}
             search={Object.fromEntries(
                 Object.entries(context.queryParams || {})
                     .filter(([, value]) => value !== undefined)

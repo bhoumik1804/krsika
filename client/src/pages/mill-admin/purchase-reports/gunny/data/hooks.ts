@@ -41,16 +41,21 @@ export const gunnyPurchaseKeys = {
 /**
  * Hook to fetch gunny purchases list with pagination and filters
  */
-export const useGunnyPurchaseList = (
-    millId: string,
-    params?: GunnyPurchaseQueryParams,
-    options?: { enabled?: boolean }
-) => {
+export const useGunnyPurchaseList = (params: {
+    millId: string
+    page?: number
+    limit?: number
+    search?: string
+}) => {
     return useQuery<GunnyPurchaseListResponse, Error>({
-        queryKey: gunnyPurchaseKeys.list(millId, params),
-        queryFn: () => fetchGunnyPurchaseList(millId, params),
-        enabled: (options?.enabled ?? true) && !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        queryKey: gunnyPurchaseKeys.list(params.millId, {
+            page: params.page,
+            limit: params.limit,
+            search: params.search,
+        }),
+        queryFn: () => fetchGunnyPurchaseList(params.millId, params),
+        enabled: !!params.millId,
+        staleTime: 5 * 60 * 1000,
     })
 }
 

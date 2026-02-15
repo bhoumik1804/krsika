@@ -1,9 +1,22 @@
 import { type ColumnDef } from '@tanstack/react-table'
-// '
+import { cn } from '@/lib/utils'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type PartyTransaction } from '../data/schema'
 
 export const partyTransactionColumns: ColumnDef<PartyTransaction>[] = [
+    {
+        id: 'srNo',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='#' />
+        ),
+        cell: ({ row, table }) => {
+            const { pageIndex, pageSize } = table.getState().pagination
+            const sr = pageIndex * pageSize + row.index + 1
+            return <div className='text-center font-medium'>{sr}</div>
+        },
+        meta: { className: cn('w-12') },
+        enableSorting: false,
+    },
     {
         accessorKey: 'partyName',
         header: ({ column }) => (

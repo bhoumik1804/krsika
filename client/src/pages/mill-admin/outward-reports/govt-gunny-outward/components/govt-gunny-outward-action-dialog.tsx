@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useCommitteeList } from '@/pages/mill-admin/input-reports/committee-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -22,16 +24,17 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-import { GovtGunnyOutwardSchema, type GovtGunnyOutward } from '../data/schema'
 import {
     useCreateGovtGunnyOutward,
     useUpdateGovtGunnyOutward,
 } from '../data/hooks'
+import { GovtGunnyOutwardSchema, type GovtGunnyOutward } from '../data/schema'
 import { useGovtGunnyOutward } from './govt-gunny-outward-provider'
 
 type GovtGunnyOutwardActionDialogProps = {
@@ -48,6 +51,19 @@ export function GovtGunnyOutwardActionDialog({
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
     const { millId, setOpen: setDialogOpen } = useGovtGunnyOutward()
+    const committee = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: useCommitteeList,
+            extractItems: (data) =>
+                data.committees
+                    .map((c: any) => c.committeeName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'committeeName', sortOrder: 'asc' },
+        },
+        currentRow?.samitiSangrahan || undefined
+    )
     const createMutation = useCreateGovtGunnyOutward(millId)
     const updateMutation = useUpdateGovtGunnyOutward(millId)
 
@@ -135,11 +151,11 @@ export function GovtGunnyOutwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                new Date(
-                                                                    field.value
-                                                                ),
-                                                                'MMM dd, yyyy'
-                                                            )
+                                                                  new Date(
+                                                                      field.value
+                                                                  ),
+                                                                  'MMM dd, yyyy'
+                                                              )
                                                             : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
@@ -153,17 +169,17 @@ export function GovtGunnyOutwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                field.value
-                                                            )
+                                                                  field.value
+                                                              )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                    date,
-                                                                    'yyyy-MM-dd'
-                                                                )
+                                                                      date,
+                                                                      'yyyy-MM-dd'
+                                                                  )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -205,10 +221,12 @@ export function GovtGunnyOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Samiti Sangrahan</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter Samiti Sangrahan'
-                                                {...field}
+                                            <PaginatedCombobox
                                                 value={field.value || ''}
+                                                onValueChange={field.onChange}
+                                                paginatedList={committee}
+                                                placeholder='Select samiti...'
+                                                emptyText='No samiti found'
                                             />
                                         </FormControl>
                                         <FormMessage />

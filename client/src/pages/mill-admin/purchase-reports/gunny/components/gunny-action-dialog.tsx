@@ -120,7 +120,7 @@ export function GunnyActionDialog({
         try {
             if (isEditing && currentRow?._id) {
                 await updateGunnyPurchase({
-                    id: currentRow._id,
+                    _id: currentRow._id,
                     ...data,
                 })
             } else {

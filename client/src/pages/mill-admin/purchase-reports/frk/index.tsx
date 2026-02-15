@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react'
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -12,7 +12,6 @@ import { FrkDialogs } from './components/frk-dialogs'
 import { FrkPrimaryButtons } from './components/frk-primary-buttons'
 import { FrkProvider, useFrk } from './components/frk-provider'
 import { FrkTable } from './components/frk-table'
-import { useFrkPurchaseList } from './data/hooks'
 
 export function FrkPurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -36,18 +35,7 @@ export function FrkPurchaseReport() {
         }
     }, [searchParams])
 
-    // Call GET API here
-    const {
-        data: apiData,
-        pagination: apiPagination,
-        isLoading,
-        isError,
-    } = useFrkPurchaseList({
-        millId: millId || '',
-        page: queryParams.page,
-        pageSize: queryParams.limit,
-        search: queryParams.search,
-    })
+    // Call GET API here -> Removed as logic is inside provider
 
     const sidebarData = getMillAdminSidebarData(millId || '')
 
@@ -65,42 +53,8 @@ export function FrkPurchaseReport() {
         }
     }
 
-    const handleQueryParamsChange = useCallback(
-        (params: {
-            page: number
-            limit: number
-            search?: string
-            sortBy?: string
-            sortOrder?: 'asc' | 'desc'
-        }) => {
-            const newParams: Record<string, string> = {
-                page: params.page.toString(),
-                limit: params.limit.toString(),
-            }
-            if (params.search) {
-                newParams.search = params.search
-            }
-            if (params.sortBy) {
-                newParams.sortBy = params.sortBy
-            }
-            if (params.sortOrder) {
-                newParams.sortOrder = params.sortOrder
-            }
-            setSearchParams(newParams, { replace: true })
-        },
-        [setSearchParams]
-    )
-
     return (
-        <FrkProvider
-            millId={millId || ''}
-            initialQueryParams={queryParams}
-            apiData={apiData}
-            apiPagination={apiPagination}
-            isLoading={isLoading}
-            isError={isError}
-            onQueryParamsChange={handleQueryParamsChange}
-        >
+        <FrkProvider millId={millId || ''} initialQueryParams={queryParams}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -160,6 +114,7 @@ function FrkPurchaseContent({
     return (
         <FrkTable
             data={context.data}
+            pagination={context.pagination}
             search={Object.fromEntries(
                 Object.entries(context.queryParams || {})
                     .filter(([, value]) => value !== undefined)

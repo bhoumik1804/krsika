@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-// '
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -23,7 +22,7 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
             />
         ),
         meta: {
-            className: cn('sticky start-0 z-10 rounded-tl-[inherit]'),
+            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
         },
         cell: ({ row }) => (
             <Checkbox
@@ -33,6 +32,7 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
                 className='translate-y-[2px]'
             />
         ),
+
         enableSorting: false,
         enableHiding: false,
     },
@@ -45,7 +45,7 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
         meta: {
             className: cn(
                 'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-                'ps-0.5 sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+                'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
             ),
         },
         enableHiding: false,

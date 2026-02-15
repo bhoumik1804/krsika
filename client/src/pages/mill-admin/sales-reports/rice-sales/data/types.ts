@@ -47,6 +47,7 @@ export type RiceSalesResponse = {
     _id: string
     millId: string
     date: string
+    riceSalesDealNumber?: string
     partyName?: string
     brokerName?: string
     deliveryType?: string

@@ -25,6 +25,7 @@ export type KhandaSalesResponse = {
     _id: string
     millId: string
     date: string
+    khandaSalesDealNumber?: string
     partyName?: string
     brokerName?: string
     khandaQty?: number

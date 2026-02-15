@@ -120,7 +120,7 @@ function GovtPaddyInwardContent({
         error,
     } = useGovtPaddyInwardList(millId, queryParams)
 
-    const data = listData?.entries ?? []
+    const data = listData?.data ?? []
     const pagination = listData?.pagination
 
     if (isLoading) {

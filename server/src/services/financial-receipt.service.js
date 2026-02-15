@@ -32,7 +32,6 @@ export const getFinancialReceiptList = async (millId, options = {}) => {
         page = 1,
         limit = 10,
         search,
-        status,
         startDate,
         endDate,
         sortBy = 'date',
@@ -40,7 +39,6 @@ export const getFinancialReceiptList = async (millId, options = {}) => {
     } = options
     const matchStage = { millId: new mongoose.Types.ObjectId(millId) }
 
-    if (status) matchStage.status = status
     if (startDate || endDate) {
         matchStage.date = {}
         if (startDate) matchStage.date.$gte = new Date(startDate)
@@ -49,8 +47,10 @@ export const getFinancialReceiptList = async (millId, options = {}) => {
     if (search) {
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
-            { paymentMode: { $regex: search, $options: 'i' } },
-            { referenceNumber: { $regex: search, $options: 'i' } },
+            { salesDealType: { $regex: search, $options: 'i' } },
+            { salesDealNumber: { $regex: search, $options: 'i' } },
+            { brokerName: { $regex: search, $options: 'i' } },
+            { remarks: { $regex: search, $options: 'i' } },
         ]
     }
 
@@ -107,7 +107,7 @@ export const getFinancialReceiptList = async (millId, options = {}) => {
 
 export const getFinancialReceiptSummary = async (millId, options = {}) => {
     const { startDate, endDate } = options
-    const match = { millId }
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     if (startDate || endDate) {
         match.date = {}
         if (startDate) match.date.$gte = new Date(startDate)
@@ -120,7 +120,7 @@ export const getFinancialReceiptSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalAmount: { $sum: '$amount' },
+                totalAmount: { $sum: '$receivedAmount' },
             },
         },
         {

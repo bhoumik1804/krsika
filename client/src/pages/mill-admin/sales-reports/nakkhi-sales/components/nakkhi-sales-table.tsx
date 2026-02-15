@@ -22,7 +22,6 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import type { NakkhiSalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { nakkhiSalesColumns as columns } from './nakkhi-sales-columns'
@@ -53,7 +52,6 @@ export function NakkhiSalesTable({ data, search, navigate }: DataTableProps) {
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
         ],
     })
 
@@ -80,6 +78,7 @@ export function NakkhiSalesTable({ data, search, navigate }: DataTableProps) {
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        getRowId: (row) => row._id,
     })
 
     useEffect(() => {
@@ -97,13 +96,7 @@ export function NakkhiSalesTable({ data, search, navigate }: DataTableProps) {
                 table={table}
                 searchPlaceholder='Search...'
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
+                filters={[]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

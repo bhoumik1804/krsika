@@ -11,14 +11,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type PaddySales } from '../data/schema'
-import { paddySales } from './paddy-sales-provider'
+import { usePaddySales } from './paddy-sales-provider'
 
 type DataTableRowActionsProps = {
     row: Row<PaddySales>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = paddySales()
+    const { setOpen, setCurrentRow } = usePaddySales()
     return (
         <>
             <DropdownMenu modal={false}>

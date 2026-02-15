@@ -94,11 +94,11 @@ export function OtherActionDialog({
             partyName: '',
             brokerName: '',
             otherPurchaseName: '',
-            otherPurchaseQty: 0,
+            otherPurchaseQty: '' as unknown as number,
             qtyType: '',
-            rate: 0,
-            discountPercent: 0,
-            gst: 0,
+            rate: '' as unknown as number,
+            discountPercent: '' as unknown as number,
+            gst: '' as unknown as number,
         } as OtherPurchase,
     })
 
@@ -112,11 +112,11 @@ export function OtherActionDialog({
                     partyName: '',
                     brokerName: '',
                     otherPurchaseName: '',
-                    otherPurchaseQty: 0,
+                    otherPurchaseQty: '' as unknown as number,
                     qtyType: '',
-                    rate: 0,
-                    discountPercent: 0,
-                    gst: 0,
+                    rate: '' as unknown as number,
+                    discountPercent: '' as unknown as number,
+                    gst: '' as unknown as number,
                 } as OtherPurchase)
             }
         }

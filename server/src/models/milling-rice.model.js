@@ -18,43 +18,58 @@ const MillingRiceSchema = new Schema(
             required: true,
             index: true,
         },
-        riceLot: {
-            type: String,
-            trim: true,
-        },
         riceType: {
             type: String,
             trim: true,
         },
-        totalPaddy: {
+        hopperInGunny: {
             type: Number,
             min: 0,
+            default: 0,
         },
-        totalRice: {
+        hopperInQintal: {
             type: Number,
             min: 0,
+            default: 0,
         },
-        brokenRice: {
+        riceQuantity: {
             type: Number,
             min: 0,
+            default: 0,
         },
-        khurai: {
-            type: Number,
-            min: 0,
-        },
-        millRecovery: {
+        ricePercentage: {
             type: Number,
             min: 0,
             max: 100,
+            default: 0,
         },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
+        khandaQuantity: {
+            type: Number,
+            min: 0,
+            default: 0,
         },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
+        khandaPercentage: {
+            type: Number,
+            min: 0,
+            max: 100,
+            default: 0,
+        },
+        silkyKodhaQuantity: {
+            type: Number,
+            min: 0,
+            default: 0,
+        },
+        silkyKodhaPercentage: {
+            type: Number,
+            min: 0,
+            max: 100,
+            default: 0,
+        },
+        wastagePercentage: {
+            type: Number,
+            min: 0,
+            max: 100,
+            default: 0,
         },
     },
     {
@@ -64,7 +79,7 @@ const MillingRiceSchema = new Schema(
 
 // Compound indexes for common queries
 MillingRiceSchema.index({ millId: 1, date: -1 })
-MillingRiceSchema.index({ millId: 1, riceLot: 1 })
+MillingRiceSchema.index({ millId: 1, riceType: 1 })
 MillingRiceSchema.index({ millId: 1, riceType: 1 })
 
 // Virtual for formatted date

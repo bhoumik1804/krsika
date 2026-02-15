@@ -25,6 +25,7 @@ export type GunnyPurchaseFormData = z.infer<typeof gunnyPurchaseFormSchema>
 export const gunnyPurchaseSchema = z.object({
     _id: z.string(),
     date: z.string(),
+    gunnyPurchaseDealNumber: z.string().optional(),
     partyName: z.string().optional(),
     deliveryType: z.string().optional(),
     newGunnyQty: z.number().optional(),

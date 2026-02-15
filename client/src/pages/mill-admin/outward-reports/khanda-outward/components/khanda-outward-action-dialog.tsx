@@ -2,22 +2,12 @@ import { useMemo, useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
-import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
+import { useKhandaSalesList } from '@/pages/mill-admin/sales-reports/khanda-sales/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import {
-    Combobox,
-    ComboboxContent,
-    ComboboxEmpty,
-    ComboboxInput,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -35,6 +25,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -42,6 +33,12 @@ import {
 } from '@/components/ui/popover'
 import { useCreateKhandaOutward, useUpdateKhandaOutward } from '../data/hooks'
 import { khandaOutwardSchema, type KhandaOutward } from '../data/schema'
+
+const useKhandaSalesListWrapper = (params: any) => {
+    return useKhandaSalesList(params.millId, params, {
+        enabled: !!params.millId,
+    })
+}
 
 type KhandaOutwardActionDialogProps = {
     open: boolean
@@ -56,32 +53,40 @@ export function KhandaOutwardActionDialog({
     currentRow,
     millId,
 }: KhandaOutwardActionDialogProps) {
-    const party = usePaginatedList(
+    const salesDeals = usePaginatedList(
         millId,
         open,
         {
-            useListHook: usePartyList,
+            useListHook: useKhandaSalesListWrapper,
             extractItems: (data) =>
-                data.parties
-                    .map((c) => c.partyName)
+                data.sales
+                    ?.map((s) => s.khandaSalesDealNumber)
                     .filter(Boolean) as string[],
-            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
         },
-        currentRow?.partyName || undefined
+        currentRow?.khandaSaleDealNumber || undefined
     )
 
-    const broker = usePaginatedList(
+    const { data: salesList } = useKhandaSalesList(
         millId,
-        open,
-        {
-            useListHook: useBrokerList,
-            extractItems: (data) =>
-                data.brokers
-                    .map((c) => c.brokerName)
-                    .filter(Boolean) as string[],
-        },
-        currentRow?.brokerName || undefined
+        { limit: 1000 },
+        { enabled: open }
     )
+
+    const handleDealSelect = (dealNumber: string) => {
+        form.setValue('khandaSaleDealNumber', dealNumber)
+        const selectedDeal = salesList?.sales?.find(
+            (sale) => sale.khandaSalesDealNumber === dealNumber
+        )
+        if (selectedDeal) {
+            if (selectedDeal.partyName) {
+                form.setValue('partyName', selectedDeal.partyName)
+            }
+            if (selectedDeal.brokerName) {
+                form.setValue('brokerName', selectedDeal.brokerName)
+            }
+        }
+    }
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -241,10 +246,14 @@ export function KhandaOutwardActionDialog({
                                             Khanda Sale Deal Number
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter khanda sale deal number'
-                                                {...field}
-                                                value={field.value || ''}
+                                            <PaginatedCombobox
+                                                value={field.value || undefined}
+                                                onValueChange={(value) =>
+                                                    handleDealSelect(value)
+                                                }
+                                                paginatedList={salesDeals}
+                                                placeholder='Select deal number'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -258,41 +267,11 @@ export function KhandaOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
-                                            <Combobox
-                                                value={field.value}
-                                                onValueChange={field.onChange}
-                                                items={party.items}
-                                            >
-                                                <ComboboxInput
-                                                    placeholder='Search party...'
-                                                    showClear
-                                                />
-                                                <ComboboxContent>
-                                                    <ComboboxList
-                                                        onScroll={
-                                                            party.onScroll
-                                                        }
-                                                    >
-                                                        <ComboboxCollection>
-                                                            {(p) => (
-                                                                <ComboboxItem
-                                                                    value={p}
-                                                                >
-                                                                    {p}
-                                                                </ComboboxItem>
-                                                            )}
-                                                        </ComboboxCollection>
-                                                        <ComboboxEmpty>
-                                                            No parties found
-                                                        </ComboboxEmpty>
-                                                        {party.isLoadingMore && (
-                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                Loading more...
-                                                            </div>
-                                                        )}
-                                                    </ComboboxList>
-                                                </ComboboxContent>
-                                            </Combobox>
+                                            <Input
+                                                placeholder='Enter party name'
+                                                {...field}
+                                                value={field.value || ''}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -305,41 +284,11 @@ export function KhandaOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Broker Name</FormLabel>
                                         <FormControl>
-                                            <Combobox
-                                                value={field.value}
-                                                onValueChange={field.onChange}
-                                                items={broker.items}
-                                            >
-                                                <ComboboxInput
-                                                    placeholder='Search broker...'
-                                                    showClear
-                                                />
-                                                <ComboboxContent>
-                                                    <ComboboxList
-                                                        onScroll={
-                                                            broker.onScroll
-                                                        }
-                                                    >
-                                                        <ComboboxCollection>
-                                                            {(b) => (
-                                                                <ComboboxItem
-                                                                    value={b}
-                                                                >
-                                                                    {b}
-                                                                </ComboboxItem>
-                                                            )}
-                                                        </ComboboxCollection>
-                                                        <ComboboxEmpty>
-                                                            No brokers found
-                                                        </ComboboxEmpty>
-                                                        {broker.isLoadingMore && (
-                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                Loading more...
-                                                            </div>
-                                                        )}
-                                                    </ComboboxList>
-                                                </ComboboxContent>
-                                            </Combobox>
+                                            <Input
+                                                placeholder='Enter broker name'
+                                                {...field}
+                                                value={field.value || ''}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

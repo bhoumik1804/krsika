@@ -1,5 +1,4 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useParams } from 'react-router'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,7 +9,10 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteLabourOther } from '../data/hooks'
 import { type LabourOther } from '../data/schema'
+
+// ... imports
 
 type LabourOtherDeleteDialogProps = {
     open: boolean
@@ -23,15 +25,17 @@ export function LabourOtherDeleteDialog({
     onOpenChange,
     currentRow,
 }: LabourOtherDeleteDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
+    const deleteMutation = useDeleteLabourOther(millId || '')
+
     const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+        if (currentRow?._id) {
+            deleteMutation.mutate(currentRow._id, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                },
+            })
+        }
     }
 
     return (

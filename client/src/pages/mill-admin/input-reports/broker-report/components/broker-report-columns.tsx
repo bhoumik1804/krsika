@@ -1,9 +1,9 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BrokerReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
-import { cn } from '@/lib/utils'
 
 export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
     {
@@ -21,6 +21,9 @@ export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
                 className='translate-y-[2px]'
             />
         ),
+        meta: {
+            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
+        },
         cell: ({ row }) => (
             <Checkbox
                 checked={row.getIsSelected()}
@@ -29,11 +32,9 @@ export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
                 className='translate-y-[2px]'
             />
         ),
-         meta: {
-                    className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
-                },
-                enableSorting: false,
-                enableHiding: false,
+
+        enableSorting: false,
+        enableHiding: false,
     },
     {
         accessorKey: 'brokerName',
@@ -42,12 +43,19 @@ export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
         ),
         cell: ({ row }) => <div>{row.getValue('brokerName')}</div>,
         meta: {
-                    className: cn(
-                        'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-                        'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
-                    ),
-                },
-                enableHiding: false,
+            className: cn(
+                'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
+                'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+            ),
+        },
+        enableHiding: false,
+    },
+    {
+        accessorKey: 'gstn',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='GSTN' />
+        ),
+        cell: ({ row }) => <div>{row.getValue('gstn')}</div>,
     },
     {
         accessorKey: 'phone',

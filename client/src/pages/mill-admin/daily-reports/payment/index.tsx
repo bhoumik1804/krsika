@@ -1,47 +1,51 @@
 import { useState } from 'react'
+import {
+    IndianRupee,
+    Users,
+    Truck,
+    Fuel,
+    DollarSign,
+    Wrench,
+    Contact,
+    UserPlus,
+    Activity,
+} from 'lucide-react'
 import { DateRange } from 'react-day-picker'
 import { useParams } from 'react-router'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { DateRangePicker } from '@/components/date-range-picker'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
+import { StatsCard } from '@/components/stats-card'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { DateRangePicker } from './components/date-range-picker'
 
 type PaymentRow = {
     description: string
     amount: number
+    icon: any
 }
 
 export function PaymentReport() {
     const { millId } = useParams<{ millId: string }>()
     const sidebarData = getMillAdminSidebarData(millId || '')
-    const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    const [date, setDate] = useState<DateRange | undefined>({
         from: new Date(),
         to: new Date(),
     })
 
     // Sample data matching the image categories
     const payments: PaymentRow[] = [
-        { description: 'Party Name / Broker Name', amount: 0 },
-        { description: 'Transporter', amount: 0 },
-        { description: 'Diesel', amount: 0 },
-        { description: 'Allowance', amount: 0 },
-        { description: 'Repair / Maintenance', amount: 0 },
-        { description: 'Hamali', amount: 0 },
-        { description: 'Salary', amount: 0 },
-        { description: 'Other Expenses', amount: 0 },
+        { description: 'Party Name / Broker Name', amount: 0, icon: Users },
+        { description: 'Transporter', amount: 0, icon: Truck },
+        { description: 'Diesel', amount: 0, icon: Fuel },
+        { description: 'Allowance', amount: 0, icon: DollarSign },
+        { description: 'Repair / Maintenance', amount: 0, icon: Wrench },
+        { description: 'Hamali', amount: 0, icon: Contact },
+        { description: 'Salary', amount: 0, icon: UserPlus },
+        { description: 'Other Expenses', amount: 0, icon: Activity },
     ]
 
     return (
@@ -68,45 +72,19 @@ export function PaymentReport() {
                             Track all daily payment transactions
                         </p>
                     </div>
-                    <DateRangePicker
-                        date={dateRange}
-                        onDateChange={setDateRange}
-                    />
+                    <DateRangePicker date={date} setDate={setDate} />
                 </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Payment Summary</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className='overflow-x-auto'>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className='w-[300px]'>
-                                            Description
-                                        </TableHead>
-                                        <TableHead className='text-right'>
-                                            Amount
-                                        </TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {payments.map((row, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell className='font-medium'>
-                                                {row.description}
-                                            </TableCell>
-                                            <TableCell className='text-right'>
-                                                {row.amount.toFixed(2)}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    </CardContent>
-                </Card>
+                <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+                    {payments.map((row, index) => (
+                        <StatsCard
+                            key={index}
+                            title={row.description}
+                            value={`₹${row.amount.toLocaleString('en-IN')}`}
+                            icon={row.icon || IndianRupee}
+                        />
+                    ))}
+                </div>
             </Main>
         </>
     )
