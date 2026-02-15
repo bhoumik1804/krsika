@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { DailyMilling } from '../models/daily-milling.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockHelpers from './stock-helpers.service.js'
 
 export const createDailyMillingEntry = async (millId, data, userId) => {
     const entry = new DailyMilling({
@@ -11,6 +12,10 @@ export const createDailyMillingEntry = async (millId, data, userId) => {
         date: new Date(data.date),
     })
     await entry.save()
+
+    // Record stock transaction
+    await StockHelpers.recordMillingTransaction(millId, entry, userId)
+
     logger.info('Daily milling entry created', {
         id: entry._id,
         millId,
@@ -153,6 +158,12 @@ export const updateDailyMillingEntry = async (millId, id, data, userId) => {
         .populate('createdBy', 'fullName email')
         .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Daily milling entry not found')
+
+    // Update stock transaction
+    if (data.quantity || data.itemType || data.date) {
+        await StockHelpers.updateStockTransaction('DailyMilling', id, entry)
+    }
+
     logger.info('Daily milling entry updated', { id, millId, userId })
     return entry
 }
@@ -160,6 +171,10 @@ export const updateDailyMillingEntry = async (millId, id, data, userId) => {
 export const deleteDailyMillingEntry = async (millId, id) => {
     const entry = await DailyMilling.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Daily milling entry not found')
+
+    // Delete stock transaction
+    await StockHelpers.deleteStockTransaction('DailyMilling', id)
+
     logger.info('Daily milling entry deleted', { id, millId })
 }
 

@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { RiceSale } from '../models/rice-sale.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 
 export const createRiceSaleEntry = async (millId, data) => {
     const entry = new RiceSale({
@@ -10,6 +11,23 @@ export const createRiceSaleEntry = async (millId, data) => {
         date: new Date(data.date),
     })
     await entry.save()
+
+    // Record stock transaction (DEBIT = stock decrease)
+    if (data.riceQty && data.riceType) {
+        await StockTransactionService.recordTransaction(millId, {
+            date: data.date,
+            commodity: 'Rice',
+            variety: data.riceType,
+            type: 'DEBIT',
+            action: 'Sale',
+            quantity: data.riceQty,
+            bags: data.bags || 0,
+            refModel: 'RiceSale',
+            refId: entry._id,
+            remarks: `Sale to ${data.partyName || 'Party'}`,
+        })
+    }
+
     logger.info('Rice sale entry created', { id: entry._id, millId })
     return entry
 }
@@ -114,6 +132,19 @@ export const updateRiceSaleEntry = async (millId, id, data) => {
         { new: true, runValidators: true }
     )
     if (!entry) throw new ApiError(404, 'Rice sale entry not found')
+
+    // Update stock transaction if quantity or type changed
+    if (data.riceQty || data.riceType || data.date) {
+        await StockTransactionService.updateTransaction('RiceSale', id, {
+            date: entry.date,
+            commodity: 'Rice',
+            variety: entry.riceType,
+            quantity: entry.riceQty,
+            bags: entry.bags || 0,
+            remarks: `Sale to ${entry.partyName || 'Party'}`,
+        })
+    }
+
     logger.info('Rice sale entry updated', { id, millId })
     return entry
 }
@@ -121,6 +152,10 @@ export const updateRiceSaleEntry = async (millId, id, data) => {
 export const deleteRiceSaleEntry = async (millId, id) => {
     const entry = await RiceSale.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Rice sale entry not found')
+
+    // Delete associated stock transactions
+    await StockTransactionService.deleteTransactionsByRef('RiceSale', id)
+
     logger.info('Rice sale entry deleted', { id, millId })
 }
 

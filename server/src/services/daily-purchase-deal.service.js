@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { DailyPurchaseDeal } from '../models/daily-purchase-deal.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 
 export const createDailyPurchaseDealEntry = async (millId, data, userId) => {
     const entry = new DailyPurchaseDeal({
@@ -11,6 +12,27 @@ export const createDailyPurchaseDealEntry = async (millId, data, userId) => {
         date: new Date(data.date),
     })
     await entry.save()
+
+    // Record stock transaction (CREDIT = stock increase)
+    if (data.commodity && data.quantity) {
+        await StockTransactionService.recordTransaction(
+            millId,
+            {
+                date: data.date,
+                commodity: data.commodity,
+                variety: data.commodityType || null,
+                type: 'CREDIT',
+                action: 'Purchase Deal',
+                quantity: data.quantity,
+                bags: data.bags || 0,
+                refModel: 'DailyPurchaseDeal',
+                refId: entry._id,
+                remarks: `Purchase deal from ${data.farmerName || 'Farmer'}`,
+            },
+            userId
+        )
+    }
+
     logger.info('Daily purchase deal entry created', {
         id: entry._id,
         millId,
@@ -153,6 +175,23 @@ export const updateDailyPurchaseDealEntry = async (
         .populate('createdBy', 'fullName email')
         .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Daily purchase deal entry not found')
+
+    // Update stock transaction if quantity or commodity changed
+    if (data.commodity || data.quantity || data.date) {
+        await StockTransactionService.updateTransaction(
+            'DailyPurchaseDeal',
+            id,
+            {
+                date: entry.date,
+                commodity: entry.commodity,
+                variety: entry.commodityType || null,
+                quantity: entry.quantity,
+                bags: entry.bags || 0,
+                remarks: `Purchase deal from ${entry.farmerName || 'Farmer'}`,
+            }
+        )
+    }
+
     logger.info('Daily purchase deal entry updated', { id, millId, userId })
     return entry
 }
@@ -160,6 +199,13 @@ export const updateDailyPurchaseDealEntry = async (
 export const deleteDailyPurchaseDealEntry = async (millId, id) => {
     const entry = await DailyPurchaseDeal.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Daily purchase deal entry not found')
+
+    // Delete associated stock transactions
+    await StockTransactionService.deleteTransactionsByRef(
+        'DailyPurchaseDeal',
+        id
+    )
+
     logger.info('Daily purchase deal entry deleted', { id, millId })
 }
 

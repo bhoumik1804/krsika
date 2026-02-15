@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { PaddyPurchase } from '../models/paddy-purchase.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 
 export const createPaddyPurchaseEntry = async (millId, data, userId) => {
     const entry = new PaddyPurchase({
@@ -11,6 +12,27 @@ export const createPaddyPurchaseEntry = async (millId, data, userId) => {
         date: new Date(data.date),
     })
     await entry.save()
+
+    // Record stock transaction (CREDIT = stock increase)
+    if (data.totalPaddyQty && data.paddyType) {
+        await StockTransactionService.recordTransaction(
+            millId,
+            {
+                date: data.date,
+                commodity: 'Paddy',
+                variety: data.paddyType,
+                type: 'CREDIT',
+                action: 'Purchase',
+                quantity: data.totalPaddyQty,
+                bags: data.bags || 0,
+                refModel: 'PaddyPurchase',
+                refId: entry._id,
+                remarks: `Purchase from ${data.partyName || 'Party'}`,
+            },
+            userId
+        )
+    }
+
     logger.info('Paddy purchase entry created', {
         id: entry._id,
         millId,
@@ -139,6 +161,19 @@ export const updatePaddyPurchaseEntry = async (millId, id, data, userId) => {
         .populate('createdBy', 'fullName email')
         .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Paddy purchase entry not found')
+
+    // Update stock transaction if quantity or type changed
+    if (data.totalPaddyQty || data.paddyType || data.date) {
+        await StockTransactionService.updateTransaction('PaddyPurchase', id, {
+            date: entry.date,
+            commodity: 'Paddy',
+            variety: entry.paddyType,
+            quantity: entry.totalPaddyQty,
+            bags: entry.bags || 0,
+            remarks: `Purchase from ${entry.partyName || 'Party'}`,
+        })
+    }
+
     logger.info('Paddy purchase entry updated', { id, millId, userId })
     return entry
 }
@@ -146,6 +181,10 @@ export const updatePaddyPurchaseEntry = async (millId, id, data, userId) => {
 export const deletePaddyPurchaseEntry = async (millId, id) => {
     const entry = await PaddyPurchase.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Paddy purchase entry not found')
+
+    // Delete associated stock transactions
+    await StockTransactionService.deleteTransactionsByRef('PaddyPurchase', id)
+
     logger.info('Paddy purchase entry deleted', { id, millId })
 }
 
