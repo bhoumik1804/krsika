@@ -45,12 +45,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { useCreatePaddySale, useUpdatePaddySale } from '../data/hooks'
 import { paddySalesSchema, type PaddySales } from '../data/schema'
 
 type PaddySalesActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: PaddySales | null
+    currentRow?: PaddySales | null
 }
 
 export function PaddySalesActionDialog({
@@ -59,6 +60,13 @@ export function PaddySalesActionDialog({
     currentRow,
 }: PaddySalesActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
+    const { mutate: createPaddySale, isPending: isCreating } =
+        useCreatePaddySale()
+    const { mutate: updatePaddySale, isPending: isUpdating } =
+        useUpdatePaddySale()
+
+    const isLoading = isCreating || isUpdating
+
     const party = usePaginatedList(
         millId || '',
         open,
@@ -97,20 +105,20 @@ export function PaddySalesActionDialog({
             brokerName: '',
             saleType: '',
             doNumber: '',
-            dhanMotaQty: '' as unknown as number,
-            dhanPatlaQty: '' as unknown as number,
-            dhanSarnaQty: '' as unknown as number,
+            dhanMotaQty: 0,
+            dhanPatlaQty: 0,
+            dhanSarnaQty: 0,
             dhanType: '',
-            dhanQty: '' as unknown as number,
-            paddyRatePerQuintal: '' as unknown as number,
+            dhanQty: 0,
+            paddyRatePerQuintal: 0,
             deliveryType: '',
-            discountPercent: '' as unknown as number,
-            brokerage: '' as unknown as number,
+            discountPercent: 0,
+            brokerage: 0,
             gunnyOption: '',
-            newGunnyRate: '' as unknown as number,
-            oldGunnyRate: '' as unknown as number,
-            plasticGunnyRate: '' as unknown as number,
-        } as PaddySales,
+            newGunnyRate: 0,
+            oldGunnyRate: 0,
+            plasticGunnyRate: 0,
+        },
     })
 
     const watchSaleType = form.watch('saleType')
@@ -130,26 +138,44 @@ export function PaddySalesActionDialog({
                     brokerName: '',
                     saleType: '',
                     doNumber: '',
-                    dhanMotaQty: '' as unknown as number,
-                    dhanPatlaQty: '' as unknown as number,
-                    dhanSarnaQty: '' as unknown as number,
+                    dhanMotaQty: 0,
+                    dhanPatlaQty: 0,
+                    dhanSarnaQty: 0,
                     dhanType: '',
-                    dhanQty: '' as unknown as number,
-                    paddyRatePerQuintal: '' as unknown as number,
+                    dhanQty: 0,
+                    paddyRatePerQuintal: 0,
                     deliveryType: '',
-                    discountPercent: '' as unknown as number,
-                    brokerage: '' as unknown as number,
+                    discountPercent: 0,
+                    brokerage: 0,
                     gunnyOption: '',
-                    newGunnyRate: '' as unknown as number,
-                    oldGunnyRate: '' as unknown as number,
-                    plasticGunnyRate: '' as unknown as number,
+                    newGunnyRate: 0,
+                    oldGunnyRate: 0,
+                    plasticGunnyRate: 0,
                 })
             }
         }
     }, [currentRow, open, form])
 
-    const onSubmit = () => {
-        // Form submission logic
+    const onSubmit = (data: PaddySales) => {
+        console.log('[PaddySales] onSubmit called with:', data)
+        if (isEditing && currentRow?._id) {
+            updatePaddySale(
+                { id: currentRow._id, data },
+                {
+                    onSuccess: () => {
+                        form.reset()
+                        onOpenChange(false)
+                    },
+                }
+            )
+        } else {
+            createPaddySale(data, {
+                onSuccess: () => {
+                    form.reset()
+                    onOpenChange(false)
+                },
+            })
+        }
     }
 
     return (
@@ -165,7 +191,12 @@ export function PaddySalesActionDialog({
                 </DialogHeader>
                 <Form {...form}>
                     <form
-                        onSubmit={form.handleSubmit(onSubmit)}
+                        onSubmit={form.handleSubmit(onSubmit, (errors) => {
+                            console.error(
+                                '[PaddySales] Validation errors:',
+                                errors
+                            )
+                        })}
                         className='space-y-4'
                     >
                         <div className='space-y-6'>
@@ -427,7 +458,7 @@ export function PaddySalesActionDialog({
 
                                 <FormField
                                     control={form.control}
-                                    name='gunnyOption'
+                                    name='dhanType'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Dhan Type</FormLabel>
@@ -744,11 +775,19 @@ export function PaddySalesActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Sale
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}{' '}
+                                Sale
                             </Button>
                         </DialogFooter>
                     </form>

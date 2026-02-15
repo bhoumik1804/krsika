@@ -1,22 +1,14 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
+import { useGunnyPurchaseList } from '@/pages/mill-admin/purchase-reports/gunny/data/hooks'
+import type { GunnyPurchaseResponse } from '@/pages/mill-admin/purchase-reports/gunny/data/types'
 import { CalendarIcon } from 'lucide-react'
 import { gunnyDeliveryTypeOptions } from '@/constants/purchase-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import {
-    Combobox,
-    ComboboxInput,
-    ComboboxContent,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxEmpty,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -34,6 +26,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -42,6 +35,10 @@ import {
 import { useCreateGunnyInward, useUpdateGunnyInward } from '../data/hooks'
 import { gunnyInwardSchema, type GunnyInward } from '../data/schema'
 import { gunnyInward } from './gunny-inward-provider'
+
+const useGunnyPurchaseListCompat = (params: any) => {
+    return useGunnyPurchaseList(params)
+}
 
 type GunnyInwardActionDialogProps = {
     open: boolean
@@ -60,19 +57,55 @@ export function GunnyInwardActionDialog({
     const { mutate: updateInward, isPending: isUpdating } =
         useUpdateGunnyInward(millId)
 
-    const party = usePaginatedList(
+    const purchaseDataRef = useRef<GunnyPurchaseResponse[]>([])
+
+    const gunnyDeal = usePaginatedList(
         millId,
         open,
         {
-            useListHook: usePartyList,
-            extractItems: (data) =>
-                data.parties
-                    .map((c) => c.partyName)
-                    .filter(Boolean) as string[],
-            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+            useListHook: useGunnyPurchaseListCompat,
+            extractItems: (data: any) => {
+                purchaseDataRef.current = data.purchases || []
+                return data.purchases
+                    .map(
+                        (p: GunnyPurchaseResponse) => p.gunnyPurchaseDealNumber
+                    )
+                    .filter(Boolean) as string[]
+            },
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
         },
-        currentRow?.partyName || undefined
+        currentRow?.gunnyPurchaseDealNumber || undefined
     )
+
+    const handleDealSelect = (dealId: string) => {
+        form.setValue('gunnyPurchaseDealNumber', dealId)
+        const purchase = purchaseDataRef.current.find(
+            (p) => p.gunnyPurchaseDealNumber === dealId
+        )
+        if (purchase) {
+            if (purchase.partyName)
+                form.setValue('partyName', purchase.partyName)
+            if (purchase.deliveryType)
+                form.setValue('delivery', purchase.deliveryType)
+
+            // Map quantities correctly, checking for undefined/null to allow 0
+            if (
+                purchase.newGunnyQty !== undefined &&
+                purchase.newGunnyQty !== null
+            )
+                form.setValue('gunnyNew', purchase.newGunnyQty)
+            if (
+                purchase.oldGunnyQty !== undefined &&
+                purchase.oldGunnyQty !== null
+            )
+                form.setValue('gunnyOld', purchase.oldGunnyQty)
+            if (
+                purchase.plasticGunnyQty !== undefined &&
+                purchase.plasticGunnyQty !== null
+            )
+                form.setValue('gunnyPlastic', purchase.plasticGunnyQty)
+        }
+    }
     const isLoading = isCreating || isUpdating
     const isEditing = !!currentRow
 
@@ -228,11 +261,12 @@ export function GunnyInwardActionDialog({
                                             Gunny Purchase Deal Number
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                id='gunnyPurchaseDealNumber'
-                                                placeholder='Enter Deal Number'
-                                                {...field}
+                                            <PaginatedCombobox
                                                 value={field.value || ''}
+                                                onValueChange={handleDealSelect}
+                                                paginatedList={gunnyDeal}
+                                                placeholder='Search deal...'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -246,41 +280,11 @@ export function GunnyInwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
-                                            <Combobox
-                                                value={field.value}
-                                                onValueChange={field.onChange}
-                                                items={party.items}
-                                            >
-                                                <ComboboxInput
-                                                    placeholder='Search Party...'
-                                                    showClear
-                                                />
-                                                <ComboboxContent>
-                                                    <ComboboxList
-                                                        onScroll={
-                                                            party.onScroll
-                                                        }
-                                                    >
-                                                        <ComboboxCollection>
-                                                            {(p) => (
-                                                                <ComboboxItem
-                                                                    value={p}
-                                                                >
-                                                                    {p}
-                                                                </ComboboxItem>
-                                                            )}
-                                                        </ComboboxCollection>
-                                                        <ComboboxEmpty>
-                                                            No parties found
-                                                        </ComboboxEmpty>
-                                                        {party.isLoadingMore && (
-                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                Loading more...
-                                                            </div>
-                                                        )}
-                                                    </ComboboxList>
-                                                </ComboboxContent>
-                                            </Combobox>
+                                            <Input
+                                                placeholder='Enter Party Name'
+                                                {...field}
+                                                value={field.value || ''}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

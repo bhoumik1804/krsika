@@ -1,23 +1,15 @@
 import { useEffect, useState } from 'react'
+import { useRef } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
-import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
+import { useOtherPurchaseList } from '@/pages/mill-admin/purchase-reports/other/data/hooks'
+import type { OtherPurchaseResponse } from '@/pages/mill-admin/purchase-reports/other/data/types'
 import { CalendarIcon } from 'lucide-react'
 import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/purchase-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import {
-    Combobox,
-    ComboboxInput,
-    ComboboxContent,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxEmpty,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -35,6 +27,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -50,6 +43,10 @@ import {
 import { useCreateOtherInward, useUpdateOtherInward } from '../data/hooks'
 import { otherInwardSchema, type OtherInward } from '../data/schema'
 import { useOtherInward } from './other-inward-provider'
+
+const useOtherPurchaseListCompat = (params: any) => {
+    return useOtherPurchaseList({ ...params, pageSize: params.limit })
+}
 
 type OtherInwardActionDialogProps = {
     open: boolean
@@ -68,32 +65,47 @@ export function OtherInwardActionDialog({
     const { mutateAsync: updateOtherInward, isPending: isUpdating } =
         useUpdateOtherInward(millId)
 
-    const party = usePaginatedList(
+    const purchaseDataRef = useRef<OtherPurchaseResponse[]>([])
+
+    const otherPurchaseDeal = usePaginatedList(
         millId,
         open,
         {
-            useListHook: usePartyList,
-            extractItems: (data) =>
-                data.parties
-                    .map((c) => c.partyName)
-                    .filter(Boolean) as string[],
-            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+            useListHook: useOtherPurchaseListCompat,
+            extractItems: (data: any) => {
+                purchaseDataRef.current = data.purchases || []
+                return data.purchases
+                    .map(
+                        (p: OtherPurchaseResponse) => p.otherPurchaseDealNumber
+                    )
+                    .filter(Boolean) as string[]
+            },
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
         },
-        currentRow?.partyName || undefined
+        currentRow?.otherPurchaseDealNumber || undefined
     )
 
-    const broker = usePaginatedList(
-        millId,
-        open,
-        {
-            useListHook: useBrokerList,
-            extractItems: (data) =>
-                data.brokers
-                    .map((c) => c.brokerName)
-                    .filter(Boolean) as string[],
-        },
-        currentRow?.brokerName || undefined
-    )
+    const handleDealSelect = (dealId: string) => {
+        form.setValue('otherPurchaseDealNumber', dealId)
+        const purchase = purchaseDataRef.current.find(
+            (p) => p.otherPurchaseDealNumber === dealId
+        )
+        if (purchase) {
+            if (purchase.partyName)
+                form.setValue('partyName', purchase.partyName)
+            if (purchase.brokerName)
+                form.setValue('brokerName', purchase.brokerName)
+            if (purchase.otherPurchaseName)
+                form.setValue('itemName', purchase.otherPurchaseName)
+            if (
+                purchase.otherPurchaseQty !== undefined &&
+                purchase.otherPurchaseQty !== null
+            )
+                form.setValue('quantity', purchase.otherPurchaseQty)
+            if (purchase.qtyType)
+                form.setValue('quantityType', purchase.qtyType)
+        }
+    }
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -260,10 +272,14 @@ export function OtherInwardActionDialog({
                                             Other Purchase Deal Number
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter Deal ID'
-                                                {...field}
+                                            <PaginatedCombobox
                                                 value={field.value || ''}
+                                                onValueChange={handleDealSelect}
+                                                paginatedList={
+                                                    otherPurchaseDeal
+                                                }
+                                                placeholder='Search deal...'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -322,9 +338,7 @@ export function OtherInwardActionDialog({
                                             <FormLabel>Qty Type</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={
-                                                    field.value || undefined
-                                                }
+                                                value={field.value || undefined}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
@@ -360,41 +374,11 @@ export function OtherInwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
-                                            <Combobox
-                                                value={field.value}
-                                                onValueChange={field.onChange}
-                                                items={party.items}
-                                            >
-                                                <ComboboxInput
-                                                    placeholder='Search Party...'
-                                                    showClear
-                                                />
-                                                <ComboboxContent>
-                                                    <ComboboxList
-                                                        onScroll={
-                                                            party.onScroll
-                                                        }
-                                                    >
-                                                        <ComboboxCollection>
-                                                            {(p) => (
-                                                                <ComboboxItem
-                                                                    value={p}
-                                                                >
-                                                                    {p}
-                                                                </ComboboxItem>
-                                                            )}
-                                                        </ComboboxCollection>
-                                                        <ComboboxEmpty>
-                                                            No parties found
-                                                        </ComboboxEmpty>
-                                                        {party.isLoadingMore && (
-                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                Loading more...
-                                                            </div>
-                                                        )}
-                                                    </ComboboxList>
-                                                </ComboboxContent>
-                                            </Combobox>
+                                            <Input
+                                                placeholder='Enter Party Name'
+                                                {...field}
+                                                value={field.value || ''}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -407,41 +391,11 @@ export function OtherInwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Broker Name</FormLabel>
                                         <FormControl>
-                                            <Combobox
-                                                value={field.value}
-                                                onValueChange={field.onChange}
-                                                items={broker.items}
-                                            >
-                                                <ComboboxInput
-                                                    placeholder='Search Broker...'
-                                                    showClear
-                                                />
-                                                <ComboboxContent>
-                                                    <ComboboxList
-                                                        onScroll={
-                                                            broker.onScroll
-                                                        }
-                                                    >
-                                                        <ComboboxCollection>
-                                                            {(b) => (
-                                                                <ComboboxItem
-                                                                    value={b}
-                                                                >
-                                                                    {b}
-                                                                </ComboboxItem>
-                                                            )}
-                                                        </ComboboxCollection>
-                                                        <ComboboxEmpty>
-                                                            No brokers found
-                                                        </ComboboxEmpty>
-                                                        {broker.isLoadingMore && (
-                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                Loading more...
-                                                            </div>
-                                                        )}
-                                                    </ComboboxList>
-                                                </ComboboxContent>
-                                            </Combobox>
+                                            <Input
+                                                placeholder='Enter Broker Name'
+                                                {...field}
+                                                value={field.value || ''}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

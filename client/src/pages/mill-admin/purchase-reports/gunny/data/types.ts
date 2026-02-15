@@ -41,6 +41,7 @@ export interface GunnyPurchaseResponse {
     _id: string
     millId: string
     date: string
+    gunnyPurchaseDealNumber?: string
     partyName?: string
     deliveryType?: string
     newGunnyQty?: number

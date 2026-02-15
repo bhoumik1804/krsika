@@ -95,12 +95,12 @@ export function OtherSalesActionDialog({
             partyName: '',
             brokerName: '',
             otherSaleName: '',
-            otherSaleQty: undefined,
+            otherSaleQty: 0,
             qtyType: '',
-            rate: undefined,
-            discountPercent: undefined,
-            gst: undefined,
-        } as OtherSales,
+            rate: 0,
+            discountPercent: 0,
+            gst: 0,
+        },
     })
 
     useEffect(() => {
@@ -113,11 +113,11 @@ export function OtherSalesActionDialog({
                     partyName: '',
                     brokerName: '',
                     otherSaleName: '',
-                    otherSaleQty: undefined,
+                    otherSaleQty: 0,
                     qtyType: '',
-                    rate: undefined,
-                    discountPercent: undefined,
-                    gst: undefined,
+                    rate: 0,
+                    discountPercent: 0,
+                    gst: 0,
                 })
             }
         }
@@ -301,9 +301,7 @@ export function OtherSalesActionDialog({
                                                             e.target
                                                                 .valueAsNumber
                                                         field.onChange(
-                                                            isNaN(val)
-                                                                ? ''
-                                                                : val
+                                                            isNaN(val) ? 0 : val
                                                         )
                                                     }}
                                                     onWheel={(e) =>
@@ -368,9 +366,7 @@ export function OtherSalesActionDialog({
                                                             e.target
                                                                 .valueAsNumber
                                                         field.onChange(
-                                                            isNaN(val)
-                                                                ? ''
-                                                                : val
+                                                            isNaN(val) ? 0 : val
                                                         )
                                                     }}
                                                     onWheel={(e) =>
@@ -399,9 +395,7 @@ export function OtherSalesActionDialog({
                                                             e.target
                                                                 .valueAsNumber
                                                         field.onChange(
-                                                            isNaN(val)
-                                                                ? ''
-                                                                : val
+                                                            isNaN(val) ? 0 : val
                                                         )
                                                     }}
                                                     onWheel={(e) =>
@@ -430,9 +424,7 @@ export function OtherSalesActionDialog({
                                                             e.target
                                                                 .valueAsNumber
                                                         field.onChange(
-                                                            isNaN(val)
-                                                                ? ''
-                                                                : val
+                                                            isNaN(val) ? 0 : val
                                                         )
                                                     }}
                                                     onWheel={(e) =>

@@ -40,6 +40,7 @@ export interface OtherPurchaseResponse {
     id?: string
     millId?: string
     date: string
+    otherPurchaseDealNumber?: string
     partyName?: string
     brokerName?: string
     otherPurchaseName?: string

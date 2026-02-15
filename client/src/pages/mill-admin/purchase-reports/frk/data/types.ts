@@ -5,6 +5,7 @@ import type { FrkPurchaseData } from './schema'
 export interface FrkPurchaseRequest {
     date: string
     partyName: string
+    frkPurchaseDealNumber?: string
     frkQty?: number
     frkRate?: number
     gst?: number
@@ -13,6 +14,7 @@ export interface FrkPurchaseRequest {
 export interface FrkPurchaseResponse {
     _id: string
     date: string
+    frkPurchaseDealNumber?: string
     partyName: string
     frkQty?: number
     frkRate?: number

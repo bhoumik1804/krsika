@@ -45,6 +45,7 @@ import otherPurchaseRoutes from './other-purchase.routes.js'
 import otherSaleRoutes from './other-sale.routes.js'
 import outwardBalancePartyRoutes from './outward-balance-party.routes.js'
 import paddyPurchaseRoutes from './paddy-purchase.routes.js'
+import paddySaleRoutes from './paddy-sale.routes.js'
 import partyTransactionRoutes from './party-transaction.routes.js'
 import partyRoutes from './party.routes.js'
 import privateGunnyOutwardRoutes from './private-gunny-outward.routes.js'
@@ -131,12 +132,15 @@ router.use('/mills/:millId/gunny-purchase', gunnyPurchaseRoutes)
 router.use('/mills/:millId/frk-purchase', frkPurchaseRoutes)
 router.use('/mills/:millId/other-purchase', otherPurchaseRoutes)
 
+// ... (existing imports)
+
 // Sales Reports
 router.use('/mills/:millId/gunny-sales', gunnySaleRoutes)
 router.use('/mills/:millId/frk-sales', frkSaleRoutes)
 router.use('/mills/:millId/other-sales', otherSaleRoutes)
 router.use('/mills/:millId/khanda-sales', khandaSaleRoutes)
 router.use('/mills/:millId/nakkhi-sales', nakkhiSaleRoutes)
+router.use('/mills/:millId/paddy-sales', paddySaleRoutes)
 
 // Balance Lifting Reports
 router.use('/mills/:millId/balance-lifting-party', balanceLiftingPartyRoutes)

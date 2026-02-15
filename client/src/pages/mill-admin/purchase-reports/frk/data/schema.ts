@@ -4,6 +4,7 @@ import { z } from 'zod'
 export const frkPurchaseSchema = z.object({
     _id: z.string().optional(),
     date: z.string().min(1, 'Date is required'),
+    frkPurchaseDealNumber: z.string().optional(),
     partyName: z.string().min(1, 'Party name is required'),
     frkQty: z.number().optional(),
     frkRate: z.number().optional(),

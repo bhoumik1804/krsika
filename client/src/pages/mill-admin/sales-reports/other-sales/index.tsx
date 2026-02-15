@@ -8,9 +8,40 @@ import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { OtherSalesDialogs } from './components/other-sales-dialogs'
 import { OtherSalesPrimaryButtons } from './components/other-sales-primary-buttons'
-import { OtherSalesProvider } from './components/other-sales-provider'
+import {
+    OtherSalesProvider,
+    useOtherSales,
+} from './components/other-sales-provider'
 import { OtherSalesTable } from './components/other-sales-table'
-import { otherSalesEntries } from './data/other-sales-entries'
+
+function OtherSalesContent({
+    search,
+    navigate,
+}: {
+    search: Record<string, string>
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const { data, isLoading, pagination } = useOtherSales()
+
+    if (isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                Loading...
+            </div>
+        )
+    }
+
+    return (
+        <>
+            <OtherSalesTable
+                data={data}
+                search={search}
+                navigate={navigate}
+                pagination={pagination}
+            />
+        </>
+    )
+}
 
 export function OtherSalesReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -30,8 +61,16 @@ export function OtherSalesReport() {
         }
     }
 
+    const queryParams = {
+        page: Number(search.page) || 1,
+        limit: Number(search.limit) || 10,
+        sortBy: search.sortBy || 'date',
+        sortOrder: (search.sortOrder || 'desc') as 'asc' | 'desc',
+        search: search.search || undefined,
+    }
+
     return (
-        <OtherSalesProvider>
+        <OtherSalesProvider millId={millId || ''} queryParams={queryParams}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -56,11 +95,7 @@ export function OtherSalesReport() {
                     </div>
                     <OtherSalesPrimaryButtons />
                 </div>
-                <OtherSalesTable
-                    data={otherSalesEntries}
-                    search={search}
-                    navigate={navigate}
-                />
+                <OtherSalesContent search={search} navigate={navigate} />
             </Main>
 
             <OtherSalesDialogs />

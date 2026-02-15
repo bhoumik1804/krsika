@@ -3,6 +3,7 @@ import type { RicePurchaseData } from './schema'
 export interface RicePurchaseResponse extends RicePurchaseData {
     _id: string
     millId?: string
+    ricePurchaseDealNumber?: string
     createdAt?: string
     updatedAt?: string
 }

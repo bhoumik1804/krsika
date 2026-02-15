@@ -1,6 +1,6 @@
+import { format } from 'date-fns'
 import { ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
-import { format } from 'date-fns'
 import { PaddySales } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
@@ -34,7 +34,7 @@ export const paddySalesColumns: ColumnDef<PaddySales>[] = [
         header: 'Date',
         cell: ({ row }) =>
             row.getValue('date')
-                ? format(new Date(row.getValue('date')), 'dd MMM yyyy')
+                ? format(new Date(row.getValue('date')), 'yyyy-MM-dd')
                 : '-',
     },
     {

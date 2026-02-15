@@ -1,26 +1,45 @@
 import { PaddySalesActionDialog } from './paddy-sales-action-dialog'
 import { PaddySalesDeleteDialog } from './paddy-sales-delete-dialog'
-import { paddySales } from './paddy-sales-provider'
+import { usePaddySales } from './paddy-sales-provider'
 
 export function PaddySalesDialogs() {
-    const { open, setOpen, currentRow } = paddySales()
+    const { open, setOpen, currentRow, setCurrentRow } = usePaddySales()
 
     return (
         <>
             <PaddySalesActionDialog
-                open={open === 'add' || open === 'edit'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? open : null)
-                }
-                currentRow={currentRow}
+                open={open === 'add'}
+                onOpenChange={(isOpen) => setOpen(isOpen ? 'add' : null)}
             />
-            <PaddySalesDeleteDialog
-                open={open === 'delete'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? 'delete' : null)
-                }
-                currentRow={currentRow}
-            />
+
+            {currentRow && (
+                <>
+                    <PaddySalesActionDialog
+                        open={open === 'edit'}
+                        onOpenChange={(isOpen) => {
+                            setOpen(isOpen ? 'edit' : null)
+                            if (!isOpen) {
+                                setTimeout(() => {
+                                    setCurrentRow(null)
+                                }, 500)
+                            }
+                        }}
+                        currentRow={currentRow}
+                    />
+                    <PaddySalesDeleteDialog
+                        open={open === 'delete'}
+                        onOpenChange={(isOpen) => {
+                            setOpen(isOpen ? 'delete' : null)
+                            if (!isOpen) {
+                                setTimeout(() => {
+                                    setCurrentRow(null)
+                                }, 500)
+                            }
+                        }}
+                        currentRow={currentRow}
+                    />
+                </>
+            )}
         </>
     )
 }
