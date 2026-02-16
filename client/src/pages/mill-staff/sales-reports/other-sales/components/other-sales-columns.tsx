@@ -1,11 +1,15 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type OtherSales } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const otherSalesColumns: ColumnDef<OtherSales>[] = [
+export const getOtherSalesColumns = (
+    t: TFunction<'millStaff'>
+): ColumnDef<OtherSales>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -38,10 +42,15 @@ export const otherSalesColumns: ColumnDef<OtherSales>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherSales.table.date')}
+            />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -54,43 +63,66 @@ export const otherSalesColumns: ColumnDef<OtherSales>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherSales.table.partyName')}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('partyName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('partyName') || '-'}
+            </div>
         ),
     },
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherSales.table.brokerName')}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('brokerName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('brokerName') || '-'}
+            </div>
         ),
     },
     {
         accessorKey: 'otherSaleName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Item Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherSales.table.itemName')}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('otherSaleName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('otherSaleName') || '-'}
+            </div>
         ),
     },
     {
         accessorKey: 'otherSaleQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Quantity' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherSales.table.quantity')}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.otherSaleQty?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                {row.original.otherSaleQty?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
         accessorKey: 'qtyType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Qty Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherSales.table.qtyType')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('qtyType') || '-'}</div>
@@ -99,28 +131,43 @@ export const otherSalesColumns: ColumnDef<OtherSales>[] = [
     {
         accessorKey: 'rate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherSales.table.rate')}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.rate?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.rate?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
         accessorKey: 'discountPercent',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Discount %' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherSales.table.discountPercent')}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.discountPercent?.toFixed(2) || 0}%</div>
+            <div className='text-right'>
+                {row.original.discountPercent?.toFixed(2) || 0}%
+            </div>
         ),
     },
     {
         accessorKey: 'gst',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='GST %' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherSales.table.gst')}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.gst?.toFixed(2) || 0}%</div>
+            <div className='text-right'>
+                {row.original.gst?.toFixed(2) || 0}%
+            </div>
         ),
     },
     {

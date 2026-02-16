@@ -21,6 +21,8 @@
         "loading": "लोड हो रहा है...",
         "success": "सफलता",
         "error": "त्रुटि",
+        "adding": "जोड़ रहे हैं...",
+        "updating": "अपडेट कर रहे हैं...",
         "exportSummary": "सारांश निर्यात करें",
         "exportHistory": "इतिहास निर्यात करें",
         "dateWiseHistory": "दिनांक-वार इतिहास",
@@ -657,6 +659,537 @@
         "multiDelete": {
             "title": "{{count}} रिकॉर्ड हटाएं?",
             "description": "क्या आप वाकई चयनित धान बिक्री रिकॉर्ड हटाना चाहते हैं?<br />यह क्रिया पूर्ववत नहीं की जा सकती है।"
+        }
+    },
+    "riceSales": {
+        "title": "चावल बिक्री रिपोर्ट",
+        "description": "चावल बिक्री लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "deliveryType": "डिलीवरी",
+            "lotOrOther": "LOT/अन्य",
+            "fciOrNAN": "FCI/NAN",
+            "riceType": "चावल का प्रकार",
+            "riceQty": "मात्रा (क्विंटल में.)",
+            "riceRatePerQuintal": "चावल का भाव/दर",
+            "discountPercent": "बटाव %",
+            "brokeragePerQuintal": "दलाली (प्रति क्विंटल)",
+            "frkType": "FRK",
+            "frkRatePerQuintal": "FRK दर (प्रति किं.)",
+            "lotNumber": "LOT No.",
+            "gunnyType": "बारदाना सहित/वापसी",
+            "newGunnyRate": "नया बारदाना दर",
+            "oldGunnyRate": "पुराना बारदाना दर",
+            "plasticGunnyRate": "प्लास्टिक बारदाना दर",
+            "actions": "कार्रवाई"
+        },
+        "form": {
+            "addTitle": "चावल बिक्री जोड़ें",
+            "editTitle": "चावल बिक्री संपादित करें",
+            "addDescription": "नीचे चावल बिक्री विवरण दर्ज करें",
+            "editDescription": "नीचे चावल बिक्री विवरण अपडेट करें",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "deliveryType": "डिलीवरी",
+            "lotOrOther": "LOT/अन्य",
+            "fciOrNAN": "FCI/NAN",
+            "lotNumber": "LOT No.",
+            "frkType": "FRK",
+            "frkRatePerQuintal": "FRK दर (प्रति क्विंटल)",
+            "riceType": "चावल का प्रकार",
+            "riceQty": "मात्रा (क्विंटल)",
+            "riceRatePerQuintal": "चावल दर (प्रति क्विंटल)",
+            "discountPercent": "बटाव (%)",
+            "brokeragePerQuintal": "दलाली (प्रति क्विंटल)",
+            "gunnyType": "बारदाना विकल्प",
+            "newGunnyRate": "नया बारदाना दर",
+            "oldGunnyRate": "पुराना बारदाना दर",
+            "plasticGunnyRate": "प्लास्टिक बारदाना दर",
+            "placeholders": {
+                "date": "तारीख चुनें",
+                "party": "पार्टी खोजें...",
+                "broker": "दलाल खोजें...",
+                "select": "चुनें",
+                "lotNumber": "LOT No. दर्ज करें"
+            },
+            "buttons": {
+                "add": "बिक्री जोड़ें",
+                "update": "बिक्री अपडेट करें",
+                "cancel": "रद्द करें",
+                "adding": "जोड़ रहे हैं...",
+                "updating": "अपडेट कर रहे हैं..."
+            }
+        },
+        "options": {
+            "deliveryType": {
+                "pede": "पड़े में",
+                "delivered": "पहुंचा कर"
+            },
+            "lotOrOther": {
+                "lot": "LOT बिक्री",
+                "other": "अन्य बिक्री"
+            },
+            "fciOrNAN": {
+                "fci": "FCI",
+                "nan": "NAN"
+            },
+            "frkType": {
+                "sahit": "FRK साहित",
+                "dena": "FRK देना है",
+                "non": "NON FRK"
+            },
+            "riceType": {
+                "mota": "चावल(मोटा)",
+                "patla": "चावल(पतला)"
+            },
+            "gunnyType": {
+                "vajanWeight": "सहित (वजन में)",
+                "bhavRate": "सहित (भाव में)",
+                "vapsiReturn": "वापसी"
+            }
+        },
+        "delete": {
+            "title": "रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई {{name}} के लिए यह रिकॉर्ड हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।"
+        },
+        "multiDelete": {
+            "title": "{{count}} रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई चयनित चावल बिक्री रिकॉर्ड हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।"
+        }
+    },
+    "gunnySales": {
+        "title": "बारदाना बिक्री रिपोर्ट",
+        "description": "बारदाना बिक्री लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "newGunnyQty": "नया बारदाना संख्या",
+            "newGunnyRate": "नया बारदाना दर",
+            "oldGunnyQty": "पुराना बारदाना संख्या",
+            "oldGunnyRate": "पुराना बारदाना दर",
+            "plasticGunnyQty": "प्लास्टिक बारदाना संख्या",
+            "plasticGunnyRate": "प्लास्टिक बारदाना दर",
+            "actions": "कार्रवाई"
+        },
+        "form": {
+            "addTitle": "बारदाना बिक्री जोड़ें",
+            "editTitle": "बारदाना बिक्री संपादित करें",
+            "addDescription": "नीचे बारदाना बिक्री विवरण दर्ज करें",
+            "editDescription": "नीचे बारदाना बिक्री विवरण अपडेट करें",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "newGunnyQty": "नया बारदाना संख्या",
+            "newGunnyRate": "नया बारदाना दर",
+            "oldGunnyQty": "पुराना बारदाना संख्या",
+            "oldGunnyRate": "पुराना बारदाना दर",
+            "plasticGunnyQty": "प्लास्टिक बारदाना संख्या",
+            "plasticGunnyRate": "प्लास्टिक बारदाना दर",
+            "placeholders": {
+                "date": "तारीख चुनें",
+                "party": "पार्टी खोजें...",
+                "noResults": "कोई पार्टी नहीं मिली"
+            },
+            "buttons": {
+                "add": "बिक्री जोड़ें",
+                "update": "बिक्री अपडेट करें",
+                "cancel": "रद्द करें",
+                "adding": "जोड़ रहे हैं...",
+                "updating": "अपडेट कर रहे हैं..."
+            }
+        },
+        "delete": {
+            "title": "रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई {{name}} के लिए यह रिकॉर्ड हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।"
+        },
+        "multiDelete": {
+            "title": "{{count}} रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई चयनित बारदाना बिक्री रिकॉर्ड हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।"
+        }
+    },
+    "khandaSales": {
+        "title": "खंडा बिक्री रिपोर्ट",
+        "description": "खंडा बिक्री लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "khandaQty": "खंडा (क्विंटल में)",
+            "khandaRate": "खंडा दर",
+            "discountPercent": "बटाव %",
+            "brokeragePerQuintal": "दलाली",
+            "actions": "कार्रवाई"
+        },
+        "form": {
+            "addTitle": "खंडा बिक्री जोड़ें",
+            "editTitle": "खंडा बिक्री संपादित करें",
+            "addDescription": "नीचे बिक्री विवरण दर्ज करें",
+            "editDescription": "नीचे बिक्री विवरण अपडेट करें",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "khandaQty": "खंडा (क्विंटल में)",
+            "khandaRate": "खंडा दर",
+            "discountPercent": "बटाव %",
+            "brokeragePerQuintal": "दलाली (प्रति क्विंटल)",
+            "placeholders": {
+                "date": "तारीख चुनें",
+                "party": "पार्टी खोजें...",
+                "broker": "ब्रोकर खोजें...",
+                "noParties": "कोई पार्टी नहीं मिली",
+                "noBrokers": "कोई ब्रोकर नहीं मिला"
+            },
+            "buttons": {
+                "add": "बिक्री जोड़ें",
+                "update": "बिक्री अपडेट करें",
+                "cancel": "रद्द करें",
+                "adding": "जोड़ रहे हैं...",
+                "updating": "अपडेट कर रहे हैं..."
+            }
+        },
+        "delete": {
+            "title": "रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई {{name}} के लिए यह रिकॉर्ड हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।"
+        },
+        "multiDelete": {
+            "title": "{{count}} रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई चयनित खंडा बिक्री रिकॉर्ड हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।"
+        }
+    },
+    "nakkhiSales": {
+        "title": "नक्खी बिक्री रिपोर्ट",
+        "description": "नक्खी बिक्री लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "nakkhiQty": "नक्खी (क्विंटल में)",
+            "nakkhiRate": "नक्खी दर",
+            "discountPercent": "बटाव %",
+            "brokeragePerQuintal": "दलाली",
+            "actions": "कार्रवाई"
+        },
+        "form": {
+            "addTitle": "नक्खी बिक्री जोड़ें",
+            "editTitle": "नक्खी बिक्री संपादित करें",
+            "addDescription": "नीचे बिक्री विवरण दर्ज करें",
+            "editDescription": "नीचे बिक्री विवरण अपडेट करें",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "nakkhiQty": "नक्खी (क्विंटल में)",
+            "nakkhiRate": "नक्खी दर",
+            "discountPercent": "बटाव %",
+            "brokeragePerQuintal": "दलाली (प्रति क्विंटल)",
+            "placeholders": {
+                "date": "तारीख चुनें",
+                "party": "पार्टी खोजें...",
+                "broker": "ब्रोकर खोजें...",
+                "noParties": "कोई पार्टी नहीं मिली",
+                "noBrokers": "कोई ब्रोकर नहीं मिला"
+            },
+            "buttons": {
+                "add": "बिक्री जोड़ें",
+                "update": "बिक्री अपडेट करें",
+                "cancel": "रद्द करें",
+                "adding": "जोड़ रहे हैं...",
+                "updating": "अपडेट कर रहे हैं..."
+            }
+        },
+        "delete": {
+            "title": "रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई {{name}} के लिए यह रिकॉर्ड हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।"
+        },
+        "multiDelete": {
+            "title": "{{count}} रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई चयनित नक्खी बिक्री रिकॉर्ड हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।"
+        }
+    },
+    "otherSales": {
+        "title": "अन्य बिक्री रिपोर्ट",
+        "description": "अन्य बिक्री लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "itemName": "वस्तु का नाम",
+            "quantity": "मात्रा",
+            "qtyType": "मात्रा प्रकार",
+            "rate": "दर",
+            "discountPercent": "बटाव %",
+            "gst": "GST %",
+            "actions": "कार्रवाई"
+        },
+        "form": {
+            "addTitle": "बिक्री जोड़ें",
+            "editTitle": "बिक्री संपादित करें",
+            "addDescription": "नीचे बिक्री विवरण दर्ज करें",
+            "editDescription": "नीचे बिक्री विवरण अपडेट करें",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "itemName": "अन्य वस्तु प्रविष्ट करें",
+            "quantity": "मात्रा",
+            "qtyType": "मात्रा प्रकार",
+            "rate": "दर",
+            "discountPercent": "बटाव %",
+            "gst": "GST",
+            "placeholders": {
+                "date": "तारीख चुनें",
+                "party": "पार्टी खोजें...",
+                "broker": "ब्रोकर खोजें...",
+                "itemName": "वस्तु का नाम दर्ज करें",
+                "noParties": "कोई पार्टी नहीं मिली",
+                "noBrokers": "कोई ब्रोकर नहीं मिला"
+            },
+            "buttons": {
+                "add": "बिक्री जोड़ें",
+                "update": "बिक्री अपडेट करें",
+                "cancel": "रद्द करें",
+                "adding": "जोड़ रहे हैं...",
+                "updating": "अपडेट कर रहे हैं..."
+            }
+        },
+        "delete": {
+            "title": "रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई {{name}} के लिए यह रिकॉर्ड हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।"
+        },
+        "multiDelete": {
+            "title": "{{count}} रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई चयनित अन्य बिक्री रिकॉर्ड हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।"
+        }
+    },
+    "inputReports": {
+        "partyReport": {
+            "title": "पार्टी रिपोर्ट",
+            "description": "पार्टी लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "table": {
+                "name": "पार्टी का नाम",
+                "gstn": "GSTN",
+                "phone": "फ़ोन न.",
+                "email": "Email",
+                "address": "पता",
+                "actions": "कार्रवाई"
+            },
+            "form": {
+                "addTitle": "पार्टी जोड़ें",
+                "editTitle": "पार्टी संपादित करें",
+                "addDescription": "नीचे पार्टी विवरण दर्ज करें",
+                "editDescription": "नीचे पार्टी विवरण अपडेट करें",
+                "name": "पार्टी का नाम",
+                "gstn": "GSTN",
+                "phone": "फ़ोन न.",
+                "email": "Email",
+                "address": "पता",
+                "placeholders": {
+                    "name": "नाम दर्ज करें",
+                    "gstn": "GSTN दर्ज करें",
+                    "phone": "फ़ोन नंबर दर्ज करें",
+                    "email": "ईमेल दर्ज करें",
+                    "address": "पता दर्ज करें"
+                }
+            }
+        },
+        "transporterReport": {
+            "title": "परिवहनकर्ता रिपोर्ट",
+            "description": "परिवहनकर्ता लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "table": {
+                "name": "परिवहनकर्ता का नाम",
+                "gstn": "GSTN",
+                "phone": "फ़ोन न.",
+                "email": "Email",
+                "address": "पता",
+                "actions": "कार्रवाई"
+            },
+            "form": {
+                "addTitle": "परिवहनकर्ता जोड़ें",
+                "editTitle": "परिवहनकर्ता संपादित करें",
+                "addDescription": "नीचे परिवहनकर्ता विवरण दर्ज करें",
+                "editDescription": "नीचे परिवहनकर्ता विवरण अपडेट करें",
+                "name": "परिवहनकर्ता का नाम",
+                "gstn": "GSTN",
+                "phone": "फ़ोन न.",
+                "email": "Email",
+                "address": "पता",
+                "placeholders": {
+                    "name": "नाम दर्ज करें",
+                    "gstn": "GSTN दर्ज करें",
+                    "phone": "फ़ोन नंबर दर्ज करें",
+                    "email": "ईमेल दर्ज करें",
+                    "address": "पता दर्ज करें"
+                }
+            }
+        },
+        "brokerReport": {
+            "title": "ब्रोकर रिपोर्ट",
+            "description": "ब्रोकर लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "table": {
+                "name": "ब्रोकर का नाम",
+                "gstn": "GSTIN",
+                "phone": "फ़ोन न.",
+                "email": "Email",
+                "address": "पता",
+                "actions": "कार्रवाई",
+                "searchPlaceholder": "ब्रोकर का नाम खोजें...",
+                "noResults": "कोई ब्रोकर नहीं मिला।"
+            },
+            "form": {
+                "addTitle": "ब्रोकर जोड़ें",
+                "editTitle": "ब्रोकर संपादित करें",
+                "addDescription": "नीचे ब्रोकर विवरण दर्ज करें",
+                "editDescription": "नीचे ब्रोकर विवरण अपडेट करें",
+                "name": "ब्रोकर का नाम",
+                "gstn": "GSTIN",
+                "phone": "फ़ोन न.",
+                "email": "Email",
+                "address": "पता",
+                "placeholders": {
+                    "name": "नाम दर्ज करें",
+                    "gstn": "GSTIN दर्ज करें",
+                    "phone": "फ़ोन नंबर दर्ज करें",
+                    "email": "ईमेल दर्ज करें",
+                    "address": "पता दर्ज करें"
+                }
+            }
+        },
+        "committeeReport": {
+            "title": "समिति रिपोर्ट",
+            "description": "समिति लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "table": {
+                "type": "समिति का प्रकार",
+                "name": "समिति का नाम",
+                "actions": "कार्रवाई"
+            },
+            "form": {
+                "addTitle": "नई समिति जोड़ें",
+                "editTitle": "समिति संपादित करें",
+                "addDescription": "समिति का नया रिकॉर्ड जोड़ें।",
+                "editDescription": "समिति का रिकॉर्ड अपडेट करें।",
+                "tabs": {
+                    "manual": "मैन्युअल प्रविष्टि",
+                    "upload": "फ़ाइल अपलोड करें"
+                },
+                "type": "समिति का प्रकार",
+                "name": "समिति का नाम",
+                "placeholders": {
+                    "select": "समिति का प्रकार चुनें",
+                    "name": "समिति का नाम दर्ज करें"
+                },
+                "uploadDescription": "समिति रिकॉर्ड वाली CSV या Excel फ़ाइल अपलोड करें।",
+                "uploadCount": " ({{count}} रिकॉर्ड) "
+            }
+        },
+        "vehicleReport": {
+            "title": "वाहन रिपोर्ट",
+            "description": "वाहन लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "table": {
+                "truckNo": "TRUCK NO",
+                "actions": "कार्रवाई"
+            },
+            "form": {
+                "addTitle": "स्वयं के वाहन जोड़ें",
+                "editTitle": "वाहन विवरण संपादित करें",
+                "addDescription": "नीचे वाहन विवरण दर्ज करें",
+                "editDescription": "नीचे वाहन विवरण अपडेट करें",
+                "truckNo": "TRUCK NO",
+                "placeholders": {
+                    "truckNo": "ट्रक नंबर दर्ज करें"
+                }
+            }
+        },
+        "staffReport": {
+            "title": "स्टाफ रिपोर्ट",
+            "description": "स्टाफ लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "table": {
+                "fullName": "पूरा नाम",
+                "post": "पद",
+                "salary": "वेतन",
+                "phoneNumber": "फ़ोन न.",
+                "email": "Email",
+                "address": "पता",
+                "actions": "कार्रवाई"
+            },
+            "form": {
+                "addTitle": "मिल स्टाफ जोड़ें",
+                "editTitle": "स्टाफ विवरण संपादित करें",
+                "addDescription": "नीचे स्टाफ विवरण दर्ज करें",
+                "editDescription": "नीचे स्टाफ विवरण अपडेट करें",
+                "fullName": "पूरा नाम",
+                "post": "पद",
+                "salary": "वेतन",
+                "phone": "फ़ोन न.",
+                "email": "Email",
+                "address": "पता",
+                "placeholders": {
+                    "name": "नाम दर्ज करें",
+                    "post": "पद/पदनाम दर्ज करें",
+                    "salary": "वेतन दर्ज करें",
+                    "phone": "फ़ोन नंबर दर्ज करें",
+                    "email": "ईमेल दर्ज करें",
+                    "address": "पता दर्ज करें"
+                }
+            }
+        },
+        "doReport": {
+            "title": "DO रिपोर्ट",
+            "description": "DO रिपोर्ट लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "table": {
+                "uniqueId": "UNIQUE ID",
+                "date": "दिनांक",
+                "committee": "समिति संग्रहण",
+                "doNumber": "DO क्रमांक",
+                "paddyMota": "धान (मोटा)",
+                "paddyPatla": "धान (पतला)",
+                "paddySarna": "धान (सरना)",
+                "actions": "कार्रवाई"
+            },
+            "form": {
+                "addTitle": "DO प्रविष्टि",
+                "editTitle": "DO प्रविष्टि संपादित करें",
+                "addDescription": "नीचे DO प्रविष्टि विवरण दर्ज करें",
+                "editDescription": "नीचे DO प्रविष्टि विवरण अपडेट करें",
+                "uniqueId": "UNIQUE ID",
+                "date": "दिनांक",
+                "committee": "समिति संग्रहण",
+                "doNumber": "DO क्रमांक",
+                "paddyMota": "धान (मोटा)",
+                "paddyPatla": "धान (पतला)",
+                "paddySarna": "धान (सरना)",
+                "placeholders": {
+                    "date": "दिनांक चुनें",
+                    "committee": "समिति चुनें",
+                    "doNumber": "DO क्रमांक दर्ज करें",
+                    "paddy": "0.00"
+                }
+            }
+        },
+        "labourGroupReport": {
+            "title": "लेबर ग्रुप रिपोर्ट",
+            "description": "लेबर ग्रुप लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "table": {
+                "name": "लेबर ग्रुप का नाम",
+                "actions": "कार्रवाई"
+            },
+            "form": {
+                "addTitle": "लेबर ग्रुप जोड़ें",
+                "editTitle": "लेबर ग्रुप संपादित करें",
+                "addDescription": "नीचे लेबर ग्रुप विवरण दर्ज करें",
+                "editDescription": "नीचे लेबर ग्रुप विवरण अपडेट करें",
+                "name": "लेबर ग्रुप का नाम",
+                "placeholders": {
+                    "name": "लेबर ग्रुप का नाम दर्ज करें"
+                }
+            }
+        },
+        "delete": {
+            "title": "रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई <strong>{{name}}</strong> के लिए यह रिकॉर्ड हटाना चाहते हैं?",
+            "descriptionItem": "क्या आप वाकई इस रिकॉर्ड को हटाना चाहते हैं ",
+            "multiTitle": "{{count}} रिकॉर्ड हटाएं?",
+            "multiDescription": "क्या आप वाकई चयनित रिकॉर्ड हटाना चाहते हैं?",
+            "undone": "यह कार्रवाई वापस नहीं ली जा सकती।"
         }
     }
 }

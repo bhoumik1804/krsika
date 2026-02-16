@@ -6,10 +6,10 @@ import { initReactI18next } from 'react-i18next'
 
 const resources = {
     en: {
-        millStaff: enMillStaff,
+        'mill-staff': enMillStaff,
     },
     hi: {
-        millStaff: hiMillStaff,
+        'mill-staff': hiMillStaff,
     },
 }
 
@@ -25,8 +25,8 @@ i18n.use(initReactI18next).init({
     resources,
     lng: getStoredLanguage(),
     fallbackLng: 'en',
-    defaultNS: 'millStaff',
-    ns: ['millStaff'],
+    defaultNS: 'mill-staff',
+    ns: ['mill-staff'],
     interpolation: {
         escapeValue: false, // React already escapes values
     },

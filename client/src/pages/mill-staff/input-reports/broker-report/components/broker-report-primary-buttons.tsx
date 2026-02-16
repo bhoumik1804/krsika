@@ -1,9 +1,11 @@
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useBrokerReport } from './broker-report-provider'
 
 export function BrokerReportPrimaryButtons() {
     const { setOpen, setCurrentRow } = useBrokerReport()
+    const { t } = useTranslation('mill-staff')
 
     return (
         <Button
@@ -13,7 +15,7 @@ export function BrokerReportPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            Add Record
+            {t('inputReports.brokerReport.form.addTitle')}
         </Button>
     )
 }

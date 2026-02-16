@@ -49,9 +49,7 @@ const MODULE_CATEGORIES = [
     },
     {
         title: 'Staff Management',
-        modules: [
-            { slug: 'staff-directory', label: 'Staff Directory' },
-        ],
+        modules: [{ slug: 'staff-directory', label: 'Staff Directory' }],
     },
     {
         title: 'Sales Reports',
@@ -91,12 +89,24 @@ const MODULE_CATEGORIES = [
         modules: [
             { slug: 'broker-transaction', label: 'Broker Trans.' },
             { slug: 'party-transaction', label: 'Party Trans.' },
-            { slug: 'balance-lifting-paddy-purchase', label: 'Lifting Paddy (P)' },
-            { slug: 'balance-lifting-rice-purchase', label: 'Lifting Rice (P)' },
-            { slug: 'balance-lifting-gunny-purchase', label: 'Lifting Gunny (P)' },
+            {
+                slug: 'balance-lifting-paddy-purchase',
+                label: 'Lifting Paddy (P)',
+            },
+            {
+                slug: 'balance-lifting-rice-purchase',
+                label: 'Lifting Rice (P)',
+            },
+            {
+                slug: 'balance-lifting-gunny-purchase',
+                label: 'Lifting Gunny (P)',
+            },
             { slug: 'balance-lifting-frk-purchase', label: 'Lifting FRK (P)' },
             { slug: 'balance-lifting-paddy-sales', label: 'Lifting Paddy (S)' },
-            { slug: 'outward-balance-lifting-rice-sales', label: 'Lifting Rice (Out)' },
+            {
+                slug: 'outward-balance-lifting-rice-sales',
+                label: 'Lifting Rice (Out)',
+            },
         ],
     },
     {
@@ -147,8 +157,6 @@ const MODULE_CATEGORIES = [
     },
 ]
 
-
-
 const ACTIONS = [
     { value: 'view', label: 'View' },
     { value: 'create', label: 'Create' },
@@ -171,7 +179,6 @@ const formSchema = z
         email: z.string().email('Invalid email address.'),
         password: z.string().transform((pwd) => pwd.trim()),
         confirmPassword: z.string().transform((pwd) => pwd.trim()),
-        role: z.string().optional(),
         post: z.string().optional(),
         salary: z.union([z.string(), z.number()]).optional(),
         address: z.string().optional(),
@@ -233,31 +240,29 @@ export function StaffActionDialog({
         resolver: zodResolver(formSchema),
         defaultValues: isEdit
             ? {
-                ...currentRow,
-                password: '',
-                confirmPassword: '',
-                role: currentRow?.role || '',
-                post: currentRow?.post || '',
-                salary: currentRow?.salary || 0,
-                address: currentRow?.address || '',
-                permissions: currentRow?.permissions || [],
-                isActive: currentRow?.isActive ?? true,
-                isEdit,
-            }
+                  ...currentRow,
+                  password: '',
+                  confirmPassword: '',
+                  post: currentRow?.post || '',
+                  salary: currentRow?.salary || 0,
+                  address: currentRow?.address || '',
+                  permissions: currentRow?.permissions || [],
+                  isActive: currentRow?.isActive ?? true,
+                  isEdit,
+              }
             : {
-                fullName: '',
-                email: '',
-                phoneNumber: '',
-                password: '',
-                confirmPassword: '',
-                role: '',
-                post: '',
-                salary: 0,
-                address: '',
-                permissions: [],
-                isActive: true,
-                isEdit,
-            },
+                  fullName: '',
+                  email: '',
+                  phoneNumber: '',
+                  password: '',
+                  confirmPassword: '',
+                  post: '',
+                  salary: 0,
+                  address: '',
+                  permissions: [],
+                  isActive: true,
+                  isEdit,
+              },
     })
 
     const onSubmit = async (values: StaffForm) => {
@@ -280,7 +285,6 @@ export function StaffActionDialog({
                     fullName: values.fullName,
                     email: values.email,
                     phoneNumber: values.phoneNumber || '',
-                    role: values.role || undefined,
                     post: values.post || undefined,
                     salary: parsedSalary,
                     address: values.address || undefined,
@@ -293,7 +297,6 @@ export function StaffActionDialog({
                     email: values.email,
                     phoneNumber: values.phoneNumber || '',
                     password: values.password,
-                    role: values.role || undefined,
                     post: values.post || undefined,
                     salary: parsedSalary,
                     address: values.address || undefined,
@@ -316,10 +319,11 @@ export function StaffActionDialog({
         )
 
         if (moduleIndex === -1) {
-            form.setValue('permissions', [
-                ...currentPermissions,
-                { moduleSlug, actions: [action] },
-            ], { shouldDirty: true })
+            form.setValue(
+                'permissions',
+                [...currentPermissions, { moduleSlug, actions: [action] }],
+                { shouldDirty: true }
+            )
         } else {
             const modulePermission = { ...currentPermissions[moduleIndex] }
             const actionIndex = modulePermission.actions.indexOf(action)
@@ -327,7 +331,9 @@ export function StaffActionDialog({
             if (actionIndex === -1) {
                 modulePermission.actions = [...modulePermission.actions, action]
             } else {
-                modulePermission.actions = modulePermission.actions.filter(a => a !== action)
+                modulePermission.actions = modulePermission.actions.filter(
+                    (a) => a !== action
+                )
             }
 
             const newPermissions = [...currentPermissions]
@@ -337,21 +343,34 @@ export function StaffActionDialog({
     }
 
     // Helper to toggle all modules in a category
-    const toggleCategory = (categoryModules: { slug: string }[], select: boolean) => {
+    const toggleCategory = (
+        categoryModules: { slug: string }[],
+        select: boolean
+    ) => {
         const currentPermissions = form.getValues('permissions') || []
         let newPermissions = [...currentPermissions]
 
-        categoryModules.forEach(module => {
-            const index = newPermissions.findIndex(p => p.moduleSlug === module.slug)
+        categoryModules.forEach((module) => {
+            const index = newPermissions.findIndex(
+                (p) => p.moduleSlug === module.slug
+            )
             if (select) {
                 if (index === -1) {
-                    newPermissions.push({ moduleSlug: module.slug, actions: ['view', 'create', 'edit', 'delete'] })
+                    newPermissions.push({
+                        moduleSlug: module.slug,
+                        actions: ['view', 'create', 'edit', 'delete'],
+                    })
                 } else {
-                    newPermissions[index] = { moduleSlug: module.slug, actions: ['view', 'create', 'edit', 'delete'] }
+                    newPermissions[index] = {
+                        moduleSlug: module.slug,
+                        actions: ['view', 'create', 'edit', 'delete'],
+                    }
                 }
             } else {
                 if (index !== -1) {
-                    newPermissions = newPermissions.filter(p => p.moduleSlug !== module.slug)
+                    newPermissions = newPermissions.filter(
+                        (p) => p.moduleSlug !== module.slug
+                    )
                 }
             }
         })
@@ -378,7 +397,7 @@ export function StaffActionDialog({
                 onOpenChange(state)
             }}
         >
-            <DialogContent className='max-w-4xl max-h-[90vh] flex flex-col'>
+            <DialogContent className='flex max-h-[90vh] max-w-4xl flex-col'>
                 <DialogHeader className='text-start'>
                     <DialogTitle>
                         {isEdit ? 'Edit Staff' : 'Add New Staff'}
@@ -494,22 +513,6 @@ export function StaffActionDialog({
                                 <div className='space-y-4'>
                                     <FormField
                                         control={form.control}
-                                        name='role'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Role</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        placeholder='e.g., Manager'
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
                                         name='post'
                                         render={({ field }) => (
                                             <FormItem>
@@ -570,7 +573,7 @@ export function StaffActionDialog({
                                                         ) =>
                                                             field.onChange(
                                                                 value ===
-                                                                'active'
+                                                                    'active'
                                                             )
                                                         }
                                                         defaultValue={
@@ -610,13 +613,22 @@ export function StaffActionDialog({
                             {/* Permissions Section */}
                             <div className='space-y-4'>
                                 <div className='flex items-center justify-between border-b pb-2'>
-                                    <h3 className='text-lg font-semibold'>Module Permissions</h3>
+                                    <h3 className='text-lg font-semibold'>
+                                        Module Permissions
+                                    </h3>
                                     <div className='flex gap-2'>
                                         <Button
                                             type='button'
                                             variant='outline'
                                             size='sm'
-                                            onClick={() => toggleCategory(MODULE_CATEGORIES.flatMap(c => c.modules), true)}
+                                            onClick={() =>
+                                                toggleCategory(
+                                                    MODULE_CATEGORIES.flatMap(
+                                                        (c) => c.modules
+                                                    ),
+                                                    true
+                                                )
+                                            }
                                         >
                                             Select All
                                         </Button>
@@ -624,7 +636,13 @@ export function StaffActionDialog({
                                             type='button'
                                             variant='outline'
                                             size='sm'
-                                            onClick={() => form.setValue('permissions', [], { shouldDirty: true })}
+                                            onClick={() =>
+                                                form.setValue(
+                                                    'permissions',
+                                                    [],
+                                                    { shouldDirty: true }
+                                                )
+                                            }
                                         >
                                             Clear All
                                         </Button>
@@ -633,9 +651,12 @@ export function StaffActionDialog({
 
                                 <div className='space-y-6'>
                                     {MODULE_CATEGORIES.map((category) => (
-                                        <div key={category.title} className='space-y-4 rounded-xl border bg-card p-5 shadow-sm'>
+                                        <div
+                                            key={category.title}
+                                            className='space-y-4 rounded-xl border bg-card p-5 shadow-sm'
+                                        >
                                             <div className='flex items-center justify-between border-b border-muted pb-3'>
-                                                <h4 className='font-bold text-primary flex items-center gap-2'>
+                                                <h4 className='flex items-center gap-2 font-bold text-primary'>
                                                     <span className='h-2 w-2 rounded-full bg-primary' />
                                                     {category.title}
                                                 </h4>
@@ -645,7 +666,12 @@ export function StaffActionDialog({
                                                         variant='secondary'
                                                         size='sm'
                                                         className='h-7 px-3 text-[10px]'
-                                                        onClick={() => toggleCategory(category.modules, true)}
+                                                        onClick={() =>
+                                                            toggleCategory(
+                                                                category.modules,
+                                                                true
+                                                            )
+                                                        }
                                                     >
                                                         Select All
                                                     </Button>
@@ -654,7 +680,12 @@ export function StaffActionDialog({
                                                         variant='ghost'
                                                         size='sm'
                                                         className='h-7 px-3 text-[10px]'
-                                                        onClick={() => toggleCategory(category.modules, false)}
+                                                        onClick={() =>
+                                                            toggleCategory(
+                                                                category.modules,
+                                                                false
+                                                            )
+                                                        }
                                                     >
                                                         Clear
                                                     </Button>
@@ -662,29 +693,53 @@ export function StaffActionDialog({
                                             </div>
 
                                             <div className='divide-y divide-muted/50'>
-                                                {category.modules.map((module) => (
-                                                    <div key={module.slug} className='flex items-center justify-between py-3 first:pt-0 last:pb-0'>
-                                                        <Label className='text-sm font-medium text-foreground/80'>{module.label}</Label>
-                                                        <div className='flex items-center gap-4 sm:gap-6'>
-                                                            {ACTIONS.map((action) => (
-                                                                <div key={`${module.slug}-${action.value}`} className='flex items-center gap-2'>
-                                                                    <Checkbox
-                                                                        id={`${module.slug}-${action.value}`}
-                                                                        checked={isActionSelected(module.slug, action.value)}
-                                                                        onCheckedChange={() => togglePermissionAction(module.slug, action.value)}
-                                                                        className='h-4 w-4 transition-all data-[state=checked]:bg-primary'
-                                                                    />
-                                                                    <Label
-                                                                        htmlFor={`${module.slug}-${action.value}`}
-                                                                        className='text-[11px] font-medium text-muted-foreground cursor-pointer select-none hover:text-primary transition-colors'
-                                                                    >
-                                                                        {action.label}
-                                                                    </Label>
-                                                                </div>
-                                                            ))}
+                                                {category.modules.map(
+                                                    (module) => (
+                                                        <div
+                                                            key={module.slug}
+                                                            className='flex items-center justify-between py-3 first:pt-0 last:pb-0'
+                                                        >
+                                                            <Label className='text-sm font-medium text-foreground/80'>
+                                                                {module.label}
+                                                            </Label>
+                                                            <div className='flex items-center gap-4 sm:gap-6'>
+                                                                {ACTIONS.map(
+                                                                    (
+                                                                        action
+                                                                    ) => (
+                                                                        <div
+                                                                            key={`${module.slug}-${action.value}`}
+                                                                            className='flex items-center gap-2'
+                                                                        >
+                                                                            <Checkbox
+                                                                                id={`${module.slug}-${action.value}`}
+                                                                                checked={isActionSelected(
+                                                                                    module.slug,
+                                                                                    action.value
+                                                                                )}
+                                                                                onCheckedChange={() =>
+                                                                                    togglePermissionAction(
+                                                                                        module.slug,
+                                                                                        action.value
+                                                                                    )
+                                                                                }
+                                                                                className='h-4 w-4 transition-all data-[state=checked]:bg-primary'
+                                                                            />
+                                                                            <Label
+                                                                                htmlFor={`${module.slug}-${action.value}`}
+                                                                                className='cursor-pointer text-[11px] font-medium text-muted-foreground transition-colors select-none hover:text-primary'
+                                                                            >
+                                                                                {
+                                                                                    action.label
+                                                                                }
+                                                                            </Label>
+                                                                        </div>
+                                                                    )
+                                                                )}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                ))}
+                                                    )
+                                                )}
                                             </div>
                                         </div>
                                     ))}
@@ -705,8 +760,8 @@ export function StaffActionDialog({
                         {createMutation.isPending || updateMutation.isPending
                             ? 'Saving...'
                             : isEdit
-                                ? 'Save Changes'
-                                : 'Create Staff Member'}
+                              ? 'Save Changes'
+                              : 'Create Staff Member'}
                     </Button>
                 </DialogFooter>
             </DialogContent>

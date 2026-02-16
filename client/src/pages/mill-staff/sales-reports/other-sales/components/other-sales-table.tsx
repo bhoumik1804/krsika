@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type OtherSales } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { otherSalesColumns as columns } from './other-sales-columns'
+import { getOtherSalesColumns } from './other-sales-columns'
 
 type DataTableProps = {
     data: OtherSales[]
@@ -44,11 +45,14 @@ export function OtherSalesTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('millStaff')
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+
+    const columns = useMemo(() => getOtherSalesColumns(t), [t])
 
     const {
         columnFilters,
@@ -107,7 +111,7 @@ export function OtherSalesTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
+                searchPlaceholder={t('otherSales.form.placeholders.party')}
                 searchKey='partyName'
                 filters={[]}
             />
@@ -180,7 +184,7 @@ export function OtherSalesTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

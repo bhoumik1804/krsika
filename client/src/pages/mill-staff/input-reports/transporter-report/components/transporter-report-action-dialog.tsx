@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -42,6 +43,7 @@ export function TransporterReportActionDialog({
         useCreateTransporter(millId)
     const { mutate: updateTransporter, isPending: isUpdating } =
         useUpdateTransporter(millId)
+    const { t } = useTranslation('mill-staff')
 
     const isLoading = isCreating || isUpdating
 
@@ -91,11 +93,18 @@ export function TransporterReportActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Transporter
+                        {isEditing
+                            ? t('inputReports.transporterReport.form.editTitle')
+                            : t('inputReports.transporterReport.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the transporter details
-                        below
+                        {isEditing
+                            ? t(
+                                  'inputReports.transporterReport.form.editDescription'
+                              )
+                            : t(
+                                  'inputReports.transporterReport.form.addDescription'
+                              )}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -112,11 +121,15 @@ export function TransporterReportActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Transporter Name
+                                                {t(
+                                                    'inputReports.transporterReport.form.name'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter transporter name'
+                                                    placeholder={t(
+                                                        'inputReports.transporterReport.form.placeholders.name'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -129,10 +142,16 @@ export function TransporterReportActionDialog({
                                     name='gstn'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>GSTN</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.transporterReport.form.gstn'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter GSTN'
+                                                    placeholder={t(
+                                                        'inputReports.transporterReport.form.placeholders.gstn'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -145,10 +164,16 @@ export function TransporterReportActionDialog({
                                     name='phone'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Phone</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.transporterReport.form.phone'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter phone number'
+                                                    placeholder={t(
+                                                        'inputReports.transporterReport.form.placeholders.phone'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -161,11 +186,17 @@ export function TransporterReportActionDialog({
                                     name='email'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Email</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.transporterReport.form.email'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='email'
-                                                    placeholder='Enter email'
+                                                    placeholder={t(
+                                                        'inputReports.transporterReport.form.placeholders.email'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -178,10 +209,16 @@ export function TransporterReportActionDialog({
                                     name='address'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Address</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.transporterReport.form.address'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter address'
+                                                    placeholder={t(
+                                                        'inputReports.transporterReport.form.placeholders.address'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -198,17 +235,16 @@ export function TransporterReportActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}{' '}
-                                Transporter
+                                      ? t('common.update')
+                                      : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

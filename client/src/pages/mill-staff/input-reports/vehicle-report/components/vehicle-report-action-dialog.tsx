@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -39,6 +40,8 @@ export function VehicleReportActionDialog({
         useCreateVehicle(millId)
     const { mutate: updateVehicle, isPending: isUpdating } =
         useUpdateVehicle(millId)
+
+    const { t } = useTranslation('mill-staff')
 
     const isLoading = isCreating || isUpdating
 
@@ -84,11 +87,18 @@ export function VehicleReportActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Vehicle
+                        {isEditing
+                            ? t('inputReports.vehicleReport.form.editTitle')
+                            : t('inputReports.vehicleReport.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the vehicle details
-                        below
+                        {isEditing
+                            ? t(
+                                  'inputReports.vehicleReport.form.editDescription'
+                              )
+                            : t(
+                                  'inputReports.vehicleReport.form.addDescription'
+                              )}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -103,10 +113,16 @@ export function VehicleReportActionDialog({
                                     name='truckNo'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Truck Number</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.vehicleReport.form.truckNo'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter truck number'
+                                                    placeholder={t(
+                                                        'inputReports.vehicleReport.form.placeholders.truckNo'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -123,17 +139,16 @@ export function VehicleReportActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}{' '}
-                                Vehicle
+                                      ? t('common.update')
+                                      : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

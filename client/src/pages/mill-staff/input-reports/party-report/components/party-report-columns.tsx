@@ -1,11 +1,14 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { TFunction } from 'i18next'
+import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type PartyReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
-import { cn } from '@/lib/utils'
 
-export const partyReportColumns: ColumnDef<PartyReportData>[] = [
+export const getPartyReportColumns = (
+    t: TFunction
+): ColumnDef<PartyReportData>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -32,14 +35,17 @@ export const partyReportColumns: ColumnDef<PartyReportData>[] = [
                 className='translate-y-[2px]'
             />
         ),
-        
+
         enableSorting: false,
         enableHiding: false,
     },
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.partyReport.table.name')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('partyName')}</div>,
         meta: {
@@ -53,28 +59,40 @@ export const partyReportColumns: ColumnDef<PartyReportData>[] = [
     {
         accessorKey: 'gstn',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='GSTN' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.partyReport.table.gstn')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('gstn')}</div>,
     },
     {
         accessorKey: 'phone',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Phone' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.partyReport.table.phone')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('phone')}</div>,
     },
     {
         accessorKey: 'email',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Email' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.partyReport.table.email')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('email')}</div>,
     },
     {
         accessorKey: 'address',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Address' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.partyReport.table.address')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('address')}</div>,
     },

@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -19,6 +20,7 @@ import { BrokerReportTable } from './components/broker-report-table'
 export function BrokerReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+    const { t } = useTranslation('mill-staff')
 
     // Extract query params from URL
     const queryParams = useMemo(() => {
@@ -73,10 +75,10 @@ export function BrokerReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Broker Report
+                            {t('inputReports.brokerReport.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage broker transactions and records
+                            {t('inputReports.brokerReport.description')}
                         </p>
                     </div>
                     <BrokerReportPrimaryButtons />
@@ -96,6 +98,7 @@ function BrokerReportContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = useBrokerReport()
+    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (
@@ -108,7 +111,7 @@ function BrokerReportContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load broker data. Please try again later.
+                {t('inputReports.brokerReport.error')}
             </div>
         )
     }

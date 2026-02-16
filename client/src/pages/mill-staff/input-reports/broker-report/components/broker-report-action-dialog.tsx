@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -39,6 +40,7 @@ export function BrokerReportActionDialog({
         useCreateBroker(millId)
     const { mutate: updateBroker, isPending: isUpdating } =
         useUpdateBroker(millId)
+    const { t } = useTranslation('mill-staff')
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -102,11 +104,18 @@ export function BrokerReportActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Broker
+                        {isEditing
+                            ? t('inputReports.brokerReport.form.editTitle')
+                            : t('inputReports.brokerReport.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the broker details
-                        below
+                        {isEditing
+                            ? t(
+                                  'inputReports.brokerReport.form.editDescription'
+                              )
+                            : t(
+                                  'inputReports.brokerReport.form.addDescription'
+                              )}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -121,10 +130,38 @@ export function BrokerReportActionDialog({
                                     name='brokerName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Broker Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.brokerReport.form.name'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter broker name'
+                                                    placeholder={t(
+                                                        'inputReports.brokerReport.form.placeholders.name'
+                                                    )}
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name='gstn'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.brokerReport.form.gstn'
+                                                )}
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder={t(
+                                                        'inputReports.brokerReport.form.placeholders.gstn'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -137,10 +174,16 @@ export function BrokerReportActionDialog({
                                     name='phone'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Phone</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.brokerReport.form.phone'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter phone number'
+                                                    placeholder={t(
+                                                        'inputReports.brokerReport.form.placeholders.phone'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -153,11 +196,17 @@ export function BrokerReportActionDialog({
                                     name='email'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Email</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.brokerReport.form.email'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='email'
-                                                    placeholder='Enter email'
+                                                    placeholder={t(
+                                                        'inputReports.brokerReport.form.placeholders.email'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -169,11 +218,17 @@ export function BrokerReportActionDialog({
                                     control={form.control}
                                     name='address'
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Address</FormLabel>
+                                        <FormItem className='col-span-2'>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.brokerReport.form.address'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter address'
+                                                    placeholder={t(
+                                                        'inputReports.brokerReport.form.placeholders.address'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -189,17 +244,16 @@ export function BrokerReportActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}{' '}
-                                Broker
+                                      ? t('common.update')
+                                      : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

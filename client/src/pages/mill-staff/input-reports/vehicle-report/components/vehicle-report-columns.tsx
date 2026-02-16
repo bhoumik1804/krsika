@@ -1,11 +1,14 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type VehicleReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const vehicleReportColumns: ColumnDef<VehicleReportData>[] = [
+export const getVehicleReportColumns = (
+    t: TFunction
+): ColumnDef<VehicleReportData>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -17,7 +20,7 @@ export const vehicleReportColumns: ColumnDef<VehicleReportData>[] = [
                 onCheckedChange={(value) =>
                     table.toggleAllPageRowsSelected(!!value)
                 }
-                aria-label='Select all'
+                aria-label={t('common.selectAll')}
                 className='translate-y-[2px]'
             />
         ),
@@ -28,7 +31,7 @@ export const vehicleReportColumns: ColumnDef<VehicleReportData>[] = [
             <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label='Select row'
+                aria-label={t('common.selectRow')}
                 className='translate-y-[2px]'
             />
         ),
@@ -38,7 +41,10 @@ export const vehicleReportColumns: ColumnDef<VehicleReportData>[] = [
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.vehicleReport.table.truckNo')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('truckNo')}</div>

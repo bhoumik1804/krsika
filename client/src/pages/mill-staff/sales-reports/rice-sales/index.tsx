@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -40,6 +41,8 @@ export function RiceSalesReport() {
     }, [searchParams])
 
     // Call GET API here
+    const { t } = useTranslation('millStaff')
+
     const {
         data: apiResponse,
         isLoading,
@@ -84,10 +87,10 @@ export function RiceSalesReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Rice Sales Report
+                            {t('riceSales.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage rice sales transactions and records
+                            {t('riceSales.description')}
                         </p>
                     </div>
                     <RiceSalesPrimaryButtons />
@@ -107,6 +110,7 @@ function RiceSalesContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = useRiceSales()
+    const { t } = useTranslation('millStaff')
 
     if (context.isLoading) {
         return (
@@ -119,7 +123,7 @@ function RiceSalesContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load rice sales data. Please try again later.
+                {t('common.errorLoading')}
             </div>
         )
     }
