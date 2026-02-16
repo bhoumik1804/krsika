@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
@@ -19,6 +20,7 @@ import { BalanceLiftingPurchasesGunnyTable } from './components/balance-lifting-
 export function BalanceLiftingPurchasesGunnyReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+    const { t } = useTranslation()
 
     const queryParams = useMemo(() => {
         const s = Object.fromEntries(searchParams.entries())
@@ -66,10 +68,10 @@ export function BalanceLiftingPurchasesGunnyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Gunny Purchase Report
+                            {t('balanceLiftingGunnyPurchase.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage gunny purchase transactions and records
+                            {t('balanceLiftingGunnyPurchase.description')}
                         </p>
                     </div>
                     <BalanceLiftingPurchasesGunnyPrimaryButtons />

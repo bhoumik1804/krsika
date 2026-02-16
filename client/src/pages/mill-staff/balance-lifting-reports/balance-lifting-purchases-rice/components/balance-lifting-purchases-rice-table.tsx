@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
     type SortingState,
     type VisibilityState,
@@ -24,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BalanceLiftingPurchasesRice } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { riceColumns as columns } from './balance-lifting-purchases-rice-columns'
+import { getRiceColumns } from './balance-lifting-purchases-rice-columns'
 
 type DataTableProps = {
     data: BalanceLiftingPurchasesRice[]
@@ -50,6 +51,9 @@ export function BalanceLiftingPurchasesRiceTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const { t } = useTranslation()
+
+    const columns = useMemo(() => getRiceColumns(t), [t])
 
     // Synced with URL states
     const {
@@ -144,10 +148,10 @@ export function BalanceLiftingPurchasesRiceTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}

@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
     type SortingState,
     type VisibilityState,
@@ -24,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BalanceLiftingPurchasesGunny } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { gunnyColumns as columns } from './balance-lifting-purchases-gunny-columns'
+import { getGunnyColumns } from './balance-lifting-purchases-gunny-columns'
 
 type DataTableProps = {
     data: BalanceLiftingPurchasesGunny[]
@@ -50,6 +51,9 @@ export function BalanceLiftingPurchasesGunnyTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const { t } = useTranslation()
+
+    const columns = useMemo(() => getGunnyColumns(t), [t])
 
     // Synced with URL states
     const {
@@ -144,10 +148,10 @@ export function BalanceLiftingPurchasesGunnyTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}
