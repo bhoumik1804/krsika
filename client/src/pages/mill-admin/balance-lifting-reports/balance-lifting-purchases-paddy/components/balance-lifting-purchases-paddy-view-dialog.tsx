@@ -1,6 +1,4 @@
 import { format } from 'date-fns'
-import html2canvas from 'html2canvas'
-import { jsPDF } from 'jspdf'
 import { Printer } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -99,7 +97,7 @@ export function BalanceLiftingPurchasesPaddyViewDialog({
 
     // --- Print Handler ---
     const handlePrint = async () => {
-        const toastId = toast.loading('Generating PDF...')
+        const toastId = toast.loading('Generating Print Preview...')
 
         try {
             // Build HTML with inline hex colors only - html2canvas doesn't support oklch
@@ -108,6 +106,16 @@ export function BalanceLiftingPurchasesPaddyViewDialog({
 <html>
 <head>
 <meta charset="utf-8">
+<title>Paddy-Purchase-Report-${currentRow.paddyPurchaseDealNumber || 'Details'}</title>
+<style>
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+  body {
+    margin: 0;
+  }
+</style>
 </head>
 
 <body style="margin:0;padding:20px;background:#fff;color:#000;font-family:Arial, sans-serif;">
@@ -202,38 +210,15 @@ export function BalanceLiftingPurchasesPaddyViewDialog({
             iframeDoc.write(html)
             iframeDoc.close()
 
-            await new Promise((resolve) => setTimeout(resolve, 100))
-
-            const target = iframeDoc.getElementById('pdf-content')
-            if (!target) throw new Error('PDF content not found')
-
-            const canvas = await html2canvas(target, {
-                scale: 2,
-                useCORS: true,
-                logging: false,
-                backgroundColor: '#ffffff',
-            })
-
-            document.body.removeChild(iframe)
-
-            const imgData = canvas.toDataURL('image/png')
-            const pdf = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4',
-            })
-
-            const imgProps = pdf.getImageProperties(imgData)
-            const pdfWidth = pdf.internal.pageSize.getWidth()
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
-
-            // Add image with a slight margin if needed, currently 0,0
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
-
-            pdf.save(
-                `paddy-purchase-${currentRow.paddyPurchaseDealNumber || 'details'}.pdf`
-            )
-            toast.success('PDF downloaded successfully!', { id: toastId })
+            // Wait for rendering
+            setTimeout(() => {
+                iframe.contentWindow?.focus()
+                iframe.contentWindow?.print()
+                setTimeout(() => {
+                    document.body.removeChild(iframe)
+                }, 1000)
+                toast.success('Print dialog opened', { id: toastId })
+            }, 500)
         } catch (error) {
             console.error('Error generating PDF:', error)
             toast.error(
