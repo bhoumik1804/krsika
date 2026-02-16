@@ -127,9 +127,9 @@ export function BalanceLiftingSalesPaddyProvider({
     )
 
     return (
-        <BalanceLiftingSalesPaddyContext value={contextValue}>
+        <BalanceLiftingSalesPaddyContext.Provider value={contextValue}>
             {children}
-        </BalanceLiftingSalesPaddyContext>
+        </BalanceLiftingSalesPaddyContext.Provider>
     )
 }
 

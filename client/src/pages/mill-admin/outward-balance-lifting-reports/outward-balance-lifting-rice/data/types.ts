@@ -11,14 +11,7 @@ export type PrivateRiceOutwardQueryParams = {
     brokerName?: string
     startDate?: string
     endDate?: string
-    sortBy?:
-        | 'date'
-        | 'partyName'
-        | 'brokerName'
-        | 'truckNumber'
-        | 'riceType'
-        | 'netWeight'
-        | 'createdAt'
+    sortBy?: string
     sortOrder?: 'asc' | 'desc'
 }
 
@@ -40,17 +33,14 @@ export type PrivateRiceOutwardSummaryResponse = {
     summary: {
         totalEntries: number
         totalRiceQty: number
-        totalGunnyNew: number
-        totalGunnyOld: number
-        totalGunnyPlastic: number
-        totalJuteWeight: number
-        totalPlasticWeight: number
-        totalTruckWeight: number
-        totalGunnyWeight: number
         totalNetWeight: number
+        balance: number
     }
 }
 
-export type CreatePrivateRiceOutwardRequest = Omit<PrivateRiceOutward, '_id'>
+export type CreatePrivateRiceOutwardRequest = Omit<
+    PrivateRiceOutward,
+    '_id' | 'outwardData'
+>
 export type UpdatePrivateRiceOutwardRequest =
     Partial<CreatePrivateRiceOutwardRequest>

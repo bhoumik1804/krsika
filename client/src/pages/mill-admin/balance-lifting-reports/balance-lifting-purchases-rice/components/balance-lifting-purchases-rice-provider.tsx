@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import useDialogState from '@/hooks/use-dialog-state'
 import { useRicePurchaseList } from '@/pages/mill-admin/purchase-reports/rice/data/hooks'
-import type { BalanceLiftingPurchasesRice } from '../data/schema'
 import type { RicePurchaseResponse } from '@/pages/mill-admin/purchase-reports/rice/data/types'
+import useDialogState from '@/hooks/use-dialog-state'
+import type { BalanceLiftingPurchasesRice } from '../data/schema'
 
-type RiceDialogType = 'add' | 'edit' | 'delete'
+type RiceDialogType = 'add' | 'edit' | 'delete' | 'view'
 
 interface QueryParams {
     page: number
@@ -48,9 +48,12 @@ const defaultQueryParams: QueryParams = {
     search: undefined,
 }
 
-function toBalanceLiftingRice(p: RicePurchaseResponse): BalanceLiftingPurchasesRice {
+function toBalanceLiftingRice(
+    p: RicePurchaseResponse
+): BalanceLiftingPurchasesRice {
     return {
         _id: p._id,
+        ricePurchaseDealNumber: p.ricePurchaseDealNumber ?? null,
         date: typeof p.date === 'string' ? p.date.split('T')[0] : p.date,
         partyName: p.partyName ?? null,
         brokerName: p.brokerName ?? null,
@@ -87,7 +90,11 @@ export function BalanceLiftingPurchasesRiceProvider({
         setQueryParams(initialQueryParams)
     }, [initialQueryParams])
 
-    const { data: apiResponse, isLoading, isError } = useRicePurchaseList({
+    const {
+        data: apiResponse,
+        isLoading,
+        isError,
+    } = useRicePurchaseList({
         millId,
         page: queryParams.page,
         pageSize: queryParams.limit,

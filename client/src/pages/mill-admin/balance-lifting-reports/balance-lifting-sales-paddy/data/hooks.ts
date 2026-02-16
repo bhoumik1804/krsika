@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router'
 import { toast } from 'sonner'
+import { type PaddySales } from './schema'
 import {
     createPaddySale,
     deleteBulkPaddySales,
@@ -9,7 +10,6 @@ import {
     getPaddySaleSummary,
     updatePaddySale,
 } from './service'
-import type { PaddySales } from './types'
 
 export const usePaddySalesList = (
     queryParams: {

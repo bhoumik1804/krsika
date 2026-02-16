@@ -1,10 +1,7 @@
 import type { PaginationState, SortingState } from '@tanstack/react-table'
 import { apiClient } from '@/lib/api-client'
-import type {
-    PaddySales,
-    PaddySalesListResponse,
-    PaddySalesSummary,
-} from './types'
+import { type PaddySales } from './schema'
+import type { PaddySalesListResponse, PaddySalesSummary } from './types'
 
 export const createPaddySale = async (millId: string, data: PaddySales) => {
     const response = await apiClient.post(`/mills/${millId}/paddy-sales`, data)

@@ -101,21 +101,22 @@ export function OutwardBalanceLiftingRiceActionDialog({
             date: format(new Date(), 'yyyy-MM-dd'),
             partyName: '',
             brokerName: '',
-            riceSaleDealNumber: '',
-            lotNo: '',
-            fciNan: '',
+            riceSalesDealNumber: '',
+            deliveryType: 'Mill to Mill',
+            lotOrOther: 'LOT',
+            fciOrNAN: 'FCI',
             riceType: 'Regular',
             riceQty: 0,
-            gunnyNew: 0,
-            gunnyOld: 0,
-            gunnyPlastic: 0,
-            juteWeight: 0,
-            plasticWeight: 0,
-            truckNumber: '',
-            truckRst: '',
-            truckWeight: 0,
-            gunnyWeight: 0,
-            netWeight: 0,
+            riceRatePerQuintal: 0,
+            discountPercent: 0,
+            brokeragePerQuintal: 0,
+            gunnyType: 'New',
+            newGunnyRate: 0,
+            oldGunnyRate: 0,
+            plasticGunnyRate: 0,
+            frkType: 'No',
+            frkRatePerQuintal: 0,
+            lotNumber: '',
         } as PrivateRiceOutward,
     })
 
@@ -127,21 +128,22 @@ export function OutwardBalanceLiftingRiceActionDialog({
                 date: format(new Date(), 'yyyy-MM-dd'),
                 partyName: '',
                 brokerName: '',
-                riceSaleDealNumber: '',
-                lotNo: '',
-                fciNan: '',
+                riceSalesDealNumber: '',
+                deliveryType: 'Mill to Mill',
+                lotOrOther: 'LOT',
+                fciOrNAN: 'FCI',
                 riceType: 'Regular',
                 riceQty: 0,
-                gunnyNew: 0,
-                gunnyOld: 0,
-                gunnyPlastic: 0,
-                juteWeight: 0,
-                plasticWeight: 0,
-                truckNumber: '',
-                truckRst: '',
-                truckWeight: 0,
-                gunnyWeight: 0,
-                netWeight: 0,
+                riceRatePerQuintal: 0,
+                discountPercent: 0,
+                brokeragePerQuintal: 0,
+                gunnyType: 'New',
+                newGunnyRate: 0,
+                oldGunnyRate: 0,
+                plasticGunnyRate: 0,
+                frkType: 'No',
+                frkRatePerQuintal: 0,
+                lotNumber: '',
             } as PrivateRiceOutward)
         }
     }, [currentRow, open, form])
@@ -168,10 +170,10 @@ export function OutwardBalanceLiftingRiceActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Private Rice Outward
+                        {isEditing ? 'Edit' : 'Add'} Rice Sale
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing ? 'Update' : 'Enter'} the sale details below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -281,27 +283,25 @@ export function OutwardBalanceLiftingRiceActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='riceType'
+                                name='deliveryType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rice Type</FormLabel>
+                                        <FormLabel>Delivery Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={
-                                                field.value ?? undefined
-                                            }
+                                            defaultValue={field.value}
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder='Select rice type' />
+                                                    <SelectValue placeholder='Select delivery type' />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value='Regular'>
-                                                    Regular
+                                                <SelectItem value='Mill to Mill'>
+                                                    Mill to Mill
                                                 </SelectItem>
-                                                <SelectItem value='Premium'>
-                                                    Premium
+                                                <SelectItem value='Mill to Party'>
+                                                    Mill to Party
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -309,7 +309,74 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                     </FormItem>
                                 )}
                             />
-                            {/* Add more fields as per schema */}
+                            <FormField
+                                control={form.control}
+                                name='lotOrOther'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>LOT/Other</FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder='Select type' />
+                                                </SelectTrigger>
+                                            </FormControl>
+
+                                            <SelectContent>
+                                                <SelectItem value='LOT'>
+                                                    LOT
+                                                </SelectItem>
+                                                <SelectItem value='Other'>
+                                                    Other
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='fciOrNAN'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>FCI/NAN</FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder='Select' />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value='FCI'>
+                                                    FCI
+                                                </SelectItem>
+                                                <SelectItem value='NAN'>
+                                                    NAN
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='riceType'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Rice Type</FormLabel>
+                                        <Input {...field} />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name='riceQty'
@@ -320,15 +387,13 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                             <Input
                                                 type='number'
                                                 step='0.01'
-                                                placeholder='0.00'
                                                 {...field}
-                                                onChange={(e) => {
-                                                    const val =
-                                                        e.target.valueAsNumber
+                                                onChange={(e) =>
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        e.target
+                                                            .valueAsNumber || 0
                                                     )
-                                                }}
+                                                }
                                             />
                                         </FormControl>
                                         <FormMessage />

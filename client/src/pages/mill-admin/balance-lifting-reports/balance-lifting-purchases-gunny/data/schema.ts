@@ -3,6 +3,7 @@ import { z } from 'zod'
 // Schema for Gunny Purchase records
 export const gunnyPurchaseSchema = z.object({
     _id: z.string().optional(),
+    gunnyPurchaseDealNumber: z.string().nullable().optional(),
     date: z.string().min(1, 'Date is required'),
     partyName: z.string().nullable().optional(),
     deliveryType: z.string().nullable().optional(),
@@ -12,6 +13,7 @@ export const gunnyPurchaseSchema = z.object({
     oldGunnyRate: z.number().optional(),
     plasticGunnyQty: z.number().optional(),
     plasticGunnyRate: z.number().optional(),
+    inwardData: z.array(z.any()).optional(),
 })
 
 export type BalanceLiftingPurchasesGunny = z.infer<typeof gunnyPurchaseSchema>

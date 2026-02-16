@@ -1,3 +1,4 @@
+import { formatDate } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table/column-header'
@@ -32,13 +33,31 @@ export const paddySalesColumns: ColumnDef<PaddySalesResponse>[] = [
         enableHiding: false,
     },
     {
+        accessorKey: 'paddySalesDealNumber',
+        header: ({ column }) => (
+            <DataTableColumnHeader
+                column={column}
+                title='Paddy Sales Deal Number'
+            />
+        ),
+        cell: ({ row }) => (
+            <div className='w-[100px] font-medium'>
+                {row.getValue('paddySalesDealNumber')}
+            </div>
+        ),
+    },
+    {
         accessorKey: 'date',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => {
             const date = new Date(row.getValue('date'))
-            return <div className='w-[80px]'>{date.toLocaleDateString()}</div>
+            return (
+                <div className='w-[100px]'>
+                    {formatDate(date, 'dd-MM-yyyy')}
+                </div>
+            )
         },
     },
     {
@@ -46,29 +65,56 @@ export const paddySalesColumns: ColumnDef<PaddySalesResponse>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Party Name' />
         ),
-        cell: ({ row }) => {
-            return (
-                <div className='flex space-x-2'>
-                    <span className='max-w-[500px] truncate font-medium'>
-                        {row.getValue('partyName')}
-                    </span>
-                </div>
-            )
-        },
+        cell: ({ row }) => (
+            <div className='w-[150px]'>{row.getValue('partyName')}</div>
+        ),
+    },
+    {
+        accessorKey: 'brokerName',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Broker Name' />
+        ),
+        cell: ({ row }) => (
+            <div className='w-[150px]'>{row.getValue('brokerName')}</div>
+        ),
     },
     {
         accessorKey: 'dhanQty',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Paddy Qty' />
         ),
+        cell: ({ row }) => (
+            <div className='w-[100px]'>{row.getValue('dhanQty')}</div>
+        ),
+    },
+    {
+        id: 'lifting',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Lifting' />
+        ),
         cell: ({ row }) => {
-            return (
-                <div className='flex space-x-2'>
-                    <span className='max-w-[500px] truncate font-medium'>
-                        {row.getValue('dhanQty')}
-                    </span>
-                </div>
+            const outwardData = row.original.outwardData || []
+            const totalLifting = outwardData.reduce(
+                (sum, entry) => sum + (entry.netWeight || 0),
+                0
             )
+            return <div>{totalLifting.toFixed(2)}</div>
+        },
+    },
+    {
+        id: 'balance',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Balance Lifting' />
+        ),
+        cell: ({ row }) => {
+            const qty = row.original.dhanQty || 0
+            const outwardData = row.original.outwardData || []
+            const totalLifting = outwardData.reduce(
+                (sum, entry) => sum + (entry.netWeight || 0),
+                0
+            )
+            const balance = qty - totalLifting
+            return <div>{balance.toFixed(2)}</div>
         },
     },
     {

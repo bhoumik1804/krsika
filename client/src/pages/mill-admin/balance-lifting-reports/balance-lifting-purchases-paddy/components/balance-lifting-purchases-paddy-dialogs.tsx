@@ -1,6 +1,7 @@
 import { BalanceLiftingPurchasesPaddyActionDialog } from './balance-lifting-purchases-paddy-action-dialog'
 import { BalanceLiftingPurchasesPaddyDeleteDialog } from './balance-lifting-purchases-paddy-delete-dialog'
 import { useBalanceLiftingPurchasesPaddy } from './balance-lifting-purchases-paddy-provider'
+import { BalanceLiftingPurchasesPaddyViewDialog } from './balance-lifting-purchases-paddy-view-dialog'
 
 export function BalanceLiftingPurchasesPaddyDialogs() {
     const { open, setOpen, currentRow, setCurrentRow } =
@@ -20,6 +21,13 @@ export function BalanceLiftingPurchasesPaddyDialogs() {
                 onOpenChange={(isOpen: boolean) => {
                     setOpen(isOpen ? 'delete' : null)
                     if (!isOpen) setCurrentRow(null)
+                }}
+                currentRow={currentRow}
+            />
+            <BalanceLiftingPurchasesPaddyViewDialog
+                open={open === 'view'}
+                onOpenChange={(isOpen: boolean) => {
+                    setOpen(isOpen ? 'view' : null)
                 }}
                 currentRow={currentRow}
             />

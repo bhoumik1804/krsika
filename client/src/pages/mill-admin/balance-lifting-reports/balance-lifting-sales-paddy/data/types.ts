@@ -1,10 +1,6 @@
-import { z } from 'zod'
-import { paddySalesSchema } from './schema'
-
-export type PaddySales = z.infer<typeof paddySalesSchema>
+import { type PaddySales } from './schema'
 
 export interface PaddySalesResponse extends PaddySales {
-    paddySalesDealNumber?: string
     _id: string
     createdAt: string
     updatedAt: string

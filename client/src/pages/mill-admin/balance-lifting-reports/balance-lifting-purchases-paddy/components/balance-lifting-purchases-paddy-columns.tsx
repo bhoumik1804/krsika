@@ -51,7 +51,7 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
         ),
         cell: ({ row }) => {
             return (
-                <div className='flex space-x-2'>
+                <div className='flex flex-col space-y-1'>
                     <span className='max-w-[500px] truncate font-medium'>
                         {row.getValue('paddyPurchaseDealNumber')}
                     </span>
@@ -95,10 +95,14 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
             <DataTableColumnHeader column={column} title='Balance' />
         ),
         cell: ({ row }) => {
+            const total = (row.original.inwardData || []).reduce(
+                (acc: number, curr: any) => acc + (Number(curr.paddyMota) || 0),
+                0
+            )
             return (
                 <div className='flex space-x-2'>
                     <span className='max-w-[500px] truncate font-medium'>
-                        {row.getValue('balance')}
+                        {total}
                     </span>
                 </div>
             )
@@ -110,10 +114,14 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
             <DataTableColumnHeader column={column} title='Balance Lifting' />
         ),
         cell: ({ row }) => {
+            const totalInward = (row.original.inwardData || []).reduce(
+                (acc: number, curr: any) => acc + (Number(curr.paddyMota) || 0),
+                0
+            )
             return (
                 <div className='flex space-x-2'>
                     <span className='max-w-[500px] truncate font-medium'>
-                        {row.getValue('balanceLifting')}
+                        {Number(row.getValue('doPaddyQty')) - totalInward}
                     </span>
                 </div>
             )

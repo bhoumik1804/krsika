@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import useDialogState from '@/hooks/use-dialog-state'
 import { useGunnyPurchaseList } from '@/pages/mill-admin/purchase-reports/gunny/data/hooks'
-import type { BalanceLiftingPurchasesGunny } from '../data/schema'
 import type { GunnyPurchaseResponse } from '@/pages/mill-admin/purchase-reports/gunny/data/types'
+import useDialogState from '@/hooks/use-dialog-state'
+import type { BalanceLiftingPurchasesGunny } from '../data/schema'
 
-type GunnyDialogType = 'add' | 'edit' | 'delete'
+type GunnyDialogType = 'add' | 'edit' | 'delete' | 'view'
 
 interface QueryParams {
     page: number
@@ -48,9 +48,12 @@ const defaultQueryParams: QueryParams = {
     search: undefined,
 }
 
-function toBalanceLiftingGunny(p: GunnyPurchaseResponse): BalanceLiftingPurchasesGunny {
+function toBalanceLiftingGunny(
+    p: GunnyPurchaseResponse
+): BalanceLiftingPurchasesGunny {
     return {
         _id: p._id,
+        gunnyPurchaseDealNumber: p.gunnyPurchaseDealNumber ?? null,
         date: typeof p.date === 'string' ? p.date.split('T')[0] : p.date,
         partyName: p.partyName ?? null,
         deliveryType: p.deliveryType ?? null,
@@ -78,7 +81,11 @@ export function BalanceLiftingPurchasesGunnyProvider({
         setQueryParams(initialQueryParams)
     }, [initialQueryParams])
 
-    const { data: apiResponse, isLoading, isError } = useGunnyPurchaseList({
+    const {
+        data: apiResponse,
+        isLoading,
+        isError,
+    } = useGunnyPurchaseList({
         millId,
         page: queryParams.page,
         limit: queryParams.limit,

@@ -33,12 +33,30 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
             enableHiding: false,
         },
         {
+            accessorKey: 'riceSalesDealNumber',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title='Rice Sales Deal Number'
+                />
+            ),
+            cell: ({ row }) => {
+                return (
+                    <div className='w-[100px] font-medium'>
+                        {row.getValue('riceSalesDealNumber')}
+                    </div>
+                )
+            },
+        },
+        {
             accessorKey: 'date',
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title='Date' />
             ),
             cell: ({ row }) => {
-                const date = new Date(row.getValue('date'))
+                const dateVal = row.getValue('date')
+                if (!dateVal) return '-'
+                const date = new Date(dateVal as string)
                 return (
                     <div className='w-[80px]'>{date.toLocaleDateString()}</div>
                 )
@@ -53,7 +71,7 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
                 return (
                     <div className='flex space-x-2'>
                         <span className='max-w-[500px] truncate font-medium'>
-                            {row.getValue('partyName')}
+                            {row.getValue('partyName') || '-'}
                         </span>
                     </div>
                 )
@@ -68,8 +86,60 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
                 return (
                     <div className='flex space-x-2'>
                         <span className='max-w-[500px] truncate font-medium'>
-                            {row.getValue('brokerName')}
+                            {row.getValue('brokerName') || '-'}
                         </span>
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: 'deliveryType',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title='Delivery' />
+            ),
+            cell: ({ row }) => {
+                return (
+                    <div className='w-[100px]'>
+                        {row.getValue('deliveryType') || '-'}
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: 'lotOrOther',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title='LOT/Other' />
+            ),
+            cell: ({ row }) => {
+                return (
+                    <div className='w-[80px]'>
+                        {row.getValue('lotOrOther') || '-'}
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: 'fciOrNAN',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title='FCI/NAN' />
+            ),
+            cell: ({ row }) => {
+                return (
+                    <div className='w-[80px]'>
+                        {row.getValue('fciOrNAN') || '-'}
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: 'riceType',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title='Rice Type' />
+            ),
+            cell: ({ row }) => {
+                return (
+                    <div className='w-[100px] font-medium'>
+                        {row.getValue('riceType') || '-'}
                     </div>
                 )
             },
@@ -77,16 +147,47 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
         {
             accessorKey: 'riceQty',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='Rice Qty' />
+                <DataTableColumnHeader column={column} title='RiceQuantity' />
             ),
             cell: ({ row }) => {
-                return (
-                    <div className='flex space-x-2'>
-                        <span className='max-w-[500px] truncate font-medium'>
-                            {row.getValue('riceQty')}
-                        </span>
-                    </div>
+                const val = (row.getValue('riceQty') as number) || 0
+                return <div>{val}</div>
+            },
+        },
+        {
+            id: 'outward',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title='Outward / LOT Deposit'
+                />
+            ),
+            cell: ({ row }) => {
+                const outwardData = row.original.outwardData || []
+                const totalOutward = outwardData.reduce(
+                    (sum, entry) => sum + (entry.netWeight || 0),
+                    0
                 )
+                return <div>{totalOutward}</div>
+            },
+        },
+        {
+            id: 'balance',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title='Outward Balance'
+                />
+            ),
+            cell: ({ row }) => {
+                const qty = row.original.riceQty || 0
+                const outwardData = row.original.outwardData || []
+                const totalOutward = outwardData.reduce(
+                    (sum, entry) => sum + (entry.netWeight || 0),
+                    0
+                )
+                const balance = qty - totalOutward
+                return <div>{balance}</div>
             },
         },
         {

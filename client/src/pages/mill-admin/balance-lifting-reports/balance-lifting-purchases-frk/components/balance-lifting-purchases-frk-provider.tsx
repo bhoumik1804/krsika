@@ -3,7 +3,7 @@ import useDialogState from '@/hooks/use-dialog-state'
 import { useBalanceLiftingFrkPurchaseList } from '../data/hooks'
 import { type BalanceLiftingPurchasesFrk } from '../data/schema'
 
-type FrkDialogType = 'add' | 'edit' | 'delete'
+type FrkDialogType = 'add' | 'edit' | 'delete' | 'view'
 
 interface QueryParams {
     page: number

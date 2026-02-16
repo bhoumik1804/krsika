@@ -1,9 +1,11 @@
 import { BalanceLiftingPurchasesRiceActionDialog } from './balance-lifting-purchases-rice-action-dialog'
 import { BalanceLiftingPurchasesRiceDeleteDialog } from './balance-lifting-purchases-rice-delete-dialog'
 import { useBalanceLiftingPurchasesRice } from './balance-lifting-purchases-rice-provider'
+import { BalanceLiftingPurchasesRiceViewDialog } from './balance-lifting-purchases-rice-view-dialog'
 
 export function BalanceLiftingPurchasesRiceDialogs() {
-    const { open, setOpen, currentRow, millId } = useBalanceLiftingPurchasesRice()
+    const { open, setOpen, currentRow, millId } =
+        useBalanceLiftingPurchasesRice()
 
     return (
         <>
@@ -11,6 +13,13 @@ export function BalanceLiftingPurchasesRiceDialogs() {
                 open={open === 'add' || open === 'edit'}
                 onOpenChange={(isOpen: boolean) =>
                     setOpen(isOpen ? open : null)
+                }
+                currentRow={currentRow}
+            />
+            <BalanceLiftingPurchasesRiceViewDialog
+                open={open === 'view'}
+                onOpenChange={(isOpen: boolean) =>
+                    setOpen(isOpen ? 'view' : null)
                 }
                 currentRow={currentRow}
             />

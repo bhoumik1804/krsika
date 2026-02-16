@@ -119,4 +119,14 @@ export const balanceLiftingPaddyPurchaseService = {
         })
         return response.data.data
     },
+
+    fetchPaddyInwardsByDealNumber: async (
+        millId: string,
+        dealNumber: string
+    ) => {
+        const response = await apiClient.get<
+            ApiResponse<{ data: any[]; pagination: any }>
+        >(`/mills/${millId}/private-paddy-inward?search=${dealNumber}`)
+        return response.data.data.data
+    },
 }

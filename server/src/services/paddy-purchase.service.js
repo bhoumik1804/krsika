@@ -84,6 +84,14 @@ export const getPaddyPurchaseList = async (millId, options = {}) => {
             },
         },
         {
+            $lookup: {
+                from: 'privatepaddyinwards',
+                localField: 'paddyPurchaseDealNumber',
+                foreignField: 'paddyPurchaseDealNumber',
+                as: 'inwardData',
+            },
+        },
+        {
             $unwind: {
                 path: '$createdByUser',
                 preserveNullAndEmptyArrays: true,

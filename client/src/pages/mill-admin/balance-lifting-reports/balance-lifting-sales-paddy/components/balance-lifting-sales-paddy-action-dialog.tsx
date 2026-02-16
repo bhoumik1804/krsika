@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
-import { useForm } from 'react-hook-form'
+import { useForm, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
@@ -50,7 +50,7 @@ export function BalanceLiftingSalesPaddyActionDialog({
         useUpdatePaddySale()
 
     const party = usePaginatedList(
-        millId,
+        millId || '',
         open,
         {
             useListHook: usePartyList,
@@ -68,12 +68,12 @@ export function BalanceLiftingSalesPaddyActionDialog({
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
     const form = useForm<PaddySales>({
-        resolver: zodResolver(paddySalesSchema),
+        resolver: zodResolver(paddySalesSchema) as Resolver<PaddySales>,
         defaultValues: {
             date: format(new Date(), 'yyyy-MM-dd'),
             partyName: '',
             dhanQty: 0,
-            saleType: 'अन्य (मिल से बिक्री)', // Default value
+            saleType: 'अन्य (मिल से बिक्री)',
             brokerName: '',
             doNumber: '',
             dhanMotaQty: 0,
@@ -88,7 +88,7 @@ export function BalanceLiftingSalesPaddyActionDialog({
             newGunnyRate: 0,
             oldGunnyRate: 0,
             plasticGunnyRate: 0,
-        } as PaddySales,
+        },
     })
 
     useEffect(() => {
@@ -114,7 +114,7 @@ export function BalanceLiftingSalesPaddyActionDialog({
                 newGunnyRate: 0,
                 oldGunnyRate: 0,
                 plasticGunnyRate: 0,
-            } as PaddySales)
+            })
         }
     }, [currentRow, open, form])
 

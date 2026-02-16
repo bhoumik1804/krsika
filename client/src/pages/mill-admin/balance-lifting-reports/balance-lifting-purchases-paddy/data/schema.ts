@@ -23,6 +23,7 @@ export const paddyPurchaseSchema = z.object({
     plasticGunnyRate: z.number().optional(),
     balance: z.number().optional(),
     balanceLifting: z.number().optional(),
+    inwardData: z.array(z.any()).optional(),
     createdAt: z.string().optional(),
     updatedAt: z.string().optional(),
 })

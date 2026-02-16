@@ -63,8 +63,17 @@ export const getRiceSaleList = async (millId, options = {}) => {
 
     const aggregate = RiceSale.aggregate([
         { $match: matchStage },
+        {
+            $lookup: {
+                from: 'privatericeoutwards',
+                localField: 'riceSalesDealNumber',
+                foreignField: 'riceSaleDealNumber',
+                as: 'outwardData',
+            },
+        },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
     ])
+
     const result = await RiceSale.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
         limit: parseInt(limit, 10),

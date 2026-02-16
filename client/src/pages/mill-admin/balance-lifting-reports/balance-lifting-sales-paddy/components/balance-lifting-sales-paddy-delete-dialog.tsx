@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useDeletePaddySale } from '../data/hooks'
 import { type PaddySalesResponse } from '../data/types'
-import { useBalanceLiftingSalesPaddy } from './balance-lifting-sales-paddy-provider'
 
 type BalanceLiftingSalesPaddyDeleteDialogProps = {
     open: boolean
