@@ -14,7 +14,7 @@ import { type AttendanceStatus } from '../data/schema'
 import { useStaff } from './staff-provider'
 
 export function StaffMarkAttendanceDialog() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { open, setOpen, currentRow } = useStaff()
     const isOpen = open === 'mark-attendance'
     const [selectedAttendance, setSelectedAttendance] =

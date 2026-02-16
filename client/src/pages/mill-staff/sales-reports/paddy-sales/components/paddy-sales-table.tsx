@@ -49,7 +49,7 @@ export function PaddySalesTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const columns = useMemo(() => getPaddySalesColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(

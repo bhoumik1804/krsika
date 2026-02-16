@@ -62,7 +62,7 @@ export function RiceActionDialog({
     onOpenChange,
     currentRow,
 }: RiceActionDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useRice()
     const { mutateAsync: createRicePurchase, isPending: isCreating } =
         useCreateRicePurchase(millId)

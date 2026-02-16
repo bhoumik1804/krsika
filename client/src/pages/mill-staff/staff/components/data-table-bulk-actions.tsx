@@ -21,7 +21,7 @@ type DataTableBulkActionsProps<TData> = {
 export function DataTableBulkActions<TData>({
     table,
 }: DataTableBulkActionsProps<TData>) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 

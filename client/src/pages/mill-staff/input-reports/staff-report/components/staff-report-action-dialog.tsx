@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -34,6 +35,7 @@ export function StaffReportActionDialog({
     onOpenChange,
 }: StaffReportActionDialogProps) {
     const { millId } = useStaffReport()
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const { mutate: createStaff, isPending: isCreating } =
         useCreateStaff(millId)
@@ -90,10 +92,14 @@ export function StaffReportActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Staff Member
+                        {isEditing
+                            ? t('inputReports.staffReport.form.editTitle')
+                            : t('inputReports.staffReport.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the staff details below
+                        {isEditing
+                            ? t('inputReports.staffReport.form.editDescription')
+                            : t('inputReports.staffReport.form.addDescription')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -107,10 +113,16 @@ export function StaffReportActionDialog({
                                 name='fullName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Full Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inputReports.staffReport.form.fullName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter full name'
+                                                placeholder={t(
+                                                    'inputReports.staffReport.form.placeholders.name'
+                                                )}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -123,10 +135,16 @@ export function StaffReportActionDialog({
                                 name='post'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Post</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inputReports.staffReport.form.post'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter post/designation'
+                                                placeholder={t(
+                                                    'inputReports.staffReport.form.placeholders.post'
+                                                )}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -139,12 +157,18 @@ export function StaffReportActionDialog({
                                 name='salary'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Salary</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inputReports.staffReport.form.salary'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
                                                 step='0.01'
-                                                placeholder='Enter salary'
+                                                placeholder={t(
+                                                    'inputReports.staffReport.form.placeholders.salary'
+                                                )}
                                                 {...field}
                                                 value={field.value ?? ''}
                                                 onChange={(e) => {
@@ -170,11 +194,17 @@ export function StaffReportActionDialog({
                                 name='phoneNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Phone Number</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inputReports.staffReport.form.phone'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='tel'
-                                                placeholder='Enter phone number'
+                                                placeholder={t(
+                                                    'inputReports.staffReport.form.placeholders.phone'
+                                                )}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -187,11 +217,17 @@ export function StaffReportActionDialog({
                                 name='email'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Email</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inputReports.staffReport.form.email'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='email'
-                                                placeholder='Enter email address'
+                                                placeholder={t(
+                                                    'inputReports.staffReport.form.placeholders.email'
+                                                )}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -204,10 +240,16 @@ export function StaffReportActionDialog({
                                 name='address'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Address</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inputReports.staffReport.form.address'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter address'
+                                                placeholder={t(
+                                                    'inputReports.staffReport.form.placeholders.address'
+                                                )}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -224,17 +266,16 @@ export function StaffReportActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}{' '}
-                                Staff
+                                      ? t('common.update')
+                                      : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

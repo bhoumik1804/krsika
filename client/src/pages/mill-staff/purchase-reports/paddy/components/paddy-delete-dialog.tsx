@@ -24,7 +24,7 @@ export function PaddyDeleteDialog({
     onOpenChange,
     currentRow,
 }: PaddyDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = usePaddy()
     const { mutateAsync: deletePaddyPurchase, isPending: isDeleting } =
         useDeletePaddyPurchase(millId)

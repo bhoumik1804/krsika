@@ -60,7 +60,7 @@ export function PaddyActionDialog({
     onOpenChange,
     currentRow,
 }: PaddyActionDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = usePaddy()
     const { mutateAsync: createPaddyPurchase, isPending: isCreating } =
         useCreatePaddyPurchase(millId)

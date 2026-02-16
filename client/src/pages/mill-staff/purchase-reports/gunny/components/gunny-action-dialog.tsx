@@ -58,7 +58,7 @@ export function GunnyActionDialog({
     onOpenChange,
     currentRow,
 }: GunnyActionDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useGunny()
     const { mutateAsync: createGunnyPurchase, isPending: isCreating } =
         useCreateGunnyPurchase(millId)

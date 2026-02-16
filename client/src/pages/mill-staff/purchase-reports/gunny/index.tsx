@@ -16,7 +16,7 @@ import { GunnyTable } from './components/gunny-table'
 import type { GunnyPurchaseQueryParams } from './data/types'
 
 export function GunnyPurchaseReport() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -94,7 +94,7 @@ function GunnyPurchaseContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const context = useGunny()
 
     if (context.isLoading) {

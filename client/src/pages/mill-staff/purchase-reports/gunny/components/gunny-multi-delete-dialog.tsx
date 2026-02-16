@@ -25,7 +25,7 @@ export function GunnyMultiDeleteDialog({
     open,
     onOpenChange,
 }: GunnyMultiDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useGunny()
     const { mutateAsync: bulkDeleteGunnyPurchases, isPending: isDeleting } =
         useBulkDeleteGunnyPurchases(millId)

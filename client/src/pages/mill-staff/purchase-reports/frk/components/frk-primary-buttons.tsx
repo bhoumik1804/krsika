@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useFrk } from './frk-provider'
 
 export function FrkPrimaryButtons() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { setOpen, setCurrentRow } = useFrk()
 
     return (

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useRiceSales } from './rice-sales-provider'
 
 export function RiceSalesPrimaryButtons() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { setOpen } = useRiceSales()
 
     return (

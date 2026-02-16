@@ -41,7 +41,7 @@ export function RiceSalesReport() {
     }, [searchParams])
 
     // Call GET API here
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
 
     const {
         data: apiResponse,
@@ -110,7 +110,7 @@ function RiceSalesContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = useRiceSales()
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (

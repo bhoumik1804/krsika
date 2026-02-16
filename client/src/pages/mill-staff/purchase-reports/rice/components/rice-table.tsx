@@ -45,7 +45,7 @@ export function RiceTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
 
     const columns = useMemo(() => getRiceColumns(t), [t])
 

@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -6,7 +7,9 @@ import { LongText } from '@/components/long-text'
 import { type FinancialReceipt } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const FinancialReceiptColumns: ColumnDef<FinancialReceipt>[] = [
+export const getFinancialReceiptColumns = (
+    t: TFunction<'mill-staff', undefined>
+): ColumnDef<FinancialReceipt>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -18,7 +21,7 @@ export const FinancialReceiptColumns: ColumnDef<FinancialReceipt>[] = [
                 onCheckedChange={(value) =>
                     table.toggleAllPageRowsSelected(!!value)
                 }
-                aria-label='Select all'
+                aria-label={t('common.selectAll')}
                 className='translate-y-[2px]'
             />
         ),
@@ -29,7 +32,7 @@ export const FinancialReceiptColumns: ColumnDef<FinancialReceipt>[] = [
             <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label='Select row'
+                aria-label={t('common.selectRow')}
                 className='translate-y-[2px]'
             />
         ),
@@ -39,7 +42,10 @@ export const FinancialReceiptColumns: ColumnDef<FinancialReceipt>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('financialReceipt.table.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -55,7 +61,10 @@ export const FinancialReceiptColumns: ColumnDef<FinancialReceipt>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('financialReceipt.table.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -67,7 +76,10 @@ export const FinancialReceiptColumns: ColumnDef<FinancialReceipt>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('financialReceipt.table.brokerName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -79,14 +91,20 @@ export const FinancialReceiptColumns: ColumnDef<FinancialReceipt>[] = [
     {
         accessorKey: 'salesDealType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Sales Deal Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('financialReceipt.table.dealType')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('salesDealType') ?? '-'}</div>,
     },
     {
         accessorKey: 'salesDealNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Sales Deal Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('financialReceipt.table.dealNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -97,7 +115,10 @@ export const FinancialReceiptColumns: ColumnDef<FinancialReceipt>[] = [
     {
         accessorKey: 'receivedAmount',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Received Amount' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('financialReceipt.table.receivedAmount')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
@@ -110,7 +131,10 @@ export const FinancialReceiptColumns: ColumnDef<FinancialReceipt>[] = [
     {
         accessorKey: 'remarks',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Remarks' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('financialReceipt.table.remarks')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>

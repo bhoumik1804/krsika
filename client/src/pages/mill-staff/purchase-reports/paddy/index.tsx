@@ -15,7 +15,7 @@ import { PaddyProvider, usePaddy } from './components/paddy-provider'
 import { PaddyTable } from './components/paddy-table'
 
 export function PaddyPurchaseReport() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -93,7 +93,7 @@ function PaddyPurchaseContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const context = usePaddy()
 
     if (context.isLoading) {

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Users } from 'lucide-react'
 import { DateRange } from 'react-day-picker'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { DateRangePicker } from '@/components/date-range-picker'
@@ -19,6 +20,7 @@ type ReceiptRow = {
 }
 
 export function ReceiptReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const sidebarData = getMillAdminSidebarData(millId || '')
     const [date, setDate] = useState<DateRange | undefined>({
@@ -26,10 +28,9 @@ export function ReceiptReport() {
         to: new Date(),
     })
 
-    // Sample data structure for Receipt
     const receipts: ReceiptRow[] = Array.from({ length: 5 }).map((_, i) => ({
-        partyName: `Party ${i + 1}`,
-        brokerName: `Broker ${i + 1}`,
+        partyName: `${t('dailyReports.receipt.partyPrefix')} ${i + 1}`,
+        brokerName: `${t('dailyReports.receipt.brokerPrefix')} ${i + 1}`,
         amount: 0,
     }))
 
@@ -51,10 +52,10 @@ export function ReceiptReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Daily Receipt
+                            {t('dailyReports.receipt.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Track daily financial receipts
+                            {t('dailyReports.receipt.description')}
                         </p>
                     </div>
                     <DateRangePicker date={date} setDate={setDate} />

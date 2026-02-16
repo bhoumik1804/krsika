@@ -390,8 +390,15 @@ export function CommitteeReportActionDialog({
                                         </div>
 
                                         <h3 className='mb-3 text-sm font-semibold'>
-                                            Preview - {previewData.length}{' '}
-                                            records
+                                            {t(
+                                                'inputReports.committeeReport.form.uploadTitle'
+                                            )}
+                                            {t(
+                                                'inputReports.committeeReport.form.uploadCount',
+                                                {
+                                                    count: previewData.length,
+                                                }
+                                            )}
                                         </h3>
                                         <div className='overflow-x-auto rounded-lg border'>
                                             <div className='h-80 overflow-x-auto overflow-y-auto'>

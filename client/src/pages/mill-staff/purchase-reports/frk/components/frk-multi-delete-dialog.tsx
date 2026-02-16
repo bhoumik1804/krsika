@@ -25,7 +25,7 @@ export function FrkMultiDeleteDialog({
     open,
     onOpenChange,
 }: FrkMultiDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useFrk()
     const { mutateAsync: bulkDeleteFrkPurchases, isPending: isDeleting } =
         useBulkDeleteFrkPurchases(millId)

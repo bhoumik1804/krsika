@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useRice } from './rice-provider'
 
 export function RicePrimaryButtons() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { setOpen, setCurrentRow } = useRice()
 
     return (

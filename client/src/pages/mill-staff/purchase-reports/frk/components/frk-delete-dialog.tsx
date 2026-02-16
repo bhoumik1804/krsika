@@ -24,7 +24,7 @@ export function FrkDeleteDialog({
     onOpenChange,
     currentRow,
 }: FrkDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useFrk()
     const { mutateAsync: deleteFrkPurchase, isPending: isDeleting } =
         useDeleteFrkPurchase(millId)

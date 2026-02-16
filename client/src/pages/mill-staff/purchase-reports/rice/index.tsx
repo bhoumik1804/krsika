@@ -17,7 +17,7 @@ import { RiceTable } from './components/rice-table'
 export function RicePurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
 
     // Extract query params from URL
     const queryParams = useMemo(() => {
@@ -94,7 +94,7 @@ function RicePurchaseContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = useRice()
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (

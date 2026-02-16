@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useGunny } from './gunny-provider'
 
 export function GunnyPrimaryButtons() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { setOpen, setCurrentRow } = useGunny()
 
     return (

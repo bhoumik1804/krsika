@@ -45,7 +45,7 @@ export function PaddyTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const columns = useMemo(() => getPaddyColumns(t), [t])
 
     // Local UI-only states

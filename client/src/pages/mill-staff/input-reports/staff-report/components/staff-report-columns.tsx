@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -6,7 +7,9 @@ import { LongText } from '@/components/long-text'
 import { type StaffReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const staffReportColumns: ColumnDef<StaffReportData>[] = [
+export const getStaffReportColumns = (
+    t: TFunction<'mill-staff', undefined>
+): ColumnDef<StaffReportData>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -18,7 +21,7 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
                 onCheckedChange={(value) =>
                     table.toggleAllPageRowsSelected(!!value)
                 }
-                aria-label='Select all'
+                aria-label={t('common.select')}
                 className='translate-y-[2px]'
             />
         ),
@@ -29,7 +32,7 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
             <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label='Select row'
+                aria-label={t('common.select')}
                 className='translate-y-[2px]'
             />
         ),
@@ -39,7 +42,10 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
     {
         accessorKey: 'fullName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Full Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.staffReport.table.fullName')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36 ps-3'>
@@ -57,7 +63,10 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
     {
         accessorKey: 'post',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Post' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.staffReport.table.post')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('post') || '-'}</div>
@@ -66,7 +75,10 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
     {
         accessorKey: 'salary',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Salary' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.staffReport.table.salary')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-left'>{row.getValue('salary')}</div>
@@ -75,7 +87,10 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
     {
         accessorKey: 'phoneNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Phone' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.staffReport.table.phoneNumber')}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>
@@ -86,7 +101,10 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
     {
         accessorKey: 'email',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Email' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.staffReport.table.email')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-48 text-sm'>
@@ -97,7 +115,10 @@ export const staffReportColumns: ColumnDef<StaffReportData>[] = [
     {
         accessorKey: 'address',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Address' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.staffReport.table.address')}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-52'>

@@ -24,7 +24,7 @@ export function KhandaSalesDeleteDialog({
     onOpenChange,
     currentRow,
 }: KhandaSalesDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useKhandaSales()
     const { mutateAsync: deleteKhandaSales, isPending } =
         useDeleteKhandaSales(millId)

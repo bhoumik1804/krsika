@@ -63,7 +63,7 @@ export function DailyReportPage({
     getIcon,
     gridCols = 'sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5',
 }: DailyReportPageProps) {
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const sidebarData = getMillAdminSidebarData(millId || '')
     const [date, setDate] = useState<DateRange | undefined>({
@@ -203,7 +203,13 @@ export function DailyReportPage({
                                     title={getLabel(item)}
                                     value={`${item.totalQuantity.toFixed(2)} Qtl`}
                                     icon={getIcon(item.commodity)}
-                                    description={`${item.count} entries · ${item.totalBags} bags`}
+                                    description={t(
+                                        'dailyReports.summaryCardDescription',
+                                        {
+                                            count: item.count,
+                                            bags: item.totalBags,
+                                        }
+                                    )}
                                 />
                             ))}
                         </div>

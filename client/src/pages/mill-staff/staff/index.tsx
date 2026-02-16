@@ -85,7 +85,7 @@ export function MillStaffStaff() {
 
     const activeStaff = staffData.filter((s) => s.isActive)
     const inactiveStaff = staffData.filter((s) => !s.isActive)
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
 
     return (
         <StaffProvider>

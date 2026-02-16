@@ -24,7 +24,7 @@ export function OtherDeleteDialog({
     onOpenChange,
     currentRow,
 }: OtherDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useOther()
     const { mutateAsync: deleteOtherPurchase, isPending: isDeleting } =
         useDeleteOtherPurchase(millId)

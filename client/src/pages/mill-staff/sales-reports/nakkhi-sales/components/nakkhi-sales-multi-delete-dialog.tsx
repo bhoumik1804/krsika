@@ -25,7 +25,7 @@ export function NakkhiSalesMultiDeleteDialog({
     open,
     onOpenChange,
 }: NakkhiSalesMultiDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useNakkhiSales()
     const { mutateAsync: bulkDeleteNakkhiSales, isPending } =
         useBulkDeleteNakkhiSales(millId)

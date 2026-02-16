@@ -37,7 +37,7 @@ const getStatus = (isActive: boolean): StaffStatus =>
     isActive ? 'active' : 'inactive'
 
 export const getStaffColumns = (
-    t: TFunction<'millStaff', undefined>
+    t: TFunction<'mill-staff', undefined>
 ): ColumnDef<Staff>[] => [
     {
         id: 'select',

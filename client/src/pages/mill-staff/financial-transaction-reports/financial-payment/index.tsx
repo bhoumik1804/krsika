@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -17,6 +18,7 @@ import { useFinancialPaymentList } from './data/hooks'
 export function FinancialPaymentReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+    const { t } = useTranslation('mill-staff')
 
     const queryParams = useMemo(() => {
         const search = Object.fromEntries(searchParams.entries())
@@ -68,7 +70,7 @@ export function FinancialPaymentReport() {
     if (isError) {
         return (
             <div className='flex h-screen items-center justify-center text-red-500'>
-                Failed to load data. Please try again later.
+                {t('common.error')}
             </div>
         )
     }
@@ -91,10 +93,10 @@ export function FinancialPaymentReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Financial Payment Report
+                            {t('financialPayment.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage financial payment transactions and records
+                            {t('financialPayment.description')}
                         </p>
                     </div>
                     <FinancialPaymentPrimaryButtons />

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -42,6 +43,7 @@ export function LabourGroupReportActionDialog({
     const isEditing = !!currentRow
     const createMutation = useCreateLabourGroup(millId || '')
     const updateMutation = useUpdateLabourGroup(millId || '')
+    const { t } = useTranslation('mill-staff')
     const isLoading = createMutation.isPending || updateMutation.isPending
 
     const form = useForm<LabourGroupReportData>({
@@ -108,11 +110,18 @@ export function LabourGroupReportActionDialog({
             <DialogContent className='max-w-md'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Labour Group
+                        {isEditing
+                            ? t('inputReports.labourGroupReport.form.editTitle')
+                            : t('inputReports.labourGroupReport.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the labour group
-                        details below
+                        {isEditing
+                            ? t(
+                                  'inputReports.labourGroupReport.form.editDescription'
+                              )
+                            : t(
+                                  'inputReports.labourGroupReport.form.addDescription'
+                              )}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -125,10 +134,16 @@ export function LabourGroupReportActionDialog({
                             name='labourTeamName'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Labour Group Name</FormLabel>
+                                    <FormLabel>
+                                        {t(
+                                            'inputReports.labourGroupReport.form.name'
+                                        )}
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder='Enter labour group name'
+                                            placeholder={t(
+                                                'inputReports.labourGroupReport.form.placeholders.name'
+                                            )}
                                             disabled={isLoading}
                                             {...field}
                                         />
@@ -144,14 +159,18 @@ export function LabourGroupReportActionDialog({
                                 onClick={() => handleDialogClose(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
-                                    ? 'Loading...'
+                                    ? t('common.loading')
                                     : isEditing
-                                      ? 'Update Labour Group'
-                                      : 'Add Labour Group'}
+                                      ? t(
+                                            'inputReports.labourGroupReport.form.editTitle'
+                                        )
+                                      : t(
+                                            'inputReports.labourGroupReport.form.addTitle'
+                                        )}
                             </Button>
                         </DialogFooter>
                     </form>

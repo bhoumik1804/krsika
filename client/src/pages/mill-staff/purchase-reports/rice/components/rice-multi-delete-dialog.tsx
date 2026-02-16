@@ -25,7 +25,7 @@ export function RiceMultiDeleteDialog({
     open,
     onOpenChange,
 }: RiceMultiDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useRice()
     const { mutateAsync: bulkDeleteRicePurchases, isPending: isDeleting } =
         useBulkDeleteRicePurchases(millId)

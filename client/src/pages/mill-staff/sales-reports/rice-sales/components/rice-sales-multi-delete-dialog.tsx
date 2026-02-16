@@ -25,7 +25,7 @@ export function RiceSalesMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: RiceSalesMultiDeleteDialogProps<TData>) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useRiceSales()
     const { mutateAsync: bulkDeleteRiceSales, isPending: isDeleting } =
         useBulkDeleteRiceSales(millId)

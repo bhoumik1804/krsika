@@ -8,6 +8,7 @@ import {
     Download,
 } from 'lucide-react'
 import { DateRange } from 'react-day-picker'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import {
     getStockBalance,
@@ -26,7 +27,6 @@ import { Search } from '@/components/search'
 import { StatsCard } from '@/components/stats-card'
 import { ThemeSwitch } from '@/components/theme-switch'
 
-// Helper to categorize items
 const getCategory = (commodity: string) => {
     const c = commodity.toLowerCase()
     if (c.includes('paddy')) return 'Paddy'
@@ -51,6 +51,7 @@ const getIcon = (commodity: string) => {
 }
 
 export function StockOverviewReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const sidebarData = getMillAdminSidebarData(millId || '')
     const [date, setDate] = useState<DateRange | undefined>({
@@ -68,7 +69,6 @@ export function StockOverviewReport() {
         setError(null)
         try {
             const params: any = {}
-            // If querying "as of date", we usually use the end of the range
             if (date?.to) {
                 params.asOfDate = formatDateForApi(date.to)
             } else if (date?.from) {
@@ -76,27 +76,14 @@ export function StockOverviewReport() {
             }
 
             const response = await getStockBalance(millId, params)
-            // Fix: Access response.data.balances instead of response.balances
-            // The API wrapper returns { statusCode, data, message, success }
-            // So we need to access response.data (which is the payload)
-            // Wait, looking at api-client structure:
-            // If apiClient returns AxiosResponse<ApiResponse<T>>, then response.data is ApiResponse<T>
-            // ApiResponse<T> has a 'data' field of type T.
-            // In stock-transaction-api.ts, T is { balances: StockBalance[] }
-            // So it should be response.data.balances.
-            // Let's assume response here IS the ApiResponse object (because getStockBalance returns response.data from axios)
-            // So yes, response.data.balances
-            // But wait, my manual type definition in api-client.ts might be slightly different?
-            // Let's use 'as any' casting if needed to be safe, or just trust the types.
-            // Based on previous error "Property 'balances' does not exist on type 'ApiResponse...'", it means 'balances' is inside 'data'.
             const apiResponse: any = response
             setData(apiResponse.data?.balances || [])
         } catch (err: any) {
-            setError(err?.message || 'Failed to fetch stock balance')
+            setError(err?.message || t('dailyReports.stockOverview.fetchError'))
         } finally {
             setLoading(false)
         }
-    }, [millId, date])
+    }, [millId, date, t])
 
     useEffect(() => {
         fetchData()
@@ -112,7 +99,6 @@ export function StockOverviewReport() {
         exportStockBalanceAsCsv(data, 'stock-overview', asOfDateStr)
     }, [data, asOfDateStr])
 
-    // Categorize data
     const categorized = {
         Paddy: data.filter((i) => getCategory(i.commodity) === 'Paddy'),
         Rice: data.filter((i) => getCategory(i.commodity) === 'Rice'),
@@ -147,20 +133,20 @@ export function StockOverviewReport() {
                             }
                             value={
                                 getCategory(item.commodity) === 'Gunny'
-                                    ? `${item.balance.toLocaleString()} Bags`
+                                    ? `${item.balance.toLocaleString()} ${t('common.bags')}`
                                     : `${item.balance.toLocaleString()} Qtl`
                             }
                             icon={getIcon(item.commodity)}
                             change={
                                 item.totalBags > 0
-                                    ? `${item.totalBags} Bags`
+                                    ? `${item.totalBags} ${t('common.bags')}`
                                     : undefined
                             }
                             changeType='neutral'
                             description={
                                 getCategory(item.commodity) === 'Gunny'
-                                    ? 'Total Bags'
-                                    : 'Current Stock'
+                                    ? t('dailyReports.stockOverview.totalBags')
+                                    : t('dailyReports.stockOverview.currentStock')
                             }
                         />
                     ))}
@@ -187,12 +173,16 @@ export function StockOverviewReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Stock Overview
+                            {t('dailyReports.stockOverview.title')}
                         </h2>
                         <p className='text-muted-foreground'>
                             {asOfDateStr
-                                ? `Stock balance as of ${asOfDateStr}`
-                                : 'Current stock positions grouped by commodity'}
+                                ? t('dailyReports.stockOverview.balanceAsOf', {
+                                      date: asOfDateStr,
+                                  })
+                                : t(
+                                      'dailyReports.stockOverview.currentDescription'
+                                  )}
                         </p>
                     </div>
                     <div className='flex items-center gap-2'>
@@ -204,7 +194,7 @@ export function StockOverviewReport() {
                             disabled={loading || data.length === 0}
                         >
                             <Download className='mr-2 h-4 w-4' />
-                            Export
+                            {t('dailyReports.stockOverview.export')}
                         </Button>
                     </div>
                 </div>
@@ -224,25 +214,28 @@ export function StockOverviewReport() {
                 {!loading && !error && data.length === 0 && (
                     <div className='flex flex-col items-center justify-center py-12 text-muted-foreground'>
                         <Activity className='mb-2 h-12 w-12' />
-                        <p>No stock data available</p>
+                        <p>{t('dailyReports.stockOverview.noData')}</p>
                     </div>
                 )}
 
                 {!loading && !error && data.length > 0 && (
                     <div className='space-y-8'>
-                        {renderSection('Paddy Stock', categorized.Paddy)}
+                        {renderSection(
+                            t('dailyReports.stockOverview.sections.paddy'),
+                            categorized.Paddy
+                        )}
 
                         <div className='grid gap-8 lg:grid-cols-3'>
                             <div className='lg:col-span-2'>
                                 {renderSection(
-                                    'Rice Stock',
+                                    t('dailyReports.stockOverview.sections.rice'),
                                     categorized.Rice,
                                     'sm:grid-cols-2'
                                 )}
                             </div>
                             <div className='lg:col-span-1'>
                                 {renderSection(
-                                    'Other Stock',
+                                    t('dailyReports.stockOverview.sections.other'),
                                     categorized.Other,
                                     'grid-cols-1'
                                 )}
@@ -250,11 +243,11 @@ export function StockOverviewReport() {
                         </div>
 
                         {renderSection(
-                            'By Product Stock',
+                            t('dailyReports.stockOverview.sections.byProduct'),
                             categorized['By-Product']
                         )}
                         {renderSection(
-                            'Gunny Stock',
+                            t('dailyReports.stockOverview.sections.gunny'),
                             categorized.Gunny,
                             'sm:grid-cols-2 lg:grid-cols-4'
                         )}

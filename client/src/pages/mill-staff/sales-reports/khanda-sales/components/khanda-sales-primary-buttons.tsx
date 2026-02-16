@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useKhandaSales } from './khanda-sales-provider'
 
 export function KhandaSalesPrimaryButtons() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { setOpen } = useKhandaSales()
 
     return (

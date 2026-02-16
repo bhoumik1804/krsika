@@ -5,7 +5,7 @@ import { usePaddySales } from './paddy-sales-provider'
 
 export function PaddySalesPrimaryButtons() {
     const { setOpen, setCurrentRow } = usePaddySales()
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
 
     return (
         <Button

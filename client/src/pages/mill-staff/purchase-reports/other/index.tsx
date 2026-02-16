@@ -15,7 +15,7 @@ import { OtherProvider, useOther } from './components/other-provider'
 import { OtherTable } from './components/other-table'
 
 export function OtherPurchaseReport() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -95,7 +95,7 @@ function OtherPurchaseContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const context = useOther()
 
     if (context.isLoading) {

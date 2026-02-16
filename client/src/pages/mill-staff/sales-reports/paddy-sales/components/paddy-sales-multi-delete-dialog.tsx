@@ -24,7 +24,7 @@ export function PaddySalesMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: PaddySalesMultiDeleteDialogProps<TData>) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleDeleteSelected = () => {

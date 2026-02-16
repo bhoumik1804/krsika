@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useStaff } from './staff-provider'
 
 export function StaffPrimaryButtons() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { setOpen } = useStaff()
     return (
         <div className='flex gap-2'>
