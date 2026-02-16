@@ -25,6 +25,7 @@ export interface UpdateStaffRequest {
     fullName?: string
     email?: string
     phoneNumber?: string
+    password?: string
     role?: string
     post?: string
     salary?: number

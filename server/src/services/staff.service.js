@@ -152,6 +152,7 @@ export const updateStaffEntry = async (millId, staffId, data, adminId) => {
 
     if (data.fullName) staff.fullName = data.fullName
     if (data.phoneNumber !== undefined) staff.phoneNumber = data.phoneNumber
+    if (data.password) staff.password = data.password
     if (data.isActive !== undefined) staff.isActive = data.isActive
     if (data.post !== undefined) staff.post = data.post
     if (data.salary !== undefined) staff.salary = data.salary

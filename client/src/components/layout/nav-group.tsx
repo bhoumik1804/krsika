@@ -36,9 +36,12 @@ import {
 
 import { usePermission } from '@/hooks/use-permission'
 
+import { useTranslation } from 'react-i18next'
+
 export function NavGroup({ title, items }: NavGroupProps) {
     const { state, isMobile } = useSidebar()
     const { can } = usePermission()
+    const { t } = useTranslation()
     const location = useLocation()
     const href = location.pathname
 
@@ -65,7 +68,7 @@ export function NavGroup({ title, items }: NavGroupProps) {
                     className='max-w-40 text-sm'
                     contentClassName='truncate'
                 >
-                    {title}
+                    {t(title)}
                 </LongText>
             </SidebarGroupLabel>
             <SidebarMenu>
@@ -109,6 +112,7 @@ function NavBadge({ children }: { children: ReactNode }) {
 
 function SidebarMenuLink({ item, href }: { item: NavLink; href: string }) {
     const { setOpenMobile } = useSidebar()
+    const { t } = useTranslation()
     return (
         <SidebarMenuItem>
             <SidebarMenuButton
@@ -119,7 +123,7 @@ function SidebarMenuLink({ item, href }: { item: NavLink; href: string }) {
                 <Link to={item.url} onClick={() => setOpenMobile(false)}>
                     {item.icon && <item.icon />}
                     <LongText className='max-w-40' contentClassName='truncate'>
-                        {item.title}
+                        {t(item.title)}
                     </LongText>
                     {item.badge && <NavBadge>{item.badge}</NavBadge>}
                 </Link>
@@ -137,6 +141,7 @@ function SidebarMenuCollapsible({
 }) {
     const { setOpenMobile } = useSidebar()
     const { can } = usePermission()
+    const { t } = useTranslation()
     return (
         <Collapsible
             asChild
@@ -151,7 +156,7 @@ function SidebarMenuCollapsible({
                             className='max-w-36'
                             contentClassName='truncate'
                         >
-                            {item.title}
+                            {t(item.title)}
                         </LongText>
                         {item.badge && <NavBadge>{item.badge}</NavBadge>}
                         <ChevronRight className='ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 rtl:rotate-180' />
@@ -178,7 +183,7 @@ function SidebarMenuCollapsible({
                                                 className='max-w-40'
                                                 contentClassName='truncate'
                                             >
-                                                {subItem.title}
+                                                {t(subItem.title)}
                                             </LongText>
                                             {subItem.badge && (
                                                 <NavBadge>
@@ -204,6 +209,7 @@ function SidebarMenuCollapsedDropdown({
     href: string
 }) {
     const { can } = usePermission()
+    const { t } = useTranslation()
     return (
         <SidebarMenuItem>
             <DropdownMenu>
@@ -217,7 +223,7 @@ function SidebarMenuCollapsedDropdown({
                             className='max-w-40'
                             contentClassName='truncate'
                         >
-                            {item.title}
+                            {t(item.title)}
                         </LongText>
                         {item.badge && <NavBadge>{item.badge}</NavBadge>}
                         <ChevronRight className='ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
@@ -225,7 +231,7 @@ function SidebarMenuCollapsedDropdown({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent side='right' align='start' sideOffset={4}>
                     <DropdownMenuLabel>
-                        {item.title} {item.badge ? `(${item.badge})` : ''}
+                        {t(item.title)} {item.badge ? `(${item.badge})` : ''}
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {item.items
@@ -244,7 +250,7 @@ function SidebarMenuCollapsedDropdown({
                                         className='max-w-48'
                                         contentClassName='truncate'
                                     >
-                                        {sub.title}
+                                        {t(sub.title)}
                                     </LongText>
                                     {sub.badge && (
                                         <span className='ms-auto text-xs'>

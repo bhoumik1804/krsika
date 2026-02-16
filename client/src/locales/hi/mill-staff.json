@@ -399,6 +399,83 @@
             "accountant": "लेखाकार"
         }
     },
+    "sidebar": {
+        "balanceLiftingPurchases": "खरीदी का शेष उठाव",
+        "balanceLiftingSales": "बिक्री का शेष उठाव",
+        "reportBalanceLiftingPaddyPurchases": "धान खरीदी के शेष उठाव की रिपोर्ट",
+        "reportBalanceLiftingRicePurchases": "चावल खरीदी के शेष उठाव की रिपोर्ट",
+        "reportBalanceLiftingGunnyPurchases": "बारदाना खरीदी के शेष उठाव की रिपोर्ट",
+        "reportBalanceLiftingFrkPurchases": "FRK खरीदी के शेष उठाव की रिपोर्ट",
+        "reportBalanceLiftingPaddySales": "मिल से धान बिक्री के शेष उठाव की रिपोर्ट",
+        "outwardBalanceLiftingRiceSales": "चावल बिक्री का जावक शेष उठाव",
+        "outwardBalanceLiftingReportRiceSales": "चावल बिक्री की जावक शेष उठाव रिपोर्ट"
+    },
+    "balanceLiftingPaddyPurchase": {
+        "title": "धान खरीदी रिपोर्ट",
+        "description": "धान खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "date": "दिनांक",
+            "dealNumber": "धान खरीदी सौदा क्रमांक",
+            "partyName": "पार्टी का नाम",
+            "paddyQty": "धान मात्रा",
+            "balance": "शेष",
+            "balanceLifting": "शेष उठाव"
+        },
+        "addPurchase": "खरीदी जोड़ें"
+    },
+    "balanceLiftingRicePurchase": {
+        "title": "चावल खरीदी रिपोर्ट",
+        "description": "चावल खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "addPurchase": "खरीदी जोड़ें",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "deliveryType": "डिलीवरी का प्रकार",
+            "lotOrOther": "लॉट / अन्य",
+            "fciOrNan": "FCI / NAN",
+            "riceType": "चावल का प्रकार",
+            "riceQty": "मात्रा (क्विंटल)",
+            "riceRate": "दर/क्विंटल",
+            "discountPercent": "बटाव %",
+            "brokeragePerQuintal": "दलाली/क्विंटल",
+            "frkType": "FRK प्रकार",
+            "frkRatePerQuintal": "FRK दर/क्विंटल",
+            "lotNumber": "लॉट नंबर",
+            "gunnyType": "बारदाना प्रकार",
+            "newGunnyRate": "नए बारदाने की दर",
+            "oldGunnyRate": "पुराने बारदाने की दर",
+            "plasticGunnyRate": "प्लास्टिक बारदाने की दर"
+        }
+    },
+    "balanceLiftingGunnyPurchase": {
+        "title": "बारदाना खरीदी रिपोर्ट",
+        "description": "बारदाना खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "addPurchase": "खरीदी जोड़ें",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "deliveryType": "डिलीवरी का प्रकार",
+            "newGunnyQty": "नए बारदाने की मात्रा",
+            "newGunnyRate": "नए बारदाने की दर",
+            "oldGunnyQty": "पुराने बारदाने की मात्रा",
+            "oldGunnyRate": "पुराने बारदाने की दर",
+            "plasticGunnyQty": "प्लास्टिक बारदाने की मात्रा",
+            "plasticGunnyRate": "प्लास्टिक बारदाने की दर"
+        }
+    },
+    "balanceLiftingFrkPurchase": {
+        "title": "FRK खरीदी रिपोर्ट",
+        "description": "FRK खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "addPurchase": "खरीदी जोड़ें",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "frkQty": "FRK मात्रा",
+            "frkRate": "FRK दर",
+            "gst": "GST (%)"
+        }
+    },
     "paddyPurchase": {
         "title": "धान खरीदी रिपोर्ट",
         "description": "धान खरीदी लेनदेन और रिकॉर्ड का प्रबंधन करें",

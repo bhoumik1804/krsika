@@ -261,28 +261,28 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Balance Lifting of Purchases',
+            title: 'sidebar.balanceLiftingPurchases',
             items: [
                 {
-                    title: 'Report on Balance Lifting of Paddy Purchases',
+                    title: 'sidebar.reportBalanceLiftingPaddyPurchases',
                     url: `/staff/${millId}/balance/lifting/report/purchases/paddy`,
                     icon: ShoppingCart,
                     moduleSlug: 'balance-lifting-paddy-purchase',
                 },
                 {
-                    title: 'Report on Balance Lifting of Rice Purchases',
+                    title: 'sidebar.reportBalanceLiftingRicePurchases',
                     url: `/staff/${millId}/balance/lifting/report/purchases/rice`,
                     icon: ShoppingCart,
                     moduleSlug: 'balance-lifting-rice-purchase',
                 },
                 {
-                    title: 'Report on Balance Lifting of Gunny Purchases',
+                    title: 'sidebar.reportBalanceLiftingGunnyPurchases',
                     url: `/staff/${millId}/balance/lifting/report/purchases/gunny`,
                     icon: ShoppingCart,
                     moduleSlug: 'balance-lifting-gunny-purchase',
                 },
                 {
-                    title: 'Report on Balance Lifting of FRK Purchases',
+                    title: 'sidebar.reportBalanceLiftingFrkPurchases',
                     url: `/staff/${millId}/balance/lifting/report/purchases/frk`,
                     icon: ShoppingCart,
                     moduleSlug: 'balance-lifting-frk-purchase',
@@ -290,10 +290,10 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Balance Lifting of Sales',
+            title: 'sidebar.balanceLiftingSales',
             items: [
                 {
-                    title: 'Report on Balance Lifting of Paddy Sales from Mill',
+                    title: 'sidebar.reportBalanceLiftingPaddySales',
                     url: `/staff/${millId}/balance/lifting/report/sales/paddy`,
                     icon: Receipt,
                     moduleSlug: 'balance-lifting-paddy-sales',
@@ -301,10 +301,10 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Outward Balance Lifting of Rice Sales',
+            title: 'sidebar.outwardBalanceLiftingRiceSales',
             items: [
                 {
-                    title: 'Outward Balance Lifting Report of Rice Sales',
+                    title: 'sidebar.outwardBalanceLiftingReportRiceSales',
                     url: `/staff/${millId}/outward/balance/lifting/report/rice`,
                     icon: Receipt,
                     moduleSlug: 'outward-balance-lifting-rice-sales',

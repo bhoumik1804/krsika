@@ -240,29 +240,29 @@ export function StaffActionDialog({
         resolver: zodResolver(formSchema),
         defaultValues: isEdit
             ? {
-                  ...currentRow,
-                  password: '',
-                  confirmPassword: '',
-                  post: currentRow?.post || '',
-                  salary: currentRow?.salary || 0,
-                  address: currentRow?.address || '',
-                  permissions: currentRow?.permissions || [],
-                  isActive: currentRow?.isActive ?? true,
-                  isEdit,
-              }
+                ...currentRow,
+                password: '',
+                confirmPassword: '',
+                post: currentRow?.post || '',
+                salary: currentRow?.salary || 0,
+                address: currentRow?.address || '',
+                permissions: currentRow?.permissions || [],
+                isActive: currentRow?.isActive ?? true,
+                isEdit,
+            }
             : {
-                  fullName: '',
-                  email: '',
-                  phoneNumber: '',
-                  password: '',
-                  confirmPassword: '',
-                  post: '',
-                  salary: 0,
-                  address: '',
-                  permissions: [],
-                  isActive: true,
-                  isEdit,
-              },
+                fullName: '',
+                email: '',
+                phoneNumber: '',
+                password: '',
+                confirmPassword: '',
+                post: '',
+                salary: 0,
+                address: '',
+                permissions: [],
+                isActive: true,
+                isEdit,
+            },
     })
 
     const onSubmit = async (values: StaffForm) => {
@@ -285,6 +285,8 @@ export function StaffActionDialog({
                     fullName: values.fullName,
                     email: values.email,
                     phoneNumber: values.phoneNumber || '',
+                    password: values.password || undefined,
+
                     post: values.post || undefined,
                     salary: parsedSalary,
                     address: values.address || undefined,
@@ -573,7 +575,7 @@ export function StaffActionDialog({
                                                         ) =>
                                                             field.onChange(
                                                                 value ===
-                                                                    'active'
+                                                                'active'
                                                             )
                                                         }
                                                         defaultValue={
@@ -760,8 +762,8 @@ export function StaffActionDialog({
                         {createMutation.isPending || updateMutation.isPending
                             ? 'Saving...'
                             : isEdit
-                              ? 'Save Changes'
-                              : 'Create Staff Member'}
+                                ? 'Save Changes'
+                                : 'Create Staff Member'}
                     </Button>
                 </DialogFooter>
             </DialogContent>

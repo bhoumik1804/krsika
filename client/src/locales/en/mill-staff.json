@@ -420,6 +420,83 @@
             "accountant": "Accountant"
         }
     },
+    "sidebar": {
+        "balanceLiftingPurchases": "Balance Lifting of Purchases",
+        "balanceLiftingSales": "Balance Lifting of Sales",
+        "reportBalanceLiftingPaddyPurchases": "Report on Balance Lifting of Paddy Purchases",
+        "reportBalanceLiftingRicePurchases": "Report on Balance Lifting of Rice Purchases",
+        "reportBalanceLiftingGunnyPurchases": "Report on Balance Lifting of Gunny Purchases",
+        "reportBalanceLiftingFrkPurchases": "Report on Balance Lifting of FRK Purchases",
+        "reportBalanceLiftingPaddySales": "Report on Balance Lifting of Paddy Sales from Mill",
+        "outwardBalanceLiftingRiceSales": "Outward Balance Lifting of Rice Sales",
+        "outwardBalanceLiftingReportRiceSales": "Outward Balance Lifting Report of Rice Sales"
+    },
+    "balanceLiftingPaddyPurchase": {
+        "title": "Paddy Purchase Report",
+        "description": "Manage paddy purchase transactions and records",
+        "table": {
+            "date": "Date",
+            "dealNumber": "Paddy Purchase Deal Number",
+            "partyName": "Party Name",
+            "paddyQty": "Paddy Qty",
+            "balance": "Balance",
+            "balanceLifting": "Balance Lifting"
+        },
+        "addPurchase": "Add Purchase"
+    },
+    "balanceLiftingRicePurchase": {
+        "title": "Rice Purchase Report",
+        "description": "Manage rice purchase transactions and records",
+        "addPurchase": "Add Purchase",
+        "table": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "deliveryType": "Delivery Type",
+            "lotOrOther": "Lot / Other",
+            "fciOrNan": "FCI / NAN",
+            "riceType": "Rice Type",
+            "riceQty": "Qty (Qtl)",
+            "riceRate": "Rate/Qtl",
+            "discountPercent": "Discount %",
+            "brokeragePerQuintal": "Brokerage/Qtl",
+            "frkType": "FRK Type",
+            "frkRatePerQuintal": "FRK Rate/Qtl",
+            "lotNumber": "LOT No.",
+            "gunnyType": "Gunny Type",
+            "newGunnyRate": "New Gunny Rate",
+            "oldGunnyRate": "Old Gunny Rate",
+            "plasticGunnyRate": "Plastic Gunny Rate"
+        }
+    },
+    "balanceLiftingGunnyPurchase": {
+        "title": "Gunny Purchase Report",
+        "description": "Manage gunny purchase transactions and records",
+        "addPurchase": "Add Purchase",
+        "table": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "deliveryType": "Delivery Type",
+            "newGunnyQty": "New Gunny Qty",
+            "newGunnyRate": "New Gunny Rate",
+            "oldGunnyQty": "Old Gunny Qty",
+            "oldGunnyRate": "Old Gunny Rate",
+            "plasticGunnyQty": "Plastic Gunny Qty",
+            "plasticGunnyRate": "Plastic Gunny Rate"
+        }
+    },
+    "balanceLiftingFrkPurchase": {
+        "title": "FRK Purchase Report",
+        "description": "Manage FRK purchase transactions and records",
+        "addPurchase": "Add Purchase",
+        "table": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "frkQty": "FRK Quantity",
+            "frkRate": "FRK Rate",
+            "gst": "GST (%)"
+        }
+    },
     "paddyPurchase": {
         "title": "Paddy Purchase Report",
         "description": "Manage paddy purchase transactions and records",
