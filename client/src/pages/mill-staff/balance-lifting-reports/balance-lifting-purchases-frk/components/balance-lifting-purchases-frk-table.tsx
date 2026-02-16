@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -23,7 +24,7 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BalanceLiftingPurchasesFrk } from '../data/schema'
-import { frkColumns as columns } from './balance-lifting-purchases-frk-columns'
+import { useBalanceLiftingPurchasesFrkColumns } from './balance-lifting-purchases-frk-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
@@ -44,11 +45,13 @@ export function BalanceLiftingPurchasesFrkTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
+    const columns = useBalanceLiftingPurchasesFrkColumns()
     const [sorting, setSorting] = useState<SortingState>([])
 
     // Only handle column filters (pagination is server-side)
@@ -189,7 +192,9 @@ export function BalanceLiftingPurchasesFrkTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {false // Assuming 'loading' state is not provided
+                                        ? t('common.loading')
+                                        : t('balanceLifting.common.noRecords')}
                                 </TableCell>
                             </TableRow>
                         )}

@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -23,8 +24,8 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BalanceLiftingPurchasesGunny } from '../data/schema'
+import { useBalanceLiftingPurchasesGunnyColumns } from './balance-lifting-purchases-gunny-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { gunnyColumns as columns } from './balance-lifting-purchases-gunny-columns'
 
 type DataTableProps = {
     data: BalanceLiftingPurchasesGunny[]
@@ -44,11 +45,13 @@ export function BalanceLiftingPurchasesGunnyTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
+    const columns = useBalanceLiftingPurchasesGunnyColumns()
     const [sorting, setSorting] = useState<SortingState>([])
 
     // Synced with URL states
@@ -189,7 +192,9 @@ export function BalanceLiftingPurchasesGunnyTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {false // Assuming 'loading' state is not provided
+                                        ? t('common.loading')
+                                        : t('balanceLifting.common.noRecords')}
                                 </TableCell>
                             </TableRow>
                         )}

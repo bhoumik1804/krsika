@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/table'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { DateRangePicker } from '@/components/date-range-picker'
-import { getMillAdminSidebarData } from '@/components/layout/data'
+import { getMillStaffSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -65,7 +65,7 @@ export function DailyReportPage({
 }: DailyReportPageProps) {
     const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
-    const sidebarData = getMillAdminSidebarData(millId || '')
+    const sidebarData = getMillStaffSidebarData(millId || '')
     const [date, setDate] = useState<DateRange | undefined>({
         from: new Date(),
         to: new Date(),
@@ -201,7 +201,7 @@ export function DailyReportPage({
                                 <StatsCard
                                     key={`${item.commodity}-${item.variety ?? index}`}
                                     title={getLabel(item)}
-                                    value={`${item.totalQuantity.toFixed(2)} Qtl`}
+                                    value={`${item.totalQuantity.toFixed(2)} ${t('common.quintal')}`}
                                     icon={getIcon(item.commodity)}
                                     description={t(
                                         'dailyReports.summaryCardDescription',
@@ -253,8 +253,8 @@ export function DailyReportPage({
                                                         {t('common.type')}
                                                     </TableHead>
                                                     <TableHead className='text-right'>
-                                                        {t('common.quantity')}{' '}
-                                                        (Qtl)
+                                                        {t('common.quantity')} (
+                                                        {t('common.quintal')})
                                                     </TableHead>
                                                     <TableHead className='text-right'>
                                                         {t('common.bags')}

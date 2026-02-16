@@ -183,6 +183,42 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
                     moduleSlug: 'daily-reports-overview',
                 },
                 {
+                    title: 'Purchase Deals',
+                    url: `/staff/${millId}/daily/reports/purchase`,
+                    icon: FileBarChart,
+                    moduleSlug: 'daily-receipt',
+                },
+                {
+                    title: 'Sales Deals',
+                    url: `/staff/${millId}/daily/reports/sales`,
+                    icon: FileBarChart,
+                    moduleSlug: 'daily-payment',
+                },
+                {
+                    title: 'Inwards',
+                    url: `/staff/${millId}/daily/reports/inwards`,
+                    icon: FileBarChart,
+                    moduleSlug: 'daily-reports-overview',
+                },
+                {
+                    title: 'Outwards',
+                    url: `/staff/${millId}/daily/reports/outwards`,
+                    icon: FileBarChart,
+                    moduleSlug: 'daily-reports-overview',
+                },
+                {
+                    title: 'Milling',
+                    url: `/staff/${millId}/daily/reports/milling`,
+                    icon: FileBarChart,
+                    moduleSlug: 'daily-reports-overview',
+                },
+                {
+                    title: 'Production',
+                    url: `/staff/${millId}/daily/reports/production`,
+                    icon: FileBarChart,
+                    moduleSlug: 'daily-reports-overview',
+                },
+                {
                     title: 'Receipt',
                     url: `/staff/${millId}/daily/reports/receipt`,
                     icon: FileBarChart,

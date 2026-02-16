@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { DateRangePicker } from '@/components/date-range-picker'
-import { getMillAdminSidebarData } from '@/components/layout/data'
+import { getMillStaffSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -32,7 +32,7 @@ type PaymentRow = {
 export function PaymentReport() {
     const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
-    const sidebarData = getMillAdminSidebarData(millId || '')
+    const sidebarData = getMillStaffSidebarData(millId || '')
     const [date, setDate] = useState<DateRange | undefined>({
         from: new Date(),
         to: new Date(),

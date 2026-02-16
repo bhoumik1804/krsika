@@ -10,7 +10,9 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
+    type ColumnDef,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -23,7 +25,7 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BalanceLiftingPurchasesPaddy } from '../data/schema'
-import { paddyColumns as columns } from './balance-lifting-purchases-paddy-columns'
+import { useBalanceLiftingPurchasesPaddyColumns } from './balance-lifting-purchases-paddy-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
@@ -44,10 +46,12 @@ export function BalanceLiftingPurchasesPaddyTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
+    const columns = useBalanceLiftingPurchasesPaddyColumns()
     const [sorting, setSorting] = useState<SortingState>([])
 
     const {
@@ -187,7 +191,11 @@ export function BalanceLiftingPurchasesPaddyTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {false // Assuming 'loading' state is not provided, so always show 'noRecords'
+                                        ? t('common.loading')
+                                        : t(
+                                              'dailyReports.balanceLifting.common.noRecords'
+                                          )}
                                 </TableCell>
                             </TableRow>
                         )}

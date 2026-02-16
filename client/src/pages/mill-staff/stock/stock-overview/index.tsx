@@ -19,7 +19,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { DateRangePicker } from '@/components/date-range-picker'
-import { getMillAdminSidebarData } from '@/components/layout/data'
+import { getMillStaffSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -53,7 +53,7 @@ const getIcon = (commodity: string) => {
 export function StockOverviewReport() {
     const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
-    const sidebarData = getMillAdminSidebarData(millId || '')
+    const sidebarData = getMillStaffSidebarData(millId || '')
     const [date, setDate] = useState<DateRange | undefined>({
         from: new Date(),
         to: new Date(),
@@ -134,7 +134,7 @@ export function StockOverviewReport() {
                             value={
                                 getCategory(item.commodity) === 'Gunny'
                                     ? `${item.balance.toLocaleString()} ${t('common.bags')}`
-                                    : `${item.balance.toLocaleString()} Qtl`
+                                    : `${item.balance.toLocaleString()} ${t('common.quintal')}`
                             }
                             icon={getIcon(item.commodity)}
                             change={
@@ -146,7 +146,9 @@ export function StockOverviewReport() {
                             description={
                                 getCategory(item.commodity) === 'Gunny'
                                     ? t('dailyReports.stockOverview.totalBags')
-                                    : t('dailyReports.stockOverview.currentStock')
+                                    : t(
+                                          'dailyReports.stockOverview.currentStock'
+                                      )
                             }
                         />
                     ))}
@@ -228,14 +230,18 @@ export function StockOverviewReport() {
                         <div className='grid gap-8 lg:grid-cols-3'>
                             <div className='lg:col-span-2'>
                                 {renderSection(
-                                    t('dailyReports.stockOverview.sections.rice'),
+                                    t(
+                                        'dailyReports.stockOverview.sections.rice'
+                                    ),
                                     categorized.Rice,
                                     'sm:grid-cols-2'
                                 )}
                             </div>
                             <div className='lg:col-span-1'>
                                 {renderSection(
-                                    t('dailyReports.stockOverview.sections.other'),
+                                    t(
+                                        'dailyReports.stockOverview.sections.other'
+                                    ),
                                     categorized.Other,
                                     'grid-cols-1'
                                 )}
