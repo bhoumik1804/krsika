@@ -74,6 +74,11 @@ export const updateStaffSchema = z.object({
             .max(15, 'Phone number must be at most 15 digits')
             .optional()
             .or(z.literal('')),
+        password: z
+            .string()
+            .trim()
+            .min(8, 'Password must be at least 8 characters')
+            .optional(),
         role: z.string().optional(),
         post: z.string().trim().max(100, 'Post is too long').optional(),
         salary: z.union([z.number(), z.string()]).optional(),

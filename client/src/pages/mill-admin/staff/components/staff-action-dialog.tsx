@@ -285,6 +285,8 @@ export function StaffActionDialog({
                     fullName: values.fullName,
                     email: values.email,
                     phoneNumber: values.phoneNumber || '',
+                    password: values.password || undefined,
+                    role: values.role || undefined,
                     post: values.post || undefined,
                     salary: parsedSalary,
                     address: values.address || undefined,
