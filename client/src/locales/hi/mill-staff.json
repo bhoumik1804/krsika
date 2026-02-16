@@ -1,6 +1,6 @@
 {
     "common": {
-        "date": "तारीख",
+        "date": "दिनांक",
         "commodity": "वस्तु",
         "item": "सामान",
         "variety": "किस्म",
@@ -23,7 +23,7 @@
         "error": "त्रुटि",
         "exportSummary": "सारांश निर्यात करें",
         "exportHistory": "इतिहास निर्यात करें",
-        "dateWiseHistory": "तारीख-वार इतिहास",
+        "dateWiseHistory": "दिनांक-वार इतिहास",
         "transactions": "लेनदेन",
         "search": "खोजें...",
         "searchPlaceholder": "प्रविष्टियां फ़िल्टर करें...",
@@ -45,7 +45,7 @@
         "vehicleNo": "वाहन संख्या",
         "driverName": "ड्राइवर का नाम",
         "netWeight": "शुद्ध वजन (किग्रा)",
-        "pickADate": "तारीख चुनें",
+        "pickADate": "दिनांक चुनें",
         "actionCannotBeUndone": "यह कार्रवाई वापस नहीं ली जा सकती।",
         "openMenu": "मेन्यू खोलें",
         "paddy": "धान",
@@ -166,7 +166,12 @@
         "addStaff": "स्टाफ जोड़ें",
         "editStaff": "स्टाफ संपादित करें",
         "deleteStaff": "स्टाफ हटाएं",
+        "edit": "संपादित करें",
+        "delete": "हटाएं",
         "markAttendance": "उपस्थिति दर्ज करें",
+        "activateSelected": "चयनित स्टाफ सक्रिय करें",
+        "deactivateSelected": "चयनित स्टाफ निष्क्रिय करें",
+        "deleteSelected": "चयनित स्टाफ हटाएं",
         "saveChanges": "परिवर्तन सहेजें",
         "cancel": "रद्द करें",
         "saveAttendance": "उपस्थिति सहेजें",
@@ -239,6 +244,419 @@
             "supervisor": "पर्यवेक्षक",
             "operator": "ऑपरेटर",
             "accountant": "लेखाकार"
+        }
+    },
+    "paddyPurchase": {
+        "title": "धान खरीदी रिपोर्ट",
+        "description": "धान खरीदी लेनदेन और रिकॉर्ड का प्रबंधन करें",
+        "failedToLoad": "धान खरीदी डेटा लोड करने में विफल। कृपया बाद में पुनः प्रयास करें।",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "delivery": "डिलीवरी",
+            "purchaseType": "खरीदी का प्रकार",
+            "doNumber": "DO क्रमांक",
+            "committee": "समिति/संग्रहण का नाम",
+            "paddyType": "धान का प्रकार",
+            "doQty": "DO मात्र (क्विंटल)",
+            "totalPaddyQty": "कुल धान की मात्रा (क्विंटल)",
+            "paddyRatePerQtl": "धान का भाव/दर (क्विंटल)",
+            "discountPercent": "बटाव %",
+            "brokerage": "दलाली",
+            "gunnyOption": "बारदाना सहित/वापसी",
+            "newGunnyRate": "नए बारदाने की दर",
+            "oldGunnyRate": "पुराने बारदाने की दर",
+            "plasticGunnyRate": "प्लास्टिक बारदाने की दर"
+        },
+        "form": {
+            "addTitle": "धान खरीदी जोड़ें",
+            "editTitle": "धान खरीदी संपादित करें",
+            "addDescription": "नीचे खरीदी विवरण दर्ज करें",
+            "editDescription": "नीचे खरीदी विवरण अपडेट करें",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "delivery": "डिलीवरी विकल्प",
+            "purchaseType": "खरीदी का प्रकार",
+            "doNumber": "DO क्रमांक",
+            "committee": "समिति/संग्रहण का नाम का नाम",
+            "doQty": "DO धान की मात्रा",
+            "paddyType": "धान का प्रकार",
+            "totalQty": "कुल धान की मात्रा (क्विंटल)",
+            "ratePerQtl": "धान की दर प्रति क्विंटल",
+            "discount": "बटाव %",
+            "brokerage": "दलाली",
+            "gunnyOption": "बारदाना सहित/वापसी",
+            "newGunnyRate": "नए बारदाने की दर",
+            "oldGunnyRate": "पुराने बारदाने की दर",
+            "plasticGunnyRate": "प्लास्टिक बारदाने की दर",
+            "placeholders": {
+                "party": "पार्टी खोजें...",
+                "broker": "दलाल खोजें...",
+                "select": "चुनें",
+                "doNumber": "DO क्रमांक दर्ज करें",
+                "committee": "समिति/संग्रहण का नाम का नाम दर्ज करें",
+                "qty": "0.00"
+            }
+        },
+        "options": {
+            "delivery": {
+                "pade": "पड़े में",
+                "pahunch": "पहुंचा कर"
+            },
+            "purchase": {
+                "do": "DO खरीदी",
+                "other": "अन्य खरीदी"
+            },
+            "paddyType": {
+                "mota": "धान(मोटा)",
+                "patla": "धान(पतला)",
+                "sarna": "धान(सरना)",
+                "mahamaya": "धान(महामाया)",
+                "rbgold": "धान(RB GOLD)"
+            },
+            "gunny": {
+                "sahitVajan": "सहित (वजन में)",
+                "sahitBhav": "सहित (भाव में)",
+                "vapsi": "वापसी"
+            }
+        },
+        "delete": {
+            "title": "खरीद हटाएं?",
+            "description": "क्या आप वाकई <b>{{partyName}}</b> के लिए इस खरीद रिकॉर्ड को हटाना चाहते हैं?<br />यह क्रिया पूर्ववत नहीं की जा सकती है।",
+            "confirm": "हटाएं",
+            "deleting": "हटाया जा रहा है..."
+        },
+        "multiDelete": {
+            "title": "{{count}} {{item}} हटाएं?",
+            "description": "क्या आप वाकई चयनित खरीद रिकॉर्ड हटाना चाहते हैं?<br />यह क्रिया पूर्ववत नहीं की जा सकती है।",
+            "confirm": "हटाएं",
+            "deleting": "हटाया जा रहा है...",
+            "item_one": "खरीद",
+            "item_other": "खरीद"
+        }
+    },
+    "ricePurchase": {
+        "title": "चावल खरीदी रिपोर्ट",
+        "description": "चावल खरीदी लेनदेन और रिकॉर्ड का प्रबंधन करें",
+        "failedToLoad": "चावल खरीदी डेटा लोड करने में विफल। कृपया बाद में पुनः प्रयास करें।",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "delivery": "डिलीवरी",
+            "purchaseType": "खरीदी का प्रकार",
+            "variety": "चावल की किस्म",
+            "lotOrOther": "LOT/अन्य",
+            "fciOrNAN": "FCI/NAN",
+            "type": "चावल का प्रकार",
+            "packingSize": "पैकिंग का आकार",
+            "quantity": "मात्रा (बोरी)",
+            "weight": "मात्रा (क्विंटल)",
+            "riceRatePerQtl": "चावल का भाव/दर",
+            "discount": "बटाव %",
+            "brokerage": "दलाली (प्रति क्विंटल)",
+            "frkType": "FRK",
+            "frkRate": "FRK दर (प्रति क्विंटल)",
+            "lotNumber": "LOT नंबर",
+            "gunnyOption": "बारदाना सहित/वापसी",
+            "newGunnyRate": "नए बारदाने की दर",
+            "oldGunnyRate": "पुराने बारदाने की दर",
+            "plasticGunnyRate": "प्लास्टिक बारदाने की दर",
+            "totalAmount": "कुल राशि"
+        },
+        "form": {
+            "addTitle": "चावल खरीदी जोड़ें",
+            "editTitle": "चावल खरीदी संपादित करें",
+            "addDescription": "नीचे खरीदी विवरण दर्ज करें",
+            "editDescription": "नीचे खरीदी विवरण अपडेट करें",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "delivery": "डिलीवरी विकल्प",
+            "purchaseType": "खरीदी का प्रकार",
+            "variety": "चावल की किस्म",
+            "type": "चावल का प्रकार",
+            "packingSize": "पैकिंग का आकार",
+            "quantity": "चावल की मात्रा (बोरी)",
+            "weight": "कुल चावल का वजन (क्विंटल)",
+            "rate": "चावल की दर प्रति क्विंटल",
+            "discount": "बटाव %",
+            "brokerage": "दलाली",
+            "totalAmount": "कुल राशि",
+            "placeholders": {
+                "party": "पार्टी खोजें...",
+                "broker": "दलाल खोजें...",
+                "select": "चुनें",
+                "qty": "0",
+                "weight": "0.00",
+                "rate": "0.00"
+            }
+        },
+        "delete": {
+            "title": "खरीद हटाएं?",
+            "description": "क्या आप वाकई <b>{{partyName}}</b> के लिए इस खरीद रिकॉर्ड को हटाना चाहते हैं?<br />यह क्रिया पूर्ववत नहीं की जा सकती है।",
+            "confirm": "हटाएं",
+            "deleting": "हटाया जा रहा है..."
+        },
+        "multiDelete": {
+            "title": "{{count}} {{item}} हटाएं?",
+            "description": "क्या आप वाकई चयनित खरीद रिकॉर्ड हटाना चाहते हैं?<br />यह क्रिया पूर्ववत नहीं की जा सकती है।",
+            "confirm": "हटाएं",
+            "deleting": "हटाया जा रहा है...",
+            "item_one": "खरीद",
+            "item_other": "खरीद"
+        }
+    },
+    "gunnyPurchase": {
+        "title": "बारदाना खरीदी रिपोर्ट",
+        "description": "बारदाना खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "failedToLoad": "बारदाना खरीदी डेटा लोड करने में विफल। कृपया बाद में पुनः प्रयास करें।",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "deliveryType": "डिलीवरी",
+            "newGunnyQty": "नया बारदाना संख्या",
+            "newGunnyRate": "नया बारदाना दर",
+            "oldGunnyQty": "पुराना बारदाना संख्या",
+            "oldGunnyRate": "पुराना बारदाना दर",
+            "plasticGunnyQty": "प्लास्टिक बारदाना संख्या",
+            "plasticGunnyRate": "प्लास्टिक बारदाना दर"
+        },
+        "form": {
+            "addTitle": "बारदाना खरीदी जोड़ें",
+            "editTitle": "बारदाना खरीदी संपादित करें",
+            "addDescription": "एक नया बारदाना खरीदी रिकॉर्ड जोड़ें",
+            "editDescription": "बारदाना खरीदी रिकॉर्ड अपडेट करें",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "deliveryType": "डिलीवरी",
+            "newGunnyQty": "नया बारदाना संख्या",
+            "newGunnyRate": "नया बारदाना दर",
+            "oldGunnyQty": "पुराना बारदाना संख्या",
+            "oldGunnyRate": "पुराना बारदाना दर",
+            "plasticGunnyQty": "प्लास्टिक बारदाना संख्या",
+            "plasticGunnyRate": "प्लास्टिक बारदाना दर",
+            "placeholders": {
+                "party": "पार्टी खोजें...",
+                "select": "चुनें",
+                "qty": "0",
+                "rate": "0.00"
+            }
+        },
+        "delete": {
+            "title": "बारदाना खरीदी हटाएं?",
+            "description": "क्या आप वाकई <b>{{partyName}}</b> से <b>{{date}}</b> को बारदाना खरीदी हटाना चाहते हैं?<br />यह क्रिया पूर्ववत नहीं की जा सकती है।",
+            "confirm": "हटाएं",
+            "deleting": "हटाया जा रहा है..."
+        },
+        "multiDelete": {
+            "title": "{{count}} रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई चयनित बारदाना खरीदी रिकॉर्ड हटाना चाहते हैं?<br />यह क्रिया पूर्ववत नहीं की जा सकती है।"
+        }
+    },
+    "frkPurchase": {
+        "title": "FRK खरीदी रिपोर्ट",
+        "description": "FRK खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "failedToLoad": "FRK खरीदी डेटा लोड करने में विफल। कृपया बाद में पुनः प्रयास करें।",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "frkQty": "मात्रा (क्विंटल में)",
+            "frkRate": "दर",
+            "gst": "GST"
+        },
+        "form": {
+            "addTitle": "FRK खरीदी जोड़ें",
+            "editTitle": "FRK खरीदी संपादित करें",
+            "addDescription": "एक नया FRK खरीदी रिकॉर्ड जोड़ें",
+            "editDescription": "FRK खरीदी रिकॉर्ड अपडेट करें",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "frkQty": "मात्रा (क्विंटल में)",
+            "frkRate": "दर",
+            "gst": "GST",
+            "placeholders": {
+                "party": "पार्टी खोजें...",
+                "select": "चुनें",
+                "qty": "0",
+                "rate": "0.00",
+                "gst": "0"
+            }
+        },
+        "delete": {
+            "title": "FRK खरीदी हटाएं?",
+            "description": "क्या आप वाकई <b>{{partyName}}</b> से <b>{{date}}</b> को FRK खरीदी हटाना चाहते हैं?<br />यह क्रिया पूर्ववत नहीं की जा सकती है।",
+            "confirm": "हटाएं",
+            "deleting": "हटाया जा रहा है..."
+        },
+        "multiDelete": {
+            "title": "{{count}} रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई चयनित FRK खरीदी रिकॉर्ड हटाना चाहते हैं?<br />यह क्रिया पूर्ववत नहीं की जा सकती है।"
+        }
+    },
+    "otherPurchase": {
+        "title": "अन्य खरीदी रिपोर्ट",
+        "description": "अन्य खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "failedToLoad": "अन्य खरीदी डेटा लोड करने में विफल। कृपया बाद में पुनः प्रयास करें।",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "itemName": "अन्य वस्तु प्रविष्ट करें",
+            "qty": "मात्रा",
+            "qtyType": "मात्रा का प्रकार",
+            "rate": "दर",
+            "discount": "बटाव %",
+            "gst": "GST"
+        },
+        "form": {
+            "addTitle": "अन्य खरीदी जोड़ें",
+            "editTitle": "अन्य खरीदी संपादित करें",
+            "addDescription": "एक नया अन्य खरीदी रिकॉर्ड जोड़ें",
+            "editDescription": "अन्य खरीदी रिकॉर्ड अपडेट करें",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "itemName": "अन्य वस्तु प्रविष्ट करें",
+            "qty": "मात्रा",
+            "qtyType": "मात्रा का प्रकार",
+            "rate": "दर",
+            "discount": "बटाव %",
+            "gst": "GST",
+            "placeholders": {
+                "party": "पार्टी खोजें...",
+                "broker": "ब्रोकर खोजें...",
+                "item": "वस्तु का नाम दर्ज करें",
+                "qty": "0",
+                "qtyType": "मात्रा का प्रकार दर्ज करें",
+                "rate": "0.00",
+                "discount": "0",
+                "gst": "0",
+                "select": "चुनें"
+            },
+            "options": {
+                "qtyType": {
+                    "quintal": "क्विंटल",
+                    "kg": "कि.ग्रा.",
+                    "ton": "टन",
+                    "nag": "नग",
+                    "other": "अन्य"
+                }
+            }
+        },
+        "delete": {
+            "title": "अन्य खरीदी हटाएं?",
+            "description": "क्या आप वाकई <b>{{partyName}}</b> से <b>{{date}}</b> को अन्य खरीदी हटाना चाहते हैं?<br />यह क्रिया पूर्ववत नहीं की जा सकती है।",
+            "confirm": "हटाएं",
+            "deleting": "हटाया जा रहा है..."
+        },
+        "multiDelete": {
+            "title": "{{count}} रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई चयनित अन्य खरीदी रिकॉर्ड हटाना चाहते हैं?<br />यह क्रिया पूर्ववत नहीं की जा सकती है।"
+        },
+        "options": {
+            "qtyType": {
+                "quintal": "क्विंटल",
+                "kg": "कि.ग्रा.",
+                "ton": "टन",
+                "nag": "नग",
+                "other": "अन्य"
+            }
+        }
+    },
+    "paddySales": {
+        "title": "धान बिक्री रिपोर्ट",
+        "description": "धान बिक्री लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "saleType": "प्रकार",
+            "doNumber": "DO क्रमांक",
+            "dhanMotaQty": "धान (मोटा)",
+            "dhanPatlaQty": "धान (पतला)",
+            "dhanSarnaQty": "धान (सरना)",
+            "dhanType": "धान का प्रकार",
+            "dhanQty": "मात्रा (क्विंटल में.)",
+            "paddyRatePerQuintal": "धान का भाव/दर",
+            "deliveryType": "डिलीवरी",
+            "discountPercent": "बटाव %",
+            "brokerage": "दलाली",
+            "gunnyType": "बारदाना सहित/वापसी",
+            "newGunnyRate": "नया बारदाना दर",
+            "oldGunnyRate": "पुराना बारदाना दर",
+            "plasticGunnyRate": "प्लास्टिक बारदाना दर",
+            "actions": "कार्रवाई"
+        },
+        "form": {
+            "addTitle": "धान बिक्री जोड़ें",
+            "editTitle": "धान बिक्री संपादित करें",
+            "addDescription": "नीचे बिक्री विवरण दर्ज करें",
+            "editDescription": "नीचे बिक्री विवरण अपडेट करें",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "saleType": "प्रकार",
+            "doNumber": "DO क्रमांक",
+            "dhanMotaQty": "धान (मोटा)",
+            "dhanPatlaQty": "धान (पतला)",
+            "dhanSarnaQty": "धान (सरना)",
+            "dhanType": "धान का प्रकार",
+            "dhanQty": "मात्रा (क्विंटल में.)",
+            "paddyRatePerQuintal": "धान का भाव/दर",
+            "deliveryType": "डिलीवरी",
+            "discountPercent": "बटाव %",
+            "brokerage": "दलाली",
+            "gunnyType": "बारदाना सहित/वापसी",
+            "newGunnyRate": "नया बारदाना दर",
+            "oldGunnyRate": "पुराना बारदाना दर",
+            "plasticGunnyRate": "प्लास्टिक बारदाना दर",
+            "placeholders": {
+                "date": "तिथि चुनें",
+                "party": "पार्टी खोजें...",
+                "broker": "ब्रोकर खोजें...",
+                "saleType": "चुनें",
+                "doNumber": "DO क्रमांक दर्ज करें",
+                "dhanType": "चुनें",
+                "deliveryType": "चुनें",
+                "gunnyType": "चुनें"
+            },
+            "buttons": {
+                "add": "बिक्री जोड़ें",
+                "update": "बिक्री अपडेट करें",
+                "cancel": "रद्द करें",
+                "adding": "जोड़ा जा रहा है...",
+                "updating": "अपडेट किया जा रहा है..."
+            }
+        },
+        "options": {
+            "saleType": {
+                "doSale": "DO बिक्री",
+                "directSale": "सीधी बिक्री"
+            },
+            "dhanType": {
+                "mota": "मोटा",
+                "patla": "पतला",
+                "sarna": "सरना"
+            },
+            "deliveryType": {
+                "exMill": "Ex Mill",
+                "delivered": "डिलीवर"
+            },
+            "gunnyType": {
+                "bardanaSahit": "बारदाना सहित",
+                "bardanaRahit": "बारदाना रहित"
+            }
+        },
+        "delete": {
+            "title": "रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई <strong>{{name}}</strong> के लिए यह रिकॉर्ड हटाना चाहते हैं?<br />यह क्रिया पूर्ववत नहीं की जा सकती है।"
+        },
+        "multiDelete": {
+            "title": "{{count}} रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई चयनित धान बिक्री रिकॉर्ड हटाना चाहते हैं?<br />यह क्रिया पूर्ववत नहीं की जा सकती है।"
         }
     }
 }

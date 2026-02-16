@@ -1,12 +1,15 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns/format'
+import { TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type OtherPurchase } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const otherColumns: ColumnDef<OtherPurchase>[] = [
+export const getOtherColumns = (
+    t: TFunction<'millStaff'>
+): ColumnDef<OtherPurchase>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherPurchase.table.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -57,7 +63,10 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherPurchase.table.partyName')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -68,7 +77,10 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherPurchase.table.brokerName')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -79,7 +91,10 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
     {
         accessorKey: 'otherPurchaseName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Item Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherPurchase.table.itemName')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -90,7 +105,10 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
     {
         accessorKey: 'otherPurchaseQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Quantity' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherPurchase.table.qty')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -101,7 +119,10 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
     {
         accessorKey: 'qtyType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Qty Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherPurchase.table.qtyType')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('qtyType') || '-'}</div>
@@ -110,7 +131,10 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
     {
         accessorKey: 'rate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherPurchase.table.rate')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>₹{row.original.rate || 0}</div>
@@ -119,7 +143,10 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
     {
         accessorKey: 'discountPercent',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Discount %' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherPurchase.table.discount')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -130,7 +157,10 @@ export const otherColumns: ColumnDef<OtherPurchase>[] = [
     {
         accessorKey: 'gst',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='GST %' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('otherPurchase.table.gst')}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.original.gst || 0}%</div>

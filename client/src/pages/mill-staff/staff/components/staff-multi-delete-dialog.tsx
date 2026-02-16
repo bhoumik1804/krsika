@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { AlertTriangle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -23,28 +24,33 @@ export function StaffMultiDeleteDialog<TData>({
     onOpenChange,
     table,
 }: StaffMultiDeleteDialogProps<TData>) {
+    const { t } = useTranslation('millStaff')
     const [value, setValue] = useState('')
 
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleDelete = () => {
         if (value.trim() !== CONFIRM_WORD) {
-            toast.error(`Please type "${CONFIRM_WORD}" to confirm.`)
+            toast.error(
+                t('staff.multiDeleteConfirmError', { word: CONFIRM_WORD }) ||
+                    `Please type "${CONFIRM_WORD}" to confirm.`
+            )
             return
         }
 
         onOpenChange(false)
 
         toast.promise(sleep(2000), {
-            loading: 'Deleting staff...',
+            loading: t('staff.deletingStaff'),
             success: () => {
                 setValue('')
                 table.resetRowSelection()
-                return `Deleted ${selectedRows.length} staff member${
-                    selectedRows.length > 1 ? 's' : ''
-                }`
+                return t('staff.deletedStaffSuccess', {
+                    count: selectedRows.length,
+                    member: selectedRows.length > 1 ? 'members' : 'member',
+                })
             },
-            error: 'Error',
+            error: t('staff.deleteSelectedError') || 'Error',
         })
     }
 
@@ -60,39 +66,43 @@ export function StaffMultiDeleteDialog<TData>({
                         className='me-1 inline-block stroke-destructive'
                         size={18}
                     />{' '}
-                    Delete {selectedRows.length}{' '}
-                    {selectedRows.length > 1 ? 'staff members' : 'staff member'}
+                    {t('staff.multiDeleteTitle', {
+                        count: selectedRows.length,
+                        member: selectedRows.length > 1 ? 'members' : 'member',
+                    })}
                 </span>
             }
             desc={
                 <div className='space-y-4'>
-                    <p className='mb-2'>
-                        Are you sure you want to delete the selected staff
-                        members? <br />
-                        This action cannot be undone.
-                    </p>
+                    <p className='mb-2'>{t('staff.multiDeleteDescription')}</p>
 
                     <Label className='my-4 flex flex-col items-start gap-1.5'>
                         <span className=''>
-                            Confirm by typing "{CONFIRM_WORD}":
+                            {t('staff.multiDeleteConfirmLabel', {
+                                word: CONFIRM_WORD,
+                            })}
                         </span>
                         <Input
                             value={value}
                             onChange={(e) => setValue(e.target.value)}
-                            placeholder={`Type "${CONFIRM_WORD}" to confirm.`}
+                            placeholder={t(
+                                'staff.multiDeleteConfirmPlaceholder',
+                                {
+                                    word: CONFIRM_WORD,
+                                }
+                            )}
                         />
                     </Label>
 
                     <Alert variant='destructive'>
-                        <AlertTitle>Warning!</AlertTitle>
+                        <AlertTitle>{t('staff.warning')}</AlertTitle>
                         <AlertDescription>
-                            Please be careful, this operation can not be rolled
-                            back.
+                            {t('staff.actionRollbackWarning')}
                         </AlertDescription>
                     </Alert>
                 </div>
             }
-            confirmText='Delete'
+            confirmText={t('common.delete')}
             destructive
         />
     )

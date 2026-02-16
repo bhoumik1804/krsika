@@ -1,8 +1,11 @@
 'use client'
 
+import { useMemo } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { type TFunction } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import { showSubmittedData } from '@/lib/show-submitted-data'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,72 +30,71 @@ import { SelectDropdown } from '@/components/select-dropdown'
 import { posts } from '../data/data'
 import { type Staff } from '../data/schema'
 
-const formSchema = z
-    .object({
-        fullName: z.string().min(2, 'Full Name must be at least 2 characters.'),
-        phoneNumber: z.string().optional(),
-        email: z.email({
-            error: (iss) =>
-                iss.input === '' ? 'Email is required.' : undefined,
-        }),
-        password: z.string().transform((pwd) => pwd.trim()),
-        post: z.string().optional(),
-        salary: z.number().optional(),
-        address: z.string().optional(),
-        confirmPassword: z.string().transform((pwd) => pwd.trim()),
-        isEdit: z.boolean(),
-    })
-    .refine(
-        (data) => {
-            if (data.isEdit && !data.password) return true
-            return data.password.length > 0
-        },
-        {
-            message: 'Password is required.',
-            path: ['password'],
-        }
-    )
-    .refine(
-        ({ isEdit, password }) => {
-            if (isEdit && !password) return true
-            return password.length >= 8
-        },
-        {
-            message: 'Password must be at least 8 characters long.',
-            path: ['password'],
-        }
-    )
-    .refine(
-        ({ isEdit, password }) => {
-            if (isEdit && !password) return true
-            return /[a-z]/.test(password)
-        },
-        {
-            message: 'Password must contain at least one lowercase letter.',
-            path: ['password'],
-        }
-    )
-    .refine(
-        ({ isEdit, password }) => {
-            if (isEdit && !password) return true
-            return /\d/.test(password)
-        },
-        {
-            message: 'Password must contain at least one number.',
-            path: ['password'],
-        }
-    )
-    .refine(
-        ({ isEdit, password, confirmPassword }) => {
-            if (isEdit && !password) return true
-            return password === confirmPassword
-        },
-        {
-            message: "Passwords don't match.",
-            path: ['confirmPassword'],
-        }
-    )
-type StaffForm = z.infer<typeof formSchema>
+const getFormSchema = (t: TFunction<'millStaff', undefined>) =>
+    z
+        .object({
+            fullName: z.string().min(2, t('staff.form.validation.nameMin')),
+            phoneNumber: z.string().optional(),
+            email: z.string().email(t('staff.form.validation.emailInvalid')),
+            password: z.string().transform((pwd) => pwd.trim()),
+            post: z.string().optional(),
+            salary: z.number().optional(),
+            address: z.string().optional(),
+            confirmPassword: z.string().transform((pwd) => pwd.trim()),
+            isEdit: z.boolean(),
+        })
+        .refine(
+            (data) => {
+                if (data.isEdit && !data.password) return true
+                return data.password.length > 0
+            },
+            {
+                message: t('staff.form.validation.passwordRequired'),
+                path: ['password'],
+            }
+        )
+        .refine(
+            ({ isEdit, password }) => {
+                if (isEdit && !password) return true
+                return password.length >= 8
+            },
+            {
+                message: t('staff.form.validation.passwordMin'),
+                path: ['password'],
+            }
+        )
+        .refine(
+            ({ isEdit, password }) => {
+                if (isEdit && !password) return true
+                return /[a-z]/.test(password)
+            },
+            {
+                message: t('staff.form.validation.passwordLower'),
+                path: ['password'],
+            }
+        )
+        .refine(
+            ({ isEdit, password }) => {
+                if (isEdit && !password) return true
+                return /\d/.test(password)
+            },
+            {
+                message: t('staff.form.validation.passwordNumber'),
+                path: ['password'],
+            }
+        )
+        .refine(
+            ({ isEdit, password, confirmPassword }) => {
+                if (isEdit && !password) return true
+                return password === confirmPassword
+            },
+            {
+                message: t('staff.form.validation.passwordMatch'),
+                path: ['confirmPassword'],
+            }
+        )
+
+type StaffForm = z.infer<ReturnType<typeof getFormSchema>>
 
 type StaffActionDialogProps = {
     currentRow?: Staff
@@ -105,7 +107,10 @@ export function StaffActionDialog({
     open,
     onOpenChange,
 }: StaffActionDialogProps) {
+    const { t } = useTranslation('millStaff')
     const isEdit = !!currentRow
+    const formSchema = useMemo(() => getFormSchema(t), [t])
+
     const form = useForm<StaffForm>({
         resolver: zodResolver(formSchema),
         defaultValues: isEdit
@@ -152,13 +157,15 @@ export function StaffActionDialog({
             <DialogContent className='sm:max-w-lg'>
                 <DialogHeader className='text-start'>
                     <DialogTitle>
-                        {isEdit ? 'Edit Staff' : 'Add New Staff'}
+                        {isEdit ? t('staff.editStaff') : t('staff.addStaff')}
                     </DialogTitle>
                     <DialogDescription>
                         {isEdit
-                            ? 'Update the staff member here. '
-                            : 'Create new staff member here. '}
-                        Click save when you&apos;re done.
+                            ? t('staff.editStaffDescription') ||
+                              'Update the staff member here. '
+                            : t('staff.addStaffDescription') ||
+                              'Create new staff member here. '}
+                        {t('staff.clickSave')}
                     </DialogDescription>
                 </DialogHeader>
                 <div className='h-105 w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3'>
@@ -174,11 +181,13 @@ export function StaffActionDialog({
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Full Name
+                                            {t('staff.form.fullName')}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='John Doe'
+                                                placeholder={t(
+                                                    'staff.form.fullNamePlaceholder'
+                                                )}
                                                 className='col-span-4'
                                                 autoComplete='off'
                                                 {...field}
@@ -194,11 +203,13 @@ export function StaffActionDialog({
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Email
+                                            {t('staff.form.email')}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='john.doe@gmail.com'
+                                                placeholder={t(
+                                                    'staff.form.emailPlaceholder'
+                                                )}
                                                 className='col-span-4'
                                                 {...field}
                                             />
@@ -213,11 +224,13 @@ export function StaffActionDialog({
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Phone Number
+                                            {t('staff.form.phoneNumber')}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='+123456789'
+                                                placeholder={t(
+                                                    'staff.form.phoneNumberPlaceholder'
+                                                )}
                                                 className='col-span-4'
                                                 {...field}
                                             />
@@ -232,19 +245,21 @@ export function StaffActionDialog({
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Post
+                                            {t('staff.form.post')}
                                         </FormLabel>
                                         <SelectDropdown
                                             defaultValue={field.value}
                                             onValueChange={field.onChange}
-                                            placeholder='Select a post'
-                                            className='col-span-4'
-                                            items={posts.map(
-                                                ({ label, value }) => ({
-                                                    label,
-                                                    value,
-                                                })
+                                            placeholder={t(
+                                                'staff.form.postPlaceholder'
                                             )}
+                                            className='col-span-4'
+                                            items={posts.map(({ value }) => ({
+                                                label: t(
+                                                    `staff.posts.${value}`
+                                                ),
+                                                value,
+                                            }))}
                                         />
                                         <FormMessage className='col-span-4 col-start-3' />
                                     </FormItem>
@@ -256,12 +271,14 @@ export function StaffActionDialog({
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Salary
+                                            {t('staff.form.salary')}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
-                                                placeholder='10000'
+                                                placeholder={t(
+                                                    'staff.form.salaryPlaceholder'
+                                                )}
                                                 className='col-span-4'
                                                 {...field}
                                             />
@@ -276,11 +293,13 @@ export function StaffActionDialog({
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Address
+                                            {t('staff.form.address')}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter address'
+                                                placeholder={t(
+                                                    'staff.form.addressPlaceholder'
+                                                )}
                                                 className='col-span-4'
                                                 {...field}
                                             />
@@ -295,11 +314,13 @@ export function StaffActionDialog({
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Password
+                                            {t('staff.form.password')}
                                         </FormLabel>
                                         <FormControl>
                                             <PasswordInput
-                                                placeholder='e.g., S3cur3P@ssw0rd'
+                                                placeholder={t(
+                                                    'staff.form.passwordPlaceholder'
+                                                )}
                                                 className='col-span-4'
                                                 {...field}
                                             />
@@ -314,12 +335,14 @@ export function StaffActionDialog({
                                 render={({ field }) => (
                                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                                         <FormLabel className='col-span-2 text-end'>
-                                            Confirm Password
+                                            {t('staff.form.confirmPassword')}
                                         </FormLabel>
                                         <FormControl>
                                             <PasswordInput
                                                 disabled={!isPasswordTouched}
-                                                placeholder='e.g., S3cur3P@ssw0rd'
+                                                placeholder={t(
+                                                    'staff.form.confirmPasswordPlaceholder'
+                                                )}
                                                 className='col-span-4'
                                                 {...field}
                                             />
@@ -333,7 +356,7 @@ export function StaffActionDialog({
                 </div>
                 <DialogFooter>
                     <Button type='submit' form='staff-form'>
-                        Save changes
+                        {t('staff.saveChanges')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

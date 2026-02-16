@@ -111,17 +111,17 @@ export function StaffTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search by name...'
+                searchPlaceholder={t('staff.table.searchPlaceholder')}
                 searchKey='fullName'
                 filters={[
                     {
                         columnId: 'status',
-                        title: 'Status',
+                        title: t('staff.table.status'),
                         options: statuses,
                     },
                     {
                         columnId: 'post',
-                        title: 'Post',
+                        title: t('staff.table.post'),
                         options: posts.map((post) => ({ ...post })),
                     },
                 ]}
@@ -204,7 +204,7 @@ export function StaffTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

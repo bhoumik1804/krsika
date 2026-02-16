@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { Trash2, UserX, UserCheck } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -20,25 +21,39 @@ type DataTableBulkActionsProps<TData> = {
 export function DataTableBulkActions<TData>({
     table,
 }: DataTableBulkActionsProps<TData>) {
+    const { t } = useTranslation('millStaff')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleBulkStatusChange = (status: 'active' | 'inactive') => {
         const selectedStaff = selectedRows.map((row) => row.original as Staff)
         toast.promise(sleep(2000), {
-            loading: `${status === 'active' ? 'Activating' : 'Deactivating'} staff...`,
+            loading: t(
+                `staff.bulkStatusChange.${status === 'active' ? 'activating' : 'deactivating'}`
+            ),
             success: () => {
                 table.resetRowSelection()
-                return `${status === 'active' ? 'Activated' : 'Deactivated'} ${selectedStaff.length} staff member${selectedStaff.length > 1 ? 's' : ''}`
+                return t(
+                    `staff.bulkStatusChange.${status === 'active' ? 'activated' : 'deactivated'}Success`,
+                    {
+                        count: selectedStaff.length,
+                        member: selectedStaff.length > 1 ? 'members' : 'member',
+                    }
+                )
             },
-            error: `Error ${status === 'active' ? 'activating' : 'deactivating'} staff`,
+            error: t(
+                `staff.bulkStatusChange.${status === 'active' ? 'activation' : 'deactivation'}Error`
+            ),
         })
         table.resetRowSelection()
     }
 
     return (
         <>
-            <BulkActionsToolbar table={table} entityName='staff member'>
+            <BulkActionsToolbar
+                table={table}
+                entityName={t('staff.staffMember')}
+            >
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <Button
@@ -46,17 +61,17 @@ export function DataTableBulkActions<TData>({
                             size='icon'
                             onClick={() => handleBulkStatusChange('active')}
                             className='size-8'
-                            aria-label='Activate selected staff'
-                            title='Activate selected staff'
+                            aria-label={t('staff.activateSelected')}
+                            title={t('staff.activateSelected')}
                         >
                             <UserCheck />
                             <span className='sr-only'>
-                                Activate selected staff
+                                {t('staff.activateSelected')}
                             </span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Activate selected staff</p>
+                        <p>{t('staff.activateSelected')}</p>
                     </TooltipContent>
                 </Tooltip>
 
@@ -67,17 +82,17 @@ export function DataTableBulkActions<TData>({
                             size='icon'
                             onClick={() => handleBulkStatusChange('inactive')}
                             className='size-8'
-                            aria-label='Deactivate selected staff'
-                            title='Deactivate selected staff'
+                            aria-label={t('staff.deactivateSelected')}
+                            title={t('staff.deactivateSelected')}
                         >
                             <UserX />
                             <span className='sr-only'>
-                                Deactivate selected staff
+                                {t('staff.deactivateSelected')}
                             </span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Deactivate selected staff</p>
+                        <p>{t('staff.deactivateSelected')}</p>
                     </TooltipContent>
                 </Tooltip>
 
@@ -88,17 +103,17 @@ export function DataTableBulkActions<TData>({
                             size='icon'
                             onClick={() => setShowDeleteConfirm(true)}
                             className='size-8'
-                            aria-label='Delete selected staff'
-                            title='Delete selected staff'
+                            aria-label={t('staff.deleteSelected')}
+                            title={t('staff.deleteSelected')}
                         >
                             <Trash2 />
                             <span className='sr-only'>
-                                Delete selected staff
+                                {t('staff.deleteSelected')}
                             </span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Delete selected staff</p>
+                        <p>{t('staff.deleteSelected')}</p>
                     </TooltipContent>
                 </Tooltip>
             </BulkActionsToolbar>

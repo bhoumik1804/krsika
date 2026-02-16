@@ -1,8 +1,10 @@
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useFrk } from './frk-provider'
 
 export function FrkPrimaryButtons() {
+    const { t } = useTranslation('millStaff')
     const { setOpen, setCurrentRow } = useFrk()
 
     return (
@@ -13,7 +15,7 @@ export function FrkPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            Add Purchase
+            {t('frkPurchase.form.addTitle')}
         </Button>
     )
 }

@@ -163,7 +163,12 @@
         "addStaff": "Add Staff",
         "editStaff": "Edit Staff",
         "deleteStaff": "Delete Staff",
+        "edit": "Edit",
+        "delete": "Delete",
         "markAttendance": "Mark Attendance",
+        "activateSelected": "Activate selected staff",
+        "deactivateSelected": "Deactivate selected staff",
+        "deleteSelected": "Delete selected staff",
         "saveChanges": "Save changes",
         "cancel": "Cancel",
         "saveAttendance": "Save Attendance",
@@ -236,6 +241,420 @@
             "supervisor": "Supervisor",
             "operator": "Operator",
             "accountant": "Accountant"
+        }
+    },
+    "paddyPurchase": {
+        "title": "Paddy Purchase Report",
+        "description": "Manage paddy purchase transactions and records",
+        "failedToLoad": "Failed to load paddy purchase data. Please try again later.",
+        "table": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "delivery": "Delivery",
+            "purchaseType": "Purchase Type",
+            "doNumber": "DO Number",
+            "committee": "Committee",
+            "paddyType": "Paddy Type",
+            "doQty": "DO Qty (Qtl)",
+            "totalPaddyQty": "Total Paddy Qty (Qtl)",
+            "paddyRatePerQtl": "Paddy Rate/Qtl",
+            "discountPercent": "Discount %",
+            "brokerage": "Brokerage",
+            "gunnyOption": "Gunny Option",
+            "newGunnyRate": "New Gunny Rate",
+            "oldGunnyRate": "Old Gunny Rate",
+            "plasticGunnyRate": "Plastic Gunny Rate"
+        },
+        "form": {
+            "addTitle": "Add Paddy Purchase",
+            "editTitle": "Edit Paddy Purchase",
+            "addDescription": "Enter the purchase details below",
+            "editDescription": "Update the purchase details below",
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "delivery": "Delivery Option",
+            "purchaseType": "Purchase Type",
+            "doNumber": "DO Number",
+            "committee": "Committee Name",
+            "doQty": "DO Paddy Quantity",
+            "paddyType": "Paddy Type",
+            "totalQty": "Total Paddy Qty",
+            "ratePerQtl": "Paddy Rate per Quintal",
+            "discount": "Discount %",
+            "brokerage": "Brokerage",
+            "gunnyOption": "Gunny Option",
+            "newGunnyRate": "New Gunny Rate",
+            "oldGunnyRate": "Old Gunny Rate",
+            "plasticGunnyRate": "Plastic Gunny Rate",
+            "placeholders": {
+                "party": "Search party...",
+                "broker": "Search broker...",
+                "select": "Select",
+                "doNumber": "Enter DO number",
+                "committee": "Enter committee name",
+                "qty": "0.00"
+            }
+        },
+        "options": {
+            "delivery": {
+                "pade": "In Pade",
+                "pahunch": "Delivered"
+            },
+            "purchase": {
+                "do": "DO Purchase",
+                "other": "Other Purchase"
+            },
+            "paddyType": {
+                "mota": "Mota",
+                "patla": "Patla",
+                "sarna": "Sarna",
+                "mahamaya": "Mahamaya",
+                "rbgold": "RB GOLD"
+            },
+            "gunny": {
+                "sahitVajan": "Sahit (By Weight)",
+                "sahitBhav": "Sahit (By Rate)",
+                "vapsi": "Return"
+            }
+        },
+        "delete": {
+            "title": "Delete Purchase?",
+            "description": "Are you sure you want to delete this purchase record for <b>{{partyName}}</b>?<br />This action cannot be undone.",
+            "confirm": "Delete",
+            "deleting": "Deleting..."
+        },
+        "multiDelete": {
+            "title": "Delete {{count}} {{item}}?",
+            "description": "Are you sure you want to delete the selected purchase records?<br />This action cannot be undone.",
+            "confirm": "Delete",
+            "deleting": "Deleting...",
+            "item_one": "purchase",
+            "item_other": "purchases"
+        }
+    },
+    "ricePurchase": {
+        "title": "Rice Purchase Report",
+        "description": "Manage rice purchase transactions and records",
+        "failedToLoad": "Failed to load rice purchase data. Please try again later.",
+        "table": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "delivery": "Delivery",
+            "purchaseType": "Purchase Type",
+            "variety": "Rice Variety",
+            "lotOrOther": "Lot / Other",
+            "fciOrNAN": "FCI / NAN",
+            "variety_fci": "FCI / NAN",
+            "type": "Rice Type",
+            "packingSize": "Packing Size",
+            "quantity": "Quantity (Bags)",
+            "weight": "Qty (Qtl)",
+            "riceRatePerQtl": "Rice Rate/Qtl",
+            "discount": "Discount %",
+            "brokerage": "Brokerage/Qtl",
+            "frkType": "FRK",
+            "frkRate": "FRK Rate/Qtl",
+            "lotNumber": "LOT No.",
+            "gunnyOption": "Gunny Option",
+            "newGunnyRate": "New Gunny Rate",
+            "oldGunnyRate": "Old Gunny Rate",
+            "plasticGunnyRate": "Plastic Gunny Rate",
+            "totalAmount": "Total Amount"
+        },
+        "form": {
+            "addTitle": "Add Rice Purchase",
+            "editTitle": "Edit Rice Purchase",
+            "addDescription": "Enter the purchase details below",
+            "editDescription": "Update the purchase details below",
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "delivery": "Delivery Option",
+            "purchaseType": "Purchase Type",
+            "variety": "Rice Variety",
+            "type": "Rice Type",
+            "packingSize": "Packing Size",
+            "quantity": "Rice Quantity (Bags)",
+            "weight": "Total Rice Weight (Qtl)",
+            "rate": "Rice Rate per Quintal",
+            "discount": "Discount %",
+            "brokerage": "Brokerage",
+            "totalAmount": "Total Amount",
+            "placeholders": {
+                "party": "Search party...",
+                "broker": "Search broker...",
+                "select": "Select",
+                "qty": "0",
+                "weight": "0.00",
+                "rate": "0.00"
+            }
+        },
+        "delete": {
+            "title": "Delete Purchase?",
+            "description": "Are you sure you want to delete this purchase record for <b>{{partyName}}</b>?<br />This action cannot be undone.",
+            "confirm": "Delete",
+            "deleting": "Deleting..."
+        },
+        "multiDelete": {
+            "title": "Delete {{count}} {{item}}?",
+            "description": "Are you sure you want to delete the selected purchase records?<br />This action cannot be undone.",
+            "confirm": "Delete",
+            "deleting": "Deleting...",
+            "item_one": "purchase",
+            "item_other": "purchases"
+        }
+    },
+    "gunnyPurchase": {
+        "title": "Gunny Purchase Report",
+        "description": "Manage gunny purchase transactions and records",
+        "failedToLoad": "Failed to load gunny purchase data. Please try again later.",
+        "table": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "deliveryType": "Delivery Type",
+            "newGunnyQty": "New Gunny Qty",
+            "newGunnyRate": "New Gunny Rate",
+            "oldGunnyQty": "Old Gunny Qty",
+            "oldGunnyRate": "Old Gunny Rate",
+            "plasticGunnyQty": "Plastic Gunny Qty",
+            "plasticGunnyRate": "Plastic Gunny Rate"
+        },
+        "form": {
+            "addTitle": "Add Gunny Purchase",
+            "editTitle": "Edit Gunny Purchase",
+            "addDescription": "Add a new gunny purchase record",
+            "editDescription": "Update gunny purchase record",
+            "date": "Date",
+            "partyName": "Party Name",
+            "deliveryType": "Delivery Type",
+            "newGunnyQty": "New Gunny Qty",
+            "newGunnyRate": "New Gunny Rate",
+            "oldGunnyQty": "Old Gunny Qty",
+            "oldGunnyRate": "Old Gunny Rate",
+            "plasticGunnyQty": "Plastic Gunny Qty",
+            "plasticGunnyRate": "Plastic Gunny Rate",
+            "placeholders": {
+                "party": "Search party...",
+                "select": "Select",
+                "qty": "0",
+                "rate": "0.00"
+            }
+        },
+        "delete": {
+            "title": "Delete Gunny Purchase?",
+            "description": "Are you sure you want to delete the gunny purchase from <b>{{partyName}}</b> on <b>{{date}}</b>?<br />This action cannot be undone.",
+            "confirm": "Delete",
+            "deleting": "Deleting..."
+        },
+        "multiDelete": {
+            "title": "Delete {{count}} records?",
+            "description": "Are you sure you want to delete the selected gunny purchase records?<br />This action cannot be undone."
+        }
+    },
+    "frkPurchase": {
+        "title": "FRK Purchase Report",
+        "description": "Manage FRK purchase transactions and records",
+        "failedToLoad": "Failed to load FRK purchase data. Please try again later.",
+        "table": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "frkQty": "FRK Qty (Qtl)",
+            "frkRate": "FRK Rate",
+            "gst": "GST %"
+        },
+        "form": {
+            "addTitle": "Add FRK Purchase",
+            "editTitle": "Edit FRK Purchase",
+            "addDescription": "Add a new FRK purchase record",
+            "editDescription": "Update FRK purchase record",
+            "date": "Date",
+            "partyName": "Party Name",
+            "frkQty": "FRK Qty",
+            "frkRate": "FRK Rate",
+            "gst": "GST %",
+            "placeholders": {
+                "party": "Search party...",
+                "select": "Select",
+                "qty": "0",
+                "rate": "0.00",
+                "gst": "0"
+            }
+        },
+        "delete": {
+            "title": "Delete FRK Purchase?",
+            "description": "Are you sure you want to delete the FRK purchase from <b>{{partyName}}</b> on <b>{{date}}</b>?<br />This action cannot be undone.",
+            "confirm": "Delete",
+            "deleting": "Deleting..."
+        },
+        "multiDelete": {
+            "title": "Delete {{count}} records?",
+            "description": "Are you sure you want to delete the selected FRK purchase records?<br />This action cannot be undone."
+        }
+    },
+    "otherPurchase": {
+        "title": "Other Purchase Report",
+        "description": "Manage other purchase transactions and records",
+        "failedToLoad": "Failed to load other purchase data. Please try again later.",
+        "table": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "itemName": "Other Item Name",
+            "qty": "Quantity",
+            "qtyType": "Quantity Type",
+            "rate": "Rate",
+            "discount": "Discount %",
+            "gst": "GST"
+        },
+        "form": {
+            "addTitle": "Add Other Purchase",
+            "editTitle": "Edit Other Purchase",
+            "addDescription": "Add a new other purchase record",
+            "editDescription": "Update other purchase record",
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "itemName": "Item Name",
+            "qty": "Quantity",
+            "qtyType": "Quantity Type",
+            "rate": "Rate (per unit)",
+            "discount": "Discount %",
+            "gst": "GST %",
+            "placeholders": {
+                "party": "Search party...",
+                "broker": "Search broker...",
+                "item": "Enter item name",
+                "qty": "0",
+                "qtyType": "Enter quantity type",
+                "rate": "0.00",
+                "discount": "0",
+                "gst": "0",
+                "select": "Select"
+            },
+            "options": {
+                "qtyType": {
+                    "quintal": "Quintal",
+                    "kg": "Kg",
+                    "ton": "Ton",
+                    "nag": "Nag",
+                    "other": "Other"
+                }
+            }
+        },
+        "delete": {
+            "title": "Delete Other Purchase?",
+            "description": "Are you sure you want to delete the other purchase from <b>{{partyName}}</b> on <b>{{date}}</b>?<br />This action cannot be undone.",
+            "confirm": "Delete",
+            "deleting": "Deleting..."
+        },
+        "multiDelete": {
+            "title": "Delete {{count}} records?",
+            "description": "Are you sure you want to delete the selected other purchase records?<br />This action cannot be undone."
+        },
+        "options": {
+            "qtyType": {
+                "quintal": "Quintal",
+                "kg": "Kg",
+                "ton": "Ton",
+                "nag": "Nag",
+                "other": "Other"
+            }
+        }
+    },
+    "paddySales": {
+        "title": "Paddy Sales Report",
+        "description": "Manage paddy sales transactions and records",
+        "table": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "saleType": "Sale Type",
+            "doNumber": "DO Number",
+            "dhanMotaQty": "Dhan Mota Qty",
+            "dhanPatlaQty": "Dhan Patla Qty",
+            "dhanSarnaQty": "Dhan Sarna Qty",
+            "dhanType": "Dhan Type",
+            "dhanQty": "Quantity",
+            "paddyRatePerQuintal": "Rate",
+            "deliveryType": "Delivery Type",
+            "discountPercent": "Discount %",
+            "brokerage": "Brokerage",
+            "gunnyType": "Gunny Type",
+            "newGunnyRate": "New Gunny Rate",
+            "oldGunnyRate": "Old Gunny Rate",
+            "plasticGunnyRate": "Plastic Gunny Rate",
+            "actions": "Actions"
+        },
+        "form": {
+            "addTitle": "Add Paddy Sale",
+            "editTitle": "Edit Paddy Sale",
+            "addDescription": "Enter the sale details below",
+            "editDescription": "Update the sale details below",
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "saleType": "Sale Type",
+            "doNumber": "DO Number",
+            "dhanMotaQty": "Dhan Mota Qty",
+            "dhanPatlaQty": "Dhan Patla Qty",
+            "dhanSarnaQty": "Dhan Sarna Qty",
+            "dhanType": "Dhan Type",
+            "dhanQty": "Quantity (Qtl)",
+            "paddyRatePerQuintal": "Rate (per Quintal)",
+            "deliveryType": "Delivery Type",
+            "discountPercent": "Discount (%)",
+            "brokerage": "Brokerage",
+            "gunnyType": "Gunny Type",
+            "newGunnyRate": "New Gunny Rate",
+            "oldGunnyRate": "Old Gunny Rate",
+            "plasticGunnyRate": "Plastic Gunny Rate",
+            "placeholders": {
+                "date": "Pick a date",
+                "party": "Search party...",
+                "broker": "Search broker...",
+                "saleType": "Select",
+                "doNumber": "Enter DO number",
+                "dhanType": "Select",
+                "deliveryType": "Select",
+                "gunnyType": "Select"
+            },
+            "buttons": {
+                "add": "Add Sale",
+                "update": "Update Sale",
+                "cancel": "Cancel",
+                "adding": "Adding...",
+                "updating": "Updating..."
+            }
+        },
+        "options": {
+            "saleType": {
+                "doSale": "DO Sale",
+                "directSale": "Direct Sale"
+            },
+            "dhanType": {
+                "mota": "Mota",
+                "patla": "Patla",
+                "sarna": "Sarna"
+            },
+            "deliveryType": {
+                "exMill": "Ex Mill",
+                "delivered": "Delivered"
+            },
+            "gunnyType": {
+                "bardanaSahit": "Bardana Sahit",
+                "bardanaRahit": "Bardana Rahit"
+            }
+        },
+        "delete": {
+            "title": "Delete Record?",
+            "description": "Are you sure you want to delete this record for <strong>{{name}}</strong>?<br />This action cannot be undone."
+        },
+        "multiDelete": {
+            "title": "Delete {{count}} records?",
+            "description": "Are you sure you want to delete the selected paddy sales records?<br />This action cannot be undone."
         }
     }
 }

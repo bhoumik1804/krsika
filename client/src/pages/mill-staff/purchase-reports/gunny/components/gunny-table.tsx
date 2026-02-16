@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -10,6 +10,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -23,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type GunnyPurchaseData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { gunnyColumns as columns } from './gunny-columns'
+import { getGunnyColumns } from './gunny-columns'
 import { useGunny } from './gunny-provider'
 
 type DataTableProps = {
@@ -45,6 +46,7 @@ export function GunnyTable({
         totalPages: number
     }
 }) {
+    const { t } = useTranslation('millStaff')
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -87,6 +89,8 @@ export function GunnyTable({
         ],
     })
 
+    const columns = useMemo(() => getGunnyColumns(t), [t])
+
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
@@ -123,7 +127,7 @@ export function GunnyTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Filter purchases...'
+                searchPlaceholder={t('gunnyPurchase.form.placeholders.party')}
                 searchKey='partyName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -195,7 +199,7 @@ export function GunnyTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

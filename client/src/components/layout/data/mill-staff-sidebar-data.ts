@@ -89,11 +89,11 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
                     icon: FileBarChart,
                     moduleSlug: 'rice-sales-report',
                 },
-                // {
-                //     title: 'Paddy Sales Report',
-                //     url: `/staff/${millId}/sales/paddy/report`,
-                //     icon: FileBarChart,
-                // },
+                {
+                    title: 'Paddy Sales Report',
+                    url: `/staff/${millId}/sales/paddy/report`,
+                    icon: FileBarChart,
+                },
                 {
                     title: 'Gunny Sales Report',
                     url: `/staff/${millId}/sales/gunny/report`,

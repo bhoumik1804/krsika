@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -23,6 +24,7 @@ export function FrkDeleteDialog({
     onOpenChange,
     currentRow,
 }: FrkDeleteDialogProps) {
+    const { t } = useTranslation('millStaff')
     const { millId } = useFrk()
     const { mutateAsync: deleteFrkPurchase, isPending: isDeleting } =
         useDeleteFrkPurchase(millId)
@@ -42,24 +44,28 @@ export function FrkDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Purchase?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                        {t('frkPurchase.delete.title')}
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete this purchase record for{' '}
-                        <strong>{currentRow?.partyName}</strong>?
-                        <br />
-                        This action cannot be undone.
+                        {t('frkPurchase.delete.description', {
+                            partyName: currentRow?.partyName,
+                            date: currentRow?.date,
+                        })}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                        Cancel
+                        {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting ? 'Deleting...' : 'Delete'}
+                        {isDeleting
+                            ? t('frkPurchase.delete.deleting')
+                            : t('frkPurchase.delete.confirm')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

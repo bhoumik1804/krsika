@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -23,6 +24,7 @@ export function PaddyDeleteDialog({
     onOpenChange,
     currentRow,
 }: PaddyDeleteDialogProps) {
+    const { t } = useTranslation('millStaff')
     const { millId } = usePaddy()
     const { mutateAsync: deletePaddyPurchase, isPending: isDeleting } =
         useDeletePaddyPurchase(millId)
@@ -42,24 +44,28 @@ export function PaddyDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Purchase?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                        {t('paddyPurchase.delete.title')}
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete this purchase record for{' '}
-                        <strong>{currentRow?.partyName}</strong>?
-                        <br />
-                        This action cannot be undone.
+                        {t('paddyPurchase.delete.description', {
+                            partyName: currentRow?.partyName,
+                            interpolation: { escapeValue: false },
+                        })}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                        Cancel
+                        {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting ? 'Deleting...' : 'Delete'}
+                        {isDeleting
+                            ? t('paddyPurchase.delete.deleting')
+                            : t('paddyPurchase.delete.confirm')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
