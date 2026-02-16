@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
     type SortingState,
     type VisibilityState,
@@ -23,7 +24,7 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BalanceLiftingPurchasesFrk } from '../data/schema'
-import { frkColumns as columns } from './balance-lifting-purchases-frk-columns'
+import { getFrkColumns } from './balance-lifting-purchases-frk-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
@@ -50,6 +51,9 @@ export function BalanceLiftingPurchasesFrkTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const { t } = useTranslation()
+
+    const columns = useMemo(() => getFrkColumns(t), [t])
 
     // Only handle column filters (pagination is server-side)
     const {
@@ -144,10 +148,10 @@ export function BalanceLiftingPurchasesFrkTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}

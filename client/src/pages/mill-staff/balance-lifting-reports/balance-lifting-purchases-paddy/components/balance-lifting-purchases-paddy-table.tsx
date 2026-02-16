@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
     type SortingState,
     type VisibilityState,
@@ -23,7 +24,7 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BalanceLiftingPurchasesPaddy } from '../data/schema'
-import { paddyColumns as columns } from './balance-lifting-purchases-paddy-columns'
+import { getPaddyColumns } from './balance-lifting-purchases-paddy-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
@@ -49,6 +50,9 @@ export function BalanceLiftingPurchasesPaddyTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const { t } = useTranslation()
+
+    const columns = useMemo(() => getPaddyColumns(t), [t])
 
     const {
         columnFilters,
@@ -142,10 +146,10 @@ export function BalanceLiftingPurchasesPaddyTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}

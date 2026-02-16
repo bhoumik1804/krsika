@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
@@ -19,6 +20,7 @@ import { BalanceLiftingPurchasesFrkTable } from './components/balance-lifting-pu
 export function BalanceLiftingPurchasesFrkReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+    const { t } = useTranslation()
 
     // Extract query params from URL
     const queryParams = useMemo(() => {
@@ -75,10 +77,10 @@ export function BalanceLiftingPurchasesFrkReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            FRK Purchase Report
+                            {t('balanceLiftingFrkPurchase.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage FRK purchase transactions and records
+                            {t('balanceLiftingFrkPurchase.description')}
                         </p>
                     </div>
                     <BalanceLiftingPurchasesFrkPrimaryButtons />

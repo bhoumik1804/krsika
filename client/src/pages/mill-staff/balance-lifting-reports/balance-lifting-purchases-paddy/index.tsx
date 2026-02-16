@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
@@ -19,6 +20,7 @@ import { BalanceLiftingPurchasesPaddyTable } from './components/balance-lifting-
 export function BalanceLiftingPurchasesPaddyReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+    const { t } = useTranslation()
 
     // Extract query params from URL
     const queryParams = useMemo(() => {
@@ -75,10 +77,10 @@ export function BalanceLiftingPurchasesPaddyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Paddy Purchase Report
+                            {t('balanceLiftingPaddyPurchase.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage paddy purchase transactions and records
+                            {t('balanceLiftingPaddyPurchase.description')}
                         </p>
                     </div>
                     <BalanceLiftingPurchasesPaddyPrimaryButtons />
