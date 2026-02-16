@@ -100,76 +100,100 @@ export function BalanceLiftingPurchasesGunnyViewDialog({
             const html = `
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"></head>
-<body style="margin:0;padding:20px;background:#fff;color:#000;font-family:sans-serif;">
-<div id="print-content" style="width:210mm;background:#fff;color:#000;margin:0 auto;">
-  <div style="margin-bottom:24px;display:flex;flex-direction:column;align-items:center;">
-    <h2 style="margin:0 0 4px;font-size:20px;font-weight:bold;text-decoration:underline;">बारदाना खरीदी सौदे की जानकारी</h2>
-    <p style="margin:0;font-size:12px;color:#6b7280;">Generated on: ${format(new Date(), 'dd/MM/yyyy HH:mm')}</p>
-  </div>
-  
-  <div style="margin-bottom:24px;display:grid;grid-template-columns:1fr 1fr;gap:8px 32px;border:1px solid #e5e7eb;border-radius:6px;padding:16px;font-size:14px;">
-    <div style="display:flex;justify-content:space-between;"><span style="font-weight:bold;">बारदाना खरीदी सौदा क्रमांक:</span><span>${currentRow.gunnyPurchaseDealNumber || 'N/A'}</span></div>
-    <div style="display:flex;justify-content:space-between;"><span style="font-weight:bold;">सौदा दिनांक:</span><span>${currentRow.date ? format(new Date(currentRow.date), 'dd/MM/yyyy') : 'N/A'}</span></div>
-    <div style="display:flex;justify-content:space-between;grid-column: span 2;"><span style="font-weight:bold;">पार्टी का नाम:</span><span>${currentRow.partyName || 'N/A'}</span></div>
+<head>
+<meta charset="utf-8">
+<title>Gunny-Purchase-Report-${currentRow.gunnyPurchaseDealNumber || 'Details'}</title>
+<style>
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+  body {
+    margin: 0;
+  }
+</style>
+</head>
+
+<body style="margin:0;padding:20px;background:#fff;color:#000;font-family:Arial, sans-serif;">
+
+<div id="pdf-content" style="width:210mm;box-sizing:border-box;padding:20px;background:#fff;color:#000;">
+
+  <div style="text-align:center;margin-bottom:10px;">
+    <h2 style="font-size:15px;font-weight:bold;">बारदाना खरीदी सौदे की जानकारी</h2>
   </div>
 
-  <table style="margin-bottom:24px;width:100%;border-collapse:collapse;border:1px solid #000;font-size:14px;">
-    <thead><tr><th colspan="2" style="border:1px solid #000;background:#f3f4f6;padding:8px;text-align:center;font-weight:bold;">सौदा विवरण</th></tr></thead>
-    <tbody>
-      <tr>
-        <td style="width:50%;border:1px solid #000;padding:8px;"><span style="font-weight:bold;">डिलीवरी:</span> ${currentRow.deliveryType || 'N/A'}</td>
-        <td style="width:50%;border:1px solid #000;padding:8px;"><span style="font-weight:bold;">नया बारदाना दर:</span> ${newGunnyRate.toFixed(2)}</td>
-      </tr>
-      <tr>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">नया बारदाना संख्या:</span> ${safeNumber(currentRow.newGunnyQty)}</td>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">पुराना बारदाना दर:</span> ${oldGunnyRate.toFixed(2)}</td>
-      </tr>
-      <tr>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">पुराना बारदाना संख्या:</span> ${safeNumber(currentRow.oldGunnyQty)}</td>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">प्लास्टिक बारदाना दर:</span> ${plasticGunnyRate.toFixed(2)}</td>
-      </tr>
-      <tr>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">प्लास्टिक बारदाना संख्या:</span> ${safeNumber(currentRow.plasticGunnyQty)}</td>
-        <td style="border:1px solid #000;padding:8px;"></td>
-      </tr>
-    </tbody>
+  <!-- ================= HEADER TABLE ================= -->
+  <table style="width:100%;border-collapse:collapse;border:1px solid #000;margin-bottom:10px;font-size:12px;">
+    <tr style="border-bottom:1px solid #000;">
+      <td style="padding:5px;width:20%;">बारदाना खरीदी सौदा क्रमांक -</td>
+      <td style="padding:5px;width:30%;">${currentRow.gunnyPurchaseDealNumber || ''}</td>
+      <td style="padding:5px;width:20%;text-align:right;">सौदा दिनांक-</td>
+      <td style="padding:5px;width:30%;">${currentRow.date ? format(new Date(currentRow.date), 'dd/MM/yyyy') : ''}</td>
+    </tr>
+    <tr>
+      <td style="padding:5px;">पार्टी का नाम -</td>
+      <td style="padding:5px;" colspan="3">${currentRow.partyName || ''}</td>
+    </tr>
   </table>
 
-  <table style="width:100%;border-collapse:collapse;border:1px solid #000;font-size:14px;">
-    <tbody>
+  <!-- ================= DEAL DETAILS TABLE ================= -->
+  <table style="width:100%;border-collapse:collapse;border:1px solid #000;margin-bottom:10px;font-size:12px;">
+    <tr style="border-bottom:1px solid #000;">
+      <td colspan="2" style="padding:5px;font-weight:bold;">सौदा विवरण</td>
+    </tr>
+
+    ${[
+                    ['डिलीवरी -', currentRow.deliveryType || '', 'नया बारदाना दर -', newGunnyRate.toFixed(2)],
+                    ['नया बारदाना संख्या -', safeNumber(currentRow.newGunnyQty), 'पुराना बारदाना दर -', oldGunnyRate.toFixed(2)],
+                    ['पुराना बारदाना संख्या -', safeNumber(currentRow.oldGunnyQty), 'प्लास्टिक बारदाना दर -', plasticGunnyRate.toFixed(2)],
+                    ['प्लास्टिक बारदाना संख्या -', safeNumber(currentRow.plasticGunnyQty), '', '']
+                ].map(row => `
       <tr>
-        <td style="width:50%;border:1px solid #000;padding:8px;font-weight:bold;">बारदाना आवक/ समिति-संग्रहण में जमा</td>
-        <td style="width:50%;border:1px solid #000;padding:0;">
-          <table style="width:100%;border-collapse:collapse;">
-            <tr><td style="padding:8px;border-bottom:1px solid #000;display:flex;justify-content:space-between;"><span>नया बारदाना -</span><span>${totalInwardNew}</span></td></tr>
-            <tr><td style="padding:8px;border-bottom:1px solid #000;display:flex;justify-content:space-between;"><span>पुराना बारदाना -</span><span>${totalInwardOld}</span></td></tr>
-            <tr><td style="padding:8px;display:flex;justify-content:space-between;"><span>प्लास्टिक बारदाना -</span><span>${totalInwardPlastic}</span></td></tr>
-          </table>
+        <td style="padding:5px;width:50%;border-right:1px solid #000;">
+          <span style="display:inline-block;width:130px;">${row[0]}</span> ${row[1]}
+        </td>
+        <td style="padding:5px;width:50%;">
+          ${row[2] ? `<span style="display:inline-block;width:130px;">${row[2]}</span> ${row[3]}` : ''}
         </td>
       </tr>
-      <tr style="background:#f3f4f6;">
-        <td style="border:1px solid #000;padding:12px;font-size:16px;font-weight:bold;">पार्टी को भुगतान योग्य राशि</td>
-        <td style="border:1px solid #000;padding:12px;text-align:right;font-size:16px;font-weight:bold;">${payableToParty.toFixed(2)}</td>
-      </tr>
-    </tbody>
+    `).join('')}
+
   </table>
+
+  <!-- ================= SUMMARY TABLE ================= -->
+  <table style="width:100%;border-collapse:collapse;border:1px solid #000;font-size:12px;">
+    ${[
+                    ['बारदाना आवक (New/Old/Plastic)', `${totalInwardNew} / ${totalInwardOld} / ${totalInwardPlastic}`],
+                    ['पार्टी को भुगतान योग्य राशि', payableToParty.toFixed(2), true]
+                ].map(row => `
+      <tr style="border-bottom:1px solid #000;">
+        <td style="padding:5px;width:60%;border-right:1px solid #000;${row[2] ? 'font-weight:bold;' : ''}">
+          ${row[0]}
+        </td>
+        <td style="padding:5px;width:40%;text-align:right;${row[2] ? 'font-weight:bold;' : ''}">
+          ${row[1]}
+        </td>
+      </tr>
+    `).join('')}
+  </table>
+
 </div>
 </body>
 </html>
-            `.trim()
+`.trim();
 
             const iframe = document.createElement('iframe')
             iframe.style.position = 'absolute'
             iframe.style.left = '-9999px'
+            iframe.style.width = '210mm'
             document.body.appendChild(iframe)
-            const iframeDoc =
-                iframe.contentDocument || iframe.contentWindow?.document
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
             if (!iframeDoc) throw new Error('Could not access iframe document')
             iframeDoc.open()
             iframeDoc.write(html)
             iframeDoc.close()
 
+            // Wait for rendering
             setTimeout(() => {
                 iframe.contentWindow?.focus()
                 iframe.contentWindow?.print()
@@ -179,8 +203,11 @@ export function BalanceLiftingPurchasesGunnyViewDialog({
                 toast.success('Print dialog opened', { id: toastId })
             }, 500)
         } catch (error) {
-            console.error('Error printing:', error)
-            toast.error('Failed to prepare print document', { id: toastId })
+            console.error('Error generating PDF:', error)
+            toast.error(
+                `Failed to generate PDF: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                { id: toastId }
+            )
         }
     }
 
@@ -220,9 +247,9 @@ export function BalanceLiftingPurchasesGunnyViewDialog({
                                 <span>
                                     {currentRow.date
                                         ? format(
-                                              new Date(currentRow.date),
-                                              'dd/MM/yyyy'
-                                          )
+                                            new Date(currentRow.date),
+                                            'dd/MM/yyyy'
+                                        )
                                         : 'N/A'}
                                 </span>
                             </div>

@@ -85,66 +85,79 @@ export function BalanceLiftingPurchasesFrkViewDialog({
             const html = `
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"></head>
-<body style="margin:0;padding:20px;background:#fff;color:#000;font-family:sans-serif;">
-<div id="print-content" style="width:210mm;background:#fff;color:#000;margin:0 auto;">
-  <div style="margin-bottom:24px;display:flex;flex-direction:column;align-items:center;">
-    <h2 style="margin:0 0 4px;font-size:20px;font-weight:bold;text-decoration:underline;">FRK खरीदी सौदे की जानकारी</h2>
-    <p style="margin:0;font-size:12px;color:#6b7280;">Generated on: ${format(new Date(), 'dd/MM/yyyy HH:mm')}</p>
-  </div>
-  
-  <div style="margin-bottom:24px;display:grid;grid-template-columns:1fr 1fr;gap:8px 32px;border:1px solid #e5e7eb;border-radius:6px;padding:16px;font-size:14px;">
-    <div style="display:flex;justify-content:space-between;"><span style="font-weight:bold;">FRK खरीदी सौदा क्रमांक:</span><span>${currentRow.frkPurchaseDealNumber || 'N/A'}</span></div>
-    <div style="display:flex;justify-content:space-between;"><span style="font-weight:bold;">सौदा दिनांक:</span><span>${currentRow.date ? format(new Date(currentRow.date), 'dd/MM/yyyy') : 'N/A'}</span></div>
-    <div style="display:flex;justify-content:space-between;grid-column: span 2;"><span style="font-weight:bold;">पार्टी का नाम:</span><span>${currentRow.partyName || 'N/A'}</span></div>
+<head>
+<meta charset="utf-8">
+<title>FRK-Purchase-Report-${currentRow.frkPurchaseDealNumber || 'Details'}</title>
+<style>
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+  body {
+    margin: 0;
+  }
+</style>
+</head>
+
+<body style="margin:0;padding:20px;background:#fff;color:#000;font-family:Arial, sans-serif;">
+
+<div id="pdf-content" style="width:210mm;box-sizing:border-box;padding:20px;background:#fff;color:#000;">
+
+  <div style="text-align:center;margin-bottom:10px;">
+    <h2 style="font-size:15px;font-weight:bold;">FRK खरीदी सौदे की जानकारी</h2>
   </div>
 
-  <table style="width:100%;border-collapse:collapse;border:1px solid #000;font-size:14px;">
-    <thead>
-      <tr style="background:#f3f4f6;">
-        <th style="border:1px solid #000;padding:8px;text-align:left;font-weight:bold;">विवरण</th>
-        <th style="border:1px solid #000;padding:8px;text-align:right;font-weight:bold;">मात्रा</th>
-        <th style="border:1px solid #000;padding:8px;text-align:right;font-weight:bold;">दर</th>
-        <th style="border:1px solid #000;padding:8px;text-align:right;font-weight:bold;">राशि</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td style="border:1px solid #000;padding:8px;font-weight:bold;">FRK मात्रा (किंतल में)</td>
-        <td style="border:1px solid #000;padding:8px;text-align:right;">${totalInwardQty.toFixed(2)}</td>
-        <td style="border:1px solid #000;padding:8px;text-align:right;">${frkRate.toFixed(2)}</td>
-        <td style="border:1px solid #000;padding:8px;text-align:right;">${basicAmount.toFixed(2)}</td>
-      </tr>
-      <tr>
-        <td style="border:1px solid #000;padding:8px;text-align:right;font-weight:bold;" colspan="3">CGST (${(gstPercent / 2).toFixed(1)}%)</td>
-        <td style="border:1px solid #000;padding:8px;text-align:right;">${cgst.toFixed(2)}</td>
-      </tr>
-      <tr>
-        <td style="border:1px solid #000;padding:8px;text-align:right;font-weight:bold;" colspan="3">SGST (${(gstPercent / 2).toFixed(1)}%)</td>
-        <td style="border:1px solid #000;padding:8px;text-align:right;">${sgst.toFixed(2)}</td>
-      </tr>
-      <tr style="background:#f3f4f6;">
-        <td style="border:1px solid #000;padding:12px;font-size:16px;font-weight:bold;" colspan="3">पार्टी को भुगतान योग्य राशि</td>
-        <td style="border:1px solid #000;padding:12px;text-align:right;font-size:16px;font-weight:bold;">${payableToParty.toFixed(2)}</td>
-      </tr>
-    </tbody>
+  <!-- ================= HEADER TABLE ================= -->
+  <table style="width:100%;border-collapse:collapse;border:1px solid #000;margin-bottom:10px;font-size:12px;">
+    <tr style="border-bottom:1px solid #000;">
+      <td style="padding:5px;width:20%;">FRK खरीदी सौदा क्रमांक -</td>
+      <td style="padding:5px;width:30%;">${currentRow.frkPurchaseDealNumber || ''}</td>
+      <td style="padding:5px;width:20%;text-align:right;">सौदा दिनांक-</td>
+      <td style="padding:5px;width:30%;">${currentRow.date ? format(new Date(currentRow.date), 'dd/MM/yyyy') : ''}</td>
+    </tr>
+    <tr>
+      <td style="padding:5px;">पार्टी का नाम -</td>
+      <td style="padding:5px;" colspan="3">${currentRow.partyName || ''}</td>
+    </tr>
   </table>
+
+  <!-- ================= SUMMARY TABLE ================= -->
+  <table style="width:100%;border-collapse:collapse;border:1px solid #000;font-size:12px;">
+    ${[
+                    ['FRK मात्रा (किंतल में)', totalInwardQty.toFixed(2), false, frkRate.toFixed(2)],
+                    ['Basic Amount', basicAmount.toFixed(2)],
+                    [`CGST (${(gstPercent / 2).toFixed(1)}%)`, cgst.toFixed(2)],
+                    [`SGST (${(gstPercent / 2).toFixed(1)}%)`, sgst.toFixed(2)],
+                    ['पार्टी को भुगतान योग्य राशि', payableToParty.toFixed(2), true]
+                ].map(row => `
+      <tr style="border-bottom:1px solid #000;">
+        <td style="padding:5px;width:60%;border-right:1px solid #000;${row[2] ? 'font-weight:bold;' : ''}">
+          ${row[0]} ${row[3] ? `(Rate: ${row[3]})` : ''}
+        </td>
+        <td style="padding:5px;width:40%;text-align:right;${row[2] ? 'font-weight:bold;' : ''}">
+          ${row[1]}
+        </td>
+      </tr>
+    `).join('')}
+  </table>
+
 </div>
 </body>
 </html>
-            `.trim()
+`.trim();
 
             const iframe = document.createElement('iframe')
             iframe.style.position = 'absolute'
             iframe.style.left = '-9999px'
+            iframe.style.width = '210mm'
             document.body.appendChild(iframe)
-            const iframeDoc =
-                iframe.contentDocument || iframe.contentWindow?.document
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
             if (!iframeDoc) throw new Error('Could not access iframe document')
             iframeDoc.open()
             iframeDoc.write(html)
             iframeDoc.close()
 
+            // Wait for rendering
             setTimeout(() => {
                 iframe.contentWindow?.focus()
                 iframe.contentWindow?.print()
@@ -154,8 +167,11 @@ export function BalanceLiftingPurchasesFrkViewDialog({
                 toast.success('Print dialog opened', { id: toastId })
             }, 500)
         } catch (error) {
-            console.error('Error printing:', error)
-            toast.error('Failed to prepare print document', { id: toastId })
+            console.error('Error generating PDF:', error)
+            toast.error(
+                `Failed to generate PDF: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                { id: toastId }
+            )
         }
     }
 
@@ -194,9 +210,9 @@ export function BalanceLiftingPurchasesFrkViewDialog({
                                 <span>
                                     {currentRow.date
                                         ? format(
-                                              new Date(currentRow.date),
-                                              'dd/MM/yyyy'
-                                          )
+                                            new Date(currentRow.date),
+                                            'dd/MM/yyyy'
+                                        )
                                         : 'N/A'}
                                 </span>
                             </div>

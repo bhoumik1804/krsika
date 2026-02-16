@@ -1,6 +1,4 @@
 import { format } from 'date-fns'
-import html2canvas from 'html2canvas'
-import { jsPDF } from 'jspdf'
 import { Printer } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -99,52 +97,107 @@ export function BalanceLiftingPurchasesPaddyViewDialog({
 
     // --- Print Handler ---
     const handlePrint = async () => {
-        const toastId = toast.loading('Generating PDF...')
+        const toastId = toast.loading('Generating Print Preview...')
 
         try {
             // Build HTML with inline hex colors only - html2canvas doesn't support oklch
             const html = `
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"></head>
-<body style="margin:0;padding:20px;background:#fff;color:#000;font-family:sans-serif;">
-<div id="pdf-content" style="width:210mm;background:#fff;color:#000;">
-  <div style="margin-bottom:24px;display:flex;flex-direction:column;align-items:center;">
-    <h2 style="margin:0 0 4px;font-size:20px;font-weight:bold;text-decoration:underline;">धान खरीदी सौदे की जानकारी</h2>
-    <p style="margin:0;font-size:12px;color:#6b7280;">Generated on: ${format(new Date(), 'dd/MM/yyyy HH:mm')}</p>
+<head>
+<meta charset="utf-8">
+<title>Paddy-Purchase-Report-${currentRow.paddyPurchaseDealNumber || 'Details'}</title>
+<style>
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+  body {
+    margin: 0;
+  }
+</style>
+</head>
+
+<body style="margin:0;padding:20px;background:#fff;color:#000;font-family:Arial, sans-serif;">
+
+<div id="pdf-content" style="width:210mm;box-sizing:border-box;padding:20px;background:#fff;color:#000;">
+
+  <div style="text-align:center;margin-bottom:10px;">
+    <h2 style="font-size:15px;font-weight:bold;">धान खरीदी सौदे की जानकारी</h2>
   </div>
-  <div style="margin-bottom:24px;display:grid;grid-template-columns:1fr 1fr;gap:8px 32px;border:1px solid #e5e7eb;border-radius:6px;padding:16px;font-size:14px;">
-    <div style="display:flex;justify-content:space-between;"><span style="font-weight:bold;">धान खरीदी सौदा क्रमांक:</span><span>${currentRow.paddyPurchaseDealNumber || 'N/A'}</span></div>
-    <div style="display:flex;justify-content:space-between;"><span style="font-weight:bold;">सौदा दिनांक:</span><span>${currentRow.date ? format(new Date(currentRow.date), 'dd/MM/yyyy') : 'N/A'}</span></div>
-    <div style="display:flex;justify-content:space-between;"><span style="font-weight:bold;">पार्टी का नाम:</span><span>${currentRow.partyName || 'N/A'}</span></div>
-    <div style="display:flex;justify-content:space-between;"><span style="font-weight:bold;">ब्रोकर का नाम:</span><span>${currentRow.brokerName || 'N/A'}</span></div>
-  </div>
-  <table style="margin-bottom:24px;width:100%;border-collapse:collapse;border:1px solid #000;font-size:14px;">
-    <thead><tr><th colspan="2" style="border:1px solid #000;background:#f3f4f6;padding:8px;text-align:center;font-weight:bold;">सौदा विवरण</th></tr></thead>
-    <tbody>
-      <tr><td style="width:50%;border:1px solid #000;padding:8px;"><span style="font-weight:bold;">डिलीवरी:</span> ${currentRow.deliveryType || 'N/A'}</td><td style="width:50%;border:1px solid #000;padding:8px;"><span style="font-weight:bold;">धान का भाव/दर:</span> ${paddyRate.toFixed(2)}</td></tr>
-      <tr><td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">खरीदी प्रकार:</span> ${currentRow.purchaseType || 'N/A'}</td><td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">बटाव %:</span> ${discountPercent}%</td></tr>
-      <tr><td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">DO की जानकारी (Qty):</span> ${currentRow.doPaddyQty || 0}</td><td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">दलाली:</span> ${brokerage.toFixed(2)}</td></tr>
-      <tr><td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">DO क्रमांक:</span> ${currentRow.doNumber || 'N/A'}</td><td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">बारदाना सहित/वापसी:</span> ${currentRow.gunnyType || 'N/A'}</td></tr>
-      <tr><td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">समिति/संग्रहण का नाम:</span> ${currentRow.committeeName || 'N/A'}</td><td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">नया बारदाना दर:</span> ${newGunnyRate.toFixed(2)}</td></tr>
-      <tr><td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">धान का प्रकार:</span> ${currentRow.paddyType || 'N/A'}</td><td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">पुराना बारदाना दर:</span> ${oldGunnyRate.toFixed(2)}</td></tr>
-      <tr><td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">कुल धान की मात्रा:</span> ${currentRow.totalPaddyQty || 0}</td><td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">प्लास्टिक बारदाना दर:</span> ${plasticGunnyRate.toFixed(2)}</td></tr>
-    </tbody>
+
+  <!-- ================= HEADER TABLE ================= -->
+  <table style="width:100%;border-collapse:collapse;border:1px solid #000;margin-bottom:10px;font-size:12px;">
+    <tr style="border-bottom:1px solid #000;">
+      <td style="padding:5px;width:20%;">धान खरीदी सौदा क्रमांक -</td>
+      <td style="padding:5px;width:30%;">${currentRow.paddyPurchaseDealNumber || ''}</td>
+      <td style="padding:5px;width:20%;text-align:right;">सौदा दिनांक-</td>
+      <td style="padding:5px;width:30%;">${currentRow.date ? format(new Date(currentRow.date), 'dd/MM/yyyy') : ''}</td>
+    </tr>
+    <tr>
+      <td style="padding:5px;">पार्टी का नाम -</td>
+      <td style="padding:5px;" colspan="3">${currentRow.partyName || ''}</td>
+    </tr>
+    <tr>
+      <td style="padding:5px;">ब्रोकर का नाम -</td>
+      <td style="padding:5px;" colspan="3">${currentRow.brokerName || ''}</td>
+    </tr>
   </table>
-  <table style="width:100%;border-collapse:collapse;border:1px solid #000;font-size:14px;">
-    <tbody>
-      <tr><td style="width:66%;border:1px solid #000;padding:8px;font-weight:bold;">उठाव (Weight)</td><td style="width:33%;border:1px solid #000;padding:8px;text-align:right;">${lifting.toFixed(2)}</td></tr>
-      <tr><td style="border:1px solid #000;padding:8px;font-weight:bold;">धान की राशि (उठाव * दर)</td><td style="border:1px solid #000;padding:8px;text-align:right;">${paddyAmount.toFixed(2)}</td></tr>
-      <tr><td style="border:1px solid #000;padding:8px;font-weight:bold;">(-) बटाव राशि (${discountPercent}%)</td><td style="border:1px solid #000;padding:8px;text-align:right;color:#dc2626;">${discountAmount.toFixed(2)}</td></tr>
-      <tr><td style="border:1px solid #000;padding:8px;font-weight:bold;">(+) बारदाने की राशि<div style="font-size:12px;font-weight:normal;color:#6b7280;">(New: ${totalNewGunny}, Old: ${totalOldGunny}, Plastic: ${totalPlasticGunny})</div></td><td style="border:1px solid #000;padding:8px;text-align:right;vertical-align:top;">${gunnyAmount.toFixed(2)}</td></tr>
-      <tr style="background:#f3f4f6;"><td style="border:1px solid #000;padding:8px;font-size:16px;font-weight:bold;">पार्टी को भुगतान योग्य राशि (Net Payable)</td><td style="border:1px solid #000;padding:8px;text-align:right;font-size:16px;font-weight:bold;">${payableToParty.toFixed(2)}</td></tr>
-      <tr><td style="border:1px solid #000;padding:8px;font-weight:bold;">ब्रोकर को भुगतान योग्य राशि (उठाव * दलाली)</td><td style="border:1px solid #000;padding:8px;text-align:right;">${payableToBroker.toFixed(2)}</td></tr>
-    </tbody>
+
+  <!-- ================= DEAL DETAILS TABLE ================= -->
+  <table style="width:100%;border-collapse:collapse;border:1px solid #000;margin-bottom:10px;font-size:12px;">
+    <tr style="border-bottom:1px solid #000;">
+      <td colspan="2" style="padding:5px;font-weight:bold;">सौदा विवरण</td>
+    </tr>
+
+    ${[
+                    ['डिलीवरी -', currentRow.deliveryType || '', 'धान का भाव/दर -', paddyRate.toFixed(2)],
+                    ['खरीदी प्रकार -', currentRow.purchaseType || '', 'बटाव % -', discountPercent],
+                    ['DO की जानकारी -', currentRow.doPaddyQty || 0, 'दलाली -', brokerage.toFixed(2)],
+                    ['DO क्रमांक -', currentRow.doNumber || '', 'बारदाना सहित/वापसी -', currentRow.gunnyType || ''],
+                    ['समिति/संग्रहण का नाम -', currentRow.committeeName || '', 'नया बारदाना दर -', newGunnyRate.toFixed(2)],
+                    ['DO में धान की मात्रा -', currentRow.doPaddyQty || 0, 'पुराना बारदाना दर -', oldGunnyRate.toFixed(2)],
+                    ['धान का प्रकार -', currentRow.paddyType || '', 'प्लास्टिक बारदाना दर -', plasticGunnyRate.toFixed(2)],
+                    ['कुल धान की मात्रा -', currentRow.totalPaddyQty || 0, '', '']
+                ].map(row => `
+      <tr>
+        <td style="padding:5px;width:50%;border-right:1px solid #000;">
+          <span style="display:inline-block;width:130px;">${row[0]}</span> ${row[1]}
+        </td>
+        <td style="padding:5px;width:50%;">
+          ${row[2] ? `<span style="display:inline-block;width:130px;">${row[2]}</span> ${row[3]}` : ''}
+        </td>
+      </tr>
+    `).join('')}
+
   </table>
+
+  <!-- ================= SUMMARY TABLE ================= -->
+  <table style="width:100%;border-collapse:collapse;border:1px solid #000;font-size:12px;">
+    ${[
+                    ['उठाव - (निजी धान आवक page से data लेना है)', lifting.toFixed(2)],
+                    ['धान की राशि - (उठाव * धान का भाव/दर )', paddyAmount.toFixed(2)],
+                    ['बटाव राशि - (उठाव * धान का भाव/दर * बटाव% /100)', discountAmount.toFixed(2)],
+                    ['बारदाने की राशि -', gunnyAmount.toFixed(2)],
+                    ['पार्टी को भुगतान योग्य राशि -', payableToParty.toFixed(2), true],
+                    ['ब्रोकर को भुगतान योग्य राशि - (उठाव * दलाली)', payableToBroker.toFixed(2), true]
+                ].map(row => `
+      <tr style="border-bottom:1px solid #000;">
+        <td style="padding:5px;width:60%;border-right:1px solid #000;${row[2] ? 'font-weight:bold;' : ''}">
+          ${row[0]}
+        </td>
+        <td style="padding:5px;width:40%;text-align:right;${row[2] ? 'font-weight:bold;' : ''}">
+          ${row[1]}
+        </td>
+      </tr>
+    `).join('')}
+  </table>
+
 </div>
 </body>
 </html>
-            `.trim()
+`.trim();
+
 
             const iframe = document.createElement('iframe')
             iframe.style.position = 'absolute'
@@ -157,38 +210,15 @@ export function BalanceLiftingPurchasesPaddyViewDialog({
             iframeDoc.write(html)
             iframeDoc.close()
 
-            await new Promise((resolve) => setTimeout(resolve, 100))
-
-            const target = iframeDoc.getElementById('pdf-content')
-            if (!target) throw new Error('PDF content not found')
-
-            const canvas = await html2canvas(target, {
-                scale: 2,
-                useCORS: true,
-                logging: false,
-                backgroundColor: '#ffffff',
-            })
-
-            document.body.removeChild(iframe)
-
-            const imgData = canvas.toDataURL('image/png')
-            const pdf = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4',
-            })
-
-            const imgProps = pdf.getImageProperties(imgData)
-            const pdfWidth = pdf.internal.pageSize.getWidth()
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
-
-            // Add image with a slight margin if needed, currently 0,0
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
-
-            pdf.save(
-                `paddy-purchase-${currentRow.paddyPurchaseDealNumber || 'details'}.pdf`
-            )
-            toast.success('PDF downloaded successfully!', { id: toastId })
+            // Wait for rendering
+            setTimeout(() => {
+                iframe.contentWindow?.focus()
+                iframe.contentWindow?.print()
+                setTimeout(() => {
+                    document.body.removeChild(iframe)
+                }, 1000)
+                toast.success('Print dialog opened', { id: toastId })
+            }, 500)
         } catch (error) {
             console.error('Error generating PDF:', error)
             toast.error(
@@ -238,9 +268,9 @@ export function BalanceLiftingPurchasesPaddyViewDialog({
                                 <span>
                                     {currentRow.date
                                         ? format(
-                                              new Date(currentRow.date),
-                                              'dd/MM/yyyy'
-                                          )
+                                            new Date(currentRow.date),
+                                            'dd/MM/yyyy'
+                                        )
                                         : 'N/A'}
                                 </span>
                             </div>
