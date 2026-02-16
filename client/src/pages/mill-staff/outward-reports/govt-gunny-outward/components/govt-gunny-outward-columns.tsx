@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,9 +6,7 @@ import { LongText } from '@/components/long-text'
 import { type GovtGunnyOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getGovtGunnyOutwardColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<GovtGunnyOutward>[] => [
+export const GovtGunnyOutwardColumns: ColumnDef<GovtGunnyOutward>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,10 +39,7 @@ export const getGovtGunnyOutwardColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -61,10 +55,7 @@ export const getGovtGunnyOutwardColumns = (
     {
         accessorKey: 'gunnyDmNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyDmNo')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny DM No.' />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>
@@ -75,10 +66,7 @@ export const getGovtGunnyOutwardColumns = (
     {
         accessorKey: 'samitiSangrahan',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.samitiSangrahan')}
-            />
+            <DataTableColumnHeader column={column} title='Samiti Sangrahan' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-40'>
@@ -89,10 +77,7 @@ export const getGovtGunnyOutwardColumns = (
     {
         accessorKey: 'oldGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.oldGunnyQty')}
-            />
+            <DataTableColumnHeader column={column} title='Old Gunny Qty' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -103,10 +88,7 @@ export const getGovtGunnyOutwardColumns = (
     {
         accessorKey: 'plasticGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.plasticGunnyQty')}
-            />
+            <DataTableColumnHeader column={column} title='Plastic Gunny Qty' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -117,10 +99,7 @@ export const getGovtGunnyOutwardColumns = (
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.truckNumber')}
-            />
+            <DataTableColumnHeader column={column} title='Truck No.' />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>

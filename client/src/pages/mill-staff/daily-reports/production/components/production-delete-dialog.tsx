@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import {
@@ -23,14 +24,16 @@ export function ProductionDeleteDialog({
     onOpenChange,
     currentRow,
 }: ProductionDeleteDialogProps) {
+    const { t } = useTranslation()
+
     const handleDelete = () => {
         toast.promise(sleep(2000), {
-            loading: 'Deleting production record...',
+            loading: t('production.deleting'),
             success: () => {
                 onOpenChange(false)
-                return 'Production record deleted successfully'
+                return t('production.deletedSuccess')
             },
-            error: 'Failed to delete record',
+            error: t('production.deleteFailed'),
         })
     }
 
@@ -39,25 +42,22 @@ export function ProductionDeleteDialog({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Delete Production Entry?
+                        {t('production.deleteTitle')}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the production entry for{' '}
-                        <strong>
-                            {currentRow?.itemName} ({currentRow?.itemType})
-                        </strong>
-                        ?
+                        {t('production.deleteDescription')}{' '}
+                        <strong>{currentRow?.itemName}</strong>?
                         <br />
-                        This action cannot be undone.
+                        {t('common.actionCannotBeUndone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

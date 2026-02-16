@@ -1,11 +1,10 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -16,41 +15,36 @@ import { LabourMillingTable } from './components/labour-milling-table'
 import { useLabourMillingList } from './data/hooks'
 
 export function LabourMillingReport() {
-    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            labourGroupName: search.labourGroupName as string | undefined,
+            sortBy: (search.sortBy as string) || 'date',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
-    const search = Object.fromEntries(searchParams.entries())
-
-    const queryParams = useMemo(
-        () => ({
-            page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
-            search: search.search as string | undefined,
-            sortBy: (search.sortBy as string) || 'createdAt',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
+    const { data, isLoading, isError } = useLabourMillingList(
+        millId || '',
+        queryParams
     )
 
-    const {
-        data: response,
-        isLoading,
-        isError,
-    } = useLabourMillingList(millId || '', queryParams, { enabled: !!millId })
-
-    const labourMillingData = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
-    }, [response])
-
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
+        const search = Object.fromEntries(searchParams.entries())
         if (typeof opts.search === 'function') {
             const newSearch = opts.search(search)
             setSearchParams(newSearch as Record<string, string>)
@@ -61,12 +55,27 @@ export function LabourMillingReport() {
         }
     }
 
+    if (isLoading) {
+        return (
+            <div className='flex h-screen items-center justify-center'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (isError) {
+        return (
+            <div className='flex h-screen items-center justify-center text-red-500'>
+                Failed to load data. Please try again later.
+            </div>
+        )
+    }
+
     return (
         <LabourMillingProvider>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
-                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -80,21 +89,23 @@ export function LabourMillingReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('reports.labourCostReports.milling.title')}
+                            Labour Milling Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('reports.labourCostReports.milling.subtitle')}
+                            Manage labour milling transactions and records
                         </p>
                     </div>
                     <LabourMillingPrimaryButtons />
                 </div>
                 <LabourMillingTable
-                    data={labourMillingData}
-                    search={search}
+                    data={data?.entries || []}
+                    search={Object.fromEntries(
+                        Object.entries(queryParams || {})
+                            .filter(([, value]) => value !== undefined)
+                            .map(([key, value]) => [key, String(value)])
+                    )}
                     navigate={navigate}
-                    isLoading={isLoading}
-                    isError={isError}
-                    totalRows={response?.pagination?.total}
+                    pagination={data?.pagination}
                 />
             </Main>
 

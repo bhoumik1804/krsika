@@ -84,9 +84,11 @@ export const committeeService = {
     },
 
     bulkDeleteCommittees: async (millId: string, committeeIds: string[]) => {
-        const response = await apiClient.post<
+        const response = await apiClient.delete<
             ApiResponse<{ success: boolean }>
-        >(`/mills/${millId}/committees/bulk-delete`, { ids: committeeIds })
+        >(`/mills/${millId}/committees/bulk`, {
+            data: { ids: committeeIds },
+        })
         return response.data.data
     },
 }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -23,16 +22,14 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-// import { type PartyTransaction } from '../data/schema'
+import { type PartyTransaction } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getPartyTransactionColumns } from './party-transaction-columns'
+import { partyTransactionColumns as columns } from './party-transaction-columns'
 
 type DataTableProps = {
-    data: any[]
+    data: PartyTransaction[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading?: boolean
-    isError?: boolean
 }
 
 export function PartyTransactionTable({
@@ -40,8 +37,6 @@ export function PartyTransactionTable({
     search,
     navigate,
 }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getPartyTransactionColumns(t), [t])
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(

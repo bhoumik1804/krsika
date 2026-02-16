@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -26,7 +26,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
 import { type InwardEntry } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getInwardsColumns } from './inwards-columns'
+import { useInwardsColumns } from './inwards-columns'
 
 type DataTableProps = {
     data: InwardEntry[]
@@ -35,9 +35,8 @@ type DataTableProps = {
 }
 
 export function InwardsTable({ data, search, navigate }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getInwardsColumns(t), [t])
-
+    const { t } = useTranslation()
+    const columns = useInwardsColumns()
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -102,17 +101,19 @@ export function InwardsTable({ data, search, navigate }: DataTableProps) {
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Filter inward entries...'
+                searchPlaceholder={t('common.searchPlaceholder', {
+                    defaultValue: 'Filter entries...',
+                })}
                 searchKey='partyName'
                 filters={[
                     {
                         columnId: 'status',
-                        title: 'Status',
+                        title: t('common.status'),
                         options: statuses,
                     },
                     {
                         columnId: 'item',
-                        title: 'Item',
+                        title: t('common.item'),
                         options: [
                             { label: 'Paddy', value: 'Paddy' },
                             { label: 'Rice', value: 'Rice' },
@@ -195,7 +196,7 @@ export function InwardsTable({ data, search, navigate }: DataTableProps) {
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

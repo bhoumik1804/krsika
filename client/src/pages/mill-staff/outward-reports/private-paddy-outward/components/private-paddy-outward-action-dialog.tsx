@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
+import { useRef } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePaddySalesList } from '@/pages/mill-admin/sales-reports/paddy-sales/data/hooks'
+import type { PaddySalesResponse } from '@/pages/mill-admin/sales-reports/paddy-sales/data/types'
 import { CalendarIcon } from 'lucide-react'
 import { paddyTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -23,6 +27,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -59,6 +64,47 @@ export function PrivatePaddyOutwardActionDialog({
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
     const { millId, setOpen: setDialogOpen } = usePrivatePaddyOutward()
+
+    const paddySaleDataRef = useRef<PaddySalesResponse[]>([])
+
+    const usePaddySalesListCompat = (params: any) => {
+        return usePaddySalesList(
+            { ...params, pageSize: params.limit },
+            { enabled: open }
+        )
+    }
+
+    const paddySaleDeal = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: usePaddySalesListCompat,
+            extractItems: (data: any) => {
+                paddySaleDataRef.current = data.data || []
+                return data.data
+                    .map((p: PaddySalesResponse) => p.paddySalesDealNumber)
+                    .filter(Boolean) as string[]
+            },
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
+        },
+        currentRow?.paddySaleDealNumber || undefined
+    )
+
+    const handleDealSelect = (dealId: string) => {
+        form.setValue('paddySaleDealNumber', dealId)
+        const sale = paddySaleDataRef.current.find(
+            (p) => p.paddySalesDealNumber === dealId
+        )
+        if (sale) {
+            if (sale.partyName) form.setValue('partyName', sale.partyName)
+            if (sale.brokerName) form.setValue('brokerName', sale.brokerName)
+            if (sale.dhanType) form.setValue('paddyType', sale.dhanType) // paddyType = dhanType
+            if (sale.dhanQty) form.setValue('doQty', sale.dhanQty) // doQty = dhanQty from sales
+            // Auto-fill gunny details if needed, mapping might depend on specific business logic or field availability
+            // Assuming direct mapping if fields exist or leaving manual if divergent
+        }
+    }
+
     const createMutation = useCreatePrivatePaddyOutward(millId)
     const updateMutation = useUpdatePrivatePaddyOutward(millId)
 
@@ -113,17 +159,22 @@ export function PrivatePaddyOutwardActionDialog({
 
     const onSubmit = async (data: PrivatePaddyOutward) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+                brokerName: data.brokerName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateMutation.mutateAsync({
                     id: currentRow._id,
-                    data: data,
+                    data: submissionData,
                 })
             } else {
-                await createMutation.mutateAsync(data)
+                await createMutation.mutateAsync(submissionData)
             }
             setDialogOpen(null)
             onOpenChange(false)
-            form.reset()
         } catch {
             // Error is handled by mutation hooks
         }
@@ -220,9 +271,12 @@ export function PrivatePaddyOutwardActionDialog({
                                             Paddy Sale Deal Number
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='SALE-XXXX'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value || ''}
+                                                onValueChange={handleDealSelect}
+                                                paginatedList={paddySaleDeal}
+                                                placeholder='Search deal...'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -241,6 +295,7 @@ export function PrivatePaddyOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter party name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -259,6 +314,7 @@ export function PrivatePaddyOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter broker name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -275,7 +331,7 @@ export function PrivatePaddyOutwardActionDialog({
                                         <FormLabel>Paddy Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            value={field.value || undefined}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -472,6 +528,7 @@ export function PrivatePaddyOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -490,6 +547,7 @@ export function PrivatePaddyOutwardActionDialog({
                                             <Input
                                                 placeholder='RST0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

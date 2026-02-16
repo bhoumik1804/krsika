@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
+import { useOtherPurchaseList } from '../data/hooks'
 import { type OtherPurchase } from '../data/schema'
 
 type OtherDialogType = 'add' | 'edit' | 'delete'
@@ -37,16 +38,6 @@ interface OtherProviderProps {
     children: React.ReactNode
     millId: string
     initialQueryParams?: QueryParams
-    apiData?: OtherPurchase[]
-    apiPagination?: {
-        page: number
-        pageSize: number
-        total: number
-        totalPages: number
-    }
-    isLoading?: boolean
-    isError?: boolean
-    onQueryParamsChange?: (params: QueryParams) => void
 }
 
 const defaultQueryParams: QueryParams = {
@@ -61,11 +52,6 @@ export function OtherProvider({
     children,
     millId,
     initialQueryParams = defaultQueryParams,
-    apiData = [],
-    apiPagination = { page: 1, pageSize: 10, total: 0, totalPages: 0 },
-    isLoading = false,
-    isError = false,
-    onQueryParamsChange,
 }: OtherProviderProps) {
     const [open, setOpen] = useDialogState<OtherDialogType>(null)
     const [currentRow, setCurrentRow] = useState<OtherPurchase | null>(null)
@@ -75,30 +61,32 @@ export function OtherProvider({
     // Sync URL params with internal state
     useEffect(() => {
         setQueryParams(initialQueryParams)
-    }, [
-        initialQueryParams.page,
-        initialQueryParams.limit,
-        initialQueryParams.search,
-    ])
+    }, [initialQueryParams])
 
-    // Notify parent when queryParams change
-    useEffect(() => {
-        onQueryParamsChange?.(queryParams)
-    }, [queryParams, onQueryParamsChange])
+    const {
+        data: apiResponse,
+        isLoading,
+        isError,
+    } = useOtherPurchaseList({
+        millId,
+        page: queryParams.page,
+        pageSize: queryParams.limit,
+        search: queryParams.search,
+    })
 
     // Memoized pagination to prevent flickering
     const pagination = useMemo(
         () => ({
-            page: apiPagination.page || 1,
-            pageSize: apiPagination.pageSize || 10,
-            total: apiPagination.total || 0,
-            totalPages: apiPagination.totalPages || 0,
+            page: apiResponse?.pagination?.page || 1,
+            pageSize: apiResponse?.pagination?.limit || 10,
+            total: apiResponse?.pagination?.total || 0,
+            totalPages: apiResponse?.pagination?.totalPages || 0,
         }),
         [
-            apiPagination.page,
-            apiPagination.pageSize,
-            apiPagination.total,
-            apiPagination.totalPages,
+            apiResponse?.pagination?.page,
+            apiResponse?.pagination?.limit,
+            apiResponse?.pagination?.total,
+            apiResponse?.pagination?.totalPages,
         ]
     )
 
@@ -109,7 +97,7 @@ export function OtherProvider({
             setOpen,
             currentRow,
             setCurrentRow,
-            data: apiData,
+            data: apiResponse?.purchases || [],
             isLoading,
             isError,
             millId,
@@ -120,7 +108,7 @@ export function OtherProvider({
         [
             open,
             currentRow,
-            apiData,
+            apiResponse?.purchases,
             isLoading,
             isError,
             millId,

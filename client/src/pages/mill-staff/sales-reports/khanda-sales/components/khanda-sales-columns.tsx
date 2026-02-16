@@ -1,14 +1,11 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import type { KhandaSalesResponse } from '../data/types'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getKhandaSalesColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<KhandaSalesResponse>[] => [
+export const khandaSalesColumns: ColumnDef<KhandaSalesResponse>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -41,10 +38,7 @@ export const getKhandaSalesColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -60,10 +54,7 @@ export const getKhandaSalesColumns = (
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.partyName')}
-            />
+            <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -74,10 +65,7 @@ export const getKhandaSalesColumns = (
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.brokerName')}
-            />
+            <DataTableColumnHeader column={column} title='Broker Name' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -88,10 +76,7 @@ export const getKhandaSalesColumns = (
     {
         accessorKey: 'khandaQty',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.khandaQty')}
-            />
+            <DataTableColumnHeader column={column} title='Khanda Qty (Qtl)' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -102,10 +87,7 @@ export const getKhandaSalesColumns = (
     {
         accessorKey: 'khandaRate',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.khandaRate')}
-            />
+            <DataTableColumnHeader column={column} title='Khanda Rate' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -116,10 +98,7 @@ export const getKhandaSalesColumns = (
     {
         accessorKey: 'discountPercent',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.discount')}
-            />
+            <DataTableColumnHeader column={column} title='Discount %' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -130,10 +109,7 @@ export const getKhandaSalesColumns = (
     {
         accessorKey: 'brokeragePerQuintal',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.brokerageQtl')}
-            />
+            <DataTableColumnHeader column={column} title='Brokerage/Qtl' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>

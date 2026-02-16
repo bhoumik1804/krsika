@@ -9,6 +9,7 @@ export const staffReportSchema = z.object({
     phoneNumber: z.string().optional(),
     email: z.string().optional(),
     address: z.string().optional(),
+    isActive: z.boolean().optional(),
 })
 
 export type StaffReportData = z.infer<typeof staffReportSchema>

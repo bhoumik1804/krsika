@@ -13,23 +13,25 @@ import { type PartyReportData } from '../data/schema'
 import { usePartyReport } from './party-report-provider'
 
 type PartyReportDeleteDialogProps = {
+    currentRow: PartyReportData
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: PartyReportData | null
 }
 
 export function PartyReportDeleteDialog({
+    currentRow,
     open,
     onOpenChange,
 }: PartyReportDeleteDialogProps) {
-    const { currentRow, millId } = usePartyReport()
+    const { millId } = usePartyReport()
     const { mutate: deleteParty, isPending: isDeleting } =
         useDeleteParty(millId)
 
     const handleDelete = (e: React.MouseEvent) => {
-        e.preventDefault() // Prevent default AlertDialog close behavior
-        if (currentRow?.id) {
-            deleteParty(currentRow.id, {
+        e.preventDefault()
+        const partyId = currentRow._id
+        if (partyId) {
+            deleteParty(partyId, {
                 onSuccess: () => {
                     onOpenChange(false)
                 },
@@ -44,7 +46,7 @@ export function PartyReportDeleteDialog({
                     <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
                         Are you sure you want to delete this record for{' '}
-                        <strong>{currentRow?.partyName}</strong>?
+                        <strong>{currentRow.partyName}</strong>?
                         <br />
                         This action cannot be undone.
                     </AlertDialogDescription>

@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
+import { useRef } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useOtherPurchaseList } from '@/pages/mill-admin/purchase-reports/other/data/hooks'
+import type { OtherPurchaseResponse } from '@/pages/mill-admin/purchase-reports/other/data/types'
 import { CalendarIcon } from 'lucide-react'
 import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -23,6 +27,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -38,6 +43,10 @@ import {
 import { useCreateOtherInward, useUpdateOtherInward } from '../data/hooks'
 import { otherInwardSchema, type OtherInward } from '../data/schema'
 import { useOtherInward } from './other-inward-provider'
+
+const useOtherPurchaseListCompat = (params: any) => {
+    return useOtherPurchaseList({ ...params, pageSize: params.limit })
+}
 
 type OtherInwardActionDialogProps = {
     open: boolean
@@ -55,6 +64,48 @@ export function OtherInwardActionDialog({
         useCreateOtherInward(millId)
     const { mutateAsync: updateOtherInward, isPending: isUpdating } =
         useUpdateOtherInward(millId)
+
+    const purchaseDataRef = useRef<OtherPurchaseResponse[]>([])
+
+    const otherPurchaseDeal = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useOtherPurchaseListCompat,
+            extractItems: (data: any) => {
+                purchaseDataRef.current = data.purchases || []
+                return data.purchases
+                    .map(
+                        (p: OtherPurchaseResponse) => p.otherPurchaseDealNumber
+                    )
+                    .filter(Boolean) as string[]
+            },
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
+        },
+        currentRow?.otherPurchaseDealNumber || undefined
+    )
+
+    const handleDealSelect = (dealId: string) => {
+        form.setValue('otherPurchaseDealNumber', dealId)
+        const purchase = purchaseDataRef.current.find(
+            (p) => p.otherPurchaseDealNumber === dealId
+        )
+        if (purchase) {
+            if (purchase.partyName)
+                form.setValue('partyName', purchase.partyName)
+            if (purchase.brokerName)
+                form.setValue('brokerName', purchase.brokerName)
+            if (purchase.otherPurchaseName)
+                form.setValue('itemName', purchase.otherPurchaseName)
+            if (
+                purchase.otherPurchaseQty !== undefined &&
+                purchase.otherPurchaseQty !== null
+            )
+                form.setValue('quantity', purchase.otherPurchaseQty)
+            if (purchase.qtyType)
+                form.setValue('quantityType', purchase.qtyType)
+        }
+    }
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -113,13 +164,19 @@ export function OtherInwardActionDialog({
 
     const onSubmit = async (data: OtherInward) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+                brokerName: data.brokerName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateOtherInward({
                     entryId: currentRow._id,
-                    data,
+                    data: submissionData,
                 })
             } else {
-                await createOtherInward(data)
+                await createOtherInward(submissionData)
             }
             onOpenChange(false)
             form.reset()
@@ -215,9 +272,14 @@ export function OtherInwardActionDialog({
                                             Other Purchase Deal Number
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter Deal ID'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value || ''}
+                                                onValueChange={handleDealSelect}
+                                                paginatedList={
+                                                    otherPurchaseDeal
+                                                }
+                                                placeholder='Search deal...'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -234,6 +296,7 @@ export function OtherInwardActionDialog({
                                             <Input
                                                 placeholder='Enter Item Name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -275,7 +338,7 @@ export function OtherInwardActionDialog({
                                             <FormLabel>Qty Type</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                value={field.value || undefined}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
@@ -314,6 +377,7 @@ export function OtherInwardActionDialog({
                                             <Input
                                                 placeholder='Enter Party Name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -330,6 +394,7 @@ export function OtherInwardActionDialog({
                                             <Input
                                                 placeholder='Enter Broker Name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -470,6 +535,7 @@ export function OtherInwardActionDialog({
                                             <Input
                                                 placeholder='Enter Truck No'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -486,6 +552,7 @@ export function OtherInwardActionDialog({
                                             <Input
                                                 placeholder='Enter RST No'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

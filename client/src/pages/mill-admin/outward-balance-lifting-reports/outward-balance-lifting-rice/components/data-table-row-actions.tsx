@@ -10,15 +10,15 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type OutwardBalanceLiftingRice } from '../data/schema'
-import { outwardBalanceLiftingRice } from './outward-balance-lifting-rice-provider'
+import { type PrivateRiceOutward } from '../data/types'
+import { useOutwardBalanceLiftingRice } from './outward-balance-lifting-rice-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<OutwardBalanceLiftingRice>
+    row: Row<PrivateRiceOutward>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = outwardBalanceLiftingRice()
+    const { setOpen, setCurrentRow } = useOutwardBalanceLiftingRice()
     return (
         <>
             <DropdownMenu modal={false}>

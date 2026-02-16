@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -10,7 +10,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +24,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type SilkyKodhaOutward } from '../data/schema'
 import type { SilkyKodhaOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getSilkyKodhaOutwardColumns } from './silky-kodha-outward-columns'
+import { silkyKodhaOutwardColumns as columns } from './silky-kodha-outward-columns'
 import { SilkyKodhaOutwardMultiDeleteDialog } from './silky-kodha-outward-multi-delete-dialog'
 import { silkyKodhaOutward } from './silky-kodha-outward-provider'
 
@@ -42,8 +41,6 @@ export function SilkyKodhaOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getSilkyKodhaOutwardColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type VehicleReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getVehicleReportColumns } from './vehicle-report-columns'
+import { vehicleReportColumns as columns } from './vehicle-report-columns'
 
 interface PaginationInfo {
     page: number
@@ -53,8 +52,6 @@ export function VehicleReportTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getVehicleReportColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -81,7 +78,7 @@ export function VehicleReportTable({
         columnFilters: [
             {
                 columnId: 'truckNo',
-                searchKey: 'search',
+                searchKey: 'truckNo',
                 type: 'string',
             },
         ],
@@ -104,6 +101,7 @@ export function VehicleReportTable({
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
+        getRowId: (row) => row._id || '',
         // Use server-side pagination info when available
         pageCount: serverPagination?.totalPages ?? -1,
         manualPagination: !!serverPagination,
@@ -131,8 +129,7 @@ export function VehicleReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='search'
-                filters={[]}
+                searchKey='truckNo'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

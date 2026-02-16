@@ -1,17 +1,17 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { staffReport } from './staff-report-provider'
+import { useStaffReport } from './staff-report-provider'
 
 export function StaffReportPrimaryButtons() {
-    const { setOpen, setCurrentRow } = staffReport()
-
-    const handleAddClick = () => {
-        setCurrentRow(null)
-        setOpen('add')
-    }
+    const { setOpen, setCurrentRow } = useStaffReport()
 
     return (
-        <Button onClick={handleAddClick}>
+        <Button
+            onClick={() => {
+                setCurrentRow(null)
+                setOpen('add')
+            }}
+        >
             <Plus className='mr-2 size-4' />
             Add Record
         </Button>

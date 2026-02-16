@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -10,7 +10,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,7 +23,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BhusaOutward } from '../data/schema'
 import type { BhusaOutwardListResponse } from '../data/types'
-import { getBhusaOutwardColumns } from './bhusa-outward-columns'
+import { bhusaOutwardColumns as columns } from './bhusa-outward-columns'
 import { BhusaOutwardMultiDeleteDialog } from './bhusa-outward-multi-delete-dialog'
 import { bhusaOutward } from './bhusa-outward-provider'
 import { DataTableBulkActions } from './data-table-bulk-actions'
@@ -42,8 +41,6 @@ export function BhusaOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getBhusaOutwardColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

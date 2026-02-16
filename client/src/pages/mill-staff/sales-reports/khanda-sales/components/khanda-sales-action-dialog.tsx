@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useParams } from 'react-router'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -22,6 +26,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -29,7 +34,6 @@ import {
 } from '@/components/ui/popover'
 import { useCreateKhandaSales, useUpdateKhandaSales } from '../data/hooks'
 import { khandaSalesSchema, type KhandaSales } from '../data/schema'
-import { useKhandaSales } from './khanda-sales-provider'
 
 type KhandaSalesActionDialogProps = {
     open: boolean
@@ -42,11 +46,37 @@ export function KhandaSalesActionDialog({
     onOpenChange,
     currentRow,
 }: KhandaSalesActionDialogProps) {
-    const { millId } = useKhandaSales()
+    const { millId } = useParams<{ millId: string }>()
+    const party = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName
+    )
+
+    const broker = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
+        currentRow?.brokerName
+    )
     const { mutateAsync: createKhandaSales, isPending: isCreating } =
-        useCreateKhandaSales(millId)
+        useCreateKhandaSales(millId || '')
     const { mutateAsync: updateKhandaSales, isPending: isUpdating } =
-        useUpdateKhandaSales(millId)
+        useUpdateKhandaSales(millId || '')
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -85,16 +115,21 @@ export function KhandaSalesActionDialog({
 
     const onSubmit = async (data: KhandaSales) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+                brokerName: data.brokerName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateKhandaSales({
                     _id: currentRow._id,
-                    ...data,
+                    ...submissionData,
                 })
             } else {
-                await createKhandaSales(data)
+                await createKhandaSales(submissionData)
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             // Error handling is managed by mutation hooks (onSuccess/onError)
             console.error('Form submission error:', error)
@@ -189,9 +224,14 @@ export function KhandaSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -205,9 +245,14 @@ export function KhandaSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter broker name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={broker}
+                                                    placeholder='Search broker...'
+                                                    emptyText='No brokers found'
                                                 />
                                             </FormControl>
                                             <FormMessage />

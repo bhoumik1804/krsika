@@ -1,15 +1,12 @@
 import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type FrkOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getFrkOutwardColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<FrkOutward>[] => [
+export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,10 +36,7 @@ export const getFrkOutwardColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => {
             const date = row.getValue('date')
@@ -57,10 +51,7 @@ export const getFrkOutwardColumns = (
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.partyName')}
-            />
+            <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -72,10 +63,7 @@ export const getFrkOutwardColumns = (
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyPlastic')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny (Plastic)' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -86,7 +74,7 @@ export const getFrkOutwardColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('tableColumns.plasticGunnyWeight')}
+                title='Plastic Gunny Weight'
             />
         ),
         cell: ({ row }) => (
@@ -98,10 +86,7 @@ export const getFrkOutwardColumns = (
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.truckNumber')}
-            />
+            <DataTableColumnHeader column={column} title='Truck No' />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -112,10 +97,7 @@ export const getFrkOutwardColumns = (
     {
         accessorKey: 'truckRst',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.rstNo')}
-            />
+            <DataTableColumnHeader column={column} title='RST No' />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>{row.getValue('truckRst')}</div>
@@ -124,10 +106,7 @@ export const getFrkOutwardColumns = (
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.truckWeight')}
-            />
+            <DataTableColumnHeader column={column} title='Truck Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -138,10 +117,7 @@ export const getFrkOutwardColumns = (
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyWeight')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -152,10 +128,7 @@ export const getFrkOutwardColumns = (
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.netWeight')}
-            />
+            <DataTableColumnHeader column={column} title='Net Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>

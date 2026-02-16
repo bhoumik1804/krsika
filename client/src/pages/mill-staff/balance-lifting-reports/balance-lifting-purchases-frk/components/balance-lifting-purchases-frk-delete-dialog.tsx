@@ -1,5 +1,3 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,12 +8,14 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteBalanceLiftingFrkPurchase } from '../data/hooks'
 import { type BalanceLiftingPurchasesFrk } from '../data/schema'
+import { useBalanceLiftingPurchasesFrk } from './balance-lifting-purchases-frk-provider'
 
 type BalanceLiftingPurchasesFrkDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: BalanceLiftingPurchasesFrk | null
+    currentRow?: BalanceLiftingPurchasesFrk | null
 }
 
 export function BalanceLiftingPurchasesFrkDeleteDialog({
@@ -23,15 +23,19 @@ export function BalanceLiftingPurchasesFrkDeleteDialog({
     onOpenChange,
     currentRow,
 }: BalanceLiftingPurchasesFrkDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting purchase...',
-            success: () => {
+    const { millId } = useBalanceLiftingPurchasesFrk()
+    const { mutateAsync: deletePurchase, isPending: isDeleting } =
+        useDeleteBalanceLiftingFrkPurchase(millId)
+
+    const handleDelete = async () => {
+        if (currentRow?._id) {
+            try {
+                await deletePurchase(currentRow._id)
                 onOpenChange(false)
-                return 'Purchase deleted successfully'
-            },
-            error: 'Failed to delete purchase',
-        })
+            } catch (error) {
+                console.error('Error deleting purchase:', error)
+            }
+        }
     }
 
     return (
@@ -47,12 +51,15 @@ export function BalanceLiftingPurchasesFrkDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

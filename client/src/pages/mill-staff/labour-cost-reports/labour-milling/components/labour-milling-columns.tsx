@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,9 +6,7 @@ import { LongText } from '@/components/long-text'
 import { type LabourMilling } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getLabourMillingColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<LabourMilling>[] => [
+export const labourMillingColumns: ColumnDef<LabourMilling>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,10 +39,7 @@ export const getLabourMillingColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -61,10 +55,7 @@ export const getLabourMillingColumns = (
     {
         accessorKey: 'hopperInGunny',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.hopperInGunny')}
-            />
+            <DataTableColumnHeader column={column} title='Hopper (In Gunny)' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -75,10 +66,7 @@ export const getLabourMillingColumns = (
     {
         accessorKey: 'hopperRate',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.hopperRate')}
-            />
+            <DataTableColumnHeader column={column} title='Hopper Rate' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -91,10 +79,7 @@ export const getLabourMillingColumns = (
     {
         accessorKey: 'labourGroupName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.labourGroup')}
-            />
+            <DataTableColumnHeader column={column} title='Labour Group' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>

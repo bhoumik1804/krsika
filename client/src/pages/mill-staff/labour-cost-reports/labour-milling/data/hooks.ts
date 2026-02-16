@@ -12,7 +12,6 @@ import {
     updateLabourMilling,
     deleteLabourMilling,
     bulkDeleteLabourMilling,
-    exportLabourMilling,
 } from './service'
 import type {
     LabourMillingResponse,
@@ -144,7 +143,7 @@ export const useUpdateLabourMilling = (millId: string) => {
                 queryKey: labourMillingKeys.lists(),
             })
             queryClient.setQueryData(
-                labourMillingKeys.detail(millId, data._id),
+                labourMillingKeys.detail(millId, data._id as string),
                 data
             )
             queryClient.invalidateQueries({
@@ -206,26 +205,6 @@ export const useBulkDeleteLabourMilling = (millId: string) => {
             toast.error(
                 error.message || 'Failed to delete labour milling entries'
             )
-        },
-    })
-}
-
-/**
- * Hook to export labour milling entries
- */
-export const useExportLabourMilling = (millId: string) => {
-    return useMutation<
-        Blob,
-        Error,
-        { params?: LabourMillingQueryParams; format?: 'csv' | 'xlsx' }
-    >({
-        mutationFn: ({ params, format }) =>
-            exportLabourMilling(millId, params, format),
-        onSuccess: () => {
-            toast.success('Export completed successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to export data')
         },
     })
 }

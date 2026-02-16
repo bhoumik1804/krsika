@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,25 +24,30 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FinancialPayment } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getFinancialPaymentColumns } from './financial-payment-columns'
+import { FinancialPaymentColumns as columns } from './financial-payment-columns'
 
 type DataTableProps = {
     data: FinancialPayment[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading?: boolean
-    isError?: boolean
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
 export function FinancialPaymentTable({
     data,
     search,
     navigate,
-    // isLoading,
-    // isError,
+    pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getFinancialPaymentColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -59,7 +63,10 @@ export function FinancialPaymentTable({
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            defaultPage: serverPagination ? serverPagination.page : 1,
+            defaultPageSize: serverPagination ? serverPagination.limit : 10,
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             {
@@ -81,6 +88,8 @@ export function FinancialPaymentTable({
             columnFilters,
             columnVisibility,
         },
+        pageCount: serverPagination ? serverPagination.totalPages : -1,
+        manualPagination: true,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
@@ -96,8 +105,10 @@ export function FinancialPaymentTable({
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (serverPagination) {
+            ensurePageInRange(serverPagination.totalPages)
+        }
+    }, [serverPagination, ensurePageInRange])
 
     return (
         <div

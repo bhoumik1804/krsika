@@ -15,21 +15,22 @@ import { useBrokerReport } from './broker-report-provider'
 type BrokerReportDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: BrokerReportData | null
+    currentRow: BrokerReportData
 }
 
 export function BrokerReportDeleteDialog({
     open,
     onOpenChange,
+    currentRow,
 }: BrokerReportDeleteDialogProps) {
-    const { currentRow, millId } = useBrokerReport()
+    const { millId } = useBrokerReport()
     const { mutate: deleteBroker, isPending: isDeleting } =
         useDeleteBroker(millId)
 
     const handleDelete = (e: React.MouseEvent) => {
-        e.preventDefault() // Prevent default AlertDialog close behavior
-        if (currentRow?.id) {
-            deleteBroker(currentRow.id, {
+        e.preventDefault()
+        if (currentRow._id) {
+            deleteBroker(currentRow._id, {
                 onSuccess: () => {
                     onOpenChange(false)
                 },
@@ -44,7 +45,7 @@ export function BrokerReportDeleteDialog({
                     <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
                         Are you sure you want to delete this record for{' '}
-                        <strong>{currentRow?.brokerName}</strong>?
+                        <strong>{currentRow.brokerName}</strong>?
                         <br />
                         This action cannot be undone.
                     </AlertDialogDescription>

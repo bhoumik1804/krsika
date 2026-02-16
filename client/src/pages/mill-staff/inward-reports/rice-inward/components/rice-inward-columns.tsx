@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,9 +6,7 @@ import { LongText } from '@/components/long-text'
 import { type RiceInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getRiceInwardColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<RiceInward>[] => [
+export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,10 +39,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -63,7 +57,7 @@ export const getRiceInwardColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('tableColumns.purchaseDealNumber')}
+                title='Rice Purchase Deal Number'
             />
         ),
         cell: ({ row }) => (
@@ -75,10 +69,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.partyName')}
-            />
+            <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -90,10 +81,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.brokerName')}
-            />
+            <DataTableColumnHeader column={column} title='Broker Name' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -105,10 +93,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'riceType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.riceType')}
-            />
+            <DataTableColumnHeader column={column} title='Rice Type' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('riceType')}</div>
@@ -117,10 +102,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'inwardType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.inwardType')}
-            />
+            <DataTableColumnHeader column={column} title='Inward Type' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('inwardType')}</div>
@@ -129,10 +111,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'lotNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.lotNo')}
-            />
+            <DataTableColumnHeader column={column} title='LOT No.' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('lotNumber')}</div>
@@ -141,10 +120,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'balanceInward',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.balanceInward')}
-            />
+            <DataTableColumnHeader column={column} title='Balance Inward' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('balanceInward')}</div>
@@ -153,10 +129,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'frkOrNAN',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.frkStatus')}
-            />
+            <DataTableColumnHeader column={column} title='FRK Status' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('frkOrNAN')}</div>
@@ -165,10 +138,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'gunnyOption',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyOption')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny Option' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('gunnyOption')}</div>
@@ -177,10 +147,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'gunnyNew',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyNew')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny New' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyNew')}</div>
@@ -189,10 +156,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'gunnyOld',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyOld')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny Old' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyOld')}</div>
@@ -201,10 +165,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyPlastic')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny Plastic' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -213,10 +174,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'juteWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.juteWeight')}
-            />
+            <DataTableColumnHeader column={column} title='Jute Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -227,10 +185,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'plasticWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.plasticGunnyWeight')}
-            />
+            <DataTableColumnHeader column={column} title='Plastic Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -241,10 +196,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyWeight')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny Weight (kg.)' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -255,10 +207,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'truckNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.truckNumber')}
-            />
+            <DataTableColumnHeader column={column} title='Truck Number' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('truckNumber')}</div>
@@ -267,10 +216,7 @@ export const getRiceInwardColumns = (
     {
         accessorKey: 'rstNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.rstNo')}
-            />
+            <DataTableColumnHeader column={column} title='RST No.' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('rstNumber')}</div>

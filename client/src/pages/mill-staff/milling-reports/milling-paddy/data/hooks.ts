@@ -12,7 +12,6 @@ import {
     updateMillingPaddy,
     deleteMillingPaddy,
     bulkDeleteMillingPaddy,
-    exportMillingPaddy,
 } from './service'
 import type {
     MillingPaddyResponse,
@@ -107,11 +106,9 @@ export const useCreateMillingPaddy = (millId: string) => {
     return useMutation<MillingPaddyResponse, Error, CreateMillingPaddyRequest>({
         mutationFn: (data) => createMillingPaddy(millId, data),
         onSuccess: () => {
-            // Invalidate and refetch list queries
             queryClient.invalidateQueries({
                 queryKey: millingPaddyKeys.lists(),
             })
-            // Invalidate summary as well
             queryClient.invalidateQueries({
                 queryKey: millingPaddyKeys.summaries(),
             })
@@ -132,16 +129,13 @@ export const useUpdateMillingPaddy = (millId: string) => {
     return useMutation<MillingPaddyResponse, Error, UpdateMillingPaddyRequest>({
         mutationFn: (data) => updateMillingPaddy(millId, data),
         onSuccess: (data) => {
-            // Invalidate and refetch list queries
             queryClient.invalidateQueries({
                 queryKey: millingPaddyKeys.lists(),
             })
-            // Update the specific detail cache
             queryClient.setQueryData(
-                millingPaddyKeys.detail(millId, data._id),
+                millingPaddyKeys.detail(millId, data._id as string),
                 data
             )
-            // Invalidate summary
             queryClient.invalidateQueries({
                 queryKey: millingPaddyKeys.summaries(),
             })
@@ -162,11 +156,9 @@ export const useDeleteMillingPaddy = (millId: string) => {
     return useMutation<void, Error, string>({
         mutationFn: (id) => deleteMillingPaddy(millId, id),
         onSuccess: () => {
-            // Invalidate and refetch list queries
             queryClient.invalidateQueries({
                 queryKey: millingPaddyKeys.lists(),
             })
-            // Invalidate summary
             queryClient.invalidateQueries({
                 queryKey: millingPaddyKeys.summaries(),
             })
@@ -186,48 +178,19 @@ export const useBulkDeleteMillingPaddy = (millId: string) => {
 
     return useMutation<void, Error, string[]>({
         mutationFn: (ids) => bulkDeleteMillingPaddy(millId, ids),
-        onSuccess: () => {
-            // Invalidate and refetch list queries
+        onSuccess: (_, ids) => {
             queryClient.invalidateQueries({
                 queryKey: millingPaddyKeys.lists(),
             })
-            // Invalidate summary
             queryClient.invalidateQueries({
                 queryKey: millingPaddyKeys.summaries(),
             })
-            toast.success('Milling paddy entries deleted successfully')
+            toast.success(`${ids.length} entries deleted successfully`)
         },
         onError: (error) => {
             toast.error(
                 error.message || 'Failed to delete milling paddy entries'
             )
-        },
-    })
-}
-
-/**
- * Hook to export milling paddy entries
- */
-export const useExportMillingPaddy = (millId: string) => {
-    return useMutation<Blob, Error, MillingPaddyQueryParams | undefined>({
-        mutationFn: (params) => exportMillingPaddy(millId, params),
-        onSuccess: (blob) => {
-            // Create download link
-            const url = window.URL.createObjectURL(blob)
-            const link = document.createElement('a')
-            link.href = url
-            link.setAttribute(
-                'download',
-                `milling-paddy-${new Date().toISOString().split('T')[0]}.csv`
-            )
-            document.body.appendChild(link)
-            link.click()
-            link.remove()
-            window.URL.revokeObjectURL(url)
-            toast.success('Export completed successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to export milling paddy data')
         },
     })
 }

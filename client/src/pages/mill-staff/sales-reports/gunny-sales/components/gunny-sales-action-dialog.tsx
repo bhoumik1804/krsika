@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useParams } from 'react-router'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -22,6 +25,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -29,7 +33,6 @@ import {
 } from '@/components/ui/popover'
 import { useCreateGunnySales, useUpdateGunnySales } from '../data/hooks'
 import { gunnySalesSchema, type GunnySales } from '../data/schema'
-import { useGunnySales } from './gunny-sales-provider'
 
 type GunnySalesActionDialogProps = {
     open: boolean
@@ -42,11 +45,24 @@ export function GunnySalesActionDialog({
     onOpenChange,
     currentRow,
 }: GunnySalesActionDialogProps) {
-    const { millId } = useGunnySales()
+    const { millId } = useParams<{ millId: string }>()
+    const party = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName
+    )
     const { mutateAsync: createGunnySales, isPending: isCreating } =
-        useCreateGunnySales(millId)
+        useCreateGunnySales(millId || '')
     const { mutateAsync: updateGunnySales, isPending: isUpdating } =
-        useUpdateGunnySales(millId)
+        useUpdateGunnySales(millId || '')
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -87,16 +103,20 @@ export function GunnySalesActionDialog({
 
     const onSubmit = async (data: GunnySales) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateGunnySales({
                     _id: currentRow._id,
-                    ...data,
+                    ...submissionData,
                 })
             } else {
-                await createGunnySales(data)
+                await createGunnySales(submissionData)
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             // Error handling is managed by mutation hooks (onSuccess/onError)
             console.error('Form submission error:', error)
@@ -192,9 +212,14 @@ export function GunnySalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />

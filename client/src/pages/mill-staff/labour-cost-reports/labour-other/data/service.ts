@@ -1,7 +1,6 @@
 /**
  * Labour Other Service
  * API client for Labour Other CRUD operations
- * Uses centralized axios instance with cookie-based auth
  */
 import apiClient, { type ApiResponse } from '@/lib/api-client'
 import type {
@@ -112,22 +111,4 @@ export const bulkDeleteLabourOther = async (
     await apiClient.delete(`${LABOUR_OTHER_ENDPOINT(millId)}/bulk`, {
         data: { ids },
     })
-}
-
-/**
- * Export labour other entries to CSV/Excel
- */
-export const exportLabourOther = async (
-    millId: string,
-    params?: LabourOtherQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${LABOUR_OTHER_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
-    )
-    return response.data
 }

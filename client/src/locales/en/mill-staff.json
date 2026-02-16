@@ -1,729 +1,177 @@
 {
     "common": {
-        "search": "Search",
+        "date": "Date",
+        "commodity": "Commodity",
+        "item": "Item",
+        "variety": "Variety",
+        "type": "Type",
+        "quantity": "Quantity",
+        "bags": "Bags",
+        "weight": "Weight",
+        "remarks": "Remarks",
+        "status": "Status",
+        "actions": "Actions",
         "save": "Save",
         "cancel": "Cancel",
-        "delete": "Delete",
         "edit": "Edit",
         "add": "Add",
+        "delete": "Delete",
         "update": "Update",
-        "submit": "Submit",
-        "close": "Close",
+        "view": "View",
         "loading": "Loading...",
-        "noData": "No data available",
-        "actions": "Actions",
-        "status": "Status",
-        "date": "Date",
-        "amount": "Amount",
-        "quantity": "Quantity",
-        "weight": "Weight",
-        "bags": "Bags",
-        "rate": "Rate",
-        "total": "Total",
-        "units": "units",
-        "items": "items",
-        "kg": "kg",
+        "success": "Success",
+        "error": "Error",
+        "exportSummary": "Export Summary",
+        "exportHistory": "Export History",
+        "dateWiseHistory": "Date-wise history",
+        "transactions": "transactions",
+        "search": "Search...",
+        "searchPlaceholder": "Filter entries...",
+        "noResults": "No results.",
+        "select": "Select...",
         "all": "All",
-        "active": "Active",
-        "inactive": "Inactive",
-        "suspended": "Suspended",
         "pending": "Pending",
         "completed": "Completed",
+        "verified": "Verified",
+        "rejected": "Rejected",
+        "dispatched": "Dispatched",
         "cancelled": "Cancelled",
-        "yes": "Yes",
-        "no": "No",
-        "confirm": "Confirm",
-        "back": "Back",
-        "next": "Next",
-        "previous": "Previous",
-        "viewAll": "View All",
-        "export": "Export",
-        "import": "Import",
-        "download": "Download",
-        "upload": "Upload",
-        "filter": "Filter",
-        "clear": "Clear",
-        "reset": "Reset",
-        "apply": "Apply",
-        "select": "Select",
-        "selectAll": "Select All",
-        "deselectAll": "Deselect All",
-        "rowsPerPage": "Rows per page",
-        "page": "Page",
-        "of": "of",
-        "showing": "Showing",
-        "to": "to",
-        "entries": "entries",
-        "noResults": "No results found",
-        "tryAgain": "Please try again later",
-        "error": "Error",
-        "success": "Success",
-        "warning": "Warning",
-        "info": "Info"
+        "stocked": "Stocked",
+        "scheduled": "Scheduled",
+        "in-progress": "In Progress",
+        "halted": "Halted",
+        "gatePass": "Gate Pass",
+        "partyName": "Party Name",
+        "vehicleNo": "Vehicle No",
+        "driverName": "Driver Name",
+        "netWeight": "Net Weight (Kg)",
+        "pickADate": "Pick a date",
+        "actionCannotBeUndone": "This action cannot be undone.",
+        "openMenu": "Open menu",
+        "paddy": "Paddy",
+        "rice": "Rice",
+        "bran": "Bran",
+        "shift": "Shift",
+        "day": "Day",
+        "night": "Night",
+        "paddyType": "Paddy Type",
+        "paddyQuantity": "Paddy Consumed (Qtl)",
+        "riceYield": "Rice Yield (Kg)",
+        "brokenRice": "Broken Rice (Kg)",
+        "branYield": "Bran Yield (Kg)",
+        "huskYield": "Husk Yield (Kg)",
+        "deleteSelectedTitle": "Delete {{count}} entries?",
+        "deleteSelectedDescription": "Are you sure you want to delete the selected entries?",
+        "deletingSelected": "Deleting entries...",
+        "deletedSelectedSuccess": "Deleted {{count}} entries successfully",
+        "deleteSelectedError": "Error deleting entries"
     },
     "dashboard": {
         "title": "Staff Dashboard",
-        "goodMorning": "Good Morning! 👋",
-        "overview": "Here's your overview for today.",
+        "goodMorning": "Good Morning, Staff",
+        "overview": "Here is what's happening today.",
         "markAttendance": "Mark Attendance",
         "attendanceMarkedAs": "Attendance marked as",
         "halfDay": "Half Day",
-        "attendanceHistory": "Attendance History",
-        "recentEntries": "Recent Entries",
-        "yourLatestEntries": "Your latest entries for today",
-        "present": "Present",
-        "absent": "Absent"
-    },
-    "attendance": {
         "present": "Present",
         "absent": "Absent",
-        "halfDay": "Half Day",
-        "todayAttendance": "Today's Attendance",
-        "monthlyAttendance": "Monthly Attendance",
-        "attendanceCount": "Attendance Count"
-    },
-    "dailyReports": {
-        "title": "Daily Reports",
-        "subtitle": "View detailed daily reports for various mill operations",
-        "purchaseDeals": "Purchase Deals",
-        "salesDeals": "Sales Deals",
-        "otherReports": "Other Reports",
-        "payments": "Payments",
-        "inwards": {
-            "title": "Inwards",
-            "subtitle": "Track daily inward transactions by commodity",
-            "summary": "Inwards Summary",
-            "entries": "entries",
-            "bags": "bags",
-            "failedToLoad": "Failed to load inward data"
-        },
-        "outwards": {
-            "title": "Outwards",
-            "subtitle": "Track daily outward transactions by commodity",
-            "summary": "Outwards Summary",
-            "failedToLoad": "Failed to load outward data"
-        },
-        "milling": {
-            "title": "Milling",
-            "subtitle": "Track daily milling operations by commodity",
-            "summary": "Milling Summary",
-            "failedToLoad": "Failed to load milling data"
-        },
-        "production": {
-            "title": "Production",
-            "subtitle": "Track daily production output by commodity",
-            "summary": "Production Summary",
-            "failedToLoad": "Failed to load production data"
-        },
-        "payment": {
-            "title": "Daily Payments",
-            "subtitle": "Track all daily payment transactions",
-            "summary": "Payment Summary",
-            "failedToLoad": "Failed to load payment data"
-        },
-        "receipt": {
-            "title": "Daily Receipt",
-            "subtitle": "Track daily financial receipts",
-            "summary": "Receipt Summary",
-            "failedToLoad": "Failed to load receipt data"
-        },
-        "purchaseDealsPage": {
-            "title": "Purchase Deals",
-            "subtitle": "Track daily purchase transactions by commodity",
-            "summary": "Purchase Summary",
-            "failedToLoad": "Failed to load purchase deal data"
-        },
-        "salesDealsPage": {
-            "title": "Sales Deals",
-            "subtitle": "Track daily sales transactions by commodity",
-            "summary": "Sales Summary",
-            "failedToLoad": "Failed to load sales deal data"
+        "attendanceHistory": "Attendance History",
+        "recentEntriesTitle": "Recent Entries",
+        "yourLatestEntries": "Your latest activity across the mill.",
+        "recentEntries": {
+            "paddyFromRamesh": "Paddy from Ramesh - {{val}}",
+            "riceToPatelStore": "Rice to Patel Store - {{val}}",
+            "paddyFromSuresh": "Paddy from Suresh - {{val}}",
+            "paddyFromKumar": "Paddy from Kumar - {{val}}",
+            "riceToKrishnaTraders": "Rice to Krishna Traders - {{val}}"
         }
     },
-    "purchaseDeals": {
-        "paddyMota": "Paddy (Mota)",
-        "paddyPatla": "Paddy (Patla)",
-        "paddySarna": "Paddy (Sarna)",
-        "paddyMahamaya": "Paddy (Mahamaya)",
-        "paddyRBGold": "Paddy (RB GOLD)",
-        "ricePatla": "Rice (Patla)",
-        "riceMota": "Rice (Mota)",
-        "frk": "FRK",
-        "newGunny": "New Gunny",
-        "oldGunny": "Old Gunny",
-        "plasticGunny": "Plastic Gunny"
+    "inwards": {
+        "title": "Inwards",
+        "description": "Track daily inward transactions by commodity",
+        "addEntry": "Add Inward Entry",
+        "editEntry": "Edit Inward Entry",
+        "deleteEntry": "Delete Inward Entry",
+        "emptyMessage": "No inward data found for the selected date range",
+        "gatePassPlaceholder": "GP-XXXX",
+        "partyPlaceholder": "Enter party name",
+        "itemPlaceholder": "e.g. Paddy, Rice",
+        "vehiclePlaceholder": "Enter vehicle no.",
+        "driverPlaceholder": "Driver name (Optional)",
+        "remarksPlaceholder": "Optional remarks",
+        "adding": "Adding entry...",
+        "deleting": "Deleting entry...",
+        "deletedSuccess": "Entry deleted successfully",
+        "deleteFailed": "Failed to delete entry"
     },
-    "salesDeals": {
-        "paddyMota": "Paddy (Mota)",
-        "paddyPatla": "Paddy (Patla)",
-        "paddySarna": "Paddy (Sarna)",
-        "paddyMahamaya": "Paddy (Mahamaya)",
-        "paddyRBGold": "Paddy (RB GOLD)",
-        "ricePatla": "Rice (Patla)",
-        "riceMota": "Rice (Mota)",
-        "frk": "FRK",
-        "newGunny": "New Gunny",
-        "oldGunny": "Old Gunny",
-        "plasticGunny": "Plastic Gunny",
-        "khanda": "Khanda",
-        "bhusa": "Bhusa",
-        "nakkhi": "Nakkhi"
+    "outwards": {
+        "title": "Outwards",
+        "description": "Track daily outward transactions by commodity",
+        "addEntry": "Add Outward Entry",
+        "editEntry": "Edit Outward Entry",
+        "deleteEntry": "Delete Outward Entry",
+        "emptyMessage": "No outward data found for the selected date range",
+        "gatePassPlaceholder": "GP-OUT-XXXX",
+        "partyPlaceholder": "Enter party name",
+        "itemPlaceholder": "e.g. Rice, Bran",
+        "vehiclePlaceholder": "Enter vehicle no.",
+        "driverPlaceholder": "Driver name (Optional)",
+        "remarksPlaceholder": "Optional remarks",
+        "adding": "Adding entry...",
+        "updating": "Updating entry...",
+        "deleting": "Deleting entry...",
+        "addedSuccess": "Entry added successfully",
+        "updatedSuccess": "Entry updated successfully",
+        "deletedSuccess": "Entry deleted successfully",
+        "addFailed": "Failed to add entry",
+        "updateFailed": "Failed to update entry",
+        "deleteFailed": "Failed to delete entry",
+        "deleteTitle": "Delete Entry?",
+        "deleteDescription": "Are you sure you want to delete this entry for"
     },
-    "paymentCategories": {
-        "partyBroker": "Party Name / Broker Name",
-        "transporter": "Transporter",
-        "diesel": "Diesel",
-        "allowance": "Allowance",
-        "repairMaintenance": "Repair / Maintenance",
-        "hamali": "Hamali",
-        "salary": "Salary",
-        "otherExpenses": "Other Expenses"
+    "production": {
+        "title": "Production",
+        "description": "Track daily production output by commodity",
+        "addEntry": "Add Production Entry",
+        "editEntry": "Edit Production Entry",
+        "deleteEntry": "Delete Production Entry",
+        "emptyMessage": "No production data found for the selected date range",
+        "itemNamePlaceholder": "e.g. Rice",
+        "itemTypePlaceholder": "e.g. Basmati",
+        "warehousePlaceholder": "Enter warehouse name/ID",
+        "stackPlaceholder": "Optional stack ID",
+        "remarksPlaceholder": "Optional remarks",
+        "adding": "Adding entry...",
+        "updating": "Updating entry...",
+        "deleting": "Deleting entry...",
+        "addedSuccess": "Entry added successfully",
+        "updatedSuccess": "Entry updated successfully",
+        "deletedSuccess": "Entry deleted successfully",
+        "addFailed": "Failed to add entry",
+        "updateFailed": "Failed to update entry",
+        "deleteFailed": "Failed to delete entry",
+        "deleteTitle": "Delete Entry?",
+        "deleteDescription": "Are you sure you want to delete this entry for"
     },
-    "staff": {
-        "title": "Staff Directory",
-        "subtitle": "Manage staff accounts, roles, and attendance.",
-        "allStaff": "All Staff",
-        "activeStaff": "Active",
-        "inactiveStaff": "Inactive",
-        "addStaff": "Add Staff",
-        "editStaff": "Edit Staff",
-        "deleteStaff": "Delete Staff",
-        "addNewStaff": "Add New Staff",
-        "updateStaff": "Update the staff member here.",
-        "createStaff": "Create new staff member here.",
-        "clickSave": "Click save when you're done.",
-        "searchByName": "Search by name...",
-        "failedToLoad": "Failed to load staff data",
-        "firstName": "First Name",
-        "lastName": "Last Name",
-        "fullName": "Full Name",
-        "email": "Email",
-        "phoneNumber": "Phone Number",
-        "role": "Role",
-        "password": "Password",
-        "confirmPassword": "Confirm Password",
-        "roles": {
-            "manager": "Manager",
-            "supervisor": "Supervisor",
-            "operator": "Operator",
-            "accountant": "Accountant"
-        },
-        "statuses": {
-            "active": "Active",
-            "inactive": "Inactive",
-            "suspended": "Suspended"
-        },
-        "validation": {
-            "firstNameRequired": "First Name is required.",
-            "lastNameRequired": "Last Name is required.",
-            "emailRequired": "Email is required.",
-            "phoneRequired": "Phone number is required.",
-            "roleRequired": "Role is required.",
-            "passwordRequired": "Password is required.",
-            "passwordMinLength": "Password must be at least 8 characters long.",
-            "passwordLowercase": "Password must contain at least one lowercase letter.",
-            "passwordNumber": "Password must contain at least one number.",
-            "passwordMismatch": "Passwords don't match."
-        },
-        "table": {
-            "fullName": "Full Name",
-            "email": "Email",
-            "phoneNumber": "Phone Number",
-            "status": "Status",
-            "post": "Post",
-            "salary": "Salary",
-            "address": "Address",
-            "todaysAttendance": "Today",
-            "monthCount": "Month Count",
-            "actions": "Actions"
-        }
-    },
-    "settings": {
-        "title": "Settings",
-        "subtitle": "Manage your account and preferences.",
-        "profile": "Profile",
-        "profileDesc": "This is how others will see you on the site.",
-        "appearance": "Appearance",
-        "appearanceDesc": "Customize the appearance of the app. Automatically switch between day and night themes.",
-        "language": "Language",
-        "languageDesc": "Select your preferred language for the interface.",
-        "english": "English",
-        "hindi": "Hindi",
-        "selectLanguage": "Select Language",
-        "font": "Font",
-        "fontDesc": "Set the font you want to use in the dashboard.",
-        "theme": "Theme",
-        "themeDesc": "Select the theme for the dashboard.",
-        "light": "Light",
-        "dark": "Dark",
-        "system": "System",
-        "updatePreferences": "Update preferences"
-    },
-    "reports": {
-        "purchaseReports": {
-            "title": "Purchase Reports",
-            "paddy": {
-                "title": "Paddy Purchase Report",
-                "subtitle": "Manage paddy purchase transactions and records",
-                "failedToLoad": "Failed to load paddy purchase data. Please try again later."
-            },
-            "rice": {
-                "title": "Rice Purchase Report",
-                "subtitle": "Manage rice purchase transactions and records",
-                "failedToLoad": "Failed to load rice purchase data. Please try again later."
-            },
-            "frk": {
-                "title": "FRK Purchase Report",
-                "subtitle": "Manage FRK purchase transactions and records",
-                "failedToLoad": "Failed to load FRK purchase data. Please try again later."
-            },
-            "gunny": {
-                "title": "Gunny Purchase Report",
-                "subtitle": "Manage gunny purchase transactions and records",
-                "failedToLoad": "Failed to load gunny purchase data. Please try again later."
-            },
-            "other": {
-                "title": "Other Purchase Report",
-                "subtitle": "Manage other purchase transactions and records",
-                "failedToLoad": "Failed to load other purchase data. Please try again later."
-            }
-        },
-        "salesReports": {
-            "title": "Sales Reports",
-            "rice": {
-                "title": "Rice Sales Report",
-                "subtitle": "Manage rice sales transactions and records",
-                "failedToLoad": "Failed to load rice sales data. Please try again later."
-            },
-            "paddy": {
-                "title": "Paddy Sales Report",
-                "subtitle": "Manage paddy sales transactions and records",
-                "failedToLoad": "Failed to load paddy sales data. Please try again later."
-            },
-            "gunny": {
-                "title": "Gunny Sales Report",
-                "subtitle": "Manage gunny sales transactions and records",
-                "failedToLoad": "Failed to load gunny sales data. Please try again later."
-            },
-            "khanda": {
-                "title": "Khanda Sales Report",
-                "subtitle": "Manage khanda sales transactions and records",
-                "failedToLoad": "Failed to load khanda sales data. Please try again later."
-            },
-            "nakkhi": {
-                "title": "Nakkhi Sales Report",
-                "subtitle": "Manage nakkhi sales transactions and records",
-                "failedToLoad": "Failed to load nakkhi sales data. Please try again later."
-            },
-            "other": {
-                "title": "Other Sales Report",
-                "subtitle": "Manage other sales transactions and records",
-                "failedToLoad": "Failed to load other sales data. Please try again later."
-            }
-        },
-        "inwardReports": {
-            "title": "Inward Reports",
-            "govtPaddy": {
-                "title": "Govt Paddy Inward Report",
-                "subtitle": "Manage paddy inward transactions and records",
-                "failedToLoad": "Failed to load govt paddy inward data. Please try again later."
-            },
-            "privatePaddy": {
-                "title": "Private Paddy Inward Report",
-                "subtitle": "Manage private paddy inward transactions and records",
-                "failedToLoad": "Failed to load private paddy inward data. Please try again later."
-            },
-            "rice": {
-                "title": "Rice Inward Report",
-                "subtitle": "Manage rice inward transactions and records",
-                "failedToLoad": "Failed to load rice inward data. Please try again later."
-            },
-            "frk": {
-                "title": "FRK Inward Report",
-                "subtitle": "Manage FRK inward transactions and records",
-                "failedToLoad": "Failed to load FRK inward data. Please try again later."
-            },
-            "gunny": {
-                "title": "Gunny Inward Report",
-                "subtitle": "Manage gunny inward transactions and records",
-                "failedToLoad": "Failed to load gunny inward data. Please try again later."
-            },
-            "other": {
-                "title": "Other Inward Report",
-                "subtitle": "Manage other inward transactions and records",
-                "failedToLoad": "Failed to load other inward data. Please try again later."
-            }
-        },
-        "outwardReports": {
-            "title": "Outward Reports",
-            "govtRice": {
-                "title": "Govt Rice Outward Report",
-                "subtitle": "Manage govt rice outward transactions and records",
-                "failedToLoad": "Failed to load govt rice outward data. Please try again later."
-            },
-            "privateRice": {
-                "title": "Private Rice Outward Report",
-                "subtitle": "Manage private rice outward transactions and records",
-                "failedToLoad": "Failed to load private rice outward data. Please try again later."
-            },
-            "privatePaddy": {
-                "title": "Private Paddy Outward Report",
-                "subtitle": "Manage private paddy outward transactions and records",
-                "failedToLoad": "Failed to load private paddy outward data. Please try again later."
-            },
-            "frk": {
-                "title": "FRK Outward Report",
-                "subtitle": "Manage FRK outward transactions and records",
-                "failedToLoad": "Failed to load FRK outward data. Please try again later."
-            },
-            "gunny": {
-                "title": "Gunny Outward Report",
-                "subtitle": "Manage gunny outward transactions and records",
-                "failedToLoad": "Failed to load gunny outward data. Please try again later."
-            },
-            "govtGunny": {
-                "title": "Govt Gunny Outward Report",
-                "subtitle": "Manage govt gunny outward transactions and records",
-                "failedToLoad": "Failed to load govt gunny outward data. Please try again later."
-            },
-            "privateGunny": {
-                "title": "Private Gunny Outward Report",
-                "subtitle": "Manage private gunny outward transactions and records",
-                "failedToLoad": "Failed to load private gunny outward data. Please try again later."
-            },
-            "bhusa": {
-                "title": "Bhusa Outward Report",
-                "subtitle": "Manage bhusa outward transactions and records",
-                "failedToLoad": "Failed to load bhusa outward data. Please try again later."
-            },
-            "khanda": {
-                "title": "Khanda Outward Report",
-                "subtitle": "Manage khanda outward transactions and records",
-                "failedToLoad": "Failed to load khanda outward data. Please try again later."
-            },
-            "nakkhi": {
-                "title": "Nakkhi Outward Report",
-                "subtitle": "Manage nakkhi outward transactions and records",
-                "failedToLoad": "Failed to load nakkhi outward data. Please try again later."
-            },
-            "kodha": {
-                "title": "Kodha Outward Report",
-                "subtitle": "Manage kodha outward transactions and records",
-                "failedToLoad": "Failed to load kodha outward data. Please try again later."
-            },
-            "silkyKodha": {
-                "title": "Silky Kodha Outward Report",
-                "subtitle": "Manage silky kodha outward transactions and records",
-                "failedToLoad": "Failed to load silky kodha outward data. Please try again later."
-            },
-            "other": {
-                "title": "Other Outward Report",
-                "subtitle": "Manage other outward transactions and records",
-                "failedToLoad": "Failed to load other outward data. Please try again later."
-            }
-        },
-        "millingReports": {
-            "title": "Milling Reports",
-            "paddy": {
-                "title": "Paddy Milling Report",
-                "subtitle": "Manage paddy milling records",
-                "failedToLoad": "Failed to load paddy milling data. Please try again later."
-            },
-            "rice": {
-                "title": "Rice Milling Report",
-                "subtitle": "Manage rice milling records",
-                "failedToLoad": "Failed to load rice milling data. Please try again later."
-            }
-        },
-        "labourCostReports": {
-            "title": "Labour Cost Reports",
-            "inward": {
-                "title": "Labour Inward Report",
-                "subtitle": "Manage labour inward cost records"
-            },
-            "outward": {
-                "title": "Labour Outward Report",
-                "subtitle": "Manage labour outward cost records"
-            },
-            "milling": {
-                "title": "Labour Milling Report",
-                "subtitle": "Manage labour milling cost records"
-            },
-            "other": {
-                "title": "Labour Other Report",
-                "subtitle": "Manage other labour cost records"
-            }
-        },
-        "inputReports": {
-            "title": "Input Reports",
-            "broker": {
-                "title": "Broker Report",
-                "subtitle": "Manage broker records"
-            },
-            "party": {
-                "title": "Party Report",
-                "subtitle": "Manage party records"
-            },
-            "committee": {
-                "title": "Committee Report",
-                "subtitle": "Manage committee records"
-            },
-            "do": {
-                "title": "DO Report",
-                "subtitle": "Manage DO records"
-            },
-            "labourGroup": {
-                "title": "Labour Group Report",
-                "subtitle": "Manage labour group records"
-            },
-            "transporter": {
-                "title": "Transporter Report",
-                "subtitle": "Manage transporter records"
-            },
-            "vehicle": {
-                "title": "Vehicle Report",
-                "subtitle": "Manage vehicle records"
-            },
-            "staff": {
-                "title": "Staff Report",
-                "subtitle": "Manage staff records"
-            }
-        },
-        "financialReports": {
-            "title": "Financial Transaction Reports",
-            "payment": {
-                "title": "Financial Payment Report",
-                "subtitle": "Manage financial payment records"
-            },
-            "receipt": {
-                "title": "Financial Receipt Report",
-                "subtitle": "Manage financial receipt records"
-            }
-        },
-        "transactionReports": {
-            "title": "Transaction Reports",
-            "broker": {
-                "title": "Broker Transaction Report",
-                "subtitle": "Manage broker transaction records"
-            },
-            "party": {
-                "title": "Party Transaction Report",
-                "subtitle": "Manage party transaction records"
-            }
-        },
-        "balanceLiftingReports": {
-            "title": "Balance Lifting Reports",
-            "purchasesPaddy": {
-                "title": "Paddy Purchase Report",
-                "subtitle": "Manage paddy purchase transactions and records"
-            },
-            "purchasesRice": {
-                "title": "Rice Purchase Report",
-                "subtitle": "Manage rice purchase transactions and records"
-            },
-            "purchasesFrk": {
-                "title": "FRK Purchase Report",
-                "subtitle": "Manage FRK purchase transactions and records"
-            },
-            "purchasesGunny": {
-                "title": "Gunny Purchase Report",
-                "subtitle": "Manage gunny purchase transactions and records"
-            },
-            "salesPaddy": {
-                "title": "Paddy Sales Report",
-                "subtitle": "Manage paddy sales transactions and records"
-            }
-        },
-        "outwardBalanceLiftingReports": {
-            "title": "Outward Balance Lifting Reports",
-            "rice": {
-                "title": "Outward Balance Lifting Rice",
-                "subtitle": "Manage rice outward balance lifting"
-            }
-        },
-        "stockReports": {
-            "title": "Stock Reports",
-            "overview": {
-                "title": "Stock Overview Report",
-                "subtitle": "View stock overview statistics and summaries",
-                "failedToLoad": "Failed to load stock overview data"
-            }
-        }
-    },
-    "tableColumns": {
-        "select": "Select",
-        "selectAll": "Select all",
-        "selectRow": "Select row",
-        "fullName": "Full Name",
-        "email": "Email",
-        "phoneNumber": "Phone Number",
-        "status": "Status",
-        "role": "Role",
-        "date": "Date",
-        "partyName": "Party Name",
-        "brokerName": "Broker Name",
-        "vehicleNumber": "Vehicle Number",
-        "truckNumber": "Truck Number",
-        "bags": "Bags",
-        "weight": "Weight",
-        "weightQtl": "Weight (Qtl)",
-        "rate": "Rate",
-        "rateQtl": "Rate/Qtl",
-        "amount": "Amount",
-        "totalAmount": "Total Amount",
-        "remarks": "Remarks",
-        "actions": "Actions",
-        "createdAt": "Created At",
-        "updatedAt": "Updated At",
-        "doNumber": "DO Number",
-        "committeeName": "Committee Name",
-        "quantity": "Quantity",
-        "qtyQtl": "Qty (Qtl)",
-        "qtyType": "Qty Type",
-        "discount": "Discount %",
-        "gst": "GST %",
-        "brokerage": "Brokerage",
-        "brokerageQtl": "Brokerage/Qtl",
-        "deliveryType": "Delivery Type",
-        "newGunnyQty": "New Gunny Qty",
-        "newGunnyRate": "New Gunny Rate",
-        "oldGunnyQty": "Old Gunny Qty",
-        "oldGunnyRate": "Old Gunny Rate",
-        "plasticGunnyQty": "Plastic Gunny Qty",
-        "plasticGunnyRate": "Plastic Gunny Rate",
-        "gunnyNew": "Gunny New",
-        "gunnyOld": "Gunny Old",
-        "gunnyPlastic": "Gunny (Plastic)",
-        "juteWeight": "Jute Weight",
-        "plasticGunnyWeight": "Plastic Gunny Weight",
-        "gunnyWeight": "Gunny Weight",
-        "netWeight": "Net Weight",
-        "truckWeight": "Truck Weight",
-        "rstNo": "RST No",
-        "lotNo": "LOT No.",
-        "fciNan": "FCI/NAN",
-        "riceType": "Rice Type",
-        "paddyType": "Paddy Type",
-        "itemName": "Item Name",
-        "labourGroupName": "Labour Group Name",
-        "transporterName": "Transporter Name",
-        "staffName": "Staff Name",
-        "post": "Post",
-        "salary": "Salary",
-        "address": "Address",
-        "gstn": "GSTN",
-        "phone": "Phone",
-        "committeeType": "Committee Type",
-        "labourTeamName": "Labour Team Name",
-        "samitiSangrahan": "Samiti Sangrahan",
-        "dhanMota": "Dhan (Mota)",
-        "dhanPatla": "Dhan (Patla)",
-        "dhanSarna": "Dhan (Sarna)",
-        "total": "Total",
-        "balanceDo": "Balance DO",
-        "inwardType": "Inward Type",
-        "outwardType": "Outward Type",
-        "frkStatus": "FRK Status",
-        "gunnyOption": "Gunny Option",
-        "balanceInward": "Balance Inward",
-        "delivery": "Delivery",
-        "purchaseType": "Purchase Type",
-        "committee": "Committee",
-        "doQty": "DO Qty (Qtl)",
-        "totalQty": "Total Qty (Qtl)",
-        "saleType": "Sale Type",
-        "dhanMotaQty": "Dhan Mota Qty",
-        "dhanPatlaQty": "Dhan Patla Qty",
-        "dhanSarnaQty": "Dhan Sarna Qty",
-        "dhanType": "Dhan Type",
-        "gunnyType": "Gunny Type",
-        "lotOther": "Lot / Other",
-        "frkType": "FRK Type",
-        "frkRateQtl": "FRK Rate/Qtl",
-        "khandaQty": "Khanda Qty (Qtl)",
-        "khandaRate": "Khanda Rate",
-        "nakkhiQty": "Nakkhi Qty (Qtl)",
-        "nakkhiRate": "Nakkhi Rate",
-        "saleDealNumber": "Sale Deal Number",
-        "purchaseDealNumber": "Purchase Deal Number",
-        "oilPercent": "OIL %",
-        "gunnyDmNo": "Gunny DM No.",
-        "saleAutoNo": "Sale Auto No.",
-        "numberGunny": "Number of Gunny",
-        "numberGunnyBundle": "Number of Gunny Bundle",
-        "unloadingRate": "Unloading Rate",
-        "stackingRate": "Stacking Rate",
-        "loadingRate": "Loading Rate",
-        "dhulaiRate": "Dhulai Rate",
-        "labourType": "Labour Type",
-        "labourRate": "Labour Rate",
-        "workDetail": "Work Detail",
-        "totalPrice": "Total Price",
-        "hopperInGunny": "Hopper (In Gunny)",
-        "hopperInQuintal": "Hopper (In Quintal)",
-        "hopperRate": "Hopper Rate",
-        "labourGroup": "Labour Group",
-        "riceQty": "Rice Quantity (Qtl)",
-        "ricePercent": "Rice (%)",
-        "khandaPercent": "Khanda (%)",
-        "silkyKodhaQty": "Silky Kodha Quantity (Qtl)",
-        "paymentType": "Payment Type",
-        "paymentAmount": "Payment Amount",
-        "receivedAmount": "Received Amount",
-        "salesDealType": "Sales Deal Type",
-        "salesDealNumber": "Sales Deal Number",
-        "voucherNo": "Voucher No",
-        "mode": "Mode",
-        "buyerName": "Buyer Name",
-        "broker": "Broker",
-        "commodity": "Commodity",
-        "farmerName": "Farmer Name",
-        "shift": "Shift",
-        "paddyQtl": "Paddy (Qtl)",
-        "riceKg": "Rice (Kg)",
-        "branKg": "Bran (Kg)",
-        "item": "Item",
-        "variety": "Variety",
-        "warehouse": "Warehouse",
-        "weightKg": "Weight (Kg)",
-        "gatePass": "Gate Pass",
-        "partyPurpose": "Party / Purpose",
-        "frkQty": "FRK Quantity (in Qtl.)",
-        "frkRate": "FRK Rate",
-        "todaysAttendance": "Today",
-        "monthCount": "Month Count",
-        "purchaseDeal": "Purchase Deal",
-        "salesDeal": "Sales Deal",
-        "inward": "Inward",
-        "outward": "Outward",
-        "accountReceipt": "Account (Receipt)",
-        "accountPayment": "Account (Payment)",
-        "accountBrokerage": "Account (Brokerage)",
-        "receipt": "Receipt",
-        "payment": "Payment"
-    },
-    "buttons": {
-        "addNew": "Add New",
-        "export": "Export",
-        "import": "Import",
-        "refresh": "Refresh",
-        "print": "Print",
-        "download": "Download",
-        "uploadFile": "Upload File",
-        "selectFile": "Select File"
-    },
-    "dialog": {
-        "confirmDelete": "Are you sure you want to delete this item?",
-        "deleteWarning": "This action cannot be undone.",
-        "confirmAction": "Confirm Action",
-        "areYouSure": "Are you sure?"
-    },
-    "errors": {
-        "genericError": "Something went wrong",
-        "networkError": "Network error occurred",
-        "notFound": "Not found",
-        "unauthorized": "Unauthorized access",
-        "forbidden": "Access forbidden",
-        "serverError": "Server error"
+    "milling": {
+        "title": "Milling",
+        "description": "Track daily milling operations by commodity",
+        "addEntry": "Add Milling Entry",
+        "editEntry": "Edit Milling Entry",
+        "deleteEntry": "Delete Milling Entry",
+        "emptyMessage": "No milling data found for the selected date range",
+        "paddyTypePlaceholder": "e.g. Paddy (Grade A)",
+        "remarksPlaceholder": "Optional remarks",
+        "adding": "Adding record...",
+        "updating": "Updating record...",
+        "deleting": "Deleting record...",
+        "addedSuccess": "Record added successfully",
+        "updatedSuccess": "Record updated successfully",
+        "deletedSuccess": "Record deleted successfully",
+        "addFailed": "Failed to add record",
+        "updateFailed": "Failed to update record",
+        "deleteFailed": "Failed to delete record",
+        "deleteTitle": "Delete Entry?",
+        "deleteDescription": "Are you sure you want to delete this entry for"
     }
 }

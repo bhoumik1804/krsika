@@ -4,10 +4,12 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
+import {
+    useCreateRicePurchase,
+    useUpdateRicePurchase,
+} from '@/pages/mill-admin/purchase-reports/rice/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { useParams } from 'react-router'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     riceTypeOptions,
     deliveryTypeOptions,
@@ -94,6 +96,8 @@ export function BalanceLiftingPurchasesRiceActionDialog({
     )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+    const createMutation = useCreateRicePurchase(millId || '')
+    const updateMutation = useUpdateRicePurchase(millId || '')
 
     const form = useForm<BalanceLiftingPurchasesRice>({
         resolver: zodResolver(ricePurchaseSchema),
@@ -141,35 +145,41 @@ export function BalanceLiftingPurchasesRiceActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = (data: BalanceLiftingPurchasesRice) => {
-        // Sanitize data
+    const onSubmit = async (data: BalanceLiftingPurchasesRice) => {
         const submissionData = {
-            ...data,
+            date: data.date,
             partyName: data.partyName || undefined,
             brokerName: data.brokerName || undefined,
             deliveryType: data.deliveryType || undefined,
             lotOrOther: data.lotOrOther || undefined,
             fciOrNAN: data.fciOrNAN || undefined,
             riceType: data.riceType || undefined,
+            riceQty: data.riceQty,
+            riceRate: data.riceRate,
+            discountPercent: data.discountPercent,
+            brokeragePerQuintal: data.brokeragePerQuintal,
             gunnyType: data.gunnyType || undefined,
+            newGunnyRate: data.newGunnyRate,
+            oldGunnyRate: data.oldGunnyRate,
+            plasticGunnyRate: data.plasticGunnyRate,
             frkType: data.frkType || undefined,
+            frkRatePerQuintal: data.frkRatePerQuintal,
             lotNumber: data.lotNumber || undefined,
         }
-        console.log('Submitting:', submissionData)
-
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Rice purchase updated successfully'
-                    : 'Rice purchase added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update purchase'
-                : 'Failed to add purchase',
-        })
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({
+                    purchaseId: currentRow._id,
+                    data: submissionData,
+                })
+            } else {
+                await createMutation.mutateAsync(submissionData)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch {
+            // Error handled by mutation onError
+        }
     }
 
     return (

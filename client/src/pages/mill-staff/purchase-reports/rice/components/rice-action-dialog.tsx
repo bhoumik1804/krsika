@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -14,17 +13,9 @@ import {
     frkTypeOptions,
     gunnyTypeOptions,
 } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import {
-    Combobox,
-    ComboboxInput,
-    ComboboxContent,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxEmpty,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -42,6 +33,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -79,99 +71,28 @@ export function RiceActionDialog({
     const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    // Lazy loading state for party and broker
-    const [partyPage, setPartyPage] = useState(1)
-    const [brokerPage, setBrokerPage] = useState(1)
-    const [allParties, setAllParties] = useState<string[]>([])
-    const [allBrokers, setAllBrokers] = useState<string[]>([])
-    const [hasMoreParties, setHasMoreParties] = useState(true)
-    const [hasMoreBrokers, setHasMoreBrokers] = useState(true)
-    const [isLoadingMoreParties, setIsLoadingMoreParties] = useState(false)
-    const [isLoadingMoreBrokers, setIsLoadingMoreBrokers] = useState(false)
+    const party = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties.map((p: { partyName: string }) => p.partyName),
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName
+    )
 
-    // Dynamic limit: 10 for first page, 5 for subsequent pages
-    const partyLimit = partyPage === 1 ? 10 : 5
-    const brokerLimit = brokerPage === 1 ? 10 : 5
-
-    // Fetch party list from API with pagination
-    const { data: partyListData } = usePartyList({
-        millId: open ? millId : '',
-        page: partyPage,
-        limit: partyLimit,
-        sortBy: 'partyName',
-        sortOrder: 'asc',
-    })
-
-    // Fetch broker list from API with pagination
-    const { data: brokerListData } = useBrokerList({
-        millId: open ? millId : '',
-        page: brokerPage,
-        limit: brokerLimit,
-    })
-
-    // Extract party names from API response and accumulate
-    React.useEffect(() => {
-        if (partyListData?.parties) {
-            const newParties = partyListData.parties.map(
-                (party) => party.partyName
-            )
-            setAllParties((prev) =>
-                Array.from(new Set([...prev, ...newParties]))
-            )
-            setHasMoreParties(partyListData.parties.length === partyLimit)
-            setIsLoadingMoreParties(false)
-        }
-    }, [partyListData, partyLimit])
-
-    // Extract broker names from API response and accumulate
-    React.useEffect(() => {
-        if (brokerListData?.brokers) {
-            const newBrokers = brokerListData.brokers.map(
-                (broker) => broker.brokerName
-            )
-            setAllBrokers((prev) =>
-                Array.from(new Set([...prev, ...newBrokers]))
-            )
-            setHasMoreBrokers(brokerListData.brokers.length === brokerLimit)
-            setIsLoadingMoreBrokers(false)
-        }
-    }, [brokerListData, brokerLimit])
-
-    // Reset accumulated data when dialog opens
-    useEffect(() => {
-        if (open) {
-            setAllParties([])
-            setAllBrokers([])
-            setPartyPage(1)
-            setBrokerPage(1)
-            setHasMoreParties(true)
-            setHasMoreBrokers(true)
-        }
-    }, [open])
-
-    // Handle scroll for party list
-    const handlePartyScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        const target = e.currentTarget
-        const bottom =
-            target.scrollHeight - target.scrollTop <= target.clientHeight + 5
-
-        if (bottom && hasMoreParties && !isLoadingMoreParties) {
-            setIsLoadingMoreParties(true)
-            setPartyPage((prev) => prev + 1)
-        }
-    }
-
-    // Handle scroll for broker list
-    const handleBrokerScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        const target = e.currentTarget
-        const bottom =
-            target.scrollHeight - target.scrollTop <= target.clientHeight + 5
-
-        if (bottom && hasMoreBrokers && !isLoadingMoreBrokers) {
-            setIsLoadingMoreBrokers(true)
-            setBrokerPage((prev) => prev + 1)
-        }
-    }
+    const broker = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers.map((b: { brokerName: string }) => b.brokerName),
+        },
+        currentRow?.brokerName
+    )
 
     const form = useForm<RicePurchaseData>({
         resolver: zodResolver(ricePurchaseSchema),
@@ -242,9 +163,9 @@ export function RiceActionDialog({
 
     const onSubmit = async (data: RicePurchaseData) => {
         try {
-            if (isEditing && currentRow?.id) {
+            if (isEditing && currentRow?._id) {
                 await updateRicePurchase({
-                    purchaseId: currentRow.id,
+                    purchaseId: currentRow._id,
                     data,
                 })
             } else {
@@ -346,46 +267,15 @@ export function RiceActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Combobox
+                                                <PaginatedCombobox
                                                     value={field.value}
                                                     onValueChange={
                                                         field.onChange
                                                     }
-                                                    items={allParties}
-                                                >
-                                                    <ComboboxInput
-                                                        placeholder='Search party...'
-                                                        showClear
-                                                    />
-                                                    <ComboboxContent>
-                                                        <ComboboxList
-                                                            onScroll={
-                                                                handlePartyScroll
-                                                            }
-                                                        >
-                                                            <ComboboxCollection>
-                                                                {(party) => (
-                                                                    <ComboboxItem
-                                                                        value={
-                                                                            party
-                                                                        }
-                                                                    >
-                                                                        {party}
-                                                                    </ComboboxItem>
-                                                                )}
-                                                            </ComboboxCollection>
-                                                            <ComboboxEmpty>
-                                                                No parties found
-                                                            </ComboboxEmpty>
-                                                            {isLoadingMoreParties && (
-                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading
-                                                                    more...
-                                                                </div>
-                                                            )}
-                                                        </ComboboxList>
-                                                    </ComboboxContent>
-                                                </Combobox>
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -398,46 +288,15 @@ export function RiceActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Combobox
+                                                <PaginatedCombobox
                                                     value={field.value}
                                                     onValueChange={
                                                         field.onChange
                                                     }
-                                                    items={allBrokers}
-                                                >
-                                                    <ComboboxInput
-                                                        placeholder='Search broker...'
-                                                        showClear
-                                                    />
-                                                    <ComboboxContent>
-                                                        <ComboboxList
-                                                            onScroll={
-                                                                handleBrokerScroll
-                                                            }
-                                                        >
-                                                            <ComboboxCollection>
-                                                                {(broker) => (
-                                                                    <ComboboxItem
-                                                                        value={
-                                                                            broker
-                                                                        }
-                                                                    >
-                                                                        {broker}
-                                                                    </ComboboxItem>
-                                                                )}
-                                                            </ComboboxCollection>
-                                                            <ComboboxEmpty>
-                                                                No brokers found
-                                                            </ComboboxEmpty>
-                                                            {isLoadingMoreBrokers && (
-                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading
-                                                                    more...
-                                                                </div>
-                                                            )}
-                                                        </ComboboxList>
-                                                    </ComboboxContent>
-                                                </Combobox>
+                                                    paginatedList={broker}
+                                                    placeholder='Search broker...'
+                                                    emptyText='No brokers found'
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

@@ -1,14 +1,14 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { balanceLiftingSalesPaddy } from './balance-lifting-sales-paddy-provider'
+import { useBalanceLiftingSalesPaddy } from './balance-lifting-sales-paddy-provider'
 
 export function BalanceLiftingSalesPaddyPrimaryButtons() {
-    const { setOpen } = balanceLiftingSalesPaddy()
+    const { setOpen } = useBalanceLiftingSalesPaddy()
 
     return (
         <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
-            Add Record
+            Add Sale
         </Button>
     )
 }

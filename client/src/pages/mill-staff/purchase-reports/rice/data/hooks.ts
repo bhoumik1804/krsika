@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import type { RicePurchaseData } from './schema'
 import { ricePurchaseService } from './service'
+import type { RicePurchaseListResponse } from './types'
 
 // Query key factory for rice purchases
 const ricePurchaseQueryKeys = {
@@ -19,27 +20,19 @@ interface UseRicePurchaseListParams {
 }
 
 export const useRicePurchaseList = (params: UseRicePurchaseListParams) => {
-    const query = useQuery({
+    return useQuery<RicePurchaseListResponse, Error>({
         queryKey: ricePurchaseQueryKeys.list(params.millId, {
             page: params.page,
-            pageSize: params.pageSize,
+            limit: params.pageSize, // Map pageSize to limit for service
             search: params.search,
         }),
-        queryFn: () => ricePurchaseService.fetchRicePurchaseList(params),
+        queryFn: () =>
+            ricePurchaseService.fetchRicePurchaseList({
+                ...params,
+                limit: params.pageSize,
+            }),
         enabled: !!params.millId,
     })
-
-    return {
-        data: query.data?.data || [],
-        pagination: (query.data?.pagination as any) || {
-            page: params.page || 1,
-            pageSize: params.pageSize || 10,
-            total: 0,
-            totalPages: 0,
-        },
-        isLoading: query.isLoading,
-        isError: query.isError,
-    }
 }
 
 export const useCreateRicePurchase = (millId: string) => {

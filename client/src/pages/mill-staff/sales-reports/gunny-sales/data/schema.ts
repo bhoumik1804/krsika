@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const gunnySalesSchema = z.object({
     _id: z.string().optional(),
+    gunnySalesDealNumber: z.string().optional(),
     date: z.string().min(1, 'Date is required'),
     partyName: z.string().optional(),
     newGunnyQty: z.number().optional(),

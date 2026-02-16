@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,9 +6,7 @@ import { LongText } from '@/components/long-text'
 import { type MillingPaddy } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getMillingPaddyColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<MillingPaddy>[] => [
+export const millingPaddyColumns: ColumnDef<MillingPaddy>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,10 +39,7 @@ export const getMillingPaddyColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -61,10 +55,7 @@ export const getMillingPaddyColumns = (
     {
         accessorKey: 'paddyType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.paddyType')}
-            />
+            <DataTableColumnHeader column={column} title='Paddy Type' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -76,10 +67,7 @@ export const getMillingPaddyColumns = (
     {
         accessorKey: 'hopperInGunny',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.hopperInGunny')}
-            />
+            <DataTableColumnHeader column={column} title='Hopper (In Gunny)' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -92,7 +80,7 @@ export const getMillingPaddyColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('tableColumns.hopperInQuintal')}
+                title='Hopper (In Quintal)'
             />
         ),
         cell: ({ row }) => (
@@ -104,10 +92,7 @@ export const getMillingPaddyColumns = (
     {
         accessorKey: 'riceType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.riceType')}
-            />
+            <DataTableColumnHeader column={column} title='Rice Type' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-32'>{row.getValue('riceType')}</LongText>
@@ -118,7 +103,7 @@ export const getMillingPaddyColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('tableColumns.riceQty')}
+                title='Rice Quantity (Qtl)'
             />
         ),
         cell: ({ row }) => (
@@ -130,10 +115,7 @@ export const getMillingPaddyColumns = (
     {
         accessorKey: 'ricePercentage',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.ricePercent')}
-            />
+            <DataTableColumnHeader column={column} title='Rice (%)' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -146,7 +128,7 @@ export const getMillingPaddyColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('tableColumns.khandaQty')}
+                title='Khanda Quantity (Qtl)'
             />
         ),
         cell: ({ row }) => (
@@ -158,10 +140,7 @@ export const getMillingPaddyColumns = (
     {
         accessorKey: 'khandaPercentage',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.khandaPercent')}
-            />
+            <DataTableColumnHeader column={column} title='Khanda (%)' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>

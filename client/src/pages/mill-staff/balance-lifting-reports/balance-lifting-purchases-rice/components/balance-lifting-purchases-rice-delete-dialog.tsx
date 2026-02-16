@@ -1,5 +1,4 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useDeleteRicePurchase } from '@/pages/mill-admin/purchase-reports/rice/data/hooks'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -16,22 +15,25 @@ type BalanceLiftingPurchasesRiceDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
     currentRow: BalanceLiftingPurchasesRice | null
+    millId: string
 }
 
 export function BalanceLiftingPurchasesRiceDeleteDialog({
     open,
     onOpenChange,
     currentRow,
+    millId,
 }: BalanceLiftingPurchasesRiceDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting rice purchase...',
-            success: () => {
-                onOpenChange(false)
-                return 'Rice purchase deleted successfully'
-            },
-            error: 'Failed to delete purchase record',
-        })
+    const deleteMutation = useDeleteRicePurchase(millId)
+
+    const handleDelete = async () => {
+        if (!currentRow?._id) return
+        try {
+            await deleteMutation.mutateAsync(currentRow._id)
+            onOpenChange(false)
+        } catch {
+            // Error handled by mutation onError
+        }
     }
 
     return (
@@ -50,6 +52,7 @@ export function BalanceLiftingPurchasesRiceDeleteDialog({
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={deleteMutation.isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
                         Delete

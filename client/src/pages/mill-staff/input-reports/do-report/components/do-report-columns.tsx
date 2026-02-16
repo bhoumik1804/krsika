@@ -1,15 +1,12 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns/format'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type DoReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getDoReportColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<DoReportData>[] => [
+export const doReportColumns: ColumnDef<DoReportData>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,10 +39,7 @@ export const getDoReportColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -63,10 +57,7 @@ export const getDoReportColumns = (
     {
         accessorKey: 'samitiSangrahan',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.samitiSangrahan')}
-            />
+            <DataTableColumnHeader column={column} title='Samiti Sangrahan' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -78,24 +69,14 @@ export const getDoReportColumns = (
     {
         accessorKey: 'doNo',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.doNo')}
-            />
+            <DataTableColumnHeader column={column} title='DO No' />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm text-nowrap'>
-                {row.getValue('doNo')}
-            </div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('doNo')}</div>,
     },
     {
         accessorKey: 'dhanMota',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.dhanMota')}
-            />
+            <DataTableColumnHeader column={column} title='Dhan (Mota)' />
         ),
         cell: ({ row }) => {
             const value = row.getValue('dhanMota') as number | undefined
@@ -105,10 +86,7 @@ export const getDoReportColumns = (
     {
         accessorKey: 'dhanPatla',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.dhanPatla')}
-            />
+            <DataTableColumnHeader column={column} title='Dhan (Patla)' />
         ),
         cell: ({ row }) => {
             const value = row.getValue('dhanPatla') as number | undefined
@@ -118,10 +96,7 @@ export const getDoReportColumns = (
     {
         accessorKey: 'dhanSarna',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.dhanSarna')}
-            />
+            <DataTableColumnHeader column={column} title='Dhan (Sarna)' />
         ),
         cell: ({ row }) => {
             const value = row.getValue('dhanSarna') as number | undefined
@@ -131,14 +106,11 @@ export const getDoReportColumns = (
     {
         accessorKey: 'total',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.total')}
-            />
+            <DataTableColumnHeader column={column} title='Total' />
         ),
         cell: ({ row }) => {
             const total = row.getValue('total') as number | undefined
-            return <div className='text-right font-semibold'>{total}</div>
+            return <div className='text-right'>{total}</div>
         },
     },
     {

@@ -1,13 +1,10 @@
 import { format } from 'date-fns'
 import { ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { Checkbox } from '@/components/ui/checkbox'
 import { PaddySales } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getPaddySalesColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<PaddySales>[] => [
+export const paddySalesColumns: ColumnDef<PaddySales>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -34,35 +31,35 @@ export const getPaddySalesColumns = (
     },
     {
         accessorKey: 'date',
-        header: t('tableColumns.date'),
+        header: 'Date',
         cell: ({ row }) =>
             row.getValue('date')
-                ? format(new Date(row.getValue('date')), 'dd MMM yyyy')
+                ? format(new Date(row.getValue('date')), 'yyyy-MM-dd')
                 : '-',
     },
     {
         accessorKey: 'partyName',
-        header: t('tableColumns.partyName'),
+        header: 'Party Name',
         cell: ({ row }) => row.getValue('partyName') || '-',
     },
     {
         accessorKey: 'brokerName',
-        header: t('tableColumns.brokerName'),
+        header: 'Broker Name',
         cell: ({ row }) => row.getValue('brokerName') || '-',
     },
     {
         accessorKey: 'saleType',
-        header: t('tableColumns.saleType'),
+        header: 'Sale Type',
         cell: ({ row }) => row.getValue('saleType') || '-',
     },
     {
         accessorKey: 'doNumber',
-        header: t('tableColumns.doNumber'),
+        header: 'DO Number',
         cell: ({ row }) => row.getValue('doNumber') || '-',
     },
     {
         accessorKey: 'dhanMotaQty',
-        header: t('tableColumns.dhanMotaQty'),
+        header: 'Dhan Mota Qty',
         cell: ({ row }) => {
             const value = row.getValue('dhanMotaQty')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -70,7 +67,7 @@ export const getPaddySalesColumns = (
     },
     {
         accessorKey: 'dhanPatlaQty',
-        header: t('tableColumns.dhanPatlaQty'),
+        header: 'Dhan Patla Qty',
         cell: ({ row }) => {
             const value = row.getValue('dhanPatlaQty')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -78,7 +75,7 @@ export const getPaddySalesColumns = (
     },
     {
         accessorKey: 'dhanSarnaQty',
-        header: t('tableColumns.dhanSarnaQty'),
+        header: 'Dhan Sarna Qty',
         cell: ({ row }) => {
             const value = row.getValue('dhanSarnaQty')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -86,12 +83,12 @@ export const getPaddySalesColumns = (
     },
     {
         accessorKey: 'dhanType',
-        header: t('tableColumns.dhanType'),
+        header: 'Dhan Type',
         cell: ({ row }) => row.getValue('dhanType') || '-',
     },
     {
         accessorKey: 'dhanQty',
-        header: t('tableColumns.quantity'),
+        header: 'Quantity',
         cell: ({ row }) => {
             const value = row.getValue('dhanQty')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -99,7 +96,7 @@ export const getPaddySalesColumns = (
     },
     {
         accessorKey: 'paddyRatePerQuintal',
-        header: t('tableColumns.rate'),
+        header: 'Rate',
         cell: ({ row }) => {
             const value = row.getValue('paddyRatePerQuintal')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -107,12 +104,12 @@ export const getPaddySalesColumns = (
     },
     {
         accessorKey: 'deliveryType',
-        header: t('tableColumns.deliveryType'),
+        header: 'Delivery Type',
         cell: ({ row }) => row.getValue('deliveryType') || '-',
     },
     {
         accessorKey: 'discountPercent',
-        header: t('tableColumns.discount'),
+        header: 'Discount %',
         cell: ({ row }) => {
             const value = row.getValue('discountPercent')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -120,7 +117,7 @@ export const getPaddySalesColumns = (
     },
     {
         accessorKey: 'brokerage',
-        header: t('tableColumns.brokerage'),
+        header: 'Brokerage',
         cell: ({ row }) => {
             const value = row.getValue('brokerage')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -128,12 +125,12 @@ export const getPaddySalesColumns = (
     },
     {
         accessorKey: 'gunnyType',
-        header: t('tableColumns.gunnyType'),
+        header: 'Gunny Type',
         cell: ({ row }) => row.getValue('gunnyType') || '-',
     },
     {
         accessorKey: 'newGunnyRate',
-        header: t('tableColumns.newGunnyRate'),
+        header: 'New Gunny Rate',
         cell: ({ row }) => {
             const value = row.getValue('newGunnyRate')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -141,7 +138,7 @@ export const getPaddySalesColumns = (
     },
     {
         accessorKey: 'oldGunnyRate',
-        header: t('tableColumns.oldGunnyRate'),
+        header: 'Old Gunny Rate',
         cell: ({ row }) => {
             const value = row.getValue('oldGunnyRate')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -149,7 +146,7 @@ export const getPaddySalesColumns = (
     },
     {
         accessorKey: 'plasticGunnyRate',
-        header: t('tableColumns.plasticGunnyRate'),
+        header: 'Plastic Gunny Rate',
         cell: ({ row }) => {
             const value = row.getValue('plasticGunnyRate')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -157,7 +154,7 @@ export const getPaddySalesColumns = (
     },
     {
         id: 'actions',
-        header: t('tableColumns.actions'),
+        header: 'Actions',
         cell: ({ row }) => <DataTableRowActions row={row} />,
     },
 ]

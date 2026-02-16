@@ -1,15 +1,11 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
-// '
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BrokerTransaction } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getBrokerTransactionColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<BrokerTransaction>[] => [
+export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -26,7 +22,7 @@ export const getBrokerTransactionColumns = (
             />
         ),
         meta: {
-            className: cn('sticky start-0 z-10 rounded-tl-[inherit]'),
+            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
         },
         cell: ({ row }) => (
             <Checkbox
@@ -36,22 +32,20 @@ export const getBrokerTransactionColumns = (
                 className='translate-y-[2px]'
             />
         ),
+
         enableSorting: false,
         enableHiding: false,
     },
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.partyName')}
-            />
+            <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => <div>{row.getValue('partyName')}</div>,
         meta: {
             className: cn(
                 'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-                'ps-0.5 sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+                'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
             ),
         },
         enableHiding: false,
@@ -59,10 +53,7 @@ export const getBrokerTransactionColumns = (
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.brokerName')}
-            />
+            <DataTableColumnHeader column={column} title='Broker Name' />
         ),
         cell: ({ row }) => <div>{row.getValue('brokerName')}</div>,
         enableHiding: false,
@@ -70,70 +61,49 @@ export const getBrokerTransactionColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => <div>{row.getValue('date')}</div>,
     },
     {
         accessorKey: 'purchaseDeal',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.purchaseDeal')}
-            />
+            <DataTableColumnHeader column={column} title='Purchase Deal' />
         ),
         cell: ({ row }) => <div>{row.getValue('purchaseDeal')}</div>,
     },
     {
         accessorKey: 'salesDeal',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.salesDeal')}
-            />
+            <DataTableColumnHeader column={column} title='Sales Deal' />
         ),
         cell: ({ row }) => <div>{row.getValue('salesDeal')}</div>,
     },
     {
         accessorKey: 'inward',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.inward')}
-            />
+            <DataTableColumnHeader column={column} title='Inward' />
         ),
         cell: ({ row }) => <div>{row.getValue('inward')}</div>,
     },
     {
         accessorKey: 'outward',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.outward')}
-            />
+            <DataTableColumnHeader column={column} title='Outward' />
         ),
         cell: ({ row }) => <div>{row.getValue('outward')}</div>,
     },
     {
         accessorKey: 'accountReceipt',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.accountReceipt')}
-            />
+            <DataTableColumnHeader column={column} title='Account (Receipt)' />
         ),
         cell: ({ row }) => <div>{row.getValue('accountReceipt')}</div>,
     },
     {
         accessorKey: 'accountPayment',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.accountPayment')}
-            />
+            <DataTableColumnHeader column={column} title='Account (Payment)' />
         ),
         cell: ({ row }) => <div>{row.getValue('accountPayment')}</div>,
     },
@@ -142,7 +112,7 @@ export const getBrokerTransactionColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('tableColumns.accountBrokerage')}
+                title='Account (Brokerage)'
             />
         ),
         cell: ({ row }) => <div>{row.getValue('accountBrokerage')}</div>,
@@ -150,30 +120,21 @@ export const getBrokerTransactionColumns = (
     {
         accessorKey: 'receipt',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.receipt')}
-            />
+            <DataTableColumnHeader column={column} title='Receipt' />
         ),
         cell: ({ row }) => <div>{row.getValue('receipt')}</div>,
     },
     {
         accessorKey: 'payment',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.payment')}
-            />
+            <DataTableColumnHeader column={column} title='Payment' />
         ),
         cell: ({ row }) => <div>{row.getValue('payment')}</div>,
     },
     {
         accessorKey: 'brokerage',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.brokerage')}
-            />
+            <DataTableColumnHeader column={column} title='Brokerage' />
         ),
         cell: ({ row }) => <div>{row.getValue('brokerage')}</div>,
     },

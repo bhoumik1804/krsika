@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -26,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
 import { type PaymentEntry } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getPaymentColumns } from './payment-columns'
+import { paymentColumns as columns } from './payment-columns'
 
 type DataTableProps = {
     data: PaymentEntry[]
@@ -35,9 +34,6 @@ type DataTableProps = {
 }
 
 export function PaymentTable({ data, search, navigate }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getPaymentColumns(t), [t])
-
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

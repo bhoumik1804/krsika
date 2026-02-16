@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -22,6 +24,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -41,6 +44,19 @@ export function FrkOutwardActionDialog({
     onOpenChange,
 }: FrkOutwardActionDialogProps) {
     const { millId, currentRow } = useFrkOutward()
+    const party = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -63,41 +79,47 @@ export function FrkOutwardActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset({
-                date: format(new Date(), 'yyyy-MM-dd'),
-                partyName: '',
-                gunnyPlastic: 0,
-                plasticGunnyWeight: 0,
-                truckNo: '',
-                truckRst: '',
-                truckWeight: 0,
-                gunnyWeight: 0,
-                netWeight: 0,
-            })
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    partyName: '',
+                    gunnyPlastic: 0,
+                    plasticGunnyWeight: 0,
+                    truckNo: '',
+                    truckRst: '',
+                    truckWeight: 0,
+                    gunnyWeight: 0,
+                    netWeight: 0,
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
     const onSubmit = async (data: FrkOutward) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+            }
+
             if (isEditing && currentRow._id) {
-                const { _id, ...updatePayload } = data
+                const { _id, ...updatePayload } = submissionData
                 await updateMutation.mutateAsync({
                     millId,
                     id: currentRow._id,
                     payload: updatePayload,
                 })
             } else {
-                const { _id, ...createPayload } = data
+                const { _id, ...createPayload } = submissionData
                 await createMutation.mutateAsync({
                     millId,
                     payload: createPayload,
                 })
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             // Error is handled by the mutation hooks
         }
@@ -188,9 +210,12 @@ export function FrkOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter party name'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value || undefined}
+                                                onValueChange={field.onChange}
+                                                paginatedList={party}
+                                                placeholder='Search party...'
+                                                emptyText='No parties found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -258,6 +283,7 @@ export function FrkOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -274,6 +300,7 @@ export function FrkOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

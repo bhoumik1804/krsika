@@ -1,5 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -8,152 +8,148 @@ import { statusStyles } from '../data/data'
 import { type MillingEntry } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getMillingColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<MillingEntry>[] => [
-    {
-        id: 'select',
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && 'indeterminate')
-                }
-                onCheckedChange={(value) =>
-                    table.toggleAllPageRowsSelected(!!value)
-                }
-                aria-label='Select all'
-                className='translate-y-[2px]'
-            />
-        ),
-        meta: {
-            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
+export const useMillingColumns = (): ColumnDef<MillingEntry>[] => {
+    const { t } = useTranslation()
+
+    return [
+        {
+            id: 'select',
+            header: ({ table }) => (
+                <Checkbox
+                    checked={
+                        table.getIsAllPageRowsSelected() ||
+                        (table.getIsSomePageRowsSelected() && 'indeterminate')
+                    }
+                    onCheckedChange={(value) =>
+                        table.toggleAllPageRowsSelected(!!value)
+                    }
+                    aria-label={t('common.select')}
+                    className='translate-y-[2px]'
+                />
+            ),
+            meta: {
+                className: cn(
+                    'max-md:sticky start-0 z-10 rounded-tl-[inherit]'
+                ),
+            },
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label={t('common.selectRow')}
+                    className='translate-y-[2px]'
+                />
+            ),
+            enableSorting: false,
+            enableHiding: false,
         },
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label='Select row'
-                className='translate-y-[2px]'
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-    },
-    {
-        accessorKey: 'date',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
-        ),
-        cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
-        ),
-        meta: {
-            className: cn(
-                'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-                'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+        {
+            accessorKey: 'date',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('common.date')}
+                />
+            ),
+            cell: ({ row }) => (
+                <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            ),
+            meta: {
+                className: cn(
+                    'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
+                    'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+                ),
+            },
+            enableHiding: false,
+        },
+        {
+            accessorKey: 'shift',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('common.shift')}
+                />
+            ),
+            cell: ({ row }) => (
+                <div className='capitalize'>
+                    {t(
+                        `common.${(row.getValue('shift') as string).toLowerCase()}`
+                    )}
+                </div>
+            ),
+            filterFn: (row, id, value) => {
+                return value.includes(row.getValue(id))
+            },
+        },
+        {
+            accessorKey: 'paddyType',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('common.paddyType')}
+                />
+            ),
+            cell: ({ row }) => (
+                <div className='font-medium'>{row.getValue('paddyType')}</div>
             ),
         },
-        enableHiding: false,
-    },
-    {
-        accessorKey: 'shift',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.shift')}
-            />
-        ),
-        cell: ({ row }) => <div>{row.getValue('shift')}</div>,
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id))
-        },
-    },
-    {
-        accessorKey: 'paddyType',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.paddyType')}
-            />
-        ),
-        cell: ({ row }) => <div>{row.getValue('paddyType')}</div>,
-    },
-    {
-        accessorKey: 'paddyQuantity',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.paddyQtl')}
-            />
-        ),
-        cell: ({ row }) => (
-            <div className='text-right font-medium'>
-                {row.getValue('paddyQuantity')}
-            </div>
-        ),
-    },
-    {
-        accessorKey: 'riceYield',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.riceKg')}
-            />
-        ),
-        cell: ({ row }) => (
-            <div className='text-right text-emerald-600 dark:text-emerald-400'>
-                {(row.getValue('riceYield') as number).toLocaleString()}
-            </div>
-        ),
-    },
-    {
-        accessorKey: 'branYield',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.branKg')}
-            />
-        ),
-        cell: ({ row }) => (
-            <div className='text-right'>
-                {(row.getValue('branYield') as number).toLocaleString()}
-            </div>
-        ),
-    },
-    {
-        accessorKey: 'status',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.status')}
-            />
-        ),
-        cell: ({ row }) => {
-            const { status } = row.original
-            const badgeColor = statusStyles.get(status)
-            return (
-                <div className='flex space-x-2'>
-                    <Badge
-                        variant='outline'
-                        className={cn('capitalize', badgeColor)}
-                    >
-                        {row.getValue('status')}
-                    </Badge>
+        {
+            accessorKey: 'paddyQuantity',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('common.paddyQuantity')}
+                />
+            ),
+            cell: ({ row }) => (
+                <div className='text-right'>
+                    {row.getValue('paddyQuantity')}
                 </div>
-            )
+            ),
         },
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id))
+        {
+            accessorKey: 'riceYield',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('common.riceYield')}
+                />
+            ),
+            cell: ({ row }) => (
+                <div className='text-right'>{row.getValue('riceYield')}</div>
+            ),
         },
-        enableHiding: false,
-        enableSorting: false,
-    },
-    {
-        id: 'actions',
-        cell: DataTableRowActions,
-    },
-]
+        {
+            accessorKey: 'status',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('common.status')}
+                />
+            ),
+            cell: ({ row }) => {
+                const { status } = row.original
+                const badgeColor = statusStyles.get(status)
+                return (
+                    <div className='flex space-x-2'>
+                        <Badge
+                            variant='outline'
+                            className={cn('capitalize', badgeColor)}
+                        >
+                            {t(`common.${row.getValue('status')}`)}
+                        </Badge>
+                    </div>
+                )
+            },
+            filterFn: (row, id, value) => {
+                return value.includes(row.getValue(id))
+            },
+            enableHiding: false,
+            enableSorting: false,
+        },
+        {
+            id: 'actions',
+            cell: DataTableRowActions,
+        },
+    ]
+}

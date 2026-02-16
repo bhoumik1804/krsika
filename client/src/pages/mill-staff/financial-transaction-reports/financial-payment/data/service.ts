@@ -1,7 +1,6 @@
 /**
  * Financial Payment Service
  * API client for Financial Payment CRUD operations
- * Uses centralized axios instance with cookie-based auth
  */
 import apiClient, { type ApiResponse } from '@/lib/api-client'
 import type {
@@ -110,22 +109,4 @@ export const bulkDeleteFinancialPayment = async (
     await apiClient.delete(`${FINANCIAL_PAYMENT_ENDPOINT(millId)}/bulk`, {
         data: { ids },
     })
-}
-
-/**
- * Export financial payment entries to CSV/Excel
- */
-export const exportFinancialPayment = async (
-    millId: string,
-    params?: FinancialPaymentQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${FINANCIAL_PAYMENT_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
-    )
-    return response.data
 }

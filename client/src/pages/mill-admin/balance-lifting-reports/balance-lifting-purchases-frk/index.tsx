@@ -1,20 +1,43 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { BalanceLiftingPurchasesFrkDialogs } from './components/balance-lifting-purchases-frk-dialogs'
 import { BalanceLiftingPurchasesFrkPrimaryButtons } from './components/balance-lifting-purchases-frk-primary-buttons'
-import { BalanceLiftingPurchasesFrkProvider } from './components/balance-lifting-purchases-frk-provider'
+import {
+    BalanceLiftingPurchasesFrkProvider,
+    useBalanceLiftingPurchasesFrk,
+} from './components/balance-lifting-purchases-frk-provider'
 import { BalanceLiftingPurchasesFrkTable } from './components/balance-lifting-purchases-frk-table'
-import { balanceLiftingPurchasesFrkEntries } from './data/balance-lifting-purchases-frk-entries'
 
 export function BalanceLiftingPurchasesFrkReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+
+    // Extract query params from URL
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     // Convert URLSearchParams to record
@@ -32,7 +55,10 @@ export function BalanceLiftingPurchasesFrkReport() {
     }
 
     return (
-        <BalanceLiftingPurchasesFrkProvider>
+        <BalanceLiftingPurchasesFrkProvider
+            millId={millId || ''}
+            initialQueryParams={queryParams}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -57,14 +83,48 @@ export function BalanceLiftingPurchasesFrkReport() {
                     </div>
                     <BalanceLiftingPurchasesFrkPrimaryButtons />
                 </div>
-                <BalanceLiftingPurchasesFrkTable
-                    data={balanceLiftingPurchasesFrkEntries}
-                    search={search}
-                    navigate={navigate}
-                />
+                <BalanceLiftingPurchasesFrkContent navigate={navigate} />
             </Main>
 
             <BalanceLiftingPurchasesFrkDialogs />
         </BalanceLiftingPurchasesFrkProvider>
+    )
+}
+
+// Separate component to use context hook
+function BalanceLiftingPurchasesFrkContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const context = useBalanceLiftingPurchasesFrk()
+
+    if (context.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (context.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                Failed to load FRK purchase data. Please try again later.
+            </div>
+        )
+    }
+
+    return (
+        <BalanceLiftingPurchasesFrkTable
+            data={context.data}
+            pagination={context.pagination}
+            search={Object.fromEntries(
+                Object.entries(context.queryParams || {})
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => [key, String(value)])
+            )}
+            navigate={navigate}
+        />
     )
 }

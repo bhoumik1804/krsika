@@ -1,8 +1,6 @@
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import type { NavigateFn } from '@/hooks/use-table-url-state'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -18,7 +16,6 @@ import { useFrkOutwardList } from './data/hooks'
 import type { FrkOutwardQueryParams } from './data/types'
 
 function FrkOutwardContent() {
-    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -91,10 +88,10 @@ function FrkOutwardContent() {
             <div className='flex flex-wrap items-end justify-between gap-2'>
                 <div>
                     <h2 className='text-2xl font-bold tracking-tight'>
-                        {t('reports.outwardReports.frk.title')}
+                        FRK Outward Report
                     </h2>
                     <p className='text-muted-foreground'>
-                        {t('reports.outwardReports.frk.subtitle')}
+                        Manage FRK outward transactions and records
                     </p>
                 </div>
                 <FrkOutwardPrimaryButtons />
@@ -118,7 +115,6 @@ export function FrkOutwardReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
-                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown

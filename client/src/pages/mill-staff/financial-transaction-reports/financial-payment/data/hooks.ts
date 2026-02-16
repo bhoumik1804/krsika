@@ -1,26 +1,27 @@
-/**
- * Financial Payment Hooks
- * React Query hooks for Financial Payment data management
- */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+    useMutation,
+    useQuery,
+    useQueryClient,
+    type UseMutationResult,
+    type UseQueryResult,
+} from '@tanstack/react-query'
 import { toast } from 'sonner'
 import {
-    fetchFinancialPaymentList,
-    fetchFinancialPaymentById,
-    fetchFinancialPaymentSummary,
-    createFinancialPayment,
-    updateFinancialPayment,
-    deleteFinancialPayment,
     bulkDeleteFinancialPayment,
-    exportFinancialPayment,
+    createFinancialPayment,
+    deleteFinancialPayment,
+    fetchFinancialPaymentById,
+    fetchFinancialPaymentList,
+    fetchFinancialPaymentSummary,
+    updateFinancialPayment,
 } from './service'
 import type {
-    FinancialPaymentResponse,
-    FinancialPaymentListResponse,
-    FinancialPaymentSummaryResponse,
     CreateFinancialPaymentRequest,
-    UpdateFinancialPaymentRequest,
+    FinancialPaymentListResponse,
     FinancialPaymentQueryParams,
+    FinancialPaymentResponse,
+    FinancialPaymentSummaryResponse,
+    UpdateFinancialPaymentRequest,
 } from './types'
 
 // ==========================================
@@ -43,150 +44,139 @@ export const financialPaymentKeys = {
 }
 
 // ==========================================
-// Query Hooks
+// Hooks
 // ==========================================
 
 /**
- * Hook to fetch financial payment list with pagination and filters
+ * Hook to fetch financial payment list
  */
 export const useFinancialPaymentList = (
     millId: string,
-    params?: FinancialPaymentQueryParams,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<FinancialPaymentListResponse, Error>({
+    params?: FinancialPaymentQueryParams
+): UseQueryResult<FinancialPaymentListResponse, Error> => {
+    return useQuery({
         queryKey: financialPaymentKeys.list(millId, params),
         queryFn: () => fetchFinancialPaymentList(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        enabled: !!millId,
     })
 }
 
 /**
- * Hook to fetch a single financial payment entry
+ * Hook to fetch a single financial payment by ID
  */
-export const useFinancialPaymentDetail = (
+export const useFinancialPayment = (
     millId: string,
-    id: string,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<FinancialPaymentResponse, Error>({
+    id: string
+): UseQueryResult<FinancialPaymentResponse, Error> => {
+    return useQuery({
         queryKey: financialPaymentKeys.detail(millId, id),
         queryFn: () => fetchFinancialPaymentById(millId, id),
-        enabled: options?.enabled ?? (!!millId && !!id),
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        enabled: !!millId && !!id,
     })
 }
 
 /**
- * Hook to fetch financial payment summary/statistics
+ * Hook to fetch financial payment summary
  */
 export const useFinancialPaymentSummary = (
     millId: string,
-    params?: Pick<FinancialPaymentQueryParams, 'startDate' | 'endDate'>,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<FinancialPaymentSummaryResponse, Error>({
+    params?: Pick<FinancialPaymentQueryParams, 'startDate' | 'endDate'>
+): UseQueryResult<FinancialPaymentSummaryResponse, Error> => {
+    return useQuery({
         queryKey: financialPaymentKeys.summary(millId, params),
         queryFn: () => fetchFinancialPaymentSummary(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        enabled: !!millId,
     })
 }
 
-// ==========================================
-// Mutation Hooks
-// ==========================================
-
 /**
- * Hook to create a new financial payment entry
+ * Hook to create a new financial payment
  */
-export const useCreateFinancialPayment = (millId: string) => {
+export const useCreateFinancialPayment = (): UseMutationResult<
+    FinancialPaymentResponse,
+    Error,
+    { millId: string; data: CreateFinancialPaymentRequest }
+> => {
     const queryClient = useQueryClient()
 
-    return useMutation<
-        FinancialPaymentResponse,
-        Error,
-        CreateFinancialPaymentRequest
-    >({
-        mutationFn: (data) => createFinancialPayment(millId, data),
+    return useMutation({
+        mutationFn: ({ millId, data }) => createFinancialPayment(millId, data),
         onSuccess: () => {
-            // Invalidate and refetch list queries
             queryClient.invalidateQueries({
                 queryKey: financialPaymentKeys.lists(),
             })
-            // Invalidate summary as well
             queryClient.invalidateQueries({
                 queryKey: financialPaymentKeys.summaries(),
             })
-            toast.success('Financial payment entry created successfully')
+            toast.success('Financial payment created successfully')
         },
         onError: (error) => {
             toast.error(
-                error.message || 'Failed to create financial payment entry'
+                `Failed to create financial payment: ${error.message || 'Unknown error'}`
             )
         },
     })
 }
 
 /**
- * Hook to update an existing financial payment entry
+ * Hook to update existing financial payment
  */
-export const useUpdateFinancialPayment = (millId: string) => {
+export const useUpdateFinancialPayment = (): UseMutationResult<
+    FinancialPaymentResponse,
+    Error,
+    { millId: string; data: UpdateFinancialPaymentRequest }
+> => {
     const queryClient = useQueryClient()
 
-    return useMutation<
-        FinancialPaymentResponse,
-        Error,
-        UpdateFinancialPaymentRequest
-    >({
-        mutationFn: (data) => updateFinancialPayment(millId, data),
-        onSuccess: (data) => {
-            // Invalidate and refetch list queries
+    return useMutation({
+        mutationFn: ({ millId, data }) => updateFinancialPayment(millId, data),
+        onSuccess: (data, variables) => {
             queryClient.invalidateQueries({
                 queryKey: financialPaymentKeys.lists(),
             })
-            // Update the specific detail cache
-            queryClient.setQueryData(
-                financialPaymentKeys.detail(millId, data._id),
-                data
-            )
-            // Invalidate summary
+            queryClient.invalidateQueries({
+                queryKey: financialPaymentKeys.detail(
+                    variables.millId,
+                    data._id!
+                ),
+            })
             queryClient.invalidateQueries({
                 queryKey: financialPaymentKeys.summaries(),
             })
-            toast.success('Financial payment entry updated successfully')
+            toast.success('Financial payment updated successfully')
         },
         onError: (error) => {
             toast.error(
-                error.message || 'Failed to update financial payment entry'
+                `Failed to update financial payment: ${error.message || 'Unknown error'}`
             )
         },
     })
 }
 
 /**
- * Hook to delete a financial payment entry
+ * Hook to delete a financial payment
  */
-export const useDeleteFinancialPayment = (millId: string) => {
+export const useDeleteFinancialPayment = (): UseMutationResult<
+    void,
+    Error,
+    { millId: string; id: string }
+> => {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string>({
-        mutationFn: (id) => deleteFinancialPayment(millId, id),
+    return useMutation({
+        mutationFn: ({ millId, id }) => deleteFinancialPayment(millId, id),
         onSuccess: () => {
-            // Invalidate and refetch list queries
             queryClient.invalidateQueries({
                 queryKey: financialPaymentKeys.lists(),
             })
-            // Invalidate summary
             queryClient.invalidateQueries({
                 queryKey: financialPaymentKeys.summaries(),
             })
-            toast.success('Financial payment entry deleted successfully')
+            toast.success('Financial payment deleted successfully')
         },
         onError: (error) => {
             toast.error(
-                error.message || 'Failed to delete financial payment entry'
+                `Failed to delete financial payment: ${error.message || 'Unknown error'}`
             )
         },
     })
@@ -195,53 +185,29 @@ export const useDeleteFinancialPayment = (millId: string) => {
 /**
  * Hook to bulk delete financial payment entries
  */
-export const useBulkDeleteFinancialPayment = (millId: string) => {
+export const useBulkDeleteFinancialPayment = (): UseMutationResult<
+    void,
+    Error,
+    { millId: string; ids: string[] }
+> => {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string[]>({
-        mutationFn: (ids) => bulkDeleteFinancialPayment(millId, ids),
-        onSuccess: (_, ids) => {
-            // Invalidate and refetch list queries
+    return useMutation({
+        mutationFn: ({ millId, ids }) =>
+            bulkDeleteFinancialPayment(millId, ids),
+        onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: financialPaymentKeys.lists(),
             })
-            // Invalidate summary
             queryClient.invalidateQueries({
                 queryKey: financialPaymentKeys.summaries(),
             })
-            toast.success(`${ids.length} entries deleted successfully`)
+            toast.success('Selected financial payments deleted successfully')
         },
         onError: (error) => {
-            toast.error(error.message || 'Failed to delete entries')
-        },
-    })
-}
-
-/**
- * Hook to export financial payment entries
- */
-export const useExportFinancialPayment = (millId: string) => {
-    return useMutation<
-        Blob,
-        Error,
-        { params?: FinancialPaymentQueryParams; format?: 'csv' | 'xlsx' }
-    >({
-        mutationFn: ({ params, format }) =>
-            exportFinancialPayment(millId, params, format),
-        onSuccess: (blob, { format = 'csv' }) => {
-            // Create download link
-            const url = window.URL.createObjectURL(blob)
-            const a = document.createElement('a')
-            a.href = url
-            a.download = `financial-payment-${new Date().toISOString().split('T')[0]}.${format}`
-            document.body.appendChild(a)
-            a.click()
-            document.body.removeChild(a)
-            window.URL.revokeObjectURL(url)
-            toast.success('Export completed successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to export data')
+            toast.error(
+                `Failed to delete selected financial payments: ${error.message || 'Unknown error'}`
+            )
         },
     })
 }

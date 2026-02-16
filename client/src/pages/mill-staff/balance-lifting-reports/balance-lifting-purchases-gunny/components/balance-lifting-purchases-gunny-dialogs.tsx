@@ -1,9 +1,11 @@
 import { BalanceLiftingPurchasesGunnyActionDialog } from './balance-lifting-purchases-gunny-action-dialog'
 import { BalanceLiftingPurchasesGunnyDeleteDialog } from './balance-lifting-purchases-gunny-delete-dialog'
-import { balanceLiftingPurchasesGunny } from './balance-lifting-purchases-gunny-provider'
+import { useBalanceLiftingPurchasesGunny } from './balance-lifting-purchases-gunny-provider'
+import { BalanceLiftingPurchasesGunnyViewDialog } from './balance-lifting-purchases-gunny-view-dialog'
 
 export function BalanceLiftingPurchasesGunnyDialogs() {
-    const { open, setOpen, currentRow } = balanceLiftingPurchasesGunny()
+    const { open, setOpen, currentRow, millId } =
+        useBalanceLiftingPurchasesGunny()
 
     return (
         <>
@@ -14,12 +16,20 @@ export function BalanceLiftingPurchasesGunnyDialogs() {
                 }
                 currentRow={currentRow}
             />
+            <BalanceLiftingPurchasesGunnyViewDialog
+                open={open === 'view'}
+                onOpenChange={(isOpen: boolean) =>
+                    setOpen(isOpen ? 'view' : null)
+                }
+                currentRow={currentRow}
+            />
             <BalanceLiftingPurchasesGunnyDeleteDialog
                 open={open === 'delete'}
                 onOpenChange={(isOpen: boolean) =>
                     setOpen(isOpen ? 'delete' : null)
                 }
                 currentRow={currentRow}
+                millId={millId}
             />
         </>
     )

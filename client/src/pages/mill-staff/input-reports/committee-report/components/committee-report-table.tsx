@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,7 +23,7 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type CommitteeReportData } from '../data/schema'
-import { getCommitteeReportColumns } from './committee-report-columns'
+import { committeeReportColumns as columns } from './committee-report-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
@@ -49,8 +48,6 @@ export function CommitteeReportTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getCommitteeReportColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -75,7 +72,11 @@ export function CommitteeReportTable({
         },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'committeeName', searchKey: 'search', type: 'string' },
+            {
+                columnId: 'committeeName',
+                searchKey: 'committeeName',
+                type: 'string',
+            },
         ],
     })
 
@@ -90,6 +91,7 @@ export function CommitteeReportTable({
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
         pageCount: serverPagination?.totalPages ?? -1,
         manualPagination: !!serverPagination,
         enableRowSelection: true,
@@ -122,7 +124,7 @@ export function CommitteeReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='search'
+                searchKey='committeeName'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

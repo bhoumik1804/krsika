@@ -22,26 +22,34 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type BalanceLiftingPurchasesPaddy } from '../data/schema'
-import { DataTableBulkActions } from './data-table-bulk-actions'
 import { paddyColumns as columns } from './balance-lifting-purchases-paddy-columns'
+import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
     data: BalanceLiftingPurchasesPaddy[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: {
+        page: number
+        pageSize: number
+        total: number
+        totalPages: number
+    }
 }
 
-export function BalanceLiftingPurchasesPaddyTable({ data, search, navigate }: DataTableProps) {
-    // Local UI-only states
+export function BalanceLiftingPurchasesPaddyTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
 
-    // Synced with URL states
     const {
         columnFilters,
         onColumnFiltersChange,
@@ -51,11 +59,16 @@ export function BalanceLiftingPurchasesPaddyTable({ data, search, navigate }: Da
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'brokerName', searchKey: 'brokerName', type: 'string' },
         ],
     })
 
@@ -70,23 +83,28 @@ export function BalanceLiftingPurchasesPaddyTable({ data, search, navigate }: Da
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        getPaginationRowModel: getPaginationRowModel(),
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -99,13 +117,6 @@ export function BalanceLiftingPurchasesPaddyTable({ data, search, navigate }: Da
                 table={table}
                 searchPlaceholder='Filter purchases...'
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'brokerName',
-                        title: 'Broker Name',
-                        options: statuses,
-                    },
-                ]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

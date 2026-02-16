@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for MillingRice records
 export const millingRiceSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
     riceType: z.string().optional(),
     hopperInGunny: z.number().optional(),

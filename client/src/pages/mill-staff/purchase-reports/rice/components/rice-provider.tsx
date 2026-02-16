@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
+import { useRicePurchaseList } from '../data/hooks'
 import { type RicePurchaseData } from '../data/schema'
 
 type RiceDialogType = 'add' | 'edit' | 'delete'
@@ -25,9 +26,13 @@ type RiceContextType = {
     setQueryParams: React.Dispatch<React.SetStateAction<QueryParams>>
     pagination: {
         page: number
-        pageSize: number
+        limit: number
         total: number
         totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
     }
 }
 
@@ -37,15 +42,6 @@ interface RiceProviderProps {
     children: React.ReactNode
     millId: string
     initialQueryParams?: QueryParams
-    apiData?: RicePurchaseData[]
-    apiPagination?: {
-        page: number
-        pageSize: number
-        total: number
-        totalPages: number
-    }
-    isLoading?: boolean
-    isError?: boolean
 }
 
 const defaultQueryParams: QueryParams = {
@@ -60,29 +56,40 @@ export function RiceProvider({
     children,
     millId,
     initialQueryParams = defaultQueryParams,
-    apiData = [],
-    apiPagination = { page: 1, pageSize: 10, total: 0, totalPages: 0 },
-    isLoading = false,
-    isError = false,
 }: RiceProviderProps) {
     const [open, setOpen] = useDialogState<RiceDialogType>(null)
     const [currentRow, setCurrentRow] = useState<RicePurchaseData | null>(null)
     const [queryParams, setQueryParams] =
         useState<QueryParams>(initialQueryParams)
 
+    useEffect(() => {
+        setQueryParams(initialQueryParams)
+    }, [initialQueryParams])
+
+    const {
+        data: apiResponse,
+        isLoading,
+        isError,
+    } = useRicePurchaseList({
+        millId,
+        page: queryParams.page,
+        pageSize: queryParams.limit,
+        search: queryParams.search,
+    })
+
     const pagination = useMemo(
-        () => ({
-            page: apiPagination.page || 1,
-            pageSize: apiPagination.pageSize || 10,
-            total: apiPagination.total || 0,
-            totalPages: apiPagination.totalPages || 0,
-        }),
-        [
-            apiPagination.page,
-            apiPagination.pageSize,
-            apiPagination.total,
-            apiPagination.totalPages,
-        ]
+        () =>
+            apiResponse?.pagination || {
+                page: queryParams.page || 1,
+                limit: queryParams.limit || 10,
+                total: 0,
+                totalPages: 0,
+                hasPrevPage: false,
+                hasNextPage: false,
+                prevPage: null,
+                nextPage: null,
+            },
+        [apiResponse?.pagination, queryParams.page, queryParams.limit]
     )
 
     const contextValue = useMemo(
@@ -91,7 +98,7 @@ export function RiceProvider({
             setOpen,
             currentRow,
             setCurrentRow,
-            data: apiData,
+            data: apiResponse?.data || [],
             isLoading,
             isError,
             millId,
@@ -102,7 +109,7 @@ export function RiceProvider({
         [
             open,
             currentRow,
-            apiData,
+            apiResponse?.data,
             isLoading,
             isError,
             millId,

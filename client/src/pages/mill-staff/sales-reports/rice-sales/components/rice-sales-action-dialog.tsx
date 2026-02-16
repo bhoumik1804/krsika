@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useParams } from 'react-router'
 import {
     riceTypeOptions,
     deliveryTypeOptions,
@@ -11,6 +14,7 @@ import {
     gunnyTypeOptions,
     saleLotOrOtherOptions,
 } from '@/constants/sale-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -30,6 +34,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -44,7 +49,6 @@ import {
 } from '@/components/ui/select'
 import { useCreateRiceSales, useUpdateRiceSales } from '../data/hooks'
 import { riceSalesSchema, type RiceSales } from '../data/schema'
-import { useRiceSales } from './rice-sales-provider'
 
 type RiceSalesActionDialogProps = {
     open: boolean
@@ -57,11 +61,37 @@ export function RiceSalesActionDialog({
     onOpenChange,
     currentRow,
 }: RiceSalesActionDialogProps) {
-    const { millId } = useRiceSales()
+    const { millId } = useParams<{ millId: string }>()
+    const party = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName
+    )
+
+    const broker = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
+        currentRow?.brokerName
+    )
     const { mutateAsync: createRiceSales, isPending: isCreating } =
-        useCreateRiceSales(millId)
+        useCreateRiceSales(millId || '')
     const { mutateAsync: updateRiceSales, isPending: isUpdating } =
-        useUpdateRiceSales(millId)
+        useUpdateRiceSales(millId || '')
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -136,16 +166,21 @@ export function RiceSalesActionDialog({
 
     const onSubmit = async (data: RiceSales) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+                brokerName: data.brokerName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateRiceSales({
                     _id: currentRow._id,
-                    ...data,
+                    ...submissionData,
                 })
             } else {
-                await createRiceSales(data)
+                await createRiceSales(submissionData)
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             // Error handling is managed by mutation hooks (onSuccess/onError)
             console.error('Form submission error:', error)
@@ -241,9 +276,14 @@ export function RiceSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -257,9 +297,14 @@ export function RiceSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter broker name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={broker}
+                                                    placeholder='Search broker...'
+                                                    emptyText='No brokers found'
                                                 />
                                             </FormControl>
                                             <FormMessage />

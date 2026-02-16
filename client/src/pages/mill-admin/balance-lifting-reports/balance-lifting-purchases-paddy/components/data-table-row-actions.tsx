@@ -1,24 +1,21 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { type Row } from '@tanstack/react-table'
-import { Trash2, Wrench } from 'lucide-react'
+import { Row } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type BalanceLiftingPurchasesPaddy } from '../data/schema'
-import { balanceLiftingPurchasesPaddy } from './balance-lifting-purchases-paddy-provider'
+import { useBalanceLiftingPurchasesPaddy } from './balance-lifting-purchases-paddy-provider'
 
 type DataTableRowActionsProps = {
     row: Row<BalanceLiftingPurchasesPaddy>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = balanceLiftingPurchasesPaddy()
+    const { setOpen, setCurrentRow } = useBalanceLiftingPurchasesPaddy()
     return (
         <>
             <DropdownMenu modal={false}>
@@ -33,6 +30,14 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align='end' className='w-[160px]'>
                     <DropdownMenuItem
+                        onClick={() => {
+                            setCurrentRow(row.original)
+                            setOpen('view')
+                        }}
+                    >
+                        View Details
+                    </DropdownMenuItem>
+                    {/* <DropdownMenuItem
                         onClick={() => {
                             setCurrentRow(row.original)
                             setOpen('edit')
@@ -55,7 +60,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                         <DropdownMenuShortcut>
                             <Trash2 size={16} />
                         </DropdownMenuShortcut>
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                 </DropdownMenuContent>
             </DropdownMenu>
         </>

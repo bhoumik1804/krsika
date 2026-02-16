@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRicePurchaseList } from '@/pages/mill-admin/purchase-reports/rice/data/hooks'
+import type { RicePurchaseResponse } from '@/pages/mill-admin/purchase-reports/rice/data/types'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import {
@@ -10,6 +12,7 @@ import {
     gunnyTypeOptions,
     frkTypeOptions,
 } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -28,6 +31,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -44,6 +48,14 @@ import { useCreateRiceInward, useUpdateRiceInward } from '../data/hooks'
 import { riceInwardSchema, type RiceInward } from '../data/schema'
 import { riceInward } from './rice-inward-provider'
 
+// Wrapper to adapt useRicePurchaseList params for usePaginatedList
+const useRicePurchaseListCompat = (params: any) => {
+    return useRicePurchaseList({
+        ...params,
+        pageSize: params.limit,
+    })
+}
+
 type RiceInwardActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -58,6 +70,42 @@ export function RiceInwardActionDialog({
     const { millId } = riceInward()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    // Store raw purchase data for auto-fill lookup
+    const purchaseDataRef = useMemo(
+        () => ({ current: [] as RicePurchaseResponse[] }),
+        []
+    )
+
+    // Paginated rice purchase deal selection
+    const riceDeal = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useRicePurchaseListCompat,
+            extractItems: (data) => {
+                const purchases = data.data ?? []
+                // Store raw data for auto-fill lookup
+                purchaseDataRef.current = [
+                    ...purchaseDataRef.current.filter(
+                        (p) =>
+                            !purchases.some(
+                                (np) =>
+                                    np.ricePurchaseDealNumber ===
+                                    p.ricePurchaseDealNumber
+                            )
+                    ),
+                    ...purchases,
+                ]
+                // Correctly extract deal numbers
+                return purchases
+                    .map((p) => p.ricePurchaseDealNumber)
+                    .filter(Boolean) as string[]
+            },
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
+        },
+        currentRow?.ricePurchaseDealNumber || undefined
+    )
 
     const createMutation = useCreateRiceInward(millId)
     const updateMutation = useUpdateRiceInward(millId)
@@ -102,10 +150,55 @@ export function RiceInwardActionDialog({
         }
     }, [currentRow, getDefaultValues])
 
+    const handleDealSelect = (dealId: string) => {
+        form.setValue('ricePurchaseDealNumber', dealId)
+        const purchase = purchaseDataRef.current.find(
+            (p) => p.ricePurchaseDealNumber === dealId
+        )
+        if (purchase) {
+            if (purchase.partyName)
+                form.setValue('partyName', purchase.partyName)
+            if (purchase.brokerName)
+                form.setValue('brokerName', purchase.brokerName)
+            if (purchase.riceType) form.setValue('riceType', purchase.riceType)
+            if (purchase.lotOrOther) {
+                if (purchase.lotOrOther === 'LOT खरीदी') {
+                    form.setValue('inwardType', 'LOT खरीदी')
+                } else if (purchase.lotOrOther === 'अन्य खरीदी') {
+                    form.setValue('inwardType', 'चावल खरीदी')
+                }
+            }
+            if (purchase.frkType) form.setValue('frkOrNAN', purchase.frkType)
+            if (purchase.gunnyType)
+                form.setValue('gunnyOption', purchase.gunnyType)
+            if (purchase.lotNumber)
+                form.setValue('lotNumber', purchase.lotNumber)
+            if (purchase.riceQty)
+                form.setValue('balanceInward', purchase.riceQty)
+        }
+    }
+
     const onSubmit = (data: RiceInward) => {
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+            ricePurchaseDealNumber: data.ricePurchaseDealNumber || undefined,
+            riceType: data.riceType || undefined,
+            inwardType: data.inwardType || undefined,
+            lotNumber: data.lotNumber || undefined,
+            frkOrNAN: data.frkOrNAN || undefined,
+            gunnyOption: data.gunnyOption || undefined,
+            truckNumber: data.truckNumber || undefined,
+            rstNumber: data.rstNumber || undefined,
+        }
+
         if (isEditing && currentRow?._id) {
             updateMutation.mutate(
-                { id: currentRow._id, data: { ...data, _id: currentRow._id } },
+                {
+                    id: currentRow._id,
+                    data: { ...submissionData, _id: currentRow._id },
+                },
                 {
                     onSuccess: () => {
                         toast.success('Updated successfully')
@@ -118,7 +211,7 @@ export function RiceInwardActionDialog({
                 }
             )
         } else {
-            createMutation.mutate(data, {
+            createMutation.mutate(submissionData, {
                 onSuccess: () => {
                     toast.success('Added successfully')
                     onOpenChange(false)
@@ -219,11 +312,12 @@ export function RiceInwardActionDialog({
                                             Rice Purchase Deal Number
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                id='ricePurchaseDealNumber'
-                                                placeholder='Enter Deal Number'
-                                                {...field}
+                                            <PaginatedCombobox
                                                 value={field.value || ''}
+                                                onValueChange={handleDealSelect}
+                                                paginatedList={riceDeal}
+                                                placeholder='Search deal...'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -238,7 +332,6 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
                                             <Input
-                                                id='partyName'
                                                 placeholder='Enter Party Name'
                                                 {...field}
                                                 value={field.value || ''}
@@ -256,7 +349,6 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Broker Name</FormLabel>
                                         <FormControl>
                                             <Input
-                                                id='brokerName'
                                                 placeholder='Enter Broker Name'
                                                 {...field}
                                                 value={field.value || ''}
@@ -274,7 +366,7 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Inward Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            value={field.value || undefined}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -359,7 +451,7 @@ export function RiceInwardActionDialog({
                                         <FormLabel>FRK Status</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            value={field.value || undefined}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -393,7 +485,7 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Gunny Option</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            value={field.value || undefined}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -673,7 +765,7 @@ export function RiceInwardActionDialog({
                                         <FormLabel>Rice Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            value={field.value || undefined}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>

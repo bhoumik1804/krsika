@@ -1,30 +1,39 @@
-import React, { useState, useMemo, ReactNode } from 'react'
+import React, { useEffect, useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
-import { usePartyList, type PartyQueryParams } from '../data/hooks'
+import { usePartyList } from '../data/hooks'
 import { type PartyReportData } from '../data/schema'
 
 type PartyReportDialogType = 'add' | 'edit' | 'delete'
 
-export interface PartyReportContextType {
+interface QueryParams {
+    page: number
+    limit: number
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+}
+
+type PartyReportContextType = {
     open: PartyReportDialogType | null
     setOpen: (str: PartyReportDialogType | null) => void
     currentRow: PartyReportData | null
     setCurrentRow: React.Dispatch<React.SetStateAction<PartyReportData | null>>
-    // Data fetching
     data: PartyReportData[]
-    isLoading: boolean
-    isError: boolean
     pagination?: {
         page: number
         limit: number
         total: number
-        pages: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
     }
-    // Query params
-    queryParams?: PartyQueryParams
-    setQueryParams: (params: PartyQueryParams) => void
-    // Mill ID
+    isLoading: boolean
+    isError: boolean
     millId: string
+    queryParams: QueryParams
+    setQueryParams: React.Dispatch<React.SetStateAction<QueryParams>>
 }
 
 const PartyReportContext = React.createContext<PartyReportContextType | null>(
@@ -32,56 +41,60 @@ const PartyReportContext = React.createContext<PartyReportContextType | null>(
 )
 
 interface PartyReportProviderProps {
-    children: ReactNode
+    children: React.ReactNode
     millId: string
-    initialQueryParams?: PartyQueryParams
+    initialQueryParams?: QueryParams
+}
+
+const defaultQueryParams: QueryParams = {
+    page: 1,
+    limit: 10,
+    search: undefined,
+    sortBy: 'createdAt',
+    sortOrder: 'desc',
 }
 
 export function PartyReportProvider({
     children,
     millId,
-    initialQueryParams,
+    initialQueryParams = defaultQueryParams,
 }: PartyReportProviderProps) {
     const [open, setOpen] = useDialogState<PartyReportDialogType>(null)
     const [currentRow, setCurrentRow] = useState<PartyReportData | null>(null)
-    const [queryParams, setQueryParams] = useState<PartyQueryParams>(
-        initialQueryParams || { page: 1, limit: 10 }
-    )
+    const [queryParams, setQueryParams] =
+        useState<QueryParams>(initialQueryParams)
 
-    // Fetch parties data
-    const {
-        data: partyResponse,
-        isLoading,
-        isError,
-    } = usePartyList(millId, queryParams)
+    useEffect(() => {
+        setQueryParams(initialQueryParams)
+    }, [initialQueryParams])
 
-    // Extract parties data and pagination
-    const partiesData = useMemo(
-        () => partyResponse?.parties || [],
-        [partyResponse?.parties]
-    )
-
-    const pagination = useMemo(
-        () => partyResponse?.pagination,
-        [partyResponse?.pagination]
-    )
-
-    const contextValue: PartyReportContextType = {
-        open,
-        setOpen,
-        currentRow,
-        setCurrentRow,
-        data: partiesData,
-        isLoading,
-        isError,
-        pagination,
-        queryParams,
-        setQueryParams,
+    const { data, isLoading, isError } = usePartyList({
         millId,
-    }
+        page: queryParams.page,
+        limit: queryParams.limit,
+        search: queryParams.search,
+        sortBy: queryParams.sortBy,
+        sortOrder: queryParams.sortOrder,
+    })
 
     return (
-        <PartyReportContext value={contextValue}>{children}</PartyReportContext>
+        <PartyReportContext
+            value={{
+                open,
+                setOpen,
+                currentRow,
+                setCurrentRow,
+                data: data?.parties ?? [],
+                pagination: data?.pagination,
+                isLoading,
+                isError,
+                millId,
+                queryParams,
+                setQueryParams,
+            }}
+        >
+            {children}
+        </PartyReportContext>
     )
 }
 

@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -49,6 +50,7 @@ export function MillingActionDialog({
     onOpenChange,
     currentRow,
 }: MillingActionDialogProps) {
+    const { t } = useTranslation()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -82,19 +84,17 @@ export function MillingActionDialog({
 
     const onSubmit = () => {
         toast.promise(sleep(2000), {
-            loading: isEditing
-                ? 'Updating milling record...'
-                : 'Adding milling record...',
+            loading: isEditing ? t('milling.updating') : t('milling.adding'),
             success: () => {
                 onOpenChange(false)
                 form.reset()
                 return isEditing
-                    ? 'Milling record updated successfully'
-                    : 'Milling record added successfully'
+                    ? t('milling.updatedSuccess')
+                    : t('milling.addedSuccess')
             },
             error: isEditing
-                ? 'Failed to update milling record'
-                : 'Failed to add milling record',
+                ? t('milling.updateFailed')
+                : t('milling.addFailed'),
         })
     }
 
@@ -103,11 +103,12 @@ export function MillingActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Milling Entry
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('milling.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the daily milling
-                        production details
+                        {isEditing ? t('common.update') : t('common.add')}{' '}
+                        {t('milling.title')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -121,7 +122,9 @@ export function MillingActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t('common.date')}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -140,7 +143,9 @@ export function MillingActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickADate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -182,22 +187,28 @@ export function MillingActionDialog({
                                 name='shift'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Shift</FormLabel>
+                                        <FormLabel>
+                                            {t('common.shift')}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder='Select shift' />
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'common.select'
+                                                        )}
+                                                    />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
                                                 <SelectItem value='Day'>
-                                                    Day
+                                                    {t('common.day')}
                                                 </SelectItem>
                                                 <SelectItem value='Night'>
-                                                    Night
+                                                    {t('common.night')}
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -210,10 +221,14 @@ export function MillingActionDialog({
                                 name='paddyType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Paddy Type</FormLabel>
+                                        <FormLabel>
+                                            {t('common.paddyType')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='e.g. Paddy (Grade A)'
+                                                placeholder={t(
+                                                    'milling.paddyTypePlaceholder'
+                                                )}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -227,7 +242,7 @@ export function MillingActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Paddy Consumed (Qtl)
+                                            {t('common.paddyQuantity')}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -249,7 +264,9 @@ export function MillingActionDialog({
                                 name='riceYield'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rice Yield (Kg)</FormLabel>
+                                        <FormLabel>
+                                            {t('common.riceYield')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -270,7 +287,9 @@ export function MillingActionDialog({
                                 name='brokenYield'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Broken Rice (Kg)</FormLabel>
+                                        <FormLabel>
+                                            {t('common.brokenRice')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -291,7 +310,9 @@ export function MillingActionDialog({
                                 name='branYield'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Bran Yield (Kg)</FormLabel>
+                                        <FormLabel>
+                                            {t('common.branYield')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -312,7 +333,9 @@ export function MillingActionDialog({
                                 name='huskYield'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Husk Yield (Kg)</FormLabel>
+                                        <FormLabel>
+                                            {t('common.huskYield')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -333,28 +356,34 @@ export function MillingActionDialog({
                                 name='status'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Status</FormLabel>
+                                        <FormLabel>
+                                            {t('common.status')}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder='Select status' />
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'common.select'
+                                                        )}
+                                                    />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
                                                 <SelectItem value='scheduled'>
-                                                    Scheduled
+                                                    {t('common.scheduled')}
                                                 </SelectItem>
                                                 <SelectItem value='in-progress'>
-                                                    In Progress
+                                                    {t('common.in-progress')}
                                                 </SelectItem>
                                                 <SelectItem value='completed'>
-                                                    Completed
+                                                    {t('common.completed')}
                                                 </SelectItem>
                                                 <SelectItem value='halted'>
-                                                    Halted
+                                                    {t('common.halted')}
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -368,10 +397,12 @@ export function MillingActionDialog({
                             name='remarks'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Remarks</FormLabel>
+                                    <FormLabel>{t('common.remarks')}</FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder='Optional remarks'
+                                            placeholder={t(
+                                                'milling.remarksPlaceholder'
+                                            )}
                                             {...field}
                                         />
                                     </FormControl>
@@ -385,10 +416,13 @@ export function MillingActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Entry
+                                {isEditing
+                                    ? t('common.update')
+                                    : t('common.add')}{' '}
+                                {t('common.entry')}
                             </Button>
                         </DialogFooter>
                     </form>

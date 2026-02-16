@@ -30,9 +30,20 @@ type DataTableProps = {
     data: BalanceLiftingPurchasesRice[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: {
+        page: number
+        pageSize: number
+        total: number
+        totalPages: number
+    }
 }
 
-export function BalanceLiftingPurchasesRiceTable({ data, search, navigate }: DataTableProps) {
+export function BalanceLiftingPurchasesRiceTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -50,15 +61,16 @@ export function BalanceLiftingPurchasesRiceTable({ data, search, navigate }: Dat
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            {
-                columnId: 'purchaseType',
-                searchKey: 'purchaseType',
-                type: 'array',
-            },
         ],
     })
 
@@ -66,6 +78,9 @@ export function BalanceLiftingPurchasesRiceTable({ data, search, navigate }: Dat
     const table = useReactTable({
         data,
         columns,
+        getRowId: (row) => row._id || '',
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         state: {
             sorting,
             pagination,
@@ -79,17 +94,19 @@ export function BalanceLiftingPurchasesRiceTable({ data, search, navigate }: Dat
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        getPaginationRowModel: getPaginationRowModel(),
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -102,16 +119,6 @@ export function BalanceLiftingPurchasesRiceTable({ data, search, navigate }: Dat
                 table={table}
                 searchPlaceholder='Filter purchases...'
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'purchaseType',
-                        title: 'Purchase Type',
-                        options: [
-                            { value: 'LOT खरीदी', label: 'LOT खरीदी' },
-                            { value: 'चावल खरीदी', label: 'चावल खरीदी' },
-                        ],
-                    },
-                ]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

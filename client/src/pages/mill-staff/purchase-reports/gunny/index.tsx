@@ -1,8 +1,6 @@
-import { useMemo, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -14,11 +12,9 @@ import { GunnyDialogs } from './components/gunny-dialogs'
 import { GunnyPrimaryButtons } from './components/gunny-primary-buttons'
 import { GunnyProvider, useGunny } from './components/gunny-provider'
 import { GunnyTable } from './components/gunny-table'
-import { useGunnyPurchaseList } from './data/hooks'
 import type { GunnyPurchaseQueryParams } from './data/types'
 
 export function GunnyPurchaseReport() {
-    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -40,13 +36,6 @@ export function GunnyPurchaseReport() {
         }
     }, [searchParams])
 
-    // Call GET API here
-    const {
-        data: apiResponse,
-        isLoading,
-        isError,
-    } = useGunnyPurchaseList(millId || '', queryParams)
-
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     // Convert URLSearchParams to record
@@ -63,39 +52,11 @@ export function GunnyPurchaseReport() {
         }
     }
 
-    const handleQueryParamsChange = useCallback(
-        (params: GunnyPurchaseQueryParams) => {
-            const newParams: Record<string, string> = {
-                page: params.page?.toString() || '1',
-                limit: params.limit?.toString() || '10',
-            }
-            if (params.search) {
-                newParams.search = params.search
-            }
-            if (params.sortBy) {
-                newParams.sortBy = params.sortBy
-            }
-            if (params.sortOrder) {
-                newParams.sortOrder = params.sortOrder
-            }
-            setSearchParams(newParams, { replace: true })
-        },
-        [setSearchParams]
-    )
-
     return (
-        <GunnyProvider
-            millId={millId || ''}
-            initialQueryParams={queryParams}
-            apiData={apiResponse}
-            isLoading={isLoading}
-            isError={isError}
-            onQueryParamsChange={handleQueryParamsChange}
-        >
+        <GunnyProvider millId={millId || ''} initialQueryParams={queryParams}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
-                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -109,10 +70,10 @@ export function GunnyPurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('reports.purchaseReports.gunny.title')}
+                            Gunny Purchase Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('reports.purchaseReports.gunny.subtitle')}
+                            Manage gunny purchase transactions and records
                         </p>
                     </div>
                     <GunnyPrimaryButtons />
@@ -152,6 +113,7 @@ function GunnyPurchaseContent({
     return (
         <GunnyTable
             data={context.data}
+            pagination={context.pagination}
             search={Object.fromEntries(
                 Object.entries(context.queryParams || {})
                     .filter(([, value]) => value !== undefined)

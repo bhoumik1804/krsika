@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -10,7 +10,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,7 +23,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type GunnyPurchaseData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getGunnyColumns } from './gunny-columns'
+import { gunnyColumns as columns } from './gunny-columns'
 import { useGunny } from './gunny-provider'
 
 type DataTableProps = {
@@ -33,17 +32,26 @@ type DataTableProps = {
     navigate: NavigateFn
 }
 
-export function GunnyTable({ data, search, navigate }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getGunnyColumns(t), [t])
-
+export function GunnyTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps & {
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+    }
+}) {
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-    const { queryParams, setQueryParams, pagination } = useGunny()
+    const { queryParams, setQueryParams } = useGunny()
 
     // Pagination state from provider (server-side)
     const paginationState = {
@@ -90,6 +98,7 @@ export function GunnyTable({ data, search, navigate }: DataTableProps) {
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
         enableRowSelection: true,
         onPaginationChange: handlePaginationChange,
         onColumnFiltersChange,
@@ -101,8 +110,8 @@ export function GunnyTable({ data, search, navigate }: DataTableProps) {
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-        pageCount: pagination.totalPages,
-        manualPagination: true,
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
     })
 
     return (

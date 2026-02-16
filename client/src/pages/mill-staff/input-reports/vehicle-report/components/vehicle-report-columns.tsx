@@ -1,14 +1,11 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type VehicleReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getVehicleReportColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<VehicleReportData>[] => [
+export const vehicleReportColumns: ColumnDef<VehicleReportData>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -41,15 +38,10 @@ export const getVehicleReportColumns = (
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.truckNumber')}
-            />
+            <DataTableColumnHeader column={column} title='Truck Number' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 font-mono text-sm text-nowrap'>
-                {row.getValue('truckNo')}
-            </div>
+            <div className='text-nowrap'>{row.getValue('truckNo')}</div>
         ),
         meta: {
             className: cn(

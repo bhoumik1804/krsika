@@ -4,9 +4,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { useParams } from 'react-router'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -34,36 +31,46 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover'
 import {
+    useCreateBalanceLiftingFrkPurchase,
+    useUpdateBalanceLiftingFrkPurchase,
+} from '../data/hooks'
+import {
     frkPurchaseSchema,
     type BalanceLiftingPurchasesFrk,
 } from '../data/schema'
+import { useBalanceLiftingPurchasesFrk } from './balance-lifting-purchases-frk-provider'
 
 type BalanceLiftingPurchasesFrkActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: BalanceLiftingPurchasesFrk | null
 }
 
 export function BalanceLiftingPurchasesFrkActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: BalanceLiftingPurchasesFrkActionDialogProps) {
-    const { millId } = useParams<{ millId: string }>()
+    const { currentRow, millId } = useBalanceLiftingPurchasesFrk()
+    const { mutateAsync: createPurchase, isPending: isCreating } =
+        useCreateBalanceLiftingFrkPurchase(millId)
+    const { mutateAsync: updatePurchase, isPending: isUpdating } =
+        useUpdateBalanceLiftingFrkPurchase(millId)
+
     const party = usePaginatedList(
-        millId || '',
+        millId,
         open,
         {
             useListHook: usePartyList,
             extractItems: (data) =>
                 data.parties
-                    .map((c) => c.partyName)
+                    .map((c: { partyName: string }) => c.partyName)
                     .filter(Boolean) as string[],
             hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
         },
         currentRow?.partyName ?? undefined
     )
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
     const form = useForm<BalanceLiftingPurchasesFrk>({
@@ -81,31 +88,31 @@ export function BalanceLiftingPurchasesFrkActionDialog({
         if (currentRow) {
             form.reset(currentRow)
         } else {
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                partyName: '',
+                frkQty: undefined,
+                frkRate: undefined,
+                gst: undefined,
+            } as BalanceLiftingPurchasesFrk)
+        }
+    }, [currentRow, open, form])
+
+    const onSubmit = async (data: BalanceLiftingPurchasesFrk) => {
+        try {
+            if (isEditing) {
+                await updatePurchase({
+                    purchaseId: currentRow?._id || '',
+                    data,
+                })
+            } else {
+                await createPurchase(data)
+            }
+            onOpenChange(false)
             form.reset()
+        } catch (error) {
+            console.error('Error submitting form:', error)
         }
-    }, [currentRow, form])
-
-    const onSubmit = (data: BalanceLiftingPurchasesFrk) => {
-        // Sanitize data
-        const submissionData = {
-            ...data,
-            partyName: data.partyName || undefined,
-        }
-        console.log('Submitting:', submissionData)
-
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Purchase updated successfully'
-                    : 'Purchase added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update purchase'
-                : 'Failed to add purchase',
-        })
     }
 
     return (
@@ -220,7 +227,7 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Quantity (Qtl)
+                                                FRK Quantity (Qtl)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -253,7 +260,7 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Rate (per Qtl)
+                                                FRK Rate (per Qtl)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -319,11 +326,18 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Purchase
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

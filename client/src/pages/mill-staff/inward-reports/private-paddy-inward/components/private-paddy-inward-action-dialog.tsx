@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePaddyPurchaseList } from '@/pages/mill-admin/purchase-reports/paddy/data/hooks'
+import type { PaddyPurchaseResponse } from '@/pages/mill-admin/purchase-reports/paddy/data/types'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import {
@@ -9,6 +11,7 @@ import {
     paddyPurchaseTypeOptions,
     gunnyTypeOptions,
 } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -28,6 +31,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -50,6 +54,18 @@ import {
 } from '../data/schema'
 import { privatePaddyInward } from './private-paddy-inward-provider'
 
+// Wrapper to adapt usePaddyPurchaseList (millId, params) → ({ millId, ...params }) for usePaginatedList
+const usePaddyPurchaseListCompat = (params: {
+    millId: string
+    page?: number
+    limit?: number
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+}) => {
+    const { millId, ...rest } = params
+    return usePaddyPurchaseList(millId, rest)
+}
+
 type PrivatePaddyInwardActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -64,6 +80,38 @@ export function PrivatePaddyInwardActionDialog({
     const { millId } = privatePaddyInward()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    // Store raw purchase data for auto-fill lookup
+    const purchaseDataRef = useRef<PaddyPurchaseResponse[]>([])
+
+    // Paginated paddy purchase deal selection
+    const paddyDeal = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: usePaddyPurchaseListCompat,
+            extractItems: (data) => {
+                const purchases = data.data ?? []
+                // Store raw data for auto-fill lookup
+                purchaseDataRef.current = [
+                    ...purchaseDataRef.current.filter(
+                        (p) =>
+                            !purchases.some(
+                                (np) =>
+                                    np.paddyPurchaseDealNumber ===
+                                    p.paddyPurchaseDealNumber
+                            )
+                    ),
+                    ...purchases,
+                ]
+                return purchases
+                    .map((p) => p.paddyPurchaseDealNumber)
+                    .filter(Boolean) as string[]
+            },
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
+        },
+        currentRow?.paddyPurchaseDealNumber || undefined
+    )
 
     const createMutation = useCreatePrivatePaddyInward(millId)
     const updateMutation = useUpdatePrivatePaddyInward(millId)
@@ -103,6 +151,33 @@ export function PrivatePaddyInwardActionDialog({
         defaultValues: getDefaultValues,
     })
 
+    // Auto-fill handler when a paddy purchase deal is selected
+    const handleDealSelect = useCallback(
+        (dealId: string) => {
+            form.setValue('paddyPurchaseDealNumber', dealId)
+            const purchase = purchaseDataRef.current.find(
+                (p) => p.paddyPurchaseDealNumber === dealId
+            )
+            if (purchase) {
+                if (purchase.partyName)
+                    form.setValue('partyName', purchase.partyName)
+                if (purchase.brokerName)
+                    form.setValue('brokerName', purchase.brokerName)
+                if (purchase.purchaseType)
+                    form.setValue('purchaseType', purchase.purchaseType)
+                if (purchase.doNumber)
+                    form.setValue('doNumber', purchase.doNumber)
+                if (purchase.committeeName)
+                    form.setValue('committeeName', purchase.committeeName)
+                if (purchase.gunnyType)
+                    form.setValue('gunnyOption', purchase.gunnyType)
+                if (purchase.paddyType)
+                    form.setValue('paddyType', purchase.paddyType)
+            }
+        },
+        [form]
+    )
+
     useEffect(() => {
         if (currentRow) {
             form.reset(currentRow)
@@ -112,9 +187,23 @@ export function PrivatePaddyInwardActionDialog({
     }, [currentRow, form, getDefaultValues])
 
     const onSubmit = (data: PrivatePaddyInward) => {
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+            paddyPurchaseDealNumber: data.paddyPurchaseDealNumber || undefined,
+            purchaseType: data.purchaseType || undefined,
+            doNumber: data.doNumber || undefined,
+            committeeName: data.committeeName || undefined,
+            gunnyOption: data.gunnyOption || undefined,
+            truckNumber: data.truckNumber || undefined,
+            rstNumber: data.rstNumber || undefined,
+            paddyType: data.paddyType || undefined,
+        }
+
         if (isEditing && currentRow?._id) {
             updateMutation.mutate(
-                { id: currentRow._id, data },
+                { id: currentRow._id, data: submissionData },
                 {
                     onSuccess: () => {
                         toast.success('Updated successfully')
@@ -127,7 +216,7 @@ export function PrivatePaddyInwardActionDialog({
                 }
             )
         } else {
-            createMutation.mutate(data, {
+            createMutation.mutate(submissionData, {
                 onSuccess: () => {
                     toast.success('Added successfully')
                     onOpenChange(false)
@@ -228,9 +317,12 @@ export function PrivatePaddyInwardActionDialog({
                                             Paddy Purchase Deal Number
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter Deal ID'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value || ''}
+                                                onValueChange={handleDealSelect}
+                                                paginatedList={paddyDeal}
+                                                placeholder='Search deal...'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -247,6 +339,7 @@ export function PrivatePaddyInwardActionDialog({
                                             <Input
                                                 placeholder='Enter Party Name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -263,6 +356,7 @@ export function PrivatePaddyInwardActionDialog({
                                             <Input
                                                 placeholder='Enter Broker Name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -277,7 +371,7 @@ export function PrivatePaddyInwardActionDialog({
                                         <FormLabel>Purchase Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            value={field.value || undefined}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -314,6 +408,9 @@ export function PrivatePaddyInwardActionDialog({
                                                     <Input
                                                         placeholder='Enter DO Number'
                                                         {...field}
+                                                        value={
+                                                            field.value || ''
+                                                        }
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -332,6 +429,9 @@ export function PrivatePaddyInwardActionDialog({
                                                     <Input
                                                         placeholder='Enter Committee Name'
                                                         {...field}
+                                                        value={
+                                                            field.value || ''
+                                                        }
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -382,7 +482,7 @@ export function PrivatePaddyInwardActionDialog({
                                         <FormLabel>Gunny Option</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            value={field.value || undefined}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -585,6 +685,7 @@ export function PrivatePaddyInwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -601,6 +702,7 @@ export function PrivatePaddyInwardActionDialog({
                                             <Input
                                                 placeholder='Enter RST Number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -646,7 +748,7 @@ export function PrivatePaddyInwardActionDialog({
                                         <FormLabel>Paddy Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            value={field.value || undefined}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>

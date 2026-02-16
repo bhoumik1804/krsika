@@ -1,15 +1,10 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import '@/constants'
-import { cn } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import { DataTableColumnHeader } from '@/components/data-table'
-import { LongText } from '@/components/long-text'
-import { statusStyles } from '../data/data'
-import { type OutwardBalanceLiftingRice } from '../data/schema'
+import { DataTableColumnHeader } from '@/components/data-table/column-header'
+import { type PrivateRiceOutward } from '../data/types'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const outwardBalanceLiftingRiceColumns: ColumnDef<OutwardBalanceLiftingRice>[] =
+export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
     [
         {
             id: 'select',
@@ -26,11 +21,6 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<OutwardBalanceLiftingRi
                     className='translate-y-[2px]'
                 />
             ),
-            meta: {
-                className: cn(
-                    'max-md:sticky start-0 z-10 rounded-tl-[inherit]'
-                ),
-            },
             cell: ({ row }) => (
                 <Checkbox
                     checked={row.getIsSelected()}
@@ -43,111 +33,165 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<OutwardBalanceLiftingRi
             enableHiding: false,
         },
         {
+            accessorKey: 'riceSalesDealNumber',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title='Rice Sales Deal Number'
+                />
+            ),
+            cell: ({ row }) => {
+                return (
+                    <div className='w-[100px] font-medium'>
+                        {row.getValue('riceSalesDealNumber')}
+                    </div>
+                )
+            },
+        },
+        {
             accessorKey: 'date',
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title='Date' />
             ),
-            cell: ({ row }) => (
-                <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
-            ),
-            meta: {
-                className: cn(
-                    'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-                    'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
-                ),
+            cell: ({ row }) => {
+                const dateVal = row.getValue('date')
+                if (!dateVal) return '-'
+                const date = new Date(dateVal as string)
+                return (
+                    <div className='w-[80px]'>{date.toLocaleDateString()}</div>
+                )
             },
-            enableHiding: false,
         },
         {
             accessorKey: 'partyName',
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title='Party Name' />
             ),
-            cell: ({ row }) => (
-                <LongText className='max-w-36'>
-                    {row.getValue('partyName')}
-                </LongText>
-            ),
-            meta: { className: 'w-36' },
-        },
-        {
-            accessorKey: 'vehicleNumber',
-            header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='Vehicle Number' />
-            ),
-            cell: ({ row }) => (
-                <div className='font-mono text-sm text-nowrap'>
-                    {row.getValue('vehicleNumber')}
-                </div>
-            ),
-        },
-        {
-            accessorKey: 'bags',
-            header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='Bags' />
-            ),
-            cell: ({ row }) => (
-                <div className='text-right'>{row.getValue('bags')}</div>
-            ),
-        },
-        {
-            accessorKey: 'weight',
-            header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='Weight (Qtl)' />
-            ),
-            cell: ({ row }) => (
-                <div className='text-right'>
-                    {(row.getValue('weight') as number).toFixed(2)}
-                </div>
-            ),
-        },
-        {
-            accessorKey: 'rate',
-            header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='Rate/Qtl' />
-            ),
-            cell: ({ row }) => (
-                <div className='text-right'>{row.getValue('rate')}</div>
-            ),
-        },
-        {
-            accessorKey: 'amount',
-            header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='Total Amount' />
-            ),
-            cell: ({ row }) => (
-                <div className='text-right font-medium'>
-                    {row.getValue('amount')}
-                </div>
-            ),
-        },
-        {
-            accessorKey: 'status',
-            header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='Status' />
-            ),
             cell: ({ row }) => {
-                const { status } = row.original
-                const badgeColor = statusStyles.get(status)
                 return (
                     <div className='flex space-x-2'>
-                        <Badge
-                            variant='outline'
-                            className={cn('capitalize', badgeColor)}
-                        >
-                            {row.getValue('status')}
-                        </Badge>
+                        <span className='max-w-[500px] truncate font-medium'>
+                            {row.getValue('partyName') || '-'}
+                        </span>
                     </div>
                 )
             },
-            filterFn: (row, id, value) => {
-                return value.includes(row.getValue(id))
+        },
+        {
+            accessorKey: 'brokerName',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title='Broker Name' />
+            ),
+            cell: ({ row }) => {
+                return (
+                    <div className='flex space-x-2'>
+                        <span className='max-w-[500px] truncate font-medium'>
+                            {row.getValue('brokerName') || '-'}
+                        </span>
+                    </div>
+                )
             },
-            enableHiding: false,
-            enableSorting: false,
+        },
+        {
+            accessorKey: 'deliveryType',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title='Delivery' />
+            ),
+            cell: ({ row }) => {
+                return (
+                    <div className='w-[100px]'>
+                        {row.getValue('deliveryType') || '-'}
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: 'lotOrOther',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title='LOT/Other' />
+            ),
+            cell: ({ row }) => {
+                return (
+                    <div className='w-[80px]'>
+                        {row.getValue('lotOrOther') || '-'}
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: 'fciOrNAN',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title='FCI/NAN' />
+            ),
+            cell: ({ row }) => {
+                return (
+                    <div className='w-[80px]'>
+                        {row.getValue('fciOrNAN') || '-'}
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: 'riceType',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title='Rice Type' />
+            ),
+            cell: ({ row }) => {
+                return (
+                    <div className='w-[100px] font-medium'>
+                        {row.getValue('riceType') || '-'}
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: 'riceQty',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title='RiceQuantity' />
+            ),
+            cell: ({ row }) => {
+                const val = (row.getValue('riceQty') as number) || 0
+                return <div>{val}</div>
+            },
+        },
+        {
+            id: 'outward',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title='Outward / LOT Deposit'
+                />
+            ),
+            cell: ({ row }) => {
+                const outwardData = row.original.outwardData || []
+                const totalOutward = outwardData.reduce(
+                    (sum, entry) => sum + (entry.netWeight || 0),
+                    0
+                )
+                return <div>{totalOutward}</div>
+            },
+        },
+        {
+            id: 'balance',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title='Outward Balance'
+                />
+            ),
+            cell: ({ row }) => {
+                const qty = row.original.riceQty || 0
+                const outwardData = row.original.outwardData || []
+                const totalOutward = outwardData.reduce(
+                    (sum, entry) => sum + (entry.netWeight || 0),
+                    0
+                )
+                const balance = qty - totalOutward
+                return <div>{balance}</div>
+            },
         },
         {
             id: 'actions',
-            cell: DataTableRowActions,
+            cell: ({ row }) => <DataTableRowActions row={row} />,
         },
     ]

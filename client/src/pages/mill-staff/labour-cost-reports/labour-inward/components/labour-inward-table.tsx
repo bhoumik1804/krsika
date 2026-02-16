@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -26,31 +25,30 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { inwardTypes } from '../data/data'
 import { type LabourInward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getLabourInwardColumns } from './labour-inward-columns'
+import { labourInwardColumns as columns } from './labour-inward-columns'
 
 type DataTableProps = {
     data: LabourInward[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading?: boolean
-    isError?: boolean
-    totalPages?: number
-    totalItems?: number
-    totalRows?: number
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
 export function LabourInwardTable({
     data,
     search,
     navigate,
-    // isLoading,
-    // isError,
-    // totalPages,
-    // totalItems,
-    // totalRows,
+    pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getLabourInwardColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -66,7 +64,13 @@ export function LabourInwardTable({
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             {
@@ -89,6 +93,9 @@ export function LabourInwardTable({
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
@@ -104,8 +111,10 @@ export function LabourInwardTable({
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div

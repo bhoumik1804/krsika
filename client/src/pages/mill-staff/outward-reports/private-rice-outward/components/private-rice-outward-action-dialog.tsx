@@ -1,9 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRiceSalesList } from '@/pages/mill-admin/sales-reports/rice-sales/data/hooks'
+import type { RiceSalesResponse } from '@/pages/mill-admin/sales-reports/rice-sales/data/types'
 import { CalendarIcon } from 'lucide-react'
 import { fciOrNANOptions, riceTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -23,6 +26,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -36,13 +40,13 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import {
-    PrivateRiceOutwardSchema,
-    type PrivateRiceOutward,
-} from '../data/schema'
-import {
     useCreatePrivateRiceOutward,
     useUpdatePrivateRiceOutward,
 } from '../data/hooks'
+import {
+    PrivateRiceOutwardSchema,
+    type PrivateRiceOutward,
+} from '../data/schema'
 import { usePrivateRiceOutward } from './private-rice-outward-provider'
 
 type PrivateRiceOutwardActionDialogProps = {
@@ -59,6 +63,47 @@ export function PrivateRiceOutwardActionDialog({
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
     const { millId, setOpen: setDialogOpen } = usePrivateRiceOutward()
+    const riceSaleDataRef = useRef<RiceSalesResponse[]>([])
+
+    const useRiceSalesListCompat = (params: any) => {
+        return useRiceSalesList(
+            millId || '',
+            { ...params, pageSize: params.limit },
+            { enabled: open }
+        )
+    }
+
+    const riceSaleDeal = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: useRiceSalesListCompat,
+            extractItems: (data: any) => {
+                riceSaleDataRef.current = data.sales || [] // API returns 'sales' array
+                return data.sales
+                    .map((p: RiceSalesResponse) => p.riceSalesDealNumber)
+                    .filter(Boolean) as string[]
+            },
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
+        },
+        currentRow?.riceSaleDealNumber || undefined
+    )
+
+    const handleDealSelect = (dealId: string) => {
+        form.setValue('riceSaleDealNumber', dealId)
+        const sale = riceSaleDataRef.current.find(
+            (p) => p.riceSalesDealNumber === dealId
+        )
+        if (sale) {
+            if (sale.partyName) form.setValue('partyName', sale.partyName)
+            if (sale.brokerName) form.setValue('brokerName', sale.brokerName)
+            if (sale.riceType) form.setValue('riceType', sale.riceType)
+            if (sale.riceQty) form.setValue('riceQty', sale.riceQty)
+            if (sale.fciOrNAN) form.setValue('fciNan', sale.fciOrNAN)
+            if (sale.lotNumber) form.setValue('lotNo', sale.lotNumber)
+            // Gunny details auto-fill if needed, currently manual in Rice Sales vs specific breakdown here
+        }
+    }
     const createMutation = useCreatePrivateRiceOutward(millId)
     const updateMutation = useUpdatePrivateRiceOutward(millId)
 
@@ -117,17 +162,22 @@ export function PrivateRiceOutwardActionDialog({
 
     const onSubmit = async (data: PrivateRiceOutward) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+                brokerName: data.brokerName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateMutation.mutateAsync({
                     id: currentRow._id,
-                    data,
+                    data: submissionData,
                 })
             } else {
-                await createMutation.mutateAsync(data)
+                await createMutation.mutateAsync(submissionData)
             }
             setDialogOpen(null)
             onOpenChange(false)
-            form.reset()
         } catch {
             // Error is handled by mutation hooks
         }
@@ -223,9 +273,12 @@ export function PrivateRiceOutwardActionDialog({
                                             Rice Sale Deal Number
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='SALE-XXXX'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value || ''}
+                                                onValueChange={handleDealSelect}
+                                                paginatedList={riceSaleDeal}
+                                                placeholder='Search deal...'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -244,6 +297,7 @@ export function PrivateRiceOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter party name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -262,6 +316,7 @@ export function PrivateRiceOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter broker name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -280,6 +335,7 @@ export function PrivateRiceOutwardActionDialog({
                                             <Input
                                                 placeholder='LOT-1234'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -296,7 +352,7 @@ export function PrivateRiceOutwardActionDialog({
                                         <FormLabel>FCI/NAN</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            value={field.value}
+                                            value={field.value || ''}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -330,7 +386,7 @@ export function PrivateRiceOutwardActionDialog({
                                         <FormLabel>Rice Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            value={field.value}
+                                            value={field.value || ''}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -507,6 +563,7 @@ export function PrivateRiceOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -525,6 +582,7 @@ export function PrivateRiceOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-12345'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

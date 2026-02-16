@@ -1,31 +1,45 @@
 import { StaffReportActionDialog } from './staff-report-action-dialog'
 import { StaffReportDeleteDialog } from './staff-report-delete-dialog'
-import { staffReport } from './staff-report-provider'
+import { useStaffReport } from './staff-report-provider'
 
 export function StaffReportDialogs() {
-    const { open, setOpen, currentRow, setCurrentRow } = staffReport()
-
-    const handleDialogChange = (isOpen: boolean) => {
-        if (!isOpen) {
-            setCurrentRow(null)
-        }
-        setOpen(isOpen ? open : null)
-    }
+    const { open, setOpen, currentRow, setCurrentRow } = useStaffReport()
 
     return (
         <>
             <StaffReportActionDialog
-                open={open === 'add' || open === 'edit'}
-                onOpenChange={handleDialogChange}
-                currentRow={currentRow}
+                key='staff-add'
+                open={open === 'add'}
+                onOpenChange={() => setOpen('add')}
             />
-            <StaffReportDeleteDialog
-                open={open === 'delete'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? 'delete' : null)
-                }
-                currentRow={currentRow}
-            />
+
+            {currentRow && (
+                <>
+                    <StaffReportActionDialog
+                        key={`staff-edit-${currentRow._id}`}
+                        open={open === 'edit'}
+                        onOpenChange={() => {
+                            setOpen('edit')
+                            setTimeout(() => {
+                                setCurrentRow(null)
+                            }, 500)
+                        }}
+                        currentRow={currentRow}
+                    />
+
+                    <StaffReportDeleteDialog
+                        key={`staff-delete-${currentRow._id}`}
+                        open={open === 'delete'}
+                        onOpenChange={() => {
+                            setOpen('delete')
+                            setTimeout(() => {
+                                setCurrentRow(null)
+                            }, 500)
+                        }}
+                        currentRow={currentRow}
+                    />
+                </>
+            )}
         </>
     )
 }

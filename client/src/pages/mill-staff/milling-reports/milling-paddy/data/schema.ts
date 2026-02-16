@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for MillingPaddy records
 export const millingPaddySchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
     paddyType: z.string(),
     hopperInGunny: z.number().optional(),

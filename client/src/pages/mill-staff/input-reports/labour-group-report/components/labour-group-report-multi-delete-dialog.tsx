@@ -1,6 +1,5 @@
 import { type Table } from '@tanstack/react-table'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useParams } from 'react-router'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,6 +10,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeleteLabourGroup } from '../data/hooks'
+import { type LabourGroupReportData } from '../data/schema'
 
 type LabourGroupReportMultiDeleteDialogProps<TData> = {
     table: Table<TData>
@@ -23,18 +24,22 @@ export function LabourGroupReportMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: LabourGroupReportMultiDeleteDialogProps<TData>) {
+    const { millId } = useParams<{ millId: string }>()
+    const mutation = useBulkDeleteLabourGroup(millId || '')
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
-    const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                table.resetRowSelection()
-                onOpenChange(false)
-                return `Deleted ${selectedRows.length} record${selectedRows.length > 1 ? 's' : ''}`
-            },
-            error: 'Error deleting records',
-        })
+    const handleDeleteSelected = async () => {
+        const selectedIds = selectedRows.map(
+            (row) => (row.original as LabourGroupReportData)._id as string
+        )
+
+        try {
+            await mutation.mutateAsync(selectedIds)
+            table.resetRowSelection()
+            onOpenChange(false)
+        } catch (error) {
+            // Error handling is managed by the mutation hook
+        }
     }
 
     return (
@@ -52,12 +57,18 @@ export function LabourGroupReportMultiDeleteDialog<TData>({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={mutation.isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
-                        onClick={handleDeleteSelected}
+                        onClick={(e) => {
+                            e.preventDefault()
+                            handleDeleteSelected()
+                        }}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
+                        disabled={mutation.isPending}
                     >
-                        Delete
+                        {mutation.isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

@@ -67,10 +67,10 @@ export const createGunnyPurchase = async (
  */
 export const updateGunnyPurchase = async (
     millId: string,
-    { id, ...data }: UpdateGunnyPurchaseRequest
+    { _id, ...data }: UpdateGunnyPurchaseRequest
 ): Promise<GunnyPurchaseResponse> => {
     const response = await apiClient.put<ApiResponse<GunnyPurchaseResponse>>(
-        `${getGunnyEndpoint(millId)}/${id}`,
+        `${getGunnyEndpoint(millId)}/${_id}`,
         data
     )
     return response.data.data

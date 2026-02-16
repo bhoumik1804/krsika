@@ -11,14 +11,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type OtherSales } from '../data/schema'
-import { otherSales } from './other-sales-provider'
+import { useOtherSales } from './other-sales-provider'
 
 type DataTableRowActionsProps = {
     row: Row<OtherSales>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = otherSales()
+    const { setOpen, setCurrentRow } = useOtherSales()
     return (
         <>
             <DropdownMenu modal={false}>

@@ -1,6 +1,6 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
-import { Trash2, Wrench } from 'lucide-react'
+import { Eye, Trash2, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
@@ -11,14 +11,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type BalanceLiftingPurchasesRice } from '../data/schema'
-import { balanceLiftingPurchasesRice } from './balance-lifting-purchases-rice-provider'
+import { useBalanceLiftingPurchasesRice } from './balance-lifting-purchases-rice-provider'
 
 type DataTableRowActionsProps = {
     row: Row<BalanceLiftingPurchasesRice>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = balanceLiftingPurchasesRice()
+    const { setOpen, setCurrentRow } = useBalanceLiftingPurchasesRice()
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
@@ -31,6 +31,18 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' className='w-[160px]'>
+                <DropdownMenuItem
+                    onClick={() => {
+                        setCurrentRow(row.original)
+                        setOpen('view')
+                    }}
+                >
+                    View Details
+                    <DropdownMenuShortcut>
+                        <Eye size={16} />
+                    </DropdownMenuShortcut>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                     onClick={() => {
                         setCurrentRow(row.original)

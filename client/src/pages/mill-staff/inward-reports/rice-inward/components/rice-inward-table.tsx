@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type RiceInward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getRiceInwardColumns } from './rice-inward-columns'
+import { riceInwardColumns as columns } from './rice-inward-columns'
 
 type DataTableProps = {
     data: RiceInward[]
@@ -49,8 +48,6 @@ export function RiceInwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getRiceInwardColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

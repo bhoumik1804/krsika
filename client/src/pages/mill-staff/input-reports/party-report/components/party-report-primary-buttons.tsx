@@ -3,10 +3,15 @@ import { Button } from '@/components/ui/button'
 import { usePartyReport } from './party-report-provider'
 
 export function PartyReportPrimaryButtons() {
-    const { setOpen } = usePartyReport()
+    const { setOpen, setCurrentRow } = usePartyReport()
 
     return (
-        <Button onClick={() => setOpen('add')}>
+        <Button
+            onClick={() => {
+                setCurrentRow(null)
+                setOpen('add')
+            }}
+        >
             <Plus className='mr-2 size-4' />
             Add Record
         </Button>

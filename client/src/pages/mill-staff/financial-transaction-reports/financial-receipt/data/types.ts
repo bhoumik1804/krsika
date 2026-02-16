@@ -1,65 +1,9 @@
-/**
- * Financial Receipt Types
- * TypeScript type definitions for Financial Receipt module
- */
+import { type FinancialReceipt } from './schema'
 
-// ==========================================
-// Status Types
-// ==========================================
+export type FinancialReceiptResponse = FinancialReceipt
 
-export type ReceiptMode = 'Cash' | 'Bank' | 'Cheque' | 'UPI'
-
-export interface ReceiptModeOption {
-    label: string
-    value: ReceiptMode
-}
-
-// ==========================================
-// API Request Types
-// ==========================================
-
-export interface CreateFinancialReceiptRequest {
-    date: string
-    partyName: string
-    receiptMode?: ReceiptMode
-    bank?: string
-    amount: number
-    narration?: string
-    accountHead?: string
-}
-
-export interface UpdateFinancialReceiptRequest {
-    id: string
-    date?: string
-    partyName?: string
-    receiptMode?: ReceiptMode
-    bank?: string
-    amount?: number
-    narration?: string
-    accountHead?: string
-}
-
-// ==========================================
-// API Response Types
-// ==========================================
-
-export interface FinancialReceiptResponse {
-    _id: string
-    millId: string
-    date: string
-    partyName: string
-    receiptMode?: ReceiptMode
-    bank?: string
-    amount: number
-    narration?: string
-    accountHead?: string
-    createdBy: string
-    createdAt: string
-    updatedAt: string
-}
-
-export interface FinancialReceiptListResponse {
-    data: FinancialReceiptResponse[]
+export type FinancialReceiptListResponse = {
+    entries: FinancialReceipt[]
     pagination: {
         page: number
         limit: number
@@ -72,52 +16,24 @@ export interface FinancialReceiptListResponse {
     }
 }
 
-export interface FinancialReceiptSummaryResponse {
+export type FinancialReceiptSummaryResponse = {
     totalEntries: number
     totalAmount: number
-    receiptModeCounts: {
-        Cash: number
-        Bank: number
-        Cheque: number
-        UPI: number
-    }
 }
 
-// ==========================================
-// Query Parameters
-// ==========================================
+export type CreateFinancialReceiptRequest = Omit<FinancialReceipt, '_id'>
 
-export interface FinancialReceiptQueryParams {
+export type UpdateFinancialReceiptRequest = Partial<FinancialReceipt> & {
+    id: string
+}
+
+export type FinancialReceiptQueryParams = {
     page?: number
     limit?: number
     search?: string
-    receiptMode?: ReceiptMode
+    receiptType?: string
     startDate?: string
     endDate?: string
     sortBy?: string
     sortOrder?: 'asc' | 'desc'
-}
-
-// ==========================================
-// Form Types
-// ==========================================
-
-export interface FinancialReceiptFormData {
-    date: string
-    partyName: string
-    receiptMode?: ReceiptMode
-    bank?: string
-    amount: number
-    narration?: string
-    accountHead?: string
-}
-
-// ==========================================
-// Dialog State Types
-// ==========================================
-
-export interface FinancialReceiptDialogState {
-    open: 'create' | 'edit' | 'delete' | 'bulk-delete' | null
-    currentRow: FinancialReceiptResponse | null
-    selectedRows: FinancialReceiptResponse[]
 }

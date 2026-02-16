@@ -1,6 +1,5 @@
 import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -8,9 +7,7 @@ import { LongText } from '@/components/long-text'
 import { type PrivateGunnyOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getPrivateGunnyOutwardColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<PrivateGunnyOutward>[] => [
+export const PrivateGunnyOutwardColumns: ColumnDef<PrivateGunnyOutward>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -43,10 +40,7 @@ export const getPrivateGunnyOutwardColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => {
             const date = row.getValue('date')
@@ -65,26 +59,23 @@ export const getPrivateGunnyOutwardColumns = (
         enableHiding: false,
     },
     {
-        accessorKey: 'gunnyPurchaseDealNumber',
+        accessorKey: 'gunnySaleDealNumber',
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('tableColumns.purchaseDealNumber')}
+                title='Gunny Sale Deal Number'
             />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>
-                {row.getValue('gunnyPurchaseDealNumber')}
+                {row.getValue('gunnySaleDealNumber')}
             </div>
         ),
     },
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.partyName')}
-            />
+            <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-40'>
@@ -95,10 +86,7 @@ export const getPrivateGunnyOutwardColumns = (
     {
         accessorKey: 'newGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.newGunnyQty')}
-            />
+            <DataTableColumnHeader column={column} title='New Gunny Qty' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -109,10 +97,7 @@ export const getPrivateGunnyOutwardColumns = (
     {
         accessorKey: 'oldGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.oldGunnyQty')}
-            />
+            <DataTableColumnHeader column={column} title='Old Gunny Qty' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -123,10 +108,7 @@ export const getPrivateGunnyOutwardColumns = (
     {
         accessorKey: 'plasticGunnyQty',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.plasticGunnyQty')}
-            />
+            <DataTableColumnHeader column={column} title='Plastic Gunny Qty' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -137,10 +119,7 @@ export const getPrivateGunnyOutwardColumns = (
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.truckNumber')}
-            />
+            <DataTableColumnHeader column={column} title='Truck No.' />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>

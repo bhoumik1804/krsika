@@ -1,54 +1,9 @@
-/**
- * Labour Other Types
- * TypeScript type definitions for Labour Other module
- */
+import { type LabourOther } from './schema'
 
-// ==========================================
-// API Request Types
-// ==========================================
+export type LabourOtherResponse = LabourOther
 
-export interface CreateLabourOtherRequest {
-    date: string
-    labourType?: string
-    labourGroupName?: string
-    numberOfGunny?: number
-    labourRate?: number
-    workDetail?: string
-    totalPrice?: number
-}
-
-export interface UpdateLabourOtherRequest {
-    id: string
-    date?: string
-    labourType?: string
-    labourGroupName?: string
-    numberOfGunny?: number
-    labourRate?: number
-    workDetail?: string
-    totalPrice?: number
-}
-
-// ==========================================
-// API Response Types
-// ==========================================
-
-export interface LabourOtherResponse {
-    _id: string
-    millId: string
-    date: string
-    labourType?: string
-    labourGroupName?: string
-    numberOfGunny?: number
-    labourRate?: number
-    workDetail?: string
-    totalPrice?: number
-    createdBy: string
-    createdAt: string
-    updatedAt: string
-}
-
-export interface LabourOtherListResponse {
-    data: LabourOtherResponse[]
+export type LabourOtherListResponse = {
+    entries: LabourOther[]
     pagination: {
         page: number
         limit: number
@@ -61,17 +16,18 @@ export interface LabourOtherListResponse {
     }
 }
 
-export interface LabourOtherSummaryResponse {
+export type LabourOtherSummaryResponse = {
     totalEntries: number
-    totalGunny: number
-    totalCost: number
+    totalPrice: number
 }
 
-// ==========================================
-// Query Parameter Types
-// ==========================================
+export type CreateLabourOtherRequest = Omit<LabourOther, '_id'>
 
-export interface LabourOtherQueryParams {
+export type UpdateLabourOtherRequest = Partial<LabourOther> & {
+    id: string
+}
+
+export type LabourOtherQueryParams = {
     page?: number
     limit?: number
     search?: string

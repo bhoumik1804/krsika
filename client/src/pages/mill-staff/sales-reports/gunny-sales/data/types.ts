@@ -26,6 +26,7 @@ export type UpdateGunnySalesRequest = {
 export type GunnySalesResponse = {
     _id: string
     millId: string
+    gunnySalesDealNumber?: string
     date: string
     partyName?: string
     newGunnyQty?: number

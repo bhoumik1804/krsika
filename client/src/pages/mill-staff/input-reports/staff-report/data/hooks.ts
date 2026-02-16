@@ -1,70 +1,57 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import {
-    fetchStaffList,
-    fetchStaffById,
-    createStaff,
-    updateStaff,
-    deleteStaff,
-    bulkDeleteStaff,
-} from './service'
-import {
-    type CreateStaffRequest,
-    type UpdateStaffRequest,
-    type StaffQueryParams,
-} from './types'
+import type { StaffReportData } from './schema'
+import { staffService, type StaffListResponse } from './service'
 
-// Query Keys
-export const staffKeys = {
+// Query key factory for staff
+const staffQueryKeys = {
     all: ['staff'] as const,
-    lists: () => [...staffKeys.all, 'list'] as const,
-    list: (millId: string, params: StaffQueryParams) =>
-        [...staffKeys.lists(), millId, params] as const,
-    details: () => [...staffKeys.all, 'detail'] as const,
-    detail: (millId: string, id: string) =>
-        [...staffKeys.details(), millId, id] as const,
+    byMill: (millId: string) => [...staffQueryKeys.all, millId] as const,
+    list: (millId: string, filters?: Record<string, unknown>) =>
+        [...staffQueryKeys.byMill(millId), 'list', filters] as const,
 }
 
-// Query Hooks
-export const useStaffList = (
-    millId: string,
-    params?: StaffQueryParams,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery({
-        queryKey: staffKeys.list(millId, params || {}),
-        queryFn: () => fetchStaffList(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000,
+interface UseStaffListParams {
+    millId: string
+    page?: number
+    limit?: number
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+}
+
+export const useStaffList = (params: UseStaffListParams) => {
+    return useQuery<StaffListResponse, Error>({
+        queryKey: staffQueryKeys.list(params.millId, {
+            page: params.page,
+            limit: params.limit,
+            search: params.search,
+            sortBy: params.sortBy,
+            sortOrder: params.sortOrder,
+        }),
+        queryFn: () => staffService.fetchStaffList(params),
+        enabled: !!params.millId,
     })
 }
 
-export const useStaffById = (
-    millId: string,
-    id: string,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery({
-        queryKey: staffKeys.detail(millId, id),
-        queryFn: () => fetchStaffById(millId, id),
-        ...options,
-    })
-}
-
-// Mutation Hooks
 export const useCreateStaff = (millId: string) => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: (data: CreateStaffRequest) => createStaff(millId, data),
+        mutationFn: (data: Partial<StaffReportData>) =>
+            staffService.createStaff(millId, data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: staffKeys.lists() })
             toast.success('Staff created successfully')
+            queryClient.invalidateQueries({
+                queryKey: staffQueryKeys.byMill(millId),
+            })
         },
-        onError: (error: any) => {
-            toast.error(
-                error?.response?.data?.message || 'Failed to create staff'
-            )
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to create staff'
+            toast.error(errorMessage)
         },
     })
 }
@@ -73,16 +60,25 @@ export const useUpdateStaff = (millId: string) => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: (data: UpdateStaffRequest) => updateStaff(millId, data),
+        mutationFn: ({
+            staffId,
+            data,
+        }: {
+            staffId: string
+            data: Partial<StaffReportData>
+        }) => staffService.updateStaff(millId, staffId, data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: staffKeys.lists() })
-            queryClient.invalidateQueries({ queryKey: staffKeys.details() })
             toast.success('Staff updated successfully')
+            queryClient.invalidateQueries({
+                queryKey: staffQueryKeys.byMill(millId),
+            })
         },
-        onError: (error: any) => {
-            toast.error(
-                error?.response?.data?.message || 'Failed to update staff'
-            )
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to update staff'
+            toast.error(errorMessage)
         },
     })
 }
@@ -91,15 +87,20 @@ export const useDeleteStaff = (millId: string) => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: (id: string) => deleteStaff(millId, id),
+        mutationFn: (staffId: string) =>
+            staffService.deleteStaff(millId, staffId),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: staffKeys.lists() })
             toast.success('Staff deleted successfully')
+            queryClient.invalidateQueries({
+                queryKey: staffQueryKeys.byMill(millId),
+            })
         },
-        onError: (error: any) => {
-            toast.error(
-                error?.response?.data?.message || 'Failed to delete staff'
-            )
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to delete staff'
+            toast.error(errorMessage)
         },
     })
 }
@@ -108,15 +109,20 @@ export const useBulkDeleteStaff = (millId: string) => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: (ids: string[]) => bulkDeleteStaff(millId, ids),
+        mutationFn: (staffIds: string[]) =>
+            staffService.bulkDeleteStaff(millId, staffIds),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: staffKeys.lists() })
-            toast.success('Staffs deleted successfully')
+            toast.success('Staff members deleted successfully')
+            queryClient.invalidateQueries({
+                queryKey: staffQueryKeys.byMill(millId),
+            })
         },
-        onError: (error: any) => {
-            toast.error(
-                error?.response?.data?.message || 'Failed to delete staffs'
-            )
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to delete staff members'
+            toast.error(errorMessage)
         },
     })
 }

@@ -37,6 +37,14 @@ export const getPaddySaleList = async (millId, query) => {
 
     const aggregate = PaddySale.aggregate([
         { $match: matchStage },
+        {
+            $lookup: {
+                from: 'privatepaddyoutwards',
+                localField: 'paddySalesDealNumber',
+                foreignField: 'paddySaleDealNumber',
+                as: 'outwardData',
+            },
+        },
         { $sort: sortStage },
     ])
 

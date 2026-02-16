@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,9 +6,7 @@ import { LongText } from '@/components/long-text'
 import { type LabourOther } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getLabourOtherColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<LabourOther>[] => [
+export const labourOtherColumns: ColumnDef<LabourOther>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,10 +39,7 @@ export const getLabourOtherColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -61,10 +55,7 @@ export const getLabourOtherColumns = (
     {
         accessorKey: 'labourType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.labourType')}
-            />
+            <DataTableColumnHeader column={column} title='Labour Type' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -76,10 +67,7 @@ export const getLabourOtherColumns = (
     {
         accessorKey: 'labourGroupName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.labourGroupName')}
-            />
+            <DataTableColumnHeader column={column} title='Labour Group Name' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -91,10 +79,7 @@ export const getLabourOtherColumns = (
     {
         accessorKey: 'numberOfGunny',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.numberGunny')}
-            />
+            <DataTableColumnHeader column={column} title='Number of Gunny' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -105,10 +90,7 @@ export const getLabourOtherColumns = (
     {
         accessorKey: 'labourRate',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.labourRate')}
-            />
+            <DataTableColumnHeader column={column} title='Labour Rate' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -121,10 +103,7 @@ export const getLabourOtherColumns = (
     {
         accessorKey: 'workDetail',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.workDetail')}
-            />
+            <DataTableColumnHeader column={column} title='Work Detail' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -136,10 +115,7 @@ export const getLabourOtherColumns = (
     {
         accessorKey: 'totalPrice',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.totalPrice')}
-            />
+            <DataTableColumnHeader column={column} title='Total Price' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>

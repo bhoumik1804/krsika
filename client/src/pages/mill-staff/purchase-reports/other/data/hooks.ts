@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import type { OtherPurchase } from './schema'
 import { otherPurchaseService } from './service'
+import type { OtherPurchaseListResponse } from './types'
 
 // Query key factory for other purchases
 const otherPurchaseQueryKeys = {
@@ -20,7 +21,7 @@ interface UseOtherPurchaseListParams {
 }
 
 export const useOtherPurchaseList = (params: UseOtherPurchaseListParams) => {
-    const query = useQuery({
+    return useQuery<OtherPurchaseListResponse, Error>({
         queryKey: otherPurchaseQueryKeys.list(params.millId, {
             page: params.page,
             pageSize: params.pageSize,
@@ -29,18 +30,6 @@ export const useOtherPurchaseList = (params: UseOtherPurchaseListParams) => {
         queryFn: () => otherPurchaseService.fetchOtherPurchaseList(params),
         enabled: !!params.millId,
     })
-
-    return {
-        data: query.data?.data || [],
-        pagination: (query.data?.pagination as any) || {
-            page: params.page || 1,
-            pageSize: params.pageSize || 10,
-            total: 0,
-            totalPages: 0,
-        },
-        isLoading: query.isLoading,
-        isError: query.isError,
-    }
 }
 
 export const useCreateOtherPurchase = (millId: string) => {

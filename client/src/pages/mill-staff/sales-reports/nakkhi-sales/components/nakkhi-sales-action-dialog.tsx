@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useParams } from 'react-router'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -22,6 +26,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -29,7 +34,6 @@ import {
 } from '@/components/ui/popover'
 import { useCreateNakkhiSales, useUpdateNakkhiSales } from '../data/hooks'
 import { nakkhiSalesSchema, type NakkhiSales } from '../data/schema'
-import { useNakkhiSales } from './nakkhi-sales-provider'
 
 type NakkhiSalesActionDialogProps = {
     open: boolean
@@ -42,11 +46,37 @@ export function NakkhiSalesActionDialog({
     onOpenChange,
     currentRow,
 }: NakkhiSalesActionDialogProps) {
-    const { millId } = useNakkhiSales()
+    const { millId } = useParams<{ millId: string }>()
+    const party = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName
+    )
+
+    const broker = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
+        currentRow?.brokerName
+    )
     const { mutateAsync: createNakkhiSales, isPending: isCreating } =
-        useCreateNakkhiSales(millId)
+        useCreateNakkhiSales(millId || '')
     const { mutateAsync: updateNakkhiSales, isPending: isUpdating } =
-        useUpdateNakkhiSales(millId)
+        useUpdateNakkhiSales(millId || '')
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -85,16 +115,21 @@ export function NakkhiSalesActionDialog({
 
     const onSubmit = async (data: NakkhiSales) => {
         try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+                brokerName: data.brokerName || undefined,
+            }
+
             if (isEditing && currentRow?._id) {
                 await updateNakkhiSales({
                     _id: currentRow._id,
-                    ...data,
+                    ...submissionData,
                 })
             } else {
-                await createNakkhiSales(data)
+                await createNakkhiSales(submissionData)
             }
             onOpenChange(false)
-            form.reset()
         } catch (error) {
             // Error handling is managed by mutation hooks (onSuccess/onError)
             console.error('Form submission error:', error)
@@ -189,9 +224,14 @@ export function NakkhiSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -205,9 +245,14 @@ export function NakkhiSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter broker name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={broker}
+                                                    placeholder='Search broker...'
+                                                    emptyText='No brokers found'
                                                 />
                                             </FormControl>
                                             <FormMessage />

@@ -3,10 +3,12 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
+import {
+    useCreateGunnyPurchase,
+    useUpdateGunnyPurchase,
+} from '@/pages/mill-admin/purchase-reports/gunny/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { useParams } from 'react-router'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { gunnyDeliveryTypeOptions } from '@/constants/purchase-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
@@ -73,6 +75,8 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
     )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+    const createMutation = useCreateGunnyPurchase(millId || '')
+    const updateMutation = useUpdateGunnyPurchase(millId || '')
 
     const form = useForm<BalanceLiftingPurchasesGunny>({
         resolver: zodResolver(gunnyPurchaseSchema),
@@ -97,28 +101,32 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = (data: BalanceLiftingPurchasesGunny) => {
-        // Sanitize data
+    const onSubmit = async (data: BalanceLiftingPurchasesGunny) => {
         const submissionData = {
-            ...data,
+            date: data.date,
             partyName: data.partyName || undefined,
             deliveryType: data.deliveryType || undefined,
+            newGunnyQty: data.newGunnyQty,
+            newGunnyRate: data.newGunnyRate,
+            oldGunnyQty: data.oldGunnyQty,
+            oldGunnyRate: data.oldGunnyRate,
+            plasticGunnyQty: data.plasticGunnyQty,
+            plasticGunnyRate: data.plasticGunnyRate,
         }
-        console.log('Submitting:', submissionData)
-
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Purchase updated successfully'
-                    : 'Purchase added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update purchase'
-                : 'Failed to add purchase',
-        })
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({
+                    _id: currentRow._id,
+                    ...submissionData,
+                })
+            } else {
+                await createMutation.mutateAsync(submissionData)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch {
+            // Error handled by mutation onError
+        }
     }
 
     return (
@@ -475,7 +483,13 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
+                            <Button
+                                type='submit'
+                                disabled={
+                                    createMutation.isPending ||
+                                    updateMutation.isPending
+                                }
+                            >
                                 {isEditing ? 'Update' : 'Add'} Purchase
                             </Button>
                         </DialogFooter>

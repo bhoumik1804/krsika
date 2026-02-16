@@ -73,7 +73,7 @@ export const bulkDeletePaddyPurchase = async (
     millId: string,
     ids: string[]
 ): Promise<void> => {
-    await apiClient.delete(`${BASE_PATH}/${millId}/paddy-purchase`, {
+    await apiClient.delete(`${BASE_PATH}/${millId}/paddy-purchase/bulk`, {
         data: { ids },
     })
 }

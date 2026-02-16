@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,9 +6,7 @@ import { LongText } from '@/components/long-text'
 import { type GovtRiceOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getGovtRiceOutwardColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<GovtRiceOutward>[] => [
+export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,10 +39,7 @@ export const getGovtRiceOutwardColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -61,10 +55,7 @@ export const getGovtRiceOutwardColumns = (
     {
         accessorKey: 'lotNo',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.lotNo')}
-            />
+            <DataTableColumnHeader column={column} title='LOT No.' />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>{row.getValue('lotNo')}</div>
@@ -73,10 +64,7 @@ export const getGovtRiceOutwardColumns = (
     {
         accessorKey: 'fciNan',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.fciNan')}
-            />
+            <DataTableColumnHeader column={column} title='FCI/NAN' />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>{row.getValue('fciNan')}</div>
@@ -88,10 +76,7 @@ export const getGovtRiceOutwardColumns = (
     {
         accessorKey: 'riceType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.riceType')}
-            />
+            <DataTableColumnHeader column={column} title='Rice Type' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-32'>{row.getValue('riceType')}</LongText>
@@ -100,10 +85,7 @@ export const getGovtRiceOutwardColumns = (
     {
         accessorKey: 'gunnyNew',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyNew')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny (New)' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyNew')}</div>
@@ -112,10 +94,7 @@ export const getGovtRiceOutwardColumns = (
     {
         accessorKey: 'gunnyOld',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyOld')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny (Old)' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyOld')}</div>
@@ -124,10 +103,7 @@ export const getGovtRiceOutwardColumns = (
     {
         accessorKey: 'juteWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.juteWeight')}
-            />
+            <DataTableColumnHeader column={column} title='Jute Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -140,10 +116,7 @@ export const getGovtRiceOutwardColumns = (
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.truckNumber')}
-            />
+            <DataTableColumnHeader column={column} title='Truck No.' />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -154,10 +127,7 @@ export const getGovtRiceOutwardColumns = (
     {
         accessorKey: 'truckRst',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.rstNo')}
-            />
+            <DataTableColumnHeader column={column} title='RST No.' />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>{row.getValue('truckRst')}</div>
@@ -166,10 +136,7 @@ export const getGovtRiceOutwardColumns = (
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.truckWeight')}
-            />
+            <DataTableColumnHeader column={column} title='Truck Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -182,10 +149,7 @@ export const getGovtRiceOutwardColumns = (
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyWeight')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -198,10 +162,7 @@ export const getGovtRiceOutwardColumns = (
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.netWeight')}
-            />
+            <DataTableColumnHeader column={column} title='Net Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
