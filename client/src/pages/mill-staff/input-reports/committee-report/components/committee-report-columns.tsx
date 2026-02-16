@@ -1,11 +1,14 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
-import { DataTableColumnHeader } from '@/components/data-table'
+import { DataTableColumnHeader } from '@/components/data-table/column-header'
 import { type CommitteeReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const committeeReportColumns: ColumnDef<CommitteeReportData>[] = [
+export const getCommitteeReportColumns = (
+    t: TFunction
+): ColumnDef<CommitteeReportData>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const committeeReportColumns: ColumnDef<CommitteeReportData>[] = [
     {
         accessorKey: 'committeeType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Committee Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.committeeReport.table.type')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -57,7 +63,10 @@ export const committeeReportColumns: ColumnDef<CommitteeReportData>[] = [
     {
         accessorKey: 'committeeName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Committee Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.committeeReport.table.name')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>

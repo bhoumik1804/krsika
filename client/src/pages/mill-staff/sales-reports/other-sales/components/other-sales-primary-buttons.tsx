@@ -1,8 +1,10 @@
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useOtherSales } from './other-sales-provider'
 
 export function OtherSalesPrimaryButtons() {
+    const { t } = useTranslation('millStaff')
     const { setOpen, setCurrentRow } = useOtherSales()
 
     return (
@@ -13,7 +15,7 @@ export function OtherSalesPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            Add Record
+            {t('common.add')}
         </Button>
     )
 }

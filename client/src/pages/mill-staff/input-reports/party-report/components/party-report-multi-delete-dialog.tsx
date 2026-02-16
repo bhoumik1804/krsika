@@ -1,4 +1,5 @@
 import { type Table } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -27,6 +28,7 @@ export function PartyReportMultiDeleteDialog<TData>({
     const { millId } = usePartyReport()
     const { mutate: bulkDelete, isPending: isDeleting } =
         useBulkDeleteParties(millId)
+    const { t } = useTranslation('mill-staff')
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleDeleteSelected = (e: React.MouseEvent) => {
@@ -50,25 +52,30 @@ export function PartyReportMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Delete {selectedRows.length}{' '}
-                        {selectedRows.length > 1 ? 'records' : 'record'}?
+                        {t('inputReports.multiDelete.title', {
+                            count: selectedRows.length,
+                        })}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the selected records?{' '}
-                        <br />
-                        This action cannot be undone.
+                        <span
+                            dangerouslySetInnerHTML={{
+                                __html: t(
+                                    'inputReports.multiDelete.description'
+                                ),
+                            }}
+                        />
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                        Cancel
+                        {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting ? 'Deleting...' : 'Delete'}
+                        {isDeleting ? t('common.deleting') : t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

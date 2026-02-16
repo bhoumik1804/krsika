@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -23,6 +24,7 @@ export function RiceSalesDeleteDialog({
     onOpenChange,
     currentRow,
 }: RiceSalesDeleteDialogProps) {
+    const { t } = useTranslation('millStaff')
     const { millId } = useRiceSales()
     const { mutateAsync: deleteRiceSales, isPending: isDeleting } =
         useDeleteRiceSales(millId)
@@ -42,24 +44,25 @@ export function RiceSalesDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Record?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                        {t('riceSales.delete.title')}
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete this record for{' '}
-                        <strong>{currentRow?.partyName}</strong>?
-                        <br />
-                        This action cannot be undone.
+                        {t('riceSales.delete.description', {
+                            name: currentRow?.partyName,
+                        })}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                        Cancel
+                        {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting ? 'Deleting...' : 'Delete'}
+                        {isDeleting ? t('common.deleting') : t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

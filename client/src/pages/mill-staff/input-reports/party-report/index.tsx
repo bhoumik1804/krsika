@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -52,6 +53,8 @@ export function PartyReport() {
         }
     }
 
+    const { t } = useTranslation('mill-staff')
+
     return (
         <PartyReportProvider
             millId={millId || ''}
@@ -73,10 +76,10 @@ export function PartyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Party Report
+                            {t('inputReports.partyReport.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage party transactions and records
+                            {t('inputReports.partyReport.description')}
                         </p>
                     </div>
                     <PartyReportPrimaryButtons />
@@ -96,6 +99,7 @@ function PartyReportContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = usePartyReport()
+    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (
@@ -108,7 +112,7 @@ function PartyReportContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load party data. Please try again later.
+                {t('common.error')}
             </div>
         )
     }

@@ -1,11 +1,14 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BrokerReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
+export const getBrokerReportColumns = (
+    t: TFunction
+): ColumnDef<BrokerReportData>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,10 @@ export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.brokerReport.table.name')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('brokerName')}</div>,
         meta: {
@@ -53,28 +59,40 @@ export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
     {
         accessorKey: 'gstn',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='GSTN' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.brokerReport.table.gstn')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('gstn')}</div>,
     },
     {
         accessorKey: 'phone',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Phone' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.brokerReport.table.phone')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('phone')}</div>,
     },
     {
         accessorKey: 'email',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Email' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.brokerReport.table.email')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('email')}</div>,
     },
     {
         accessorKey: 'address',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Address' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inputReports.brokerReport.table.address')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('address')}</div>,
     },

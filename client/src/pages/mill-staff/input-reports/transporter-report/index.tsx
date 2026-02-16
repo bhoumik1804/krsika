@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -17,6 +18,7 @@ import {
 import { TransporterReportTable } from './components/transporter-report-table'
 
 export function TransporterReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -73,10 +75,10 @@ export function TransporterReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Transporter Report
+                            {t('inputReports.transporterReport.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage transporter transactions and records
+                            {t('inputReports.transporterReport.description')}
                         </p>
                     </div>
                     <TransporterReportPrimaryButtons />
@@ -96,6 +98,7 @@ function TransporterReportContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = useTransporterReport()
+    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (
@@ -108,7 +111,7 @@ function TransporterReportContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load transporter data. Please try again later.
+                {t('common.error')}
             </div>
         )
     }

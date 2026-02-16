@@ -1,4 +1,5 @@
 import { type Table } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -24,6 +25,7 @@ export function RiceSalesMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: RiceSalesMultiDeleteDialogProps<TData>) {
+    const { t } = useTranslation('millStaff')
     const { millId } = useRiceSales()
     const { mutateAsync: bulkDeleteRiceSales, isPending: isDeleting } =
         useBulkDeleteRiceSales(millId)
@@ -51,25 +53,24 @@ export function RiceSalesMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Delete {selectedRows.length}{' '}
-                        {selectedRows.length > 1 ? 'records' : 'record'}?
+                        {t('riceSales.multiDelete.title', {
+                            count: selectedRows.length,
+                        })}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the selected records?{' '}
-                        <br />
-                        This action cannot be undone.
+                        {t('riceSales.multiDelete.description')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                        Cancel
+                        {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting ? 'Deleting...' : 'Delete'}
+                        {isDeleting ? t('common.deleting') : t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

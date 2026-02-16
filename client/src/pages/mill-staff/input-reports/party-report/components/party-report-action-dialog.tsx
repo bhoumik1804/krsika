@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -39,6 +40,7 @@ export function PartyReportActionDialog({
         useCreateParty(millId)
     const { mutate: updateParty, isPending: isUpdating } =
         useUpdateParty(millId)
+    const { t } = useTranslation('mill-staff')
 
     const isLoading = isCreating || isUpdating
 
@@ -88,10 +90,14 @@ export function PartyReportActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Party
+                        {isEditing
+                            ? t('inputReports.partyReport.form.editTitle')
+                            : t('inputReports.partyReport.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the party details below
+                        {isEditing
+                            ? t('inputReports.partyReport.form.editDescription')
+                            : t('inputReports.partyReport.form.addDescription')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -106,10 +112,16 @@ export function PartyReportActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.partyReport.form.name'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter party name'
+                                                    placeholder={t(
+                                                        'inputReports.partyReport.form.placeholders.name'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -122,10 +134,16 @@ export function PartyReportActionDialog({
                                     name='gstn'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>GSTN</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.partyReport.form.gstn'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter GSTN'
+                                                    placeholder={t(
+                                                        'inputReports.partyReport.form.placeholders.gstn'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -138,10 +156,16 @@ export function PartyReportActionDialog({
                                     name='phone'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Phone</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.partyReport.form.phone'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter phone number'
+                                                    placeholder={t(
+                                                        'inputReports.partyReport.form.placeholders.phone'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -154,11 +178,17 @@ export function PartyReportActionDialog({
                                     name='email'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Email</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.partyReport.form.email'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='email'
-                                                    placeholder='Enter email'
+                                                    placeholder={t(
+                                                        'inputReports.partyReport.form.placeholders.email'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -171,10 +201,16 @@ export function PartyReportActionDialog({
                                     name='address'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Address</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.partyReport.form.address'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter address'
+                                                    placeholder={t(
+                                                        'inputReports.partyReport.form.placeholders.address'
+                                                    )}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -191,17 +227,16 @@ export function PartyReportActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}{' '}
-                                Party
+                                      ? t('common.update')
+                                      : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

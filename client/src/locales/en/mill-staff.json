@@ -21,6 +21,8 @@
         "loading": "Loading...",
         "success": "Success",
         "error": "Error",
+        "adding": "Adding...",
+        "updating": "Updating...",
         "exportSummary": "Export Summary",
         "exportHistory": "Export History",
         "dateWiseHistory": "Date-wise history",
@@ -655,6 +657,537 @@
         "multiDelete": {
             "title": "Delete {{count}} records?",
             "description": "Are you sure you want to delete the selected paddy sales records?<br />This action cannot be undone."
+        }
+    },
+    "riceSales": {
+        "title": "Rice Sales Report",
+        "description": "Manage rice sales transactions and records",
+        "table": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "deliveryType": "Delivery Type",
+            "lotOrOther": "Lot / Other",
+            "fciOrNAN": "FCI / NAN",
+            "riceType": "Rice Type",
+            "riceQty": "Qty (Qtl)",
+            "riceRatePerQuintal": "Rate/Qtl",
+            "discountPercent": "Discount %",
+            "brokeragePerQuintal": "Brokerage/Qtl",
+            "frkType": "FRK Type",
+            "frkRatePerQuintal": "FRK Rate/Qtl",
+            "lotNumber": "LOT No.",
+            "gunnyType": "Gunny Type",
+            "newGunnyRate": "New Gunny Rate",
+            "oldGunnyRate": "Old Gunny Rate",
+            "plasticGunnyRate": "Plastic Gunny Rate",
+            "actions": "Actions"
+        },
+        "form": {
+            "addTitle": "Add Rice Sale",
+            "editTitle": "Edit Rice Sale",
+            "addDescription": "Enter rice sale details below",
+            "editDescription": "Update rice sale details below",
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "deliveryType": "Delivery Type",
+            "lotOrOther": "LOT/Other",
+            "fciOrNAN": "FCI/NAN",
+            "lotNumber": "LOT No.",
+            "frkType": "FRK",
+            "frkRatePerQuintal": "FRK Rate (per Qtl)",
+            "riceType": "Rice Type",
+            "riceQty": "Quantity (Qtl)",
+            "riceRatePerQuintal": "Rice Rate (per Qtl)",
+            "discountPercent": "Discount (%)",
+            "brokeragePerQuintal": "Brokerage (per Qtl)",
+            "gunnyType": "Gunny Option",
+            "newGunnyRate": "New Gunny Rate",
+            "oldGunnyRate": "Old Gunny Rate",
+            "plasticGunnyRate": "Plastic Gunny Rate",
+            "placeholders": {
+                "date": "Pick a date",
+                "party": "Search party...",
+                "broker": "Search broker...",
+                "select": "Select",
+                "lotNumber": "Enter LOT No."
+            },
+            "buttons": {
+                "add": "Add Sale",
+                "update": "Update Sale",
+                "cancel": "Cancel",
+                "adding": "Adding...",
+                "updating": "Updating..."
+            }
+        },
+        "options": {
+            "deliveryType": {
+                "pede": "Ex Mill",
+                "delivered": "Delivered"
+            },
+            "lotOrOther": {
+                "lot": "LOT Sale",
+                "other": "Other Sale"
+            },
+            "fciOrNAN": {
+                "fci": "FCI",
+                "nan": "NAN"
+            },
+            "frkType": {
+                "sahit": "With FRK",
+                "dena": "FRK to be given",
+                "non": "Non FRK"
+            },
+            "riceType": {
+                "mota": "Mota",
+                "patla": "Patla"
+            },
+            "gunnyType": {
+                "vajanWeight": "Weight (Sahit)",
+                "bhavRate": "Rate (Sahit)",
+                "vapsiReturn": "Return"
+            }
+        },
+        "delete": {
+            "title": "Delete Record?",
+            "description": "Are you sure you want to delete this record for {{name}}? This action cannot be undone."
+        },
+        "multiDelete": {
+            "title": "{{count}} records delete?",
+            "description": "Are you sure you want to delete the selected rice sales records? This action cannot be undone."
+        }
+    },
+    "gunnySales": {
+        "title": "Gunny Sales Report",
+        "description": "Manage gunny sales transactions and records",
+        "table": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "newGunnyQty": "New Gunny Qty",
+            "newGunnyRate": "New Gunny Rate",
+            "oldGunnyQty": "Old Gunny Qty",
+            "oldGunnyRate": "Old Gunny Rate",
+            "plasticGunnyQty": "Plastic Gunny Qty",
+            "plasticGunnyRate": "Plastic Gunny Rate",
+            "actions": "Actions"
+        },
+        "form": {
+            "addTitle": "Add Gunny Sale",
+            "editTitle": "Edit Gunny Sale",
+            "addDescription": "Enter gunny sale details below",
+            "editDescription": "Update gunny sale details below",
+            "date": "Date",
+            "partyName": "Party Name",
+            "newGunnyQty": "New Gunny Quantity",
+            "newGunnyRate": "New Gunny Rate",
+            "oldGunnyQty": "Old Gunny Quantity",
+            "oldGunnyRate": "Old Gunny Rate",
+            "plasticGunnyQty": "Plastic Gunny Quantity",
+            "plasticGunnyRate": "Plastic Gunny Rate",
+            "placeholders": {
+                "date": "Pick a date",
+                "party": "Search party...",
+                "noResults": "No parties found"
+            },
+            "buttons": {
+                "add": "Add Sale",
+                "update": "Update Sale",
+                "cancel": "Cancel",
+                "adding": "Adding...",
+                "updating": "Updating..."
+            }
+        },
+        "delete": {
+            "title": "Delete Record?",
+            "description": "Are you sure you want to delete this record for <strong>{{name}}</strong>?<br />This action cannot be undone."
+        },
+        "multiDelete": {
+            "title": "{{count}} records delete?",
+            "description": "Are you sure you want to delete the selected gunny sales records?<br />This action cannot be undone."
+        }
+    },
+    "khandaSales": {
+        "title": "Khanda Sales Report",
+        "description": "Manage khanda sales transactions and records",
+        "table": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "khandaQty": "Khanda (Qtl)",
+            "khandaRate": "Khanda Rate",
+            "discountPercent": "Discount %",
+            "brokeragePerQuintal": "Brokerage",
+            "actions": "Actions"
+        },
+        "form": {
+            "addTitle": "Add Khanda Sale",
+            "editTitle": "Edit Khanda Sale",
+            "addDescription": "Enter the sale details below",
+            "editDescription": "Update the sale details below",
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "khandaQty": "Quantity (Qtl)",
+            "khandaRate": "Rate (Per Quintal)",
+            "discountPercent": "Discount (%)",
+            "brokeragePerQuintal": "Brokerage (Per Quintal)",
+            "placeholders": {
+                "date": "Pick a date",
+                "party": "Search party...",
+                "broker": "Search broker...",
+                "noParties": "No parties found",
+                "noBrokers": "No brokers found"
+            },
+            "buttons": {
+                "add": "Add Sale",
+                "update": "Update Sale",
+                "cancel": "Cancel",
+                "adding": "Adding...",
+                "updating": "Updating..."
+            }
+        },
+        "delete": {
+            "title": "Delete Record?",
+            "description": "Are you sure you want to delete this record for <strong>{{name}}</strong>?<br />This action cannot be undone."
+        },
+        "multiDelete": {
+            "title": "{{count}} records delete?",
+            "description": "Are you sure you want to delete the selected khanda sales records?<br />This action cannot be undone."
+        }
+    },
+    "nakkhiSales": {
+        "title": "Nakkhi Sales Report",
+        "description": "Manage nakkhi sales transactions and records",
+        "table": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "nakkhiQty": "Nakkhi (Qtl)",
+            "nakkhiRate": "Nakkhi Rate",
+            "discountPercent": "Discount %",
+            "brokeragePerQuintal": "Brokerage",
+            "actions": "Actions"
+        },
+        "form": {
+            "addTitle": "Add Nakkhi Sale",
+            "editTitle": "Edit Nakkhi Sale",
+            "addDescription": "Enter the sale details below",
+            "editDescription": "Update the sale details below",
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "nakkhiQty": "Quantity (Qtl)",
+            "nakkhiRate": "Rate (per Quintal)",
+            "discountPercent": "Discount (%)",
+            "brokeragePerQuintal": "Brokerage (per Quintal)",
+            "placeholders": {
+                "date": "Pick a date",
+                "party": "Search party...",
+                "broker": "Search broker...",
+                "noParties": "No parties found",
+                "noBrokers": "No brokers found"
+            },
+            "buttons": {
+                "add": "Add Sale",
+                "update": "Update Sale",
+                "cancel": "Cancel",
+                "adding": "Adding...",
+                "updating": "Updating..."
+            }
+        },
+        "delete": {
+            "title": "Delete Record?",
+            "description": "Are you sure you want to delete this record for <strong>{{name}}</strong>?<br />This action cannot be undone."
+        },
+        "multiDelete": {
+            "title": "{{count}} records delete?",
+            "description": "Are you sure you want to delete the selected nakkhi sales records?<br />This action cannot be undone."
+        }
+    },
+    "otherSales": {
+        "title": "Other Sales Report",
+        "description": "Manage other sales transactions and records",
+        "table": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "itemName": "Item Name",
+            "quantity": "Quantity",
+            "qtyType": "Qty Type",
+            "rate": "Rate",
+            "discountPercent": "Discount %",
+            "gst": "GST",
+            "actions": "Actions"
+        },
+        "form": {
+            "addTitle": "Add Other Sale",
+            "editTitle": "Edit Other Sale",
+            "addDescription": "Enter the sale details below",
+            "editDescription": "Update the sale details below",
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "itemName": "Item Name",
+            "quantity": "Quantity",
+            "qtyType": "Quantity Type",
+            "rate": "Rate",
+            "discountPercent": "Discount (%)",
+            "gst": "GST (%)",
+            "placeholders": {
+                "date": "Pick a date",
+                "party": "Search party...",
+                "broker": "Search broker...",
+                "itemName": "Enter item name",
+                "noParties": "No parties found",
+                "noBrokers": "No brokers found"
+            },
+            "buttons": {
+                "add": "Add Sale",
+                "update": "Update Sale",
+                "cancel": "Cancel",
+                "adding": "Adding...",
+                "updating": "Updating..."
+            }
+        },
+        "delete": {
+            "title": "Delete Record?",
+            "description": "Are you sure you want to delete this record for <strong>{{name}}</strong>?<br />This action cannot be undone."
+        },
+        "multiDelete": {
+            "title": "{{count}} records delete?",
+            "description": "Are you sure you want to delete the selected other sales records?<br />This action cannot be undone."
+        }
+    },
+    "inputReports": {
+        "partyReport": {
+            "title": "Party Report",
+            "description": "Manage party transactions and records",
+            "table": {
+                "name": "Party Name",
+                "gstn": "GSTN",
+                "phone": "Phone No.",
+                "email": "Email",
+                "address": "Address",
+                "actions": "Actions"
+            },
+            "form": {
+                "addTitle": "Add Party",
+                "editTitle": "Edit Party",
+                "addDescription": "Enter the party details below",
+                "editDescription": "Update the party details below",
+                "name": "Party Name",
+                "gstn": "GSTN",
+                "phone": "Phone No.",
+                "email": "Email",
+                "address": "Address",
+                "placeholders": {
+                    "name": "Enter name",
+                    "gstn": "Enter GSTN",
+                    "phone": "Enter phone number",
+                    "email": "Enter email",
+                    "address": "Enter address"
+                }
+            }
+        },
+        "transporterReport": {
+            "title": "Transporter Report",
+            "description": "Manage transporter transactions and records",
+            "table": {
+                "name": "Transporter Name",
+                "gstn": "GSTN",
+                "phone": "Phone No.",
+                "email": "Email",
+                "address": "Address",
+                "actions": "Actions"
+            },
+            "form": {
+                "addTitle": "Add Transporter",
+                "editTitle": "Edit Transporter",
+                "addDescription": "Enter the transporter details below",
+                "editDescription": "Update the transporter details below",
+                "name": "Transporter Name",
+                "gstn": "GSTN",
+                "phone": "Phone No.",
+                "email": "Email",
+                "address": "Address",
+                "placeholders": {
+                    "name": "Enter name",
+                    "gstn": "Enter GSTN",
+                    "phone": "Enter phone number",
+                    "email": "Enter email",
+                    "address": "Enter address"
+                }
+            }
+        },
+        "brokerReport": {
+            "title": "Broker Report",
+            "description": "Manage broker transactions and records",
+            "table": {
+                "name": "Broker Name",
+                "gstn": "GSTIN",
+                "phone": "Phone No.",
+                "email": "Email",
+                "address": "Address",
+                "actions": "Actions",
+                "searchPlaceholder": "Search broker name...",
+                "noResults": "No brokers found."
+            },
+            "form": {
+                "addTitle": "Add Broker",
+                "editTitle": "Edit Broker",
+                "addDescription": "Enter the broker details below",
+                "editDescription": "Update the broker details below",
+                "name": "Broker Name",
+                "gstn": "GSTIN",
+                "phone": "Phone No.",
+                "email": "Email",
+                "address": "Address",
+                "placeholders": {
+                    "name": "Enter name",
+                    "gstn": "Enter GSTIN",
+                    "phone": "Enter phone number",
+                    "email": "Enter email",
+                    "address": "Enter address"
+                }
+            }
+        },
+        "committeeReport": {
+            "title": "Committee Report",
+            "description": "Manage committee transactions and records",
+            "table": {
+                "type": "Committee Type",
+                "name": "Committee Name",
+                "actions": "Actions"
+            },
+            "form": {
+                "addTitle": "Add Committee",
+                "editTitle": "Edit Committee",
+                "addDescription": "Add a new committee record.",
+                "editDescription": "Edit the existing committee record.",
+                "tabs": {
+                    "manual": "Manual Entry",
+                    "upload": "Upload File"
+                },
+                "type": "Committee Type",
+                "name": "Committee Name",
+                "placeholders": {
+                    "select": "Select committee type",
+                    "name": "Enter committee name"
+                },
+                "uploadDescription": "Upload a CSV or Excel file containing committee records.",
+                "uploadCount": " ({{count}} records) "
+            }
+        },
+        "vehicleReport": {
+            "title": "Vehicle Report",
+            "description": "Manage vehicle transactions and records",
+            "table": {
+                "truckNo": "Truck No.",
+                "actions": "Actions"
+            },
+            "form": {
+                "addTitle": "Add Vehicle",
+                "editTitle": "Edit Vehicle",
+                "addDescription": "Enter the vehicle details below",
+                "editDescription": "Update the vehicle details below",
+                "truckNo": "Truck No.",
+                "placeholders": {
+                    "truckNo": "Enter truck number"
+                }
+            }
+        },
+        "staffReport": {
+            "title": "Staff Report",
+            "description": "Manage staff transactions and records",
+            "table": {
+                "fullName": "Full Name",
+                "post": "Post",
+                "salary": "Salary",
+                "phoneNumber": "Phone Number",
+                "email": "Email",
+                "address": "Address",
+                "actions": "Actions"
+            },
+            "form": {
+                "addTitle": "Add Staff",
+                "editTitle": "Edit Staff",
+                "addDescription": "Enter the staff details below",
+                "editDescription": "Update the staff details below",
+                "name": "Name",
+                "designation": "Designation",
+                "salary": "Salary",
+                "phone": "Phone No.",
+                "email": "Email",
+                "address": "Address",
+                "placeholders": {
+                    "name": "Enter name",
+                    "designation": "Enter designation",
+                    "salary": "Enter salary",
+                    "phone": "Enter phone number",
+                    "email": "Enter email",
+                    "address": "Enter address"
+                }
+            }
+        },
+        "doReport": {
+            "title": "DO Report",
+            "description": "Manage DO report transactions and records",
+            "table": {
+                "uniqueId": "Unique ID",
+                "date": "Date",
+                "committee": "Committee",
+                "doNumber": "DO Number",
+                "paddyMota": "Paddy (Mota)",
+                "paddyPatla": "Paddy (Patla)",
+                "paddySarna": "Paddy (Sarna)",
+                "actions": "Actions"
+            },
+            "form": {
+                "addTitle": "Add DO Entry",
+                "editTitle": "Edit DO Entry",
+                "addDescription": "Enter the DO entry details below",
+                "editDescription": "Update the DO entry details below",
+                "uniqueId": "Unique ID",
+                "date": "Date",
+                "committee": "Committee",
+                "doNumber": "DO Number",
+                "paddyMota": "Paddy (Mota)",
+                "paddyPatla": "Paddy (Patla)",
+                "paddySarna": "Paddy (Sarna)",
+                "placeholders": {
+                    "date": "Pick a date",
+                    "committee": "Select committee",
+                    "doNumber": "Enter DO number",
+                    "paddy": "0.00"
+                }
+            }
+        },
+        "labourGroupReport": {
+            "title": "Labour Group Report",
+            "description": "Manage labour group transactions and records",
+            "table": {
+                "name": "Labour Group Name",
+                "actions": "Actions"
+            },
+            "form": {
+                "addTitle": "Add Labour Group",
+                "editTitle": "Edit Labour Group",
+                "addDescription": "Enter the labour group details below",
+                "editDescription": "Update the labour group details below",
+                "name": "Labour Group Name",
+                "placeholders": {
+                    "name": "Enter labour group name"
+                }
+            }
+        },
+        "delete": {
+            "title": "Delete Record?",
+            "description": "Are you sure you want to delete this record for <strong>{{name}}</strong>?",
+            "descriptionItem": "Are you sure you want to delete this record for ",
+            "multiTitle": "Delete {{count}} records?",
+            "multiDescription": "Are you sure you want to delete the selected records?",
+            "undone": "This action cannot be undone."
         }
     }
 }
