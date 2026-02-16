@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
-import { useTranslation } from 'react-i18next'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillStaffSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
@@ -22,7 +21,6 @@ export function BalanceLiftingPurchasesGunnyReport() {
     const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
-    const { t } = useTranslation()
 
     const queryParams = useMemo(() => {
         const s = Object.fromEntries(searchParams.entries())
@@ -74,7 +72,6 @@ export function BalanceLiftingPurchasesGunnyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-<<<<<<< HEAD
                             {t(
                                 'dailyReports.balanceLifting.gunnyPurchase.title'
                             )}
@@ -83,12 +80,6 @@ export function BalanceLiftingPurchasesGunnyReport() {
                             {t(
                                 'dailyReports.balanceLifting.gunnyPurchase.description'
                             )}
-=======
-                            {t('balanceLiftingGunnyPurchase.title')}
-                        </h2>
-                        <p className='text-muted-foreground'>
-                            {t('balanceLiftingGunnyPurchase.description')}
->>>>>>> 7b33ee8c0394d38b6faf6e6a409ad6210120d529
                         </p>
                     </div>
                     <BalanceLiftingPurchasesGunnyPrimaryButtons />
