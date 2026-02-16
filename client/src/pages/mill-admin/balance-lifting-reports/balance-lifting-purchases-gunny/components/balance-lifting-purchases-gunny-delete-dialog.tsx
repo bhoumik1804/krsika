@@ -1,5 +1,4 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useDeleteGunnyPurchase } from '@/pages/mill-admin/purchase-reports/gunny/data/hooks'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -16,22 +15,25 @@ type BalanceLiftingPurchasesGunnyDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
     currentRow: BalanceLiftingPurchasesGunny | null
+    millId: string
 }
 
 export function BalanceLiftingPurchasesGunnyDeleteDialog({
     open,
     onOpenChange,
     currentRow,
+    millId,
 }: BalanceLiftingPurchasesGunnyDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting purchase...',
-            success: () => {
-                onOpenChange(false)
-                return 'Purchase deleted successfully'
-            },
-            error: 'Failed to delete purchase',
-        })
+    const deleteMutation = useDeleteGunnyPurchase(millId)
+
+    const handleDelete = async () => {
+        if (!currentRow?._id) return
+        try {
+            await deleteMutation.mutateAsync(currentRow._id)
+            onOpenChange(false)
+        } catch {
+            // Error handled by mutation onError
+        }
     }
 
     return (
@@ -50,6 +52,7 @@ export function BalanceLiftingPurchasesGunnyDeleteDialog({
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={deleteMutation.isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
                         Delete

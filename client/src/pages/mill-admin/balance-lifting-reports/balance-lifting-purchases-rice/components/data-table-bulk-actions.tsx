@@ -10,13 +10,15 @@ import {
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
 import { RiceMultiDeleteDialog } from './balance-lifting-purchases-rice-multi-delete-dialog'
 
-type DataTableBulkActionsProps<TData> = {
-    table: Table<TData>
+import type { BalanceLiftingPurchasesRice } from '../data/schema'
+
+type DataTableBulkActionsProps = {
+    table: Table<BalanceLiftingPurchasesRice>
 }
 
-export function DataTableBulkActions<TData>({
+export function DataTableBulkActions({
     table,
-}: DataTableBulkActionsProps<TData>) {
+}: DataTableBulkActionsProps) {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
     return (

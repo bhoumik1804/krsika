@@ -11,14 +11,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type BalanceLiftingPurchasesFrk } from '../data/schema'
-import { balanceLiftingPurchasesFrk } from './balance-lifting-purchases-frk-provider'
+import { useBalanceLiftingPurchasesFrk } from './balance-lifting-purchases-frk-provider'
 
 type DataTableRowActionsProps = {
     row: Row<BalanceLiftingPurchasesFrk>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = balanceLiftingPurchasesFrk()
+    const { setOpen, setCurrentRow } = useBalanceLiftingPurchasesFrk()
     return (
         <>
             <DropdownMenu modal={false}>

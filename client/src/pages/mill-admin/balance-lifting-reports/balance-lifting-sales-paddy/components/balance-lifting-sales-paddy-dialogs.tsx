@@ -1,24 +1,26 @@
 import { BalanceLiftingSalesPaddyActionDialog } from './balance-lifting-sales-paddy-action-dialog'
 import { BalanceLiftingSalesPaddyDeleteDialog } from './balance-lifting-sales-paddy-delete-dialog'
-import { balanceLiftingSalesPaddy } from './balance-lifting-sales-paddy-provider'
+import { useBalanceLiftingSalesPaddy } from './balance-lifting-sales-paddy-provider'
 
 export function BalanceLiftingSalesPaddyDialogs() {
-    const { open, setOpen, currentRow } = balanceLiftingSalesPaddy()
+    const { open, setOpen, currentRow, setCurrentRow } =
+        useBalanceLiftingSalesPaddy()
 
     return (
         <>
             <BalanceLiftingSalesPaddyActionDialog
                 open={open === 'add' || open === 'edit'}
-                onOpenChange={(isOpen: boolean) =>
+                onOpenChange={(isOpen: boolean) => {
                     setOpen(isOpen ? open : null)
-                }
-                currentRow={currentRow}
+                    if (!isOpen) setCurrentRow(null)
+                }}
             />
             <BalanceLiftingSalesPaddyDeleteDialog
                 open={open === 'delete'}
-                onOpenChange={(isOpen: boolean) =>
+                onOpenChange={(isOpen: boolean) => {
                     setOpen(isOpen ? 'delete' : null)
-                }
+                    if (!isOpen) setCurrentRow(null)
+                }}
                 currentRow={currentRow}
             />
         </>

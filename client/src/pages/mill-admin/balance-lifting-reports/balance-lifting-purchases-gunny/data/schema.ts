@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for Gunny Purchase records
 export const gunnyPurchaseSchema = z.object({
+    _id: z.string().optional(),
     date: z.string().min(1, 'Date is required'),
     partyName: z.string().nullable().optional(),
     deliveryType: z.string().nullable().optional(),

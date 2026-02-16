@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { balanceLiftingPurchasesGunny } from './balance-lifting-purchases-gunny-provider'
+import { useBalanceLiftingPurchasesGunny } from './balance-lifting-purchases-gunny-provider'
 
 export function BalanceLiftingPurchasesGunnyPrimaryButtons() {
-    const { setOpen } = balanceLiftingPurchasesGunny()
+    const { setOpen } = useBalanceLiftingPurchasesGunny()
 
     return (
         <Button onClick={() => setOpen('add')}>

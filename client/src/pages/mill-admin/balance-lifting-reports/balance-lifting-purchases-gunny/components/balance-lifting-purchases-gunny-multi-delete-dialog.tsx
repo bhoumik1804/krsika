@@ -1,6 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,30 +9,39 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeleteGunnyPurchases } from '@/pages/mill-admin/purchase-reports/gunny/data/hooks'
+import { useBalanceLiftingPurchasesGunny } from './balance-lifting-purchases-gunny-provider'
+import type { BalanceLiftingPurchasesGunny } from '../data/schema'
 
-type GunnyMultiDeleteDialogProps<TData> = {
-    table: Table<TData>
+type GunnyMultiDeleteDialogProps = {
+    table: Table<BalanceLiftingPurchasesGunny>
     open: boolean
     onOpenChange: (open: boolean) => void
 }
 
-export function GunnyMultiDeleteDialog<TData>({
+export function GunnyMultiDeleteDialog({
     table,
     open,
     onOpenChange,
-}: GunnyMultiDeleteDialogProps<TData>) {
+}: GunnyMultiDeleteDialogProps) {
+    const { millId } = useBalanceLiftingPurchasesGunny()
+    const { mutateAsync: bulkDelete, isPending } =
+        useBulkDeleteGunnyPurchases(millId)
+
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
-    const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting purchases...',
-            success: () => {
-                table.resetRowSelection()
-                onOpenChange(false)
-                return `Deleted ${selectedRows.length} purchase${selectedRows.length > 1 ? 's' : ''}`
-            },
-            error: 'Error deleting purchases',
-        })
+    const handleDeleteSelected = async () => {
+        try {
+            const ids = selectedRows
+                .map((row) => (row.original as BalanceLiftingPurchasesGunny)._id)
+                .filter(Boolean) as string[]
+            if (ids.length === 0) return
+            await bulkDelete(ids)
+            table.resetRowSelection()
+            onOpenChange(false)
+        } catch {
+            // Error handled by mutation onError
+        }
     }
 
     return (
@@ -52,12 +59,13 @@ export function GunnyMultiDeleteDialog<TData>({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
+                        disabled={isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

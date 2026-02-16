@@ -1,6 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,6 +9,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeletePrivateRiceOutward } from '../data/hooks'
+import { type PrivateRiceOutward } from '../data/schema'
+import { useOutwardBalanceLiftingRice } from './outward-balance-lifting-rice-provider'
 
 type OutwardBalanceLiftingRiceMultiDeleteDialogProps<TData> = {
     table: Table<TData>
@@ -23,18 +24,25 @@ export function OutwardBalanceLiftingRiceMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: OutwardBalanceLiftingRiceMultiDeleteDialogProps<TData>) {
+    const { millId } = useOutwardBalanceLiftingRice()
+    const { mutateAsync: bulkDelete, isPending: isDeleting } =
+        useBulkDeletePrivateRiceOutward(millId)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
-    const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
+    const handleDeleteSelected = async () => {
+        const ids = selectedRows
+            .map((row) => (row.original as PrivateRiceOutward)._id)
+            .filter(Boolean) as string[]
+
+        if (ids.length > 0) {
+            try {
+                await bulkDelete(ids)
                 table.resetRowSelection()
                 onOpenChange(false)
-                return `Deleted ${selectedRows.length} record${selectedRows.length > 1 ? 's' : ''}`
-            },
-            error: 'Error deleting records',
-        })
+            } catch (error) {
+                console.error('Error deleting entries:', error)
+            }
+        }
     }
 
     return (
@@ -43,21 +51,24 @@ export function OutwardBalanceLiftingRiceMultiDeleteDialog<TData>({
                 <AlertDialogHeader>
                     <AlertDialogTitle>
                         Delete {selectedRows.length}{' '}
-                        {selectedRows.length > 1 ? 'records' : 'record'}?
+                        {selectedRows.length > 1 ? 'entries' : 'entry'}?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the selected records?{' '}
+                        Are you sure you want to delete the selected entries?{' '}
                         <br />
                         This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

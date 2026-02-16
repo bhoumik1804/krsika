@@ -84,6 +84,12 @@ const PaddyPurchaseSchema = new Schema(
             type: Number,
             min: 0,
         },
+        balance: {
+            type: Number,
+        },
+        balanceLifting: {
+            type: Number,
+        },
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: 'User',

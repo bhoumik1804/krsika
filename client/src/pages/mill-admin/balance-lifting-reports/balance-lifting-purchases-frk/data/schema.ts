@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for FRK Purchase records
 export const frkPurchaseSchema = z.object({
+    _id: z.string().optional(),
     date: z.string().min(1, 'Date is required'),
     partyName: z.string().nullable().optional(),
     frkQty: z.number().optional(),

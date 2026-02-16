@@ -22,7 +22,6 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type BalanceLiftingPurchasesGunny } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { gunnyColumns as columns } from './balance-lifting-purchases-gunny-columns'
@@ -31,9 +30,20 @@ type DataTableProps = {
     data: BalanceLiftingPurchasesGunny[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: {
+        page: number
+        pageSize: number
+        total: number
+        totalPages: number
+    }
 }
 
-export function BalanceLiftingPurchasesGunnyTable({ data, search, navigate }: DataTableProps) {
+export function BalanceLiftingPurchasesGunnyTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -51,11 +61,16 @@ export function BalanceLiftingPurchasesGunnyTable({ data, search, navigate }: Da
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
         ],
     })
 
@@ -63,6 +78,9 @@ export function BalanceLiftingPurchasesGunnyTable({ data, search, navigate }: Da
     const table = useReactTable({
         data,
         columns,
+        getRowId: (row) => row._id || '',
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         state: {
             sorting,
             pagination,
@@ -76,17 +94,19 @@ export function BalanceLiftingPurchasesGunnyTable({ data, search, navigate }: Da
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        getPaginationRowModel: getPaginationRowModel(),
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -99,13 +119,6 @@ export function BalanceLiftingPurchasesGunnyTable({ data, search, navigate }: Da
                 table={table}
                 searchPlaceholder='Filter purchases...'
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>
