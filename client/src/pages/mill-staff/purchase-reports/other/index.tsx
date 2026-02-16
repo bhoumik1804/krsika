@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -14,6 +15,7 @@ import { OtherProvider, useOther } from './components/other-provider'
 import { OtherTable } from './components/other-table'
 
 export function OtherPurchaseReport() {
+    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -71,10 +73,10 @@ export function OtherPurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Other Purchase Report
+                            {t('otherPurchase.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage other purchase transactions and records
+                            {t('otherPurchase.description')}
                         </p>
                     </div>
                     <OtherPrimaryButtons />
@@ -93,6 +95,7 @@ function OtherPurchaseContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
+    const { t } = useTranslation('millStaff')
     const context = useOther()
 
     if (context.isLoading) {
@@ -106,7 +109,7 @@ function OtherPurchaseContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load other purchase data. Please try again later.
+                {t('otherPurchase.failedToLoad')}
             </div>
         )
     }

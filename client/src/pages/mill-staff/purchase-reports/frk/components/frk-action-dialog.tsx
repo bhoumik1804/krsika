@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -40,6 +41,7 @@ type FrkActionDialogProps = {
 }
 
 export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
+    const { t } = useTranslation('millStaff')
     const { currentRow, millId } = useFrk()
     const { mutateAsync: createFrkPurchase, isPending: isCreating } =
         useCreateFrkPurchase(millId)
@@ -109,11 +111,14 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} FRK Purchase
+                        {isEditing
+                            ? t('frkPurchase.form.editTitle')
+                            : t('frkPurchase.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the purchase details
-                        below
+                        {isEditing
+                            ? t('frkPurchase.form.editDescription')
+                            : t('frkPurchase.form.addDescription')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -128,7 +133,9 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Date</FormLabel>
+                                            <FormLabel>
+                                                {t('frkPurchase.form.date')}
+                                            </FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
                                                 onOpenChange={
@@ -149,7 +156,9 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                                                       ),
                                                                       'MMM dd, yyyy'
                                                                   )
-                                                                : 'Pick a date'}
+                                                                : t(
+                                                                      'frkPurchase.form.placeholders.select'
+                                                                  )}
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
@@ -191,7 +200,11 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'frkPurchase.form.partyName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -199,8 +212,12 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                                         field.onChange
                                                     }
                                                     paginatedList={party}
-                                                    placeholder='Search party...'
-                                                    emptyText='No parties found'
+                                                    placeholder={t(
+                                                        'frkPurchase.form.placeholders.party'
+                                                    )}
+                                                    emptyText={t(
+                                                        'common.noResults'
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -214,13 +231,15 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                FRK Quantity (Qtl)
+                                                {t('frkPurchase.form.frkQty')}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
                                                     step='0.01'
-                                                    placeholder='0.00'
+                                                    placeholder={t(
+                                                        'frkPurchase.form.placeholders.qty'
+                                                    )}
                                                     {...field}
                                                     onChange={(e) => {
                                                         const val =
@@ -247,7 +266,7 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                FRK Rate (per Qtl)
+                                                {t('frkPurchase.form.frkRate')}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -280,7 +299,9 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                     name='gst'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>GST (%)</FormLabel>
+                                            <FormLabel>
+                                                {t('frkPurchase.form.gst')}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -315,16 +336,16 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}
+                                      ? t('frkPurchase.form.editTitle')
+                                      : t('frkPurchase.form.addTitle')}
                             </Button>
                         </DialogFooter>
                     </form>

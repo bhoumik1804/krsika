@@ -1,10 +1,13 @@
 import { format } from 'date-fns'
 import { ColumnDef } from '@tanstack/react-table'
+import { TFunction } from 'i18next'
 import { Checkbox } from '@/components/ui/checkbox'
 import { PaddySales } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const paddySalesColumns: ColumnDef<PaddySales>[] = [
+export const getPaddySalesColumns = (
+    t: TFunction<'millStaff', undefined>
+): ColumnDef<PaddySales>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -31,7 +34,7 @@ export const paddySalesColumns: ColumnDef<PaddySales>[] = [
     },
     {
         accessorKey: 'date',
-        header: 'Date',
+        header: t('paddySales.table.date'),
         cell: ({ row }) =>
             row.getValue('date')
                 ? format(new Date(row.getValue('date')), 'yyyy-MM-dd')
@@ -39,27 +42,27 @@ export const paddySalesColumns: ColumnDef<PaddySales>[] = [
     },
     {
         accessorKey: 'partyName',
-        header: 'Party Name',
+        header: t('paddySales.table.partyName'),
         cell: ({ row }) => row.getValue('partyName') || '-',
     },
     {
         accessorKey: 'brokerName',
-        header: 'Broker Name',
+        header: t('paddySales.table.brokerName'),
         cell: ({ row }) => row.getValue('brokerName') || '-',
     },
     {
         accessorKey: 'saleType',
-        header: 'Sale Type',
+        header: t('paddySales.table.saleType'),
         cell: ({ row }) => row.getValue('saleType') || '-',
     },
     {
         accessorKey: 'doNumber',
-        header: 'DO Number',
+        header: t('paddySales.table.doNumber'),
         cell: ({ row }) => row.getValue('doNumber') || '-',
     },
     {
         accessorKey: 'dhanMotaQty',
-        header: 'Dhan Mota Qty',
+        header: t('paddySales.table.dhanMotaQty'),
         cell: ({ row }) => {
             const value = row.getValue('dhanMotaQty')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -67,7 +70,7 @@ export const paddySalesColumns: ColumnDef<PaddySales>[] = [
     },
     {
         accessorKey: 'dhanPatlaQty',
-        header: 'Dhan Patla Qty',
+        header: t('paddySales.table.dhanPatlaQty'),
         cell: ({ row }) => {
             const value = row.getValue('dhanPatlaQty')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -75,7 +78,7 @@ export const paddySalesColumns: ColumnDef<PaddySales>[] = [
     },
     {
         accessorKey: 'dhanSarnaQty',
-        header: 'Dhan Sarna Qty',
+        header: t('paddySales.table.dhanSarnaQty'),
         cell: ({ row }) => {
             const value = row.getValue('dhanSarnaQty')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -83,12 +86,12 @@ export const paddySalesColumns: ColumnDef<PaddySales>[] = [
     },
     {
         accessorKey: 'dhanType',
-        header: 'Dhan Type',
+        header: t('paddySales.table.dhanType'),
         cell: ({ row }) => row.getValue('dhanType') || '-',
     },
     {
         accessorKey: 'dhanQty',
-        header: 'Quantity',
+        header: t('paddySales.table.dhanQty'),
         cell: ({ row }) => {
             const value = row.getValue('dhanQty')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -96,7 +99,7 @@ export const paddySalesColumns: ColumnDef<PaddySales>[] = [
     },
     {
         accessorKey: 'paddyRatePerQuintal',
-        header: 'Rate',
+        header: t('paddySales.table.paddyRatePerQuintal'),
         cell: ({ row }) => {
             const value = row.getValue('paddyRatePerQuintal')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -104,12 +107,12 @@ export const paddySalesColumns: ColumnDef<PaddySales>[] = [
     },
     {
         accessorKey: 'deliveryType',
-        header: 'Delivery Type',
+        header: t('paddySales.table.deliveryType'),
         cell: ({ row }) => row.getValue('deliveryType') || '-',
     },
     {
         accessorKey: 'discountPercent',
-        header: 'Discount %',
+        header: t('paddySales.table.discountPercent'),
         cell: ({ row }) => {
             const value = row.getValue('discountPercent')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -117,7 +120,7 @@ export const paddySalesColumns: ColumnDef<PaddySales>[] = [
     },
     {
         accessorKey: 'brokerage',
-        header: 'Brokerage',
+        header: t('paddySales.table.brokerage'),
         cell: ({ row }) => {
             const value = row.getValue('brokerage')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -125,12 +128,12 @@ export const paddySalesColumns: ColumnDef<PaddySales>[] = [
     },
     {
         accessorKey: 'gunnyType',
-        header: 'Gunny Type',
+        header: t('paddySales.table.gunnyType'),
         cell: ({ row }) => row.getValue('gunnyType') || '-',
     },
     {
         accessorKey: 'newGunnyRate',
-        header: 'New Gunny Rate',
+        header: t('paddySales.table.newGunnyRate'),
         cell: ({ row }) => {
             const value = row.getValue('newGunnyRate')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -138,7 +141,7 @@ export const paddySalesColumns: ColumnDef<PaddySales>[] = [
     },
     {
         accessorKey: 'oldGunnyRate',
-        header: 'Old Gunny Rate',
+        header: t('paddySales.table.oldGunnyRate'),
         cell: ({ row }) => {
             const value = row.getValue('oldGunnyRate')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -146,7 +149,7 @@ export const paddySalesColumns: ColumnDef<PaddySales>[] = [
     },
     {
         accessorKey: 'plasticGunnyRate',
-        header: 'Plastic Gunny Rate',
+        header: t('paddySales.table.plasticGunnyRate'),
         cell: ({ row }) => {
             const value = row.getValue('plasticGunnyRate')
             return value ? parseFloat(String(value)).toFixed(2) : '-'
@@ -154,7 +157,6 @@ export const paddySalesColumns: ColumnDef<PaddySales>[] = [
     },
     {
         id: 'actions',
-        header: 'Actions',
         cell: ({ row }) => <DataTableRowActions row={row} />,
     },
 ]

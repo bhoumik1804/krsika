@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -21,6 +22,7 @@ export function RiceDeleteDialog({
     onOpenChange,
 }: RiceDeleteDialogProps) {
     const { currentRow, millId } = useRice()
+    const { t } = useTranslation('millStaff')
     const { mutateAsync: deleteRicePurchase, isPending: isDeleting } =
         useDeleteRicePurchase(millId)
 
@@ -39,24 +41,28 @@ export function RiceDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Rice Purchase?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                        {t('ricePurchase.delete.title')}
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the rice purchase from{' '}
-                        <strong>{currentRow?.partyName}</strong> on{' '}
-                        <strong>{currentRow?.date}</strong>? <br />
-                        This action cannot be undone.
+                        {t('ricePurchase.delete.description', {
+                            partyName: currentRow?.partyName,
+                            date: currentRow?.date,
+                        })}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                        Cancel
+                        {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting ? 'Deleting...' : 'Delete'}
+                        {isDeleting
+                            ? t('ricePurchase.delete.deleting')
+                            : t('ricePurchase.delete.confirm')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -23,6 +24,7 @@ export function GunnyDeleteDialog({
     onOpenChange,
     currentRow,
 }: GunnyDeleteDialogProps) {
+    const { t } = useTranslation('millStaff')
     const { millId } = useGunny()
     const { mutateAsync: deleteGunnyPurchase, isPending: isDeleting } =
         useDeleteGunnyPurchase(millId)
@@ -42,24 +44,28 @@ export function GunnyDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Gunny Purchase?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                        {t('gunnyPurchase.delete.title')}
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the gunny purchase from{' '}
-                        <strong>{currentRow?.partyName}</strong> on{' '}
-                        <strong>{currentRow?.date}</strong>? <br />
-                        This action cannot be undone.
+                        {t('gunnyPurchase.delete.description', {
+                            partyName: currentRow?.partyName,
+                            date: currentRow?.date,
+                        })}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                        Cancel
+                        {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting ? 'Deleting...' : 'Delete'}
+                        {isDeleting
+                            ? t('gunnyPurchase.delete.deleting')
+                            : t('gunnyPurchase.delete.confirm')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -16,6 +17,7 @@ import { RiceTable } from './components/rice-table'
 export function RicePurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+    const { t } = useTranslation('millStaff')
 
     // Extract query params from URL
     const queryParams = useMemo(() => {
@@ -69,10 +71,10 @@ export function RicePurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Rice Purchase Report
+                            {t('ricePurchase.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage rice purchase transactions and records
+                            {t('ricePurchase.description')}
                         </p>
                     </div>
                     <RicePrimaryButtons />
@@ -92,6 +94,7 @@ function RicePurchaseContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = useRice()
+    const { t } = useTranslation('millStaff')
 
     if (context.isLoading) {
         return (
@@ -104,7 +107,7 @@ function RicePurchaseContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load rice purchase data. Please try again later.
+                {t('ricePurchase.failedToLoad')}
             </div>
         )
     }

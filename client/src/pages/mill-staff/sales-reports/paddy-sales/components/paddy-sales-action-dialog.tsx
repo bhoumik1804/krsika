@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import {
     paddySaleTypeOptions,
@@ -64,6 +65,8 @@ export function PaddySalesActionDialog({
         useCreatePaddySale()
     const { mutate: updatePaddySale, isPending: isUpdating } =
         useUpdatePaddySale()
+
+    const { t } = useTranslation('millStaff')
 
     const isLoading = isCreating || isUpdating
 
@@ -183,10 +186,14 @@ export function PaddySalesActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Paddy Sale
+                        {isEditing
+                            ? t('paddySales.form.editTitle')
+                            : t('paddySales.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the sale details below
+                        {isEditing
+                            ? t('paddySales.form.editDescription')
+                            : t('paddySales.form.addDescription')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -206,7 +213,9 @@ export function PaddySalesActionDialog({
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Date</FormLabel>
+                                            <FormLabel>
+                                                {t('paddySales.form.date')}
+                                            </FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
                                                 onOpenChange={
@@ -227,7 +236,9 @@ export function PaddySalesActionDialog({
                                                                       ),
                                                                       'MMM dd, yyyy'
                                                                   )
-                                                                : 'Pick a date'}
+                                                                : t(
+                                                                      'paddySales.form.placeholders.date'
+                                                                  )}
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
@@ -269,7 +280,9 @@ export function PaddySalesActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
+                                            <FormLabel>
+                                                {t('paddySales.form.partyName')}
+                                            </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -277,8 +290,12 @@ export function PaddySalesActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={party}
-                                                    placeholder='Search party...'
-                                                    emptyText='No parties found'
+                                                    placeholder={t(
+                                                        'paddySales.form.placeholders.party'
+                                                    )}
+                                                    emptyText={t(
+                                                        'common.noResults'
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -290,7 +307,11 @@ export function PaddySalesActionDialog({
                                     name='brokerName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Broker Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'paddySales.form.brokerName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -298,8 +319,12 @@ export function PaddySalesActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={broker}
-                                                    placeholder='Search broker...'
-                                                    emptyText='No brokers found'
+                                                    placeholder={t(
+                                                        'paddySales.form.placeholders.broker'
+                                                    )}
+                                                    emptyText={t(
+                                                        'common.noResults'
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -311,7 +336,9 @@ export function PaddySalesActionDialog({
                                     name='saleType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Sale Type</FormLabel>
+                                            <FormLabel>
+                                                {t('paddySales.form.saleType')}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
@@ -352,11 +379,15 @@ export function PaddySalesActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        DO Number
+                                                        {t(
+                                                            'paddySales.form.doNumber'
+                                                        )}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
-                                                            placeholder='Enter DO number'
+                                                            placeholder={t(
+                                                                'paddySales.form.placeholders.doNumber'
+                                                            )}
                                                             {...field}
                                                         />
                                                     </FormControl>
@@ -370,7 +401,9 @@ export function PaddySalesActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        Dhan Mota Qty
+                                                        {t(
+                                                            'paddySales.form.dhanMotaQty'
+                                                        )}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -399,7 +432,9 @@ export function PaddySalesActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        Dhan Patla Qty
+                                                        {t(
+                                                            'paddySales.form.dhanPatlaQty'
+                                                        )}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -428,7 +463,9 @@ export function PaddySalesActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        Dhan Sarna Qty
+                                                        {t(
+                                                            'paddySales.form.dhanSarnaQty'
+                                                        )}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -461,7 +498,9 @@ export function PaddySalesActionDialog({
                                     name='dhanType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Dhan Type</FormLabel>
+                                            <FormLabel>
+                                                {t('paddySales.form.dhanType')}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
@@ -498,7 +537,7 @@ export function PaddySalesActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Quantity (Qtl)
+                                                {t('paddySales.form.dhanQty')}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -526,7 +565,9 @@ export function PaddySalesActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Rate (per Quintal)
+                                                {t(
+                                                    'paddySales.form.paddyRatePerQuintal'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -553,7 +594,11 @@ export function PaddySalesActionDialog({
                                     name='deliveryType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Delivery Type</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'paddySales.form.deliveryType'
+                                                )}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
@@ -589,7 +634,11 @@ export function PaddySalesActionDialog({
                                     name='discountPercent'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Discount (%)</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'paddySales.form.discountPercent'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -615,7 +664,9 @@ export function PaddySalesActionDialog({
                                     name='brokerage'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Brokerage</FormLabel>
+                                            <FormLabel>
+                                                {t('paddySales.form.brokerage')}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -644,7 +695,9 @@ export function PaddySalesActionDialog({
                                     name='gunnyOption'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Gunny Type</FormLabel>
+                                            <FormLabel>
+                                                {t('paddySales.form.gunnyType')}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 value={field.value}
@@ -684,7 +737,9 @@ export function PaddySalesActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        New Gunny Rate
+                                                        {t(
+                                                            'paddySales.form.newGunnyRate'
+                                                        )}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -713,7 +768,9 @@ export function PaddySalesActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        Old Gunny Rate
+                                                        {t(
+                                                            'paddySales.form.oldGunnyRate'
+                                                        )}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -742,7 +799,9 @@ export function PaddySalesActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        Plastic Gunny Rate
+                                                        {t(
+                                                            'paddySales.form.plasticGunnyRate'
+                                                        )}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -777,17 +836,16 @@ export function PaddySalesActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('paddySales.form.buttons.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('paddySales.form.buttons.updating')
+                                        : t('paddySales.form.buttons.adding')
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}{' '}
-                                Sale
+                                      ? t('paddySales.form.buttons.update')
+                                      : t('paddySales.form.buttons.add')}
                             </Button>
                         </DialogFooter>
                     </form>

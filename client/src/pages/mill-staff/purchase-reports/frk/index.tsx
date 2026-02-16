@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -14,6 +15,7 @@ import { FrkProvider, useFrk } from './components/frk-provider'
 import { FrkTable } from './components/frk-table'
 
 export function FrkPurchaseReport() {
+    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -71,10 +73,10 @@ export function FrkPurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            FRK Purchase Report
+                            {t('frkPurchase.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage FRK purchase transactions and records
+                            {t('frkPurchase.description')}
                         </p>
                     </div>
                     <FrkPrimaryButtons />
@@ -93,6 +95,7 @@ function FrkPurchaseContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
+    const { t } = useTranslation('millStaff')
     const context = useFrk()
 
     if (context.isLoading) {
@@ -106,7 +109,7 @@ function FrkPurchaseContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load FRK purchase data. Please try again later.
+                {t('frkPurchase.failedToLoad')}
             </div>
         )
     }
