@@ -24,7 +24,7 @@ export function OtherSalesMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: OtherSalesMultiDeleteDialogProps<TData>) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const { mutate: bulkDelete, isPending } = useBulkDeleteOtherSales(
         millId || ''

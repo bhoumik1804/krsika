@@ -66,7 +66,7 @@ export function PaddySalesActionDialog({
     const { mutate: updatePaddySale, isPending: isUpdating } =
         useUpdatePaddySale()
 
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
 
     const isLoading = isCreating || isUpdating
 

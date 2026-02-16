@@ -12,6 +12,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,8 +25,8 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BalanceLiftingPurchasesRice } from '../data/schema'
+import { useBalanceLiftingPurchasesRiceColumns } from './balance-lifting-purchases-rice-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getRiceColumns } from './balance-lifting-purchases-rice-columns'
 
 type DataTableProps = {
     data: BalanceLiftingPurchasesRice[]
@@ -45,16 +46,15 @@ export function BalanceLiftingPurchasesRiceTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
+    const columns = useBalanceLiftingPurchasesRiceColumns()
     const [sorting, setSorting] = useState<SortingState>([])
-    const { t } = useTranslation()
-
-    const columns = useMemo(() => getRiceColumns(t), [t])
-
+    
     // Synced with URL states
     const {
         columnFilters,
@@ -193,7 +193,9 @@ export function BalanceLiftingPurchasesRiceTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {false // Assuming 'loading' state is not provided
+                                        ? t('common.loading')
+                                        : t('balanceLifting.common.noRecords')}
                                 </TableCell>
                             </TableRow>
                         )}

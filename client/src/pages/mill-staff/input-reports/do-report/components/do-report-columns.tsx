@@ -1,12 +1,15 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns/format'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type DoReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const doReportColumns: ColumnDef<DoReportData>[] = [
+export const getDoReportColumns = (
+    t: TFunction<'mill-staff', undefined>
+): ColumnDef<DoReportData>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -18,7 +21,7 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
                 onCheckedChange={(value) =>
                     table.toggleAllPageRowsSelected(!!value)
                 }
-                aria-label='Select all'
+                aria-label={t('common.select')}
                 className='translate-y-[2px]'
             />
         ),
@@ -29,7 +32,7 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
             <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label='Select row'
+                aria-label={t('common.select')}
                 className='translate-y-[2px]'
             />
         ),
@@ -39,25 +42,24 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('doReport.table.date')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
                 {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
             </div>
         ),
-        meta: {
-            className: cn(
-                'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-                'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
-            ),
-        },
-        enableHiding: false,
     },
     {
         accessorKey: 'samitiSangrahan',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Samiti Sangrahan' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('doReport.table.committee')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -69,14 +71,20 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
     {
         accessorKey: 'doNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='DO No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('doReport.table.doNumber')}
+            />
         ),
         cell: ({ row }) => <div>{row.getValue('doNo')}</div>,
     },
     {
         accessorKey: 'dhanMota',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Dhan (Mota)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('doReport.table.paddyMota')}
+            />
         ),
         cell: ({ row }) => {
             const value = row.getValue('dhanMota') as number | undefined
@@ -86,7 +94,10 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
     {
         accessorKey: 'dhanPatla',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Dhan (Patla)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('doReport.table.paddyPatla')}
+            />
         ),
         cell: ({ row }) => {
             const value = row.getValue('dhanPatla') as number | undefined
@@ -96,7 +107,10 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
     {
         accessorKey: 'dhanSarna',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Dhan (Sarna)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('doReport.table.paddySarna')}
+            />
         ),
         cell: ({ row }) => {
             const value = row.getValue('dhanSarna') as number | undefined
@@ -106,7 +120,7 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
     {
         accessorKey: 'total',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Total' />
+            <DataTableColumnHeader column={column} title={t('common.weight')} />
         ),
         cell: ({ row }) => {
             const total = row.getValue('total') as number | undefined

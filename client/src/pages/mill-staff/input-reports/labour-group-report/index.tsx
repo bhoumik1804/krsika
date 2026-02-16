@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -19,6 +20,7 @@ import { LabourGroupReportTable } from './components/labour-group-report-table'
 export function LabourGroupReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+    const { t } = useTranslation('mill-staff')
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
@@ -66,10 +68,10 @@ export function LabourGroupReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Labour Group Report
+                            {t('labourGroupReport.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage labour group transactions and records
+                            {t('labourGroupReport.description')}
                         </p>
                     </div>
                     <LabourGroupReportPrimaryButtons />
@@ -88,6 +90,7 @@ function LabourGroupReportContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = useLabourGroupReport()
+    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (
@@ -100,7 +103,7 @@ function LabourGroupReportContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load labour group data. Please try again later.
+                {t('common.error')}
             </div>
         )
     }

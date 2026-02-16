@@ -25,7 +25,7 @@ export function PaddyMultiDeleteDialog({
     open,
     onOpenChange,
 }: PaddyMultiDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = usePaddy()
     const { mutateAsync: bulkDeletePaddyPurchases, isPending: isDeleting } =
         useBulkDeletePaddyPurchases(millId)

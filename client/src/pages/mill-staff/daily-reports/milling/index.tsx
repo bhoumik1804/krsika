@@ -9,7 +9,7 @@ function getIcon(commodity: string) {
 }
 
 export function MillingReport() {
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
     return (
         <DailyReportPage
             action='Milling'
@@ -22,3 +22,4 @@ export function MillingReport() {
         />
     )
 }
+

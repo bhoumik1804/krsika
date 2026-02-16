@@ -11,10 +11,11 @@ import {
     Activity,
 } from 'lucide-react'
 import { DateRange } from 'react-day-picker'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { DateRangePicker } from '@/components/date-range-picker'
-import { getMillAdminSidebarData } from '@/components/layout/data'
+import { getMillStaffSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -29,23 +30,55 @@ type PaymentRow = {
 }
 
 export function PaymentReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
-    const sidebarData = getMillAdminSidebarData(millId || '')
+    const sidebarData = getMillStaffSidebarData(millId || '')
     const [date, setDate] = useState<DateRange | undefined>({
         from: new Date(),
         to: new Date(),
     })
 
-    // Sample data matching the image categories
     const payments: PaymentRow[] = [
-        { description: 'Party Name / Broker Name', amount: 0, icon: Users },
-        { description: 'Transporter', amount: 0, icon: Truck },
-        { description: 'Diesel', amount: 0, icon: Fuel },
-        { description: 'Allowance', amount: 0, icon: DollarSign },
-        { description: 'Repair / Maintenance', amount: 0, icon: Wrench },
-        { description: 'Hamali', amount: 0, icon: Contact },
-        { description: 'Salary', amount: 0, icon: UserPlus },
-        { description: 'Other Expenses', amount: 0, icon: Activity },
+        {
+            description: t('dailyReports.payment.categories.partyBroker'),
+            amount: 0,
+            icon: Users,
+        },
+        {
+            description: t('dailyReports.payment.categories.transporter'),
+            amount: 0,
+            icon: Truck,
+        },
+        {
+            description: t('dailyReports.payment.categories.diesel'),
+            amount: 0,
+            icon: Fuel,
+        },
+        {
+            description: t('dailyReports.payment.categories.allowance'),
+            amount: 0,
+            icon: DollarSign,
+        },
+        {
+            description: t('dailyReports.payment.categories.repairMaintenance'),
+            amount: 0,
+            icon: Wrench,
+        },
+        {
+            description: t('dailyReports.payment.categories.hamali'),
+            amount: 0,
+            icon: Contact,
+        },
+        {
+            description: t('dailyReports.payment.categories.salary'),
+            amount: 0,
+            icon: UserPlus,
+        },
+        {
+            description: t('dailyReports.payment.categories.otherExpenses'),
+            amount: 0,
+            icon: Activity,
+        },
     ]
 
     return (
@@ -66,10 +99,10 @@ export function PaymentReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Daily Payments
+                            {t('dailyReports.payment.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Track all daily payment transactions
+                            {t('dailyReports.payment.description')}
                         </p>
                     </div>
                     <DateRangePicker date={date} setDate={setDate} />

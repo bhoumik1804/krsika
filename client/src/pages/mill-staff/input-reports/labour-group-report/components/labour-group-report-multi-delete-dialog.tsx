@@ -1,4 +1,5 @@
 import { type Table } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import {
     AlertDialog,
@@ -25,6 +26,7 @@ export function LabourGroupReportMultiDeleteDialog<TData>({
     onOpenChange,
 }: LabourGroupReportMultiDeleteDialogProps<TData>) {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const mutation = useBulkDeleteLabourGroup(millId || '')
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
@@ -47,18 +49,19 @@ export function LabourGroupReportMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Delete {selectedRows.length}{' '}
-                        {selectedRows.length > 1 ? 'records' : 'record'}?
+                        {t('delete.multiTitle', {
+                            count: selectedRows.length,
+                        })}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the selected records?{' '}
+                        {t('delete.multiDescription')}
                         <br />
-                        This action cannot be undone.
+                        {t('delete.undone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={mutation.isPending}>
-                        Cancel
+                        {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={(e) => {
@@ -68,7 +71,9 @@ export function LabourGroupReportMultiDeleteDialog<TData>({
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                         disabled={mutation.isPending}
                     >
-                        {mutation.isPending ? 'Deleting...' : 'Delete'}
+                        {mutation.isPending
+                            ? t('common.deleting')
+                            : t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

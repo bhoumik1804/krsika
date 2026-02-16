@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type DoReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { doReportColumns as columns } from './do-report-columns'
+import { getDoReportColumns } from './do-report-columns'
 
 type DataTableProps = {
     data: DoReportData[]
@@ -48,6 +49,8 @@ export function DoReportTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
+    const columns = useMemo(() => getDoReportColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -125,7 +128,9 @@ export function DoReportTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search Samiti...'
+                searchPlaceholder={t(
+                    'doReport.table.searchPlaceholder'
+                )}
                 searchKey='samitiSangrahan'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -197,7 +202,7 @@ export function DoReportTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

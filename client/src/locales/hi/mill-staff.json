@@ -6,7 +6,8 @@
         "variety": "किस्म",
         "type": "प्रकार",
         "quantity": "मात्रा",
-        "bags": "बोले",
+        "bags": "बोरी",
+        "quintal": "क्विंटल",
         "weight": "वजन",
         "remarks": "टिप्पणी",
         "status": "स्थिति",
@@ -70,7 +71,8 @@
         "deleteSelectedDescription": "क्या आप वाकई चयनित प्रविष्टियों को हटाना चाहते हैं?",
         "deletingSelected": "प्रविष्टियां हटाई जा रही हैं...",
         "deletedSelectedSuccess": "{{count}} प्रविष्टियां सफलतापूर्वक हटाई गईं",
-        "deleteSelectedError": "प्रविष्टियां हटाने में त्रुटि"
+        "deleteSelectedError": "प्रविष्टियां हटाने में त्रुटि",
+        "truckNumber": "ट्रक नंबर"
     },
     "dashboard": {
         "title": "स्टाफ डैशबोर्ड",
@@ -157,6 +159,155 @@
         "deleteFailed": "प्रविष्टि हटाने में विफल",
         "deleteTitle": "प्रविष्टि हटाएं?",
         "deleteDescription": "क्या आप वाकई इस प्रविष्टि को हटाना चाहते हैं"
+    },
+    "dailyReports": {
+        "title": "दैनिक रिपोर्ट",
+        "overview": {
+            "title": "रिपोर्ट सारांश",
+            "description": "सभी दैनिक रिपोर्ट मॉड्यूल तक त्वरित पहुँच"
+        },
+        "summaryCardDescription": "{{count}} प्रविष्टियां • {{bags}} बोरी",
+        "delete": {
+            "title": "रिकॉर्ड हटाएं?",
+            "description": "क्या आप वाकई {{name}} के लिए यह रिकॉर्ड हटाना चाहते हैं?",
+            "descriptionWithVoucher": "क्या आप वाकई {{name}} (वाउचर: {{voucher}}) के लिए यह रिकॉर्ड हटाना चाहते हैं?",
+            "loading": "रिकॉर्ड हटाया जा रहा है...",
+            "success": "रिकॉर्ड सफलतापूर्वक हटा दिया गया",
+            "error": "रिकॉर्ड हटाने में विफल"
+        },
+        "purchaseDeals": {
+            "title": "खरीद सौदे",
+            "description": "जिंस के अनुसार दैनिक खरीद लेनदेन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई खरीद सौदा नहीं मिला",
+            "primaryButton": "सौदा जोड़ें"
+        },
+        "salesDeals": {
+            "title": "बिक्री सौदे",
+            "description": "जिंस के अनुसार दैनिक बिक्री लेनदेन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई बिक्री सौदा नहीं मिला",
+            "primaryButton": "बिक्री सौदा जोड़ें"
+        },
+        "inwards": {
+            "title": "आवक (Inwards)",
+            "description": "स्टॉक आवक की निगरानी करें"
+        },
+        "outwards": {
+            "title": "जावक (Outwards)",
+            "description": "स्टॉक जावक को ट्रैक करें"
+        },
+        "milling": {
+            "title": "मिलिंग",
+            "description": "मिलिंग कार्यों को देखें"
+        },
+        "production": {
+            "title": "उत्पादन",
+            "description": "दैनिक उत्पादन को ट्रैक करें"
+        },
+        "payment": {
+            "title": "दैनिक भुगतान",
+            "description": "सभी दैनिक भुगतान लेनदेन ट्रैक करें",
+            "primaryButton": "नया भुगतान",
+            "categories": {
+                "partyBroker": "पार्टी का नाम / ब्रोकर का नाम",
+                "transporter": "परिवहनकर्ता",
+                "diesel": "डीजल",
+                "allowance": "भत्ता",
+                "repairMaintenance": "मरम्मत / रखरखाव",
+                "hamali": "हमाली",
+                "salary": "वेतन",
+                "otherExpenses": "अन्य खर्च"
+            }
+        },
+        "receipt": {
+            "title": "दैनिक रसीद",
+            "description": "दैनिक वित्तीय रसीदें ट्रैक करें",
+            "primaryButton": "नई रसीद",
+            "partyPrefix": "पार्टी",
+            "brokerPrefix": "ब्रोकर"
+        },
+        "stockOverview": {
+            "title": "स्टॉक सारांश",
+            "currentDescription": "वस्तु के अनुसार वर्तमान स्टॉक स्थिति",
+            "balanceAsOf": "{{date}} तक स्टॉक बैलेंस",
+            "export": "निर्यात",
+            "noData": "कोई स्टॉक डेटा उपलब्ध नहीं है",
+            "fetchError": "स्टॉक बैलेंस प्राप्त करने में विफल",
+            "totalBags": "कुल बोरी",
+            "currentStock": "वर्तमान स्टॉक",
+            "sections": {
+                "paddy": "धान स्टॉक",
+                "rice": "चावल स्टॉक",
+                "other": "अन्य स्टॉक",
+                "byProduct": "उप-उत्पाद स्टॉक",
+                "gunny": "बारदाना स्टॉक"
+            }
+        },
+        "transactionReports": {
+            "brokerName": "ब्रोकर का नाम",
+            "broker": "ब्रोकर",
+            "party": "पार्टी",
+            "purchaseDeal": "खरीद सौदा",
+            "salesDeal": "बिक्री सौदा",
+            "brokerage": "दलाली (Brokerage)",
+            "inwardKg": "आवक (Inward (Kg))",
+            "outwardKg": "जावक (Outward (Kg))",
+            "receipt": "रसीद (Receipt)",
+            "payment": "भुगतान (Payment)",
+            "noTransactions": "कोई लेनदेन नहीं मिला।",
+            "brokerReport": {
+                "title": "ब्रोकर लेनदेन रिपोर्ट",
+                "description": "ब्रोकर द्वारा खरीद और बिक्री सौदों से एकत्रित",
+                "filterPlaceholder": "ब्रोकर द्वारा फ़िल्टर करें..."
+            },
+            "partyReport": {
+                "title": "पार्टी लेनदेन रिपोर्ट",
+                "description": "खरीद, बिक्री, आवक, जावक, रसीद और भुगतान से एकत्रित",
+                "filterPlaceholder": "पार्टी द्वारा फ़िल्टर करें..."
+            }
+        },
+        "balanceLifting": {
+            "common": {
+                "dealNumber": "सौदा नंबर",
+                "qty": "मात्रा",
+                "lifting": "लिफ्टिंग (Lifting)",
+                "balance": "शेष (Balance)",
+                "searchPlaceholder": "लेनदेन खोजें...",
+                "noRecords": "कोई रिकॉर्ड नहीं मिला।",
+                "failedToLoad": "डेटा लोड करने में विफल। कृपया बाद में पुनः प्रयास करें।"
+            },
+            "paddyPurchase": {
+                "title": "धान खरीद बैलेंस लिफ्टिंग",
+                "description": "धान खरीद लेनदेन और बैलेंस लिफ्टिंग रिकॉर्ड प्रबंधित करें",
+                "dealNumber": "धान खरीद सौदा नंबर"
+            },
+            "ricePurchase": {
+                "title": "चावल खरीद बैलेंस लिफ्टिंग",
+                "description": "चावल खरीद लेनदेन और बैलेंस लिफ्टिंग रिकॉर्ड प्रबंधित करें",
+                "dealNumber": "चावल खरीद सौदा नंबर"
+            },
+            "gunnyPurchase": {
+                "title": "बारदाना खरीद बैलेंस लिफ्टिंग",
+                "description": "बारदाना खरीद लेनदेन और बैलेंस लिफ्टिंग रिकॉर्ड प्रबंधित करें",
+                "dealNumber": "बारदाना खरीद सौदा नंबर"
+            },
+            "frkPurchase": {
+                "title": "FRK खरीद बैलेंस लिफ्टिंग",
+                "description": "FRK खरीद लेनदेन और बैलेंस लिफ्टिंग रिकॉर्ड प्रबंधित करें",
+                "dealNumber": "FRK खरीद सौदा नंबर"
+            },
+            "paddySales": {
+                "title": "धान बिक्री बैलेंस लिफ्टिंग",
+                "description": "मिल से धान बिक्री लेनदेन और बैलेंस लिफ्टिंग रिकॉर्ड प्रबंधित करें",
+                "dealNumber": "धान बिक्री सौदा नंबर"
+            },
+            "outwardRiceSales": {
+                "title": "चावल बिक्री जावक बैलेंस लिफ्टिंग",
+                "description": "चावल बिक्री के लिए जावक बैलेंस लिफ्टिंग रिपोर्ट",
+                "dealNumber": "चावल बिक्री सौदा नंबर",
+                "outwardNumber": "जावक नंबर",
+                "saleNumber": "बिक्री नंबर"
+            }
+        }
     },
     "staff": {
         "title": "स्टाफ प्रबंधन",
@@ -1038,235 +1189,350 @@
             "description": "क्या आप वाकई चयनित अन्य बिक्री रिकॉर्ड हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।"
         }
     },
-    "inputReports": {
-        "partyReport": {
-            "title": "पार्टी रिपोर्ट",
-            "description": "पार्टी लेनदेन और रिकॉर्ड प्रबंधित करें",
-            "table": {
-                "name": "पार्टी का नाम",
-                "gstn": "GSTN",
-                "phone": "फ़ोन न.",
-                "email": "Email",
-                "address": "पता",
-                "actions": "कार्रवाई"
-            },
-            "form": {
-                "addTitle": "पार्टी जोड़ें",
-                "editTitle": "पार्टी संपादित करें",
-                "addDescription": "नीचे पार्टी विवरण दर्ज करें",
-                "editDescription": "नीचे पार्टी विवरण अपडेट करें",
-                "name": "पार्टी का नाम",
-                "gstn": "GSTN",
-                "phone": "फ़ोन न.",
-                "email": "Email",
-                "address": "पता",
-                "placeholders": {
-                    "name": "नाम दर्ज करें",
-                    "gstn": "GSTN दर्ज करें",
-                    "phone": "फ़ोन नंबर दर्ज करें",
-                    "email": "ईमेल दर्ज करें",
-                    "address": "पता दर्ज करें"
-                }
-            }
+    "partyReport": {
+        "title": "पार्टी रिपोर्ट",
+        "description": "पार्टी लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "name": "पार्टी का नाम",
+            "gstn": "GSTN",
+            "phone": "फ़ोन न.",
+            "email": "Email",
+            "address": "पता",
+            "actions": "कार्रवाई"
         },
-        "transporterReport": {
-            "title": "परिवहनकर्ता रिपोर्ट",
-            "description": "परिवहनकर्ता लेनदेन और रिकॉर्ड प्रबंधित करें",
-            "table": {
-                "name": "परिवहनकर्ता का नाम",
-                "gstn": "GSTN",
-                "phone": "फ़ोन न.",
-                "email": "Email",
-                "address": "पता",
-                "actions": "कार्रवाई"
-            },
-            "form": {
-                "addTitle": "परिवहनकर्ता जोड़ें",
-                "editTitle": "परिवहनकर्ता संपादित करें",
-                "addDescription": "नीचे परिवहनकर्ता विवरण दर्ज करें",
-                "editDescription": "नीचे परिवहनकर्ता विवरण अपडेट करें",
-                "name": "परिवहनकर्ता का नाम",
-                "gstn": "GSTN",
-                "phone": "फ़ोन न.",
-                "email": "Email",
-                "address": "पता",
-                "placeholders": {
-                    "name": "नाम दर्ज करें",
-                    "gstn": "GSTN दर्ज करें",
-                    "phone": "फ़ोन नंबर दर्ज करें",
-                    "email": "ईमेल दर्ज करें",
-                    "address": "पता दर्ज करें"
-                }
+        "form": {
+            "addTitle": "पार्टी जोड़ें",
+            "editTitle": "पार्टी संपादित करें",
+            "addDescription": "नीचे पार्टी विवरण दर्ज करें",
+            "editDescription": "नीचे पार्टी विवरण अपडेट करें",
+            "name": "पार्टी का नाम",
+            "gstn": "GSTN",
+            "phone": "फ़ोन न.",
+            "email": "Email",
+            "address": "पता",
+            "placeholders": {
+                "name": "नाम दर्ज करें",
+                "gstn": "GSTIN दर्ज करें",
+                "phone": "फ़ोन नंबर दर्ज करें",
+                "email": "ईमेल दर्ज करें",
+                "address": "पता दर्ज करें"
             }
-        },
-        "brokerReport": {
-            "title": "ब्रोकर रिपोर्ट",
-            "description": "ब्रोकर लेनदेन और रिकॉर्ड प्रबंधित करें",
-            "table": {
-                "name": "ब्रोकर का नाम",
-                "gstn": "GSTIN",
-                "phone": "फ़ोन न.",
-                "email": "Email",
-                "address": "पता",
-                "actions": "कार्रवाई",
-                "searchPlaceholder": "ब्रोकर का नाम खोजें...",
-                "noResults": "कोई ब्रोकर नहीं मिला।"
-            },
-            "form": {
-                "addTitle": "ब्रोकर जोड़ें",
-                "editTitle": "ब्रोकर संपादित करें",
-                "addDescription": "नीचे ब्रोकर विवरण दर्ज करें",
-                "editDescription": "नीचे ब्रोकर विवरण अपडेट करें",
-                "name": "ब्रोकर का नाम",
-                "gstn": "GSTIN",
-                "phone": "फ़ोन न.",
-                "email": "Email",
-                "address": "पता",
-                "placeholders": {
-                    "name": "नाम दर्ज करें",
-                    "gstn": "GSTIN दर्ज करें",
-                    "phone": "फ़ोन नंबर दर्ज करें",
-                    "email": "ईमेल दर्ज करें",
-                    "address": "पता दर्ज करें"
-                }
-            }
-        },
-        "committeeReport": {
-            "title": "समिति रिपोर्ट",
-            "description": "समिति लेनदेन और रिकॉर्ड प्रबंधित करें",
-            "table": {
-                "type": "समिति का प्रकार",
-                "name": "समिति का नाम",
-                "actions": "कार्रवाई"
-            },
-            "form": {
-                "addTitle": "नई समिति जोड़ें",
-                "editTitle": "समिति संपादित करें",
-                "addDescription": "समिति का नया रिकॉर्ड जोड़ें।",
-                "editDescription": "समिति का रिकॉर्ड अपडेट करें।",
-                "tabs": {
-                    "manual": "मैन्युअल प्रविष्टि",
-                    "upload": "फ़ाइल अपलोड करें"
-                },
-                "type": "समिति का प्रकार",
-                "name": "समिति का नाम",
-                "placeholders": {
-                    "select": "समिति का प्रकार चुनें",
-                    "name": "समिति का नाम दर्ज करें"
-                },
-                "uploadDescription": "समिति रिकॉर्ड वाली CSV या Excel फ़ाइल अपलोड करें।",
-                "uploadCount": " ({{count}} रिकॉर्ड) "
-            }
-        },
-        "vehicleReport": {
-            "title": "वाहन रिपोर्ट",
-            "description": "वाहन लेनदेन और रिकॉर्ड प्रबंधित करें",
-            "table": {
-                "truckNo": "TRUCK NO",
-                "actions": "कार्रवाई"
-            },
-            "form": {
-                "addTitle": "स्वयं के वाहन जोड़ें",
-                "editTitle": "वाहन विवरण संपादित करें",
-                "addDescription": "नीचे वाहन विवरण दर्ज करें",
-                "editDescription": "नीचे वाहन विवरण अपडेट करें",
-                "truckNo": "TRUCK NO",
-                "placeholders": {
-                    "truckNo": "ट्रक नंबर दर्ज करें"
-                }
-            }
-        },
-        "staffReport": {
-            "title": "स्टाफ रिपोर्ट",
-            "description": "स्टाफ लेनदेन और रिकॉर्ड प्रबंधित करें",
-            "table": {
-                "fullName": "पूरा नाम",
-                "post": "पद",
-                "salary": "वेतन",
-                "phoneNumber": "फ़ोन न.",
-                "email": "Email",
-                "address": "पता",
-                "actions": "कार्रवाई"
-            },
-            "form": {
-                "addTitle": "मिल स्टाफ जोड़ें",
-                "editTitle": "स्टाफ विवरण संपादित करें",
-                "addDescription": "नीचे स्टाफ विवरण दर्ज करें",
-                "editDescription": "नीचे स्टाफ विवरण अपडेट करें",
-                "fullName": "पूरा नाम",
-                "post": "पद",
-                "salary": "वेतन",
-                "phone": "फ़ोन न.",
-                "email": "Email",
-                "address": "पता",
-                "placeholders": {
-                    "name": "नाम दर्ज करें",
-                    "post": "पद/पदनाम दर्ज करें",
-                    "salary": "वेतन दर्ज करें",
-                    "phone": "फ़ोन नंबर दर्ज करें",
-                    "email": "ईमेल दर्ज करें",
-                    "address": "पता दर्ज करें"
-                }
-            }
-        },
-        "doReport": {
-            "title": "DO रिपोर्ट",
-            "description": "DO रिपोर्ट लेनदेन और रिकॉर्ड प्रबंधित करें",
-            "table": {
-                "uniqueId": "UNIQUE ID",
-                "date": "दिनांक",
-                "committee": "समिति संग्रहण",
-                "doNumber": "DO क्रमांक",
-                "paddyMota": "धान (मोटा)",
-                "paddyPatla": "धान (पतला)",
-                "paddySarna": "धान (सरना)",
-                "actions": "कार्रवाई"
-            },
-            "form": {
-                "addTitle": "DO प्रविष्टि",
-                "editTitle": "DO प्रविष्टि संपादित करें",
-                "addDescription": "नीचे DO प्रविष्टि विवरण दर्ज करें",
-                "editDescription": "नीचे DO प्रविष्टि विवरण अपडेट करें",
-                "uniqueId": "UNIQUE ID",
-                "date": "दिनांक",
-                "committee": "समिति संग्रहण",
-                "doNumber": "DO क्रमांक",
-                "paddyMota": "धान (मोटा)",
-                "paddyPatla": "धान (पतला)",
-                "paddySarna": "धान (सरना)",
-                "placeholders": {
-                    "date": "दिनांक चुनें",
-                    "committee": "समिति चुनें",
-                    "doNumber": "DO क्रमांक दर्ज करें",
-                    "paddy": "0.00"
-                }
-            }
-        },
-        "labourGroupReport": {
-            "title": "लेबर ग्रुप रिपोर्ट",
-            "description": "लेबर ग्रुप लेनदेन और रिकॉर्ड प्रबंधित करें",
-            "table": {
-                "name": "लेबर ग्रुप का नाम",
-                "actions": "कार्रवाई"
-            },
-            "form": {
-                "addTitle": "लेबर ग्रुप जोड़ें",
-                "editTitle": "लेबर ग्रुप संपादित करें",
-                "addDescription": "नीचे लेबर ग्रुप विवरण दर्ज करें",
-                "editDescription": "नीचे लेबर ग्रुप विवरण अपडेट करें",
-                "name": "लेबर ग्रुप का नाम",
-                "placeholders": {
-                    "name": "लेबर ग्रुप का नाम दर्ज करें"
-                }
-            }
-        },
-        "delete": {
-            "title": "रिकॉर्ड हटाएं?",
-            "description": "क्या आप वाकई <strong>{{name}}</strong> के लिए यह रिकॉर्ड हटाना चाहते हैं?",
-            "descriptionItem": "क्या आप वाकई इस रिकॉर्ड को हटाना चाहते हैं ",
-            "multiTitle": "{{count}} रिकॉर्ड हटाएं?",
-            "multiDescription": "क्या आप वाकई चयनित रिकॉर्ड हटाना चाहते हैं?",
-            "undone": "यह कार्रवाई वापस नहीं ली जा सकती।"
         }
+    },
+    "transporterReport": {
+        "title": "परिवहनकर्ता रिपोर्ट",
+        "description": "परिवहनकर्ता लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "name": "परिवहनकर्ता का नाम",
+            "gstn": "GSTN",
+            "phone": "फ़ोन न.",
+            "email": "Email",
+            "address": "पता",
+            "actions": "कार्रवाई"
+        },
+        "form": {
+            "addTitle": "परिवहनकर्ता जोड़ें",
+            "editTitle": "परिवहनकर्ता संपादित करें",
+            "addDescription": "नीचे परिवहनकर्ता विवरण दर्ज करें",
+            "editDescription": "नीचे परिवहनकर्ता विवरण अपडेट करें",
+            "name": "परिवहनकर्ता का नाम",
+            "gstn": "GSTN",
+            "phone": "फ़ोन न.",
+            "email": "Email",
+            "address": "पता",
+            "placeholders": {
+                "name": "नाम दर्ज करें",
+                "gstn": "GSTN दर्ज करें",
+                "phone": "फ़ोन नंबर दर्ज करें",
+                "email": "ईमेल दर्ज करें",
+                "address": "पता दर्ज करें"
+            }
+        }
+    },
+    "brokerReport": {
+        "title": "ब्रोकर रिपोर्ट",
+        "description": "ब्रोकर लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "name": "ब्रोकर का नाम",
+            "gstn": "GSTIN",
+            "phone": "फ़ोन न.",
+            "email": "Email",
+            "address": "पता",
+            "actions": "कार्रवाई",
+            "searchPlaceholder": "ब्रोकर का नाम खोजें...",
+            "noResults": "कोई ब्रोकर नहीं मिला।"
+        },
+        "form": {
+            "addTitle": "ब्रोकर जोड़ें",
+            "editTitle": "ब्रोकर संपादित करें",
+            "addDescription": "नीचे ब्रोकर विवरण दर्ज करें",
+            "editDescription": "नीचे ब्रोकर विवरण अपडेट करें",
+            "name": "ब्रोकर का नाम",
+            "gstn": "GSTIN",
+            "phone": "फ़ोन न.",
+            "email": "Email",
+            "address": "पता",
+            "placeholders": {
+                "name": "नाम दर्ज करें",
+                "gstn": "GSTIN दर्ज करें",
+                "phone": "फ़ोन नंबर दर्ज करें",
+                "email": "ईमेल दर्ज करें",
+                "address": "पता दर्ज करें"
+            }
+        }
+    },
+    "committeeReport": {
+        "title": "समिति रिपोर्ट",
+        "description": "समिति लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "type": "समिति का प्रकार",
+            "name": "समिति का नाम",
+            "actions": "कार्रवाई"
+        },
+        "form": {
+            "addTitle": "नई समिति जोड़ें",
+            "editTitle": "समिति संपादित करें",
+            "addDescription": "समिति का नया रिकॉर्ड जोड़ें।",
+            "editDescription": "समिति का रिकॉर्ड अपडेट करें।",
+            "tabs": {
+                "manual": "मैन्युअल प्रविष्टि",
+                "upload": "फ़ाइल अपलोड करें"
+            },
+            "type": "समिति का प्रकार",
+            "name": "समिति का नाम",
+            "placeholders": {
+                "select": "समिति का प्रकार चुनें",
+                "name": "समिति का नाम दर्ज करें"
+            },
+            "uploadDescription": "समिति रिकॉर्ड वाली CSV या Excel फ़ाइल अपलोड करें।",
+            "uploadCount": " ({{count}} रिकॉर्ड) "
+        }
+    },
+    "vehicleReport": {
+        "title": "वाहन रिपोर्ट",
+        "description": "वाहन लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "truckNo": "TRUCK NO",
+            "actions": "कार्रवाई"
+        },
+        "form": {
+            "addTitle": "स्वयं के वाहन जोड़ें",
+            "editTitle": "वाहन विवरण संपादित करें",
+            "addDescription": "नीचे वाहन विवरण दर्ज करें",
+            "editDescription": "नीचे वाहन विवरण अपडेट करें",
+            "truckNo": "TRUCK NO",
+            "placeholders": {
+                "truckNo": "ट्रक नंबर दर्ज करें"
+            }
+        }
+    },
+    "staffReport": {
+        "title": "स्टाफ रिपोर्ट",
+        "description": "स्टाफ लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "fullName": "पूरा नाम",
+            "post": "पद",
+            "salary": "वेतन",
+            "phoneNumber": "फ़ोन न.",
+            "email": "Email",
+            "address": "पता",
+            "actions": "कार्रवाई"
+        },
+        "form": {
+            "addTitle": "मिल स्टाफ जोड़ें",
+            "editTitle": "स्टाफ विवरण संपादित करें",
+            "addDescription": "नीचे स्टाफ विवरण दर्ज करें",
+            "editDescription": "नीचे स्टाफ विवरण अपडेट करें",
+            "fullName": "पूरा नाम",
+            "post": "पद",
+            "salary": "वेतन",
+            "phone": "फ़ोन न.",
+            "email": "Email",
+            "address": "पता",
+            "placeholders": {
+                "name": "नाम दर्ज करें",
+                "post": "पद/पदनाम दर्ज करें",
+                "salary": "वेतन दर्ज करें",
+                "phone": "फ़ोन नंबर दर्ज करें",
+                "email": "ईमेल दर्ज करें",
+                "address": "पता दर्ज करें"
+            }
+        }
+    },
+    "doReport": {
+        "title": "DO रिपोर्ट",
+        "description": "DO रिपोर्ट लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "uniqueId": "UNIQUE ID",
+            "date": "दिनांक",
+            "committee": "समिति संग्रहण",
+            "doNumber": "DO क्रमांक",
+            "paddyMota": "धान (मोटा)",
+            "paddyPatla": "धान (पतला)",
+            "paddySarna": "धान (सरना)",
+            "actions": "कार्रवाई"
+        },
+        "form": {
+            "addTitle": "DO प्रविष्टि",
+            "editTitle": "DO प्रविष्टि संपादित करें",
+            "addDescription": "नीचे DO प्रविष्टि विवरण दर्ज करें",
+            "editDescription": "नीचे DO प्रविष्टि विवरण अपडेट करें",
+            "uniqueId": "UNIQUE ID",
+            "date": "दिनांक",
+            "committee": "समिति संग्रहण",
+            "doNumber": "DO क्रमांक",
+            "paddyMota": "धान (मोटा)",
+            "paddyPatla": "धान (पतला)",
+            "paddySarna": "धान (सरना)",
+            "placeholders": {
+                "date": "दिनांक चुनें",
+                "committee": "समिति चुनें",
+                "doNumber": "DO क्रमांक दर्ज करें",
+                "paddy": "0.00"
+            }
+        }
+    },
+    "labourGroupReport": {
+        "title": "लेबर ग्रुप रिपोर्ट",
+        "description": "लेबर ग्रुप लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "table": {
+            "name": "लेबर ग्रुप का नाम",
+            "actions": "कार्रवाई"
+        },
+        "form": {
+            "addTitle": "लेबर ग्रुप जोड़ें",
+            "editTitle": "लेबर ग्रुप संपादित करें",
+            "addDescription": "नीचे लेबर ग्रुप विवरण दर्ज करें",
+            "editDescription": "नीचे लेबर ग्रुप विवरण अपडेट करें",
+            "name": "लेबर ग्रुप का नाम",
+            "placeholders": {
+                "name": "लेबर ग्रुप का नाम दर्ज करें"
+            }
+        }
+    },
+    "financialTransactionReports": "वित्तीय लेनदेन रिपोर्ट",
+    "financialPayment": {
+        "title": "वित्तीय भुगतान रिपोर्ट",
+        "description": "वित्तीय भुगतान लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "addRecord": "भुगतान रिकॉर्ड जोड़ें",
+        "table": {
+            "date": "दिनांक",
+            "paymentType": "भुगतान प्रकार",
+            "partyName": "पार्टी का नाम",
+            "transporterName": "परिवहनकर्ता का नाम",
+            "labourGroupName": "लेबर ग्रुप का नाम",
+            "staffName": "स्टाफ का नाम",
+            "paymentAmount": "भुगतान राशि",
+            "remarks": "टिप्पणी",
+            "actions": "कार्रवाई",
+            "searchPlaceholder": "रिकॉर्ड खोजें..."
+        },
+        "form": {
+            "addTitle": "भुगतान रिकॉर्ड जोड़ें",
+            "editTitle": "भुगतान रिकॉर्ड संपादित करें",
+            "addDescription": "नीचे भुगतान विवरण दर्ज करें",
+            "editDescription": "नीचे भुगतान विवरण अपडेट करें",
+            "date": "दिनांक",
+            "paymentType": "भुगतान प्रकार",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "dealType": "सौदा प्रकार",
+            "dealNumber": "सौदा नंबर",
+            "transporterName": "परिवहनकर्ता का नाम",
+            "truckNumber": "ट्रक नंबर",
+            "diesel": "डीजल",
+            "bhatta": "भत्ता",
+            "repairMaintenance": "मरम्मत/रखरखाव",
+            "labourType": "लेबर प्रकार",
+            "labourGroupName": "लेबर ग्रुप का नाम",
+            "staffName": "स्टाफ का नाम",
+            "salary": "वेतन",
+            "month": "महीना",
+            "attendance": "उपस्थिति",
+            "allowedLeave": "अनुमत अवकाश",
+            "payableSalary": "देय वेतन",
+            "paymentAmount": "भुगतान राशि",
+            "remarks": "टिप्पणी",
+            "options": {
+                "dealPayment": "सौदा भुगतान",
+                "transportPayment": "परिवहन भुगतान",
+                "hamaliPayment": "हमाली भुगतान",
+                "salaryPayment": "वेतन/मजदूरी भुगतान"
+            },
+            "placeholders": {
+                "date": "तारीख चुनें",
+                "party": "पार्टी खोजें...",
+                "broker": "ब्रोकर खोजें...",
+                "dealType": "सौदा प्रकार चुनें",
+                "dealNumber": "सौदा नंबर दर्ज करें",
+                "transporter": "परिवहनकर्ता खोजें...",
+                "truckNumber": "ट्रक नंबर दर्ज करें",
+                "diesel": "0.00",
+                "bhatta": "0.00",
+                "repairMaintenance": "0.00",
+                "labourType": "लेबर प्रकार चुनें",
+                "labourGroup": "लेबर ग्रुप खोजें...",
+                "staff": "स्टाफ खोजें...",
+                "salary": "वेतन दर्ज करें",
+                "month": "महीना चुनें",
+                "attendance": "उपस्थिति दर्ज करें",
+                "allowedLeave": "अनुमत अवकाश दर्ज करें",
+                "amount": "0.00",
+                "remarks": "टिप्पणी दर्ज करें"
+            }
+        }
+    },
+    "financialReceipt": {
+        "title": "वित्तीय प्राप्ति रिपोर्ट",
+        "description": "वित्तीय प्राप्ति लेनदेन और रिकॉर्ड प्रबंधित करें",
+        "addRecord": "प्राप्ति रिकॉर्ड जोड़ें",
+        "table": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "dealType": "बिक्री सौदा प्रकार",
+            "dealNumber": "बिक्री सौदा नंबर",
+            "receivedAmount": "प्राप्त राशि",
+            "remarks": "टिप्पणी",
+            "actions": "कार्रवाई",
+            "searchPlaceholder": "रिकॉर्ड खोजें..."
+        },
+        "form": {
+            "addTitle": "रिकॉर्ड जोड़ें",
+            "editTitle": "रिकॉर्ड संपादित करें",
+            "addDescription": "नीचे विवरण दर्ज करें",
+            "editDescription": "नीचे विवरण अपडेट करें",
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "ब्रोकर का नाम",
+            "dealType": "बिक्री सौदा प्रकार",
+            "dealNumber": "बिक्री सौदा नंबर",
+            "receivedAmount": "प्राप्त राशि",
+            "remarks": "टिप्पणी",
+            "placeholders": {
+                "date": "तारीख चुनें",
+                "party": "पार्टी खोजें...",
+                "broker": "ब्रोकर खोजें...",
+                "dealType": "बिक्री सौदा प्रकार चुनें",
+                "dealNumber": "बिक्री सौदा नंबर दर्ज करें",
+                "amount": "0.00",
+                "remarks": "टिप्पणी दर्ज करें"
+            }
+        },
+        "options": {
+            "purchase": "खरीद",
+            "sale": "बिक्री"
+        }
+    },
+    "inputReports": "इनपुट रिपोर्ट",
+    "delete": {
+        "title": "रिकॉर्ड हटाएं?",
+        "description": "क्या आप वाकई <strong>{{name}}</strong> के लिए यह रिकॉर्ड हटाना चाहते हैं?",
+        "descriptionItem": "क्या आप वाकई इस रिकॉर्ड को हटाना चाहते हैं ",
+        "selected": "चयनित हटाएं",
+        "selectedRecords": "चयनित रिकॉर्ड हटाएं",
+        "multiTitle": "Delete {{count}} records?",
+        "multiDescription": "क्या आप वाकई चयनित रिकॉर्ड हटाना चाहते हैं?",
+        "undone": "यह कार्रवाई वापस नहीं ली जा सकती।"
     }
 }

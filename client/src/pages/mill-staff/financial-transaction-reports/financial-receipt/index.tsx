@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -15,6 +16,7 @@ import { FinancialReceiptTable } from './components/financial-receipt-table'
 import { useFinancialReceiptList } from './data/hooks'
 
 export function FinancialReceiptReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -68,7 +70,7 @@ export function FinancialReceiptReport() {
     if (isError) {
         return (
             <div className='flex h-screen items-center justify-center text-red-500'>
-                Failed to load data. Please try again later.
+                {t('common.error')}
             </div>
         )
     }
@@ -91,10 +93,10 @@ export function FinancialReceiptReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Financial Receipt Report
+                            {t('financialReceipt.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage financial receipt transactions and records
+                            {t('financialReceipt.description')}
                         </p>
                     </div>
                     <FinancialReceiptPrimaryButtons />

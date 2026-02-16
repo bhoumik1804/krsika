@@ -24,7 +24,7 @@ export function ProductionDeleteDialog({
     onOpenChange,
     currentRow,
 }: ProductionDeleteDialogProps) {
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
 
     const handleDelete = () => {
         toast.promise(sleep(2000), {
@@ -64,3 +64,4 @@ export function ProductionDeleteDialog({
         </AlertDialog>
     )
 }
+

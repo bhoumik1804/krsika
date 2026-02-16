@@ -34,7 +34,7 @@ type DataTableProps = {
 }
 
 export function GunnySalesTable({ data, search, navigate }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

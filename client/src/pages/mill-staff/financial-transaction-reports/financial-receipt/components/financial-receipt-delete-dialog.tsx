@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import {
     AlertDialog,
@@ -23,6 +24,7 @@ export function FinancialReceiptDeleteDialog({
     onOpenChange,
     currentRow,
 }: FinancialReceiptDeleteDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const deleteMutation = useDeleteFinancialReceipt()
 
@@ -43,21 +45,24 @@ export function FinancialReceiptDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Record?</AlertDialogTitle>
+                    <AlertDialogTitle>{t('delete.title')}</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete this record for{' '}
-                        <strong>{currentRow?.partyName}</strong>?
-                        <br />
-                        This action cannot be undone.
+                        {t('delete.description')}
+                        {currentRow?.partyName && (
+                            <>
+                                <br />
+                                <strong>{currentRow.partyName}</strong>
+                            </>
+                        )}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

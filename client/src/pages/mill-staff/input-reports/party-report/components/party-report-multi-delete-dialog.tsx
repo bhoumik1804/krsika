@@ -52,7 +52,7 @@ export function PartyReportMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t('inputReports.multiDelete.title', {
+                        {t('multiDelete.title', {
                             count: selectedRows.length,
                         })}
                     </AlertDialogTitle>
@@ -60,7 +60,7 @@ export function PartyReportMultiDeleteDialog<TData>({
                         <span
                             dangerouslySetInnerHTML={{
                                 __html: t(
-                                    'inputReports.multiDelete.description'
+                                    'multiDelete.description'
                                 ),
                             }}
                         />

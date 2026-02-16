@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -23,7 +24,7 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type PaddySalesResponse } from '../data/types'
-import { paddySalesColumns as columns } from './balance-lifting-sales-paddy-columns'
+import { useBalanceLiftingSalesPaddyColumns } from './balance-lifting-sales-paddy-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
@@ -44,10 +45,12 @@ export function BalanceLiftingSalesPaddyTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
+    const columns = useBalanceLiftingSalesPaddyColumns()
     const [sorting, setSorting] = useState<SortingState>([])
 
     const {
@@ -187,7 +190,11 @@ export function BalanceLiftingSalesPaddyTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {false // Assuming 'loading' state is not provided
+                                        ? t('common.loading')
+                                        : t(
+                                              'dailyReports.balanceLifting.common.noRecords'
+                                          )}
                                 </TableCell>
                             </TableRow>
                         )}

@@ -55,7 +55,7 @@ export function OtherActionDialog({
     onOpenChange,
     currentRow,
 }: OtherActionDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useOther()
     const { mutateAsync: createOtherPurchase, isPending: isCreating } =
         useCreateOtherPurchase(millId)

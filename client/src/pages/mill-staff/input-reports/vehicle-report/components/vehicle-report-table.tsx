@@ -134,7 +134,7 @@ export function VehicleReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder={t(
-                    'inputReports.vehicleReport.form.placeholders.truckNo'
+                    'vehicleReport.form.placeholders.truckNo'
                 )}
                 searchKey='truckNo'
             />

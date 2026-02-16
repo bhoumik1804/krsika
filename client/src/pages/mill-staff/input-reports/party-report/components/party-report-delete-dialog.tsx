@@ -46,12 +46,12 @@ export function PartyReportDeleteDialog({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t('inputReports.delete.title')}
+                        {t('delete.title')}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                         <span
                             dangerouslySetInnerHTML={{
-                                __html: t('inputReports.delete.description', {
+                                __html: t('delete.description', {
                                     name: currentRow.partyName,
                                 }),
                             }}

@@ -15,7 +15,7 @@ import { NakkhiSalesTable } from './components/nakkhi-sales-table'
 import { useNakkhiSalesList } from './data/hooks'
 
 export function NakkhiSalesReport() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')

@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
-import { useParams, useSearchParams } from 'react-router'
 import { useTranslation } from 'react-i18next'
+import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { getMillAdminSidebarData } from '@/components/layout/data'
+import { getMillStaffSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { LoadingSpinner } from '@/components/loading-spinner'
@@ -18,9 +18,9 @@ import {
 import { BalanceLiftingPurchasesFrkTable } from './components/balance-lifting-purchases-frk-table'
 
 export function BalanceLiftingPurchasesFrkReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
-    const { t } = useTranslation()
 
     // Extract query params from URL
     const queryParams = useMemo(() => {
@@ -40,7 +40,7 @@ export function BalanceLiftingPurchasesFrkReport() {
         }
     }, [searchParams])
 
-    const sidebarData = getMillAdminSidebarData(millId || '')
+    const sidebarData = getMillStaffSidebarData(millId || '')
 
     // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
@@ -77,10 +77,12 @@ export function BalanceLiftingPurchasesFrkReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('balanceLiftingFrkPurchase.title')}
+                            {t('dailyReports.balanceLifting.frkPurchase.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('balanceLiftingFrkPurchase.description')}
+                            {t(
+                                'dailyReports.balanceLifting.frkPurchase.description'
+                            )}
                         </p>
                     </div>
                     <BalanceLiftingPurchasesFrkPrimaryButtons />
@@ -99,6 +101,7 @@ function BalanceLiftingPurchasesFrkContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
+    const { t } = useTranslation('mill-staff')
     const context = useBalanceLiftingPurchasesFrk()
 
     if (context.isLoading) {
@@ -112,7 +115,7 @@ function BalanceLiftingPurchasesFrkContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load FRK purchase data. Please try again later.
+                {t('dailyReports.balanceLifting.common.failedToLoad')}
             </div>
         )
     }

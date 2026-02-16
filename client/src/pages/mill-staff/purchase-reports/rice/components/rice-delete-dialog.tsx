@@ -22,7 +22,7 @@ export function RiceDeleteDialog({
     onOpenChange,
 }: RiceDeleteDialogProps) {
     const { currentRow, millId } = useRice()
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { mutateAsync: deleteRicePurchase, isPending: isDeleting } =
         useDeleteRicePurchase(millId)
 

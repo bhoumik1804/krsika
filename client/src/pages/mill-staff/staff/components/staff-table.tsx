@@ -42,7 +42,7 @@ export function StaffTable({
     navigate,
     isLoading,
 }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const columns = useMemo(() => getStaffColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(

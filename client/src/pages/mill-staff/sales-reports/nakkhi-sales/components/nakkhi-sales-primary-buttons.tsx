@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useNakkhiSales } from './nakkhi-sales-provider'
 
 export function NakkhiSalesPrimaryButtons() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { setOpen } = useNakkhiSales()
 
     return (

@@ -1,4 +1,5 @@
 import { type Table } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import {
@@ -23,17 +24,20 @@ export function PaymentMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: PaymentMultiDeleteDialogProps<TData>) {
+    const { t } = useTranslation('mill-staff')
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleDeleteSelected = () => {
         toast.promise(sleep(2000), {
-            loading: 'Deleting payments...',
+            loading: t('common.deletingSelected'),
             success: () => {
                 table.resetRowSelection()
                 onOpenChange(false)
-                return `Deleted ${selectedRows.length} payment record${selectedRows.length > 1 ? 's' : ''}`
+                return t('common.deletedSelectedSuccess', {
+                    count: selectedRows.length,
+                })
             },
-            error: 'Error deleting records',
+            error: t('common.deleteSelectedError'),
         })
     }
 
@@ -42,22 +46,23 @@ export function PaymentMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Delete {selectedRows.length} payment record
-                        {selectedRows.length > 1 ? 's' : ''}?
+                        {t('common.deleteSelectedTitle', {
+                            count: selectedRows.length,
+                        })}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the selected payment
-                        records? <br />
-                        This action cannot be undone.
+                        {t('common.deleteSelectedDescription')}
+                        <br />
+                        {t('common.actionCannotBeUndone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

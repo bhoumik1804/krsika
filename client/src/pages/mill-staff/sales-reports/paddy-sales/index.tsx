@@ -39,7 +39,7 @@ export function PaddySalesReport() {
         }
     }, [searchParams])
 
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
 
     const sidebarData = getMillAdminSidebarData(millId || '')
 
@@ -99,7 +99,7 @@ function PaddySalesContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = usePaddySales()
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (

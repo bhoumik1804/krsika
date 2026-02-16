@@ -15,7 +15,7 @@ import { GunnySalesTable } from './components/gunny-sales-table'
 import { useGunnySalesList } from './data/hooks'
 
 export function GunnySalesReport() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FinancialReceipt } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { FinancialReceiptColumns as columns } from './financial-receipt-columns'
+import { getFinancialReceiptColumns } from './financial-receipt-columns'
 
 type DataTableProps = {
     data: FinancialReceipt[]
@@ -48,6 +49,8 @@ export function FinancialReceiptTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
+    const columns = useMemo(() => getFinancialReceiptColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -120,18 +123,27 @@ export function FinancialReceiptTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search by party name...'
+                searchPlaceholder={t(
+                    'financialReceipt.table.searchPlaceholder'
+                )}
                 searchKey='partyName'
                 filters={[
                     {
                         columnId: 'salesDealType',
-                        title: 'Sales Deal Type',
+                        title: t('financialReceipt.table.dealType'),
                         options: [
                             {
-                                label: 'खरीद (Purchase)',
+                                label: t('financialReceipt.options.purchase', {
+                                    defaultValue: 'खरीद (Purchase)',
+                                }),
                                 value: 'खरीद (Purchase)',
                             },
-                            { label: 'बिकी (Sale)', value: 'बिकी (Sale)' },
+                            {
+                                label: t('financialReceipt.options.sale', {
+                                    defaultValue: 'बिकी (Sale)',
+                                }),
+                                value: 'बिकी (Sale)',
+                            },
                         ],
                     },
                 ]}
@@ -205,7 +217,7 @@ export function FinancialReceiptTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

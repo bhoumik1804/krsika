@@ -43,7 +43,7 @@ export const getTransporterReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.transporterReport.table.name')}
+                title={t('transporterReport.table.name')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('transporterName')}</div>,
@@ -60,7 +60,7 @@ export const getTransporterReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.transporterReport.table.gstn')}
+                title={t('transporterReport.table.gstn')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('gstn')}</div>,
@@ -70,7 +70,7 @@ export const getTransporterReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.transporterReport.table.phone')}
+                title={t('transporterReport.table.phone')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('phone')}</div>,
@@ -80,7 +80,7 @@ export const getTransporterReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.transporterReport.table.email')}
+                title={t('transporterReport.table.email')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('email')}</div>,
@@ -90,7 +90,7 @@ export const getTransporterReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.transporterReport.table.address')}
+                title={t('transporterReport.table.address')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('address')}</div>,

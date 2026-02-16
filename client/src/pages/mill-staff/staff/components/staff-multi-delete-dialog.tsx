@@ -24,7 +24,7 @@ export function StaffMultiDeleteDialog<TData>({
     onOpenChange,
     table,
 }: StaffMultiDeleteDialogProps<TData>) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const [value, setValue] = useState('')
 
     const selectedRows = table.getFilteredSelectedRowModel().rows

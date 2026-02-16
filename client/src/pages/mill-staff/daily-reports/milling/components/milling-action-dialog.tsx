@@ -50,7 +50,7 @@ export function MillingActionDialog({
     onOpenChange,
     currentRow,
 }: MillingActionDialogProps) {
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -431,3 +431,4 @@ export function MillingActionDialog({
         </Dialog>
     )
 }
+

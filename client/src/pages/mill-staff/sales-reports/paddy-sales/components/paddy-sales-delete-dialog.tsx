@@ -24,7 +24,7 @@ export function PaddySalesDeleteDialog({
     onOpenChange,
     currentRow,
 }: PaddySalesDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const handleDelete = () => {
         toast.promise(sleep(2000), {
             loading: t('common.deleting', 'Deleting...'),

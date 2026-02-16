@@ -12,7 +12,7 @@ import { type PaddyPurchaseData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
 export const getPaddyColumns = (
-    t: TFunction<'millStaff'>
+    t: TFunction<'mill-staff'>
 ): ColumnDef<PaddyPurchaseData>[] => [
     {
         id: 'select',

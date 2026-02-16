@@ -124,7 +124,7 @@ export function BrokerReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder={t(
-                    'inputReports.brokerReport.table.searchPlaceholder'
+                    'brokerReport.table.searchPlaceholder'
                 )}
                 searchKey='brokerName'
             />
@@ -198,7 +198,7 @@ export function BrokerReportTable({
                                     className='h-24 text-center'
                                 >
                                     {t(
-                                        'inputReports.brokerReport.table.noResults'
+                                        'brokerReport.table.noResults'
                                     )}
                                 </TableCell>
                             </TableRow>

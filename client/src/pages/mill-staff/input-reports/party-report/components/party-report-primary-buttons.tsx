@@ -15,7 +15,7 @@ export function PartyReportPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('inputReports.partyReport.form.addTitle')}
+            {t('partyReport.form.addTitle')}
         </Button>
     )
 }

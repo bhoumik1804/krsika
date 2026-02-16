@@ -107,7 +107,7 @@ export function StaffActionDialog({
     open,
     onOpenChange,
 }: StaffActionDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const isEdit = !!currentRow
     const formSchema = useMemo(() => getFormSchema(t), [t])
 

@@ -35,7 +35,7 @@ type DataTableProps = {
 }
 
 export function OutwardsTable({ data, search, navigate }: DataTableProps) {
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
     const columns = useOutwardsColumns()
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
@@ -201,3 +201,4 @@ export function OutwardsTable({ data, search, navigate }: DataTableProps) {
         </div>
     )
 }
+

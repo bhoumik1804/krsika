@@ -15,7 +15,7 @@ import { FrkProvider, useFrk } from './components/frk-provider'
 import { FrkTable } from './components/frk-table'
 
 export function FrkPurchaseReport() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -95,7 +95,7 @@ function FrkPurchaseContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const context = useFrk()
 
     if (context.isLoading) {

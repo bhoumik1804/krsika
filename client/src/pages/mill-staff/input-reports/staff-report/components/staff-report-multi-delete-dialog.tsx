@@ -1,4 +1,5 @@
 import { type Table } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,6 +26,7 @@ export function StaffReportMultiDeleteDialog<TData>({
     onOpenChange,
 }: StaffReportMultiDeleteDialogProps<TData>) {
     const { millId } = useStaffReport()
+    const { t } = useTranslation('mill-staff')
     const { mutate: bulkDelete, isPending: isDeleting } =
         useBulkDeleteStaff(millId)
     const selectedRows = table.getFilteredSelectedRowModel().rows
@@ -50,25 +52,26 @@ export function StaffReportMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Delete {selectedRows.length}{' '}
-                        {selectedRows.length > 1 ? 'records' : 'record'}?
+                        {t('delete.multiTitle', {
+                            count: selectedRows.length,
+                        })}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the selected records?{' '}
+                        {t('delete.multiDescription')}
                         <br />
-                        This action cannot be undone.
+                        {t('delete.undone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                        Cancel
+                        {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting ? 'Deleting...' : 'Delete'}
+                        {isDeleting ? t('common.deleting') : t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

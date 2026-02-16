@@ -24,7 +24,7 @@ export function NakkhiSalesDeleteDialog({
     onOpenChange,
     currentRow,
 }: NakkhiSalesDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useNakkhiSales()
     const { mutateAsync: deleteNakkhiSales, isPending } =
         useDeleteNakkhiSales(millId)

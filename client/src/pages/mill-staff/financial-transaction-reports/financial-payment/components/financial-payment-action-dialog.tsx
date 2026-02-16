@@ -8,6 +8,7 @@ import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data
 import { useStaffList } from '@/pages/mill-admin/input-reports/staff-report/data/hooks'
 import { useTransporterList } from '@/pages/mill-admin/input-reports/transporter-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import {
     paymentTypeOptions,
@@ -65,6 +66,7 @@ export function FinancialPaymentActionDialog({
     onOpenChange,
     currentRow,
 }: FinancialPaymentActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const party = usePaginatedList(
         millId || '',
@@ -253,10 +255,14 @@ export function FinancialPaymentActionDialog({
             <DialogContent className='max-h-[90vh] max-w-3xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Payment Record
+                        {isEditing
+                            ? t('financialPayment.form.editTitle')
+                            : t('financialPayment.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} payment details
+                        {isEditing
+                            ? t('financialPayment.form.editDescription')
+                            : t('financialPayment.form.addDescription')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -289,7 +295,9 @@ export function FinancialPaymentActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'financialPayment.form.placeholders.date'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -331,7 +339,11 @@ export function FinancialPaymentActionDialog({
                                 name='paymentType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Payment Type</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'financialPayment.form.paymentType'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value || ''}
@@ -368,7 +380,11 @@ export function FinancialPaymentActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'financialPayment.form.partyName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={
@@ -378,8 +394,12 @@ export function FinancialPaymentActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={party}
-                                                    placeholder='Search party...'
-                                                    emptyText='No parties found'
+                                                    placeholder={t(
+                                                        'financialPayment.form.placeholders.party'
+                                                    )}
+                                                    emptyText={t(
+                                                        'common.noResults'
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -391,7 +411,11 @@ export function FinancialPaymentActionDialog({
                                     name='brokerName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Broker Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'financialPayment.form.brokerName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={
@@ -401,8 +425,12 @@ export function FinancialPaymentActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={broker}
-                                                    placeholder='Search broker...'
-                                                    emptyText='No brokers found'
+                                                    placeholder={t(
+                                                        'financialPayment.form.placeholders.broker'
+                                                    )}
+                                                    emptyText={t(
+                                                        'common.noResults'
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -414,14 +442,22 @@ export function FinancialPaymentActionDialog({
                                     name='purchaseDealType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Deal Type</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'financialPayment.form.dealType'
+                                                )}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value || ''}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
-                                                        <SelectValue placeholder='Select deal type' />
+                                                        <SelectValue
+                                                            placeholder={t(
+                                                                'financialPayment.form.placeholders.dealType'
+                                                            )}
+                                                        />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent className='w-full'>
@@ -450,7 +486,11 @@ export function FinancialPaymentActionDialog({
                                     name='purchaseDealNumber'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Deal Number</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'financialPayment.form.dealNumber'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     disabled
@@ -473,7 +513,9 @@ export function FinancialPaymentActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Transporter Name
+                                                {t(
+                                                    'financialPayment.form.transporterName'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
@@ -484,8 +526,12 @@ export function FinancialPaymentActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={transporter}
-                                                    placeholder='Search transporter...'
-                                                    emptyText='No transporters found'
+                                                    placeholder={t(
+                                                        'financialPayment.form.placeholders.transporter'
+                                                    )}
+                                                    emptyText={t(
+                                                        'common.noResults'
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -497,7 +543,11 @@ export function FinancialPaymentActionDialog({
                                     name='truckNumber'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Truck Number</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'financialPayment.form.truckNumber'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     {...field}
@@ -513,7 +563,11 @@ export function FinancialPaymentActionDialog({
                                     name='diesel'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Diesel</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'financialPayment.form.diesel'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -540,7 +594,11 @@ export function FinancialPaymentActionDialog({
                                     name='bhatta'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Bhatta</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'financialPayment.form.bhatta'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -568,7 +626,9 @@ export function FinancialPaymentActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Repair/Maintenance
+                                                {t(
+                                                    'financialPayment.form.repairMaintenance'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -601,14 +661,22 @@ export function FinancialPaymentActionDialog({
                                     name='labourType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Labour Type</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'financialPayment.form.labourType'
+                                                )}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value || ''}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                        <SelectValue />
+                                                        <SelectValue
+                                                            placeholder={t(
+                                                                'financialPayment.form.placeholders.labourType'
+                                                            )}
+                                                        />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
@@ -638,7 +706,9 @@ export function FinancialPaymentActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Labour Group Name
+                                                {t(
+                                                    'financialPayment.form.labourGroupName'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
@@ -649,8 +719,12 @@ export function FinancialPaymentActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={labourGroup}
-                                                    placeholder='Search labour group...'
-                                                    emptyText='No labour groups found'
+                                                    placeholder={t(
+                                                        'financialPayment.form.placeholders.labourGroup'
+                                                    )}
+                                                    emptyText={t(
+                                                        'common.noResults'
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -667,7 +741,11 @@ export function FinancialPaymentActionDialog({
                                     name='staffName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Staff Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'financialPayment.form.staffName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={
@@ -677,8 +755,12 @@ export function FinancialPaymentActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={staffList}
-                                                    placeholder='Search staff...'
-                                                    emptyText='No staff found'
+                                                    placeholder={t(
+                                                        'financialPayment.form.placeholders.staff'
+                                                    )}
+                                                    emptyText={t(
+                                                        'common.noResults'
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -690,7 +772,11 @@ export function FinancialPaymentActionDialog({
                                     name='salary'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Salary</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'financialPayment.form.salary'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -708,14 +794,22 @@ export function FinancialPaymentActionDialog({
                                     name='month'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Month</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.financialPayment.form.month'
+                                                )}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value || ''}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                        <SelectValue />
+                                                        <SelectValue
+                                                            placeholder={t(
+                                                                'financialPayment.form.placeholders.month'
+                                                            )}
+                                                        />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
@@ -744,7 +838,11 @@ export function FinancialPaymentActionDialog({
                                     name='attendance'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Attendance</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'financialPayment.form.attendance'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -770,7 +868,11 @@ export function FinancialPaymentActionDialog({
                                     name='allowedLeave'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Allowed Leave</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'financialPayment.form.allowedLeave'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -798,7 +900,9 @@ export function FinancialPaymentActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Payable Salary
+                                                {t(
+                                                    'financialPayment.form.payableSalary'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -880,12 +984,19 @@ export function FinancialPaymentActionDialog({
                                 name='paymentAmount'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Payment Amount</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'financialPayment.form.paymentAmount'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
+                                                placeholder={t(
+                                                    'financialPayment.form.placeholders.amount'
+                                                )}
                                                 onChange={(e) =>
                                                     field.onChange(
                                                         e.target.value
@@ -909,10 +1020,15 @@ export function FinancialPaymentActionDialog({
                             name='remarks'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Remarks</FormLabel>
+                                    <FormLabel>
+                                        {t('financialPayment.form.remarks')}
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            placeholder={t(
+                                                'financialPayment.form.placeholders.remarks'
+                                            )}
                                             value={field.value || ''}
                                         />
                                     </FormControl>
@@ -927,10 +1043,12 @@ export function FinancialPaymentActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {isEditing
+                                    ? t('common.update')
+                                    : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

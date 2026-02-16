@@ -1,4 +1,5 @@
 import { Boxes, Package, Scale, Info, ShoppingCart } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { DailyReportPage } from '../components/daily-report-page'
 
 const COMMODITY_ICONS: Record<string, React.ElementType> = {
@@ -16,12 +17,13 @@ function getIcon(commodity: string) {
 }
 
 export function PurchaseDealsReport() {
+    const { t } = useTranslation('mill-staff')
     return (
         <DailyReportPage
             action='Purchase Deal'
-            title='Purchase Deals'
-            description='Track daily purchase transactions by commodity'
-            emptyMessage='No purchase deals found for the selected date range'
+            title={t('dailyReports.purchaseDeals.title')}
+            description={t('dailyReports.purchaseDeals.description')}
+            emptyMessage={t('dailyReports.purchaseDeals.emptyMessage')}
             exportBaseFilename='purchase-deals-report'
             EmptyIcon={ShoppingCart}
             getIcon={getIcon}

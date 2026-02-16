@@ -41,7 +41,7 @@ type FrkActionDialogProps = {
 }
 
 export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { currentRow, millId } = useFrk()
     const { mutateAsync: createFrkPurchase, isPending: isCreating } =
         useCreateFrkPurchase(millId)

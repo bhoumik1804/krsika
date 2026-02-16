@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { useOther } from './other-provider'
 
 export function OtherPrimaryButtons() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { setOpen, setCurrentRow } = useOther()
 
     return (

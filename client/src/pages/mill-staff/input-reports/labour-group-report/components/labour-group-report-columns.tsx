@@ -1,11 +1,14 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type LabourGroupReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const labourGroupReportColumns: ColumnDef<LabourGroupReportData>[] = [
+export const getLabourGroupReportColumns = (
+    t: TFunction<'mill-staff', undefined>
+): ColumnDef<LabourGroupReportData>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -17,7 +20,7 @@ export const labourGroupReportColumns: ColumnDef<LabourGroupReportData>[] = [
                 onCheckedChange={(value) =>
                     table.toggleAllPageRowsSelected(!!value)
                 }
-                aria-label='Select all'
+                aria-label={t('common.select')}
                 className='translate-y-[2px]'
             />
         ),
@@ -28,7 +31,7 @@ export const labourGroupReportColumns: ColumnDef<LabourGroupReportData>[] = [
             <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label='Select row'
+                aria-label={t('common.select')}
                 className='translate-y-[2px]'
             />
         ),
@@ -38,7 +41,10 @@ export const labourGroupReportColumns: ColumnDef<LabourGroupReportData>[] = [
     {
         accessorKey: 'labourTeamName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Labour Team Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('labourGroupReport.table.name')}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>

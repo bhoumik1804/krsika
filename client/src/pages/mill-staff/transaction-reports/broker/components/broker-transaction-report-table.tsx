@@ -8,6 +8,8 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { Loader2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -20,15 +22,19 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BrokerTransaction } from '../data/schema'
-import { brokerTransactionReportColumns as columns } from './broker-transaction-report-columns'
-import { Loader2 } from 'lucide-react'
+import { useBrokerTransactionReportColumns } from './broker-transaction-report-columns'
 
 type DataTableProps = {
     data: BrokerTransaction[]
     search: Record<string, unknown>
     navigate: NavigateFn
     loading?: boolean
-    serverPagination?: { page: number; limit: number; total: number; totalPages: number }
+    serverPagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+    }
 }
 
 export function BrokerTransactionReportTable({
@@ -38,7 +44,11 @@ export function BrokerTransactionReportTable({
     loading = false,
     serverPagination,
 }: DataTableProps) {
-    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+    const { t } = useTranslation('mill-staff')
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+        {}
+    )
+    const columns = useBrokerTransactionReportColumns()
     const [sorting, setSorting] = useState<SortingState>([])
 
     const {
@@ -93,7 +103,9 @@ export function BrokerTransactionReportTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Filter by broker...'
+                searchPlaceholder={t(
+                    'transactionReports.brokerReport.filterPlaceholder'
+                )}
                 searchKey='brokerName'
             />
             <div className='relative overflow-hidden rounded-md border'>
@@ -105,21 +117,27 @@ export function BrokerTransactionReportTable({
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id} className='group/row'>
+                            <TableRow
+                                key={headerGroup.id}
+                                className='group/row'
+                            >
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
                                         colSpan={header.colSpan}
                                         className={cn(
                                             'bg-background',
-                                            header.column.columnDef.meta?.className,
-                                            header.column.columnDef.meta?.thClassName
+                                            header.column.columnDef.meta
+                                                ?.className,
+                                            header.column.columnDef.meta
+                                                ?.thClassName
                                         )}
                                     >
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
-                                                  header.column.columnDef.header,
+                                                  header.column.columnDef
+                                                      .header,
                                                   header.getContext()
                                               )}
                                     </TableHead>
@@ -136,8 +154,10 @@ export function BrokerTransactionReportTable({
                                             key={cell.id}
                                             className={cn(
                                                 'bg-background',
-                                                cell.column.columnDef.meta?.className,
-                                                cell.column.columnDef.meta?.tdClassName
+                                                cell.column.columnDef.meta
+                                                    ?.className,
+                                                cell.column.columnDef.meta
+                                                    ?.tdClassName
                                             )}
                                         >
                                             {flexRender(
@@ -154,7 +174,11 @@ export function BrokerTransactionReportTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {loading ? 'Loading...' : 'No transactions found.'}
+                                    {loading
+                                        ? t('common.loading')
+                                        : t(
+                                              'transactionReports.noTransactions'
+                                          )}
                                 </TableCell>
                             </TableRow>
                         )}

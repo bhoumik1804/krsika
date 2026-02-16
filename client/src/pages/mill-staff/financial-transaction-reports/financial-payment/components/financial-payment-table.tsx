@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FinancialPayment } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { FinancialPaymentColumns as columns } from './financial-payment-columns'
+import { getFinancialPaymentColumns } from './financial-payment-columns'
 
 type DataTableProps = {
     data: FinancialPayment[]
@@ -48,6 +49,8 @@ export function FinancialPaymentTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
+    const columns = useMemo(() => getFinancialPaymentColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -119,21 +122,41 @@ export function FinancialPaymentTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search by payment type...'
+                searchPlaceholder={t(
+                    'financialPayment.table.searchPlaceholder'
+                )}
                 searchKey='paymentType'
                 filters={[
                     {
                         columnId: 'paymentType',
-                        title: 'Payment Type',
+                        title: t('financialPayment.table.paymentType'),
                         options: [
                             {
-                                label: 'सौदे का भुगतान',
+                                label: t(
+                                    'financialPayment.options.dealPayment',
+                                    { defaultValue: 'सौदे का भुगतान' }
+                                ),
                                 value: 'सौदे का भुगतान',
                             },
-                            { label: 'परिवहन भुगतान', value: 'परिवहन भुगतान' },
-                            { label: 'हमाली भुगतान', value: 'हमाली भुगतान' },
                             {
-                                label: 'वेतन/मजदूरी भुगतान',
+                                label: t(
+                                    'financialPayment.options.transportPayment',
+                                    { defaultValue: 'परिवहन भुगतान' }
+                                ),
+                                value: 'परिवहन भुगतान',
+                            },
+                            {
+                                label: t(
+                                    'financialPayment.options.hamaliPayment',
+                                    { defaultValue: 'हमाली भुगतान' }
+                                ),
+                                value: 'हमाली भुगतान',
+                            },
+                            {
+                                label: t(
+                                    'financialPayment.options.salaryPayment',
+                                    { defaultValue: 'वेतन/मजदूरी भुगतान' }
+                                ),
                                 value: 'वेतन/मजदूरी भुगतान',
                             },
                         ],
@@ -209,7 +232,7 @@ export function FinancialPaymentTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

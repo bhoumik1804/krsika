@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { usePaddy } from './paddy-provider'
 
 export function PaddyPrimaryButtons() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { setOpen } = usePaddy()
 
     return (

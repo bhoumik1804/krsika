@@ -24,7 +24,7 @@ export function GunnyDeleteDialog({
     onOpenChange,
     currentRow,
 }: GunnyDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useGunny()
     const { mutateAsync: deleteGunnyPurchase, isPending: isDeleting } =
         useDeleteGunnyPurchase(millId)

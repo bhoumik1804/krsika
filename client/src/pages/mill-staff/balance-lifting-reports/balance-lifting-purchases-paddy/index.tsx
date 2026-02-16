@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { getMillAdminSidebarData } from '@/components/layout/data'
+import { getMillStaffSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { LoadingSpinner } from '@/components/loading-spinner'
@@ -18,6 +19,7 @@ import {
 import { BalanceLiftingPurchasesPaddyTable } from './components/balance-lifting-purchases-paddy-table'
 
 export function BalanceLiftingPurchasesPaddyReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const { t } = useTranslation()
@@ -40,7 +42,7 @@ export function BalanceLiftingPurchasesPaddyReport() {
         }
     }, [searchParams])
 
-    const sidebarData = getMillAdminSidebarData(millId || '')
+    const sidebarData = getMillStaffSidebarData(millId || '')
 
     // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
@@ -77,10 +79,21 @@ export function BalanceLiftingPurchasesPaddyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
+<<<<<<< HEAD
+                            {t(
+                                'dailyReports.balanceLifting.paddyPurchase.title'
+                            )}
+                        </h2>
+                        <p className='text-muted-foreground'>
+                            {t(
+                                'dailyReports.balanceLifting.paddyPurchase.description'
+                            )}
+=======
                             {t('balanceLiftingPaddyPurchase.title')}
                         </h2>
                         <p className='text-muted-foreground'>
                             {t('balanceLiftingPaddyPurchase.description')}
+>>>>>>> 7b33ee8c0394d38b6faf6e6a409ad6210120d529
                         </p>
                     </div>
                     <BalanceLiftingPurchasesPaddyPrimaryButtons />
@@ -98,6 +111,7 @@ function BalanceLiftingPurchasesPaddyContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
+    const { t } = useTranslation('mill-staff')
     const context = useBalanceLiftingPurchasesPaddy()
 
     if (context.isLoading) {
@@ -111,7 +125,7 @@ function BalanceLiftingPurchasesPaddyContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load Paddy purchase data. Please try again later.
+                {t('dailyReports.balanceLifting.common.failedToLoad')}
             </div>
         )
     }

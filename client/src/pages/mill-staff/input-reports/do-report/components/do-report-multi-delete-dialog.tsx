@@ -1,5 +1,6 @@
 import { type Table } from '@tanstack/react-table'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -26,6 +27,7 @@ export function DoReportMultiDeleteDialog<TData>({
     onOpenChange,
 }: DoReportMultiDeleteDialogProps<TData>) {
     const { millId } = useDoReport()
+    const { t } = useTranslation('mill-staff')
     const { mutateAsync: bulkDelete, isPending } = useBulkDeleteDoReport(millId)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
@@ -36,13 +38,15 @@ export function DoReportMultiDeleteDialog<TData>({
             .filter(Boolean) as string[]
 
         toast.promise(bulkDelete(ids), {
-            loading: `Deleting ${ids.length} record${ids.length > 1 ? 's' : ''}...`,
+            loading: t('common.deletingSelected'),
             success: () => {
                 table.resetRowSelection()
                 onOpenChange(false)
-                return `${ids.length} record${ids.length > 1 ? 's' : ''} deleted successfully`
+                return t('common.deletedSelectedSuccess', {
+                    count: ids.length,
+                })
             },
-            error: 'Failed to delete records',
+            error: t('common.deleteSelectedError'),
         })
     }
 
@@ -51,25 +55,26 @@ export function DoReportMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Delete {selectedRows.length}{' '}
-                        {selectedRows.length > 1 ? 'records' : 'record'}?
+                        {t('delete.multiTitle', {
+                            count: selectedRows.length,
+                        })}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the selected records?{' '}
+                        {t('delete.multiDescription')}
                         <br />
-                        This action cannot be undone.
+                        {t('delete.undone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isPending}>
-                        Cancel
+                        {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
                         disabled={isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isPending ? 'Deleting...' : 'Delete'}
+                        {isPending ? t('common.deleting') : t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

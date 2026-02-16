@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { purchaseDealTypes } from '@/constants/purchase-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
@@ -57,6 +58,7 @@ export function FinancialReceiptActionDialog({
     onOpenChange,
     currentRow,
 }: FinancialReceiptActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const party = usePaginatedList(
         millId || '',
@@ -154,10 +156,14 @@ export function FinancialReceiptActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing
+                            ? t('financialReceipt.form.editTitle')
+                            : t('financialReceipt.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing
+                            ? t('financialReceipt.form.editDescription')
+                            : t('financialReceipt.form.addDescription')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -171,7 +177,9 @@ export function FinancialReceiptActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t('financialReceipt.form.date')}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -190,7 +198,9 @@ export function FinancialReceiptActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'financialReceipt.form.placeholders.date'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -232,14 +242,22 @@ export function FinancialReceiptActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Party Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'financialReceipt.form.partyName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
                                                 value={field.value ?? undefined}
                                                 onValueChange={field.onChange}
                                                 paginatedList={party}
-                                                placeholder='Search party...'
-                                                emptyText='No parties found'
+                                                placeholder={t(
+                                                    'financialReceipt.form.placeholders.party'
+                                                )}
+                                                emptyText={t(
+                                                    'common.noResults'
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -251,14 +269,22 @@ export function FinancialReceiptActionDialog({
                                 name='brokerName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Broker Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'financialReceipt.form.brokerName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
                                                 value={field.value ?? undefined}
                                                 onValueChange={field.onChange}
                                                 paginatedList={broker}
-                                                placeholder='Search broker...'
-                                                emptyText='No brokers found'
+                                                placeholder={t(
+                                                    'financialReceipt.form.placeholders.broker'
+                                                )}
+                                                emptyText={t(
+                                                    'common.noResults'
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -270,14 +296,22 @@ export function FinancialReceiptActionDialog({
                                 name='salesDealType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Sales Deal Type</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'financialReceipt.form.dealType'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value || ''}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
-                                                    <SelectValue placeholder='Select a sales deal type' />
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'financialReceipt.form.placeholders.dealType'
+                                                        )}
+                                                    />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent className='w-full'>
@@ -302,10 +336,16 @@ export function FinancialReceiptActionDialog({
                                 name='salesDealNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Sales Deal Number</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'financialReceipt.form.dealNumber'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Sales Deal Number'
+                                                placeholder={t(
+                                                    'financialReceipt.form.placeholders.dealNumber'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -319,7 +359,11 @@ export function FinancialReceiptActionDialog({
                                 name='receivedAmount'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Received Amount</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'financialReceipt.form.receivedAmount'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -349,10 +393,14 @@ export function FinancialReceiptActionDialog({
                                 name='remarks'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Remarks</FormLabel>
+                                        <FormLabel>
+                                            {t('financialReceipt.form.remarks')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter remarks'
+                                                placeholder={t(
+                                                    'financialReceipt.form.placeholders.remarks'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -368,10 +416,12 @@ export function FinancialReceiptActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {isEditing
+                                    ? t('common.update')
+                                    : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

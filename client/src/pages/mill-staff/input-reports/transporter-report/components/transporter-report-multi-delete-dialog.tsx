@@ -53,13 +53,13 @@ export function TransporterReportMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t('inputReports.delete.multiTitle', {
+                        {t('delete.multiTitle', {
                             count: selectedRows.length,
                         })}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('inputReports.delete.multiDescription')} <br />
-                        {t('inputReports.delete.undone')}
+                        {t('delete.multiDescription')} <br />
+                        {t('delete.undone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

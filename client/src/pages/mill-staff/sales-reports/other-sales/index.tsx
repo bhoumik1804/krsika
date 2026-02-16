@@ -17,7 +17,7 @@ import {
 import { OtherSalesTable } from './components/other-sales-table'
 
 export function OtherSalesReport() {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -84,7 +84,7 @@ function OtherSalesContent({
     search: Record<string, string>
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { data, isLoading, pagination } = useOtherSales()
 
     if (isLoading) {

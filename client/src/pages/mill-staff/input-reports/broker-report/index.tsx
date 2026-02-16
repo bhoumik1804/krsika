@@ -75,10 +75,10 @@ export function BrokerReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('inputReports.brokerReport.title')}
+                            {t('brokerReport.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('inputReports.brokerReport.description')}
+                            {t('brokerReport.description')}
                         </p>
                     </div>
                     <BrokerReportPrimaryButtons />
@@ -111,7 +111,7 @@ function BrokerReportContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('inputReports.brokerReport.error')}
+                {t('brokerReport.error')}
             </div>
         )
     }

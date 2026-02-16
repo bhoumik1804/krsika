@@ -44,7 +44,7 @@ export const getPartyReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.partyReport.table.name')}
+                title={t('partyReport.table.name')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('partyName')}</div>,
@@ -61,7 +61,7 @@ export const getPartyReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.partyReport.table.gstn')}
+                title={t('partyReport.table.gstn')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('gstn')}</div>,
@@ -71,7 +71,7 @@ export const getPartyReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.partyReport.table.phone')}
+                title={t('partyReport.table.phone')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('phone')}</div>,
@@ -81,7 +81,7 @@ export const getPartyReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.partyReport.table.email')}
+                title={t('partyReport.table.email')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('email')}</div>,
@@ -91,7 +91,7 @@ export const getPartyReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.partyReport.table.address')}
+                title={t('partyReport.table.address')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('address')}</div>,

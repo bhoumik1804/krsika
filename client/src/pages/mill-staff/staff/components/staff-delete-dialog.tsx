@@ -21,7 +21,7 @@ export function StaffDeleteDialog({
     onOpenChange,
     currentRow,
 }: StaffDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const [value, setValue] = useState('')
 
     const handleDelete = () => {

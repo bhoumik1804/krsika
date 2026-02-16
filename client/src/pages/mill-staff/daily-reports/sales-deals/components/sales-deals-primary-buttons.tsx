@@ -1,14 +1,16 @@
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useSalesDeals } from './sales-deals-provider'
 
 export function SalesDealsPrimaryButtons() {
+    const { t } = useTranslation('mill-staff')
     const { setOpen } = useSalesDeals()
 
     return (
         <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
-            Add Sale Deal
+            {t('dailyReports.salesDeals.primaryButton')}
         </Button>
     )
 }

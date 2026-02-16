@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { getMillAdminSidebarData } from '@/components/layout/data'
+import { getMillStaffSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { LoadingSpinner } from '@/components/loading-spinner'
@@ -17,6 +18,7 @@ import {
 import { BalanceLiftingSalesPaddyTable } from './components/balance-lifting-sales-paddy-table'
 
 export function BalanceLiftingSalesPaddyReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -38,7 +40,7 @@ export function BalanceLiftingSalesPaddyReport() {
         }
     }, [searchParams])
 
-    const sidebarData = getMillAdminSidebarData(millId || '')
+    const sidebarData = getMillStaffSidebarData(millId || '')
 
     // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
@@ -75,10 +77,12 @@ export function BalanceLiftingSalesPaddyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Paddy Sale Report
+                            {t('dailyReports.balanceLifting.paddySales.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage paddy sales transactions and records
+                            {t(
+                                'dailyReports.balanceLifting.paddySales.description'
+                            )}
                         </p>
                     </div>
                     <BalanceLiftingSalesPaddyPrimaryButtons />
@@ -96,6 +100,7 @@ function BalanceLiftingSalesPaddyContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
+    const { t } = useTranslation('mill-staff')
     const context = useBalanceLiftingSalesPaddy()
 
     if (context.isLoading) {
@@ -109,7 +114,7 @@ function BalanceLiftingSalesPaddyContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load Paddy sales data. Please try again later.
+                {t('dailyReports.balanceLifting.common.failedToLoad')}
             </div>
         )
     }

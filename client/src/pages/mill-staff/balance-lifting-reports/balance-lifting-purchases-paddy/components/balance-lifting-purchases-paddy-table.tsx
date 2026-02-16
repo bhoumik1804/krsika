@@ -1,5 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -12,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BalanceLiftingPurchasesPaddy } from '../data/schema'
-import { getPaddyColumns } from './balance-lifting-purchases-paddy-columns'
+import { useBalanceLiftingPurchasesPaddyColumns } from './balance-lifting-purchases-paddy-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
@@ -45,14 +45,13 @@ export function BalanceLiftingPurchasesPaddyTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
+    const columns = useBalanceLiftingPurchasesPaddyColumns()
     const [sorting, setSorting] = useState<SortingState>([])
-    const { t } = useTranslation()
-
-    const columns = useMemo(() => getPaddyColumns(t), [t])
 
     const {
         columnFilters,
@@ -146,10 +145,10 @@ export function BalanceLiftingPurchasesPaddyTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext()
-                                                )}
+                                                      header.column.columnDef
+                                                          .header,
+                                                      header.getContext()
+                                                  )}
                                         </TableHead>
                                     )
                                 })}
@@ -191,7 +190,11 @@ export function BalanceLiftingPurchasesPaddyTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {false // Assuming 'loading' state is not provided, so always show 'noRecords'
+                                        ? t('common.loading')
+                                        : t(
+                                              'dailyReports.balanceLifting.common.noRecords'
+                                          )}
                                 </TableCell>
                             </TableRow>
                         )}

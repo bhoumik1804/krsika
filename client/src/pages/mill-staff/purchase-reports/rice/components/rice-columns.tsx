@@ -9,7 +9,7 @@ import { type RicePurchaseData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
 export const getRiceColumns = (
-    t: TFunction<'millStaff'>
+    t: TFunction<'mill-staff'>
 ): ColumnDef<RicePurchaseData>[] => [
     {
         id: 'select',

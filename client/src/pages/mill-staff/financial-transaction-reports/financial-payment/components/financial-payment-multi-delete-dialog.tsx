@@ -1,4 +1,5 @@
 import { type Table } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import {
     AlertDialog,
@@ -24,6 +25,7 @@ export function FinancialPaymentMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: FinancialPaymentMultiDeleteDialogProps<TData>) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const selectedRows = table.getFilteredSelectedRowModel().rows
     const { mutate: bulkDelete, isPending } = useBulkDeleteFinancialPayment()
@@ -50,19 +52,16 @@ export function FinancialPaymentMultiDeleteDialog<TData>({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        Delete {selectedRows.length}{' '}
-                        {selectedRows.length > 1 ? 'records' : 'record'}?
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>{t('delete.bulkTitle')}</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the selected records?{' '}
-                        <br />
-                        This action cannot be undone.
+                        {t('delete.bulkDescription', {
+                            count: selectedRows.length,
+                        })}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isPending}>
-                        Cancel
+                        {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={(e) => {
@@ -72,7 +71,7 @@ export function FinancialPaymentMultiDeleteDialog<TData>({
                         disabled={isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isPending ? 'Deleting...' : 'Delete'}
+                        {isPending ? t('common.deleting') : t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

@@ -25,7 +25,7 @@ export function KhandaSalesMultiDeleteDialog({
     open,
     onOpenChange,
 }: KhandaSalesMultiDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useKhandaSales()
     const { mutateAsync: bulkDeleteKhandaSales, isPending } =
         useBulkDeleteKhandaSales(millId)

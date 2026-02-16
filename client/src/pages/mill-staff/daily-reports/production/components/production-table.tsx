@@ -35,7 +35,7 @@ type DataTableProps = {
 }
 
 export function ProductionTable({ data, search, navigate }: DataTableProps) {
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
     const columns = useProductionColumns()
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
@@ -200,3 +200,4 @@ export function ProductionTable({ data, search, navigate }: DataTableProps) {
         </div>
     )
 }
+

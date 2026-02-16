@@ -25,7 +25,7 @@ export function OtherMultiDeleteDialog({
     open,
     onOpenChange,
 }: OtherMultiDeleteDialogProps) {
-    const { t } = useTranslation('millStaff')
+    const { t } = useTranslation('mill-staff')
     const { millId } = useOther()
     const { mutateAsync: bulkDeleteOtherPurchases, isPending: isDeleting } =
         useBulkDeleteOtherPurchases(millId)
