@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -26,7 +26,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
 import { type OutwardEntry } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getOutwardsColumns } from './outwards-columns'
+import { useOutwardsColumns } from './outwards-columns'
 
 type DataTableProps = {
     data: OutwardEntry[]
@@ -35,9 +35,8 @@ type DataTableProps = {
 }
 
 export function OutwardsTable({ data, search, navigate }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getOutwardsColumns(t), [t])
-
+    const { t } = useTranslation()
+    const columns = useOutwardsColumns()
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -102,28 +101,21 @@ export function OutwardsTable({ data, search, navigate }: DataTableProps) {
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Filter outward entries...'
+                searchPlaceholder={t('common.searchPlaceholder')}
                 searchKey='partyName'
                 filters={[
                     {
                         columnId: 'status',
-                        title: 'Status',
+                        title: t('common.status'),
                         options: statuses,
                     },
                     {
                         columnId: 'item',
-                        title: 'Item',
+                        title: t('common.item'),
                         options: [
-                            {
-                                label: 'Rice (Basmati)',
-                                value: 'Rice (Basmati)',
-                            },
-                            {
-                                label: 'Rice (Sona Masoori)',
-                                value: 'Rice (Sona Masoori)',
-                            },
-                            { label: 'Bran', value: 'Bran' },
-                            { label: 'Husk', value: 'Husk' },
+                            { label: t('common.paddy'), value: 'Paddy' },
+                            { label: t('common.rice'), value: 'Rice' },
+                            { label: t('common.bran'), value: 'Bran' },
                         ],
                     },
                 ]}
@@ -197,7 +189,7 @@ export function OutwardsTable({ data, search, navigate }: DataTableProps) {
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

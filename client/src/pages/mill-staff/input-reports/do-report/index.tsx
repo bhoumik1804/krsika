@@ -1,69 +1,62 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
-import type { NavigateFn } from '@/hooks/use-table-url-state'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { DoReportDialogs } from './components/do-report-dialogs'
 import { DoReportPrimaryButtons } from './components/do-report-primary-buttons'
-import { DoReportProvider } from './components/do-report-provider'
+import { DoReportProvider, useDoReport } from './components/do-report-provider'
 import { DoReportTable } from './components/do-report-table'
-import { useDoReportList } from './data/hooks'
 
 export function DoReport() {
-    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
-    const sidebarData = getMillAdminSidebarData(millId || '')
 
-    const search = Object.fromEntries(searchParams.entries())
+    // Extract query params from URL
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
 
-    const queryParams = useMemo(
-        () => ({
+        return {
             page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            limit,
             search: search.search as string | undefined,
             sortBy: (search.sortBy as string) || 'createdAt',
             sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
+        }
+    }, [searchParams])
 
-    const {
-        data: response,
-        isLoading,
-        isError,
-    } = useDoReportList(millId || '', queryParams, { enabled: !!millId })
+    const sidebarData = getMillAdminSidebarData(millId || '')
 
-    const doReportData = useMemo(() => response?.reports ?? [], [response])
-
-    const navigate: NavigateFn = (opts) => {
+    const navigate = (opts: { search: unknown; replace?: boolean }) => {
+        const search = Object.fromEntries(searchParams.entries())
         if (typeof opts.search === 'function') {
             const newSearch = opts.search(search)
-            setSearchParams(newSearch as Record<string, string>, {
-                replace: opts.replace,
-            })
+            setSearchParams(newSearch as Record<string, string>)
         } else if (opts.search === true) {
             // Keep current params
         } else {
-            setSearchParams(opts.search as Record<string, string>, {
-                replace: opts.replace,
-            })
+            setSearchParams(opts.search as Record<string, string>)
         }
     }
 
     return (
-        <DoReportProvider>
+        <DoReportProvider
+            millId={millId || ''}
+            initialQueryParams={queryParams}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
-                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -77,25 +70,56 @@ export function DoReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('reports.inputReports.do.title')}
+                            DO Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('reports.inputReports.do.subtitle')}
+                            Manage DO report transactions and records
                         </p>
                     </div>
                     <DoReportPrimaryButtons />
                 </div>
-                <DoReportTable
-                    data={doReportData}
-                    search={search}
-                    navigate={navigate}
-                    isLoading={isLoading}
-                    isError={isError}
-                    pagination={response?.pagination}
-                />
+                <DoReportContent navigate={navigate} />
             </Main>
 
             <DoReportDialogs />
         </DoReportProvider>
+    )
+}
+
+// Separate component to use context hook
+function DoReportContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const context = useDoReport()
+
+    if (context.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (context.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                Failed to load DO report data. Please try again later.
+            </div>
+        )
+    }
+
+    return (
+        <DoReportTable
+            data={context.data}
+            pagination={context.pagination}
+            search={Object.fromEntries(
+                Object.entries(context.queryParams || {})
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => [key, String(value)])
+            )}
+            navigate={navigate}
+        />
     )
 }

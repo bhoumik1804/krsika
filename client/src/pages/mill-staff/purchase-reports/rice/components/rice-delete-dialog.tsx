@@ -25,9 +25,9 @@ export function RiceDeleteDialog({
         useDeleteRicePurchase(millId)
 
     const handleDelete = async () => {
-        if (currentRow?.id) {
+        if (currentRow?._id) {
             try {
-                await deleteRicePurchase(currentRow.id)
+                await deleteRicePurchase(currentRow._id)
                 onOpenChange(false)
             } catch (error) {
                 console.error('Error deleting purchase:', error)

@@ -1,76 +1,41 @@
-/**
- * Balance Lifting Purchases FRK Types
- * TypeScript type definitions for Balance Lifting Purchases FRK module
- */
+import type { BalanceLiftingPurchasesFrk } from './schema'
 
-// ==========================================
-// API Request Types
-// ==========================================
+// API Request/Response types for Balance Lifting FRK Purchase
 
-export interface CreateBalanceLiftingPurchasesFrkRequest {
+export interface BalanceLiftingFrkPurchaseRequest {
     date: string
-    partyName?: string
+    partyName: string
     frkQty?: number
     frkRate?: number
     gst?: number
 }
 
-export interface UpdateBalanceLiftingPurchasesFrkRequest {
-    id: string
-    date?: string
-    partyName?: string
-    frkQty?: number
-    frkRate?: number
-    gst?: number
-}
-
-// ==========================================
-// API Response Types
-// ==========================================
-
-export interface BalanceLiftingPurchasesFrkResponse {
+export interface BalanceLiftingFrkPurchaseResponse {
     _id: string
-    millId: string
     date: string
-    partyName?: string
+    partyName: string
     frkQty?: number
     frkRate?: number
     gst?: number
-    createdBy: string
-    createdAt: string
-    updatedAt: string
+    millId?: string
+    createdBy?: string
+    createdAt?: string
+    updatedAt?: string
+    __v?: number
 }
 
-export interface BalanceLiftingPurchasesFrkListResponse {
-    data: BalanceLiftingPurchasesFrkResponse[]
-    pagination: {
-        page: number
-        limit: number
-        total: number
-        totalPages: number
-        hasPrevPage: boolean
-        hasNextPage: boolean
-        prevPage: number | null
-        nextPage: number | null
-    }
+export interface PaginationData {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasPrevPage: boolean
+    hasNextPage: boolean
+    prevPage: number | null
+    nextPage: number | null
 }
 
-export interface BalanceLiftingPurchasesFrkSummaryResponse {
-    totalEntries: number
-    totalFrkQty: number
-    totalGst: number
-}
-
-// ==========================================
-// Query Parameter Types
-// ==========================================
-
-export interface BalanceLiftingPurchasesFrkQueryParams {
-    page?: number
-    limit?: number
-    search?: string
-    startDate?: string
-    endDate?: string
-    sortBy?: string
-    sortOrder?: 'asc' | 'desc'
+export interface BalanceLiftingFrkPurchaseListResponse {
+    data: BalanceLiftingPurchasesFrk[]
+    pagination: PaginationData
 }

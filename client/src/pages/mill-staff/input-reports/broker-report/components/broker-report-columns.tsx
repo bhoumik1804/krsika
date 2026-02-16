@@ -1,14 +1,11 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BrokerReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getBrokerReportColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<BrokerReportData>[] => [
+export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -24,6 +21,9 @@ export const getBrokerReportColumns = (
                 className='translate-y-[2px]'
             />
         ),
+        meta: {
+            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
+        },
         cell: ({ row }) => (
             <Checkbox
                 checked={row.getIsSelected()}
@@ -32,19 +32,14 @@ export const getBrokerReportColumns = (
                 className='translate-y-[2px]'
             />
         ),
-        meta: {
-            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
-        },
+
         enableSorting: false,
         enableHiding: false,
     },
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.brokerName')}
-            />
+            <DataTableColumnHeader column={column} title='Broker Name' />
         ),
         cell: ({ row }) => <div>{row.getValue('brokerName')}</div>,
         meta: {
@@ -56,32 +51,30 @@ export const getBrokerReportColumns = (
         enableHiding: false,
     },
     {
+        accessorKey: 'gstn',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='GSTN' />
+        ),
+        cell: ({ row }) => <div>{row.getValue('gstn')}</div>,
+    },
+    {
         accessorKey: 'phone',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.phone')}
-            />
+            <DataTableColumnHeader column={column} title='Phone' />
         ),
         cell: ({ row }) => <div>{row.getValue('phone')}</div>,
     },
     {
         accessorKey: 'email',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.email')}
-            />
+            <DataTableColumnHeader column={column} title='Email' />
         ),
         cell: ({ row }) => <div>{row.getValue('email')}</div>,
     },
     {
         accessorKey: 'address',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.address')}
-            />
+            <DataTableColumnHeader column={column} title='Address' />
         ),
         cell: ({ row }) => <div>{row.getValue('address')}</div>,
     },

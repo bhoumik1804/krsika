@@ -1,26 +1,27 @@
-/**
- * Financial Receipt Hooks
- * React Query hooks for Financial Receipt data management
- */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+    useMutation,
+    useQuery,
+    useQueryClient,
+    type UseMutationResult,
+    type UseQueryResult,
+} from '@tanstack/react-query'
 import { toast } from 'sonner'
 import {
-    fetchFinancialReceiptList,
-    fetchFinancialReceiptById,
-    fetchFinancialReceiptSummary,
-    createFinancialReceipt,
-    updateFinancialReceipt,
-    deleteFinancialReceipt,
     bulkDeleteFinancialReceipt,
-    exportFinancialReceipt,
+    createFinancialReceipt,
+    deleteFinancialReceipt,
+    fetchFinancialReceiptById,
+    fetchFinancialReceiptList,
+    fetchFinancialReceiptSummary,
+    updateFinancialReceipt,
 } from './service'
 import type {
-    FinancialReceiptResponse,
-    FinancialReceiptListResponse,
-    FinancialReceiptSummaryResponse,
     CreateFinancialReceiptRequest,
-    UpdateFinancialReceiptRequest,
+    FinancialReceiptListResponse,
     FinancialReceiptQueryParams,
+    FinancialReceiptResponse,
+    FinancialReceiptSummaryResponse,
+    UpdateFinancialReceiptRequest,
 } from './types'
 
 // ==========================================
@@ -43,150 +44,139 @@ export const financialReceiptKeys = {
 }
 
 // ==========================================
-// Query Hooks
+// Hooks
 // ==========================================
 
 /**
- * Hook to fetch financial receipt list with pagination and filters
+ * Hook to fetch financial receipt list
  */
 export const useFinancialReceiptList = (
     millId: string,
-    params?: FinancialReceiptQueryParams,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<FinancialReceiptListResponse, Error>({
+    params?: FinancialReceiptQueryParams
+): UseQueryResult<FinancialReceiptListResponse, Error> => {
+    return useQuery({
         queryKey: financialReceiptKeys.list(millId, params),
         queryFn: () => fetchFinancialReceiptList(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        enabled: !!millId,
     })
 }
 
 /**
- * Hook to fetch a single financial receipt entry
+ * Hook to fetch a single financial receipt by ID
  */
-export const useFinancialReceiptDetail = (
+export const useFinancialReceipt = (
     millId: string,
-    id: string,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<FinancialReceiptResponse, Error>({
+    id: string
+): UseQueryResult<FinancialReceiptResponse, Error> => {
+    return useQuery({
         queryKey: financialReceiptKeys.detail(millId, id),
         queryFn: () => fetchFinancialReceiptById(millId, id),
-        enabled: options?.enabled ?? (!!millId && !!id),
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        enabled: !!millId && !!id,
     })
 }
 
 /**
- * Hook to fetch financial receipt summary/statistics
+ * Hook to fetch financial receipt summary
  */
 export const useFinancialReceiptSummary = (
     millId: string,
-    params?: Pick<FinancialReceiptQueryParams, 'startDate' | 'endDate'>,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<FinancialReceiptSummaryResponse, Error>({
+    params?: Pick<FinancialReceiptQueryParams, 'startDate' | 'endDate'>
+): UseQueryResult<FinancialReceiptSummaryResponse, Error> => {
+    return useQuery({
         queryKey: financialReceiptKeys.summary(millId, params),
         queryFn: () => fetchFinancialReceiptSummary(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        enabled: !!millId,
     })
 }
 
-// ==========================================
-// Mutation Hooks
-// ==========================================
-
 /**
- * Hook to create a new financial receipt entry
+ * Hook to create a new financial receipt
  */
-export const useCreateFinancialReceipt = (millId: string) => {
+export const useCreateFinancialReceipt = (): UseMutationResult<
+    FinancialReceiptResponse,
+    Error,
+    { millId: string; data: CreateFinancialReceiptRequest }
+> => {
     const queryClient = useQueryClient()
 
-    return useMutation<
-        FinancialReceiptResponse,
-        Error,
-        CreateFinancialReceiptRequest
-    >({
-        mutationFn: (data) => createFinancialReceipt(millId, data),
+    return useMutation({
+        mutationFn: ({ millId, data }) => createFinancialReceipt(millId, data),
         onSuccess: () => {
-            // Invalidate and refetch list queries
             queryClient.invalidateQueries({
                 queryKey: financialReceiptKeys.lists(),
             })
-            // Invalidate summary as well
             queryClient.invalidateQueries({
                 queryKey: financialReceiptKeys.summaries(),
             })
-            toast.success('Financial receipt entry created successfully')
+            toast.success('Financial receipt created successfully')
         },
         onError: (error) => {
             toast.error(
-                error.message || 'Failed to create financial receipt entry'
+                `Failed to create financial receipt: ${error.message || 'Unknown error'}`
             )
         },
     })
 }
 
 /**
- * Hook to update an existing financial receipt entry
+ * Hook to update existing financial receipt
  */
-export const useUpdateFinancialReceipt = (millId: string) => {
+export const useUpdateFinancialReceipt = (): UseMutationResult<
+    FinancialReceiptResponse,
+    Error,
+    { millId: string; data: UpdateFinancialReceiptRequest }
+> => {
     const queryClient = useQueryClient()
 
-    return useMutation<
-        FinancialReceiptResponse,
-        Error,
-        UpdateFinancialReceiptRequest
-    >({
-        mutationFn: (data) => updateFinancialReceipt(millId, data),
-        onSuccess: (data) => {
-            // Invalidate and refetch list queries
+    return useMutation({
+        mutationFn: ({ millId, data }) => updateFinancialReceipt(millId, data),
+        onSuccess: (data, variables) => {
             queryClient.invalidateQueries({
                 queryKey: financialReceiptKeys.lists(),
             })
-            // Update the specific detail cache
-            queryClient.setQueryData(
-                financialReceiptKeys.detail(millId, data._id),
-                data
-            )
-            // Invalidate summary
+            queryClient.invalidateQueries({
+                queryKey: financialReceiptKeys.detail(
+                    variables.millId,
+                    data._id!
+                ),
+            })
             queryClient.invalidateQueries({
                 queryKey: financialReceiptKeys.summaries(),
             })
-            toast.success('Financial receipt entry updated successfully')
+            toast.success('Financial receipt updated successfully')
         },
         onError: (error) => {
             toast.error(
-                error.message || 'Failed to update financial receipt entry'
+                `Failed to update financial receipt: ${error.message || 'Unknown error'}`
             )
         },
     })
 }
 
 /**
- * Hook to delete a financial receipt entry
+ * Hook to delete a financial receipt
  */
-export const useDeleteFinancialReceipt = (millId: string) => {
+export const useDeleteFinancialReceipt = (): UseMutationResult<
+    void,
+    Error,
+    { millId: string; id: string }
+> => {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string>({
-        mutationFn: (id) => deleteFinancialReceipt(millId, id),
+    return useMutation({
+        mutationFn: ({ millId, id }) => deleteFinancialReceipt(millId, id),
         onSuccess: () => {
-            // Invalidate and refetch list queries
             queryClient.invalidateQueries({
                 queryKey: financialReceiptKeys.lists(),
             })
-            // Invalidate summary
             queryClient.invalidateQueries({
                 queryKey: financialReceiptKeys.summaries(),
             })
-            toast.success('Financial receipt entry deleted successfully')
+            toast.success('Financial receipt deleted successfully')
         },
         onError: (error) => {
             toast.error(
-                error.message || 'Failed to delete financial receipt entry'
+                `Failed to delete financial receipt: ${error.message || 'Unknown error'}`
             )
         },
     })
@@ -195,53 +185,29 @@ export const useDeleteFinancialReceipt = (millId: string) => {
 /**
  * Hook to bulk delete financial receipt entries
  */
-export const useBulkDeleteFinancialReceipt = (millId: string) => {
+export const useBulkDeleteFinancialReceipt = (): UseMutationResult<
+    void,
+    Error,
+    { millId: string; ids: string[] }
+> => {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string[]>({
-        mutationFn: (ids) => bulkDeleteFinancialReceipt(millId, ids),
-        onSuccess: (_, ids) => {
-            // Invalidate and refetch list queries
+    return useMutation({
+        mutationFn: ({ millId, ids }) =>
+            bulkDeleteFinancialReceipt(millId, ids),
+        onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: financialReceiptKeys.lists(),
             })
-            // Invalidate summary
             queryClient.invalidateQueries({
                 queryKey: financialReceiptKeys.summaries(),
             })
-            toast.success(`${ids.length} entries deleted successfully`)
+            toast.success('Selected financial receipts deleted successfully')
         },
         onError: (error) => {
-            toast.error(error.message || 'Failed to delete entries')
-        },
-    })
-}
-
-/**
- * Hook to export financial receipt entries
- */
-export const useExportFinancialReceipt = (millId: string) => {
-    return useMutation<
-        Blob,
-        Error,
-        { params?: FinancialReceiptQueryParams; format?: 'csv' | 'xlsx' }
-    >({
-        mutationFn: ({ params, format }) =>
-            exportFinancialReceipt(millId, params, format),
-        onSuccess: (blob, { format = 'csv' }) => {
-            // Create download link
-            const url = window.URL.createObjectURL(blob)
-            const a = document.createElement('a')
-            a.href = url
-            a.download = `financial-receipt-${new Date().toISOString().split('T')[0]}.${format}`
-            document.body.appendChild(a)
-            a.click()
-            document.body.removeChild(a)
-            window.URL.revokeObjectURL(url)
-            toast.success('Export completed successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to export data')
+            toast.error(
+                `Failed to delete selected financial receipts: ${error.message || 'Unknown error'}`
+            )
         },
     })
 }

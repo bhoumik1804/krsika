@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,9 +6,7 @@ import { LongText } from '@/components/long-text'
 import { type FinancialReceipt } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getFinancialReceiptColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<FinancialReceipt>[] => [
+export const FinancialReceiptColumns: ColumnDef<FinancialReceipt>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,10 +39,7 @@ export const getFinancialReceiptColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -61,10 +55,7 @@ export const getFinancialReceiptColumns = (
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.partyName')}
-            />
+            <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -76,10 +67,7 @@ export const getFinancialReceiptColumns = (
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.brokerName')}
-            />
+            <DataTableColumnHeader column={column} title='Broker Name' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -91,20 +79,14 @@ export const getFinancialReceiptColumns = (
     {
         accessorKey: 'salesDealType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.salesDealType')}
-            />
+            <DataTableColumnHeader column={column} title='Sales Deal Type' />
         ),
         cell: ({ row }) => <div>{row.getValue('salesDealType') ?? '-'}</div>,
     },
     {
         accessorKey: 'salesDealNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.salesDealNumber')}
-            />
+            <DataTableColumnHeader column={column} title='Sales Deal Number' />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -115,10 +97,7 @@ export const getFinancialReceiptColumns = (
     {
         accessorKey: 'receivedAmount',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.receivedAmount')}
-            />
+            <DataTableColumnHeader column={column} title='Received Amount' />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
@@ -131,10 +110,7 @@ export const getFinancialReceiptColumns = (
     {
         accessorKey: 'remarks',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.remarks')}
-            />
+            <DataTableColumnHeader column={column} title='Remarks' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -23,20 +22,32 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
-import { type PaddySales } from '../data/schema'
+import type { PaddySalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getPaddySalesColumns } from './paddy-sales-columns'
+import { paddySalesColumns as columns } from './paddy-sales-columns'
 
 type DataTableProps = {
-    data: PaddySales[]
+    data: PaddySalesResponse[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
-export function PaddySalesTable({ data, search, navigate }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getPaddySalesColumns(t), [t])
+export function PaddySalesTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -52,11 +63,16 @@ export function PaddySalesTable({ data, search, navigate }: DataTableProps) {
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
         ],
     })
 
@@ -72,6 +88,8 @@ export function PaddySalesTable({ data, search, navigate }: DataTableProps) {
             columnVisibility,
         },
         enableRowSelection: true,
+        manualPagination: !!serverPagination,
+        pageCount: serverPagination?.totalPages ?? -1,
         onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
@@ -83,11 +101,14 @@ export function PaddySalesTable({ data, search, navigate }: DataTableProps) {
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        getRowId: (row) => row._id || '',
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -98,15 +119,8 @@ export function PaddySalesTable({ data, search, navigate }: DataTableProps) {
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
+                searchPlaceholder='Search Party Name...'
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

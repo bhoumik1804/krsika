@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useLabourGroupList } from '@/pages/mill-admin/input-reports/labour-group-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useParams } from 'react-router'
 import { inwardTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -25,6 +26,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -37,6 +39,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { useCreateLabourInward, useUpdateLabourInward } from '../data/hooks'
 import { labourInwardSchema, type LabourInward } from '../data/schema'
 
 type LabourInwardActionDialogProps = {
@@ -50,13 +53,29 @@ export function LabourInwardActionDialog({
     onOpenChange,
     currentRow,
 }: LabourInwardActionDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    const createMutation = useCreateLabourInward(millId || '')
+    const updateMutation = useUpdateLabourInward(millId || '')
+
+    const labourGroupList = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: (params) => useLabourGroupList(params.millId, params),
+            extractItems: (data) =>
+                data.labourGroups?.map((lg) => lg.labourTeamName) || [],
+            hookParams: { sortBy: 'labourTeamName', sortOrder: 'asc' },
+        },
+        currentRow?.labourGroupName
+    )
 
     const form = useForm<LabourInward>({
         resolver: zodResolver(labourInwardSchema),
         defaultValues: {
-            date: '',
+            date: format(new Date(), 'yyyy-MM-dd'),
             inwardType: '',
             truckNumber: '',
             totalGunny: undefined,
@@ -71,22 +90,35 @@ export function LabourInwardActionDialog({
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                inwardType: '',
+                // other defaults
+            })
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
     const inwardType = form.watch('inwardType')
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = (data: LabourInward) => {
+        if (isEditing && currentRow?._id) {
+            updateMutation.mutate(
+                { id: currentRow._id, ...data },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        } else {
+            createMutation.mutate(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
+        }
     }
 
     return (
@@ -341,9 +373,11 @@ export function LabourInwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Labour Group Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter labour group name'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value || ''}
+                                                onValueChange={field.onChange}
+                                                paginatedList={labourGroupList}
+                                                placeholder='Select a labour group'
                                             />
                                         </FormControl>
                                         <FormMessage />

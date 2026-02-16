@@ -26,14 +26,15 @@ import { useBrokerReport } from './broker-report-provider'
 type BrokerReportActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: BrokerReportData | null
+    currentRow?: BrokerReportData
 }
 
 export function BrokerReportActionDialog({
     open,
     onOpenChange,
+    currentRow,
 }: BrokerReportActionDialogProps) {
-    const { currentRow, millId } = useBrokerReport()
+    const { millId } = useBrokerReport()
     const { mutate: createBroker, isPending: isCreating } =
         useCreateBroker(millId)
     const { mutate: updateBroker, isPending: isUpdating } =
@@ -44,26 +45,35 @@ export function BrokerReportActionDialog({
 
     const form = useForm<BrokerReportData>({
         resolver: zodResolver(brokerReportSchema),
-        defaultValues: {
-            brokerName: '',
-            phone: '',
-            email: '',
-            address: '',
-        },
+        defaultValues: isEditing
+            ? { ...currentRow }
+            : {
+                  brokerName: '',
+                  phone: '',
+                  email: '',
+                  address: '',
+              },
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
+        if (open) {
+            form.reset(
+                isEditing
+                    ? { ...currentRow }
+                    : {
+                          brokerName: '',
+                          phone: '',
+                          email: '',
+                          address: '',
+                      }
+            )
         }
-    }, [currentRow, form])
+    }, [open])
 
     const onSubmit = (data: BrokerReportData) => {
         if (isEditing) {
             updateBroker(
-                { brokerId: currentRow?.id || '', data },
+                { brokerId: currentRow._id || '', data },
                 {
                     onSuccess: () => {
                         onOpenChange(false)
@@ -82,7 +92,13 @@ export function BrokerReportActionDialog({
     }
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog
+            open={open}
+            onOpenChange={(state) => {
+                form.reset()
+                onOpenChange(state)
+            }}
+        >
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>

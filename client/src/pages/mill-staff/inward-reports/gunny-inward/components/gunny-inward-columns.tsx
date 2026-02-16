@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,9 +6,7 @@ import { LongText } from '@/components/long-text'
 import { type GunnyInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getGunnyInwardColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<GunnyInward>[] => [
+export const gunnyInwardColumns: ColumnDef<GunnyInward>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,10 +39,7 @@ export const getGunnyInwardColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -63,7 +57,7 @@ export const getGunnyInwardColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('tableColumns.purchaseDealNumber')}
+                title='Gunny Purchase Deal Number'
             />
         ),
         cell: ({ row }) => (
@@ -75,10 +69,7 @@ export const getGunnyInwardColumns = (
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.partyName')}
-            />
+            <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -90,10 +81,7 @@ export const getGunnyInwardColumns = (
     {
         accessorKey: 'delivery',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.delivery')}
-            />
+            <DataTableColumnHeader column={column} title='Delivery' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('delivery')}</div>
@@ -102,10 +90,7 @@ export const getGunnyInwardColumns = (
     {
         accessorKey: 'samitiSangrahan',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.samitiSangrahan')}
-            />
+            <DataTableColumnHeader column={column} title='Samiti Sangrahan' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('samitiSangrahan')}</div>
@@ -114,10 +99,7 @@ export const getGunnyInwardColumns = (
     {
         accessorKey: 'gunnyNew',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyNew')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny New' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyNew')}</div>
@@ -126,10 +108,7 @@ export const getGunnyInwardColumns = (
     {
         accessorKey: 'gunnyOld',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyOld')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny Old' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyOld')}</div>
@@ -138,10 +117,7 @@ export const getGunnyInwardColumns = (
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyPlastic')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny Plastic' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>

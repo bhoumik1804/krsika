@@ -1,138 +1,132 @@
-/**
- * Balance Lifting Purchases Paddy Service
- * API client for Balance Lifting Purchases Paddy CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
-import apiClient, { type ApiResponse } from '@/lib/api-client'
+import { apiClient, type ApiResponse } from '@/lib/api-client'
+import type { BalanceLiftingPurchasesPaddy } from './schema'
 import type {
-    BalanceLiftingPurchasesPaddyResponse,
-    BalanceLiftingPurchasesPaddyListResponse,
-    BalanceLiftingPurchasesPaddySummaryResponse,
-    CreateBalanceLiftingPurchasesPaddyRequest,
-    UpdateBalanceLiftingPurchasesPaddyRequest,
-    BalanceLiftingPurchasesPaddyQueryParams,
+    BalanceLiftingPaddyPurchaseListResponse,
+    BalanceLiftingPaddyPurchaseRequest,
+    BalanceLiftingPaddyPurchaseResponse,
+    PaginationData,
 } from './types'
 
-// ==========================================
-// API Endpoints
-// ==========================================
-
-const BALANCE_LIFTING_PURCHASES_PADDY_ENDPOINT = (millId: string) =>
-    `/mills/${millId}/balance-lifting-purchases-paddy`
-
-// ==========================================
-// Balance Lifting Purchases Paddy API Functions
-// ==========================================
-
-/**
- * Fetch all balance lifting purchases paddy entries with pagination and filters
- */
-export const fetchBalanceLiftingPurchasesPaddyList = async (
-    millId: string,
-    params?: BalanceLiftingPurchasesPaddyQueryParams
-): Promise<BalanceLiftingPurchasesPaddyListResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<BalanceLiftingPurchasesPaddyListResponse>
-    >(BALANCE_LIFTING_PURCHASES_PADDY_ENDPOINT(millId), { params })
-    return response.data.data
+interface FetchBalanceLiftingPaddyPurchaseListParams {
+    millId: string
+    page?: number
+    pageSize?: number
+    search?: string
 }
 
-/**
- * Fetch a single balance lifting purchases paddy entry by ID
- */
-export const fetchBalanceLiftingPurchasesPaddyById = async (
-    millId: string,
-    id: string
-): Promise<BalanceLiftingPurchasesPaddyResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<BalanceLiftingPurchasesPaddyResponse>
-    >(`${BALANCE_LIFTING_PURCHASES_PADDY_ENDPOINT(millId)}/${id}`)
-    return response.data.data
-}
+export const balanceLiftingPaddyPurchaseService = {
+    fetchList: async (params: FetchBalanceLiftingPaddyPurchaseListParams) => {
+        const queryParams = new URLSearchParams()
+        if (params.page) queryParams.append('page', params.page.toString())
+        if (params.pageSize)
+            queryParams.append('limit', params.pageSize.toString())
+        if (params.search) queryParams.append('search', params.search)
 
-/**
- * Fetch balance lifting purchases paddy summary/statistics
- */
-export const fetchBalanceLiftingPurchasesPaddySummary = async (
-    millId: string,
-    params?: Pick<
-        BalanceLiftingPurchasesPaddyQueryParams,
-        'startDate' | 'endDate'
-    >
-): Promise<BalanceLiftingPurchasesPaddySummaryResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<BalanceLiftingPurchasesPaddySummaryResponse>
-    >(`${BALANCE_LIFTING_PURCHASES_PADDY_ENDPOINT(millId)}/summary`, { params })
-    return response.data.data
-}
+        const response = await apiClient.get<
+            ApiResponse<BalanceLiftingPaddyPurchaseListResponse>
+        >(`/mills/${params.millId}/paddy-purchase?${queryParams.toString()}`)
 
-/**
- * Create a new balance lifting purchases paddy entry
- */
-export const createBalanceLiftingPurchasesPaddy = async (
-    millId: string,
-    data: CreateBalanceLiftingPurchasesPaddyRequest
-): Promise<BalanceLiftingPurchasesPaddyResponse> => {
-    const response = await apiClient.post<
-        ApiResponse<BalanceLiftingPurchasesPaddyResponse>
-    >(BALANCE_LIFTING_PURCHASES_PADDY_ENDPOINT(millId), data)
-    return response.data.data
-}
+        const data: BalanceLiftingPurchasesPaddy[] =
+            response.data.data.data || []
 
-/**
- * Update an existing balance lifting purchases paddy entry
- */
-export const updateBalanceLiftingPurchasesPaddy = async (
-    millId: string,
-    { id, ...data }: UpdateBalanceLiftingPurchasesPaddyRequest
-): Promise<BalanceLiftingPurchasesPaddyResponse> => {
-    const response = await apiClient.put<
-        ApiResponse<BalanceLiftingPurchasesPaddyResponse>
-    >(`${BALANCE_LIFTING_PURCHASES_PADDY_ENDPOINT(millId)}/${id}`, data)
-    return response.data.data
-}
-
-/**
- * Delete a balance lifting purchases paddy entry
- */
-export const deleteBalanceLiftingPurchasesPaddy = async (
-    millId: string,
-    id: string
-): Promise<void> => {
-    await apiClient.delete(
-        `${BALANCE_LIFTING_PURCHASES_PADDY_ENDPOINT(millId)}/${id}`
-    )
-}
-
-/**
- * Bulk delete balance lifting purchases paddy entries
- */
-export const bulkDeleteBalanceLiftingPurchasesPaddy = async (
-    millId: string,
-    ids: string[]
-): Promise<void> => {
-    await apiClient.delete(
-        `${BALANCE_LIFTING_PURCHASES_PADDY_ENDPOINT(millId)}/bulk`,
-        {
-            data: { ids },
+        const pagination: PaginationData = response.data.data.pagination || {
+            page: params.page || 1,
+            limit: params.pageSize || 10,
+            total: 0,
+            totalPages: 0,
+            hasPrevPage: false,
+            hasNextPage: false,
+            prevPage: null,
+            nextPage: null,
         }
-    )
-}
 
-/**
- * Export balance lifting purchases paddy entries to CSV/Excel
- */
-export const exportBalanceLiftingPurchasesPaddy = async (
-    millId: string,
-    params?: BalanceLiftingPurchasesPaddyQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${BALANCE_LIFTING_PURCHASES_PADDY_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
+        return { data, pagination }
+    },
+
+    create: async (
+        millId: string,
+        data: Omit<BalanceLiftingPurchasesPaddy, '_id'>
+    ) => {
+        const requestData: BalanceLiftingPaddyPurchaseRequest = {
+            date: data.date,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+            deliveryType: data.deliveryType || undefined,
+            purchaseType: data.purchaseType || undefined,
+            doNumber: data.doNumber || undefined,
+            committeeName: data.committeeName || undefined,
+            doPaddyQty: data.doPaddyQty,
+            paddyType: data.paddyType || undefined,
+            totalPaddyQty: data.totalPaddyQty,
+            paddyRatePerQuintal: data.paddyRatePerQuintal,
+            discountPercent: data.discountPercent,
+            brokerage: data.brokerage,
+            gunnyType: data.gunnyType || undefined,
+            newGunnyRate: data.newGunnyRate,
+            oldGunnyRate: data.oldGunnyRate,
+            plasticGunnyRate: data.plasticGunnyRate,
         }
-    )
-    return response.data
+
+        const response = await apiClient.post<
+            ApiResponse<BalanceLiftingPaddyPurchaseResponse>
+        >(`/mills/${millId}/paddy-purchase`, requestData)
+        return response.data.data
+    },
+
+    update: async (
+        millId: string,
+        purchaseId: string,
+        data: Omit<BalanceLiftingPurchasesPaddy, '_id'>
+    ) => {
+        const requestData: BalanceLiftingPaddyPurchaseRequest = {
+            date: data.date,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+            deliveryType: data.deliveryType || undefined,
+            purchaseType: data.purchaseType || undefined,
+            doNumber: data.doNumber || undefined,
+            committeeName: data.committeeName || undefined,
+            doPaddyQty: data.doPaddyQty,
+            paddyType: data.paddyType || undefined,
+            totalPaddyQty: data.totalPaddyQty,
+            paddyRatePerQuintal: data.paddyRatePerQuintal,
+            discountPercent: data.discountPercent,
+            brokerage: data.brokerage,
+            gunnyType: data.gunnyType || undefined,
+            newGunnyRate: data.newGunnyRate,
+            oldGunnyRate: data.oldGunnyRate,
+            plasticGunnyRate: data.plasticGunnyRate,
+        }
+
+        const response = await apiClient.put<
+            ApiResponse<BalanceLiftingPaddyPurchaseResponse>
+        >(`/mills/${millId}/paddy-purchase/${purchaseId}`, requestData)
+        return response.data.data
+    },
+
+    delete: async (millId: string, purchaseId: string) => {
+        const response = await apiClient.delete<
+            ApiResponse<{ success: boolean }>
+        >(`/mills/${millId}/paddy-purchase/${purchaseId}`)
+        return response.data.data
+    },
+
+    bulkDelete: async (millId: string, purchaseIds: string[]) => {
+        const response = await apiClient.delete<
+            ApiResponse<{ success: boolean }>
+        >(`/mills/${millId}/paddy-purchase/bulk`, {
+            data: { ids: purchaseIds },
+        })
+        return response.data.data
+    },
+
+    fetchPaddyInwardsByDealNumber: async (
+        millId: string,
+        dealNumber: string
+    ) => {
+        const response = await apiClient.get<
+            ApiResponse<{ data: any[]; pagination: any }>
+        >(`/mills/${millId}/private-paddy-inward?search=${dealNumber}`)
+        return response.data.data.data
+    },
 }

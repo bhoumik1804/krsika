@@ -1,7 +1,5 @@
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -16,7 +14,6 @@ import { BhusaOutwardTable } from './components/bhusa-outward-table'
 import { useBhusaOutwardList } from './data/hooks'
 
 export function BhusaOutwardReport() {
-    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -60,7 +57,6 @@ export function BhusaOutwardReport() {
                 <Header fixed>
                     <Search />
                     <div className='ms-auto flex items-center space-x-4'>
-                        <LanguageSwitch />
                         <ThemeSwitch />
                         <ConfigDrawer />
                         <ProfileDropdown
@@ -82,7 +78,6 @@ export function BhusaOutwardReport() {
                 <Header fixed>
                     <Search />
                     <div className='ms-auto flex items-center space-x-4'>
-                        <LanguageSwitch />
                         <ThemeSwitch />
                         <ConfigDrawer />
                         <ProfileDropdown
@@ -103,7 +98,6 @@ export function BhusaOutwardReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
-                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -117,10 +111,10 @@ export function BhusaOutwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('reports.outwardReports.bhusa.title')}
+                            Bhusa Outward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('reports.outwardReports.bhusa.subtitle')}
+                            Manage Bhusa outward transactions and records
                         </p>
                     </div>
                     <BhusaOutwardPrimaryButtons />

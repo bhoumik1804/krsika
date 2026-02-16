@@ -44,18 +44,29 @@ export const doReportKeys = {
 // Query Hooks
 // ==========================================
 
+interface UseDoReportListParams {
+    millId: string
+    page?: number
+    limit?: number
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+}
+
 /**
  * Hook to fetch DO report list with pagination and filters
  */
-export const useDoReportList = (
-    millId: string,
-    params?: DoReportQueryParams,
-    options?: { enabled?: boolean }
-) => {
+export const useDoReportList = (params: UseDoReportListParams) => {
     return useQuery<DoReportListResponse, Error>({
-        queryKey: doReportKeys.list(millId, params),
-        queryFn: () => fetchDoReportList(millId, params),
-        enabled: options?.enabled ?? !!millId,
+        queryKey: doReportKeys.list(params.millId, {
+            page: params.page,
+            limit: params.limit,
+            search: params.search,
+            sortBy: params.sortBy,
+            sortOrder: params.sortOrder,
+        }),
+        queryFn: () => fetchDoReportList(params),
+        enabled: !!params.millId,
         staleTime: 5 * 60 * 1000,
     })
 }
@@ -203,17 +214,13 @@ export const useBulkDeleteDoReport = (millId: string) => {
 
     return useMutation<void, Error, string[]>({
         mutationFn: (ids) => bulkDeleteDoReport(millId, ids),
-        onSuccess: (_, ids) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: doReportKeys.lists(),
             })
             queryClient.invalidateQueries({
                 queryKey: doReportKeys.summaries(),
             })
-            toast.success(`${ids.length} DO reports deleted successfully`)
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to delete DO reports')
         },
     })
 }

@@ -1,22 +1,22 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { LabourGroupReportDialogs } from './components/labour-group-report-dialogs'
 import { LabourGroupReportPrimaryButtons } from './components/labour-group-report-primary-buttons'
-import { LabourGroupReportProvider } from './components/labour-group-report-provider'
+import {
+    LabourGroupReportProvider,
+    useLabourGroupReport,
+} from './components/labour-group-report-provider'
 import { LabourGroupReportTable } from './components/labour-group-report-table'
-import { useLabourGroupList } from './data/hooks'
 
 export function LabourGroupReport() {
-    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -34,22 +34,6 @@ export function LabourGroupReport() {
         [search]
     )
 
-    const {
-        data: response,
-        isLoading,
-        isError,
-    } = useLabourGroupList(millId || '', queryParams, { enabled: !!millId })
-
-    const labourGroupData = useMemo(() => {
-        const list = response?.labourGroups || []
-        return Array.isArray(list)
-            ? list.map((group) => ({
-                  _id: group._id,
-                  labourTeamName: group.groupName || '',
-              }))
-            : []
-    }, [response])
-
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
             const newSearch = opts.search(search)
@@ -62,11 +46,13 @@ export function LabourGroupReport() {
     }
 
     return (
-        <LabourGroupReportProvider>
+        <LabourGroupReportProvider
+            millId={millId || ''}
+            initialQueryParams={queryParams}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
-                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -80,25 +66,55 @@ export function LabourGroupReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('reports.inputReports.labourGroup.title')}
+                            Labour Group Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('reports.inputReports.labourGroup.subtitle')}
+                            Manage labour group transactions and records
                         </p>
                     </div>
                     <LabourGroupReportPrimaryButtons />
                 </div>
-                <LabourGroupReportTable
-                    data={labourGroupData}
-                    search={search}
-                    navigate={navigate}
-                    isLoading={isLoading}
-                    isError={isError}
-                    pagination={response?.pagination}
-                />
+                <LabourGroupReportContent navigate={navigate} />
             </Main>
 
             <LabourGroupReportDialogs />
         </LabourGroupReportProvider>
+    )
+}
+
+function LabourGroupReportContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const context = useLabourGroupReport()
+
+    if (context.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (context.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                Failed to load labour group data. Please try again later.
+            </div>
+        )
+    }
+
+    return (
+        <LabourGroupReportTable
+            data={context.data}
+            search={Object.fromEntries(
+                Object.entries(context.queryParams || {})
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => [key, String(value)])
+            )}
+            navigate={navigate}
+            pagination={context.pagination}
+        />
     )
 }

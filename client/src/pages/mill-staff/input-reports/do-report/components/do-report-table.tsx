@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,26 +24,22 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type DoReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getDoReportColumns } from './do-report-columns'
-
-interface PaginationInfo {
-    page: number
-    limit: number
-    total: number
-    totalPages: number
-    hasPrevPage: boolean
-    hasNextPage: boolean
-    prevPage: number | null
-    nextPage: number | null
-}
+import { doReportColumns as columns } from './do-report-columns'
 
 type DataTableProps = {
     data: DoReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    pagination?: PaginationInfo
-    isLoading?: boolean
-    isError?: boolean
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
 export function DoReportTable({
@@ -53,8 +48,6 @@ export function DoReportTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getDoReportColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -81,7 +74,7 @@ export function DoReportTable({
         columnFilters: [
             {
                 columnId: 'samitiSangrahan',
-                searchKey: 'search',
+                searchKey: 'samitiSangrahan',
                 type: 'string',
             },
         ],
@@ -98,6 +91,9 @@ export function DoReportTable({
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
@@ -105,8 +101,6 @@ export function DoReportTable({
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
         // Use server-side pagination info when available
-        pageCount: serverPagination?.totalPages ?? -1,
-        manualPagination: !!serverPagination,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -117,10 +111,10 @@ export function DoReportTable({
 
     // Ensure page is within range when using server-side pagination
     useEffect(() => {
-        if (serverPagination) {
-            ensurePageInRange(serverPagination.totalPages)
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
         }
-    }, [serverPagination, ensurePageInRange])
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -131,9 +125,8 @@ export function DoReportTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
-                searchKey='search'
-                filters={[]}
+                searchPlaceholder='Search Samiti...'
+                searchKey='samitiSangrahan'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

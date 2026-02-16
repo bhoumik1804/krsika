@@ -1,57 +1,9 @@
-/**
- * Labour Inward Types
- * TypeScript type definitions for Labour Inward module
- */
+import { type LabourInward } from './schema'
 
-// ==========================================
-// API Request Types
-// ==========================================
+export type LabourInwardResponse = LabourInward
 
-export interface CreateLabourInwardRequest {
-    date: string
-    inwardType?: string
-    truckNumber?: string
-    totalGunny?: number
-    numberOfGunnyBundle?: number
-    unloadingRate?: number
-    stackingRate?: number
-    labourGroupName?: string
-}
-
-export interface UpdateLabourInwardRequest {
-    id: string
-    date?: string
-    inwardType?: string
-    truckNumber?: string
-    totalGunny?: number
-    numberOfGunnyBundle?: number
-    unloadingRate?: number
-    stackingRate?: number
-    labourGroupName?: string
-}
-
-// ==========================================
-// API Response Types
-// ==========================================
-
-export interface LabourInwardResponse {
-    _id: string
-    millId: string
-    date: string
-    inwardType?: string
-    truckNumber?: string
-    totalGunny?: number
-    numberOfGunnyBundle?: number
-    unloadingRate?: number
-    stackingRate?: number
-    labourGroupName?: string
-    createdBy: string
-    createdAt: string
-    updatedAt: string
-}
-
-export interface LabourInwardListResponse {
-    data: LabourInwardResponse[]
+export type LabourInwardListResponse = {
+    entries: LabourInward[]
     pagination: {
         page: number
         limit: number
@@ -64,18 +16,19 @@ export interface LabourInwardListResponse {
     }
 }
 
-export interface LabourInwardSummaryResponse {
+export type LabourInwardSummaryResponse = {
     totalEntries: number
     totalGunny: number
-    totalUnloadingCost: number
-    totalStackingCost: number
+    totalBundles: number
 }
 
-// ==========================================
-// Query Parameter Types
-// ==========================================
+export type CreateLabourInwardRequest = Omit<LabourInward, '_id'>
 
-export interface LabourInwardQueryParams {
+export type UpdateLabourInwardRequest = Partial<LabourInward> & {
+    id: string
+}
+
+export type LabourInwardQueryParams = {
     page?: number
     limit?: number
     search?: string

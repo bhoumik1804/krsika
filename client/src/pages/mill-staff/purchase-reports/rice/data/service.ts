@@ -1,10 +1,15 @@
 import { apiClient } from '@/lib/api-client'
 import type { RicePurchaseData } from './schema'
+import type {
+    RicePurchaseListResponse,
+    RicePurchaseResponse,
+    PaginationData,
+} from './types'
 
 interface FetchRicePurchaseListParams {
     millId: string
     page?: number
-    pageSize?: number
+    limit?: number
     search?: string
 }
 
@@ -13,28 +18,23 @@ interface ApiResponse<T> {
 }
 
 export const ricePurchaseService = {
-    fetchRicePurchaseList: async (params: FetchRicePurchaseListParams) => {
+    fetchRicePurchaseList: async (
+        params: FetchRicePurchaseListParams
+    ): Promise<RicePurchaseListResponse> => {
         const queryParams = new URLSearchParams()
         if (params.page) queryParams.append('page', params.page.toString())
-        if (params.pageSize)
-            queryParams.append('pageSize', params.pageSize.toString())
+        if (params.limit) queryParams.append('limit', params.limit.toString())
         if (params.search) queryParams.append('search', params.search)
 
         const response = await apiClient.get<
             ApiResponse<{
-                data: Array<RicePurchaseData & { _id: string }>
-                pagination: Record<string, unknown>
+                data: RicePurchaseResponse[]
+                pagination: PaginationData
             }>
         >(`/mills/${params.millId}/rice-purchase?${queryParams.toString()}`)
 
-        // Map _id to id for consistency
-        const data = response.data.data.data.map((item) => ({
-            ...item,
-            id: item._id,
-        }))
-
         return {
-            data,
+            data: response.data.data.data,
             pagination: response.data.data.pagination,
         }
     },
@@ -42,11 +42,10 @@ export const ricePurchaseService = {
     createRicePurchase: async (
         millId: string,
         data: Omit<RicePurchaseData, 'id'>
-    ) => {
-        const response = await apiClient.post<ApiResponse<RicePurchaseData>>(
-            `/mills/${millId}/rice-purchase`,
-            data
-        )
+    ): Promise<RicePurchaseResponse> => {
+        const response = await apiClient.post<
+            ApiResponse<RicePurchaseResponse>
+        >(`/mills/${millId}/rice-purchase`, data)
         return response.data.data
     },
 
@@ -54,8 +53,8 @@ export const ricePurchaseService = {
         millId: string,
         purchaseId: string,
         data: Omit<RicePurchaseData, 'id'>
-    ) => {
-        const response = await apiClient.put<ApiResponse<RicePurchaseData>>(
+    ): Promise<RicePurchaseResponse> => {
+        const response = await apiClient.put<ApiResponse<RicePurchaseResponse>>(
             `/mills/${millId}/rice-purchase/${purchaseId}`,
             data
         )

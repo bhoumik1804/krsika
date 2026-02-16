@@ -1,45 +1,9 @@
-/**
- * Labour Milling Types
- * TypeScript type definitions for Labour Milling module
- */
+import { type LabourMilling } from './schema'
 
-// ==========================================
-// API Request Types
-// ==========================================
+export type LabourMillingResponse = LabourMilling
 
-export interface CreateLabourMillingRequest {
-    date: string
-    hopperInGunny?: number
-    hopperRate?: number
-    labourGroupName?: string
-}
-
-export interface UpdateLabourMillingRequest {
-    id: string
-    date?: string
-    hopperInGunny?: number
-    hopperRate?: number
-    labourGroupName?: string
-}
-
-// ==========================================
-// API Response Types
-// ==========================================
-
-export interface LabourMillingResponse {
-    _id: string
-    millId: string
-    date: string
-    hopperInGunny?: number
-    hopperRate?: number
-    labourGroupName?: string
-    createdBy: string
-    createdAt: string
-    updatedAt: string
-}
-
-export interface LabourMillingListResponse {
-    data: LabourMillingResponse[]
+export type LabourMillingListResponse = {
+    entries: LabourMilling[]
     pagination: {
         page: number
         limit: number
@@ -52,17 +16,18 @@ export interface LabourMillingListResponse {
     }
 }
 
-export interface LabourMillingSummaryResponse {
+export type LabourMillingSummaryResponse = {
     totalEntries: number
-    totalHopperGunny: number
-    totalHopperCost: number
+    totalHopperInGunny: number
 }
 
-// ==========================================
-// Query Parameter Types
-// ==========================================
+export type CreateLabourMillingRequest = Omit<LabourMilling, '_id'>
 
-export interface LabourMillingQueryParams {
+export type UpdateLabourMillingRequest = Partial<LabourMilling> & {
+    id: string
+}
+
+export type LabourMillingQueryParams = {
     page?: number
     limit?: number
     search?: string

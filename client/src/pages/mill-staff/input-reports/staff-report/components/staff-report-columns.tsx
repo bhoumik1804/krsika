@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,9 +6,7 @@ import { LongText } from '@/components/long-text'
 import { type StaffReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getStaffReportColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<StaffReportData>[] => [
+export const staffReportColumns: ColumnDef<StaffReportData>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,10 +39,7 @@ export const getStaffReportColumns = (
     {
         accessorKey: 'fullName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.fullName')}
-            />
+            <DataTableColumnHeader column={column} title='Full Name' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36 ps-3'>
@@ -63,10 +57,7 @@ export const getStaffReportColumns = (
     {
         accessorKey: 'post',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.post')}
-            />
+            <DataTableColumnHeader column={column} title='Post' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('post') || '-'}</div>
@@ -75,10 +66,7 @@ export const getStaffReportColumns = (
     {
         accessorKey: 'salary',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.salary')}
-            />
+            <DataTableColumnHeader column={column} title='Salary' />
         ),
         cell: ({ row }) => (
             <div className='text-left'>{row.getValue('salary')}</div>
@@ -87,10 +75,7 @@ export const getStaffReportColumns = (
     {
         accessorKey: 'phoneNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.phone')}
-            />
+            <DataTableColumnHeader column={column} title='Phone' />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>
@@ -101,10 +86,7 @@ export const getStaffReportColumns = (
     {
         accessorKey: 'email',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.email')}
-            />
+            <DataTableColumnHeader column={column} title='Email' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-48 text-sm'>
@@ -115,10 +97,7 @@ export const getStaffReportColumns = (
     {
         accessorKey: 'address',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.address')}
-            />
+            <DataTableColumnHeader column={column} title='Address' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-52'>

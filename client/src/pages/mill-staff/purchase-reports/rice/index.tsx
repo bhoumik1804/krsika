@@ -1,8 +1,6 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -14,10 +12,8 @@ import { RiceDialogs } from './components/rice-dialogs'
 import { RicePrimaryButtons } from './components/rice-primary-buttons'
 import { RiceProvider, useRice } from './components/rice-provider'
 import { RiceTable } from './components/rice-table'
-import { useRicePurchaseList } from './data/hooks'
 
 export function RicePurchaseReport() {
-    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -39,18 +35,7 @@ export function RicePurchaseReport() {
         }
     }, [searchParams])
 
-    // Call GET API here
-    const {
-        data: apiData,
-        pagination: apiPagination,
-        isLoading,
-        isError,
-    } = useRicePurchaseList({
-        millId: millId || '',
-        page: queryParams.page,
-        pageSize: queryParams.limit,
-        search: queryParams.search,
-    })
+    // Call GET API here -> Removed as it is now inside the provider
 
     const sidebarData = getMillAdminSidebarData(millId || '')
 
@@ -67,18 +52,10 @@ export function RicePurchaseReport() {
     }
 
     return (
-        <RiceProvider
-            millId={millId || ''}
-            initialQueryParams={queryParams}
-            apiData={apiData}
-            apiPagination={apiPagination}
-            isLoading={isLoading}
-            isError={isError}
-        >
+        <RiceProvider millId={millId || ''} initialQueryParams={queryParams}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
-                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -92,10 +69,10 @@ export function RicePurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('reports.purchaseReports.rice.title')}
+                            Rice Purchase Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('reports.purchaseReports.rice.subtitle')}
+                            Manage rice purchase transactions and records
                         </p>
                     </div>
                     <RicePrimaryButtons />
@@ -135,6 +112,7 @@ function RicePurchaseContent({
     return (
         <RiceTable
             data={context.data}
+            pagination={context.pagination}
             search={Object.fromEntries(
                 Object.entries(context.queryParams || {})
                     .filter(([, value]) => value !== undefined)

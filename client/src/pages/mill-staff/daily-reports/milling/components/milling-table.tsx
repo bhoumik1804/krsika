@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -26,7 +26,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
 import { type MillingEntry } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getMillingColumns } from './milling-columns'
+import { useMillingColumns } from './milling-columns'
 
 type DataTableProps = {
     data: MillingEntry[]
@@ -35,9 +35,8 @@ type DataTableProps = {
 }
 
 export function MillingTable({ data, search, navigate }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getMillingColumns(t), [t])
-
+    const { t } = useTranslation()
+    const columns = useMillingColumns()
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -102,20 +101,20 @@ export function MillingTable({ data, search, navigate }: DataTableProps) {
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Filter milling records...'
+                searchPlaceholder={t('common.searchPlaceholder')}
                 searchKey='paddyType'
                 filters={[
                     {
                         columnId: 'status',
-                        title: 'Status',
+                        title: t('common.status'),
                         options: statuses,
                     },
                     {
                         columnId: 'shift',
-                        title: 'Shift',
+                        title: t('common.shift'),
                         options: [
-                            { label: 'Day', value: 'Day' },
-                            { label: 'Night', value: 'Night' },
+                            { label: t('common.day'), value: 'Day' },
+                            { label: t('common.night'), value: 'Night' },
                         ],
                     },
                 ]}
@@ -189,7 +188,7 @@ export function MillingTable({ data, search, navigate }: DataTableProps) {
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

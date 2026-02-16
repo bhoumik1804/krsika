@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,9 +6,7 @@ import { LongText } from '@/components/long-text'
 import { type MillingRice } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getMillingRiceColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<MillingRice>[] => [
+export const millingRiceColumns: ColumnDef<MillingRice>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,10 +39,7 @@ export const getMillingRiceColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -61,10 +55,7 @@ export const getMillingRiceColumns = (
     {
         accessorKey: 'riceType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.riceType')}
-            />
+            <DataTableColumnHeader column={column} title='Rice Type' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>{row.getValue('riceType')}</LongText>
@@ -74,10 +65,7 @@ export const getMillingRiceColumns = (
     {
         accessorKey: 'hopperInGunny',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.hopperInGunny')}
-            />
+            <DataTableColumnHeader column={column} title='Hopper (In Gunny)' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -90,7 +78,7 @@ export const getMillingRiceColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('tableColumns.hopperInQuintal')}
+                title='Hopper (In Quintal)'
             />
         ),
         cell: ({ row }) => (
@@ -104,7 +92,7 @@ export const getMillingRiceColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('tableColumns.riceQty')}
+                title='Rice Quantity (Qtl)'
             />
         ),
         cell: ({ row }) => (
@@ -116,10 +104,7 @@ export const getMillingRiceColumns = (
     {
         accessorKey: 'ricePercentage',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.ricePercent')}
-            />
+            <DataTableColumnHeader column={column} title='Rice (%)' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -132,7 +117,7 @@ export const getMillingRiceColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('tableColumns.khandaQty')}
+                title='Khanda Quantity (Qtl)'
             />
         ),
         cell: ({ row }) => (
@@ -144,10 +129,7 @@ export const getMillingRiceColumns = (
     {
         accessorKey: 'khandaPercentage',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.khandaPercent')}
-            />
+            <DataTableColumnHeader column={column} title='Khanda (%)' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -160,7 +142,7 @@ export const getMillingRiceColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('tableColumns.silkyKodhaQty')}
+                title='Silky Kodha Quantity (Qtl)'
             />
         ),
         cell: ({ row }) => (

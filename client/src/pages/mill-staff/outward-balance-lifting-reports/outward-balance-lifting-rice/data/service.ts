@@ -1,134 +1,95 @@
-/**
- * Outward Balance Lifting Rice Service
- * API client for Outward Balance Lifting Rice CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
-import apiClient, { type ApiResponse } from '@/lib/api-client'
+import apiClient from '@/lib/api-client'
 import type {
-    OutwardBalanceLiftingRiceResponse,
-    OutwardBalanceLiftingRiceListResponse,
-    OutwardBalanceLiftingRiceSummaryResponse,
-    CreateOutwardBalanceLiftingRiceRequest,
-    UpdateOutwardBalanceLiftingRiceRequest,
-    OutwardBalanceLiftingRiceQueryParams,
+    CreatePrivateRiceOutwardRequest,
+    PrivateRiceOutwardListResponse,
+    PrivateRiceOutwardQueryParams,
+    PrivateRiceOutwardSummaryResponse,
+    UpdatePrivateRiceOutwardRequest,
 } from './types'
 
-// ==========================================
-// API Endpoints
-// ==========================================
+const BASE_PATH = '/mills'
 
-const OUTWARD_BALANCE_LIFTING_RICE_ENDPOINT = (millId: string) =>
-    `/mills/${millId}/outward-balance-lifting-rice`
-
-// ==========================================
-// Outward Balance Lifting Rice API Functions
-// ==========================================
-
-/**
- * Fetch all outward balance lifting rice entries with pagination and filters
- */
-export const fetchOutwardBalanceLiftingRiceList = async (
+export async function fetchPrivateRiceOutwardList(
     millId: string,
-    params?: OutwardBalanceLiftingRiceQueryParams
-): Promise<OutwardBalanceLiftingRiceListResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<OutwardBalanceLiftingRiceListResponse>
-    >(OUTWARD_BALANCE_LIFTING_RICE_ENDPOINT(millId), { params })
-    return response.data.data
+    params: PrivateRiceOutwardQueryParams = {}
+): Promise<PrivateRiceOutwardListResponse> {
+    const response = await apiClient.get(`${BASE_PATH}/${millId}/rice-sales`, {
+        params,
+    })
+    // Map backend 'sales' to frontend 'entries' if needed,
+    // but the types.ts was updated to expect 'entries'.
+    // Actually, the backend returns { sales: [], pagination: {} }
+    const { sales, pagination } = response.data.data
+    return {
+        entries: sales || [],
+        pagination: pagination || {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 0,
+            hasPrevPage: false,
+            hasNextPage: false,
+            prevPage: null,
+            nextPage: null,
+        },
+    }
 }
 
-/**
- * Fetch a single outward balance lifting rice entry by ID
- */
-export const fetchOutwardBalanceLiftingRiceById = async (
+export async function fetchPrivateRiceOutwardSummary(
     millId: string,
-    id: string
-): Promise<OutwardBalanceLiftingRiceResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<OutwardBalanceLiftingRiceResponse>
-    >(`${OUTWARD_BALANCE_LIFTING_RICE_ENDPOINT(millId)}/${id}`)
-    return response.data.data
-}
-
-/**
- * Fetch outward balance lifting rice summary/statistics
- */
-export const fetchOutwardBalanceLiftingRiceSummary = async (
-    millId: string
-): Promise<OutwardBalanceLiftingRiceSummaryResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<OutwardBalanceLiftingRiceSummaryResponse>
-    >(`${OUTWARD_BALANCE_LIFTING_RICE_ENDPOINT(millId)}/summary`)
-    return response.data.data
-}
-
-/**
- * Create a new outward balance lifting rice entry
- */
-export const createOutwardBalanceLiftingRice = async (
-    millId: string,
-    data: CreateOutwardBalanceLiftingRiceRequest
-): Promise<OutwardBalanceLiftingRiceResponse> => {
-    const response = await apiClient.post<
-        ApiResponse<OutwardBalanceLiftingRiceResponse>
-    >(OUTWARD_BALANCE_LIFTING_RICE_ENDPOINT(millId), data)
-    return response.data.data
-}
-
-/**
- * Update an existing outward balance lifting rice entry
- */
-export const updateOutwardBalanceLiftingRice = async (
-    millId: string,
-    { id, ...data }: UpdateOutwardBalanceLiftingRiceRequest
-): Promise<OutwardBalanceLiftingRiceResponse> => {
-    const response = await apiClient.put<
-        ApiResponse<OutwardBalanceLiftingRiceResponse>
-    >(`${OUTWARD_BALANCE_LIFTING_RICE_ENDPOINT(millId)}/${id}`, data)
-    return response.data.data
-}
-
-/**
- * Delete an outward balance lifting rice entry
- */
-export const deleteOutwardBalanceLiftingRice = async (
-    millId: string,
-    id: string
-): Promise<void> => {
-    await apiClient.delete(
-        `${OUTWARD_BALANCE_LIFTING_RICE_ENDPOINT(millId)}/${id}`
+    params: Pick<PrivateRiceOutwardQueryParams, 'startDate' | 'endDate'> = {}
+): Promise<PrivateRiceOutwardSummaryResponse> {
+    const response = await apiClient.get(
+        `${BASE_PATH}/${millId}/rice-sales/summary`,
+        { params }
     )
+    return response.data.data
 }
 
-/**
- * Bulk delete outward balance lifting rice entries
- */
-export const bulkDeleteOutwardBalanceLiftingRice = async (
+export async function createPrivateRiceOutward(
+    millId: string,
+    data: CreatePrivateRiceOutwardRequest
+) {
+    const response = await apiClient.post(
+        `${BASE_PATH}/${millId}/rice-sales`,
+        data
+    )
+    return response.data.data
+}
+
+export async function getPrivateRiceOutwardById(millId: string, id: string) {
+    const response = await apiClient.get(
+        `${BASE_PATH}/${millId}/rice-sales/${id}`
+    )
+    return response.data.data
+}
+
+export async function updatePrivateRiceOutward(
+    millId: string,
+    id: string,
+    data: UpdatePrivateRiceOutwardRequest
+) {
+    const response = await apiClient.put(
+        `${BASE_PATH}/${millId}/rice-sales/${id}`,
+        data
+    )
+    return response.data.data
+}
+
+export async function deletePrivateRiceOutward(millId: string, id: string) {
+    const response = await apiClient.delete(
+        `${BASE_PATH}/${millId}/rice-sales/${id}`
+    )
+    return response.data.data
+}
+
+export async function bulkDeletePrivateRiceOutward(
     millId: string,
     ids: string[]
-): Promise<void> => {
-    await apiClient.delete(
-        `${OUTWARD_BALANCE_LIFTING_RICE_ENDPOINT(millId)}/bulk`,
-        {
-            data: { ids },
-        }
+) {
+    const response = await apiClient.delete(
+        `${BASE_PATH}/${millId}/rice-sales/bulk`,
+        { data: { ids } }
     )
-}
-
-/**
- * Export outward balance lifting rice entries to CSV/Excel
- */
-export const exportOutwardBalanceLiftingRice = async (
-    millId: string,
-    params?: OutwardBalanceLiftingRiceQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${OUTWARD_BALANCE_LIFTING_RICE_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
-    )
-    return response.data
+    return response.data.data
 }

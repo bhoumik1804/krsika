@@ -1,9 +1,12 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useGunnyPurchaseList } from '@/pages/mill-admin/purchase-reports/gunny/data/hooks'
+import type { GunnyPurchaseResponse } from '@/pages/mill-admin/purchase-reports/gunny/data/types'
 import { CalendarIcon } from 'lucide-react'
 import { gunnyDeliveryTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -23,6 +26,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -31,6 +35,10 @@ import {
 import { useCreateGunnyInward, useUpdateGunnyInward } from '../data/hooks'
 import { gunnyInwardSchema, type GunnyInward } from '../data/schema'
 import { gunnyInward } from './gunny-inward-provider'
+
+const useGunnyPurchaseListCompat = (params: any) => {
+    return useGunnyPurchaseList(params)
+}
 
 type GunnyInwardActionDialogProps = {
     open: boolean
@@ -48,6 +56,56 @@ export function GunnyInwardActionDialog({
         useCreateGunnyInward(millId)
     const { mutate: updateInward, isPending: isUpdating } =
         useUpdateGunnyInward(millId)
+
+    const purchaseDataRef = useRef<GunnyPurchaseResponse[]>([])
+
+    const gunnyDeal = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useGunnyPurchaseListCompat,
+            extractItems: (data: any) => {
+                purchaseDataRef.current = data.purchases || []
+                return data.purchases
+                    .map(
+                        (p: GunnyPurchaseResponse) => p.gunnyPurchaseDealNumber
+                    )
+                    .filter(Boolean) as string[]
+            },
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
+        },
+        currentRow?.gunnyPurchaseDealNumber || undefined
+    )
+
+    const handleDealSelect = (dealId: string) => {
+        form.setValue('gunnyPurchaseDealNumber', dealId)
+        const purchase = purchaseDataRef.current.find(
+            (p) => p.gunnyPurchaseDealNumber === dealId
+        )
+        if (purchase) {
+            if (purchase.partyName)
+                form.setValue('partyName', purchase.partyName)
+            if (purchase.deliveryType)
+                form.setValue('delivery', purchase.deliveryType)
+
+            // Map quantities correctly, checking for undefined/null to allow 0
+            if (
+                purchase.newGunnyQty !== undefined &&
+                purchase.newGunnyQty !== null
+            )
+                form.setValue('gunnyNew', purchase.newGunnyQty)
+            if (
+                purchase.oldGunnyQty !== undefined &&
+                purchase.oldGunnyQty !== null
+            )
+                form.setValue('gunnyOld', purchase.oldGunnyQty)
+            if (
+                purchase.plasticGunnyQty !== undefined &&
+                purchase.plasticGunnyQty !== null
+            )
+                form.setValue('gunnyPlastic', purchase.plasticGunnyQty)
+        }
+    }
     const isLoading = isCreating || isUpdating
     const isEditing = !!currentRow
 
@@ -82,14 +140,21 @@ export function GunnyInwardActionDialog({
     }, [currentRow, open, getDefaultValues])
 
     const onSubmit = (data: GunnyInward) => {
-        console.log('Submitting data:', data)
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            gunnyPurchaseDealNumber: data.gunnyPurchaseDealNumber || undefined,
+            delivery: data.delivery || undefined,
+            samitiSangrahan: data.samitiSangrahan || undefined,
+        }
+        console.log('Submitting data:', submissionData)
 
         if (isEditing && currentRow?._id) {
             updateInward(
                 {
                     id: currentRow._id,
                     data: {
-                        ...data,
+                        ...submissionData,
                         _id: currentRow._id,
                     },
                 },
@@ -101,7 +166,7 @@ export function GunnyInwardActionDialog({
                 }
             )
         } else {
-            createInward(data, {
+            createInward(submissionData, {
                 onSuccess: () => {
                     onOpenChange(false)
                     form.reset()
@@ -196,11 +261,12 @@ export function GunnyInwardActionDialog({
                                             Gunny Purchase Deal Number
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                id='gunnyPurchaseDealNumber'
-                                                placeholder='Enter Deal Number'
-                                                {...field}
+                                            <PaginatedCombobox
                                                 value={field.value || ''}
+                                                onValueChange={handleDealSelect}
+                                                paginatedList={gunnyDeal}
+                                                placeholder='Search deal...'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -215,7 +281,6 @@ export function GunnyInwardActionDialog({
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
                                             <Input
-                                                id='partyName'
                                                 placeholder='Enter Party Name'
                                                 {...field}
                                                 value={field.value || ''}

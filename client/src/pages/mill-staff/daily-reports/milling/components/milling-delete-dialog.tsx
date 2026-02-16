@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import {
@@ -23,14 +24,16 @@ export function MillingDeleteDialog({
     onOpenChange,
     currentRow,
 }: MillingDeleteDialogProps) {
+    const { t } = useTranslation()
+
     const handleDelete = () => {
         toast.promise(sleep(2000), {
-            loading: 'Deleting milling record...',
+            loading: t('milling.deleting'),
             success: () => {
                 onOpenChange(false)
-                return 'Milling record deleted successfully'
+                return t('milling.deletedSuccess')
             },
-            error: 'Failed to delete milling record',
+            error: t('milling.deleteFailed'),
         })
     }
 
@@ -38,22 +41,23 @@ export function MillingDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Milling Record?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                        {t('milling.deleteTitle')}
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete this milling record for{' '}
-                        <strong>{currentRow?.paddyType}</strong> on{' '}
-                        <strong>{currentRow?.date}</strong>?
+                        {t('milling.deleteDescription')}{' '}
+                        <strong>{currentRow?.paddyType}</strong>?
                         <br />
-                        This action cannot be undone.
+                        {t('common.actionCannotBeUndone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

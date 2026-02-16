@@ -1,7 +1,6 @@
 /**
  * Financial Receipt Service
  * API client for Financial Receipt CRUD operations
- * Uses centralized axios instance with cookie-based auth
  */
 import apiClient, { type ApiResponse } from '@/lib/api-client'
 import type {
@@ -110,22 +109,4 @@ export const bulkDeleteFinancialReceipt = async (
     await apiClient.delete(`${FINANCIAL_RECEIPT_ENDPOINT(millId)}/bulk`, {
         data: { ids },
     })
-}
-
-/**
- * Export financial receipt entries to CSV/Excel
- */
-export const exportFinancialReceipt = async (
-    millId: string,
-    params?: FinancialReceiptQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${FINANCIAL_RECEIPT_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
-    )
-    return response.data
 }

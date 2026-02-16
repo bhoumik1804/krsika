@@ -1,22 +1,13 @@
 import { useEffect, useState } from 'react'
-import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { gunnyDeliveryTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import {
-    Combobox,
-    ComboboxInput,
-    ComboboxContent,
-    ComboboxItem,
-    ComboboxList,
-    ComboboxEmpty,
-    ComboboxCollection,
-} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -34,6 +25,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -71,68 +63,17 @@ export function GunnyActionDialog({
     const { mutateAsync: updateGunnyPurchase, isPending: isUpdating } =
         useUpdateGunnyPurchase(millId)
 
-    const [partyPage, setPartyPage] = useState(1)
-    const [allParties, setAllParties] = useState<string[]>([])
-    const [hasMoreParties, setHasMoreParties] = useState(true)
-    const [isLoadingMoreParties, setIsLoadingMoreParties] = useState(false)
-
-    // Dynamic limit: 10 for first page, 5 for subsequent pages
-    const partyLimit = partyPage === 1 ? 10 : 5
-
-    // Fetch party list from API with pagination
-    const { data: partyListData } = usePartyList({
-        millId: open ? millId : '',
-        page: partyPage,
-        limit: partyLimit,
-        sortBy: 'partyName',
-        sortOrder: 'asc',
-    })
-
-    // Extract party names from API response and accumulate
-    React.useEffect(() => {
-        if (partyListData?.parties) {
-            console.log(
-                'Party data received:',
-                partyListData.parties.length,
-                'parties on page',
-                partyPage
-            )
-            const newParties = partyListData.parties.map(
-                (party) => party.partyName
-            )
-            setAllParties((prev) => {
-                // Only add if not already in the list
-                const combined = [...prev, ...newParties]
-                return Array.from(new Set(combined))
-            })
-            // Check if there are more parties to load
-            setHasMoreParties(partyListData.parties.length === partyLimit)
-            setIsLoadingMoreParties(false)
-        }
-    }, [partyListData, partyLimit, partyPage])
-
-    // Reset accumulated data when dialog opens
-    useEffect(() => {
-        if (open) {
-            setAllParties([])
-            setPartyPage(1)
-            setHasMoreParties(true)
-            setIsLoadingMoreParties(false)
-        }
-    }, [open])
-
-    // Handle scroll for party list
-    const handlePartyScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        const target = e.currentTarget
-        const bottom =
-            target.scrollHeight - target.scrollTop <= target.clientHeight + 5
-
-        if (bottom && hasMoreParties && !isLoadingMoreParties) {
-            console.log('Loading more parties... Current page:', partyPage)
-            setIsLoadingMoreParties(true)
-            setPartyPage((prev) => prev + 1)
-        }
-    }
+    const party = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties.map((p: { partyName: string }) => p.partyName),
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName
+    )
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -179,7 +120,7 @@ export function GunnyActionDialog({
         try {
             if (isEditing && currentRow?._id) {
                 await updateGunnyPurchase({
-                    id: currentRow._id,
+                    _id: currentRow._id,
                     ...data,
                 })
             } else {
@@ -281,46 +222,15 @@ export function GunnyActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Combobox
+                                                <PaginatedCombobox
                                                     value={field.value}
                                                     onValueChange={
                                                         field.onChange
                                                     }
-                                                    items={allParties}
-                                                >
-                                                    <ComboboxInput
-                                                        placeholder='Search party...'
-                                                        showClear
-                                                    />
-                                                    <ComboboxContent>
-                                                        <ComboboxList
-                                                            onScroll={
-                                                                handlePartyScroll
-                                                            }
-                                                        >
-                                                            <ComboboxCollection>
-                                                                {(party) => (
-                                                                    <ComboboxItem
-                                                                        value={
-                                                                            party
-                                                                        }
-                                                                    >
-                                                                        {party}
-                                                                    </ComboboxItem>
-                                                                )}
-                                                            </ComboboxCollection>
-                                                            <ComboboxEmpty>
-                                                                No parties found
-                                                            </ComboboxEmpty>
-                                                            {isLoadingMoreParties && (
-                                                                <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                    Loading
-                                                                    more...
-                                                                </div>
-                                                            )}
-                                                        </ComboboxList>
-                                                    </ComboboxContent>
-                                                </Combobox>
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

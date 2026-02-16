@@ -1,56 +1,47 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { BalanceLiftingSalesPaddyDialogs } from './components/balance-lifting-sales-paddy-dialogs'
 import { BalanceLiftingSalesPaddyPrimaryButtons } from './components/balance-lifting-sales-paddy-primary-buttons'
-import { BalanceLiftingSalesPaddyProvider } from './components/balance-lifting-sales-paddy-provider'
+import {
+    BalanceLiftingSalesPaddyProvider,
+    useBalanceLiftingSalesPaddy,
+} from './components/balance-lifting-sales-paddy-provider'
 import { BalanceLiftingSalesPaddyTable } from './components/balance-lifting-sales-paddy-table'
-import { useBalanceLiftingSalesPaddyList } from './data/hooks'
 
 export function BalanceLiftingSalesPaddyReport() {
-    const { t } = useTranslation('millStaff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+
+    // Extract query params from URL
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'date',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
+    // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
-
-    const queryParams = useMemo(
-        () => ({
-            page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
-            search: search.search as string | undefined,
-            sortBy: (search.sortBy as string) || 'createdAt',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
-
-    const { data: response } = useBalanceLiftingSalesPaddyList(
-        millId || '',
-        queryParams,
-        {
-            enabled: !!millId,
-        }
-    )
-
-    const balanceLiftingSalesPaddyData = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
-    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -64,11 +55,13 @@ export function BalanceLiftingSalesPaddyReport() {
     }
 
     return (
-        <BalanceLiftingSalesPaddyProvider>
+        <BalanceLiftingSalesPaddyProvider
+            millId={millId || ''}
+            initialQueryParams={queryParams}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
-                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown
@@ -82,26 +75,55 @@ export function BalanceLiftingSalesPaddyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t(
-                                'reports.balanceLiftingReports.salesPaddy.title'
-                            )}
+                            Paddy Sale Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t(
-                                'reports.balanceLiftingReports.salesPaddy.subtitle'
-                            )}
+                            Manage paddy sales transactions and records
                         </p>
                     </div>
                     <BalanceLiftingSalesPaddyPrimaryButtons />
                 </div>
-                <BalanceLiftingSalesPaddyTable
-                    data={balanceLiftingSalesPaddyData}
-                    search={search}
-                    navigate={navigate}
-                />
+                <BalanceLiftingSalesPaddyContent navigate={navigate} />
             </Main>
-
             <BalanceLiftingSalesPaddyDialogs />
         </BalanceLiftingSalesPaddyProvider>
+    )
+}
+
+// Separate component to use context hook
+function BalanceLiftingSalesPaddyContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const context = useBalanceLiftingSalesPaddy()
+
+    if (context.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (context.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                Failed to load Paddy sales data. Please try again later.
+            </div>
+        )
+    }
+
+    return (
+        <BalanceLiftingSalesPaddyTable
+            data={context.data}
+            pagination={context.pagination}
+            search={Object.fromEntries(
+                Object.entries(context.queryParams || {})
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => [key, String(value)])
+            )}
+            navigate={navigate}
+        />
     )
 }

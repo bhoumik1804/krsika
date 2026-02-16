@@ -13,12 +13,12 @@ const resources = {
     },
 }
 
-// Get stored language or default to 'en'
+// Get stored language or default to 'hi'
 const getStoredLanguage = (): string => {
     if (typeof window !== 'undefined') {
-        return localStorage.getItem('language') || 'en'
+        return localStorage.getItem('language') || 'hi'
     }
-    return 'en'
+    return 'hi'
 }
 
 i18n.use(initReactI18next).init({

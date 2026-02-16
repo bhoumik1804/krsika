@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -24,6 +25,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -37,67 +39,141 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import {
-    outwardBalanceLiftingRiceSchema,
-    type OutwardBalanceLiftingRice,
+    useCreatePrivateRiceOutward,
+    useUpdatePrivateRiceOutward,
+} from '../data/hooks'
+import {
+    PrivateRiceOutwardSchema,
+    type PrivateRiceOutward,
 } from '../data/schema'
+import { useOutwardBalanceLiftingRice } from './outward-balance-lifting-rice-provider'
 
 type OutwardBalanceLiftingRiceActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: OutwardBalanceLiftingRice | null
 }
 
 export function OutwardBalanceLiftingRiceActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: OutwardBalanceLiftingRiceActionDialogProps) {
+    const { currentRow, millId } = useOutwardBalanceLiftingRice()
+    const { mutateAsync: createEntry, isPending: isCreating } =
+        useCreatePrivateRiceOutward(millId)
+    const { mutateAsync: updateEntry, isPending: isUpdating } =
+        useUpdatePrivateRiceOutward(millId)
+
+    const party = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c: { partyName: string }) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName ?? undefined
+    )
+
+    const broker = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c: { brokerName: string }) => c.brokerName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'brokerName', sortOrder: 'asc' },
+        },
+        currentRow?.brokerName ?? undefined
+    )
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<OutwardBalanceLiftingRice>({
-        resolver: zodResolver(outwardBalanceLiftingRiceSchema),
+    const form = useForm<PrivateRiceOutward>({
+        resolver: zodResolver(PrivateRiceOutwardSchema),
         defaultValues: {
-            date: '',
+            date: format(new Date(), 'yyyy-MM-dd'),
             partyName: '',
-            vehicleNumber: '',
-            bags: 0,
-            weight: 0,
-            rate: 0,
-            amount: 0,
-            status: 'pending',
-        },
+            brokerName: '',
+            riceSalesDealNumber: '',
+            deliveryType: 'Mill to Mill',
+            lotOrOther: 'LOT',
+            fciOrNAN: 'FCI',
+            riceType: 'Regular',
+            riceQty: 0,
+            riceRatePerQuintal: 0,
+            discountPercent: 0,
+            brokeragePerQuintal: 0,
+            gunnyType: 'New',
+            newGunnyRate: 0,
+            oldGunnyRate: 0,
+            plasticGunnyRate: 0,
+            frkType: 'No',
+            frkRatePerQuintal: 0,
+            lotNumber: '',
+        } as PrivateRiceOutward,
     })
 
     useEffect(() => {
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                partyName: '',
+                brokerName: '',
+                riceSalesDealNumber: '',
+                deliveryType: 'Mill to Mill',
+                lotOrOther: 'LOT',
+                fciOrNAN: 'FCI',
+                riceType: 'Regular',
+                riceQty: 0,
+                riceRatePerQuintal: 0,
+                discountPercent: 0,
+                brokeragePerQuintal: 0,
+                gunnyType: 'New',
+                newGunnyRate: 0,
+                oldGunnyRate: 0,
+                plasticGunnyRate: 0,
+                frkType: 'No',
+                frkRatePerQuintal: 0,
+                lotNumber: '',
+            } as PrivateRiceOutward)
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = async (data: PrivateRiceOutward) => {
+        try {
+            if (isEditing) {
+                await updateEntry({
+                    id: currentRow?._id || '',
+                    data,
+                })
+            } else {
+                await createEntry(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            console.error('Error submitting form:', error)
+        }
     }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className='max-w-2xl'>
+            <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing ? 'Edit' : 'Add'} Rice Sale
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing ? 'Update' : 'Enter'} the sale details below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -174,9 +250,12 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter name'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value ?? undefined}
+                                                onValueChange={field.onChange}
+                                                paginatedList={party}
+                                                placeholder='Search party...'
+                                                emptyText='No parties found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -185,14 +264,17 @@ export function OutwardBalanceLiftingRiceActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='vehicleNumber'
+                                name='brokerName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Vehicle Number</FormLabel>
+                                        <FormLabel>Broker Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='XX-00-XX-0000'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value ?? undefined}
+                                                onValueChange={field.onChange}
+                                                paginatedList={broker}
+                                                placeholder='Search broker...'
+                                                emptyText='No brokers found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -201,31 +283,106 @@ export function OutwardBalanceLiftingRiceActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='bags'
+                                name='deliveryType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Bags</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type='number'
-                                                {...field}
-                                                onChange={(e) =>
-                                                    field.onChange(
-                                                        +e.target.value
-                                                    )
-                                                }
-                                            />
-                                        </FormControl>
+                                        <FormLabel>Delivery Type</FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder='Select delivery type' />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value='Mill to Mill'>
+                                                    Mill to Mill
+                                                </SelectItem>
+                                                <SelectItem value='Mill to Party'>
+                                                    Mill to Party
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
                             <FormField
                                 control={form.control}
-                                name='weight'
+                                name='lotOrOther'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Weight (Qtl)</FormLabel>
+                                        <FormLabel>LOT/Other</FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder='Select type' />
+                                                </SelectTrigger>
+                                            </FormControl>
+
+                                            <SelectContent>
+                                                <SelectItem value='LOT'>
+                                                    LOT
+                                                </SelectItem>
+                                                <SelectItem value='Other'>
+                                                    Other
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='fciOrNAN'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>FCI/NAN</FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder='Select' />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value='FCI'>
+                                                    FCI
+                                                </SelectItem>
+                                                <SelectItem value='NAN'>
+                                                    NAN
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='riceType'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Rice Type</FormLabel>
+                                        <Input {...field} />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='riceQty'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Rice Qty</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -233,63 +390,12 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                                 {...field}
                                                 onChange={(e) =>
                                                     field.onChange(
-                                                        +e.target.value
+                                                        e.target
+                                                            .valueAsNumber || 0
                                                     )
                                                 }
                                             />
                                         </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name='rate'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Rate per Qtl</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type='number'
-                                                {...field}
-                                                onChange={(e) =>
-                                                    field.onChange(
-                                                        +e.target.value
-                                                    )
-                                                }
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name='status'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Status</FormLabel>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                        >
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value='pending'>
-                                                    Pending
-                                                </SelectItem>
-                                                <SelectItem value='completed'>
-                                                    Completed
-                                                </SelectItem>
-                                                <SelectItem value='cancelled'>
-                                                    Cancelled
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -300,11 +406,18 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

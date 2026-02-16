@@ -12,7 +12,6 @@ import {
     updateLabourOutward,
     deleteLabourOutward,
     bulkDeleteLabourOutward,
-    exportLabourOutward,
 } from './service'
 import type {
     LabourOutwardResponse,
@@ -144,7 +143,7 @@ export const useUpdateLabourOutward = (millId: string) => {
                 queryKey: labourOutwardKeys.lists(),
             })
             queryClient.setQueryData(
-                labourOutwardKeys.detail(millId, data._id),
+                labourOutwardKeys.detail(millId, data._id as string),
                 data
             )
             queryClient.invalidateQueries({
@@ -206,26 +205,6 @@ export const useBulkDeleteLabourOutward = (millId: string) => {
             toast.error(
                 error.message || 'Failed to delete labour outward entries'
             )
-        },
-    })
-}
-
-/**
- * Hook to export labour outward entries
- */
-export const useExportLabourOutward = (millId: string) => {
-    return useMutation<
-        Blob,
-        Error,
-        { params?: LabourOutwardQueryParams; format?: 'csv' | 'xlsx' }
-    >({
-        mutationFn: ({ params, format }) =>
-            exportLabourOutward(millId, params, format),
-        onSuccess: () => {
-            toast.success('Export completed successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to export data')
         },
     })
 }

@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for LabourInward records
 export const labourInwardSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
     inwardType: z.string().optional(),
     truckNumber: z.string().optional(),

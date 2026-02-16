@@ -38,39 +38,45 @@ import {
 
 // Recent Entries Component
 function RecentEntries() {
+    const { t } = useTranslation()
     const entries = [
         {
             id: 1,
             type: 'gate',
-            desc: 'Paddy from Ramesh - 250 kg',
+            desc: 'recentEntries.paddyFromRamesh',
+            val: '250 kg',
             time: '10:30 AM',
             status: 'completed',
         },
         {
             id: 2,
             type: 'sale',
-            desc: 'Rice to Patel Store - 100 kg',
+            desc: 'recentEntries.riceToPatelStore',
+            val: '100 kg',
             time: '11:15 AM',
             status: 'completed',
         },
         {
             id: 3,
             type: 'gate',
-            desc: 'Paddy from Suresh - 180 kg',
+            desc: 'recentEntries.paddyFromSuresh',
+            val: '180 kg',
             time: '11:45 AM',
             status: 'completed',
         },
         {
             id: 4,
             type: 'gate',
-            desc: 'Paddy from Kumar - 320 kg',
+            desc: 'recentEntries.paddyFromKumar',
+            val: '320 kg',
             time: '12:30 PM',
             status: 'pending',
         },
         {
             id: 5,
             type: 'sale',
-            desc: 'Rice to Krishna Traders - 200 kg',
+            desc: 'recentEntries.riceToKrishnaTraders',
+            val: '200 kg',
             time: '02:00 PM',
             status: 'pending',
         },
@@ -98,7 +104,7 @@ function RecentEntries() {
                     </div>
                     <div className='min-w-0 flex-1'>
                         <p className='truncate text-sm font-medium text-foreground'>
-                            {entry.desc}
+                            {t(entry.desc, { val: entry.val })}
                         </p>
                         <p className='flex items-center gap-2 text-xs text-muted-foreground'>
                             <Clock className='h-3 w-3' />
@@ -273,7 +279,9 @@ export function MillStaffDashboard() {
                 {/* Recent Entries */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>{t('dashboard.recentEntries')}</CardTitle>
+                        <CardTitle>
+                            {t('dashboard.recentEntriesTitle')}
+                        </CardTitle>
                         <CardDescription>
                             {t('dashboard.yourLatestEntries')}
                         </CardDescription>

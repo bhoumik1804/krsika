@@ -1,241 +1,144 @@
-/**
- * Outward Balance Lifting Rice Hooks
- * React Query hooks for Outward Balance Lifting Rice data management
- */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import {
-    fetchOutwardBalanceLiftingRiceList,
-    fetchOutwardBalanceLiftingRiceById,
-    fetchOutwardBalanceLiftingRiceSummary,
-    createOutwardBalanceLiftingRice,
-    updateOutwardBalanceLiftingRice,
-    deleteOutwardBalanceLiftingRice,
-    bulkDeleteOutwardBalanceLiftingRice,
-    exportOutwardBalanceLiftingRice,
-} from './service'
+import * as privateRiceOutwardService from './service'
 import type {
-    OutwardBalanceLiftingRiceResponse,
-    OutwardBalanceLiftingRiceListResponse,
-    OutwardBalanceLiftingRiceSummaryResponse,
-    CreateOutwardBalanceLiftingRiceRequest,
-    UpdateOutwardBalanceLiftingRiceRequest,
-    OutwardBalanceLiftingRiceQueryParams,
+    CreatePrivateRiceOutwardRequest,
+    PrivateRiceOutwardQueryParams,
+    UpdatePrivateRiceOutwardRequest,
 } from './types'
 
-// ==========================================
-// Query Keys
-// ==========================================
-
-export const outwardBalanceLiftingRiceKeys = {
-    all: ['outward-balance-lifting-rice'] as const,
-    lists: () => [...outwardBalanceLiftingRiceKeys.all, 'list'] as const,
-    list: (millId: string, params?: OutwardBalanceLiftingRiceQueryParams) =>
-        [...outwardBalanceLiftingRiceKeys.lists(), millId, params] as const,
-    details: () => [...outwardBalanceLiftingRiceKeys.all, 'detail'] as const,
-    detail: (millId: string, id: string) =>
-        [...outwardBalanceLiftingRiceKeys.details(), millId, id] as const,
-    summaries: () => [...outwardBalanceLiftingRiceKeys.all, 'summary'] as const,
+export const privateRiceOutwardKeys = {
+    all: (millId: string) => ['private-rice-outward', millId] as const,
+    lists: (millId: string) =>
+        [...privateRiceOutwardKeys.all(millId), 'list'] as const,
+    list: (millId: string, params: PrivateRiceOutwardQueryParams) =>
+        [...privateRiceOutwardKeys.lists(millId), params] as const,
     summary: (millId: string) =>
-        [...outwardBalanceLiftingRiceKeys.summaries(), millId] as const,
+        [...privateRiceOutwardKeys.all(millId), 'summary'] as const,
 }
 
-// ==========================================
-// Query Hooks
-// ==========================================
-
-/**
- * Hook to fetch outward balance lifting rice list with pagination and filters
- */
-export const useOutwardBalanceLiftingRiceList = (
+export function usePrivateRiceOutwardList(
     millId: string,
-    params?: OutwardBalanceLiftingRiceQueryParams,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<OutwardBalanceLiftingRiceListResponse, Error>({
-        queryKey: outwardBalanceLiftingRiceKeys.list(millId, params),
-        queryFn: () => fetchOutwardBalanceLiftingRiceList(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+    params: PrivateRiceOutwardQueryParams = {}
+) {
+    return useQuery({
+        queryKey: privateRiceOutwardKeys.list(millId, params),
+        queryFn: () =>
+            privateRiceOutwardService.fetchPrivateRiceOutwardList(
+                millId,
+                params
+            ),
+        staleTime: 1000 * 60 * 5,
+        enabled: !!millId,
     })
 }
 
-/**
- * Hook to fetch a single outward balance lifting rice entry
- */
-export const useOutwardBalanceLiftingRiceDetail = (
+export function usePrivateRiceOutwardSummary(
     millId: string,
-    id: string,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<OutwardBalanceLiftingRiceResponse, Error>({
-        queryKey: outwardBalanceLiftingRiceKeys.detail(millId, id),
-        queryFn: () => fetchOutwardBalanceLiftingRiceById(millId, id),
-        enabled: options?.enabled ?? (!!millId && !!id),
-        staleTime: 5 * 60 * 1000, // 5 minutes
+    params: Pick<PrivateRiceOutwardQueryParams, 'startDate' | 'endDate'> = {}
+) {
+    return useQuery({
+        queryKey: privateRiceOutwardKeys.summary(millId),
+        queryFn: () =>
+            privateRiceOutwardService.fetchPrivateRiceOutwardSummary(
+                millId,
+                params
+            ),
+        staleTime: 1000 * 60 * 5,
+        enabled: !!millId,
     })
 }
 
-/**
- * Hook to fetch outward balance lifting rice summary/statistics
- */
-export const useOutwardBalanceLiftingRiceSummary = (
-    millId: string,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<OutwardBalanceLiftingRiceSummaryResponse, Error>({
-        queryKey: outwardBalanceLiftingRiceKeys.summary(millId),
-        queryFn: () => fetchOutwardBalanceLiftingRiceSummary(millId),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    })
-}
-
-// ==========================================
-// Mutation Hooks
-// ==========================================
-
-/**
- * Hook to create a new outward balance lifting rice entry
- */
-export const useCreateOutwardBalanceLiftingRice = (millId: string) => {
+export function useCreatePrivateRiceOutward(millId: string) {
     const queryClient = useQueryClient()
 
-    return useMutation<
-        OutwardBalanceLiftingRiceResponse,
-        Error,
-        CreateOutwardBalanceLiftingRiceRequest
-    >({
-        mutationFn: (data) => createOutwardBalanceLiftingRice(millId, data),
+    return useMutation({
+        mutationFn: (data: CreatePrivateRiceOutwardRequest) =>
+            privateRiceOutwardService.createPrivateRiceOutward(millId, data),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: outwardBalanceLiftingRiceKeys.lists(),
+                queryKey: privateRiceOutwardKeys.lists(millId),
             })
             queryClient.invalidateQueries({
-                queryKey: outwardBalanceLiftingRiceKeys.summaries(),
+                queryKey: privateRiceOutwardKeys.summary(millId),
             })
-            toast.success(
-                'Outward balance lifting rice entry created successfully'
-            )
+            toast.success('Entry created successfully')
         },
-        onError: (error) => {
-            toast.error(
-                error.message ||
-                    'Failed to create outward balance lifting rice entry'
-            )
+        onError: (error: Error) => {
+            toast.error(error.message || 'Failed to create entry')
         },
     })
 }
 
-/**
- * Hook to update an existing outward balance lifting rice entry
- */
-export const useUpdateOutwardBalanceLiftingRice = (millId: string) => {
+export function useUpdatePrivateRiceOutward(millId: string) {
     const queryClient = useQueryClient()
 
-    return useMutation<
-        OutwardBalanceLiftingRiceResponse,
-        Error,
-        UpdateOutwardBalanceLiftingRiceRequest
-    >({
-        mutationFn: (data) => updateOutwardBalanceLiftingRice(millId, data),
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({
-                queryKey: outwardBalanceLiftingRiceKeys.lists(),
-            })
-            queryClient.setQueryData(
-                outwardBalanceLiftingRiceKeys.detail(millId, data._id),
+    return useMutation({
+        mutationFn: ({
+            id,
+            data,
+        }: {
+            id: string
+            data: UpdatePrivateRiceOutwardRequest
+        }) =>
+            privateRiceOutwardService.updatePrivateRiceOutward(
+                millId,
+                id,
                 data
-            )
-            queryClient.invalidateQueries({
-                queryKey: outwardBalanceLiftingRiceKeys.summaries(),
-            })
-            toast.success(
-                'Outward balance lifting rice entry updated successfully'
-            )
-        },
-        onError: (error) => {
-            toast.error(
-                error.message ||
-                    'Failed to update outward balance lifting rice entry'
-            )
-        },
-    })
-}
-
-/**
- * Hook to delete an outward balance lifting rice entry
- */
-export const useDeleteOutwardBalanceLiftingRice = (millId: string) => {
-    const queryClient = useQueryClient()
-
-    return useMutation<void, Error, string>({
-        mutationFn: (id) => deleteOutwardBalanceLiftingRice(millId, id),
+            ),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: outwardBalanceLiftingRiceKeys.lists(),
+                queryKey: privateRiceOutwardKeys.lists(millId),
             })
             queryClient.invalidateQueries({
-                queryKey: outwardBalanceLiftingRiceKeys.summaries(),
+                queryKey: privateRiceOutwardKeys.summary(millId),
             })
-            toast.success(
-                'Outward balance lifting rice entry deleted successfully'
-            )
+            toast.success('Entry updated successfully')
         },
-        onError: (error) => {
-            toast.error(
-                error.message ||
-                    'Failed to delete outward balance lifting rice entry'
-            )
+        onError: (error: Error) => {
+            toast.error(error.message || 'Failed to update entry')
         },
     })
 }
 
-/**
- * Hook to bulk delete outward balance lifting rice entries
- */
-export const useBulkDeleteOutwardBalanceLiftingRice = (millId: string) => {
+export function useDeletePrivateRiceOutward(millId: string) {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string[]>({
-        mutationFn: (ids) => bulkDeleteOutwardBalanceLiftingRice(millId, ids),
-        onSuccess: (_, ids) => {
+    return useMutation({
+        mutationFn: (id: string) =>
+            privateRiceOutwardService.deletePrivateRiceOutward(millId, id),
+        onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: outwardBalanceLiftingRiceKeys.lists(),
+                queryKey: privateRiceOutwardKeys.lists(millId),
             })
             queryClient.invalidateQueries({
-                queryKey: outwardBalanceLiftingRiceKeys.summaries(),
+                queryKey: privateRiceOutwardKeys.summary(millId),
             })
-            toast.success(`${ids.length} entries deleted successfully`)
+            toast.success('Entry deleted successfully')
         },
-        onError: (error) => {
-            toast.error(
-                error.message ||
-                    'Failed to delete outward balance lifting rice entries'
-            )
+        onError: (error: Error) => {
+            toast.error(error.message || 'Failed to delete entry')
         },
     })
 }
 
-/**
- * Hook to export outward balance lifting rice entries
- */
-export const useExportOutwardBalanceLiftingRice = (millId: string) => {
-    return useMutation<
-        Blob,
-        Error,
-        {
-            params?: OutwardBalanceLiftingRiceQueryParams
-            format?: 'csv' | 'xlsx'
-        }
-    >({
-        mutationFn: ({ params, format }) =>
-            exportOutwardBalanceLiftingRice(millId, params, format),
+export function useBulkDeletePrivateRiceOutward(millId: string) {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: (ids: string[]) =>
+            privateRiceOutwardService.bulkDeletePrivateRiceOutward(millId, ids),
         onSuccess: () => {
-            toast.success('Export completed successfully')
+            queryClient.invalidateQueries({
+                queryKey: privateRiceOutwardKeys.lists(millId),
+            })
+            queryClient.invalidateQueries({
+                queryKey: privateRiceOutwardKeys.summary(millId),
+            })
+            toast.success('Entries deleted successfully')
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to export data')
+        onError: (error: Error) => {
+            toast.error(error.message || 'Failed to delete entries')
         },
     })
 }

@@ -1,8 +1,6 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { LanguageSwitch } from '@/components/language-switch'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -18,7 +16,6 @@ import { useRiceInwardList } from './data/hooks'
 import type { RiceInwardQueryParams } from './data/types'
 
 function RiceInwardContent({ millId }: { millId: string }) {
-    const { t } = useTranslation('millStaff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     const search = Object.fromEntries(searchParams.entries())
@@ -80,10 +77,10 @@ function RiceInwardContent({ millId }: { millId: string }) {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('reports.inwardReports.rice.title')}
+                            Rice Inward / LOT Deposit Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('reports.inwardReports.rice.subtitle')}
+                            Manage rice inward transactions and records
                         </p>
                     </div>
                     <RiceInwardPrimaryButtons />
@@ -128,7 +125,6 @@ export function RiceInwardReport() {
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
-                    <LanguageSwitch />
                     <ThemeSwitch />
                     <ConfigDrawer />
                     <ProfileDropdown

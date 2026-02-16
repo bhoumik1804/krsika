@@ -2,9 +2,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useOtherSalesList } from '@/pages/mill-admin/sales-reports/other-sales/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -24,6 +26,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -39,6 +42,12 @@ import {
 import { useCreateOtherOutward, useUpdateOtherOutward } from '../data/hooks'
 import { otherOutwardSchema, type OtherOutward } from '../data/schema'
 
+const useOtherSalesWrapper = (params: any) => {
+    return useOtherSalesList(params.millId, params, {
+        enabled: !!params.millId,
+    })
+}
+
 type OtherOutwardActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -52,6 +61,43 @@ export function OtherOutwardActionDialog({
     currentRow,
     millId,
 }: OtherOutwardActionDialogProps) {
+    const salesDeals = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: useOtherSalesWrapper,
+            extractItems: (data) =>
+                data.sales
+                    ?.map((s) => s.otherSalesDealNumber)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
+        },
+        currentRow?.otherSaleDealNumber || undefined
+    )
+
+    const { data: salesList } = useOtherSalesList(
+        millId || '',
+        { limit: 1000 },
+        { enabled: open }
+    )
+
+    const handleDealSelect = (dealNumber: string) => {
+        form.setValue('otherSaleDealNumber', dealNumber)
+        const selectedDeal = salesList?.sales?.find(
+            (sale) => sale.otherSalesDealNumber === dealNumber
+        )
+        if (selectedDeal) {
+            if (selectedDeal.partyName) {
+                form.setValue('partyName', selectedDeal.partyName)
+            }
+            if (selectedDeal.brokerName) {
+                form.setValue('brokerName', selectedDeal.brokerName)
+            }
+            if (selectedDeal.otherSaleName) {
+                form.setValue('itemName', selectedDeal.otherSaleName)
+            }
+        }
+    }
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -87,42 +133,48 @@ export function OtherOutwardActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset({
-                ...currentRow,
-                date: currentRow.date
-                    ? format(new Date(currentRow.date), 'yyyy-MM-dd')
-                    : '',
-            })
-        } else {
-            form.reset(defaultValues)
+        if (open) {
+            if (currentRow) {
+                form.reset({
+                    ...currentRow,
+                    date: currentRow.date
+                        ? format(new Date(currentRow.date), 'yyyy-MM-dd')
+                        : '',
+                })
+            } else {
+                form.reset(defaultValues)
+            }
         }
-    }, [currentRow, form, defaultValues])
+    }, [currentRow, form, defaultValues, open])
 
     const onSubmit = (data: OtherOutward) => {
         const { _id, ...submitData } = data
+        const submissionData = {
+            ...submitData,
+            partyName: submitData.partyName || undefined,
+            brokerName: submitData.brokerName || undefined,
+        }
+
         if (isEditing && currentRow?._id) {
             toast.promise(
                 updateMutation.mutateAsync({
                     id: currentRow._id,
-                    data: submitData,
+                    data: submissionData,
                 }),
                 {
                     loading: 'Updating...',
                     success: () => {
                         onOpenChange(false)
-                        form.reset(defaultValues)
                         return 'Updated successfully'
                     },
                     error: 'Failed to update',
                 }
             )
         } else {
-            toast.promise(createMutation.mutateAsync(submitData), {
+            toast.promise(createMutation.mutateAsync(submissionData), {
                 loading: 'Adding...',
                 success: () => {
                     onOpenChange(false)
-                    form.reset(defaultValues)
                     return 'Added successfully'
                 },
                 error: 'Failed to add',
@@ -217,9 +269,14 @@ export function OtherOutwardActionDialog({
                                             Other Sale Deal Number
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter deal number'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value || undefined}
+                                                onValueChange={(value) =>
+                                                    handleDealSelect(value)
+                                                }
+                                                paginatedList={salesDeals}
+                                                placeholder='Select deal number'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -236,6 +293,7 @@ export function OtherOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter item name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -274,7 +332,9 @@ export function OtherOutwardActionDialog({
                                         <FormLabel>Quantity Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            defaultValue={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -308,6 +368,7 @@ export function OtherOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter party name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -324,6 +385,7 @@ export function OtherOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter broker name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -464,6 +526,7 @@ export function OtherOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -480,6 +543,7 @@ export function OtherOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

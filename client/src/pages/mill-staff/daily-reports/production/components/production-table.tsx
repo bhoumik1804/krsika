@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -26,7 +26,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
 import { type ProductionEntry } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getProductionColumns } from './production-columns'
+import { useProductionColumns } from './production-columns'
 
 type DataTableProps = {
     data: ProductionEntry[]
@@ -35,9 +35,8 @@ type DataTableProps = {
 }
 
 export function ProductionTable({ data, search, navigate }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getProductionColumns(t), [t])
-
+    const { t } = useTranslation()
+    const columns = useProductionColumns()
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -101,13 +100,22 @@ export function ProductionTable({ data, search, navigate }: DataTableProps) {
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Filter production records...'
+                searchPlaceholder={t('common.searchPlaceholder')}
                 searchKey='itemName'
                 filters={[
                     {
                         columnId: 'status',
-                        title: 'Status',
+                        title: t('common.status'),
                         options: statuses,
+                    },
+                    {
+                        columnId: 'itemName',
+                        title: t('common.item'),
+                        options: [
+                            { label: t('common.paddy'), value: 'Paddy' },
+                            { label: t('common.rice'), value: 'Rice' },
+                            { label: t('common.bran'), value: 'Bran' },
+                        ],
                     },
                 ]}
             />
@@ -180,7 +188,7 @@ export function ProductionTable({ data, search, navigate }: DataTableProps) {
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

@@ -1,7 +1,6 @@
 /**
  * Milling Paddy Service
  * API client for Milling Paddy CRUD operations
- * Uses centralized axios instance with cookie-based auth
  */
 import apiClient, { type ApiResponse } from '@/lib/api-client'
 import type {
@@ -112,21 +111,4 @@ export const bulkDeleteMillingPaddy = async (
     await apiClient.delete(`${MILLING_PADDY_ENDPOINT(millId)}/bulk`, {
         data: { ids },
     })
-}
-
-/**
- * Export milling paddy entries to CSV/Excel
- */
-export const exportMillingPaddy = async (
-    millId: string,
-    params?: MillingPaddyQueryParams
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${MILLING_PADDY_ENDPOINT(millId)}/export`,
-        {
-            params,
-            responseType: 'blob',
-        }
-    )
-    return response.data
 }

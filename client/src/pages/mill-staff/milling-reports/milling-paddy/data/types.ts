@@ -1,90 +1,9 @@
-/**
- * Milling Paddy Types
- * TypeScript type definitions for Milling Paddy module
- */
+import { type MillingPaddy } from './schema'
 
-// ==========================================
-// API Request Types
-// ==========================================
+export type MillingPaddyResponse = MillingPaddy
 
-export interface CreateMillingPaddyRequest {
-    date: string
-    paddyType: string
-    hopperInGunny?: number
-    hopperInQintal?: number
-    riceType?: string
-    riceQuantity?: number
-    ricePercentage?: number
-    khandaQuantity?: number
-    khandaPercentage?: number
-    kodhaQuantity?: number
-    kodhaPercentage?: number
-    bhusaTon?: number
-    bhusaPercentage?: number
-    nakkhiQuantity?: number
-    nakkhiPercentage?: number
-    wastagePercentage?: number
-}
-
-export interface UpdateMillingPaddyRequest {
-    id: string
-    date?: string
-    paddyType?: string
-    hopperInGunny?: number
-    hopperInQintal?: number
-    riceType?: string
-    riceQuantity?: number
-    ricePercentage?: number
-    khandaQuantity?: number
-    khandaPercentage?: number
-    kodhaQuantity?: number
-    kodhaPercentage?: number
-    bhusaTon?: number
-    bhusaPercentage?: number
-    nakkhiQuantity?: number
-    nakkhiPercentage?: number
-    wastagePercentage?: number
-}
-
-// ==========================================
-// API Response Types
-// ==========================================
-
-export interface MillingPaddyResponse {
-    _id: string
-    millId: string
-    date: string
-    paddyType: string
-    hopperInGunny?: number
-    hopperInQintal?: number
-    riceType?: string
-    riceQuantity?: number
-    ricePercentage?: number
-    khandaQuantity?: number
-    khandaPercentage?: number
-    kodhaQuantity?: number
-    kodhaPercentage?: number
-    bhusaTon?: number
-    bhusaPercentage?: number
-    nakkhiQuantity?: number
-    nakkhiPercentage?: number
-    wastagePercentage?: number
-    createdBy: {
-        _id: string
-        fullName: string
-        email: string
-    }
-    updatedBy?: {
-        _id: string
-        fullName: string
-        email: string
-    }
-    createdAt: string
-    updatedAt: string
-}
-
-export interface MillingPaddyListResponse {
-    data: MillingPaddyResponse[]
+export type MillingPaddyListResponse = {
+    data: MillingPaddy[]
     pagination: {
         page: number
         limit: number
@@ -97,33 +16,23 @@ export interface MillingPaddyListResponse {
     }
 }
 
-export interface MillingPaddySummaryResponse {
+export type MillingPaddySummaryResponse = {
     totalEntries: number
-    totalHopperInGunny: number
-    totalHopperInQintal: number
-    totalRiceQuantity: number
-    totalKhandaQuantity: number
-    totalKodhaQuantity: number
-    totalBhusaTon: number
-    totalNakkhiQuantity: number
-    avgRicePercentage: number
-    avgKhandaPercentage: number
-    avgKodhaPercentage: number
-    avgBhusaPercentage: number
-    avgNakkhiPercentage: number
-    avgWastagePercentage: number
+    totalInput: number
+    totalOutput: number
 }
 
-// ==========================================
-// Query Parameter Types
-// ==========================================
+export type CreateMillingPaddyRequest = Omit<MillingPaddy, '_id'>
 
-export interface MillingPaddyQueryParams {
+export type UpdateMillingPaddyRequest = Partial<MillingPaddy> & {
+    id: string
+}
+
+export type MillingPaddyQueryParams = {
     page?: number
     limit?: number
     search?: string
     paddyType?: string
-    riceType?: string
     startDate?: string
     endDate?: string
     sortBy?: string

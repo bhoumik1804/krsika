@@ -1,7 +1,6 @@
 /**
  * Labour Milling Service
  * API client for Labour Milling CRUD operations
- * Uses centralized axios instance with cookie-based auth
  */
 import apiClient, { type ApiResponse } from '@/lib/api-client'
 import type {
@@ -111,22 +110,4 @@ export const bulkDeleteLabourMilling = async (
     await apiClient.delete(`${LABOUR_MILLING_ENDPOINT(millId)}/bulk`, {
         data: { ids },
     })
-}
-
-/**
- * Export labour milling entries to CSV/Excel
- */
-export const exportLabourMilling = async (
-    millId: string,
-    params?: LabourMillingQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${LABOUR_MILLING_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
-    )
-    return response.data
 }

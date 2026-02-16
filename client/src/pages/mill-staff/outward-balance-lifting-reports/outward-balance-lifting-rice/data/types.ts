@@ -1,65 +1,22 @@
-/**
- * Outward Balance Lifting Rice Types
- * TypeScript type definitions for Outward Balance Lifting Rice module
- */
+import type { PrivateRiceOutward } from './schema'
 
-// ==========================================
-// API Request Types
-// ==========================================
+export type { PrivateRiceOutward }
 
-export interface CreateOutwardBalanceLiftingRiceRequest {
-    date: string
-    partyName: string
-    vehicleNumber: string
-    bags: number
-    weight: number
-    rate: number
-    amount: number
-    status: 'pending' | 'completed' | 'cancelled'
-    remarks?: string
-}
-
-export interface UpdateOutwardBalanceLiftingRiceRequest {
-    id: string
-    date?: string
+export type PrivateRiceOutwardQueryParams = {
+    page?: number
+    limit?: number
+    search?: string
+    riceType?: string
     partyName?: string
-    vehicleNumber?: string
-    bags?: number
-    weight?: number
-    rate?: number
-    amount?: number
-    status?: 'pending' | 'completed' | 'cancelled'
-    remarks?: string
+    brokerName?: string
+    startDate?: string
+    endDate?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
 }
 
-// ==========================================
-// API Response Types
-// ==========================================
-
-export interface OutwardBalanceLiftingRiceResponse {
-    _id: string
-    millId: string
-    date: string
-    partyName: string
-    vehicleNumber: string
-    bags: number
-    weight: number
-    rate: number
-    amount: number
-    status: 'pending' | 'completed' | 'cancelled'
-    remarks?: string
-    createdBy: string
-    createdByUser?: {
-        fullName: string
-        email: string
-    }
-    updatedBy?: string
-    createdAt: string
-    updatedAt: string
-}
-
-export interface OutwardBalanceLiftingRiceListResponse {
-    data: OutwardBalanceLiftingRiceResponse[]
+export type PrivateRiceOutwardListResponse = {
+    entries: PrivateRiceOutward[]
     pagination: {
         page: number
         limit: number
@@ -72,27 +29,18 @@ export interface OutwardBalanceLiftingRiceListResponse {
     }
 }
 
-export interface OutwardBalanceLiftingRiceSummaryResponse {
-    totalEntries: number
-    totalBags: number
-    totalWeight: number
-    totalAmount: number
-    pendingCount: number
-    completedCount: number
-    cancelledCount: number
+export type PrivateRiceOutwardSummaryResponse = {
+    summary: {
+        totalEntries: number
+        totalRiceQty: number
+        totalNetWeight: number
+        balance: number
+    }
 }
 
-// ==========================================
-// Query Parameter Types
-// ==========================================
-
-export interface OutwardBalanceLiftingRiceQueryParams {
-    page?: number
-    limit?: number
-    search?: string
-    sortBy?: string
-    sortOrder?: 'asc' | 'desc'
-    status?: 'pending' | 'completed' | 'cancelled'
-    startDate?: string
-    endDate?: string
-}
+export type CreatePrivateRiceOutwardRequest = Omit<
+    PrivateRiceOutward,
+    '_id' | 'outwardData'
+>
+export type UpdatePrivateRiceOutwardRequest =
+    Partial<CreatePrivateRiceOutwardRequest>

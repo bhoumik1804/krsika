@@ -1,31 +1,45 @@
 import { VehicleReportActionDialog } from './vehicle-report-action-dialog'
 import { VehicleReportDeleteDialog } from './vehicle-report-delete-dialog'
-import { vehicleReport } from './vehicle-report-provider'
+import { useVehicleReport } from './vehicle-report-provider'
 
 export function VehicleReportDialogs() {
-    const { open, setOpen, currentRow, setCurrentRow } = vehicleReport()
-
-    const handleDialogChange = (isOpen: boolean) => {
-        if (!isOpen) {
-            setCurrentRow(null)
-        }
-        setOpen(isOpen ? open : null)
-    }
+    const { open, setOpen, currentRow, setCurrentRow } = useVehicleReport()
 
     return (
         <>
             <VehicleReportActionDialog
-                open={open === 'add' || open === 'edit'}
-                onOpenChange={handleDialogChange}
-                currentRow={currentRow}
+                key='vehicle-add'
+                open={open === 'add'}
+                onOpenChange={() => setOpen('add')}
             />
-            <VehicleReportDeleteDialog
-                open={open === 'delete'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? 'delete' : null)
-                }
-                currentRow={currentRow}
-            />
+
+            {currentRow && (
+                <>
+                    <VehicleReportActionDialog
+                        key={`vehicle-edit-${currentRow._id}`}
+                        open={open === 'edit'}
+                        onOpenChange={() => {
+                            setOpen('edit')
+                            setTimeout(() => {
+                                setCurrentRow(null)
+                            }, 500)
+                        }}
+                        currentRow={currentRow}
+                    />
+
+                    <VehicleReportDeleteDialog
+                        key={`vehicle-delete-${currentRow._id}`}
+                        open={open === 'delete'}
+                        onOpenChange={() => {
+                            setOpen('delete')
+                            setTimeout(() => {
+                                setCurrentRow(null)
+                            }, 500)
+                        }}
+                        currentRow={currentRow}
+                    />
+                </>
+            )}
         </>
     )
 }

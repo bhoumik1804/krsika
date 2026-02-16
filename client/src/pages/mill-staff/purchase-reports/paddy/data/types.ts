@@ -61,6 +61,7 @@ export type PaddyPurchaseResponse = {
     newGunnyRate?: number
     oldGunnyRate?: number
     plasticGunnyRate?: number
+    paddyPurchaseDealNumber?: string
     createdAt: string
     updatedAt: string
 }

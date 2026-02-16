@@ -1,9 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNakkhiSalesList } from '@/pages/mill-admin/sales-reports/nakkhi-sales/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -23,6 +25,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -30,6 +33,12 @@ import {
 } from '@/components/ui/popover'
 import { useCreateNakkhiOutward, useUpdateNakkhiOutward } from '../data/hooks'
 import { nakkhiOutwardSchema, type NakkhiOutward } from '../data/schema'
+
+const useNakkhiSalesWrapper = (params: any) => {
+    return useNakkhiSalesList(params.millId, params, {
+        enabled: !!params.millId,
+    })
+}
 
 type NakkhiOutwardActionDialogProps = {
     open: boolean
@@ -44,6 +53,40 @@ export function NakkhiOutwardActionDialog({
     currentRow,
     millId,
 }: NakkhiOutwardActionDialogProps) {
+    const salesDeals = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useNakkhiSalesWrapper,
+            extractItems: (data) =>
+                data.sales
+                    ?.map((s) => s.nakkhiSalesDealNumber)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
+        },
+        currentRow?.nakkhiSaleDealNumber || undefined
+    )
+
+    const { data: salesList } = useNakkhiSalesList(
+        millId,
+        { limit: 1000 },
+        { enabled: open }
+    )
+
+    const handleDealSelect = (dealNumber: string) => {
+        form.setValue('nakkhiSaleDealNumber', dealNumber)
+        const selectedDeal = salesList?.sales?.find(
+            (sale) => sale.nakkhiSalesDealNumber === dealNumber
+        )
+        if (selectedDeal) {
+            if (selectedDeal.partyName) {
+                form.setValue('partyName', selectedDeal.partyName)
+            }
+            if (selectedDeal.brokerName) {
+                form.setValue('brokerName', selectedDeal.brokerName)
+            }
+        }
+    }
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -74,26 +117,43 @@ export function NakkhiOutwardActionDialog({
         defaultValues,
     })
 
+    useEffect(() => {
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset(defaultValues)
+            }
+        }
+    }, [currentRow, form, open, defaultValues])
+
     const onSubmit = (data: NakkhiOutward) => {
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+        }
+
         if (isEditing && currentRow?._id) {
             toast.promise(
-                updateMutation.mutateAsync({ id: currentRow._id, data }),
+                updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data: submissionData,
+                }),
                 {
                     loading: 'Updating...',
                     success: () => {
                         onOpenChange(false)
-                        form.reset()
                         return 'Updated successfully'
                     },
                     error: 'Failed to update',
                 }
             )
         } else {
-            toast.promise(createMutation.mutateAsync(data), {
+            toast.promise(createMutation.mutateAsync(submissionData), {
                 loading: 'Adding...',
                 success: () => {
                     onOpenChange(false)
-                    form.reset()
                     return 'Added successfully'
                 },
                 error: 'Failed to add',
@@ -188,9 +248,14 @@ export function NakkhiOutwardActionDialog({
                                             Nakkhi Sale Deal Number
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter deal number'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value || undefined}
+                                                onValueChange={(value) =>
+                                                    handleDealSelect(value)
+                                                }
+                                                paginatedList={salesDeals}
+                                                placeholder='Select deal number'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -207,6 +272,7 @@ export function NakkhiOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter party name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -223,6 +289,7 @@ export function NakkhiOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter broker name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -338,6 +405,7 @@ export function NakkhiOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -354,6 +422,7 @@ export function NakkhiOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

@@ -1,11 +1,8 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
+import { usePaddyPurchaseList } from '../data/hooks'
 import { type PaddyPurchaseData } from '../data/schema'
-import type {
-    PaddyPurchaseQueryParams,
-    PaddyPurchaseResponse,
-    PaddyPurchaseListResponse,
-} from '../data/types'
+import { PaddyPurchaseQueryParams } from '../data/types'
 
 type PaddyDialogType = 'add' | 'edit' | 'delete'
 
@@ -22,7 +19,7 @@ type PaddyContextType = {
     setCurrentRow: React.Dispatch<
         React.SetStateAction<PaddyPurchaseData | null>
     >
-    data: PaddyPurchaseResponse[]
+    data: PaddyPurchaseData[]
     isLoading: boolean
     isError: boolean
     millId: string
@@ -42,9 +39,6 @@ interface PaddyProviderProps {
     children: React.ReactNode
     millId: string
     initialQueryParams?: QueryParams
-    apiResponse?: PaddyPurchaseListResponse
-    isLoading?: boolean
-    isError?: boolean
 }
 
 const defaultQueryParams: QueryParams = {
@@ -59,14 +53,21 @@ export function PaddyProvider({
     children,
     millId,
     initialQueryParams = defaultQueryParams,
-    apiResponse,
-    isLoading = false,
-    isError = false,
 }: PaddyProviderProps) {
     const [open, setOpen] = useDialogState<PaddyDialogType>(null)
     const [currentRow, setCurrentRow] = useState<PaddyPurchaseData | null>(null)
     const [queryParams, setQueryParams] =
         useState<QueryParams>(initialQueryParams)
+
+    useEffect(() => {
+        setQueryParams(initialQueryParams)
+    }, [initialQueryParams])
+
+    const {
+        data: apiResponse,
+        isLoading,
+        isError,
+    } = usePaddyPurchaseList(millId, queryParams, { enabled: !!millId })
 
     const data = useMemo(() => {
         const list = apiResponse?.data || []

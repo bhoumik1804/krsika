@@ -1,7 +1,6 @@
 /**
  * Labour Outward Service
  * API client for Labour Outward CRUD operations
- * Uses centralized axios instance with cookie-based auth
  */
 import apiClient, { type ApiResponse } from '@/lib/api-client'
 import type {
@@ -111,22 +110,4 @@ export const bulkDeleteLabourOutward = async (
     await apiClient.delete(`${LABOUR_OUTWARD_ENDPOINT(millId)}/bulk`, {
         data: { ids },
     })
-}
-
-/**
- * Export labour outward entries to CSV/Excel
- */
-export const exportLabourOutward = async (
-    millId: string,
-    params?: LabourOutwardQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${LABOUR_OUTWARD_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
-    )
-    return response.data
 }

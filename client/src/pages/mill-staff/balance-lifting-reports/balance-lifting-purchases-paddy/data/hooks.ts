@@ -1,257 +1,133 @@
-/**
- * Balance Lifting Purchases Paddy Hooks
- * React Query hooks for Balance Lifting Purchases Paddy data management
- */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import {
-    fetchBalanceLiftingPurchasesPaddyList,
-    fetchBalanceLiftingPurchasesPaddyById,
-    fetchBalanceLiftingPurchasesPaddySummary,
-    createBalanceLiftingPurchasesPaddy,
-    updateBalanceLiftingPurchasesPaddy,
-    deleteBalanceLiftingPurchasesPaddy,
-    bulkDeleteBalanceLiftingPurchasesPaddy,
-    exportBalanceLiftingPurchasesPaddy,
-} from './service'
-import type {
-    BalanceLiftingPurchasesPaddyResponse,
-    BalanceLiftingPurchasesPaddyListResponse,
-    BalanceLiftingPurchasesPaddySummaryResponse,
-    CreateBalanceLiftingPurchasesPaddyRequest,
-    UpdateBalanceLiftingPurchasesPaddyRequest,
-    BalanceLiftingPurchasesPaddyQueryParams,
-} from './types'
+import type { BalanceLiftingPurchasesPaddy } from './schema'
+import { balanceLiftingPaddyPurchaseService } from './service'
+import type { BalanceLiftingPaddyPurchaseListResponse } from './types'
 
-// ==========================================
-// Query Keys
-// ==========================================
-
-export const balanceLiftingPurchasesPaddyKeys = {
-    all: ['balance-lifting-purchases-paddy'] as const,
-    lists: () => [...balanceLiftingPurchasesPaddyKeys.all, 'list'] as const,
-    list: (millId: string, params?: BalanceLiftingPurchasesPaddyQueryParams) =>
-        [...balanceLiftingPurchasesPaddyKeys.lists(), millId, params] as const,
-    details: () => [...balanceLiftingPurchasesPaddyKeys.all, 'detail'] as const,
-    detail: (millId: string, id: string) =>
-        [...balanceLiftingPurchasesPaddyKeys.details(), millId, id] as const,
-    summaries: () =>
-        [...balanceLiftingPurchasesPaddyKeys.all, 'summary'] as const,
-    summary: (
-        millId: string,
-        params?: Pick<
-            BalanceLiftingPurchasesPaddyQueryParams,
-            'startDate' | 'endDate'
-        >
-    ) =>
+// Query key factory for Balance Lifting Paddy purchases
+const balanceLiftingPaddyPurchaseQueryKeys = {
+    all: ['balance-lifting-paddy-purchases'] as const,
+    byMill: (millId: string) =>
+        [...balanceLiftingPaddyPurchaseQueryKeys.all, millId] as const,
+    list: (millId: string, filters?: Record<string, unknown>) =>
         [
-            ...balanceLiftingPurchasesPaddyKeys.summaries(),
-            millId,
-            params,
+            ...balanceLiftingPaddyPurchaseQueryKeys.byMill(millId),
+            'list',
+            filters,
         ] as const,
 }
 
-// ==========================================
-// Query Hooks
-// ==========================================
+interface UseBalanceLiftingPaddyPurchaseListParams {
+    millId: string
+    page?: number
+    pageSize?: number
+    search?: string
+}
 
-/**
- * Hook to fetch balance lifting purchases paddy list with pagination and filters
- */
-export const useBalanceLiftingPurchasesPaddyList = (
-    millId: string,
-    params?: BalanceLiftingPurchasesPaddyQueryParams,
-    options?: { enabled?: boolean }
+export const useBalanceLiftingPaddyPurchaseList = (
+    params: UseBalanceLiftingPaddyPurchaseListParams
 ) => {
-    return useQuery<BalanceLiftingPurchasesPaddyListResponse, Error>({
-        queryKey: balanceLiftingPurchasesPaddyKeys.list(millId, params),
-        queryFn: () => fetchBalanceLiftingPurchasesPaddyList(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+    return useQuery<BalanceLiftingPaddyPurchaseListResponse, Error>({
+        queryKey: balanceLiftingPaddyPurchaseQueryKeys.list(params.millId, {
+            page: params.page,
+            pageSize: params.pageSize,
+            search: params.search,
+        }),
+        queryFn: () => balanceLiftingPaddyPurchaseService.fetchList(params),
+        enabled: !!params.millId,
     })
 }
 
-/**
- * Hook to fetch a single balance lifting purchases paddy entry
- */
-export const useBalanceLiftingPurchasesPaddyDetail = (
-    millId: string,
-    id: string,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<BalanceLiftingPurchasesPaddyResponse, Error>({
-        queryKey: balanceLiftingPurchasesPaddyKeys.detail(millId, id),
-        queryFn: () => fetchBalanceLiftingPurchasesPaddyById(millId, id),
-        enabled: options?.enabled ?? (!!millId && !!id),
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    })
-}
-
-/**
- * Hook to fetch balance lifting purchases paddy summary/statistics
- */
-export const useBalanceLiftingPurchasesPaddySummary = (
-    millId: string,
-    params?: Pick<
-        BalanceLiftingPurchasesPaddyQueryParams,
-        'startDate' | 'endDate'
-    >,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<BalanceLiftingPurchasesPaddySummaryResponse, Error>({
-        queryKey: balanceLiftingPurchasesPaddyKeys.summary(millId, params),
-        queryFn: () => fetchBalanceLiftingPurchasesPaddySummary(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    })
-}
-
-// ==========================================
-// Mutation Hooks
-// ==========================================
-
-/**
- * Hook to create a new balance lifting purchases paddy entry
- */
-export const useCreateBalanceLiftingPurchasesPaddy = (millId: string) => {
+export const useCreateBalanceLiftingPaddyPurchase = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<
-        BalanceLiftingPurchasesPaddyResponse,
-        Error,
-        CreateBalanceLiftingPurchasesPaddyRequest
-    >({
-        mutationFn: (data) => createBalanceLiftingPurchasesPaddy(millId, data),
+    return useMutation({
+        mutationFn: (data: Omit<BalanceLiftingPurchasesPaddy, '_id'>) =>
+            balanceLiftingPaddyPurchaseService.create(millId, data),
         onSuccess: () => {
+            toast.success('Paddy purchase created successfully')
             queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesPaddyKeys.lists(),
+                queryKey: balanceLiftingPaddyPurchaseQueryKeys.byMill(millId),
             })
-            queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesPaddyKeys.summaries(),
-            })
-            toast.success(
-                'Balance lifting purchases paddy entry created successfully'
-            )
         },
-        onError: (error) => {
-            toast.error(
-                error.message ||
-                    'Failed to create balance lifting purchases paddy entry'
-            )
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to create Paddy purchase'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to update an existing balance lifting purchases paddy entry
- */
-export const useUpdateBalanceLiftingPurchasesPaddy = (millId: string) => {
+export const useUpdateBalanceLiftingPaddyPurchase = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<
-        BalanceLiftingPurchasesPaddyResponse,
-        Error,
-        UpdateBalanceLiftingPurchasesPaddyRequest
-    >({
-        mutationFn: (data) => updateBalanceLiftingPurchasesPaddy(millId, data),
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesPaddyKeys.lists(),
-            })
-            queryClient.setQueryData(
-                balanceLiftingPurchasesPaddyKeys.detail(millId, data._id),
-                data
-            )
-            queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesPaddyKeys.summaries(),
-            })
-            toast.success(
-                'Balance lifting purchases paddy entry updated successfully'
-            )
-        },
-        onError: (error) => {
-            toast.error(
-                error.message ||
-                    'Failed to update balance lifting purchases paddy entry'
-            )
-        },
-    })
-}
-
-/**
- * Hook to delete a balance lifting purchases paddy entry
- */
-export const useDeleteBalanceLiftingPurchasesPaddy = (millId: string) => {
-    const queryClient = useQueryClient()
-
-    return useMutation<void, Error, string>({
-        mutationFn: (id) => deleteBalanceLiftingPurchasesPaddy(millId, id),
+    return useMutation({
+        mutationFn: ({
+            purchaseId,
+            data,
+        }: {
+            purchaseId: string
+            data: Omit<BalanceLiftingPurchasesPaddy, '_id'>
+        }) =>
+            balanceLiftingPaddyPurchaseService.update(millId, purchaseId, data),
         onSuccess: () => {
+            toast.success('Paddy purchase updated successfully')
             queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesPaddyKeys.lists(),
+                queryKey: balanceLiftingPaddyPurchaseQueryKeys.byMill(millId),
             })
-            queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesPaddyKeys.summaries(),
-            })
-            toast.success(
-                'Balance lifting purchases paddy entry deleted successfully'
-            )
         },
-        onError: (error) => {
-            toast.error(
-                error.message ||
-                    'Failed to delete balance lifting purchases paddy entry'
-            )
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to update Paddy purchase'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to bulk delete balance lifting purchases paddy entries
- */
-export const useBulkDeleteBalanceLiftingPurchasesPaddy = (millId: string) => {
+export const useDeleteBalanceLiftingPaddyPurchase = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string[]>({
-        mutationFn: (ids) =>
-            bulkDeleteBalanceLiftingPurchasesPaddy(millId, ids),
-        onSuccess: (_, ids) => {
+    return useMutation({
+        mutationFn: (purchaseId: string) =>
+            balanceLiftingPaddyPurchaseService.delete(millId, purchaseId),
+        onSuccess: () => {
+            toast.success('Paddy purchase deleted successfully')
             queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesPaddyKeys.lists(),
+                queryKey: balanceLiftingPaddyPurchaseQueryKeys.byMill(millId),
             })
-            queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesPaddyKeys.summaries(),
-            })
-            toast.success(`${ids.length} entries deleted successfully`)
         },
-        onError: (error) => {
-            toast.error(
-                error.message ||
-                    'Failed to delete balance lifting purchases paddy entries'
-            )
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to delete Paddy purchase'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to export balance lifting purchases paddy entries
- */
-export const useExportBalanceLiftingPurchasesPaddy = (millId: string) => {
-    return useMutation<
-        Blob,
-        Error,
-        {
-            params?: BalanceLiftingPurchasesPaddyQueryParams
-            format?: 'csv' | 'xlsx'
-        }
-    >({
-        mutationFn: ({ params, format }) =>
-            exportBalanceLiftingPurchasesPaddy(millId, params, format),
+export const useBulkDeleteBalanceLiftingPaddyPurchases = (millId: string) => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: (purchaseIds: string[]) =>
+            balanceLiftingPaddyPurchaseService.bulkDelete(millId, purchaseIds),
         onSuccess: () => {
-            toast.success('Export completed successfully')
+            toast.success('Paddy purchases deleted successfully')
+            queryClient.invalidateQueries({
+                queryKey: balanceLiftingPaddyPurchaseQueryKeys.byMill(millId),
+            })
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to export data')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to delete Paddy purchases'
+            toast.error(errorMessage)
         },
     })
 }

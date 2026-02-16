@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type LabourGroupReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getLabourGroupReportColumns } from './labour-group-report-columns'
+import { labourGroupReportColumns as columns } from './labour-group-report-columns'
 
 type Pagination = {
     page: number
@@ -55,8 +54,6 @@ export function LabourGroupReportTable({
     // isLoading,
     // isError,
 }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getLabourGroupReportColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -83,7 +80,7 @@ export function LabourGroupReportTable({
         columnFilters: [
             {
                 columnId: 'labourTeamName',
-                searchKey: 'search',
+                searchKey: 'labourTeamName',
                 type: 'string',
             },
         ],
@@ -100,6 +97,7 @@ export function LabourGroupReportTable({
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,

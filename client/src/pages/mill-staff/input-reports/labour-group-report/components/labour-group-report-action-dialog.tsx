@@ -68,14 +68,13 @@ export function LabourGroupReportActionDialog({
                 return
             }
 
-            // Transform labourTeamName to groupName for API
             const payload = {
-                groupName: data.labourTeamName,
+                labourTeamName: data.labourTeamName,
             }
 
             if (currentRow?._id) {
                 await updateMutation.mutateAsync({
-                    id: currentRow._id,
+                    _id: currentRow._id,
                     ...payload,
                 })
             } else {
@@ -126,10 +125,10 @@ export function LabourGroupReportActionDialog({
                             name='labourTeamName'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Labour Team Name</FormLabel>
+                                    <FormLabel>Labour Group Name</FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder='Enter labour team name'
+                                            placeholder='Enter labour group name'
                                             disabled={isLoading}
                                             {...field}
                                         />

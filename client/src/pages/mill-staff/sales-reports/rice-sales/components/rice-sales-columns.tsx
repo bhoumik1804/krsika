@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,9 +6,7 @@ import { LongText } from '@/components/long-text'
 import { type RiceSales } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getRiceSalesColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<RiceSales>[] => [
+export const riceSalesColumns: ColumnDef<RiceSales>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -42,10 +39,7 @@ export const getRiceSalesColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -61,10 +55,7 @@ export const getRiceSalesColumns = (
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.partyName')}
-            />
+            <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -75,52 +66,34 @@ export const getRiceSalesColumns = (
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.brokerName')}
-            />
+            <DataTableColumnHeader column={column} title='Broker Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>
-                {row.getValue('brokerName') || '-'}
-            </div>
+            <div className='text-nowrap'>{row.getValue('brokerName') || '-'}</div>
         ),
     },
     {
         accessorKey: 'deliveryType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.deliveryType')}
-            />
+            <DataTableColumnHeader column={column} title='Delivery Type' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>
-                {row.getValue('deliveryType') || '-'}
-            </div>
+            <div className='text-nowrap'>{row.getValue('deliveryType') || '-'}</div>
         ),
     },
     {
         accessorKey: 'lotOrOther',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.lotOther')}
-            />
+            <DataTableColumnHeader column={column} title='Lot / Other' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>
-                {row.getValue('lotOrOther') || '-'}
-            </div>
+            <div className='text-nowrap'>{row.getValue('lotOrOther') || '-'}</div>
         ),
     },
     {
         accessorKey: 'fciOrNAN',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.fciNan')}
-            />
+            <DataTableColumnHeader column={column} title='FCI / NAN' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('fciOrNAN') || '-'}</div>
@@ -129,10 +102,7 @@ export const getRiceSalesColumns = (
     {
         accessorKey: 'riceType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.riceType')}
-            />
+            <DataTableColumnHeader column={column} title='Rice Type' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('riceType') || '-'}</div>
@@ -141,66 +111,43 @@ export const getRiceSalesColumns = (
     {
         accessorKey: 'riceQty',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.qtyQtl')}
-            />
+            <DataTableColumnHeader column={column} title='Qty (Qtl)' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                {row.original.riceQty?.toFixed(2) || 0}
-            </div>
+            <div className='text-right'>{row.original.riceQty?.toFixed(2) || 0}</div>
         ),
     },
     {
         accessorKey: 'riceRatePerQuintal',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.rateQtl')}
-            />
+            <DataTableColumnHeader column={column} title='Rate/Qtl' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                ₹{row.original.riceRatePerQuintal?.toFixed(2) || 0}
-            </div>
+            <div className='text-right'>₹{row.original.riceRatePerQuintal?.toFixed(2) || 0}</div>
         ),
     },
     {
         accessorKey: 'discountPercent',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.discount')}
-            />
+            <DataTableColumnHeader column={column} title='Discount %' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                {row.original.discountPercent?.toFixed(2) || 0}%
-            </div>
+            <div className='text-right'>{row.original.discountPercent?.toFixed(2) || 0}%</div>
         ),
     },
     {
         accessorKey: 'brokeragePerQuintal',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.brokerageQtl')}
-            />
+            <DataTableColumnHeader column={column} title='Brokerage/Qtl' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                ₹{row.original.brokeragePerQuintal?.toFixed(2) || 0}
-            </div>
+            <div className='text-right'>₹{row.original.brokeragePerQuintal?.toFixed(2) || 0}</div>
         ),
     },
     {
         accessorKey: 'frkType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.frkType')}
-            />
+            <DataTableColumnHeader column={column} title='FRK Type' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('frkType') || '-'}</div>
@@ -209,85 +156,55 @@ export const getRiceSalesColumns = (
     {
         accessorKey: 'frkRatePerQuintal',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.frkRateQtl')}
-            />
+            <DataTableColumnHeader column={column} title='FRK Rate/Qtl' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                ₹{row.original.frkRatePerQuintal?.toFixed(2) || 0}
-            </div>
+            <div className='text-right'>₹{row.original.frkRatePerQuintal?.toFixed(2) || 0}</div>
         ),
     },
     {
         accessorKey: 'lotNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.lotNo')}
-            />
+            <DataTableColumnHeader column={column} title='LOT No.' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>
-                {row.getValue('lotNumber') || '-'}
-            </div>
+            <div className='text-nowrap'>{row.getValue('lotNumber') || '-'}</div>
         ),
     },
     {
         accessorKey: 'gunnyType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.gunnyType')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny Type' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>
-                {row.getValue('gunnyType') || '-'}
-            </div>
+            <div className='text-nowrap'>{row.getValue('gunnyType') || '-'}</div>
         ),
     },
     {
         accessorKey: 'newGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.newGunnyRate')}
-            />
+            <DataTableColumnHeader column={column} title='New Gunny Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                ₹{row.original.newGunnyRate?.toFixed(2) || 0}
-            </div>
+            <div className='text-right'>₹{row.original.newGunnyRate?.toFixed(2) || 0}</div>
         ),
     },
     {
         accessorKey: 'oldGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.oldGunnyRate')}
-            />
+            <DataTableColumnHeader column={column} title='Old Gunny Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                ₹{row.original.oldGunnyRate?.toFixed(2) || 0}
-            </div>
+            <div className='text-right'>₹{row.original.oldGunnyRate?.toFixed(2) || 0}</div>
         ),
     },
     {
         accessorKey: 'plasticGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.plasticGunnyRate')}
-            />
+            <DataTableColumnHeader column={column} title='Plastic Gunny Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>
-                ₹{row.original.plasticGunnyRate?.toFixed(2) || 0}
-            </div>
+            <div className='text-right'>₹{row.original.plasticGunnyRate?.toFixed(2) || 0}</div>
         ),
     },
     {

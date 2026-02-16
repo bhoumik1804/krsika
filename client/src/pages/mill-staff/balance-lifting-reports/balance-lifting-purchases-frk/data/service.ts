@@ -1,138 +1,102 @@
-/**
- * Balance Lifting Purchases FRK Service
- * API client for Balance Lifting Purchases FRK CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
-import apiClient, { type ApiResponse } from '@/lib/api-client'
+import { apiClient } from '@/lib/api-client'
+import type { BalanceLiftingPurchasesFrk } from './schema'
 import type {
-    BalanceLiftingPurchasesFrkResponse,
-    BalanceLiftingPurchasesFrkListResponse,
-    BalanceLiftingPurchasesFrkSummaryResponse,
-    CreateBalanceLiftingPurchasesFrkRequest,
-    UpdateBalanceLiftingPurchasesFrkRequest,
-    BalanceLiftingPurchasesFrkQueryParams,
+    BalanceLiftingFrkPurchaseListResponse,
+    BalanceLiftingFrkPurchaseRequest,
+    BalanceLiftingFrkPurchaseResponse,
+    PaginationData,
 } from './types'
 
-// ==========================================
-// API Endpoints
-// ==========================================
-
-const BALANCE_LIFTING_PURCHASES_FRK_ENDPOINT = (millId: string) =>
-    `/mills/${millId}/balance-lifting-purchases-frk`
-
-// ==========================================
-// Balance Lifting Purchases FRK API Functions
-// ==========================================
-
-/**
- * Fetch all balance lifting purchases FRK entries with pagination and filters
- */
-export const fetchBalanceLiftingPurchasesFrkList = async (
-    millId: string,
-    params?: BalanceLiftingPurchasesFrkQueryParams
-): Promise<BalanceLiftingPurchasesFrkListResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<BalanceLiftingPurchasesFrkListResponse>
-    >(BALANCE_LIFTING_PURCHASES_FRK_ENDPOINT(millId), { params })
-    return response.data.data
+interface FetchBalanceLiftingFrkPurchaseListParams {
+    millId: string
+    page?: number
+    pageSize?: number
+    search?: string
 }
 
-/**
- * Fetch a single balance lifting purchases FRK entry by ID
- */
-export const fetchBalanceLiftingPurchasesFrkById = async (
-    millId: string,
-    id: string
-): Promise<BalanceLiftingPurchasesFrkResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<BalanceLiftingPurchasesFrkResponse>
-    >(`${BALANCE_LIFTING_PURCHASES_FRK_ENDPOINT(millId)}/${id}`)
-    return response.data.data
+interface ApiResponse<T> {
+    statusCode: number
+    data: T
+    message: string
+    success: boolean
 }
 
-/**
- * Fetch balance lifting purchases FRK summary/statistics
- */
-export const fetchBalanceLiftingPurchasesFrkSummary = async (
-    millId: string,
-    params?: Pick<
-        BalanceLiftingPurchasesFrkQueryParams,
-        'startDate' | 'endDate'
-    >
-): Promise<BalanceLiftingPurchasesFrkSummaryResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<BalanceLiftingPurchasesFrkSummaryResponse>
-    >(`${BALANCE_LIFTING_PURCHASES_FRK_ENDPOINT(millId)}/summary`, { params })
-    return response.data.data
-}
+export const balanceLiftingFrkPurchaseService = {
+    fetchList: async (params: FetchBalanceLiftingFrkPurchaseListParams) => {
+        const queryParams = new URLSearchParams()
+        if (params.page) queryParams.append('page', params.page.toString())
+        if (params.pageSize)
+            queryParams.append('limit', params.pageSize.toString())
+        if (params.search) queryParams.append('search', params.search)
 
-/**
- * Create a new balance lifting purchases FRK entry
- */
-export const createBalanceLiftingPurchasesFrk = async (
-    millId: string,
-    data: CreateBalanceLiftingPurchasesFrkRequest
-): Promise<BalanceLiftingPurchasesFrkResponse> => {
-    const response = await apiClient.post<
-        ApiResponse<BalanceLiftingPurchasesFrkResponse>
-    >(BALANCE_LIFTING_PURCHASES_FRK_ENDPOINT(millId), data)
-    return response.data.data
-}
+        const response = await apiClient.get<
+            ApiResponse<BalanceLiftingFrkPurchaseListResponse>
+        >(`/mills/${params.millId}/frk-purchase?${queryParams.toString()}`)
 
-/**
- * Update an existing balance lifting purchases FRK entry
- */
-export const updateBalanceLiftingPurchasesFrk = async (
-    millId: string,
-    { id, ...data }: UpdateBalanceLiftingPurchasesFrkRequest
-): Promise<BalanceLiftingPurchasesFrkResponse> => {
-    const response = await apiClient.put<
-        ApiResponse<BalanceLiftingPurchasesFrkResponse>
-    >(`${BALANCE_LIFTING_PURCHASES_FRK_ENDPOINT(millId)}/${id}`, data)
-    return response.data.data
-}
+        const data: BalanceLiftingPurchasesFrk[] = response.data.data.data || []
 
-/**
- * Delete a balance lifting purchases FRK entry
- */
-export const deleteBalanceLiftingPurchasesFrk = async (
-    millId: string,
-    id: string
-): Promise<void> => {
-    await apiClient.delete(
-        `${BALANCE_LIFTING_PURCHASES_FRK_ENDPOINT(millId)}/${id}`
-    )
-}
-
-/**
- * Bulk delete balance lifting purchases FRK entries
- */
-export const bulkDeleteBalanceLiftingPurchasesFrk = async (
-    millId: string,
-    ids: string[]
-): Promise<void> => {
-    await apiClient.delete(
-        `${BALANCE_LIFTING_PURCHASES_FRK_ENDPOINT(millId)}/bulk`,
-        {
-            data: { ids },
+        const pagination: PaginationData = response.data.data.pagination || {
+            page: params.page || 1,
+            limit: params.pageSize || 10,
+            total: 0,
+            totalPages: 0,
+            hasPrevPage: false,
+            hasNextPage: false,
+            prevPage: null,
+            nextPage: null,
         }
-    )
-}
 
-/**
- * Export balance lifting purchases FRK entries to CSV/Excel
- */
-export const exportBalanceLiftingPurchasesFrk = async (
-    millId: string,
-    params?: BalanceLiftingPurchasesFrkQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${BALANCE_LIFTING_PURCHASES_FRK_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
+        return { data, pagination }
+    },
+
+    create: async (
+        millId: string,
+        data: Omit<BalanceLiftingPurchasesFrk, '_id'>
+    ) => {
+        const requestData: BalanceLiftingFrkPurchaseRequest = {
+            date: data.date,
+            partyName: data.partyName || '',
+            frkQty: data.frkQty,
+            frkRate: data.frkRate,
+            gst: data.gst,
         }
-    )
-    return response.data
+
+        const response = await apiClient.post<
+            ApiResponse<BalanceLiftingFrkPurchaseResponse>
+        >(`/mills/${millId}/frk-purchase`, requestData)
+        return response.data.data
+    },
+
+    update: async (
+        millId: string,
+        purchaseId: string,
+        data: Omit<BalanceLiftingPurchasesFrk, '_id'>
+    ) => {
+        const requestData: BalanceLiftingFrkPurchaseRequest = {
+            date: data.date,
+            partyName: data.partyName || '',
+            frkQty: data.frkQty,
+            frkRate: data.frkRate,
+            gst: data.gst,
+        }
+
+        const response = await apiClient.put<
+            ApiResponse<BalanceLiftingFrkPurchaseResponse>
+        >(`/mills/${millId}/frk-purchase/${purchaseId}`, requestData)
+        return response.data.data
+    },
+
+    delete: async (millId: string, purchaseId: string) => {
+        const response = await apiClient.delete<
+            ApiResponse<{ success: boolean }>
+        >(`/mills/${millId}/frk-purchase/${purchaseId}`)
+        return response.data.data
+    },
+
+    bulkDelete: async (millId: string, purchaseIds: string[]) => {
+        const response = await apiClient.delete<
+            ApiResponse<{ success: boolean }>
+        >(`/mills/${millId}/frk-purchase/bulk`, { data: { ids: purchaseIds } })
+        return response.data.data
+    },
 }

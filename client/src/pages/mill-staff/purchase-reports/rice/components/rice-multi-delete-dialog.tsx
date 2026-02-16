@@ -33,7 +33,7 @@ export function RiceMultiDeleteDialog({
     const handleDeleteSelected = async () => {
         try {
             const ids = selectedRows
-                .map((row) => (row.original as RicePurchaseData).id)
+                .map((row) => (row.original as RicePurchaseData)._id)
                 .filter(Boolean) as string[]
             await bulkDeleteRicePurchases(ids)
             table.resetRowSelection()

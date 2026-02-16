@@ -1,14 +1,11 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import type { NakkhiSalesResponse } from '../data/types'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getNakkhiSalesColumns = (
-    t: TFunction<'millStaff', undefined>
-): ColumnDef<NakkhiSalesResponse>[] => [
+export const nakkhiSalesColumns: ColumnDef<NakkhiSalesResponse>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -41,10 +38,7 @@ export const getNakkhiSalesColumns = (
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
@@ -60,10 +54,7 @@ export const getNakkhiSalesColumns = (
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.partyName')}
-            />
+            <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -74,10 +65,7 @@ export const getNakkhiSalesColumns = (
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.brokerName')}
-            />
+            <DataTableColumnHeader column={column} title='Broker Name' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -88,10 +76,7 @@ export const getNakkhiSalesColumns = (
     {
         accessorKey: 'nakkhiQty',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.nakkhiQty')}
-            />
+            <DataTableColumnHeader column={column} title='Nakkhi Qty (Qtl)' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.original.nakkhiQty || 0}</div>
@@ -100,10 +85,7 @@ export const getNakkhiSalesColumns = (
     {
         accessorKey: 'nakkhiRate',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.nakkhiRate')}
-            />
+            <DataTableColumnHeader column={column} title='Nakkhi Rate' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>₹{row.original.nakkhiRate || 0}</div>
@@ -112,10 +94,7 @@ export const getNakkhiSalesColumns = (
     {
         accessorKey: 'discountPercent',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.discount')}
-            />
+            <DataTableColumnHeader column={column} title='Discount %' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -126,10 +105,7 @@ export const getNakkhiSalesColumns = (
     {
         accessorKey: 'brokerage',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('tableColumns.brokerage')}
-            />
+            <DataTableColumnHeader column={column} title='Brokerage' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>

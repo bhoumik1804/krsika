@@ -1,256 +1,132 @@
-/**
- * Balance Lifting Purchases FRK Hooks
- * React Query hooks for Balance Lifting Purchases FRK data management
- */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import {
-    fetchBalanceLiftingPurchasesFrkList,
-    fetchBalanceLiftingPurchasesFrkById,
-    fetchBalanceLiftingPurchasesFrkSummary,
-    createBalanceLiftingPurchasesFrk,
-    updateBalanceLiftingPurchasesFrk,
-    deleteBalanceLiftingPurchasesFrk,
-    bulkDeleteBalanceLiftingPurchasesFrk,
-    exportBalanceLiftingPurchasesFrk,
-} from './service'
-import type {
-    BalanceLiftingPurchasesFrkResponse,
-    BalanceLiftingPurchasesFrkListResponse,
-    BalanceLiftingPurchasesFrkSummaryResponse,
-    CreateBalanceLiftingPurchasesFrkRequest,
-    UpdateBalanceLiftingPurchasesFrkRequest,
-    BalanceLiftingPurchasesFrkQueryParams,
-} from './types'
+import type { BalanceLiftingPurchasesFrk } from './schema'
+import { balanceLiftingFrkPurchaseService } from './service'
+import type { BalanceLiftingFrkPurchaseListResponse } from './types'
 
-// ==========================================
-// Query Keys
-// ==========================================
-
-export const balanceLiftingPurchasesFrkKeys = {
-    all: ['balance-lifting-purchases-frk'] as const,
-    lists: () => [...balanceLiftingPurchasesFrkKeys.all, 'list'] as const,
-    list: (millId: string, params?: BalanceLiftingPurchasesFrkQueryParams) =>
-        [...balanceLiftingPurchasesFrkKeys.lists(), millId, params] as const,
-    details: () => [...balanceLiftingPurchasesFrkKeys.all, 'detail'] as const,
-    detail: (millId: string, id: string) =>
-        [...balanceLiftingPurchasesFrkKeys.details(), millId, id] as const,
-    summaries: () =>
-        [...balanceLiftingPurchasesFrkKeys.all, 'summary'] as const,
-    summary: (
-        millId: string,
-        params?: Pick<
-            BalanceLiftingPurchasesFrkQueryParams,
-            'startDate' | 'endDate'
-        >
-    ) =>
+// Query key factory for Balance Lifting FRK purchases
+const balanceLiftingFrkPurchaseQueryKeys = {
+    all: ['balance-lifting-frk-purchases'] as const,
+    byMill: (millId: string) =>
+        [...balanceLiftingFrkPurchaseQueryKeys.all, millId] as const,
+    list: (millId: string, filters?: Record<string, unknown>) =>
         [
-            ...balanceLiftingPurchasesFrkKeys.summaries(),
-            millId,
-            params,
+            ...balanceLiftingFrkPurchaseQueryKeys.byMill(millId),
+            'list',
+            filters,
         ] as const,
 }
 
-// ==========================================
-// Query Hooks
-// ==========================================
+interface UseBalanceLiftingFrkPurchaseListParams {
+    millId: string
+    page?: number
+    pageSize?: number
+    search?: string
+}
 
-/**
- * Hook to fetch balance lifting purchases FRK list with pagination and filters
- */
-export const useBalanceLiftingPurchasesFrkList = (
-    millId: string,
-    params?: BalanceLiftingPurchasesFrkQueryParams,
-    options?: { enabled?: boolean }
+export const useBalanceLiftingFrkPurchaseList = (
+    params: UseBalanceLiftingFrkPurchaseListParams
 ) => {
-    return useQuery<BalanceLiftingPurchasesFrkListResponse, Error>({
-        queryKey: balanceLiftingPurchasesFrkKeys.list(millId, params),
-        queryFn: () => fetchBalanceLiftingPurchasesFrkList(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+    return useQuery<BalanceLiftingFrkPurchaseListResponse, Error>({
+        queryKey: balanceLiftingFrkPurchaseQueryKeys.list(params.millId, {
+            page: params.page,
+            pageSize: params.pageSize,
+            search: params.search,
+        }),
+        queryFn: () => balanceLiftingFrkPurchaseService.fetchList(params),
+        enabled: !!params.millId,
     })
 }
 
-/**
- * Hook to fetch a single balance lifting purchases FRK entry
- */
-export const useBalanceLiftingPurchasesFrkDetail = (
-    millId: string,
-    id: string,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<BalanceLiftingPurchasesFrkResponse, Error>({
-        queryKey: balanceLiftingPurchasesFrkKeys.detail(millId, id),
-        queryFn: () => fetchBalanceLiftingPurchasesFrkById(millId, id),
-        enabled: options?.enabled ?? (!!millId && !!id),
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    })
-}
-
-/**
- * Hook to fetch balance lifting purchases FRK summary/statistics
- */
-export const useBalanceLiftingPurchasesFrkSummary = (
-    millId: string,
-    params?: Pick<
-        BalanceLiftingPurchasesFrkQueryParams,
-        'startDate' | 'endDate'
-    >,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<BalanceLiftingPurchasesFrkSummaryResponse, Error>({
-        queryKey: balanceLiftingPurchasesFrkKeys.summary(millId, params),
-        queryFn: () => fetchBalanceLiftingPurchasesFrkSummary(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    })
-}
-
-// ==========================================
-// Mutation Hooks
-// ==========================================
-
-/**
- * Hook to create a new balance lifting purchases FRK entry
- */
-export const useCreateBalanceLiftingPurchasesFrk = (millId: string) => {
+export const useCreateBalanceLiftingFrkPurchase = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<
-        BalanceLiftingPurchasesFrkResponse,
-        Error,
-        CreateBalanceLiftingPurchasesFrkRequest
-    >({
-        mutationFn: (data) => createBalanceLiftingPurchasesFrk(millId, data),
+    return useMutation({
+        mutationFn: (data: Omit<BalanceLiftingPurchasesFrk, '_id'>) =>
+            balanceLiftingFrkPurchaseService.create(millId, data),
         onSuccess: () => {
+            toast.success('FRK purchase created successfully')
             queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesFrkKeys.lists(),
+                queryKey: balanceLiftingFrkPurchaseQueryKeys.byMill(millId),
             })
-            queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesFrkKeys.summaries(),
-            })
-            toast.success(
-                'Balance lifting purchases FRK entry created successfully'
-            )
         },
-        onError: (error) => {
-            toast.error(
-                error.message ||
-                    'Failed to create balance lifting purchases FRK entry'
-            )
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to create FRK purchase'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to update an existing balance lifting purchases FRK entry
- */
-export const useUpdateBalanceLiftingPurchasesFrk = (millId: string) => {
+export const useUpdateBalanceLiftingFrkPurchase = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<
-        BalanceLiftingPurchasesFrkResponse,
-        Error,
-        UpdateBalanceLiftingPurchasesFrkRequest
-    >({
-        mutationFn: (data) => updateBalanceLiftingPurchasesFrk(millId, data),
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesFrkKeys.lists(),
-            })
-            queryClient.setQueryData(
-                balanceLiftingPurchasesFrkKeys.detail(millId, data._id),
-                data
-            )
-            queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesFrkKeys.summaries(),
-            })
-            toast.success(
-                'Balance lifting purchases FRK entry updated successfully'
-            )
-        },
-        onError: (error) => {
-            toast.error(
-                error.message ||
-                    'Failed to update balance lifting purchases FRK entry'
-            )
-        },
-    })
-}
-
-/**
- * Hook to delete a balance lifting purchases FRK entry
- */
-export const useDeleteBalanceLiftingPurchasesFrk = (millId: string) => {
-    const queryClient = useQueryClient()
-
-    return useMutation<void, Error, string>({
-        mutationFn: (id) => deleteBalanceLiftingPurchasesFrk(millId, id),
+    return useMutation({
+        mutationFn: ({
+            purchaseId,
+            data,
+        }: {
+            purchaseId: string
+            data: Omit<BalanceLiftingPurchasesFrk, '_id'>
+        }) => balanceLiftingFrkPurchaseService.update(millId, purchaseId, data),
         onSuccess: () => {
+            toast.success('FRK purchase updated successfully')
             queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesFrkKeys.lists(),
+                queryKey: balanceLiftingFrkPurchaseQueryKeys.byMill(millId),
             })
-            queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesFrkKeys.summaries(),
-            })
-            toast.success(
-                'Balance lifting purchases FRK entry deleted successfully'
-            )
         },
-        onError: (error) => {
-            toast.error(
-                error.message ||
-                    'Failed to delete balance lifting purchases FRK entry'
-            )
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to update FRK purchase'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to bulk delete balance lifting purchases FRK entries
- */
-export const useBulkDeleteBalanceLiftingPurchasesFrk = (millId: string) => {
+export const useDeleteBalanceLiftingFrkPurchase = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string[]>({
-        mutationFn: (ids) => bulkDeleteBalanceLiftingPurchasesFrk(millId, ids),
-        onSuccess: (_, ids) => {
+    return useMutation({
+        mutationFn: (purchaseId: string) =>
+            balanceLiftingFrkPurchaseService.delete(millId, purchaseId),
+        onSuccess: () => {
+            toast.success('FRK purchase deleted successfully')
             queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesFrkKeys.lists(),
+                queryKey: balanceLiftingFrkPurchaseQueryKeys.byMill(millId),
             })
-            queryClient.invalidateQueries({
-                queryKey: balanceLiftingPurchasesFrkKeys.summaries(),
-            })
-            toast.success(`${ids.length} entries deleted successfully`)
         },
-        onError: (error) => {
-            toast.error(
-                error.message ||
-                    'Failed to delete balance lifting purchases FRK entries'
-            )
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to delete FRK purchase'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to export balance lifting purchases FRK entries
- */
-export const useExportBalanceLiftingPurchasesFrk = (millId: string) => {
-    return useMutation<
-        Blob,
-        Error,
-        {
-            params?: BalanceLiftingPurchasesFrkQueryParams
-            format?: 'csv' | 'xlsx'
-        }
-    >({
-        mutationFn: ({ params, format }) =>
-            exportBalanceLiftingPurchasesFrk(millId, params, format),
+export const useBulkDeleteBalanceLiftingFrkPurchases = (millId: string) => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: (purchaseIds: string[]) =>
+            balanceLiftingFrkPurchaseService.bulkDelete(millId, purchaseIds),
         onSuccess: () => {
-            toast.success('Export completed successfully')
+            toast.success('FRK purchases deleted successfully')
+            queryClient.invalidateQueries({
+                queryKey: balanceLiftingFrkPurchaseQueryKeys.byMill(millId),
+            })
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to export data')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to delete FRK purchases'
+            toast.error(errorMessage)
         },
     })
 }

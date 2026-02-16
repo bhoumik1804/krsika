@@ -1,13 +1,8 @@
-/**
- * Balance Lifting Purchases Paddy Types
- * TypeScript type definitions for Balance Lifting Purchases Paddy module
- */
+import type { BalanceLiftingPurchasesPaddy } from './schema'
 
-// ==========================================
-// API Request Types
-// ==========================================
+// API Request/Response types for Balance Lifting Paddy Purchase
 
-export interface CreateBalanceLiftingPurchasesPaddyRequest {
+export interface BalanceLiftingPaddyPurchaseRequest {
     date: string
     partyName?: string
     brokerName?: string
@@ -27,34 +22,8 @@ export interface CreateBalanceLiftingPurchasesPaddyRequest {
     plasticGunnyRate?: number
 }
 
-export interface UpdateBalanceLiftingPurchasesPaddyRequest {
-    id: string
-    date?: string
-    partyName?: string
-    brokerName?: string
-    deliveryType?: string
-    purchaseType?: string
-    doNumber?: string
-    committeeName?: string
-    doPaddyQty?: number
-    paddyType?: string
-    totalPaddyQty?: number
-    paddyRatePerQuintal?: number
-    discountPercent?: number
-    brokerage?: number
-    gunnyType?: string
-    newGunnyRate?: number
-    oldGunnyRate?: number
-    plasticGunnyRate?: number
-}
-
-// ==========================================
-// API Response Types
-// ==========================================
-
-export interface BalanceLiftingPurchasesPaddyResponse {
+export interface BalanceLiftingPaddyPurchaseResponse {
     _id: string
-    millId: string
     date: string
     partyName?: string
     brokerName?: string
@@ -72,41 +41,25 @@ export interface BalanceLiftingPurchasesPaddyResponse {
     newGunnyRate?: number
     oldGunnyRate?: number
     plasticGunnyRate?: number
-    createdBy: string
-    createdAt: string
-    updatedAt: string
+    millId?: string
+    createdBy?: string
+    createdAt?: string
+    updatedAt?: string
+    __v?: number
 }
 
-export interface BalanceLiftingPurchasesPaddyListResponse {
-    data: BalanceLiftingPurchasesPaddyResponse[]
-    pagination: {
-        page: number
-        limit: number
-        total: number
-        totalPages: number
-        hasPrevPage: boolean
-        hasNextPage: boolean
-        prevPage: number | null
-        nextPage: number | null
-    }
+export interface PaginationData {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasPrevPage: boolean
+    hasNextPage: boolean
+    prevPage: number | null
+    nextPage: number | null
 }
 
-export interface BalanceLiftingPurchasesPaddySummaryResponse {
-    totalEntries: number
-    totalPaddyQty: number
-    totalBrokerage: number
-}
-
-// ==========================================
-// Query Parameter Types
-// ==========================================
-
-export interface BalanceLiftingPurchasesPaddyQueryParams {
-    page?: number
-    limit?: number
-    search?: string
-    startDate?: string
-    endDate?: string
-    sortBy?: string
-    sortOrder?: 'asc' | 'desc'
+export interface BalanceLiftingPaddyPurchaseListResponse {
+    data: BalanceLiftingPurchasesPaddy[]
+    pagination: PaginationData
 }

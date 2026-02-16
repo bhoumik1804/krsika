@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useFrkPurchaseList } from '@/pages/mill-admin/purchase-reports/frk/data/hooks'
+import type { FrkPurchaseData } from '@/pages/mill-admin/purchase-reports/frk/data/schema'
 import { CalendarIcon } from 'lucide-react'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -22,6 +25,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -47,6 +51,39 @@ export function FrkInwardActionDialog({
         useCreateFrkInward(millId)
     const { mutateAsync: updateFrkInward, isPending: isUpdating } =
         useUpdateFrkInward(millId)
+
+    const purchaseDataRef = useRef<FrkPurchaseData[]>([])
+
+    const useFrkPurchaseListCompat = (params: any) => {
+        return useFrkPurchaseList({ ...params, pageSize: params.limit })
+    }
+
+    const frkPurchaseDeal = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useFrkPurchaseListCompat,
+            extractItems: (data: any) => {
+                purchaseDataRef.current = data.data || []
+                return data.data
+                    .map((p: FrkPurchaseData) => p.frkPurchaseDealNumber)
+                    .filter(Boolean) as string[]
+            },
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
+        },
+        currentRow?.frkPurchaseDealNumber || undefined
+    )
+
+    const handleDealSelect = (dealId: string) => {
+        form.setValue('frkPurchaseDealNumber', dealId)
+        const purchase = purchaseDataRef.current.find(
+            (p) => p.frkPurchaseDealNumber === dealId
+        )
+        if (purchase) {
+            if (purchase.partyName)
+                form.setValue('partyName', purchase.partyName)
+        }
+    }
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -81,7 +118,11 @@ export function FrkInwardActionDialog({
 
     const onSubmit = async (data: FrkInward) => {
         try {
-            const { _id, ...payload } = data
+            const { _id, ...rest } = data
+            const payload = {
+                ...rest,
+                partyName: rest.partyName || undefined,
+            }
             if (isEditing && currentRow?._id) {
                 await updateFrkInward({
                     id: currentRow._id,
@@ -184,10 +225,12 @@ export function FrkInwardActionDialog({
                                             FRK Purchase Deal Number
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter Deal Number'
-                                                {...field}
+                                            <PaginatedCombobox
                                                 value={field.value || ''}
+                                                onValueChange={handleDealSelect}
+                                                paginatedList={frkPurchaseDeal}
+                                                placeholder='Search deal...'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />

@@ -1,135 +1,78 @@
-/**
- * Balance Lifting Sales Paddy Service
- * API client for Balance Lifting Sales Paddy CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
-import apiClient, { type ApiResponse } from '@/lib/api-client'
-import type {
-    BalanceLiftingSalesPaddyResponse,
-    BalanceLiftingSalesPaddyListResponse,
-    BalanceLiftingSalesPaddySummaryResponse,
-    CreateBalanceLiftingSalesPaddyRequest,
-    UpdateBalanceLiftingSalesPaddyRequest,
-    BalanceLiftingSalesPaddyQueryParams,
-} from './types'
+import type { PaginationState, SortingState } from '@tanstack/react-table'
+import { apiClient } from '@/lib/api-client'
+import { type PaddySales } from './schema'
+import type { PaddySalesListResponse, PaddySalesSummary } from './types'
 
-// ==========================================
-// API Endpoints
-// ==========================================
-
-const BALANCE_LIFTING_SALES_PADDY_ENDPOINT = (millId: string) =>
-    `/mills/${millId}/balance-lifting-sales-paddy`
-
-// ==========================================
-// Balance Lifting Sales Paddy API Functions
-// ==========================================
-
-/**
- * Fetch all balance lifting sales paddy entries with pagination and filters
- */
-export const fetchBalanceLiftingSalesPaddyList = async (
-    millId: string,
-    params?: BalanceLiftingSalesPaddyQueryParams
-): Promise<BalanceLiftingSalesPaddyListResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<BalanceLiftingSalesPaddyListResponse>
-    >(BALANCE_LIFTING_SALES_PADDY_ENDPOINT(millId), { params })
+export const createPaddySale = async (millId: string, data: PaddySales) => {
+    const response = await apiClient.post(`/mills/${millId}/paddy-sales`, data)
     return response.data.data
 }
 
-/**
- * Fetch a single balance lifting sales paddy entry by ID
- */
-export const fetchBalanceLiftingSalesPaddyById = async (
+export const getPaddySales = async (
     millId: string,
-    id: string
-): Promise<BalanceLiftingSalesPaddyResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<BalanceLiftingSalesPaddyResponse>
-    >(`${BALANCE_LIFTING_SALES_PADDY_ENDPOINT(millId)}/${id}`)
-    return response.data.data
-}
+    pagination: PaginationState,
+    sorting: SortingState,
+    search: string,
+    filters: Record<string, unknown>
+) => {
+    const { pageIndex, pageSize } = pagination
+    const sortBy = sorting[0]?.id || 'date'
+    const order = sorting[0]?.desc ? 'desc' : 'asc'
 
-/**
- * Fetch balance lifting sales paddy summary/statistics
- */
-export const fetchBalanceLiftingSalesPaddySummary = async (
-    millId: string,
-    params?: Pick<BalanceLiftingSalesPaddyQueryParams, 'startDate' | 'endDate'>
-): Promise<BalanceLiftingSalesPaddySummaryResponse> => {
-    const response = await apiClient.get<
-        ApiResponse<BalanceLiftingSalesPaddySummaryResponse>
-    >(`${BALANCE_LIFTING_SALES_PADDY_ENDPOINT(millId)}/summary`, { params })
-    return response.data.data
-}
-
-/**
- * Create a new balance lifting sales paddy entry
- */
-export const createBalanceLiftingSalesPaddy = async (
-    millId: string,
-    data: CreateBalanceLiftingSalesPaddyRequest
-): Promise<BalanceLiftingSalesPaddyResponse> => {
-    const response = await apiClient.post<
-        ApiResponse<BalanceLiftingSalesPaddyResponse>
-    >(BALANCE_LIFTING_SALES_PADDY_ENDPOINT(millId), data)
-    return response.data.data
-}
-
-/**
- * Update an existing balance lifting sales paddy entry
- */
-export const updateBalanceLiftingSalesPaddy = async (
-    millId: string,
-    { id, ...data }: UpdateBalanceLiftingSalesPaddyRequest
-): Promise<BalanceLiftingSalesPaddyResponse> => {
-    const response = await apiClient.put<
-        ApiResponse<BalanceLiftingSalesPaddyResponse>
-    >(`${BALANCE_LIFTING_SALES_PADDY_ENDPOINT(millId)}/${id}`, data)
-    return response.data.data
-}
-
-/**
- * Delete a balance lifting sales paddy entry
- */
-export const deleteBalanceLiftingSalesPaddy = async (
-    millId: string,
-    id: string
-): Promise<void> => {
-    await apiClient.delete(
-        `${BALANCE_LIFTING_SALES_PADDY_ENDPOINT(millId)}/${id}`
+    const response = await apiClient.get<{ data: PaddySalesListResponse }>(
+        `/mills/${millId}/paddy-sales`,
+        {
+            params: {
+                page: pageIndex + 1,
+                limit: pageSize,
+                search,
+                sortBy,
+                order,
+                ...filters,
+            },
+        }
     )
+    return response.data.data
 }
 
-/**
- * Bulk delete balance lifting sales paddy entries
- */
-export const bulkDeleteBalanceLiftingSalesPaddy = async (
+export const getPaddySaleSummary = async (
     millId: string,
-    ids: string[]
-): Promise<void> => {
-    await apiClient.delete(
-        `${BALANCE_LIFTING_SALES_PADDY_ENDPOINT(millId)}/bulk`,
+    filters: Record<string, unknown>
+) => {
+    const response = await apiClient.get(
+        `/mills/${millId}/paddy-sales/summary`,
+        {
+            params: filters,
+        }
+    )
+    return response.data.data as PaddySalesSummary
+}
+
+export const updatePaddySale = async (
+    millId: string,
+    id: string,
+    data: PaddySales
+) => {
+    const response = await apiClient.put(
+        `/mills/${millId}/paddy-sales/${id}`,
+        data
+    )
+    return response.data.data
+}
+
+export const deletePaddySale = async (millId: string, id: string) => {
+    const response = await apiClient.delete(
+        `/mills/${millId}/paddy-sales/${id}`
+    )
+    return response.data.data
+}
+
+export const deleteBulkPaddySales = async (millId: string, ids: string[]) => {
+    const response = await apiClient.delete(
+        `/mills/${millId}/paddy-sales/bulk`,
         {
             data: { ids },
         }
     )
-}
-
-/**
- * Export balance lifting sales paddy entries to CSV/Excel
- */
-export const exportBalanceLiftingSalesPaddy = async (
-    millId: string,
-    params?: BalanceLiftingSalesPaddyQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${BALANCE_LIFTING_SALES_PADDY_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
-    )
-    return response.data
+    return response.data.data
 }

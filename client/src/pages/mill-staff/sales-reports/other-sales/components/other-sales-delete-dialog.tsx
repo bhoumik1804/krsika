@@ -1,5 +1,4 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useParams } from 'react-router'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,6 +9,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteOtherSales } from '../data/hooks'
 import { type OtherSales } from '../data/schema'
 
 type OtherSalesDeleteDialogProps = {
@@ -23,14 +23,17 @@ export function OtherSalesDeleteDialog({
     onOpenChange,
     currentRow,
 }: OtherSalesDeleteDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
+    const { mutate: deleteOtherSale, isPending } = useDeleteOtherSales(
+        millId || ''
+    )
+
     const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
+        if (!currentRow?._id) return
+        deleteOtherSale(currentRow._id, {
+            onSuccess: () => {
                 onOpenChange(false)
-                return 'Deleted successfully'
             },
-            error: 'Failed to delete',
         })
     }
 
@@ -50,9 +53,10 @@ export function OtherSalesDeleteDialog({
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

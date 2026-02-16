@@ -12,7 +12,6 @@ import {
     updateLabourOther,
     deleteLabourOther,
     bulkDeleteLabourOther,
-    exportLabourOther,
 } from './service'
 import type {
     LabourOtherResponse,
@@ -134,7 +133,7 @@ export const useUpdateLabourOther = (millId: string) => {
                 queryKey: labourOtherKeys.lists(),
             })
             queryClient.setQueryData(
-                labourOtherKeys.detail(millId, data._id),
+                labourOtherKeys.detail(millId, data._id as string),
                 data
             )
             queryClient.invalidateQueries({
@@ -192,26 +191,6 @@ export const useBulkDeleteLabourOther = (millId: string) => {
             toast.error(
                 error.message || 'Failed to delete labour other entries'
             )
-        },
-    })
-}
-
-/**
- * Hook to export labour other entries
- */
-export const useExportLabourOther = (millId: string) => {
-    return useMutation<
-        Blob,
-        Error,
-        { params?: LabourOtherQueryParams; format?: 'csv' | 'xlsx' }
-    >({
-        mutationFn: ({ params, format }) =>
-            exportLabourOther(millId, params, format),
-        onSuccess: () => {
-            toast.success('Export completed successfully')
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to export data')
         },
     })
 }

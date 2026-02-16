@@ -2,10 +2,22 @@ import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    Combobox,
+    ComboboxContent,
+    ComboboxEmpty,
+    ComboboxInput,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -44,6 +56,32 @@ export function KodhaOutwardActionDialog({
     currentRow,
     millId,
 }: KodhaOutwardActionDialogProps) {
+    const party = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName || undefined
+    )
+
+    const broker = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
+        currentRow?.brokerName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -76,36 +114,42 @@ export function KodhaOutwardActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset(defaultValues)
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset(defaultValues)
+            }
         }
-    }, [currentRow, form, defaultValues])
+    }, [currentRow, form, defaultValues, open])
 
     const onSubmit = (values: KodhaOutward) => {
+        const submissionData = {
+            ...values,
+            partyName: values.partyName || undefined,
+            brokerName: values.brokerName || undefined,
+        }
+
         if (isEditing && currentRow?._id) {
             toast.promise(
                 updateMutation.mutateAsync({
                     id: currentRow._id,
-                    data: values,
+                    data: submissionData,
                 }),
                 {
                     loading: 'Updating...',
                     success: () => {
                         onOpenChange(false)
-                        form.reset(defaultValues)
                         return 'Updated successfully'
                     },
                     error: 'Failed to update',
                 }
             )
         } else {
-            toast.promise(createMutation.mutateAsync(values), {
+            toast.promise(createMutation.mutateAsync(submissionData), {
                 loading: 'Adding...',
                 success: () => {
                     onOpenChange(false)
-                    form.reset(defaultValues)
                     return 'Added successfully'
                 },
                 error: 'Failed to add',
@@ -203,6 +247,7 @@ export function KodhaOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter deal number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -216,10 +261,41 @@ export function KodhaOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Party Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter party name'
-                                                {...field}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={party.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search party...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            party.onScroll
+                                                        }
+                                                    >
+                                                        <ComboboxCollection>
+                                                            {(p) => (
+                                                                <ComboboxItem
+                                                                    value={p}
+                                                                >
+                                                                    {p}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No parties found
+                                                        </ComboboxEmpty>
+                                                        {party.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -232,10 +308,41 @@ export function KodhaOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>Broker Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter broker name'
-                                                {...field}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={broker.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search broker...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            broker.onScroll
+                                                        }
+                                                    >
+                                                        <ComboboxCollection>
+                                                            {(b) => (
+                                                                <ComboboxItem
+                                                                    value={b}
+                                                                >
+                                                                    {b}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No brokers found
+                                                        </ComboboxEmpty>
+                                                        {broker.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -375,6 +482,7 @@ export function KodhaOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -391,6 +499,7 @@ export function KodhaOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -7,10 +7,10 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,55 +24,50 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FrkPurchaseData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getFrkColumns } from './frk-columns'
-import { useFrk } from './frk-provider'
+import { frkColumns as columns } from './frk-columns'
 
 type DataTableProps = {
     data: FrkPurchaseData[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: {
+        page: number
+        pageSize: number
+        total: number
+        totalPages: number
+    }
 }
 
-export function FrkTable({ data, search, navigate }: DataTableProps) {
-    const { t } = useTranslation('millStaff')
-    const columns = useMemo(() => getFrkColumns(t), [t])
-
+export function FrkTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-    const { queryParams, setQueryParams, pagination } = useFrk()
-
-    // Pagination state from provider (server-side)
-    const paginationState = {
-        pageIndex: (queryParams.page || 1) - 1,
-        pageSize: queryParams.limit || 10,
-    }
-
-    const handlePaginationChange = (updater: any) => {
-        const newPageIndex =
-            typeof updater === 'function'
-                ? updater(paginationState).pageIndex
-                : updater.pageIndex
-        const newPageSize =
-            typeof updater === 'function'
-                ? updater(paginationState).pageSize
-                : updater.pageSize
-
-        setQueryParams((prev) => ({
-            ...prev,
-            page: newPageIndex + 1,
-            limit: newPageSize,
-        }))
-    }
 
     // Only handle column filters (pagination is server-side)
-    const { columnFilters, onColumnFiltersChange } = useTableUrlState({
+    const {
+        columnFilters,
+        onColumnFiltersChange,
+        pagination,
+        onPaginationChange,
+        ensurePageInRange,
+    } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
@@ -85,13 +80,16 @@ export function FrkTable({ data, search, navigate }: DataTableProps) {
         columns,
         state: {
             sorting,
-            pagination: paginationState,
+            pagination,
             rowSelection,
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
-        onPaginationChange: handlePaginationChange,
+        onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
@@ -101,9 +99,14 @@ export function FrkTable({ data, search, navigate }: DataTableProps) {
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-        pageCount: pagination.totalPages,
-        manualPagination: true,
+        getPaginationRowModel: getPaginationRowModel(),
     })
+
+    useEffect(() => {
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
