@@ -75,10 +75,10 @@ export function TransporterReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('inputReports.transporterReport.title')}
+                            {t('transporterReport.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('inputReports.transporterReport.description')}
+                            {t('transporterReport.description')}
                         </p>
                     </div>
                     <TransporterReportPrimaryButtons />

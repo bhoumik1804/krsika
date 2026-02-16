@@ -129,7 +129,7 @@ export function DoReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder={t(
-                    'inputReports.doReport.table.searchPlaceholder'
+                    'doReport.table.searchPlaceholder'
                 )}
                 searchKey='samitiSangrahan'
             />

@@ -72,10 +72,10 @@ export function DoReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('inputReports.doReport.title')}
+                            {t('doReport.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('inputReports.doReport.description')}
+                            {t('doReport.description')}
                         </p>
                     </div>
                     <DoReportPrimaryButtons />

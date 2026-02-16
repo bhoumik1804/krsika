@@ -111,16 +111,16 @@ export function LabourGroupReportActionDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing
-                            ? t('inputReports.labourGroupReport.form.editTitle')
-                            : t('inputReports.labourGroupReport.form.addTitle')}
+                            ? t('labourGroupReport.form.editTitle')
+                            : t('labourGroupReport.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
                         {isEditing
                             ? t(
-                                  'inputReports.labourGroupReport.form.editDescription'
+                                  'labourGroupReport.form.editDescription'
                               )
                             : t(
-                                  'inputReports.labourGroupReport.form.addDescription'
+                                  'labourGroupReport.form.addDescription'
                               )}
                     </DialogDescription>
                 </DialogHeader>
@@ -136,13 +136,13 @@ export function LabourGroupReportActionDialog({
                                 <FormItem>
                                     <FormLabel>
                                         {t(
-                                            'inputReports.labourGroupReport.form.name'
+                                            'labourGroupReport.form.name'
                                         )}
                                     </FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder={t(
-                                                'inputReports.labourGroupReport.form.placeholders.name'
+                                                'labourGroupReport.form.placeholders.name'
                                             )}
                                             disabled={isLoading}
                                             {...field}
@@ -166,10 +166,10 @@ export function LabourGroupReportActionDialog({
                                     ? t('common.loading')
                                     : isEditing
                                       ? t(
-                                            'inputReports.labourGroupReport.form.editTitle'
+                                            'labourGroupReport.form.editTitle'
                                         )
                                       : t(
-                                            'inputReports.labourGroupReport.form.addTitle'
+                                            'labourGroupReport.form.addTitle'
                                         )}
                             </Button>
                         </DialogFooter>

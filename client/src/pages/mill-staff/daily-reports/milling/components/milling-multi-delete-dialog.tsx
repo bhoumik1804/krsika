@@ -24,7 +24,7 @@ export function MillingMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: MillingMultiDeleteDialogProps<TData>) {
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleDeleteSelected = () => {
@@ -69,3 +69,4 @@ export function MillingMultiDeleteDialog<TData>({
         </AlertDialog>
     )
 }
+

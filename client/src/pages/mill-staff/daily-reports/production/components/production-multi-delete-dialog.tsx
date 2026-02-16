@@ -24,7 +24,7 @@ export function ProductionMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: ProductionMultiDeleteDialogProps<TData>) {
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleDeleteSelected = () => {
@@ -69,3 +69,4 @@ export function ProductionMultiDeleteDialog<TData>({
         </AlertDialog>
     )
 }
+

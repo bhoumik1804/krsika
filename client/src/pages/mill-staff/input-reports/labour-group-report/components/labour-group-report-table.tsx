@@ -134,7 +134,7 @@ export function LabourGroupReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder={t(
-                    'inputReports.labourGroupReport.table.searchPlaceholder'
+                    'labourGroupReport.table.searchPlaceholder'
                 )}
                 searchKey='labourTeamName'
             />

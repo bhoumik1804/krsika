@@ -55,14 +55,14 @@ export function DoReportMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t('inputReports.delete.multiTitle', {
+                        {t('delete.multiTitle', {
                             count: selectedRows.length,
                         })}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('inputReports.delete.multiDescription')}
+                        {t('delete.multiDescription')}
                         <br />
-                        {t('inputReports.delete.undone')}
+                        {t('delete.undone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

@@ -43,7 +43,7 @@ export const getLabourGroupReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.labourGroupReport.table.name')}
+                title={t('labourGroupReport.table.name')}
             />
         ),
         cell: ({ row }) => (

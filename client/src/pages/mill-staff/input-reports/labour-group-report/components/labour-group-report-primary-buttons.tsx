@@ -10,7 +10,7 @@ export function LabourGroupReportPrimaryButtons() {
     return (
         <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
-            {t('inputReports.labourGroupReport.addRecord')}
+            {t('labourGroupReport.addRecord')}
         </Button>
     )
 }

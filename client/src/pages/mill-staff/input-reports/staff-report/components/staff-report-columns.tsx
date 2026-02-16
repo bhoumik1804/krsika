@@ -44,7 +44,7 @@ export const getStaffReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.staffReport.table.fullName')}
+                title={t('staffReport.table.fullName')}
             />
         ),
         cell: ({ row }) => (
@@ -65,7 +65,7 @@ export const getStaffReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.staffReport.table.post')}
+                title={t('staffReport.table.post')}
             />
         ),
         cell: ({ row }) => (
@@ -77,7 +77,7 @@ export const getStaffReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.staffReport.table.salary')}
+                title={t('staffReport.table.salary')}
             />
         ),
         cell: ({ row }) => (
@@ -89,7 +89,7 @@ export const getStaffReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.staffReport.table.phoneNumber')}
+                title={t('staffReport.table.phoneNumber')}
             />
         ),
         cell: ({ row }) => (
@@ -103,7 +103,7 @@ export const getStaffReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.staffReport.table.email')}
+                title={t('staffReport.table.email')}
             />
         ),
         cell: ({ row }) => (
@@ -117,7 +117,7 @@ export const getStaffReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.staffReport.table.address')}
+                title={t('staffReport.table.address')}
             />
         ),
         cell: ({ row }) => (

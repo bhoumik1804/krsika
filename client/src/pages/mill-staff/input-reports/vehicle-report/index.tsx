@@ -74,10 +74,10 @@ export function VehicleReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('inputReports.vehicleReport.title')}
+                            {t('vehicleReport.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('inputReports.vehicleReport.description')}
+                            {t('vehicleReport.description')}
                         </p>
                     </div>
                     <VehicleReportPrimaryButtons />

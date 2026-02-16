@@ -88,16 +88,16 @@ export function VehicleReportActionDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing
-                            ? t('inputReports.vehicleReport.form.editTitle')
-                            : t('inputReports.vehicleReport.form.addTitle')}
+                            ? t('vehicleReport.form.editTitle')
+                            : t('vehicleReport.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
                         {isEditing
                             ? t(
-                                  'inputReports.vehicleReport.form.editDescription'
+                                  'vehicleReport.form.editDescription'
                               )
                             : t(
-                                  'inputReports.vehicleReport.form.addDescription'
+                                  'vehicleReport.form.addDescription'
                               )}
                     </DialogDescription>
                 </DialogHeader>
@@ -115,13 +115,13 @@ export function VehicleReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'inputReports.vehicleReport.form.truckNo'
+                                                    'vehicleReport.form.truckNo'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'inputReports.vehicleReport.form.placeholders.truckNo'
+                                                        'vehicleReport.form.placeholders.truckNo'
                                                     )}
                                                     {...field}
                                                 />

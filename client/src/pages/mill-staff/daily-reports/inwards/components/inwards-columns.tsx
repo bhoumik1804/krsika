@@ -10,7 +10,7 @@ import { type InwardEntry } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
 export const useInwardsColumns = (): ColumnDef<InwardEntry>[] => {
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
 
     return [
         {
@@ -179,3 +179,4 @@ export const useInwardsColumns = (): ColumnDef<InwardEntry>[] => {
         },
     ]
 }
+

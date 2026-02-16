@@ -46,13 +46,13 @@ export function StaffReportDeleteDialog({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t('inputReports.delete.title')}
+                        {t('delete.title')}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('inputReports.delete.descriptionItem')}
+                        {t('delete.descriptionItem')}
                         <strong>{currentRow.fullName}</strong>?
                         <br />
-                        {t('inputReports.delete.undone')}
+                        {t('delete.undone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

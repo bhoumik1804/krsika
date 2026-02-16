@@ -129,7 +129,7 @@ export function TransporterReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder={t(
-                    'inputReports.transporterReport.form.placeholders.name'
+                    'transporterReport.form.placeholders.name'
                 )}
                 searchKey='transporterName'
             />

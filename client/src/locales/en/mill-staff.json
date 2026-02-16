@@ -1045,261 +1045,260 @@
             "description": "Are you sure you want to delete the selected other sales records?<br />This action cannot be undone."
         }
     },
-    "inputReports": {
-        "partyReport": {
-            "title": "Party Report",
-            "description": "Manage party transactions and records",
-            "table": {
-                "name": "Party Name",
-                "gstn": "GSTN",
-                "phone": "Phone No.",
-                "email": "Email",
-                "address": "Address",
-                "actions": "Actions"
-            },
-            "form": {
-                "addTitle": "Add Party",
-                "editTitle": "Edit Party",
-                "addDescription": "Enter the party details below",
-                "editDescription": "Update the party details below",
-                "name": "Party Name",
-                "gstn": "GSTN",
-                "phone": "Phone No.",
-                "email": "Email",
-                "address": "Address",
-                "placeholders": {
-                    "name": "Enter name",
-                    "gstn": "Enter GSTN",
-                    "phone": "Enter phone number",
-                    "email": "Enter email",
-                    "address": "Enter address"
-                }
-            }
+    "partyReport": {
+        "title": "Party Report",
+        "description": "Manage party transactions and records",
+        "table": {
+            "name": "Party Name",
+            "gstn": "GSTN",
+            "phone": "Phone No.",
+            "email": "Email",
+            "address": "Address",
+            "actions": "Actions"
         },
-        "transporterReport": {
-            "title": "Transporter Report",
-            "description": "Manage transporter transactions and records",
-            "table": {
-                "name": "Transporter Name",
-                "gstn": "GSTN",
-                "phone": "Phone No.",
-                "email": "Email",
-                "address": "Address",
-                "actions": "Actions"
-            },
-            "form": {
-                "addTitle": "Add Transporter",
-                "editTitle": "Edit Transporter",
-                "addDescription": "Enter the transporter details below",
-                "editDescription": "Update the transporter details below",
-                "name": "Transporter Name",
-                "gstn": "GSTN",
-                "phone": "Phone No.",
-                "email": "Email",
-                "address": "Address",
-                "placeholders": {
-                    "name": "Enter name",
-                    "gstn": "Enter GSTN",
-                    "phone": "Enter phone number",
-                    "email": "Enter email",
-                    "address": "Enter address"
-                }
-            }
-        },
-        "brokerReport": {
-            "title": "Broker Report",
-            "description": "Manage broker transactions and records",
-            "table": {
-                "name": "Broker Name",
-                "gstn": "GSTIN",
-                "phone": "Phone No.",
-                "email": "Email",
-                "address": "Address",
-                "actions": "Actions",
-                "searchPlaceholder": "Search broker name...",
-                "noResults": "No brokers found."
-            },
-            "form": {
-                "addTitle": "Add Broker",
-                "editTitle": "Edit Broker",
-                "addDescription": "Enter the broker details below",
-                "editDescription": "Update the broker details below",
-                "name": "Broker Name",
-                "gstn": "GSTIN",
-                "phone": "Phone No.",
-                "email": "Email",
-                "address": "Address",
-                "placeholders": {
-                    "name": "Enter name",
-                    "gstn": "Enter GSTIN",
-                    "phone": "Enter phone number",
-                    "email": "Enter email",
-                    "address": "Enter address"
-                }
-            }
-        },
-        "committeeReport": {
-            "title": "Committee Report",
-            "description": "Manage committee transactions and records",
-            "addRecord": "Add Committee Record",
-            "table": {
-                "type": "Committee Type",
-                "name": "Committee Name",
-                "actions": "Actions"
-            },
-            "form": {
-                "addTitle": "Add Committee",
-                "editTitle": "Edit Committee",
-                "addDescription": "Add a new committee record.",
-                "editDescription": "Edit the existing committee record.",
-                "tabs": {
-                    "manual": "Manual Entry",
-                    "upload": "Upload File"
-                },
-                "type": "Committee Type",
-                "name": "Committee Name",
-                "placeholders": {
-                    "select": "Select committee type",
-                    "name": "Enter committee name"
-                },
-                "uploadDescription": "Upload a CSV or Excel file containing committee records.",
-                "uploadCount": " ({{count}} records) "
-            }
-        },
-        "vehicleReport": {
-            "title": "Vehicle Report",
-            "description": "Manage vehicle transactions and records",
-            "table": {
-                "truckNo": "Truck No.",
-                "actions": "Actions"
-            },
-            "form": {
-                "addTitle": "Add Vehicle",
-                "editTitle": "Edit Vehicle",
-                "addDescription": "Enter the vehicle details below",
-                "editDescription": "Update the vehicle details below",
-                "truckNo": "Truck No.",
-                "placeholders": {
-                    "truckNo": "Enter truck number"
-                }
-            }
-        },
-        "staffReport": {
-            "title": "Staff Report",
-            "description": "Manage staff transactions and records",
-            "addRecord": "Add Staff Record",
-            "table": {
-                "fullName": "Full Name",
-                "post": "Post",
-                "salary": "Salary",
-                "phoneNumber": "Phone Number",
-                "email": "Email",
-                "address": "Address",
-                "actions": "Actions",
-                "searchPlaceholder": "Search staff..."
-            },
-            "form": {
-                "addTitle": "Add Staff",
-                "editTitle": "Edit Staff",
-                "addDescription": "Enter the staff details below",
-                "editDescription": "Update the staff details below",
-                "fullName": "Full Name",
-                "post": "Post",
-                "name": "Name",
-                "designation": "Designation",
-                "salary": "Salary",
-                "phone": "Phone No.",
-                "email": "Email",
-                "address": "Address",
-                "placeholders": {
-                    "name": "Enter name",
-                    "post": "Enter post/designation",
-                    "designation": "Enter designation",
-                    "salary": "Enter salary",
-                    "phone": "Enter phone number",
-                    "email": "Enter email",
-                    "address": "Enter address"
-                }
-            }
-        },
-        "doReport": {
-            "title": "DO Report",
-            "description": "Manage DO report transactions and records",
-            "addRecord": "Add DO Record",
-            "table": {
-                "uniqueId": "Unique ID",
-                "date": "Date",
-                "committee": "Committee",
-                "doNumber": "DO Number",
-                "paddyMota": "Paddy (Mota)",
-                "paddyPatla": "Paddy (Patla)",
-                "paddySarna": "Paddy (Sarna)",
-                "actions": "Actions",
-                "searchPlaceholder": "Search samiti..."
-            },
-            "form": {
-                "addTitle": "Add DO Entry",
-                "editTitle": "Edit DO Entry",
-                "addDescription": "Enter the DO entry details below",
-                "editDescription": "Update the DO entry details below",
-                "uniqueId": "Unique ID",
-                "date": "Date",
-                "committee": "Committee",
-                "doNumber": "DO Number",
-                "paddyMota": "Paddy (Mota)",
-                "paddyPatla": "Paddy (Patla)",
-                "paddySarna": "Paddy (Sarna)",
-                "total": "Total",
-                "tabs": {
-                    "manual": "Manual Entry",
-                    "upload": "Upload File"
-                },
-                "buttons": {
-                    "uploading": "Uploading...",
-                    "uploadWithCount_one": "Upload {{count}} Report",
-                    "uploadWithCount_other": "Upload {{count}} Reports"
-                },
-                "upload": {
-                    "label": "Upload Excel File",
-                    "supportedFormats": "Supported formats: Excel (.xlsx, .xls) or CSV",
-                    "fileSelected": "File selected: {{fileName}}",
-                    "parseStatistics": "Parse Statistics",
-                    "totalRows": "Total Rows",
-                    "successfullyParsed": "Successfully Parsed",
-                    "failedOrSkipped": "Failed/Skipped",
-                    "errorDetails": "Error Details:",
-                    "previewTitle": "Preview - {{count}} records"
-                },
-                "placeholders": {
-                    "date": "Pick a date",
-                    "committee": "Select committee",
-                    "noCommittee": "No committees found",
-                    "doNumber": "Enter DO number",
-                    "paddy": "0.00"
-                }
-            }
-        },
-        "labourGroupReport": {
-            "title": "Labour Group Report",
-            "description": "Manage labour group transactions and records",
-            "addRecord": "Add Labour Group",
-            "table": {
-                "name": "Labour Team Name",
-                "actions": "Actions",
-                "searchPlaceholder": "Search labour team..."
-            },
-            "form": {
-                "addTitle": "Add Labour Group",
-                "editTitle": "Edit Labour Group",
-                "addDescription": "Enter the labour group details below",
-                "editDescription": "Update the labour group details below",
-                "name": "Labour Team Name",
-                "placeholders": {
-                    "name": "Enter labour team name"
-                }
+        "form": {
+            "addTitle": "Add Party",
+            "editTitle": "Edit Party",
+            "addDescription": "Enter the party details below",
+            "editDescription": "Update the party details below",
+            "name": "Party Name",
+            "gstn": "GSTN",
+            "phone": "Phone No.",
+            "email": "Email",
+            "address": "Address",
+            "placeholders": {
+                "name": "Enter name",
+                "gstn": "Enter GSTN",
+                "phone": "Enter phone number",
+                "email": "Enter email",
+                "address": "Enter address"
             }
         }
     },
+    "transporterReport": {
+        "title": "Transporter Report",
+        "description": "Manage transporter transactions and records",
+        "table": {
+            "name": "Transporter Name",
+            "gstn": "GSTN",
+            "phone": "Phone No.",
+            "email": "Email",
+            "address": "Address",
+            "actions": "Actions"
+        },
+        "form": {
+            "addTitle": "Add Transporter",
+            "editTitle": "Edit Transporter",
+            "addDescription": "Enter the transporter details below",
+            "editDescription": "Update the transporter details below",
+            "name": "Transporter Name",
+            "gstn": "GSTN",
+            "phone": "Phone No.",
+            "email": "Email",
+            "address": "Address",
+            "placeholders": {
+                "name": "Enter name",
+                "gstn": "Enter GSTN",
+                "phone": "Enter phone number",
+                "email": "Enter email",
+                "address": "Enter address"
+            }
+        }
+    },
+    "brokerReport": {
+        "title": "Broker Report",
+        "description": "Manage broker transactions and records",
+        "table": {
+            "name": "Broker Name",
+            "gstn": "GSTIN",
+            "phone": "Phone No.",
+            "email": "Email",
+            "address": "Address",
+            "actions": "Actions",
+            "searchPlaceholder": "Search broker name...",
+            "noResults": "No brokers found."
+        },
+        "form": {
+            "addTitle": "Add Broker",
+            "editTitle": "Edit Broker",
+            "addDescription": "Enter the broker details below",
+            "editDescription": "Update the broker details below",
+            "name": "Broker Name",
+            "gstn": "GSTIN",
+            "phone": "Phone No.",
+            "email": "Email",
+            "address": "Address",
+            "placeholders": {
+                "name": "Enter name",
+                "gstn": "Enter GSTIN",
+                "phone": "Enter phone number",
+                "email": "Enter email",
+                "address": "Enter address"
+            }
+        }
+    },
+    "committeeReport": {
+        "title": "Committee Report",
+        "description": "Manage committee transactions and records",
+        "addRecord": "Add Committee Record",
+        "table": {
+            "type": "Committee Type",
+            "name": "Committee Name",
+            "actions": "Actions"
+        },
+        "form": {
+            "addTitle": "Add Committee",
+            "editTitle": "Edit Committee",
+            "addDescription": "Add a new committee record.",
+            "editDescription": "Edit the existing committee record.",
+            "tabs": {
+                "manual": "Manual Entry",
+                "upload": "Upload File"
+            },
+            "type": "Committee Type",
+            "name": "Committee Name",
+            "placeholders": {
+                "select": "Select committee type",
+                "name": "Enter committee name"
+            },
+            "uploadDescription": "Upload a CSV or Excel file containing committee records.",
+            "uploadCount": " ({{count}} records) "
+        }
+    },
+    "vehicleReport": {
+        "title": "Vehicle Report",
+        "description": "Manage vehicle transactions and records",
+        "table": {
+            "truckNo": "Truck No.",
+            "actions": "Actions"
+        },
+        "form": {
+            "addTitle": "Add Vehicle",
+            "editTitle": "Edit Vehicle",
+            "addDescription": "Enter the vehicle details below",
+            "editDescription": "Update the vehicle details below",
+            "truckNo": "Truck No.",
+            "placeholders": {
+                "truckNo": "Enter truck number"
+            }
+        }
+    },
+    "staffReport": {
+        "title": "Staff Report",
+        "description": "Manage staff transactions and records",
+        "addRecord": "Add Staff Record",
+        "table": {
+            "fullName": "Full Name",
+            "post": "Post",
+            "salary": "Salary",
+            "phoneNumber": "Phone Number",
+            "email": "Email",
+            "address": "Address",
+            "actions": "Actions",
+            "searchPlaceholder": "Search staff..."
+        },
+        "form": {
+            "addTitle": "Add Staff",
+            "editTitle": "Edit Staff",
+            "addDescription": "Enter the staff details below",
+            "editDescription": "Update the staff details below",
+            "fullName": "Full Name",
+            "post": "Post",
+            "name": "Name",
+            "designation": "Designation",
+            "salary": "Salary",
+            "phone": "Phone No.",
+            "email": "Email",
+            "address": "Address",
+            "placeholders": {
+                "name": "Enter name",
+                "post": "Enter post/designation",
+                "designation": "Enter designation",
+                "salary": "Enter salary",
+                "phone": "Enter phone number",
+                "email": "Enter email",
+                "address": "Enter address"
+            }
+        }
+    },
+    "doReport": {
+        "title": "DO Report",
+        "description": "Manage DO report transactions and records",
+        "addRecord": "Add DO Record",
+        "table": {
+            "uniqueId": "Unique ID",
+            "date": "Date",
+            "committee": "Committee",
+            "doNumber": "DO Number",
+            "paddyMota": "Paddy (Mota)",
+            "paddyPatla": "Paddy (Patla)",
+            "paddySarna": "Paddy (Sarna)",
+            "actions": "Actions",
+            "searchPlaceholder": "Search samiti..."
+        },
+        "form": {
+            "addTitle": "Add DO Entry",
+            "editTitle": "Edit DO Entry",
+            "addDescription": "Enter the DO entry details below",
+            "editDescription": "Update the DO entry details below",
+            "uniqueId": "Unique ID",
+            "date": "Date",
+            "committee": "Committee",
+            "doNumber": "DO Number",
+            "paddyMota": "Paddy (Mota)",
+            "paddyPatla": "Paddy (Patla)",
+            "paddySarna": "Paddy (Sarna)",
+            "total": "Total",
+            "tabs": {
+                "manual": "Manual Entry",
+                "upload": "Upload File"
+            },
+            "buttons": {
+                "uploading": "Uploading...",
+                "uploadWithCount_one": "Upload {{count}} Report",
+                "uploadWithCount_other": "Upload {{count}} Reports"
+            },
+            "upload": {
+                "label": "Upload Excel File",
+                "supportedFormats": "Supported formats: Excel (.xlsx, .xls) or CSV",
+                "fileSelected": "File selected: {{fileName}}",
+                "parseStatistics": "Parse Statistics",
+                "totalRows": "Total Rows",
+                "successfullyParsed": "Successfully Parsed",
+                "failedOrSkipped": "Failed/Skipped",
+                "errorDetails": "Error Details:",
+                "previewTitle": "Preview - {{count}} records"
+            },
+            "placeholders": {
+                "date": "Pick a date",
+                "committee": "Select committee",
+                "noCommittee": "No committees found",
+                "doNumber": "Enter DO number",
+                "paddy": "0.00"
+            }
+        }
+    },
+    "labourGroupReport": {
+        "title": "Labour Group Report",
+        "description": "Manage labour group transactions and records",
+        "addRecord": "Add Labour Group",
+        "table": {
+            "name": "Labour Team Name",
+            "actions": "Actions",
+            "searchPlaceholder": "Search labour team..."
+        },
+        "form": {
+            "addTitle": "Add Labour Group",
+            "editTitle": "Edit Labour Group",
+            "addDescription": "Enter the labour group details below",
+            "editDescription": "Update the labour group details below",
+            "name": "Labour Team Name",
+            "placeholders": {
+                "name": "Enter labour team name"
+            }
+        }
+    },
+    "inputReports": "Input Reports",
     "financialTransactionReports": "Financial Transaction Reports",
     "financialPayment": {
         "title": "Financial Payment Report",

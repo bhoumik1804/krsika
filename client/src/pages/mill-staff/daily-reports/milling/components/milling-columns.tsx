@@ -9,7 +9,7 @@ import { type MillingEntry } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
 export const useMillingColumns = (): ColumnDef<MillingEntry>[] => {
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
 
     return [
         {
@@ -153,3 +153,4 @@ export const useMillingColumns = (): ColumnDef<MillingEntry>[] => {
         },
     ]
 }
+

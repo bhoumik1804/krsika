@@ -33,12 +33,12 @@ export function DataTableBulkActions<TData>({
                         >
                             <Trash2 />
                             <span className='sr-only'>
-                                {t('inputReports.delete.selected')}
+                                {t('delete.selected')}
                             </span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>{t('inputReports.delete.selectedRecords')}</p>
+                        <p>{t('delete.selectedRecords')}</p>
                     </TooltipContent>
                 </Tooltip>
             </BulkActionsToolbar>

@@ -68,10 +68,10 @@ export function LabourGroupReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('inputReports.labourGroupReport.title')}
+                            {t('labourGroupReport.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('inputReports.labourGroupReport.description')}
+                            {t('labourGroupReport.description')}
                         </p>
                     </div>
                     <LabourGroupReportPrimaryButtons />

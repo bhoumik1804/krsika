@@ -44,7 +44,7 @@ export const getBrokerReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.brokerReport.table.name')}
+                title={t('brokerReport.table.name')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('brokerName')}</div>,
@@ -61,7 +61,7 @@ export const getBrokerReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.brokerReport.table.gstn')}
+                title={t('brokerReport.table.gstn')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('gstn')}</div>,
@@ -71,7 +71,7 @@ export const getBrokerReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.brokerReport.table.phone')}
+                title={t('brokerReport.table.phone')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('phone')}</div>,
@@ -81,7 +81,7 @@ export const getBrokerReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.brokerReport.table.email')}
+                title={t('brokerReport.table.email')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('email')}</div>,
@@ -91,7 +91,7 @@ export const getBrokerReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.brokerReport.table.address')}
+                title={t('brokerReport.table.address')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('address')}</div>,

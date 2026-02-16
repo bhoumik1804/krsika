@@ -15,7 +15,7 @@ export function TransporterReportPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('inputReports.transporterReport.form.addTitle')}
+            {t('transporterReport.form.addTitle')}
         </Button>
     )
 }

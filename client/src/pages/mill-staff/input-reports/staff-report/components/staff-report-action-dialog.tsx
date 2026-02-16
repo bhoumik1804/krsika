@@ -93,13 +93,13 @@ export function StaffReportActionDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing
-                            ? t('inputReports.staffReport.form.editTitle')
-                            : t('inputReports.staffReport.form.addTitle')}
+                            ? t('staffReport.form.editTitle')
+                            : t('staffReport.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
                         {isEditing
-                            ? t('inputReports.staffReport.form.editDescription')
-                            : t('inputReports.staffReport.form.addDescription')}
+                            ? t('staffReport.form.editDescription')
+                            : t('staffReport.form.addDescription')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -115,13 +115,13 @@ export function StaffReportActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'inputReports.staffReport.form.fullName'
+                                                'staffReport.form.fullName'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder={t(
-                                                    'inputReports.staffReport.form.placeholders.name'
+                                                    'staffReport.form.placeholders.name'
                                                 )}
                                                 {...field}
                                             />
@@ -137,13 +137,13 @@ export function StaffReportActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'inputReports.staffReport.form.post'
+                                                'staffReport.form.post'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder={t(
-                                                    'inputReports.staffReport.form.placeholders.post'
+                                                    'staffReport.form.placeholders.post'
                                                 )}
                                                 {...field}
                                             />
@@ -159,7 +159,7 @@ export function StaffReportActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'inputReports.staffReport.form.salary'
+                                                'staffReport.form.salary'
                                             )}
                                         </FormLabel>
                                         <FormControl>
@@ -167,7 +167,7 @@ export function StaffReportActionDialog({
                                                 type='number'
                                                 step='0.01'
                                                 placeholder={t(
-                                                    'inputReports.staffReport.form.placeholders.salary'
+                                                    'staffReport.form.placeholders.salary'
                                                 )}
                                                 {...field}
                                                 value={field.value ?? ''}
@@ -196,14 +196,14 @@ export function StaffReportActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'inputReports.staffReport.form.phone'
+                                                'staffReport.form.phone'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='tel'
                                                 placeholder={t(
-                                                    'inputReports.staffReport.form.placeholders.phone'
+                                                    'staffReport.form.placeholders.phone'
                                                 )}
                                                 {...field}
                                             />
@@ -219,14 +219,14 @@ export function StaffReportActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'inputReports.staffReport.form.email'
+                                                'staffReport.form.email'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='email'
                                                 placeholder={t(
-                                                    'inputReports.staffReport.form.placeholders.email'
+                                                    'staffReport.form.placeholders.email'
                                                 )}
                                                 {...field}
                                             />
@@ -242,13 +242,13 @@ export function StaffReportActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'inputReports.staffReport.form.address'
+                                                'staffReport.form.address'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder={t(
-                                                    'inputReports.staffReport.form.placeholders.address'
+                                                    'staffReport.form.placeholders.address'
                                                 )}
                                                 {...field}
                                             />

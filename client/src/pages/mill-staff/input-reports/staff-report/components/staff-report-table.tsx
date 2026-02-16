@@ -128,7 +128,7 @@ export function StaffReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder={t(
-                    'inputReports.staffReport.table.searchPlaceholder'
+                    'staffReport.table.searchPlaceholder'
                 )}
                 searchKey='fullName'
             />

@@ -44,7 +44,7 @@ export const getDoReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.doReport.table.date')}
+                title={t('doReport.table.date')}
             />
         ),
         cell: ({ row }) => (
@@ -58,7 +58,7 @@ export const getDoReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.doReport.table.committee')}
+                title={t('doReport.table.committee')}
             />
         ),
         cell: ({ row }) => (
@@ -73,7 +73,7 @@ export const getDoReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.doReport.table.doNumber')}
+                title={t('doReport.table.doNumber')}
             />
         ),
         cell: ({ row }) => <div>{row.getValue('doNo')}</div>,
@@ -83,7 +83,7 @@ export const getDoReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.doReport.table.paddyMota')}
+                title={t('doReport.table.paddyMota')}
             />
         ),
         cell: ({ row }) => {
@@ -96,7 +96,7 @@ export const getDoReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.doReport.table.paddyPatla')}
+                title={t('doReport.table.paddyPatla')}
             />
         ),
         cell: ({ row }) => {
@@ -109,7 +109,7 @@ export const getDoReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.doReport.table.paddySarna')}
+                title={t('doReport.table.paddySarna')}
             />
         ),
         cell: ({ row }) => {

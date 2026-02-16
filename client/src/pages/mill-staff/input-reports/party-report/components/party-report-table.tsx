@@ -124,7 +124,7 @@ export function PartyReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder={t(
-                    'inputReports.partyReport.form.placeholders.name'
+                    'partyReport.form.placeholders.name'
                 )}
                 searchKey='partyName'
             />

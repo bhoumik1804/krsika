@@ -44,14 +44,14 @@ export function LabourGroupReportDeleteDialog({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t('inputReports.delete.title')}
+                        {t('delete.title')}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('inputReports.delete.description', {
+                        {t('delete.description', {
                             name: currentRow?.labourTeamName,
                         })}
                         <br />
-                        {t('inputReports.delete.undone')}
+                        {t('delete.undone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

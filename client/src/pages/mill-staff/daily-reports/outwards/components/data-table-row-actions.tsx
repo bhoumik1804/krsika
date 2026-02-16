@@ -19,7 +19,7 @@ type DataTableRowActionsProps = {
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
     const { setOpen, setCurrentRow } = useOutwards()
     return (
         <DropdownMenu modal={false}>
@@ -61,3 +61,4 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         </DropdownMenu>
     )
 }
+

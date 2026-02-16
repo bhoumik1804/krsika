@@ -43,7 +43,7 @@ export const getVehicleReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.vehicleReport.table.truckNo')}
+                title={t('vehicleReport.table.truckNo')}
             />
         ),
         cell: ({ row }) => (

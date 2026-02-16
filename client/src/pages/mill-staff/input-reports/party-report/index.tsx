@@ -76,10 +76,10 @@ export function PartyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('inputReports.partyReport.title')}
+                            {t('partyReport.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('inputReports.partyReport.description')}
+                            {t('partyReport.description')}
                         </p>
                     </div>
                     <PartyReportPrimaryButtons />

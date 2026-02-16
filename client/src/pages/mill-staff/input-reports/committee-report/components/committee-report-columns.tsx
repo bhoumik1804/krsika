@@ -44,7 +44,7 @@ export const getCommitteeReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.committeeReport.table.type')}
+                title={t('committeeReport.table.type')}
             />
         ),
         cell: ({ row }) => (
@@ -65,7 +65,7 @@ export const getCommitteeReportColumns = (
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title={t('inputReports.committeeReport.table.name')}
+                title={t('committeeReport.table.name')}
             />
         ),
         cell: ({ row }) => (

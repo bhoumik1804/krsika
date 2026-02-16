@@ -15,7 +15,7 @@ export function DoReportPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('inputReports.doReport.addRecord')}
+            {t('doReport.addRecord')}
         </Button>
     )
 }

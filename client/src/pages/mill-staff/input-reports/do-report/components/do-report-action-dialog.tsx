@@ -232,13 +232,13 @@ export function DoReportActionDialog({
 
     const getFieldLabel = (field: (typeof fieldOrder)[number]) => {
         const translatedFieldLabels: Record<string, string> = {
-            samitiSangrahan: t('inputReports.doReport.table.committee'),
-            doNo: t('inputReports.doReport.table.doNumber'),
-            date: t('inputReports.doReport.table.date'),
-            dhanMota: t('inputReports.doReport.table.paddyMota'),
-            dhanPatla: t('inputReports.doReport.table.paddyPatla'),
-            dhanSarna: t('inputReports.doReport.table.paddySarna'),
-            total: t('inputReports.doReport.form.total'),
+            samitiSangrahan: t('doReport.table.committee'),
+            doNo: t('doReport.table.doNumber'),
+            date: t('doReport.table.date'),
+            dhanMota: t('doReport.table.paddyMota'),
+            dhanPatla: t('doReport.table.paddyPatla'),
+            dhanSarna: t('doReport.table.paddySarna'),
+            total: t('doReport.form.total'),
         }
 
         return translatedFieldLabels[field] ?? fieldLabels[field]
@@ -250,13 +250,13 @@ export function DoReportActionDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing
-                            ? t('inputReports.doReport.form.editTitle')
-                            : t('inputReports.doReport.form.addTitle')}
+                            ? t('doReport.form.editTitle')
+                            : t('doReport.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
                         {isEditing
-                            ? t('inputReports.doReport.form.editDescription')
-                            : t('inputReports.doReport.form.addDescription')}
+                            ? t('doReport.form.editDescription')
+                            : t('doReport.form.addDescription')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -271,13 +271,13 @@ export function DoReportActionDialog({
                         >
                             <TabsList className='grid w-full grid-cols-2'>
                                 <TabsTrigger value='manual'>
-                                    {t('inputReports.doReport.form.tabs.manual')}
+                                    {t('doReport.form.tabs.manual')}
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value='upload'
                                     disabled={isEditing}
                                 >
-                                    {t('inputReports.doReport.form.tabs.upload')}
+                                    {t('doReport.form.tabs.upload')}
                                 </TabsTrigger>
                             </TabsList>
                             <TabsContent
@@ -292,7 +292,7 @@ export function DoReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'inputReports.doReport.form.date'
+                                                        'doReport.form.date'
                                                     )}
                                                 </FormLabel>
                                                 <Popover>
@@ -311,7 +311,7 @@ export function DoReportActionDialog({
                                                                           'MMM dd, yyyy'
                                                                       )
                                                                     : t(
-                                                                          'inputReports.doReport.form.placeholders.date'
+                                                                          'doReport.form.placeholders.date'
                                                                       )}
                                                             </Button>
                                                         </FormControl>
@@ -355,7 +355,7 @@ export function DoReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'inputReports.doReport.form.committee'
+                                                        'doReport.form.committee'
                                                     )}
                                                 </FormLabel>
                                                 <FormControl>
@@ -368,10 +368,10 @@ export function DoReportActionDialog({
                                                             committee
                                                         }
                                                         placeholder={t(
-                                                            'inputReports.doReport.form.placeholders.committee'
+                                                            'doReport.form.placeholders.committee'
                                                         )}
                                                         emptyText={t(
-                                                            'inputReports.doReport.form.placeholders.noCommittee'
+                                                            'doReport.form.placeholders.noCommittee'
                                                         )}
                                                     />
                                                 </FormControl>
@@ -386,13 +386,13 @@ export function DoReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'inputReports.doReport.form.doNumber'
+                                                        'doReport.form.doNumber'
                                                     )}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         placeholder={t(
-                                                            'inputReports.doReport.form.placeholders.doNumber'
+                                                            'doReport.form.placeholders.doNumber'
                                                         )}
                                                         {...field}
                                                     />
@@ -408,7 +408,7 @@ export function DoReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'inputReports.doReport.form.paddyMota'
+                                                        'doReport.form.paddyMota'
                                                     )}
                                                 </FormLabel>
                                                 <FormControl>
@@ -447,7 +447,7 @@ export function DoReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'inputReports.doReport.form.paddyPatla'
+                                                        'doReport.form.paddyPatla'
                                                     )}
                                                 </FormLabel>
                                                 <FormControl>
@@ -485,7 +485,7 @@ export function DoReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'inputReports.doReport.form.paddySarna'
+                                                        'doReport.form.paddySarna'
                                                     )}
                                                 </FormLabel>
                                                 <FormControl>
@@ -523,7 +523,7 @@ export function DoReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'inputReports.doReport.form.total'
+                                                        'doReport.form.total'
                                                     )}
                                                 </FormLabel>
                                                 <FormControl>
@@ -548,7 +548,7 @@ export function DoReportActionDialog({
                                 <FormItem>
                                     <FormLabel>
                                         {t(
-                                            'inputReports.doReport.form.upload.label'
+                                            'doReport.form.upload.label'
                                         )}
                                     </FormLabel>
                                     <FormControl>
@@ -561,13 +561,13 @@ export function DoReportActionDialog({
                                     </FormControl>
                                     <p className='mt-2 text-sm text-gray-500'>
                                         {t(
-                                            'inputReports.doReport.form.upload.supportedFormats'
+                                            'doReport.form.upload.supportedFormats'
                                         )}
                                     </p>
                                     {uploadedFile && (
                                         <p className='mt-2 text-sm text-green-600'>
                                             {t(
-                                                'inputReports.doReport.form.upload.fileSelected',
+                                                'doReport.form.upload.fileSelected',
                                                 {
                                                     fileName:
                                                         uploadedFile.name,
@@ -582,14 +582,14 @@ export function DoReportActionDialog({
                                         <div className='mb-4'>
                                             <h3 className='mb-3 text-sm font-semibold'>
                                                 {t(
-                                                    'inputReports.doReport.form.upload.parseStatistics'
+                                                    'doReport.form.upload.parseStatistics'
                                                 )}
                                             </h3>
                                             <div className='grid grid-cols-3 gap-3'>
                                                 <div className='rounded-lg border bg-primary/10 p-3'>
                                                     <p className='text-xs text-muted-foreground'>
                                                         {t(
-                                                            'inputReports.doReport.form.upload.totalRows'
+                                                            'doReport.form.upload.totalRows'
                                                         )}
                                                     </p>
                                                     <p className='text-lg font-bold text-primary'>
@@ -600,7 +600,7 @@ export function DoReportActionDialog({
                                                 <div className='rounded-lg border bg-chart-2/10 p-3'>
                                                     <p className='text-xs text-muted-foreground'>
                                                         {t(
-                                                            'inputReports.doReport.form.upload.successfullyParsed'
+                                                            'doReport.form.upload.successfullyParsed'
                                                         )}
                                                     </p>
                                                     <p className='text-lg font-bold text-chart-2'>
@@ -611,7 +611,7 @@ export function DoReportActionDialog({
                                                 <div className='rounded-lg border bg-destructive/10 p-3'>
                                                     <p className='text-xs text-muted-foreground'>
                                                         {t(
-                                                            'inputReports.doReport.form.upload.failedOrSkipped'
+                                                            'doReport.form.upload.failedOrSkipped'
                                                         )}
                                                     </p>
                                                     <p className='text-lg font-bold text-destructive'>
@@ -627,7 +627,7 @@ export function DoReportActionDialog({
                                                     <div className='mt-3'>
                                                         <p className='mb-2 text-xs font-semibold text-gray-600'>
                                                             {t(
-                                                                'inputReports.doReport.form.upload.errorDetails'
+                                                                'doReport.form.upload.errorDetails'
                                                             )}
                                                         </p>
                                                         <div className='max-h-24 overflow-y-auto rounded border border-red-200 bg-red-50 p-2'>
@@ -662,7 +662,7 @@ export function DoReportActionDialog({
 
                                         <h3 className='mb-3 text-sm font-semibold'>
                                             {t(
-                                                'inputReports.doReport.form.upload.previewTitle',
+                                                'doReport.form.upload.previewTitle',
                                                 { count: previewData.length }
                                             )}
                                         </h3>
@@ -742,7 +742,7 @@ export function DoReportActionDialog({
                                     ? activeTab === 'upload' &&
                                       previewData.length > 0
                                         ? t(
-                                              'inputReports.doReport.form.buttons.uploading'
+                                              'doReport.form.buttons.uploading'
                                           )
                                         : isEditing
                                           ? t('common.updating')
@@ -750,7 +750,7 @@ export function DoReportActionDialog({
                                     : activeTab === 'upload' &&
                                         previewData.length > 0
                                       ? t(
-                                            'inputReports.doReport.form.buttons.uploadWithCount',
+                                            'doReport.form.buttons.uploadWithCount',
                                             { count: previewData.length }
                                         )
                                       : isEditing

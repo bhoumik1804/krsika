@@ -15,7 +15,7 @@ export function StaffReportPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('inputReports.staffReport.addRecord')}
+            {t('staffReport.addRecord')}
         </Button>
     )
 }

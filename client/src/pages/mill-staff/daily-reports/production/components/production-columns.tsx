@@ -9,7 +9,7 @@ import { type ProductionEntry } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
 export const useProductionColumns = (): ColumnDef<ProductionEntry>[] => {
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
 
     return [
         {
@@ -157,3 +157,4 @@ export const useProductionColumns = (): ColumnDef<ProductionEntry>[] => {
         },
     ]
 }
+

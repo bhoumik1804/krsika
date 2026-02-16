@@ -50,7 +50,7 @@ export function InwardsActionDialog({
     onOpenChange,
     currentRow,
 }: InwardsActionDialogProps) {
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -408,3 +408,4 @@ export function InwardsActionDialog({
         </Dialog>
     )
 }
+

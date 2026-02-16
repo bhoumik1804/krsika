@@ -15,7 +15,7 @@ export function BrokerReportPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('inputReports.brokerReport.form.addTitle')}
+            {t('brokerReport.form.addTitle')}
         </Button>
     )
 }

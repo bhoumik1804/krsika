@@ -94,16 +94,16 @@ export function TransporterReportActionDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing
-                            ? t('inputReports.transporterReport.form.editTitle')
-                            : t('inputReports.transporterReport.form.addTitle')}
+                            ? t('transporterReport.form.editTitle')
+                            : t('transporterReport.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
                         {isEditing
                             ? t(
-                                  'inputReports.transporterReport.form.editDescription'
+                                  'transporterReport.form.editDescription'
                               )
                             : t(
-                                  'inputReports.transporterReport.form.addDescription'
+                                  'transporterReport.form.addDescription'
                               )}
                     </DialogDescription>
                 </DialogHeader>
@@ -122,13 +122,13 @@ export function TransporterReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'inputReports.transporterReport.form.name'
+                                                    'transporterReport.form.name'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'inputReports.transporterReport.form.placeholders.name'
+                                                        'transporterReport.form.placeholders.name'
                                                     )}
                                                     {...field}
                                                 />
@@ -144,13 +144,13 @@ export function TransporterReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'inputReports.transporterReport.form.gstn'
+                                                    'transporterReport.form.gstn'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'inputReports.transporterReport.form.placeholders.gstn'
+                                                        'transporterReport.form.placeholders.gstn'
                                                     )}
                                                     {...field}
                                                 />
@@ -166,13 +166,13 @@ export function TransporterReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'inputReports.transporterReport.form.phone'
+                                                    'transporterReport.form.phone'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'inputReports.transporterReport.form.placeholders.phone'
+                                                        'transporterReport.form.placeholders.phone'
                                                     )}
                                                     {...field}
                                                 />
@@ -188,14 +188,14 @@ export function TransporterReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'inputReports.transporterReport.form.email'
+                                                    'transporterReport.form.email'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='email'
                                                     placeholder={t(
-                                                        'inputReports.transporterReport.form.placeholders.email'
+                                                        'transporterReport.form.placeholders.email'
                                                     )}
                                                     {...field}
                                                 />
@@ -211,13 +211,13 @@ export function TransporterReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'inputReports.transporterReport.form.address'
+                                                    'transporterReport.form.address'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'inputReports.transporterReport.form.placeholders.address'
+                                                        'transporterReport.form.placeholders.address'
                                                     )}
                                                     {...field}
                                                 />

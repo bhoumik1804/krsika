@@ -35,7 +35,7 @@ type DataTableProps = {
 }
 
 export function MillingTable({ data, search, navigate }: DataTableProps) {
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
     const columns = useMillingColumns()
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
@@ -200,3 +200,4 @@ export function MillingTable({ data, search, navigate }: DataTableProps) {
         </div>
     )
 }
+

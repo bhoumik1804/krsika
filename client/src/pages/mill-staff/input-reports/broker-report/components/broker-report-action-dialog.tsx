@@ -105,16 +105,16 @@ export function BrokerReportActionDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing
-                            ? t('inputReports.brokerReport.form.editTitle')
-                            : t('inputReports.brokerReport.form.addTitle')}
+                            ? t('brokerReport.form.editTitle')
+                            : t('brokerReport.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
                         {isEditing
                             ? t(
-                                  'inputReports.brokerReport.form.editDescription'
+                                  'brokerReport.form.editDescription'
                               )
                             : t(
-                                  'inputReports.brokerReport.form.addDescription'
+                                  'brokerReport.form.addDescription'
                               )}
                     </DialogDescription>
                 </DialogHeader>
@@ -132,13 +132,13 @@ export function BrokerReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'inputReports.brokerReport.form.name'
+                                                    'brokerReport.form.name'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'inputReports.brokerReport.form.placeholders.name'
+                                                        'brokerReport.form.placeholders.name'
                                                     )}
                                                     {...field}
                                                 />
@@ -154,13 +154,13 @@ export function BrokerReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'inputReports.brokerReport.form.gstn'
+                                                    'brokerReport.form.gstn'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'inputReports.brokerReport.form.placeholders.gstn'
+                                                        'brokerReport.form.placeholders.gstn'
                                                     )}
                                                     {...field}
                                                 />
@@ -176,13 +176,13 @@ export function BrokerReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'inputReports.brokerReport.form.phone'
+                                                    'brokerReport.form.phone'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'inputReports.brokerReport.form.placeholders.phone'
+                                                        'brokerReport.form.placeholders.phone'
                                                     )}
                                                     {...field}
                                                 />
@@ -198,14 +198,14 @@ export function BrokerReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'inputReports.brokerReport.form.email'
+                                                    'brokerReport.form.email'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='email'
                                                     placeholder={t(
-                                                        'inputReports.brokerReport.form.placeholders.email'
+                                                        'brokerReport.form.placeholders.email'
                                                     )}
                                                     {...field}
                                                 />
@@ -221,13 +221,13 @@ export function BrokerReportActionDialog({
                                         <FormItem className='col-span-2'>
                                             <FormLabel>
                                                 {t(
-                                                    'inputReports.brokerReport.form.address'
+                                                    'brokerReport.form.address'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'inputReports.brokerReport.form.placeholders.address'
+                                                        'brokerReport.form.placeholders.address'
                                                     )}
                                                     {...field}
                                                 />
