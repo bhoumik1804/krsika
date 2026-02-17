@@ -6,7 +6,7 @@ import {
     FileBarChart,
     UserCog,
     BarChart3,
-    HelpCircle,
+    // HelpCircle,
     Settings,
     Palette,
     ArrowLeftRight,
