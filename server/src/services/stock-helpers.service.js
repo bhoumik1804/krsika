@@ -1,5 +1,5 @@
-import * as StockTransactionService from './stock-transaction.service.js'
 import logger from '../utils/logger.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 
 /**
  * Helper to record stock transaction for Inward entries
@@ -7,9 +7,15 @@ import logger from '../utils/logger.js'
  */
 export const recordInwardTransaction = async (millId, entry, userId) => {
     if (!entry.item || !entry.weight) {
-        logger.warn('Skipping inward stock recording - missing item or weight', {
-            millId, entryId: entry._id, item: entry.item, weight: entry.weight,
-        })
+        logger.warn(
+            'Skipping inward stock recording - missing item or weight',
+            {
+                millId,
+                entryId: entry._id,
+                item: entry.item,
+                weight: entry.weight,
+            }
+        )
         return
     }
 
@@ -37,9 +43,15 @@ export const recordInwardTransaction = async (millId, entry, userId) => {
  */
 export const recordOutwardTransaction = async (millId, entry, userId) => {
     if (!entry.item || !entry.weight) {
-        logger.warn('Skipping outward stock recording - missing item or weight', {
-            millId, entryId: entry._id, item: entry.item, weight: entry.weight,
-        })
+        logger.warn(
+            'Skipping outward stock recording - missing item or weight',
+            {
+                millId,
+                entryId: entry._id,
+                item: entry.item,
+                weight: entry.weight,
+            }
+        )
         return
     }
 
@@ -69,9 +81,15 @@ export const recordOutwardTransaction = async (millId, entry, userId) => {
  */
 export const recordProductionTransaction = async (millId, entry, userId) => {
     if (!entry.itemName || !entry.weight) {
-        logger.warn('Skipping production stock recording - missing itemName or weight', {
-            millId, entryId: entry._id, itemName: entry.itemName, weight: entry.weight,
-        })
+        logger.warn(
+            'Skipping production stock recording - missing itemName or weight',
+            {
+                millId,
+                entryId: entry._id,
+                itemName: entry.itemName,
+                weight: entry.weight,
+            }
+        )
         return
     }
 
@@ -100,9 +118,15 @@ export const recordProductionTransaction = async (millId, entry, userId) => {
  */
 export const recordMillingTransaction = async (millId, entry, userId) => {
     if (!entry.paddyType || !entry.paddyQuantity) {
-        logger.warn('Skipping milling stock recording - missing paddyType or paddyQuantity', {
-            millId, entryId: entry._id, paddyType: entry.paddyType, paddyQuantity: entry.paddyQuantity,
-        })
+        logger.warn(
+            'Skipping milling stock recording - missing paddyType or paddyQuantity',
+            {
+                millId,
+                entryId: entry._id,
+                paddyType: entry.paddyType,
+                paddyQuantity: entry.paddyQuantity,
+            }
+        )
         return
     }
 
@@ -123,6 +147,128 @@ export const recordMillingTransaction = async (millId, entry, userId) => {
         },
         userId
     )
+}
+
+/**
+ * Helper to record stock transaction for Milling Paddy entries
+ */
+export const recordMillingPaddyStock = async (millId, entry, userId) => {
+    // 1. DEBIT Paddy (Input)
+    await StockTransactionService.recordTransaction(
+        millId,
+        {
+            date: entry.date,
+            commodity: 'Paddy',
+            variety: entry.paddyType || null,
+            type: 'DEBIT',
+            action: 'Milling',
+            quantity: entry.hopperInQintal || 0,
+            bags: entry.hopperInGunny || 0,
+            refModel: 'MillingPaddy',
+            refId: entry._id,
+            remarks: `Milling Paddy Input - ${entry.paddyType || ''}`,
+        },
+        userId
+    )
+
+    // 2. CREDIT Outputs (Production)
+    const outputs = [
+        { name: 'Rice', qty: entry.riceQuantity, variety: entry.riceType },
+        { name: 'Khanda', qty: entry.khandaQuantity },
+        { name: 'Kodha', qty: entry.kodhaQuantity },
+        { name: 'Nakkhi', qty: entry.nakkhiQuantity },
+        { name: 'Bhusa', qty: entry.bhusaTon, variety: 'Ton' }, // Bhusa is in Ton in model? Let's check unit
+    ]
+
+    for (const output of outputs) {
+        if (output.qty > 0) {
+            await StockTransactionService.recordTransaction(
+                millId,
+                {
+                    date: entry.date,
+                    commodity: output.name,
+                    variety: output.variety || null,
+                    type: 'CREDIT',
+                    action: 'Production',
+                    quantity: output.qty,
+                    bags: 0,
+                    refModel: 'MillingPaddy',
+                    refId: entry._id,
+                    remarks: `Production from Milling Paddy`,
+                },
+                userId
+            )
+        }
+    }
+}
+
+/**
+ * Helper to record stock transaction for Milling Rice entries
+ */
+export const recordMillingRiceStock = async (millId, entry, userId) => {
+    // 1. DEBIT Rice (Input)
+    await StockTransactionService.recordTransaction(
+        millId,
+        {
+            date: entry.date,
+            commodity: 'Rice',
+            variety: entry.riceType || null,
+            type: 'DEBIT',
+            action: 'Milling',
+            quantity: entry.hopperInQintal || 0,
+            bags: entry.hopperInGunny || 0,
+            refModel: 'MillingRice',
+            refId: entry._id,
+            remarks: `Milling Rice Input - ${entry.riceType || ''}`,
+        },
+        userId
+    )
+
+    // 2. CREDIT Outputs (Production)
+    const outputs = [
+        { name: 'Rice', qty: entry.riceQuantity, variety: entry.riceType },
+        { name: 'Khanda', qty: entry.khandaQuantity },
+        { name: 'Silky Kodha', qty: entry.silkyKodhaQuantity },
+    ]
+
+    for (const output of outputs) {
+        if (output.qty > 0) {
+            await StockTransactionService.recordTransaction(
+                millId,
+                {
+                    date: entry.date,
+                    commodity: output.name,
+                    variety: output.variety || null,
+                    type: 'CREDIT',
+                    action: 'Production',
+                    quantity: output.qty,
+                    bags: 0,
+                    refModel: 'MillingRice',
+                    refId: entry._id,
+                    remarks: `Production from Milling Rice`,
+                },
+                userId
+            )
+        }
+    }
+}
+
+/**
+ * central helper for milling update - deletes all and recreates
+ */
+export const updateMillingStock = async (
+    refModel,
+    refId,
+    millId,
+    entry,
+    userId
+) => {
+    await StockTransactionService.deleteTransactionsByRef(refModel, refId)
+    if (refModel === 'MillingPaddy') {
+        await recordMillingPaddyStock(millId, entry, userId)
+    } else if (refModel === 'MillingRice') {
+        await recordMillingRiceStock(millId, entry, userId)
+    }
 }
 
 /**
