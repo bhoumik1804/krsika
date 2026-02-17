@@ -1,6 +1,7 @@
 import { type Table } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,6 +12,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeletePrivatePaddyOutward } from '../data/hooks'
+import { PrivatePaddyOutward } from '../data/schema'
 
 type PrivatePaddyOutwardMultiDeleteDialogProps<TData> = {
     table: Table<TData>
@@ -23,17 +26,28 @@ export function PrivatePaddyOutwardMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: PrivatePaddyOutwardMultiDeleteDialogProps<TData>) {
+    const { t } = useTranslation('mill-staff')
+    const { millId } = useParams<{ millId: string }>()
+    const bulkDeleteMutation = useBulkDeletePrivatePaddyOutward(millId || '')
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
+        const ids = selectedRows
+            .map((row) => (row.original as PrivatePaddyOutward)._id)
+            .filter((id): id is string => id !== undefined)
+
+        if (ids.length === 0) return
+
+        toast.promise(bulkDeleteMutation.mutateAsync(ids), {
+            loading: t('common.deleting'),
             success: () => {
                 table.resetRowSelection()
                 onOpenChange(false)
-                return `Deleted ${selectedRows.length} record${selectedRows.length > 1 ? 's' : ''}`
+                return t('common.deletedSelectedSuccess', {
+                    count: ids.length,
+                })
             },
-            error: 'Error deleting records',
+            error: t('common.error'),
         })
     }
 
@@ -42,22 +56,22 @@ export function PrivatePaddyOutwardMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Delete {selectedRows.length}{' '}
-                        {selectedRows.length > 1 ? 'records' : 'record'}?
+                        {t('common.deleteSelectedTitle', {
+                            count: selectedRows.length,
+                        })}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the selected records?{' '}
-                        <br />
-                        This action cannot be undone.
+                        {t('common.deleteSelectedDescription')} <br />
+                        {t('common.actionCannotBeUndone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

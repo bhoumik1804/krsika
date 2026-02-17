@@ -72,14 +72,10 @@ export function BalanceLiftingPurchasesGunnyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t(
-                                'dailyReports.balanceLifting.gunnyPurchase.title'
-                            )}
+                            {t('gunnyPurchase.balanceLifting.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t(
-                                'dailyReports.balanceLifting.gunnyPurchase.description'
-                            )}
+                            {t('gunnyPurchase.balanceLifting.description')}
                         </p>
                     </div>
                     <BalanceLiftingPurchasesGunnyPrimaryButtons />
@@ -97,7 +93,6 @@ function BalanceLiftingPurchasesGunnyContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('mill-staff')
     const ctx = useBalanceLiftingPurchasesGunny()
 
     if (ctx.isLoading) {
@@ -111,7 +106,7 @@ function BalanceLiftingPurchasesGunnyContent({
     if (ctx.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('dailyReports.balanceLifting.common.failedToLoad')}
+                Error occurred while loading data
             </div>
         )
     }

@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useBalanceLiftingPurchasesGunny } from './balance-lifting-purchases-gunny-provider'
-import { useTranslation } from 'react-i18next'
 
 export function BalanceLiftingPurchasesGunnyPrimaryButtons() {
     const { setOpen } = useBalanceLiftingPurchasesGunny()
@@ -10,7 +10,7 @@ export function BalanceLiftingPurchasesGunnyPrimaryButtons() {
     return (
         <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
-            {t('balanceLiftingGunnyPurchase.addPurchase')}
+            {t('gunnyPurchase.addPurchase')}
         </Button>
     )
 }

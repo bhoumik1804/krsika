@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useOtherSalesList } from '@/pages/mill-admin/sales-reports/other-sales/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/purchase-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
@@ -61,6 +62,7 @@ export function OtherOutwardActionDialog({
     currentRow,
     millId,
 }: OtherOutwardActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const salesDeals = usePaginatedList(
         millId || '',
         open,
@@ -162,22 +164,22 @@ export function OtherOutwardActionDialog({
                     data: submissionData,
                 }),
                 {
-                    loading: 'Updating...',
+                    loading: t('common.updating'),
                     success: () => {
                         onOpenChange(false)
-                        return 'Updated successfully'
+                        return t('common.success')
                     },
-                    error: 'Failed to update',
+                    error: t('common.error'),
                 }
             )
         } else {
             toast.promise(createMutation.mutateAsync(submissionData), {
-                loading: 'Adding...',
+                loading: t('common.adding'),
                 success: () => {
                     onOpenChange(false)
-                    return 'Added successfully'
+                    return t('common.success')
                 },
-                error: 'Failed to add',
+                error: t('common.error'),
             })
         }
     }
@@ -187,10 +189,14 @@ export function OtherOutwardActionDialog({
             <DialogContent className='max-h-[90vh] max-w-2xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing
+                            ? t('otherOutward.editRecord')
+                            : t('otherOutward.addRecord')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing
+                            ? t('common.updateDetails')
+                            : t('common.enterDetails')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -204,7 +210,9 @@ export function OtherOutwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t('otherOutward.form.date')}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -223,7 +231,9 @@ export function OtherOutwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickADate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -266,7 +276,9 @@ export function OtherOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Other Sale Deal Number
+                                            {t(
+                                                'otherOutward.form.otherSaleDealNumber'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
@@ -275,8 +287,12 @@ export function OtherOutwardActionDialog({
                                                     handleDealSelect(value)
                                                 }
                                                 paginatedList={salesDeals}
-                                                placeholder='Select deal number'
-                                                emptyText='No deals found'
+                                                placeholder={t(
+                                                    'otherOutward.form.searchDeal'
+                                                )}
+                                                emptyText={t(
+                                                    'otherOutward.form.noDealsFound'
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -288,10 +304,14 @@ export function OtherOutwardActionDialog({
                                 name='itemName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Item Name</FormLabel>
+                                        <FormLabel>
+                                            {t('otherOutward.form.itemName')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter item name'
+                                                placeholder={t(
+                                                    'otherOutward.form.enterItemName'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -305,7 +325,9 @@ export function OtherOutwardActionDialog({
                                 name='quantity'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Quantity</FormLabel>
+                                        <FormLabel>
+                                            {t('otherOutward.form.quantity')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -329,7 +351,11 @@ export function OtherOutwardActionDialog({
                                 name='quantityType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Quantity Type</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'otherOutward.form.quantityType'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={
@@ -338,7 +364,11 @@ export function OtherOutwardActionDialog({
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
-                                                    <SelectValue placeholder='Select type' />
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'common.select'
+                                                        )}
+                                                    />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent className='w-full'>
@@ -363,10 +393,14 @@ export function OtherOutwardActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Party Name</FormLabel>
+                                        <FormLabel>
+                                            {t('otherOutward.form.partyName')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter party name'
+                                                placeholder={t(
+                                                    'otherOutward.form.enterPartyName'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -380,10 +414,14 @@ export function OtherOutwardActionDialog({
                                 name='brokerName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Broker Name</FormLabel>
+                                        <FormLabel>
+                                            {t('otherOutward.form.brokerName')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter broker name'
+                                                placeholder={t(
+                                                    'otherOutward.form.enterBrokerName'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -397,7 +435,9 @@ export function OtherOutwardActionDialog({
                                 name='gunnyNew'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny (New)</FormLabel>
+                                        <FormLabel>
+                                            {t('otherOutward.form.gunnyNew')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -421,7 +461,9 @@ export function OtherOutwardActionDialog({
                                 name='gunnyOld'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny (Old)</FormLabel>
+                                        <FormLabel>
+                                            {t('otherOutward.form.gunnyOld')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -445,7 +487,11 @@ export function OtherOutwardActionDialog({
                                 name='gunnyPlastic'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny (Plastic)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'otherOutward.form.gunnyPlastic'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -469,7 +515,11 @@ export function OtherOutwardActionDialog({
                                 name='juteGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Jute Gunny Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'otherOutward.form.juteGunnyWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -495,7 +545,9 @@ export function OtherOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Plastic Gunny Weight
+                                            {t(
+                                                'otherOutward.form.plasticGunnyWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -521,10 +573,14 @@ export function OtherOutwardActionDialog({
                                 name='truckNo'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck No</FormLabel>
+                                        <FormLabel>
+                                            {t('otherOutward.form.truckNumber')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='XX-00-XX-0000'
+                                                placeholder={t(
+                                                    'otherOutward.form.enterTruckNo'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -538,10 +594,14 @@ export function OtherOutwardActionDialog({
                                 name='truckRst'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>RST No</FormLabel>
+                                        <FormLabel>
+                                            {t('otherOutward.form.rstNumber')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='RST-000'
+                                                placeholder={t(
+                                                    'otherOutward.form.enterRstNo'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -555,7 +615,9 @@ export function OtherOutwardActionDialog({
                                 name='truckWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck Weight</FormLabel>
+                                        <FormLabel>
+                                            {t('otherOutward.form.truckWeight')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -580,7 +642,9 @@ export function OtherOutwardActionDialog({
                                 name='gunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny Weight</FormLabel>
+                                        <FormLabel>
+                                            {t('otherOutward.form.gunnyWeight')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -605,7 +669,9 @@ export function OtherOutwardActionDialog({
                                 name='netWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Net Weight</FormLabel>
+                                        <FormLabel>
+                                            {t('otherOutward.form.netWeight')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -632,10 +698,12 @@ export function OtherOutwardActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {isEditing
+                                    ? t('common.update')
+                                    : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

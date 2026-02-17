@@ -10,6 +10,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
 import { type KhandaOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { khandaOutwardColumns as columns } from './khanda-outward-columns'
+import { useKhandaOutwardColumns } from './khanda-outward-columns'
 import { KhandaOutwardMultiDeleteDialog } from './khanda-outward-multi-delete-dialog'
 import { khandaOutward } from './khanda-outward-provider'
 
@@ -41,6 +42,8 @@ export function KhandaOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
+    const columns = useKhandaOutwardColumns()
     const { millId, open, setOpen } = khandaOutward()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -178,7 +181,7 @@ export function KhandaOutwardTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

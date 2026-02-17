@@ -77,12 +77,10 @@ export function BalanceLiftingSalesPaddyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('dailyReports.balanceLifting.paddySales.title')}
+                            {t('paddySales.balanceLifting.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t(
-                                'dailyReports.balanceLifting.paddySales.description'
-                            )}
+                            {t('paddySales.balanceLifting.description')}
                         </p>
                     </div>
                     <BalanceLiftingSalesPaddyPrimaryButtons />
@@ -100,7 +98,6 @@ function BalanceLiftingSalesPaddyContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('mill-staff')
     const context = useBalanceLiftingSalesPaddy()
 
     if (context.isLoading) {
@@ -114,7 +111,7 @@ function BalanceLiftingSalesPaddyContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('dailyReports.balanceLifting.common.failedToLoad')}
+                Failed to load data
             </div>
         )
     }

@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -15,6 +16,7 @@ import { OtherInwardTable } from './components/other-inward-table'
 import { useOtherInwardList } from './data/hooks'
 
 export function OtherInwardReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -70,10 +72,10 @@ export function OtherInwardReport() {
             <Main className='flex flex-1 items-center justify-center'>
                 <div className='text-center'>
                     <h2 className='text-lg font-semibold'>
-                        Error loading data
+                        {t('common.errorLoadingData')}
                     </h2>
                     <p className='text-muted-foreground'>
-                        Please try again later.
+                        {t('common.tryAgainLater')}
                     </p>
                 </div>
             </Main>
@@ -105,10 +107,10 @@ export function OtherInwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Other Inward Report
+                            {t('otherInward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage your other inward records here.
+                            {t('otherInward.description')}
                         </p>
                     </div>
                     <OtherInwardPrimaryButtons />

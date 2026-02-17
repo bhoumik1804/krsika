@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { paddyTypeOptions, riceTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
@@ -50,6 +51,7 @@ export function MillingPaddyActionDialog({
     onOpenChange,
     currentRow,
 }: MillingPaddyActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -117,10 +119,14 @@ export function MillingPaddyActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing
+                            ? t('millingPaddy.form.editTitle')
+                            : t('millingPaddy.form.addTitle')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing
+                            ? t('millingPaddy.form.editDescription')
+                            : t('millingPaddy.form.addDescription')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -134,7 +140,9 @@ export function MillingPaddyActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t('millingPaddy.form.date')}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -153,7 +161,9 @@ export function MillingPaddyActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'millingPaddy.form.placeholders.pickDate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -195,14 +205,20 @@ export function MillingPaddyActionDialog({
                                 name='paddyType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Paddy Type</FormLabel>
+                                        <FormLabel>
+                                            {t('millingPaddy.form.paddyType')}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             value={field.value}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
-                                                    <SelectValue placeholder='Select paddy type' />
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'millingPaddy.form.placeholders.selectPaddyType'
+                                                        )}
+                                                    />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent className='w-full'>
@@ -227,7 +243,11 @@ export function MillingPaddyActionDialog({
                                 name='hopperInGunny'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Hopper (Gunny)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingPaddy.form.hopperInGunny'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -254,7 +274,11 @@ export function MillingPaddyActionDialog({
                                 name='hopperInQintal'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Hopper (Quintal)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingPaddy.form.hopperInQuintal'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -282,14 +306,20 @@ export function MillingPaddyActionDialog({
                                 name='riceType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rice Type</FormLabel>
+                                        <FormLabel>
+                                            {t('millingPaddy.form.riceType')}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             value={field.value}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
-                                                    <SelectValue placeholder='Select rice type' />
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'millingPaddy.form.placeholders.selectRiceType'
+                                                        )}
+                                                    />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent className='w-full'>
@@ -313,7 +343,9 @@ export function MillingPaddyActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Rice Quantity (Quintal)
+                                            {t(
+                                                'millingPaddy.form.riceQuantity'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -342,7 +374,11 @@ export function MillingPaddyActionDialog({
                                 name='ricePercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rice (%)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingPaddy.form.ricePercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -371,7 +407,9 @@ export function MillingPaddyActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Khanda Quantity (Quintal)
+                                            {t(
+                                                'millingPaddy.form.khandaQuantity'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -400,7 +438,11 @@ export function MillingPaddyActionDialog({
                                 name='khandaPercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Khanda (%)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingPaddy.form.khandaPercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -429,7 +471,9 @@ export function MillingPaddyActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Kodha Quantity (Quintal)
+                                            {t(
+                                                'millingPaddy.form.kodhaQuantity'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -458,7 +502,11 @@ export function MillingPaddyActionDialog({
                                 name='kodhaPercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Kodha (%)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingPaddy.form.kodhaPercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -487,7 +535,7 @@ export function MillingPaddyActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Bhusa Quantity (Ton)
+                                            {t('millingPaddy.form.bhusaTon')}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -516,7 +564,11 @@ export function MillingPaddyActionDialog({
                                 name='bhusaPercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Bhusa (%)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingPaddy.form.bhusaPercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -545,7 +597,9 @@ export function MillingPaddyActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Nakkhi Quantity (Quintal)
+                                            {t(
+                                                'millingPaddy.form.nakkhiQuantity'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -574,7 +628,11 @@ export function MillingPaddyActionDialog({
                                 name='nakkhiPercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Nakkhi (%)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingPaddy.form.nakkhiPercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -602,7 +660,11 @@ export function MillingPaddyActionDialog({
                                 name='wastagePercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Wastage (%)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingPaddy.form.wastagePercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -632,10 +694,12 @@ export function MillingPaddyActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {isEditing
+                                    ? t('common.update')
+                                    : t('millingPaddy.form.addTitle')}
                             </Button>
                         </DialogFooter>
                     </form>

@@ -1,4 +1,4 @@
-import { formatDate } from 'date-fns'
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table/column-header'
@@ -53,11 +53,7 @@ export const paddySalesColumns: ColumnDef<PaddySalesResponse>[] = [
         ),
         cell: ({ row }) => {
             const date = new Date(row.getValue('date'))
-            return (
-                <div className='w-[100px]'>
-                    {formatDate(date, 'dd-MM-yyyy')}
-                </div>
-            )
+            return <div className='w-[100px]'>{format(date, 'dd-MM-yyyy')}</div>
         },
     },
     {

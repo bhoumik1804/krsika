@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
@@ -56,6 +57,7 @@ export function BhusaOutwardActionDialog({
     currentRow,
     millId,
 }: BhusaOutwardActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const party = usePaginatedList(
         millId,
         open,
@@ -132,35 +134,39 @@ export function BhusaOutwardActionDialog({
                     data: submissionData,
                 }),
                 {
-                    loading: 'Updating...',
+                    loading: t('common.updating'),
                     success: () => {
                         onOpenChange(false)
-                        return 'Updated successfully'
+                        return t('common.success')
                     },
-                    error: 'Failed to update',
+                    error: t('common.error'),
                 }
             )
         } else {
             toast.promise(createMutation.mutateAsync(submissionData), {
-                loading: 'Adding...',
+                loading: t('common.adding'),
                 success: () => {
                     onOpenChange(false)
-                    return 'Added successfully'
+                    return t('common.success')
                 },
-                error: 'Failed to add',
+                error: t('common.error'),
             })
         }
     }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className='max-w-2xl'>
+            <DialogContent className='max-h-[90vh] max-w-2xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing
+                            ? t('bhusaOutward.editRecord')
+                            : t('bhusaOutward.addRecord')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing
+                            ? t('common.updateDetails')
+                            : t('common.enterDetails')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -168,13 +174,15 @@ export function BhusaOutwardActionDialog({
                         onSubmit={form.handleSubmit(onSubmit)}
                         className='space-y-4'
                     >
-                        <div className='grid grid-cols-2 gap-4'>
+                        <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                             <FormField
                                 control={form.control}
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t('bhusaOutward.form.date')}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -193,7 +201,9 @@ export function BhusaOutwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickADate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -236,11 +246,15 @@ export function BhusaOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Bhusa Sale Deal Number
+                                            {t(
+                                                'bhusaOutward.form.bhusaSaleDealNumber'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter deal number'
+                                                placeholder={t(
+                                                    'bhusaOutward.form.enterDealNumber'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -254,7 +268,9 @@ export function BhusaOutwardActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Party Name</FormLabel>
+                                        <FormLabel>
+                                            {t('bhusaOutward.form.partyName')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Combobox
                                                 value={field.value}
@@ -262,7 +278,9 @@ export function BhusaOutwardActionDialog({
                                                 items={party.items}
                                             >
                                                 <ComboboxInput
-                                                    placeholder='Search party...'
+                                                    placeholder={t(
+                                                        'bhusaOutward.form.searchParty'
+                                                    )}
                                                     showClear
                                                 />
                                                 <ComboboxContent>
@@ -281,11 +299,15 @@ export function BhusaOutwardActionDialog({
                                                             )}
                                                         </ComboboxCollection>
                                                         <ComboboxEmpty>
-                                                            No parties found
+                                                            {t(
+                                                                'common.noResults'
+                                                            )}
                                                         </ComboboxEmpty>
                                                         {party.isLoadingMore && (
                                                             <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                Loading more...
+                                                                {t(
+                                                                    'common.loadingMore'
+                                                                )}
                                                             </div>
                                                         )}
                                                     </ComboboxList>
@@ -301,7 +323,9 @@ export function BhusaOutwardActionDialog({
                                 name='brokerName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Broker Name</FormLabel>
+                                        <FormLabel>
+                                            {t('bhusaOutward.form.brokerName')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Combobox
                                                 value={field.value}
@@ -309,7 +333,9 @@ export function BhusaOutwardActionDialog({
                                                 items={broker.items}
                                             >
                                                 <ComboboxInput
-                                                    placeholder='Search broker...'
+                                                    placeholder={t(
+                                                        'bhusaOutward.form.searchBroker'
+                                                    )}
                                                     showClear
                                                 />
                                                 <ComboboxContent>
@@ -328,11 +354,15 @@ export function BhusaOutwardActionDialog({
                                                             )}
                                                         </ComboboxCollection>
                                                         <ComboboxEmpty>
-                                                            No brokers found
+                                                            {t(
+                                                                'common.noResults'
+                                                            )}
                                                         </ComboboxEmpty>
                                                         {broker.isLoadingMore && (
                                                             <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                Loading more...
+                                                                {t(
+                                                                    'common.loadingMore'
+                                                                )}
                                                             </div>
                                                         )}
                                                     </ComboboxList>
@@ -348,7 +378,9 @@ export function BhusaOutwardActionDialog({
                                 name='rate'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rate</FormLabel>
+                                        <FormLabel>
+                                            {t('bhusaOutward.form.rate')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -372,7 +404,9 @@ export function BhusaOutwardActionDialog({
                                 name='brokerage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Brokerage</FormLabel>
+                                        <FormLabel>
+                                            {t('bhusaOutward.form.brokerage')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -396,10 +430,14 @@ export function BhusaOutwardActionDialog({
                                 name='truckNo'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck No</FormLabel>
+                                        <FormLabel>
+                                            {t('bhusaOutward.form.truckNo')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='XX-00-XX-0000'
+                                                placeholder={t(
+                                                    'bhusaOutward.form.enterTruckNo'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -413,10 +451,14 @@ export function BhusaOutwardActionDialog({
                                 name='truckRst'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>RST No</FormLabel>
+                                        <FormLabel>
+                                            {t('bhusaOutward.form.rstNo')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='RST-000'
+                                                placeholder={t(
+                                                    'bhusaOutward.form.enterRstNo'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -430,7 +472,9 @@ export function BhusaOutwardActionDialog({
                                 name='truckWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck Weight</FormLabel>
+                                        <FormLabel>
+                                            {t('bhusaOutward.form.truckWeight')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -457,10 +501,12 @@ export function BhusaOutwardActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {isEditing
+                                    ? t('common.update')
+                                    : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import {
     AlertDialog,
@@ -24,20 +25,19 @@ export function SilkyKodhaOutwardDeleteDialog({
     onOpenChange,
     currentRow,
 }: SilkyKodhaOutwardDeleteDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = silkyKodhaOutward()
     const deleteMutation = useDeleteSilkyKodhaOutward(millId)
 
     const handleDelete = () => {
         if (!currentRow?._id) return
-
-        deleteMutation.mutate(currentRow._id, {
-            onSuccess: () => {
-                toast.success('Deleted successfully')
+        toast.promise(deleteMutation.mutateAsync(currentRow._id), {
+            loading: t('common.deleting'),
+            success: () => {
                 onOpenChange(false)
+                return t('common.success')
             },
-            onError: (error) => {
-                toast.error(error.message || 'Failed to delete')
-            },
+            error: (error) => error.message || t('common.error'),
         })
     }
 
@@ -45,21 +45,23 @@ export function SilkyKodhaOutwardDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Record?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                        {t('common.deleteRecord')}
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete this record for{' '}
+                        {t('common.deleteRecordFor')}{' '}
                         <strong>{currentRow?.partyName}</strong>?
                         <br />
-                        This action cannot be undone.
+                        {t('common.actionCannotBeUndone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

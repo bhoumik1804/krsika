@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -14,6 +15,7 @@ import { NakkhiOutwardTable } from './components/nakkhi-outward-table'
 import { useNakkhiOutwardList } from './data/hooks'
 
 export function NakkhiOutwardReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -53,7 +55,7 @@ export function NakkhiOutwardReport() {
         return (
             <Main className='flex flex-1 items-center justify-center'>
                 <p className='text-destructive'>
-                    Failed to load nakkhi outward data
+                    {t('common.errorLoadingData')}
                 </p>
             </Main>
         )
@@ -77,10 +79,10 @@ export function NakkhiOutwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Nakkhi Outward Report
+                            {t('nakkhiOutward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage nakkhi outward transactions and records
+                            {t('nakkhiOutward.description')}
                         </p>
                     </div>
                     <NakkhiOutwardPrimaryButtons />

@@ -72,14 +72,10 @@ export function BalanceLiftingPurchasesRiceReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t(
-                                'dailyReports.balanceLifting.ricePurchase.title'
-                            )}
+                            {t('ricePurchase.balanceLifting.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t(
-                                'dailyReports.balanceLifting.ricePurchase.description'
-                            )}
+                            {t('ricePurchase.balanceLifting.description')}
                         </p>
                     </div>
                     <BalanceLiftingPurchasesRicePrimaryButtons />
@@ -97,7 +93,6 @@ function BalanceLiftingPurchasesRiceContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('mill-staff')
     const ctx = useBalanceLiftingPurchasesRice()
 
     if (ctx.isLoading) {
@@ -111,7 +106,7 @@ function BalanceLiftingPurchasesRiceContent({
     if (ctx.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('dailyReports.balanceLifting.common.failedToLoad')}
+                Failed to load data
             </div>
         )
     }

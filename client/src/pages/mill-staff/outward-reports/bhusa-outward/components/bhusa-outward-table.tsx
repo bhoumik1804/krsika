@@ -10,6 +10,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -23,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BhusaOutward } from '../data/schema'
 import type { BhusaOutwardListResponse } from '../data/types'
-import { bhusaOutwardColumns as columns } from './bhusa-outward-columns'
+import { useBhusaOutwardColumns } from './bhusa-outward-columns'
 import { BhusaOutwardMultiDeleteDialog } from './bhusa-outward-multi-delete-dialog'
 import { bhusaOutward } from './bhusa-outward-provider'
 import { DataTableBulkActions } from './data-table-bulk-actions'
@@ -41,6 +42,7 @@ export function BhusaOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -48,6 +50,7 @@ export function BhusaOutwardTable({
     const [sorting, setSorting] = useState<SortingState>([])
 
     const { open, setOpen, millId } = bhusaOutward()
+    const columns = useBhusaOutwardColumns()
 
     const {
         columnFilters,
@@ -99,7 +102,7 @@ export function BhusaOutwardTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
+                searchPlaceholder={t('otherInward.form.enterPartyName')}
                 searchKey='partyName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -171,7 +174,7 @@ export function BhusaOutwardTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

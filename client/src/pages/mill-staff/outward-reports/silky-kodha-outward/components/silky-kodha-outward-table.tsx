@@ -10,6 +10,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type SilkyKodhaOutward } from '../data/schema'
 import type { SilkyKodhaOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { silkyKodhaOutwardColumns as columns } from './silky-kodha-outward-columns'
+import { useSilkyKodhaOutwardColumns } from './silky-kodha-outward-columns'
 import { SilkyKodhaOutwardMultiDeleteDialog } from './silky-kodha-outward-multi-delete-dialog'
 import { silkyKodhaOutward } from './silky-kodha-outward-provider'
 
@@ -41,6 +42,8 @@ export function SilkyKodhaOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
+    const columns = useSilkyKodhaOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -168,7 +171,7 @@ export function SilkyKodhaOutwardTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

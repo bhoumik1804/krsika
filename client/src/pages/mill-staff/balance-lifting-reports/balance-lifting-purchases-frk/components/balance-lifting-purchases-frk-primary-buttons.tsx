@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useBalanceLiftingPurchasesFrk } from './balance-lifting-purchases-frk-provider'
-import { useTranslation } from 'react-i18next'
 
 export function BalanceLiftingPurchasesFrkPrimaryButtons() {
     const { setOpen } = useBalanceLiftingPurchasesFrk()
@@ -10,7 +10,7 @@ export function BalanceLiftingPurchasesFrkPrimaryButtons() {
     return (
         <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
-            {t('balanceLiftingFrkPurchase.addPurchase')}
+            {t('frkPurchase.addPurchase')}
         </Button>
     )
 }

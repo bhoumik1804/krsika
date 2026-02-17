@@ -74,14 +74,10 @@ export function OutwardBalanceLiftingRiceReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t(
-                                'dailyReports.balanceLifting.outwardRiceSales.title'
-                            )}
+                            {t('outwardRiceSales.balanceLifting.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t(
-                                'dailyReports.balanceLifting.outwardRiceSales.description'
-                            )}
+                            {t('outwardRiceSales.balanceLifting.description')}
                         </p>
                     </div>
                     <OutwardBalanceLiftingRicePrimaryButtons />
@@ -98,7 +94,6 @@ function OutwardBalanceLiftingRiceContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('mill-staff')
     const context = useOutwardBalanceLiftingRice()
 
     if (context.isLoading) {
@@ -111,9 +106,7 @@ function OutwardBalanceLiftingRiceContent({
 
     if (context.isError) {
         return (
-            <div className='py-10 text-center text-red-500'>
-                {t('dailyReports.balanceLifting.common.failedToLoad')}
-            </div>
+            <div className='py-10 text-center text-red-500'>failed to load</div>
         )
     }
 

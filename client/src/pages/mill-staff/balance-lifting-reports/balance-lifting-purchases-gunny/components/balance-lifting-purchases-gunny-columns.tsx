@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -47,12 +48,12 @@ export function useBalanceLiftingPurchasesGunnyColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.date')}
+                        title={t('gunnyPurchase.table.date')}
                     />
                 ),
                 cell: ({ row }) => (
                     <div className='ps-3 text-nowrap'>
-                        {row.getValue('date')}
+                        {format(new Date(row.getValue('date')), 'dd-MM-yyyy')}
                     </div>
                 ),
                 meta: {
@@ -68,7 +69,7 @@ export function useBalanceLiftingPurchasesGunnyColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.partyName')}
+                        title={t('gunnyPurchase.table.partyName')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -83,7 +84,7 @@ export function useBalanceLiftingPurchasesGunnyColumns() {
                     <DataTableColumnHeader
                         column={column}
                         title={t(
-                            'balanceLifting.ricePurchase.deliveryType',
+                            'gunnyPurchase.table.deliveryType',
                             'Delivery Type'
                         )}
                     />
@@ -99,7 +100,7 @@ export function useBalanceLiftingPurchasesGunnyColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.bags', 'New Gunny Qty')}
+                        title={t('gunnyPurchase.table.newGunnyQty')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -109,25 +110,11 @@ export function useBalanceLiftingPurchasesGunnyColumns() {
                 ),
             },
             {
-                accessorKey: 'newGunnyRate',
-                header: ({ column }) => (
-                    <DataTableColumnHeader
-                        column={column}
-                        title={t('common.newGunnyRate', 'New Gunny Rate')}
-                    />
-                ),
-                cell: ({ row }) => (
-                    <div className='text-right'>
-                        ₹{row.original.newGunnyRate || 0}
-                    </div>
-                ),
-            },
-            {
                 accessorKey: 'oldGunnyQty',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.bags', 'Old Gunny Qty')}
+                        title={t('gunnyPurchase.table.oldGunnyQty')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -137,25 +124,11 @@ export function useBalanceLiftingPurchasesGunnyColumns() {
                 ),
             },
             {
-                accessorKey: 'oldGunnyRate',
-                header: ({ column }) => (
-                    <DataTableColumnHeader
-                        column={column}
-                        title={t('common.oldGunnyRate', 'Old Gunny Rate')}
-                    />
-                ),
-                cell: ({ row }) => (
-                    <div className='text-right'>
-                        ₹{row.original.oldGunnyRate || 0}
-                    </div>
-                ),
-            },
-            {
                 accessorKey: 'plasticGunnyQty',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.bags', 'Plastic Gunny Qty')}
+                        title={t('gunnyPurchase.table.plasticGunnyQty')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -165,19 +138,18 @@ export function useBalanceLiftingPurchasesGunnyColumns() {
                 ),
             },
             {
-                accessorKey: 'plasticGunnyRate',
+                accessorKey: 'total',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t(
-                            'common.plasticGunnyRate',
-                            'Plastic Gunny Rate'
-                        )}
+                        title={t('gunnyPurchase.table.total')}
                     />
                 ),
                 cell: ({ row }) => (
                     <div className='text-right'>
-                        ₹{row.original.plasticGunnyRate || 0}
+                        {Number(row.original.plasticGunnyQty) +
+                            Number(row.original.oldGunnyQty) +
+                            Number(row.original.newGunnyQty)}
                     </div>
                 ),
             },
