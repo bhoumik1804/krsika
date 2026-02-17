@@ -7,6 +7,7 @@ import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type LabourOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const useLabourOutwardColumns = (): ColumnDef<LabourOutward>[] => {
     const { t } = useTranslation('mill-staff')
@@ -52,7 +53,9 @@ export const useLabourOutwardColumns = (): ColumnDef<LabourOutward>[] => {
                 />
             ),
             cell: ({ row }) => (
-                <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+                <div className='ps-3 text-nowrap'>
+                    {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+                </div>
             ),
             meta: {
                 className: cn(

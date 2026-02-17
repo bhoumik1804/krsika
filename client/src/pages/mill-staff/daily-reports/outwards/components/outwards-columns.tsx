@@ -8,6 +8,7 @@ import { LongText } from '@/components/long-text'
 import { statusStyles } from '../data/data'
 import { type OutwardEntry } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const useOutwardsColumns = (): ColumnDef<OutwardEntry>[] => {
     const { t } = useTranslation('mill-staff')
@@ -53,7 +54,9 @@ export const useOutwardsColumns = (): ColumnDef<OutwardEntry>[] => {
                 />
             ),
             cell: ({ row }) => (
-                <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+                <div className='ps-3 text-nowrap'>
+                    {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+                </div>
             ),
             meta: {
                 className: cn(
@@ -179,4 +182,3 @@ export const useOutwardsColumns = (): ColumnDef<OutwardEntry>[] => {
         },
     ]
 }
-

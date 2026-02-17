@@ -7,6 +7,7 @@ import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type MillingRice } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const useMillingRiceColumns = () => {
     const { t } = useTranslation('mill-staff')
@@ -55,7 +56,7 @@ export const useMillingRiceColumns = () => {
                 ),
                 cell: ({ row }) => (
                     <div className='ps-3 text-nowrap'>
-                        {row.getValue('date')}
+                        {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
                     </div>
                 ),
                 meta: {

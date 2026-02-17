@@ -6,6 +6,7 @@ import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type GunnyInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export function useGunnyInwardColumns(): ColumnDef<GunnyInward>[] {
     const { t } = useTranslation('mill-staff')
@@ -51,7 +52,9 @@ export function useGunnyInwardColumns(): ColumnDef<GunnyInward>[] {
                 />
             ),
             cell: ({ row }) => (
-                <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+                <div className='ps-3 text-nowrap'>
+                    {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+                </div>
             ),
             meta: {
                 className: cn(

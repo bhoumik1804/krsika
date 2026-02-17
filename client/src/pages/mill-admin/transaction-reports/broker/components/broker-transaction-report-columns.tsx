@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BrokerTransaction } from '../data/schema'
+import { format } from 'date-fns'
 
 /** Read-only columns for Broker Transaction Report (aggregated from deals) */
 export const brokerTransactionReportColumns: ColumnDef<BrokerTransaction>[] = [
@@ -63,7 +64,9 @@ export const brokerTransactionReportColumns: ColumnDef<BrokerTransaction>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Date' />
         ),
-        cell: ({ row }) => <div>{row.getValue('date')}</div>,
+        cell: ({ row }) => (
+            <div>{format(new Date(row.getValue('date')), 'yyyy-MM-dd')}</div>
+        ),
     },
     {
         accessorKey: 'purchaseDeal',

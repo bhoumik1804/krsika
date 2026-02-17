@@ -4,6 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type OtherSales } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const otherSalesColumns: ColumnDef<OtherSales>[] = [
     {
@@ -41,7 +42,9 @@ export const otherSalesColumns: ColumnDef<OtherSales>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -57,7 +60,9 @@ export const otherSalesColumns: ColumnDef<OtherSales>[] = [
             <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('partyName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('partyName') || '-'}
+            </div>
         ),
     },
     {
@@ -66,7 +71,9 @@ export const otherSalesColumns: ColumnDef<OtherSales>[] = [
             <DataTableColumnHeader column={column} title='Broker Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('brokerName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('brokerName') || '-'}
+            </div>
         ),
     },
     {
@@ -75,7 +82,9 @@ export const otherSalesColumns: ColumnDef<OtherSales>[] = [
             <DataTableColumnHeader column={column} title='Item Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('otherSaleName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('otherSaleName') || '-'}
+            </div>
         ),
     },
     {
@@ -84,7 +93,9 @@ export const otherSalesColumns: ColumnDef<OtherSales>[] = [
             <DataTableColumnHeader column={column} title='Quantity' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.otherSaleQty?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                {row.original.otherSaleQty?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -102,7 +113,9 @@ export const otherSalesColumns: ColumnDef<OtherSales>[] = [
             <DataTableColumnHeader column={column} title='Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.rate?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.rate?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -111,7 +124,9 @@ export const otherSalesColumns: ColumnDef<OtherSales>[] = [
             <DataTableColumnHeader column={column} title='Discount %' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.discountPercent?.toFixed(2) || 0}%</div>
+            <div className='text-right'>
+                {row.original.discountPercent?.toFixed(2) || 0}%
+            </div>
         ),
     },
     {
@@ -120,7 +135,9 @@ export const otherSalesColumns: ColumnDef<OtherSales>[] = [
             <DataTableColumnHeader column={column} title='GST %' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.gst?.toFixed(2) || 0}%</div>
+            <div className='text-right'>
+                {row.original.gst?.toFixed(2) || 0}%
+            </div>
         ),
     },
     {

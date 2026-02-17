@@ -2,6 +2,7 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type PartyTransaction } from '../data/schema'
+import { format } from 'date-fns'
 
 export const partyTransactionColumns: ColumnDef<PartyTransaction>[] = [
     {
@@ -43,7 +44,9 @@ export const partyTransactionColumns: ColumnDef<PartyTransaction>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='w-[100px]'>{row.getValue('date')}</div>
+            <div className='w-[100px]'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
     },
     {

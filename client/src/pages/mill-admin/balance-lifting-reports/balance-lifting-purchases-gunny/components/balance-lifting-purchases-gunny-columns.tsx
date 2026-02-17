@@ -4,6 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BalanceLiftingPurchasesGunny } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
     {
@@ -41,7 +42,9 @@ export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -57,7 +60,9 @@ export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
             <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('partyName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('partyName') || '-'}
+            </div>
         ),
     },
     {
@@ -66,7 +71,9 @@ export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
             <DataTableColumnHeader column={column} title='Delivery Type' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('deliveryType') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('deliveryType') || '-'}
+            </div>
         ),
     },
     {
@@ -111,7 +118,9 @@ export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
             <DataTableColumnHeader column={column} title='Plastic Gunny Qty' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.plasticGunnyQty || 0}</div>
+            <div className='text-right'>
+                {row.original.plasticGunnyQty || 0}
+            </div>
         ),
     },
     {
@@ -120,7 +129,9 @@ export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
             <DataTableColumnHeader column={column} title='Plastic Gunny Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.plasticGunnyRate || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.plasticGunnyRate || 0}
+            </div>
         ),
     },
     {

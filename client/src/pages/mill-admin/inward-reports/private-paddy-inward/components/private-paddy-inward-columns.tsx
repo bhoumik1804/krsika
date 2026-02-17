@@ -5,6 +5,7 @@ import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type PrivatePaddyInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
     {
@@ -42,7 +43,9 @@ export const privatePaddyInwardColumns: ColumnDef<PrivatePaddyInward>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('date')}</div>
+            <div className='text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
