@@ -13,7 +13,8 @@ export const createKhandaOutward = async (req, res, next) => {
     try {
         const entry = await createKhandaOutwardEntry(
             req.params.millId,
-            req.body
+            req.body,
+            req.user._id
         )
         res.status(201).json(
             new ApiResponse(201, { entry }, 'Khanda outward created')

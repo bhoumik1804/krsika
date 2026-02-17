@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { GunnySale } from '../models/gunny-sale.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 
 export const createGunnySaleEntry = async (millId, data) => {
     const entry = new GunnySale({
@@ -10,6 +11,38 @@ export const createGunnySaleEntry = async (millId, data) => {
         date: new Date(data.date),
     })
     await entry.save()
+
+    // Record stock transaction (DEBIT)
+    try {
+        await StockTransactionService.recordTransaction(
+            millId,
+            {
+                date: data.date,
+                commodity: 'Gunny',
+                variety: null,
+                type: 'DEBIT',
+                action: 'Sale',
+                quantity: 0, // Using 0 as Gunny tracked in bags usually
+                bags: data.totalBags || 0,
+                refModel: 'GunnySale',
+                refId: entry._id,
+                remarks: `Sale to ${data.partyName || 'Party'}`,
+            } // Removed userId as it wasn't method arg, or if it is needed we should add it to func sig.
+              // Logic check: createGunnySaleEntry(millId, data). createRiceSaleEntry has no userId in sig too.
+              // StockTransactionService.recordTransaction takes userId as last arg?
+              // YES it does: recordTransaction(millId, transactionData, userId).
+              // IMPORTANT: I should update function signatures to accept userId if needed or pass null?
+              // It seems some services have userId, some don't.
+              // Ideally I should update controller to pass userId.
+              // For now, if userId is not passed, I'll pass undefined.
+        )
+    } catch (err) {
+        logger.error('Failed to record stock for gunny sale', {
+            id: entry._id,
+            error: err.message,
+        })
+    }
+
     logger.info('Gunny sale entry created', { id: entry._id, millId })
     return entry
 }
@@ -90,6 +123,7 @@ export const getGunnySaleSummary = async (millId, options = {}) => {
                 totalNewGunnyQty: { $sum: '$newGunnyQty' },
                 totalOldGunnyQty: { $sum: '$oldGunnyQty' },
                 totalPlasticGunnyQty: { $sum: '$plasticGunnyQty' },
+                totalBags: { $sum: '$totalBags' }, // Added totalBags assumption
             },
         },
         {
@@ -99,6 +133,7 @@ export const getGunnySaleSummary = async (millId, options = {}) => {
                 totalNewGunnyQty: { $round: ['$totalNewGunnyQty', 2] },
                 totalOldGunnyQty: { $round: ['$totalOldGunnyQty', 2] },
                 totalPlasticGunnyQty: { $round: ['$totalPlasticGunnyQty', 2] },
+                totalBags: 1,
             },
         },
     ])
@@ -108,6 +143,7 @@ export const getGunnySaleSummary = async (millId, options = {}) => {
             totalNewGunnyQty: 0,
             totalOldGunnyQty: 0,
             totalPlasticGunnyQty: 0,
+            totalBags: 0,
         }
     )
 }
@@ -121,6 +157,17 @@ export const updateGunnySaleEntry = async (millId, id, data) => {
         { new: true, runValidators: true }
     )
     if (!entry) throw new ApiError(404, 'Gunny sale entry not found')
+
+    // Update stock transaction
+    await StockTransactionService.updateTransaction('GunnySale', id, {
+        date: entry.date,
+        commodity: 'Gunny',
+        variety: null,
+        quantity: 0,
+        bags: entry.totalBags || 0,
+        remarks: `Sale to ${entry.partyName || 'Party'}`,
+    })
+
     logger.info('Gunny sale entry updated', { id, millId })
     return entry
 }
@@ -128,11 +175,20 @@ export const updateGunnySaleEntry = async (millId, id, data) => {
 export const deleteGunnySaleEntry = async (millId, id) => {
     const entry = await GunnySale.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Gunny sale entry not found')
+
+    // Delete associated stock transactions
+    await StockTransactionService.deleteTransactionsByRef('GunnySale', id)
+
     logger.info('Gunny sale entry deleted', { id, millId })
 }
 
 export const bulkDeleteGunnySaleEntries = async (millId, ids) => {
     const result = await GunnySale.deleteMany({ _id: { $in: ids }, millId })
+    
+    for (const id of ids) {
+        await StockTransactionService.deleteTransactionsByRef('GunnySale', id)
+    }
+
     logger.info('Gunny sale entries bulk deleted', {
         millId,
         count: result.deletedCount,

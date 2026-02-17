@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { FrkOutward } from '../models/frk-outward.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
@@ -8,7 +9,7 @@ const escapeRegex = (str) => {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-export const createFrkOutwardEntry = async (millId, data) => {
+export const createFrkOutwardEntry = async (millId, data, userId) => {
     const entry = new FrkOutward({
         ...data,
         millId,
@@ -19,6 +20,26 @@ export const createFrkOutwardEntry = async (millId, data) => {
         id: entry._id,
         millId,
     })
+
+    // Record stock transaction (DEBIT - outgoing FRK)
+    try {
+        const qty = entry.netWeight || 0
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: 'FRK',
+            variety: null,
+            type: 'DEBIT',
+            action: 'Outward',
+            quantity: qty / 100,
+            bags: entry.gunnyPlastic || 0,
+            refModel: 'FrkOutward',
+            refId: entry._id,
+            remarks: `FRK Outward - ${entry.partyName || 'Party'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for FRK outward', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 

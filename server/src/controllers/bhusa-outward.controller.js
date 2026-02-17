@@ -11,7 +11,7 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 
 export const createBhusaOutward = async (req, res, next) => {
     try {
-        const entry = await createBhusaOutwardEntry(req.params.millId, req.body)
+        const entry = await createBhusaOutwardEntry(req.params.millId, req.body, req.user._id)
         res.status(201).json(
             new ApiResponse(201, { entry }, 'Bhusa outward created')
         )

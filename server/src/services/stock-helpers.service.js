@@ -1,11 +1,17 @@
 import * as StockTransactionService from './stock-transaction.service.js'
+import logger from '../utils/logger.js'
 
 /**
  * Helper to record stock transaction for Inward entries
  * Inward = Stock increase (CREDIT)
  */
 export const recordInwardTransaction = async (millId, entry, userId) => {
-    if (!entry.item || !entry.weight) return
+    if (!entry.item || !entry.weight) {
+        logger.warn('Skipping inward stock recording - missing item or weight', {
+            millId, entryId: entry._id, item: entry.item, weight: entry.weight,
+        })
+        return
+    }
 
     await StockTransactionService.recordTransaction(
         millId,
@@ -30,7 +36,12 @@ export const recordInwardTransaction = async (millId, entry, userId) => {
  * Outward = Stock decrease (DEBIT)
  */
 export const recordOutwardTransaction = async (millId, entry, userId) => {
-    if (!entry.item || !entry.weight) return
+    if (!entry.item || !entry.weight) {
+        logger.warn('Skipping outward stock recording - missing item or weight', {
+            millId, entryId: entry._id, item: entry.item, weight: entry.weight,
+        })
+        return
+    }
 
     await StockTransactionService.recordTransaction(
         millId,
@@ -57,7 +68,12 @@ export const recordOutwardTransaction = async (millId, entry, userId) => {
  * - CREDIT for output (produced items)
  */
 export const recordProductionTransaction = async (millId, entry, userId) => {
-    if (!entry.itemName || !entry.weight) return
+    if (!entry.itemName || !entry.weight) {
+        logger.warn('Skipping production stock recording - missing itemName or weight', {
+            millId, entryId: entry._id, itemName: entry.itemName, weight: entry.weight,
+        })
+        return
+    }
 
     // Production creates new stock (CREDIT)
     await StockTransactionService.recordTransaction(
@@ -83,22 +99,27 @@ export const recordProductionTransaction = async (millId, entry, userId) => {
  * Milling consumes stock (DEBIT)
  */
 export const recordMillingTransaction = async (millId, entry, userId) => {
-    if (!entry.itemType || !entry.quantity) return
+    if (!entry.paddyType || !entry.paddyQuantity) {
+        logger.warn('Skipping milling stock recording - missing paddyType or paddyQuantity', {
+            millId, entryId: entry._id, paddyType: entry.paddyType, paddyQuantity: entry.paddyQuantity,
+        })
+        return
+    }
 
     // Milling consumes stock (DEBIT)
     await StockTransactionService.recordTransaction(
         millId,
         {
             date: entry.date,
-            commodity: entry.itemType,
-            variety: entry.variety || null,
+            commodity: entry.paddyType,
+            variety: entry.paddyType || null,
             type: 'DEBIT',
             action: 'Milling',
-            quantity: entry.quantity, // Already in Qtl
-            bags: entry.bags || 0,
+            quantity: entry.paddyQuantity, // Already in Qtl
+            bags: 0,
             refModel: 'DailyMilling',
             refId: entry._id,
-            remarks: `Milled in ${entry.millNumber || 'mill'}`,
+            remarks: `Milled in ${entry.shift || 'shift'}`,
         },
         userId
     )
@@ -126,11 +147,11 @@ export const updateStockTransaction = async (refModel, refId, entry) => {
         updates.bags = entry.bags || 0
         updates.remarks = `Produced in ${entry.warehouse || 'warehouse'}`
     } else if (refModel === 'DailyMilling') {
-        updates.commodity = entry.itemType
-        updates.variety = entry.variety || null
-        updates.quantity = entry.quantity
-        updates.bags = entry.bags || 0
-        updates.remarks = `Milled in ${entry.millNumber || 'mill'}`
+        updates.commodity = entry.paddyType
+        updates.variety = entry.paddyType || null
+        updates.quantity = entry.paddyQuantity
+        updates.bags = 0
+        updates.remarks = `Milled in ${entry.shift || 'shift'}`
     }
 
     await StockTransactionService.updateTransaction(refModel, refId, updates)

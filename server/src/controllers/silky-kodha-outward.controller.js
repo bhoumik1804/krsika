@@ -13,7 +13,8 @@ export const createSilkyKodhaOutward = async (req, res, next) => {
     try {
         const entry = await createSilkyKodhaOutwardEntry(
             req.params.millId,
-            req.body
+            req.body,
+            req.user._id
         )
         res.status(201).json(
             new ApiResponse(201, { entry }, 'Silky kodha outward created')

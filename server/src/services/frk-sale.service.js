@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { FrkSale } from '../models/frk-sale.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 
 export const createFrkSaleEntry = async (millId, data, userId) => {
     const entry = new FrkSale({
@@ -11,6 +12,32 @@ export const createFrkSaleEntry = async (millId, data, userId) => {
         date: new Date(data.date),
     })
     await entry.save()
+
+    // Record stock transaction (DEBIT)
+    try {
+        await StockTransactionService.recordTransaction(
+            millId,
+            {
+                date: data.date,
+                commodity: 'FRK',
+                variety: null,
+                type: 'DEBIT',
+                action: 'Sale',
+                quantity: data.quantity, 
+                bags: data.bags || 0,
+                refModel: 'FrkSale',
+                refId: entry._id,
+                remarks: `Sale to ${data.partyName || 'Party'}`,
+            },
+            userId
+        )
+    } catch (err) {
+        logger.error('Failed to record stock for FRK sale', {
+            id: entry._id,
+            error: err.message,
+        })
+    }
+
     logger.info('FRK sale entry created', { id: entry._id, millId, userId })
     return entry
 }
@@ -100,7 +127,7 @@ export const getFrkSaleList = async (millId, options = {}) => {
 
 export const getFrkSaleSummary = async (millId, options = {}) => {
     const { startDate, endDate } = options
-    const match = { millId }
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     if (startDate || endDate) {
         match.date = {}
         if (startDate) match.date.$gte = new Date(startDate)
@@ -141,6 +168,17 @@ export const updateFrkSaleEntry = async (millId, id, data, userId) => {
         .populate('createdBy', 'fullName email')
         .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'FRK sale entry not found')
+
+    // Update stock transaction
+    await StockTransactionService.updateTransaction('FrkSale', id, {
+        date: entry.date,
+        commodity: 'FRK',
+        variety: null,
+        quantity: entry.quantity,
+        bags: entry.bags || 0,
+        remarks: `Sale to ${entry.partyName || 'Party'}`,
+    })
+
     logger.info('FRK sale entry updated', { id, millId, userId })
     return entry
 }
@@ -148,11 +186,20 @@ export const updateFrkSaleEntry = async (millId, id, data, userId) => {
 export const deleteFrkSaleEntry = async (millId, id) => {
     const entry = await FrkSale.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'FRK sale entry not found')
+
+    // Delete associated stock transactions
+    await StockTransactionService.deleteTransactionsByRef('FrkSale', id)
+
     logger.info('FRK sale entry deleted', { id, millId })
 }
 
 export const bulkDeleteFrkSaleEntries = async (millId, ids) => {
     const result = await FrkSale.deleteMany({ _id: { $in: ids }, millId })
+    
+    for (const id of ids) {
+        await StockTransactionService.deleteTransactionsByRef('FrkSale', id)
+    }
+
     logger.info('FRK sale entries bulk deleted', {
         millId,
         count: result.deletedCount,

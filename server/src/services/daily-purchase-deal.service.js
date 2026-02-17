@@ -214,6 +214,11 @@ export const bulkDeleteDailyPurchaseDealEntries = async (millId, ids) => {
         _id: { $in: ids },
         millId,
     })
+    
+    for (const id of ids) {
+        await StockTransactionService.deleteTransactionsByRef('DailyPurchaseDeal', id)
+    }
+
     logger.info('Daily purchase deal entries bulk deleted', {
         millId,
         count: result.deletedCount,

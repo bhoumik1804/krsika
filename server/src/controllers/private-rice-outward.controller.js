@@ -13,7 +13,8 @@ export const createPrivateRiceOutward = async (req, res, next) => {
     try {
         const entry = await createPrivateRiceOutwardEntry(
             req.params.millId,
-            req.body
+            req.body,
+            req.user._id
         )
         res.status(201).json(
             new ApiResponse(201, { entry }, 'Private rice outward created')

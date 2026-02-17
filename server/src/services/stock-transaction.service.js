@@ -8,6 +8,8 @@ import logger from '../utils/logger.js'
  * This is the central method called by all services to log stock movements
  */
 export const recordTransaction = async (millId, data, userId = null) => {
+    console.log('transaction')
+
     const transaction = new StockTransaction({
         ...data,
         millId,
@@ -23,6 +25,7 @@ export const recordTransaction = async (millId, data, userId = null) => {
         action: data.action,
         quantity: data.quantity,
     })
+    console.log(transaction)
     return transaction
 }
 
@@ -98,7 +101,13 @@ export const getStockTransactionList = async (millId, options = {}) => {
     if (commodity) matchStage.commodity = commodity
     if (variety) matchStage.variety = variety
     if (type) matchStage.type = type
-    if (action) matchStage.action = action
+    if (action) {
+        if (action.includes(',')) {
+            matchStage.action = { $in: action.split(',').map(a => a.trim()) }
+        } else {
+            matchStage.action = action
+        }
+    }
     if (startDate || endDate) {
         matchStage.date = {}
         if (startDate) matchStage.date.$gte = new Date(startDate)
@@ -273,13 +282,26 @@ export const getStockTransactionSummary = async (millId, options = {}) => {
 export const getStockByAction = async (millId, options = {}) => {
     const { action, startDate, endDate } = options
 
+    console.log('getStockByAction Params:', { millId, action, startDate, endDate })
+
     const match = { millId: new mongoose.Types.ObjectId(millId) }
-    if (action) match.action = action
+    if (action) {
+        if (action.includes(',')) {
+            match.action = { $in: action.split(',').map(a => a.trim()) }
+        } else {
+            match.action = action
+        }
+    }
     if (startDate || endDate) {
         match.date = {}
         if (startDate) match.date.$gte = new Date(startDate)
         if (endDate) match.date.$lte = new Date(endDate + 'T23:59:59.999Z')
     }
+
+    console.log('getStockByAction Match:', JSON.stringify(match, null, 2))
+
+    const debugCount = await StockTransaction.countDocuments(match)
+    console.log('getStockByAction Matching Documents Count:', debugCount)
 
     const result = await StockTransaction.aggregate([
         { $match: match },
@@ -306,6 +328,8 @@ export const getStockByAction = async (millId, options = {}) => {
         },
         { $sort: { commodity: 1, variety: 1 } },
     ])
+
+    console.log('getStockByAction Result:', result)
 
     return result
 }

@@ -12,9 +12,12 @@ export const createPaddyPurchaseEntry = async (millId, data, userId) => {
         date: new Date(data.date),
     })
     await entry.save()
-
+    console.log(data)
     // Record stock transaction (CREDIT = stock increase)
-    if (data.totalPaddyQty && data.paddyType) {
+    try {
+        console.log('Recording 111 stock transaction for paddy purchase', {
+            id: entry._id,
+        })
         await StockTransactionService.recordTransaction(
             millId,
             {
@@ -31,6 +34,11 @@ export const createPaddyPurchaseEntry = async (millId, data, userId) => {
             },
             userId
         )
+    } catch (err) {
+        logger.error('Failed to record stock for paddy purchase', {
+            id: entry._id,
+            error: err.message,
+        })
     }
 
     logger.info('Paddy purchase entry created', {
@@ -198,6 +206,11 @@ export const deletePaddyPurchaseEntry = async (millId, id) => {
 
 export const bulkDeletePaddyPurchaseEntries = async (millId, ids) => {
     const result = await PaddyPurchase.deleteMany({ _id: { $in: ids }, millId })
+    
+    for (const id of ids) {
+        await StockTransactionService.deleteTransactionsByRef('PaddyPurchase', id)
+    }
+
     logger.info('Paddy purchase entries bulk deleted', {
         millId,
         count: result.deletedCount,

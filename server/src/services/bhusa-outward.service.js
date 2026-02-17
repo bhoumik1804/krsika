@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { BhusaOutward } from '../models/bhusa-outward.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
@@ -8,7 +9,7 @@ const escapeRegex = (str) => {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-export const createBhusaOutwardEntry = async (millId, data) => {
+export const createBhusaOutwardEntry = async (millId, data, userId) => {
     const entry = new BhusaOutward({
         ...data,
         millId,
@@ -16,6 +17,26 @@ export const createBhusaOutwardEntry = async (millId, data) => {
     })
     await entry.save()
     logger.info('Bhusa outward entry created', { id: entry._id, millId })
+
+    // Record stock transaction (DEBIT - outgoing bhusa)
+    try {
+        const qty = entry.truckWeight || 0
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: 'Bhusa',
+            variety: null,
+            type: 'DEBIT',
+            action: 'Outward',
+            quantity: qty / 100,
+            bags: 0,
+            refModel: 'BhusaOutward',
+            refId: entry._id,
+            remarks: `Bhusa Outward - ${entry.partyName || 'Party'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for bhusa outward', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 

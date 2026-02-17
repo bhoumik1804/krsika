@@ -18,7 +18,7 @@ function getIcon(commodity: string) {
 export function SalesDealsReport() {
     return (
         <DailyReportPage
-            action='Sales Deal'
+            action='Sales Deal,Sale'
             title='Sales Deals'
             description='Track daily sales transactions by commodity'
             emptyMessage='No sales deals found for the selected date range'

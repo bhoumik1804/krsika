@@ -13,7 +13,8 @@ export const createGovtGunnyOutward = async (req, res, next) => {
     try {
         const entry = await createGovtGunnyOutwardEntry(
             req.params.millId,
-            req.body
+            req.body,
+            req.user._id
         )
         res.status(201).json(
             new ApiResponse(201, { entry }, 'Govt gunny outward created')

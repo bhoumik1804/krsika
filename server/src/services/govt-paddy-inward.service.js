@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { GovtPaddyInward } from '../models/govt-paddy-inward.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
@@ -16,6 +17,26 @@ export const createGovtPaddyInwardEntry = async (millId, data, userId) => {
         millId,
         userId,
     })
+
+    // Record stock transaction (CREDIT - incoming paddy)
+    try {
+        const totalQtl = (entry.paddyMota || 0) + (entry.paddyPatla || 0) + (entry.paddySarna || 0) + (entry.paddyMahamaya || 0) + (entry.paddyRbGold || 0)
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: 'Paddy',
+            variety: entry.paddyType || null,
+            type: 'CREDIT',
+            action: 'Inward',
+            quantity: totalQtl,
+            bags: 0,
+            refModel: 'GovtPaddyInward',
+            refId: entry._id,
+            remarks: `Govt Paddy Inward - ${entry.committeeName || 'Committee'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for govt paddy inward', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 

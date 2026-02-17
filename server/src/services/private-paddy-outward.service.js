@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { PrivatePaddyOutward } from '../models/private-paddy-outward.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
@@ -8,7 +9,7 @@ const escapeRegex = (str) => {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-export const createPrivatePaddyOutwardEntry = async (millId, data) => {
+export const createPrivatePaddyOutwardEntry = async (millId, data, userId) => {
     const entry = new PrivatePaddyOutward({
         ...data,
         millId,
@@ -19,6 +20,26 @@ export const createPrivatePaddyOutwardEntry = async (millId, data) => {
         id: entry._id,
         millId,
     })
+
+    // Record stock transaction (DEBIT - outgoing paddy)
+    try {
+        const qty = entry.netWeight || 0
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: 'Paddy',
+            variety: entry.paddyType || null,
+            type: 'DEBIT',
+            action: 'Outward',
+            quantity: qty / 100,
+            bags: (entry.gunnyNew || 0) + (entry.gunnyOld || 0) + (entry.gunnyPlastic || 0),
+            refModel: 'PrivatePaddyOutward',
+            refId: entry._id,
+            remarks: `Private Paddy Outward - ${entry.partyName || 'Party'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for private paddy outward', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 
