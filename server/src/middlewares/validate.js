@@ -18,10 +18,15 @@ export const validate = (schema) => {
 
             next()
         } catch (error) {
-            if (error instanceof z.ZodError) {
+            // Check if it is a Zod Error by checking for the 'issues' or 'errors' property
+            // ZodError usually has an 'errors' or 'issues' array. 
+            // Generic check ensures safer access.
+            const validationErrors = error?.errors || error?.issues;
+
+            if (error instanceof z.ZodError || (validationErrors && Array.isArray(validationErrors))) {
                 // 3. Clean mapping of error messages
-                const details = error.errors.map((err) => ({
-                    field: err.path.join('.'),
+                const details = (validationErrors || []).map((err) => ({
+                    field: err.path ? err.path.join('.') : (err.code || 'unknown'),
                     message: err.message,
                 }))
 
