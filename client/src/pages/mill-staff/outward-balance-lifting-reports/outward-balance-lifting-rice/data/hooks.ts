@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import * as privateRiceOutwardService from './service'
 import type {
@@ -50,6 +51,7 @@ export function usePrivateRiceOutwardSummary(
 }
 
 export function useCreatePrivateRiceOutward(millId: string) {
+    const { t } = useTranslation('mill-staff')
     const queryClient = useQueryClient()
 
     return useMutation({
@@ -62,15 +64,16 @@ export function useCreatePrivateRiceOutward(millId: string) {
             queryClient.invalidateQueries({
                 queryKey: privateRiceOutwardKeys.summary(millId),
             })
-            toast.success('Entry created successfully')
+            toast.success(t('common.messages.createdSuccessfully'))
         },
         onError: (error: Error) => {
-            toast.error(error.message || 'Failed to create entry')
+            toast.error(error.message || t('common.messages.failedToCreate'))
         },
     })
 }
 
 export function useUpdatePrivateRiceOutward(millId: string) {
+    const { t } = useTranslation('mill-staff')
     const queryClient = useQueryClient()
 
     return useMutation({
@@ -93,15 +96,16 @@ export function useUpdatePrivateRiceOutward(millId: string) {
             queryClient.invalidateQueries({
                 queryKey: privateRiceOutwardKeys.summary(millId),
             })
-            toast.success('Entry updated successfully')
+            toast.success(t('common.messages.updatedSuccessfully'))
         },
         onError: (error: Error) => {
-            toast.error(error.message || 'Failed to update entry')
+            toast.error(error.message || t('common.messages.failedToUpdate'))
         },
     })
 }
 
 export function useDeletePrivateRiceOutward(millId: string) {
+    const { t } = useTranslation('mill-staff')
     const queryClient = useQueryClient()
 
     return useMutation({
@@ -114,15 +118,16 @@ export function useDeletePrivateRiceOutward(millId: string) {
             queryClient.invalidateQueries({
                 queryKey: privateRiceOutwardKeys.summary(millId),
             })
-            toast.success('Entry deleted successfully')
+            toast.success(t('common.messages.deletedSuccessfully'))
         },
         onError: (error: Error) => {
-            toast.error(error.message || 'Failed to delete entry')
+            toast.error(error.message || t('common.messages.failedToDelete'))
         },
     })
 }
 
 export function useBulkDeletePrivateRiceOutward(millId: string) {
+    const { t } = useTranslation('mill-staff')
     const queryClient = useQueryClient()
 
     return useMutation({
@@ -135,10 +140,10 @@ export function useBulkDeletePrivateRiceOutward(millId: string) {
             queryClient.invalidateQueries({
                 queryKey: privateRiceOutwardKeys.summary(millId),
             })
-            toast.success('Entries deleted successfully')
+            toast.success(t('common.messages.deletedSuccessfully'))
         },
         onError: (error: Error) => {
-            toast.error(error.message || 'Failed to delete entries')
+            toast.error(error.message || t('common.messages.failedToDelete'))
         },
     })
 }
