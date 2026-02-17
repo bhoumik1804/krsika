@@ -230,7 +230,7 @@ export function DoReportActionDialog({
 
     return (
         <Dialog open={open} onOpenChange={handleDialogClose}>
-            <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
+            <DialogContent className='max-h-[90vh] sm:max-w-4xl overflow-y-auto p-4 sm:p-6'>
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing ? 'Edit' : 'Add'} DO Report
@@ -243,7 +243,7 @@ export function DoReportActionDialog({
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
-                        className='space-y-4'
+                        className='w-full max-w-full space-y-4'
                     >
                         <Tabs
                             value={activeTab}
@@ -282,11 +282,11 @@ export function DoReportActionDialog({
                                                                 <CalendarIcon className='mr-2 h-4 w-4' />
                                                                 {field.value
                                                                     ? format(
-                                                                          new Date(
-                                                                              field.value
-                                                                          ),
-                                                                          'MMM dd, yyyy'
-                                                                      )
+                                                                        new Date(
+                                                                            field.value
+                                                                        ),
+                                                                        'MMM dd, yyyy'
+                                                                    )
                                                                     : 'Pick a date'}
                                                             </Button>
                                                         </FormControl>
@@ -300,8 +300,8 @@ export function DoReportActionDialog({
                                                             selected={
                                                                 field.value
                                                                     ? new Date(
-                                                                          field.value
-                                                                      )
+                                                                        field.value
+                                                                    )
                                                                     : undefined
                                                             }
                                                             onSelect={(
@@ -310,9 +310,9 @@ export function DoReportActionDialog({
                                                                 field.onChange(
                                                                     date
                                                                         ? format(
-                                                                              date,
-                                                                              'yyyy-MM-dd'
-                                                                          )
+                                                                            date,
+                                                                            'yyyy-MM-dd'
+                                                                        )
                                                                         : ''
                                                                 )
                                                             }}
@@ -391,8 +391,8 @@ export function DoReportActionDialog({
                                                                 value === ''
                                                                     ? ''
                                                                     : Number(
-                                                                          value
-                                                                      )
+                                                                        value
+                                                                    )
                                                             )
                                                         }}
                                                     />
@@ -427,8 +427,8 @@ export function DoReportActionDialog({
                                                                 value === ''
                                                                     ? ''
                                                                     : Number(
-                                                                          value
-                                                                      )
+                                                                        value
+                                                                    )
                                                             )
                                                         }}
                                                     />
@@ -463,8 +463,8 @@ export function DoReportActionDialog({
                                                                 value === ''
                                                                     ? ''
                                                                     : Number(
-                                                                          value
-                                                                      )
+                                                                        value
+                                                                    )
                                                             )
                                                         }}
                                                     />
@@ -513,7 +513,7 @@ export function DoReportActionDialog({
                                         or CSV
                                     </p>
                                     {uploadedFile && (
-                                        <p className='mt-2 text-sm text-green-600'>
+                                        <p className='mt-2 text-sm text-green-600 break-all'>
                                             File selected: {uploadedFile.name}
                                         </p>
                                     )}
@@ -525,7 +525,7 @@ export function DoReportActionDialog({
                                             <h3 className='mb-3 text-sm font-semibold'>
                                                 Parse Statistics
                                             </h3>
-                                            <div className='grid grid-cols-3 gap-3'>
+                                            <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
                                                 <div className='rounded-lg border bg-primary/10 p-3'>
                                                     <p className='text-xs text-muted-foreground'>
                                                         Total Rows
@@ -557,7 +557,7 @@ export function DoReportActionDialog({
 
                                             {parseStats?.errorDetails &&
                                                 parseStats.errorDetails.length >
-                                                    0 && (
+                                                0 && (
                                                     <div className='mt-3'>
                                                         <p className='mb-2 text-xs font-semibold text-gray-600'>
                                                             Error Details:
@@ -596,7 +596,7 @@ export function DoReportActionDialog({
                                             Preview - {previewData.length}{' '}
                                             records
                                         </h3>
-                                        <div className='w-full overflow-x-auto rounded-lg border'>
+                                        <div className='w-full max-w-[calc(100vw-5rem)] overflow-x-auto rounded-lg border sm:max-w-full'>
                                             <div className='h-80 overflow-y-auto'>
                                                 <Table>
                                                     <TableBody>
@@ -614,7 +614,7 @@ export function DoReportActionDialog({
                                                                     >
                                                                         {
                                                                             fieldLabels[
-                                                                                field
+                                                                            field
                                                                             ]
                                                                         }
                                                                     </TableCell>
@@ -642,7 +642,7 @@ export function DoReportActionDialog({
                                                                             >
                                                                                 {formatPreviewCell(
                                                                                     row[
-                                                                                        field as keyof DoReportData
+                                                                                    field as keyof DoReportData
                                                                                     ]
                                                                                 )}
                                                                             </TableCell>
@@ -670,17 +670,17 @@ export function DoReportActionDialog({
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? activeTab === 'upload' &&
-                                      previewData.length > 0
+                                        previewData.length > 0
                                         ? 'Uploading...'
                                         : isEditing
-                                          ? 'Updating...'
-                                          : 'Adding...'
+                                            ? 'Updating...'
+                                            : 'Adding...'
                                     : activeTab === 'upload' &&
                                         previewData.length > 0
-                                      ? `Upload ${previewData.length} Report${previewData.length > 1 ? 's' : ''}`
-                                      : isEditing
-                                        ? 'Update'
-                                        : 'Add'}{' '}
+                                        ? `Upload ${previewData.length} Report${previewData.length > 1 ? 's' : ''}`
+                                        : isEditing
+                                            ? 'Update'
+                                            : 'Add'}{' '}
                                 {activeTab === 'manual' && 'DO Report'}
                             </Button>
                         </DialogFooter>
