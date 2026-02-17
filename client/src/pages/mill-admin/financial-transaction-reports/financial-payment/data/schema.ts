@@ -25,6 +25,10 @@ export const FinancialPaymentSchema = z.object({
     advancePayment: z.number().optional(),
     remarks: z.string().nullable().optional(),
     paymentAmount: z.number().optional(),
+    createdBy: z.string().optional(),
+    updatedBy: z.string().optional().nullable(),
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional(),
 })
 
 export type FinancialPayment = z.infer<typeof FinancialPaymentSchema>

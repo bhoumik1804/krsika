@@ -54,6 +54,7 @@ import {
     useUpdateFinancialPayment,
 } from '../data/hooks'
 import { FinancialPaymentSchema, type FinancialPayment } from '../data/schema'
+import { type CreateFinancialPaymentRequest } from '../data/types'
 
 type FinancialPaymentActionDialogProps = {
     open: boolean
@@ -143,13 +144,13 @@ export function FinancialPaymentActionDialog({
             purchaseDealNumber: '',
             transporterName: '',
             truckNumber: '',
-            diesel: '' as unknown as number,
-            bhatta: '' as unknown as number,
-            repairOrMaintenance: '' as unknown as number,
+            diesel: undefined,
+            bhatta: undefined,
+            repairOrMaintenance: undefined,
             labourType: '',
             labourGroupName: '',
             staffName: '',
-            salary: '' as unknown as number,
+            salary: undefined,
             month: '',
             attendance: undefined,
             allowedLeave: undefined,
@@ -207,25 +208,24 @@ export function FinancialPaymentActionDialog({
     const updateMutation = useUpdateFinancialPayment()
 
     const onSubmit = (data: FinancialPayment) => {
-        // Sanitize data
-        const submissionData = {
-            ...data,
-            partyName: data.partyName || undefined,
-            brokerName: data.brokerName || undefined,
-            paymentType: data.paymentType || undefined,
-            purchaseDealType: data.purchaseDealType || undefined,
-            transporterName: data.transporterName || undefined,
-            labourType: data.labourType || undefined,
-            labourGroupName: data.labourGroupName || undefined,
-            staffName: data.staffName || undefined,
-            month: data.month || undefined,
-        }
+        // Sanitize data - remove system fields and empty strings
+        const sanitizedData = Object.fromEntries(
+            Object.entries(data)
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                .filter(([key, value]) => {
+                    if (key === '_id' || key === 'id') return false
+                    if (value === '' || value === null) return false
+                    return true
+                })
+        ) as unknown as CreateFinancialPaymentRequest
+
+        console.log('Final Submission Data:', sanitizedData)
 
         if (isEditing && currentRow._id) {
             updateMutation.mutate(
                 {
                     millId: millId || '',
-                    data: { ...submissionData, id: currentRow._id },
+                    data: { ...sanitizedData, id: currentRow._id },
                 },
                 {
                     onSuccess: () => {
@@ -238,7 +238,7 @@ export function FinancialPaymentActionDialog({
             createMutation.mutate(
                 {
                     millId: millId || '',
-                    data: submissionData,
+                    data: sanitizedData,
                 },
                 {
                     onSuccess: () => {
@@ -267,7 +267,9 @@ export function FinancialPaymentActionDialog({
                 </DialogHeader>
                 <Form {...form}>
                     <form
-                        onSubmit={form.handleSubmit(onSubmit)}
+                        onSubmit={form.handleSubmit(onSubmit, (errors) => {
+                            console.error('Form Validation Errors:', errors)
+                        })}
                         className='space-y-4'
                     >
                         <div className='grid grid-cols-2 gap-4'>
@@ -346,7 +348,7 @@ export function FinancialPaymentActionDialog({
                                         </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value || ''}
+                                            value={field.value || ''}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
@@ -449,7 +451,7 @@ export function FinancialPaymentActionDialog({
                                             </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value || ''}
+                                                value={field.value || ''}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
@@ -668,7 +670,7 @@ export function FinancialPaymentActionDialog({
                                             </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value || ''}
+                                                value={field.value || ''}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger>
@@ -796,12 +798,12 @@ export function FinancialPaymentActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'inputReports.financialPayment.form.month'
+                                                    'financialPayment.form.month'
                                                 )}
                                             </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value || ''}
+                                                value={field.value || ''}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger>

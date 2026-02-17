@@ -106,6 +106,15 @@ const FinancialPaymentSchema = new Schema(
             type: Number,
             default: 0,
         },
+        createdBy: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
+        },
+        updatedBy: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+        },
     },
     {
         timestamps: true,
