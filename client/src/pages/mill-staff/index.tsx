@@ -293,7 +293,7 @@ interface WelcomeMessageProps {
     userName?: string
 }
 
-export function WelcomeMessage({ userName }: WelcomeMessageProps) {
+export function MillStaffDashboard({ userName }: WelcomeMessageProps) {
     const { t } = useTranslation()
 
     // Get current hour to determine greeting if needed,
