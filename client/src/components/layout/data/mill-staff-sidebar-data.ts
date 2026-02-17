@@ -494,11 +494,11 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
                         },
                     ],
                 },
-                {
-                    title: 'Help',
-                    url: `/staff/${millId}/help`,
-                    icon: HelpCircle,
-                },
+                // {
+                //     title: 'Help',
+                //     url: `/staff/${millId}/help`,
+                //     icon: HelpCircle,
+                // },
             ],
         },
     ],

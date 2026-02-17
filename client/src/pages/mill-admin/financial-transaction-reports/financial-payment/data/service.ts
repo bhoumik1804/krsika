@@ -3,6 +3,7 @@
  * API client for Financial Payment CRUD operations
  */
 import apiClient, { type ApiResponse } from '@/lib/api-client'
+import type { FinancialPayment } from './schema'
 import type {
     FinancialPaymentResponse,
     FinancialPaymentListResponse,
@@ -31,9 +32,10 @@ export const fetchFinancialPaymentList = async (
     params?: FinancialPaymentQueryParams
 ): Promise<FinancialPaymentListResponse> => {
     const response = await apiClient.get<
-        ApiResponse<FinancialPaymentListResponse>
+        ApiResponse<{ entries: FinancialPayment[]; pagination: any }>
     >(FINANCIAL_PAYMENT_ENDPOINT(millId), { params })
-    return response.data.data
+    const { entries, pagination } = response.data.data
+    return { entries, pagination }
 }
 
 /**
@@ -43,10 +45,10 @@ export const fetchFinancialPaymentById = async (
     millId: string,
     id: string
 ): Promise<FinancialPaymentResponse> => {
-    const response = await apiClient.get<ApiResponse<FinancialPaymentResponse>>(
-        `${FINANCIAL_PAYMENT_ENDPOINT(millId)}/${id}`
-    )
-    return response.data.data
+    const response = await apiClient.get<
+        ApiResponse<{ payment: FinancialPaymentResponse }>
+    >(`${FINANCIAL_PAYMENT_ENDPOINT(millId)}/${id}`)
+    return response.data.data.payment
 }
 
 /**
@@ -57,9 +59,9 @@ export const fetchFinancialPaymentSummary = async (
     params?: Pick<FinancialPaymentQueryParams, 'startDate' | 'endDate'>
 ): Promise<FinancialPaymentSummaryResponse> => {
     const response = await apiClient.get<
-        ApiResponse<FinancialPaymentSummaryResponse>
+        ApiResponse<{ summary: FinancialPaymentSummaryResponse }>
     >(`${FINANCIAL_PAYMENT_ENDPOINT(millId)}/summary`, { params })
-    return response.data.data
+    return response.data.data.summary
 }
 
 /**
@@ -70,9 +72,9 @@ export const createFinancialPayment = async (
     data: CreateFinancialPaymentRequest
 ): Promise<FinancialPaymentResponse> => {
     const response = await apiClient.post<
-        ApiResponse<FinancialPaymentResponse>
+        ApiResponse<{ payment: FinancialPaymentResponse }>
     >(FINANCIAL_PAYMENT_ENDPOINT(millId), data)
-    return response.data.data
+    return response.data.data.payment
 }
 
 /**
@@ -82,11 +84,10 @@ export const updateFinancialPayment = async (
     millId: string,
     { id, ...data }: UpdateFinancialPaymentRequest
 ): Promise<FinancialPaymentResponse> => {
-    const response = await apiClient.put<ApiResponse<FinancialPaymentResponse>>(
-        `${FINANCIAL_PAYMENT_ENDPOINT(millId)}/${id}`,
-        data
-    )
-    return response.data.data
+    const response = await apiClient.put<
+        ApiResponse<{ payment: FinancialPaymentResponse }>
+    >(`${FINANCIAL_PAYMENT_ENDPOINT(millId)}/${id}`, data)
+    return response.data.data.payment
 }
 
 /**

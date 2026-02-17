@@ -205,25 +205,38 @@ export function FinancialPaymentActionDialog({
     const updateMutation = useUpdateFinancialPayment()
 
     const onSubmit = (data: FinancialPayment) => {
-        // Sanitize data
-        const submissionData = {
-            ...data,
+        // Sanitize data - remove system fields and empty strings
+        const sanitizedData = {
+            date: data.date,
+            paymentType: data.paymentType || undefined,
             partyName: data.partyName || undefined,
             brokerName: data.brokerName || undefined,
-            paymentType: data.paymentType || undefined,
             purchaseDealType: data.purchaseDealType || undefined,
+            purchaseDealNumber: data.purchaseDealNumber || undefined,
             transporterName: data.transporterName || undefined,
+            truckNumber: data.truckNumber || undefined,
+            diesel: data.diesel || undefined,
+            bhatta: data.bhatta || undefined,
+            repairOrMaintenance: data.repairOrMaintenance || undefined,
             labourType: data.labourType || undefined,
             labourGroupName: data.labourGroupName || undefined,
             staffName: data.staffName || undefined,
+            salary: data.salary || undefined,
             month: data.month || undefined,
+            attendance: data.attendance || undefined,
+            allowedLeave: data.allowedLeave || undefined,
+            payableSalary: data.payableSalary || undefined,
+            salaryPayment: data.salaryPayment || undefined,
+            advancePayment: data.advancePayment || undefined,
+            paymentAmount: data.paymentAmount || undefined,
+            remarks: data.remarks || undefined,
         }
 
         if (isEditing && currentRow._id) {
             updateMutation.mutate(
                 {
                     millId: millId || '',
-                    data: { ...submissionData, id: currentRow._id },
+                    data: { ...sanitizedData, id: currentRow._id },
                 },
                 {
                     onSuccess: () => {
@@ -236,7 +249,7 @@ export function FinancialPaymentActionDialog({
             createMutation.mutate(
                 {
                     millId: millId || '',
-                    data: submissionData,
+                    data: sanitizedData,
                 },
                 {
                     onSuccess: () => {
