@@ -4,6 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BrokerTransaction } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
     {
@@ -63,7 +64,9 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Date' />
         ),
-        cell: ({ row }) => <div>{row.getValue('date')}</div>,
+        cell: ({ row }) => (
+            <div>{format(new Date(row.getValue('date')), 'yyyy-MM-dd')}</div>
+        ),
     },
     {
         accessorKey: 'purchaseDeal',

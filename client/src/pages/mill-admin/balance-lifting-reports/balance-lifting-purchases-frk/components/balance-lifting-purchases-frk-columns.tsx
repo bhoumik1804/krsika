@@ -4,6 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BalanceLiftingPurchasesFrk } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const frkColumns: ColumnDef<BalanceLiftingPurchasesFrk>[] = [
     {
@@ -41,7 +42,9 @@ export const frkColumns: ColumnDef<BalanceLiftingPurchasesFrk>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(

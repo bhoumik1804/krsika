@@ -6,6 +6,7 @@ import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type GovtPaddyInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export function useGovtPaddyInwardColumns(): ColumnDef<GovtPaddyInward>[] {
     const { t } = useTranslation('mill-staff')
@@ -51,7 +52,9 @@ export function useGovtPaddyInwardColumns(): ColumnDef<GovtPaddyInward>[] {
                 />
             ),
             cell: ({ row }) => (
-                <div className='text-nowrap'>{row.getValue('date')}</div>
+                <div className='text-nowrap'>
+                    {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+                </div>
             ),
             meta: {
                 className: cn(
