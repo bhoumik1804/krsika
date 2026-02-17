@@ -24,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type LabourMilling } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { labourMillingColumns as columns } from './labour-milling-columns'
+import { useLabourMillingColumns } from './labour-milling-columns'
 
 type DataTableProps = {
     data: LabourMilling[]
@@ -53,6 +53,8 @@ export function LabourMillingTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+
+    const columns = useLabourMillingColumns()
 
     const {
         columnFilters,

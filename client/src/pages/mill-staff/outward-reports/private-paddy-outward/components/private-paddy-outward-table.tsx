@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +26,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type PrivatePaddyOutward } from '../data/schema'
 import type { PrivatePaddyOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { PrivatePaddyOutwardColumns as columns } from './private-paddy-outward-columns'
+import { usePrivatePaddyOutwardColumns } from './private-paddy-outward-columns'
 
 type DataTableProps = {
     data: PrivatePaddyOutward[]
@@ -40,6 +41,8 @@ export function PrivatePaddyOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
+    const columns = usePrivatePaddyOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -180,7 +183,7 @@ export function PrivatePaddyOutwardTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

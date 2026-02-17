@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNakkhiSalesList } from '@/pages/mill-admin/sales-reports/nakkhi-sales/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
@@ -53,6 +54,7 @@ export function NakkhiOutwardActionDialog({
     currentRow,
     millId,
 }: NakkhiOutwardActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const salesDeals = usePaginatedList(
         millId,
         open,
@@ -141,22 +143,22 @@ export function NakkhiOutwardActionDialog({
                     data: submissionData,
                 }),
                 {
-                    loading: 'Updating...',
+                    loading: t('common.updating'),
                     success: () => {
                         onOpenChange(false)
-                        return 'Updated successfully'
+                        return t('common.success')
                     },
-                    error: 'Failed to update',
+                    error: t('common.error'),
                 }
             )
         } else {
             toast.promise(createMutation.mutateAsync(submissionData), {
-                loading: 'Adding...',
+                loading: t('common.adding'),
                 success: () => {
                     onOpenChange(false)
-                    return 'Added successfully'
+                    return t('common.success')
                 },
-                error: 'Failed to add',
+                error: t('common.error'),
             })
         }
     }
@@ -166,10 +168,14 @@ export function NakkhiOutwardActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing
+                            ? t('nakkhiOutward.editRecord')
+                            : t('nakkhiOutward.addRecord')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing
+                            ? t('common.updateDetails')
+                            : t('common.enterDetails')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -183,7 +189,9 @@ export function NakkhiOutwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t('nakkhiOutward.form.date')}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -202,7 +210,9 @@ export function NakkhiOutwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickADate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -245,7 +255,9 @@ export function NakkhiOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Nakkhi Sale Deal Number
+                                            {t(
+                                                'nakkhiOutward.form.nakkhiSaleDealNumber'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
@@ -254,8 +266,12 @@ export function NakkhiOutwardActionDialog({
                                                     handleDealSelect(value)
                                                 }
                                                 paginatedList={salesDeals}
-                                                placeholder='Select deal number'
-                                                emptyText='No deals found'
+                                                placeholder={t(
+                                                    'nakkhiOutward.form.enterDealNumber'
+                                                )}
+                                                emptyText={t(
+                                                    'common.noResults'
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -267,10 +283,14 @@ export function NakkhiOutwardActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Party Name</FormLabel>
+                                        <FormLabel>
+                                            {t('nakkhiOutward.form.partyName')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter party name'
+                                                placeholder={t(
+                                                    'nakkhiOutward.form.searchParty'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -284,10 +304,14 @@ export function NakkhiOutwardActionDialog({
                                 name='brokerName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Broker Name</FormLabel>
+                                        <FormLabel>
+                                            {t('nakkhiOutward.form.brokerName')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter broker name'
+                                                placeholder={t(
+                                                    'nakkhiOutward.form.searchBroker'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -301,7 +325,9 @@ export function NakkhiOutwardActionDialog({
                                 name='rate'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rate</FormLabel>
+                                        <FormLabel>
+                                            {t('nakkhiOutward.form.rate')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -325,7 +351,9 @@ export function NakkhiOutwardActionDialog({
                                 name='brokerage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Brokerage</FormLabel>
+                                        <FormLabel>
+                                            {t('nakkhiOutward.form.brokerage')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -349,7 +377,11 @@ export function NakkhiOutwardActionDialog({
                                 name='gunnyPlastic'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny (Plastic)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'nakkhiOutward.form.gunnyPlastic'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -374,7 +406,9 @@ export function NakkhiOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Plastic Gunny Weight
+                                            {t(
+                                                'nakkhiOutward.form.plasticGunnyWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -400,10 +434,14 @@ export function NakkhiOutwardActionDialog({
                                 name='truckNo'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck No</FormLabel>
+                                        <FormLabel>
+                                            {t('nakkhiOutward.form.truckNo')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='XX-00-XX-0000'
+                                                placeholder={t(
+                                                    'nakkhiOutward.form.enterTruckNo'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -417,10 +455,14 @@ export function NakkhiOutwardActionDialog({
                                 name='truckRst'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>RST No</FormLabel>
+                                        <FormLabel>
+                                            {t('nakkhiOutward.form.rstNo')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='RST-000'
+                                                placeholder={t(
+                                                    'nakkhiOutward.form.enterRstNo'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -434,7 +476,11 @@ export function NakkhiOutwardActionDialog({
                                 name='truckWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'nakkhiOutward.form.truckWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -459,7 +505,11 @@ export function NakkhiOutwardActionDialog({
                                 name='gunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'nakkhiOutward.form.gunnyWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -484,7 +534,9 @@ export function NakkhiOutwardActionDialog({
                                 name='netWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Net Weight</FormLabel>
+                                        <FormLabel>
+                                            {t('nakkhiOutward.form.netWeight')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -511,10 +563,12 @@ export function NakkhiOutwardActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {isEditing
+                                    ? t('common.update')
+                                    : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

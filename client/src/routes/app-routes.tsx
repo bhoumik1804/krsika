@@ -852,11 +852,6 @@ const MillStaffPaymentReport = lazy(() =>
         default: m.PaymentReport,
     }))
 )
-const DailyReportsOverview = lazy(() =>
-    import('@/pages/mill-staff/daily-reports').then((m) => ({
-        default: m.DailyReportsOverview,
-    }))
-)
 
 // Root layout with Suspense wrapper for navigation
 function RootLayoutWithSuspense() {
@@ -1891,15 +1886,6 @@ export const router = createBrowserRouter([
                             <LazyRoute
                                 Component={MillStaffStockOverviewReport}
                                 moduleSlug='stock-overview'
-                            />
-                        ),
-                    },
-                    {
-                        path: 'daily/reports',
-                        element: (
-                            <LazyRoute
-                                Component={DailyReportsOverview}
-                                moduleSlug='daily-reports-overview'
                             />
                         ),
                     },

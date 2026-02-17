@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -47,12 +48,12 @@ export function useBalanceLiftingPurchasesFrkColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.date')}
+                        title={t('frkPurchase.table.date')}
                     />
                 ),
                 cell: ({ row }) => (
                     <div className='ps-3 text-nowrap'>
-                        {row.getValue('date')}
+                        {format(new Date(row.getValue('date')), 'dd-MM-yyyy')}
                     </div>
                 ),
                 meta: {
@@ -68,7 +69,7 @@ export function useBalanceLiftingPurchasesFrkColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.partyName')}
+                        title={t('frkPurchase.table.partyName')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -82,7 +83,7 @@ export function useBalanceLiftingPurchasesFrkColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.quantity', 'FRK Quantity')}
+                        title={t('frkPurchase.table.frkQty')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -94,25 +95,46 @@ export function useBalanceLiftingPurchasesFrkColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.rate', 'FRK Rate')}
+                        title={t('frkPurchase.table.frkRate')}
                     />
                 ),
                 cell: ({ row }) => (
                     <div className='text-right'>
-                        ₹{row.original.frkRate || 0}
+                        {row.original.frkRate || 0}
                     </div>
                 ),
             },
             {
                 accessorKey: 'gst',
                 header: ({ column }) => (
+                    <DataTableColumnHeader column={column} title={'GST'} />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-right'>{row.original.gst || 0}</div>
+                ),
+            },
+            {
+                accessorKey: 'liftedQty',
+                header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.gst', 'GST (%)')}
+                        title={t('frkPurchase.table.liftedQty')}
                     />
                 ),
                 cell: ({ row }) => (
-                    <div className='text-right'>{row.original.gst || 0}%</div>
+                    <div className='text-right'>{row.original.gst || 0}</div>
+                ),
+            },
+            {
+                accessorKey: 'balanceLifting',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('frkPurchase.table.blanceLifting')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-right'>{row.original.gst || 0}</div>
                 ),
             },
             {

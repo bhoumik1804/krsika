@@ -8,6 +8,7 @@ import {
     getFacetedUniqueValues,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -19,7 +20,7 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { otherInwardColumns as columns } from './other-inward-columns'
+import { useOtherInwardColumns } from './other-inward-columns'
 import { useOtherInward } from './other-inward-provider'
 
 type DataTableProps = {
@@ -28,6 +29,8 @@ type DataTableProps = {
 }
 
 export function OtherInwardTable({ search, navigate }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
+    const columns = useOtherInwardColumns()
     const { data, pagination } = useOtherInward()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -88,7 +91,7 @@ export function OtherInwardTable({ search, navigate }: DataTableProps) {
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search by Item Name...'
+                searchPlaceholder={t('common.search')}
                 searchKey='itemName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -160,7 +163,7 @@ export function OtherInwardTable({ search, navigate }: DataTableProps) {
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

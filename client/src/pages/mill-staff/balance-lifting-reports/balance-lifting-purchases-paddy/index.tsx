@@ -77,14 +77,10 @@ export function BalanceLiftingPurchasesPaddyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t(
-                                'dailyReports.balanceLifting.paddyPurchase.title'
-                            )}
+                            {t('paddyPurchase.balanceLiftingtitle')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t(
-                                'dailyReports.balanceLifting.paddyPurchase.description'
-                            )}
+                            {t('paddyPurchase.balanceLifting.description')}
                         </p>
                     </div>
                     <BalanceLiftingPurchasesPaddyPrimaryButtons />
@@ -102,7 +98,6 @@ function BalanceLiftingPurchasesPaddyContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('mill-staff')
     const context = useBalanceLiftingPurchasesPaddy()
 
     if (context.isLoading) {
@@ -116,7 +111,7 @@ function BalanceLiftingPurchasesPaddyContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('dailyReports.balanceLifting.common.failedToLoad')}
+                Failed to load data
             </div>
         )
     }

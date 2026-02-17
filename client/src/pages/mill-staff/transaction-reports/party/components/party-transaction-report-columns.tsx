@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -49,7 +50,7 @@ export function usePartyTransactionReportColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('transactionReports.party')}
+                        title={t('transactionReports.partyName')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -70,7 +71,7 @@ export function usePartyTransactionReportColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('transactionReports.broker')}
+                        title={t('transactionReports.brokerName')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -85,7 +86,9 @@ export function usePartyTransactionReportColumns() {
                         title={t('common.date')}
                     />
                 ),
-                cell: ({ row }) => <div>{row.getValue('date')}</div>,
+                cell: ({ row }) => (
+                    <div>{format(row.getValue('date'), 'dd-MM-yyyy')}</div>
+                ),
             },
             {
                 accessorKey: 'purchaseDeal',
@@ -144,6 +147,50 @@ export function usePartyTransactionReportColumns() {
                 cell: ({ row }) => (
                     <div className='text-right'>
                         {Number(row.getValue('outward') || 0).toLocaleString()}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'accountReceipt',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('transactionReports.accountReceipt')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-right'>
+                        {Number(
+                            row.getValue('accountReceipt') || 0
+                        ).toLocaleString()}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'accountPayment',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('transactionReports.accountPayment')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-right'>
+                        {Number(row.getValue('accountPayment') || 0)}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'accountBrokerage',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('transactionReports.accountBrokerage')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-right'>
+                        {Number(row.getValue('accountBrokerage') || 0)}
                     </div>
                 ),
             },

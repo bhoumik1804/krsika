@@ -77,12 +77,10 @@ export function BalanceLiftingPurchasesFrkReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('dailyReports.balanceLifting.frkPurchase.title')}
+                            {t('frkPurchase.balanceLifting.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t(
-                                'dailyReports.balanceLifting.frkPurchase.description'
-                            )}
+                            {t('frkPurchase.balanceLifting.description')}
                         </p>
                     </div>
                     <BalanceLiftingPurchasesFrkPrimaryButtons />
@@ -101,7 +99,6 @@ function BalanceLiftingPurchasesFrkContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('mill-staff')
     const context = useBalanceLiftingPurchasesFrk()
 
     if (context.isLoading) {
@@ -115,7 +112,7 @@ function BalanceLiftingPurchasesFrkContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('dailyReports.balanceLifting.common.failedToLoad')}
+                Error while loading data
             </div>
         )
     }

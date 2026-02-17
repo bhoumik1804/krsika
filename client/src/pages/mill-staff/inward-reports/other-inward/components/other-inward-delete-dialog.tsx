@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -20,6 +21,7 @@ export function OtherInwardDeleteDialog({
     open,
     onOpenChange,
 }: OtherInwardDeleteDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { currentRow, millId } = useOtherInward()
     const { mutateAsync: deleteOtherInward, isPending } =
         useDeleteOtherInward(millId)
@@ -39,11 +41,10 @@ export function OtherInwardDeleteDialog({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Are you absolutely sure?
+                        {t('common.areYouSure')}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete the record for{' '}
+                        {t('common.deleteWarning')}{' '}
                         <span className='font-bold'>
                             {currentRow?.itemName}
                         </span>
@@ -52,14 +53,14 @@ export function OtherInwardDeleteDialog({
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isPending}>
-                        Cancel
+                        {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         className='bg-red-500 hover:bg-red-600'
                         disabled={isPending}
                     >
-                        {isPending ? 'Deleting...' : 'Delete'}
+                        {isPending ? t('common.deleting') : t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

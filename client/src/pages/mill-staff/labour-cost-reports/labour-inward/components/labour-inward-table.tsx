@@ -25,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { inwardTypes } from '../data/data'
 import { type LabourInward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { labourInwardColumns as columns } from './labour-inward-columns'
+import { useLabourInwardColumns } from './labour-inward-columns'
 
 type DataTableProps = {
     data: LabourInward[]
@@ -54,6 +54,8 @@ export function LabourInwardTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+
+    const columns = useLabourInwardColumns()
 
     const {
         columnFilters,

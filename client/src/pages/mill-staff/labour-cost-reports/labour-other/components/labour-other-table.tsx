@@ -24,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type LabourOther } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { labourOtherColumns as columns } from './labour-other-columns'
+import { useLabourOtherColumns } from './labour-other-columns'
 
 type DataTableProps = {
     data: LabourOther[]
@@ -53,6 +53,8 @@ export function LabourOtherTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+
+    const columns = useLabourOtherColumns()
 
     const {
         columnFilters,

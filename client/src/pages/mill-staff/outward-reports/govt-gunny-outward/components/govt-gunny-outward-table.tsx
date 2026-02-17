@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +26,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type GovtGunnyOutward } from '../data/schema'
 import type { GovtGunnyOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { GovtGunnyOutwardColumns as columns } from './govt-gunny-outward-columns'
+import { useGovtGunnyOutwardColumns } from './govt-gunny-outward-columns'
 
 type DataTableProps = {
     data: GovtGunnyOutward[]
@@ -40,6 +41,8 @@ export function GovtGunnyOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
+    const columns = useGovtGunnyOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -64,7 +67,11 @@ export function GovtGunnyOutwardTable({
         },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'samitiSangrahan', searchKey: 'samitiSangrahan', type: 'string' },
+            {
+                columnId: 'samitiSangrahan',
+                searchKey: 'samitiSangrahan',
+                type: 'string',
+            },
         ],
     })
 
@@ -180,7 +187,7 @@ export function GovtGunnyOutwardTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

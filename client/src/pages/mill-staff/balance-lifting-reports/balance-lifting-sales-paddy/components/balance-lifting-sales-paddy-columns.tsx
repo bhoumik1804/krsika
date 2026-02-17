@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -53,7 +54,7 @@ export function useBalanceLiftingSalesPaddyColumns() {
                 ),
                 cell: ({ row }) => (
                     <div className='ps-3 text-nowrap'>
-                        {row.getValue('date')}
+                        {format(new Date(row.getValue('date')), 'dd-MM-yyyy')}
                     </div>
                 ),
                 meta: {
@@ -69,7 +70,7 @@ export function useBalanceLiftingSalesPaddyColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.partyName')}
+                        title={t('paddySales.table.partyName')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -79,91 +80,84 @@ export function useBalanceLiftingSalesPaddyColumns() {
                 ),
             },
             {
-                accessorKey: 'saleNumber',
+                accessorKey: 'paddySalesDealNumber',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t(
-                            'balanceLifting.paddySales.dealNumber',
-                            'Deal Number'
-                        )}
+                        title={t('paddySales.table.paddySalesDealNumber')}
                     />
                 ),
                 cell: ({ row }) => (
                     <div className='text-nowrap'>
-                        {row.getValue('saleNumber') || '-'}
+                        {row.getValue('paddySalesDealNumber') || '-'}
                     </div>
                 ),
             },
             {
-                accessorKey: 'paddyType',
+                accessorKey: 'dhanType',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.paddyType', 'Paddy Type')}
+                        title={t('paddySales.table.dhanType')}
                     />
                 ),
                 cell: ({ row }) => (
                     <div className='text-nowrap'>
-                        {row.getValue('paddyType') || '-'}
+                        {row.getValue('dhanType') || '-'}
                     </div>
                 ),
             },
             {
-                accessorFn: (row) => row.dhanQty || 0,
-                id: 'paddyQty',
+                accessorKey: 'dhanQty',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.quantity', 'Qty (Qtl)')}
+                        title={t('paddySales.table.dhanQty')}
                     />
                 ),
                 cell: ({ row }) => (
-                    <div className='text-right'>{row.getValue('paddyQty')}</div>
+                    <div className='text-right'>{row.getValue('dhanQty')}</div>
                 ),
             },
             {
-                accessorFn: (row) =>
-                    row.outwardData?.reduce(
-                        (acc, outward) => acc + (outward.netWeight || 0),
-                        0
-                    ) || 0,
-                id: 'lifting',
+                accessorKey: 'deliveryType',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t(
-                            'dailyReports.balanceLifting.common.lifting',
-                            'Lifting'
-                        )}
+                        title={t('paddySales.table.deliveryType')}
                     />
                 ),
                 cell: ({ row }) => (
-                    <div className='text-right'>{row.getValue('lifting')}</div>
+                    <div className='text-right'>
+                        {row.getValue('deliveryType')}
+                    </div>
                 ),
             },
             {
-                accessorFn: (row) => {
-                    const qty = row.dhanQty || 0
-                    const lifting =
-                        row.outwardData?.reduce(
-                            (acc, outward) => acc + (outward.netWeight || 0),
-                            0
-                        ) || 0
-                    return qty - lifting
-                },
-                id: 'balance',
+                accessorKey: 'liftedQty',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t(
-                            'dailyReports.balanceLifting.common.balance',
-                            'Balance'
-                        )}
+                        title={t('paddySales.table.liftedQty')}
                     />
                 ),
                 cell: ({ row }) => (
-                    <div className='text-right'>{row.getValue('balance')}</div>
+                    <div className='text-right'>
+                        {/* {Number(row.original.inwardData?.netWeight)} */}
+                        {Number(row.original?.dhanQty || 0)}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'balanceLifting',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('paddySales.table.balanceLifting')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-right'>{row.getValue('dhanQty')}</div>
                 ),
             },
             {

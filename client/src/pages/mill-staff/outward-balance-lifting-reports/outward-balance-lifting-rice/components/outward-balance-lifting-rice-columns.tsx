@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { formatDate } from 'date-fns'
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -40,23 +40,6 @@ export function useOutwardBalanceLiftingRiceColumns() {
                 enableHiding: false,
             },
             {
-                accessorKey: 'privateRiceOutwardNumber',
-                header: ({ column }) => (
-                    <DataTableColumnHeader
-                        column={column}
-                        title={t(
-                            'balanceLifting.outwardRiceSales.outwardNumber',
-                            'Outward Number'
-                        )}
-                    />
-                ),
-                cell: ({ row }) => (
-                    <div className='w-[100px] font-medium'>
-                        {row.getValue('privateRiceOutwardNumber')}
-                    </div>
-                ),
-            },
-            {
                 accessorKey: 'date',
                 header: ({ column }) => (
                     <DataTableColumnHeader
@@ -68,25 +51,22 @@ export function useOutwardBalanceLiftingRiceColumns() {
                     const date = new Date(row.getValue('date'))
                     return (
                         <div className='w-[100px]'>
-                            {formatDate(date, 'dd-MM-yyyy')}
+                            {format(date, 'dd-MM-yyyy')}
                         </div>
                     )
                 },
             },
             {
-                accessorKey: 'saleNumber',
+                accessorKey: 'riceSalesDealNumber',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t(
-                            'balanceLifting.outwardRiceSales.saleNumber',
-                            'Sale Number'
-                        )}
+                        title={t('outwardRiceSales.table.riceSalesDealNumber')}
                     />
                 ),
                 cell: ({ row }) => (
                     <div className='w-[100px]'>
-                        {row.getValue('saleNumber') || '-'}
+                        {row.getValue('riceSalesDealNumber') || '-'}
                     </div>
                 ),
             },
@@ -95,7 +75,7 @@ export function useOutwardBalanceLiftingRiceColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.partyName')}
+                        title={t('outwardRiceSales.table.partyName')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -103,29 +83,107 @@ export function useOutwardBalanceLiftingRiceColumns() {
                 ),
             },
             {
-                accessorKey: 'truckNumber',
+                accessorKey: 'brokerName',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.truckNumber', 'Truck Number')}
+                        title={t('outwardRiceSales.brokerName')}
                     />
                 ),
                 cell: ({ row }) => (
                     <div className='w-[120px]'>
-                        {row.getValue('truckNumber')}
+                        {row.getValue('brokerName')}
                     </div>
                 ),
             },
             {
-                accessorKey: 'netWeight',
+                accessorKey: 'deliveryType',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.netWeight', 'Net Weight')}
+                        title={t('outwardRiceSales.table.deliveryType')}
                     />
                 ),
                 cell: ({ row }) => (
-                    <div className='w-[100px]'>{row.getValue('netWeight')}</div>
+                    <div className='w-[100px]'>
+                        {row.getValue('deliveryType')}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'lotOrOther',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('outwardRiceSales.table.lotOrOther')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='w-[100px]'>
+                        {row.getValue('lotOrOther')}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'fciOrNan',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('outwardRiceSales.table.fciOrNan')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='w-[100px]'>{row.getValue('fciOrNan')}</div>
+                ),
+            },
+            {
+                accessorKey: 'riceType',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('outwardRiceSales.table.riceType')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='w-[100px]'>{row.getValue('riceType')}</div>
+                ),
+            },
+            {
+                accessorKey: 'riceQty',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('outwardRiceSales.table.riceQty')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='w-[100px]'>{row.getValue('riceQty')}</div>
+                ),
+            },
+            {
+                accessorKey: 'outwardQty',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('outwardRiceSales.table.outwardQty')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='w-[100px]'>
+                        {row.getValue('outwardQty')}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'balanceOutward',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('outwardRiceSales.table.balanceOutward')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='w-[100px]'>{row.getValue('riceQty')}</div>
                 ),
             },
             {

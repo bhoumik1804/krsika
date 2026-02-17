@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -45,7 +44,6 @@ export function BalanceLiftingPurchasesRiceTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -193,8 +191,8 @@ export function BalanceLiftingPurchasesRiceTable({
                                     className='h-24 text-center'
                                 >
                                     {false // Assuming 'loading' state is not provided
-                                        ? t('common.loading')
-                                        : t('balanceLifting.common.noRecords')}
+                                        ? 'Loading...'
+                                        : 'No records found.'}
                                 </TableCell>
                             </TableRow>
                         )}

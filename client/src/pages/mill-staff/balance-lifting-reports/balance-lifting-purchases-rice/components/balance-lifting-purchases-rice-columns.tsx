@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -53,7 +54,7 @@ export function useBalanceLiftingPurchasesRiceColumns() {
                 ),
                 cell: ({ row }) => (
                     <div className='ps-3 text-nowrap'>
-                        {row.getValue('date')}
+                        {format(new Date(row.getValue('date')), 'dd-MM-yyyy')}
                     </div>
                 ),
                 meta: {
@@ -65,11 +66,25 @@ export function useBalanceLiftingPurchasesRiceColumns() {
                 enableHiding: false,
             },
             {
+                accessorKey: 'ricePurchaseDealNumber',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('ricePurchase.table.ricePurchaseDealNumber')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-nowrap'>
+                        {row.getValue('ricePurchaseDealNumber') || '-'}
+                    </div>
+                ),
+            },
+            {
                 accessorKey: 'partyName',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.partyName')}
+                        title={t('ricePurchase.table.partyName')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -83,7 +98,7 @@ export function useBalanceLiftingPurchasesRiceColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('transactionReports.brokerName')}
+                        title={t('ricePurchase.table..brokerName')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -97,10 +112,7 @@ export function useBalanceLiftingPurchasesRiceColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t(
-                            'balanceLifting.ricePurchase.deliveryType',
-                            'Delivery Type'
-                        )}
+                        title={t('ricePurchase.table.deliveryType')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -114,10 +126,7 @@ export function useBalanceLiftingPurchasesRiceColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t(
-                            'balanceLifting.ricePurchase.lotOrOther',
-                            'Lot / Other'
-                        )}
+                        title={t('ricePurchase.table.lotOrOther')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -131,10 +140,7 @@ export function useBalanceLiftingPurchasesRiceColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t(
-                            'balanceLifting.ricePurchase.fciOrNan',
-                            'FCI / NAN'
-                        )}
+                        title={t('ricePurchase.table.fciOrNAN')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -148,7 +154,7 @@ export function useBalanceLiftingPurchasesRiceColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.riceType', 'Rice Type')}
+                        title={t('ricePurchase.table.type')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -162,7 +168,7 @@ export function useBalanceLiftingPurchasesRiceColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.quantity', 'Qty (Qtl)')}
+                        title={t('ricePurchase.table.weight')}
                     />
                 ),
                 cell: ({ row }) => (
@@ -172,145 +178,44 @@ export function useBalanceLiftingPurchasesRiceColumns() {
                 ),
             },
             {
-                accessorKey: 'riceRate',
+                accessorKey: 'inwarded',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.ratePerQuintal', 'Rate/Qtl')}
+                        title={t('ricePurchase.table.inwarded')}
                     />
                 ),
                 cell: ({ row }) => (
                     <div className='text-right'>
-                        ₹{row.original.riceRate || 0}
+                        {row.original.riceQty || 0}
                     </div>
                 ),
             },
             {
-                accessorKey: 'discountPercent',
+                accessorKey: 'inwardQty',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.discountPercent', 'Discount %')}
+                        title={t('ricePurchase.table.inwardQty')}
                     />
                 ),
                 cell: ({ row }) => (
                     <div className='text-right'>
-                        {row.original.discountPercent || 0}%
+                        {row.original.riceQty || 0}
                     </div>
                 ),
             },
             {
-                accessorKey: 'brokeragePerQuintal',
+                accessorKey: 'balanceInward',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('common.brokeragePerQuintal', 'Brokerage/Qtl')}
+                        title={t('ricePurchase.table.balanceInward')}
                     />
                 ),
                 cell: ({ row }) => (
                     <div className='text-right'>
-                        ₹{row.original.brokeragePerQuintal || 0}
-                    </div>
-                ),
-            },
-            {
-                accessorKey: 'frkType',
-                header: ({ column }) => (
-                    <DataTableColumnHeader
-                        column={column}
-                        title={t('common.frkType', 'FRK Type')}
-                    />
-                ),
-                cell: ({ row }) => (
-                    <div className='text-nowrap'>
-                        {row.getValue('frkType') || '-'}
-                    </div>
-                ),
-            },
-            {
-                accessorKey: 'frkRatePerQuintal',
-                header: ({ column }) => (
-                    <DataTableColumnHeader
-                        column={column}
-                        title={t('common.frkRatePerQuintal', 'FRK Rate/Qtl')}
-                    />
-                ),
-                cell: ({ row }) => (
-                    <div className='text-right'>
-                        ₹{row.original.frkRatePerQuintal || 0}
-                    </div>
-                ),
-            },
-            {
-                accessorKey: 'lotNumber',
-                header: ({ column }) => (
-                    <DataTableColumnHeader
-                        column={column}
-                        title={t('common.lotNumber', 'LOT No.')}
-                    />
-                ),
-                cell: ({ row }) => (
-                    <div className='text-nowrap'>
-                        {row.getValue('lotNumber') || '-'}
-                    </div>
-                ),
-            },
-            {
-                accessorKey: 'gunnyType',
-                header: ({ column }) => (
-                    <DataTableColumnHeader
-                        column={column}
-                        title={t('common.gunnyType', 'Gunny Type')}
-                    />
-                ),
-                cell: ({ row }) => (
-                    <div className='text-nowrap'>
-                        {row.getValue('gunnyType') || '-'}
-                    </div>
-                ),
-            },
-            {
-                accessorKey: 'newGunnyRate',
-                header: ({ column }) => (
-                    <DataTableColumnHeader
-                        column={column}
-                        title={t('common.newGunnyRate', 'New Gunny Rate')}
-                    />
-                ),
-                cell: ({ row }) => (
-                    <div className='text-right'>
-                        ₹{row.original.newGunnyRate || 0}
-                    </div>
-                ),
-            },
-            {
-                accessorKey: 'oldGunnyRate',
-                header: ({ column }) => (
-                    <DataTableColumnHeader
-                        column={column}
-                        title={t('common.oldGunnyRate', 'Old Gunny Rate')}
-                    />
-                ),
-                cell: ({ row }) => (
-                    <div className='text-right'>
-                        ₹{row.original.oldGunnyRate || 0}
-                    </div>
-                ),
-            },
-            {
-                accessorKey: 'plasticGunnyRate',
-                header: ({ column }) => (
-                    <DataTableColumnHeader
-                        column={column}
-                        title={t(
-                            'common.plasticGunnyRate',
-                            'Plastic Gunny Rate'
-                        )}
-                    />
-                ),
-                cell: ({ row }) => (
-                    <div className='text-right'>
-                        ₹{row.original.plasticGunnyRate || 0}
+                        {row.original.riceQty || 0}
                     </div>
                 ),
             },

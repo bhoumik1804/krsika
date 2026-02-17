@@ -25,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { outwardTypes } from '../data/data'
 import { type LabourOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { labourOutwardColumns as columns } from './labour-outward-columns'
+import { useLabourOutwardColumns } from './labour-outward-columns'
 
 type DataTableProps = {
     data: LabourOutward[]
@@ -54,6 +54,8 @@ export function LabourOutwardTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+
+    const columns = useLabourOutwardColumns()
 
     const {
         columnFilters,

@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -50,7 +51,7 @@ export function useBalanceLiftingPurchasesPaddyColumns() {
                     const date = new Date(row.getValue('date'))
                     return (
                         <div className='w-[80px]'>
-                            {date.toLocaleDateString()}
+                            {format(date, 'dd-MM-yyyy')}
                         </div>
                     )
                 },
@@ -60,9 +61,7 @@ export function useBalanceLiftingPurchasesPaddyColumns() {
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t(
-                            'dailyReports.balanceLifting.paddyPurchase.dealNumber'
-                        )}
+                        title={t('paddyPurchase.table.paddyPurchaseDealNumber')}
                     />
                 ),
                 cell: ({ row }) => {
@@ -94,29 +93,115 @@ export function useBalanceLiftingPurchasesPaddyColumns() {
                 },
             },
             {
-                accessorKey: 'doPaddyQty',
+                accessorKey: 'brokerName',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('dailyReports.balanceLifting.common.qty')}
+                        title={t(
+                            'balanceLiftingPaddyPurchase.table.brokerName'
+                        )}
                     />
                 ),
                 cell: ({ row }) => {
                     return (
                         <div className='flex space-x-2'>
                             <span className='max-w-[500px] truncate font-medium'>
-                                {row.getValue('doPaddyQty')}
+                                {row.getValue('brokerName')}
                             </span>
                         </div>
                     )
                 },
             },
             {
-                accessorKey: 'balance',
+                accessorKey: 'deliveryType',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('dailyReports.balanceLifting.common.lifting')}
+                        title={t('paddyPurchase.table.delivery')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-nowrap'>
+                        {row.getValue('deliveryType')}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'purchaseType',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('paddyPurchase.table.purchaseType')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-nowrap'>
+                        {row.getValue('purchaseType')}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'doNumber',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('paddyPurchase.table.doNumber')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='font-mono text-sm'>
+                        {row.getValue('doNumber') || '-'}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'committeeName',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('paddyPurchase.table.committee')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div>{row.getValue('committeeName') || '-'}</div>
+                ),
+            },
+            {
+                accessorKey: 'paddyType',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('paddyPurchase.table.paddyType')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-nowrap'>
+                        {row.getValue('paddyType')}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'totalPaddyQty',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t(
+                            'balanceLiftingPaddyPurchase.table.totalPaddyQty'
+                        )}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-right'>
+                        {row.getValue('totalPaddyQty') || '0.00'}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'liftedQty',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('paddyPurchase.table.liftedQty')}
                     />
                 ),
                 cell: ({ row }) => {
@@ -135,11 +220,11 @@ export function useBalanceLiftingPurchasesPaddyColumns() {
                 },
             },
             {
-                accessorKey: 'balanceLifting',
+                accessorKey: 'balanceLiftited',
                 header: ({ column }) => (
                     <DataTableColumnHeader
                         column={column}
-                        title={t('dailyReports.balanceLifting.common.balance')}
+                        title={t('paddyPurchase.table.balanceLiftited')}
                     />
                 ),
                 cell: ({ row }) => {

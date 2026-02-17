@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -8,8 +10,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { type PrivateRiceOutward } from '../data/schema'
 import { useDeletePrivateRiceOutward } from '../data/hooks'
+import { type PrivateRiceOutward } from '../data/schema'
 import { usePrivateRiceOutward } from './private-rice-outward-provider'
 
 type PrivateRiceOutwardDeleteDialogProps = {
@@ -23,40 +25,45 @@ export function PrivateRiceOutwardDeleteDialog({
     onOpenChange,
     currentRow,
 }: PrivateRiceOutwardDeleteDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId, setOpen, setCurrentRow } = usePrivateRiceOutward()
     const deleteMutation = useDeletePrivateRiceOutward(millId)
 
-    const handleDelete = async () => {
+    const handleDelete = () => {
         if (!currentRow?._id) return
-        try {
-            await deleteMutation.mutateAsync(currentRow._id)
-            setCurrentRow(null)
-            setOpen(null)
-            onOpenChange(false)
-        } catch {
-            // Error is handled by mutation hook
-        }
+        toast.promise(deleteMutation.mutateAsync(currentRow._id), {
+            loading: t('common.deleting'),
+            success: () => {
+                setCurrentRow(null)
+                setOpen(null)
+                onOpenChange(false)
+                return t('common.success')
+            },
+            error: t('common.error'),
+        })
     }
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Record?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                        {t('common.deleteRecord')}
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete this record for{' '}
+                        {t('common.deleteRecordFor')}{' '}
                         <strong>{currentRow?.partyName}</strong>?
                         <br />
-                        This action cannot be undone.
+                        {t('common.actionCannotBeUndone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

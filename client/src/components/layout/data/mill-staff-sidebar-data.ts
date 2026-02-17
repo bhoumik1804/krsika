@@ -177,12 +177,6 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             title: 'Daily Reports',
             items: [
                 {
-                    title: 'Reports Overview',
-                    url: `/staff/${millId}/daily/reports`,
-                    icon: FileBarChart,
-                    moduleSlug: 'daily-reports-overview',
-                },
-                {
                     title: 'Purchase Deals',
                     url: `/staff/${millId}/daily/reports/purchase`,
                     icon: FileBarChart,

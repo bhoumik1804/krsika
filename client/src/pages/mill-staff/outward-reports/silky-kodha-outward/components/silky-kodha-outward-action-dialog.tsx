@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { toast } from 'sonner'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
@@ -58,6 +59,7 @@ export function SilkyKodhaOutwardActionDialog({
     onOpenChange,
     currentRow,
 }: SilkyKodhaOutwardActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const party = usePaginatedList(
         millId || '',
@@ -135,27 +137,28 @@ export function SilkyKodhaOutwardActionDialog({
 
         if (isEditing && currentRow?._id) {
             const { _id, ...updateData } = submissionData
-            updateMutation.mutate(
-                { id: currentRow._id, data: updateData },
+            toast.promise(
+                updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data: updateData,
+                }),
                 {
-                    onSuccess: () => {
-                        toast.success('Updated successfully')
+                    loading: t('common.updating'),
+                    success: () => {
                         onOpenChange(false)
+                        return t('common.success')
                     },
-                    onError: (error) => {
-                        toast.error(error.message || 'Failed to update')
-                    },
+                    error: (error) => error.message || t('common.error'),
                 }
             )
         } else {
-            createMutation.mutate(submissionData, {
-                onSuccess: () => {
-                    toast.success('Added successfully')
+            toast.promise(createMutation.mutateAsync(submissionData), {
+                loading: t('common.adding'),
+                success: () => {
                     onOpenChange(false)
+                    return t('common.success')
                 },
-                onError: (error) => {
-                    toast.error(error.message || 'Failed to add')
-                },
+                error: (error) => error.message || t('common.error'),
             })
         }
     }
@@ -165,10 +168,14 @@ export function SilkyKodhaOutwardActionDialog({
             <DialogContent className='max-h-[90vh] max-w-2xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing
+                            ? t('silkyKodhaOutward.editRecord')
+                            : t('silkyKodhaOutward.addRecord')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing
+                            ? t('common.updateDetails')
+                            : t('common.enterDetails')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -182,7 +189,9 @@ export function SilkyKodhaOutwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t('silkyKodhaOutward.form.date')}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -201,7 +210,9 @@ export function SilkyKodhaOutwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickADate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -244,11 +255,15 @@ export function SilkyKodhaOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Silky Kodha Sale Deal Number
+                                            {t(
+                                                'silkyKodhaOutward.form.silkyKodhaSaleDealNumber'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter deal number'
+                                                placeholder={t(
+                                                    'silkyKodhaOutward.form.enterDealNumber'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -262,7 +277,11 @@ export function SilkyKodhaOutwardActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Party Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'silkyKodhaOutward.form.partyName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Combobox
                                                 value={field.value}
@@ -270,7 +289,9 @@ export function SilkyKodhaOutwardActionDialog({
                                                 items={party.items}
                                             >
                                                 <ComboboxInput
-                                                    placeholder='Search party...'
+                                                    placeholder={t(
+                                                        'silkyKodhaOutward.form.searchParty'
+                                                    )}
                                                     showClear
                                                 />
                                                 <ComboboxContent>
@@ -289,11 +310,15 @@ export function SilkyKodhaOutwardActionDialog({
                                                             )}
                                                         </ComboboxCollection>
                                                         <ComboboxEmpty>
-                                                            No parties found
+                                                            {t(
+                                                                'common.noResults'
+                                                            )}
                                                         </ComboboxEmpty>
                                                         {party.isLoadingMore && (
                                                             <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                Loading more...
+                                                                {t(
+                                                                    'common.loadingMore'
+                                                                )}
                                                             </div>
                                                         )}
                                                     </ComboboxList>
@@ -309,7 +334,11 @@ export function SilkyKodhaOutwardActionDialog({
                                 name='brokerName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Broker Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'silkyKodhaOutward.form.brokerName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Combobox
                                                 value={field.value}
@@ -317,7 +346,9 @@ export function SilkyKodhaOutwardActionDialog({
                                                 items={broker.items}
                                             >
                                                 <ComboboxInput
-                                                    placeholder='Search broker...'
+                                                    placeholder={t(
+                                                        'silkyKodhaOutward.form.searchBroker'
+                                                    )}
                                                     showClear
                                                 />
                                                 <ComboboxContent>
@@ -336,11 +367,15 @@ export function SilkyKodhaOutwardActionDialog({
                                                             )}
                                                         </ComboboxCollection>
                                                         <ComboboxEmpty>
-                                                            No brokers found
+                                                            {t(
+                                                                'common.noResults'
+                                                            )}
                                                         </ComboboxEmpty>
                                                         {broker.isLoadingMore && (
                                                             <div className='py-2 text-center text-xs text-muted-foreground'>
-                                                                Loading more...
+                                                                {t(
+                                                                    'common.loadingMore'
+                                                                )}
                                                             </div>
                                                         )}
                                                     </ComboboxList>
@@ -356,7 +391,9 @@ export function SilkyKodhaOutwardActionDialog({
                                 name='rate'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rate</FormLabel>
+                                        <FormLabel>
+                                            {t('silkyKodhaOutward.form.rate')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -380,7 +417,9 @@ export function SilkyKodhaOutwardActionDialog({
                                 name='oil'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>OIL %</FormLabel>
+                                        <FormLabel>
+                                            {t('silkyKodhaOutward.form.oil')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -405,7 +444,11 @@ export function SilkyKodhaOutwardActionDialog({
                                 name='brokerage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Brokerage</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'silkyKodhaOutward.form.brokerage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -429,7 +472,11 @@ export function SilkyKodhaOutwardActionDialog({
                                 name='gunnyPlastic'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny (Plastic)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'silkyKodhaOutward.form.gunnyPlastic'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -454,7 +501,9 @@ export function SilkyKodhaOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Plastic Gunny Weight
+                                            {t(
+                                                'silkyKodhaOutward.form.plasticWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -480,7 +529,11 @@ export function SilkyKodhaOutwardActionDialog({
                                 name='truckNo'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck No</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'silkyKodhaOutward.form.truckNo'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder='XX-00-XX-0000'
@@ -497,7 +550,9 @@ export function SilkyKodhaOutwardActionDialog({
                                 name='truckRst'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>RST No</FormLabel>
+                                        <FormLabel>
+                                            {t('silkyKodhaOutward.form.rstNo')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder='RST-000'
@@ -514,7 +569,11 @@ export function SilkyKodhaOutwardActionDialog({
                                 name='truckWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'silkyKodhaOutward.form.truckWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -539,7 +598,11 @@ export function SilkyKodhaOutwardActionDialog({
                                 name='gunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'silkyKodhaOutward.form.gunnyWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -564,7 +627,11 @@ export function SilkyKodhaOutwardActionDialog({
                                 name='netWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Net Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'silkyKodhaOutward.form.netWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -591,10 +658,12 @@ export function SilkyKodhaOutwardActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {isEditing
+                                    ? t('common.update')
+                                    : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

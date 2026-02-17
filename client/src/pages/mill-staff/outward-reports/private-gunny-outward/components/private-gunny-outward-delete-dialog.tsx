@@ -1,5 +1,6 @@
 'use client'
-
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,17 +26,20 @@ export function PrivateGunnyOutwardDeleteDialog({
     onOpenChange,
     currentRow,
 }: Props) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = usePrivateGunnyOutward()
     const deleteMutation = useDeletePrivateGunnyOutward(millId)
 
-    const handleDelete = async () => {
+    const handleDelete = () => {
         if (!currentRow?._id) return
-        try {
-            await deleteMutation.mutateAsync(currentRow._id)
-            onOpenChange(false)
-        } catch (error) {
-            // Error handling is done in the mutation hook
-        }
+        toast.promise(deleteMutation.mutateAsync(currentRow._id), {
+            loading: t('common.deleting'),
+            success: () => {
+                onOpenChange(false)
+                return t('common.success')
+            },
+            error: t('common.error'),
+        })
     }
 
     return (
@@ -43,24 +47,22 @@ export function PrivateGunnyOutwardDeleteDialog({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Are you absolutely sure?
+                        {t('common.deleteRecord')}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete the record for{' '}
+                        {t('common.deleteRecordFor')}{' '}
                         <strong>{currentRow?.gunnySaleDealNumber}</strong>
+                        <br />
+                        {t('common.actionCannotBeUndone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel disabled={deleteMutation.isPending}>
-                        Cancel
-                    </AlertDialogCancel>
+                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                     <AlertDialogAction
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                         onClick={handleDelete}
-                        disabled={deleteMutation.isPending}
                     >
-                        {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                        {t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

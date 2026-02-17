@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -15,6 +16,7 @@ import { useGovtGunnyOutwardList } from './data/hooks'
 import type { GovtGunnyOutwardQueryParams } from './data/types'
 
 function GovtGunnyOutwardContent() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -65,10 +67,10 @@ function GovtGunnyOutwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Govt Gunny Outward Report
+                            {t('govtGunnyOutward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage government gunny outward transactions
+                            {t('govtGunnyOutward.description')}
                         </p>
                     </div>
                 </div>
@@ -85,10 +87,10 @@ function GovtGunnyOutwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Govt Gunny Outward Report
+                            {t('govtGunnyOutward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage government gunny outward transactions
+                            {t('govtGunnyOutward.description')}
                         </p>
                     </div>
                 </div>
@@ -106,10 +108,10 @@ function GovtGunnyOutwardContent() {
             <div className='flex flex-wrap items-end justify-between gap-2'>
                 <div>
                     <h2 className='text-2xl font-bold tracking-tight'>
-                        Govt Gunny Outward Report
+                        {t('govtGunnyOutward.title')}
                     </h2>
                     <p className='text-muted-foreground'>
-                        Manage government gunny outward transactions
+                        {t('govtGunnyOutward.description')}
                     </p>
                 </div>
                 <GovtGunnyOutwardPrimaryButtons />

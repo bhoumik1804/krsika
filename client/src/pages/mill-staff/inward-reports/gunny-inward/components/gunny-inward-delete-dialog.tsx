@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -20,6 +21,7 @@ export function GunnyInwardDeleteDialog({
     open,
     onOpenChange,
 }: GunnyInwardDeleteDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId, currentRow } = gunnyInward()
     const { mutate: deleteInward, isPending } = useDeleteGunnyInward(millId)
 
@@ -37,24 +39,26 @@ export function GunnyInwardDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Record?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                        {t('gunnyInward.deleteRecord')}
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete this record for{' '}
+                        {t('common.deleteConfirmation')}{' '}
                         <strong>{currentRow?.partyName}</strong>?
                         <br />
-                        This action cannot be undone.
+                        {t('common.cannotBeUndone')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isPending}>
-                        Cancel
+                        {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         disabled={isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isPending ? 'Deleting...' : 'Delete'}
+                        {isPending ? t('common.deleting') : t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
