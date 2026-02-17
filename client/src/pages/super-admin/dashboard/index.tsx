@@ -229,7 +229,7 @@
 //         disabled: true,
 //     },
 // ]
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { superAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
