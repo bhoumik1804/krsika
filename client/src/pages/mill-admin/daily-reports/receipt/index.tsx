@@ -149,7 +149,7 @@ export function ReceiptReport() {
             </Header>
 
             <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
-                <div className='flex flex-wrap items-end justify-between gap-2'>
+                <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
                             Receipt
@@ -158,13 +158,14 @@ export function ReceiptReport() {
                             Track daily receipt transactions
                         </p>
                     </div>
-                    <div className='flex items-center gap-2'>
+                    <div className='flex flex-col gap-2 sm:flex-row sm:items-center items-start'>
                         <DateRangePicker date={date} setDate={setDate} />
                         <Button
                             variant='outline'
                             size='sm'
                             onClick={handleExport}
                             disabled={loading || receipts.length === 0}
+                            className='w-auto'
                         >
                             <Download className='mr-2 h-4 w-4' />
                             Export CSV

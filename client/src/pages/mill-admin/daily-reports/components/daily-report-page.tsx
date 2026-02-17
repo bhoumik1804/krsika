@@ -134,7 +134,7 @@ export function DailyReportPage({
             </Header>
 
             <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
-                <div className='flex flex-wrap items-end justify-between gap-2'>
+                <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
                             {title}
@@ -143,26 +143,30 @@ export function DailyReportPage({
                             {description}
                         </p>
                     </div>
-                    <div className='flex items-center gap-2'>
+                    <div className='flex flex-col gap-2 sm:flex-row sm:items-center items-start'>
                         <DateRangePicker date={date} setDate={setDate} />
-                        <Button
-                            variant='outline'
-                            size='sm'
-                            onClick={handleExportSummary}
-                            disabled={loading || data.length === 0}
-                        >
-                            <Download className='mr-2 h-4 w-4' />
-                            Export Summary
-                        </Button>
-                        <Button
-                            variant='outline'
-                            size='sm'
-                            onClick={handleExportHistory}
-                            disabled={transactionsLoading || transactions.length === 0}
-                        >
-                            <Download className='mr-2 h-4 w-4' />
-                            Export History
-                        </Button>
+                        <div className="flex flex-col gap-2 sm:flex-row items-start sm:items-center">
+                            <Button
+                                variant='outline'
+                                size='sm'
+                                onClick={handleExportSummary}
+                                disabled={loading || data.length === 0}
+                                className='w-auto'
+                            >
+                                <Download className='mr-2 h-4 w-4' />
+                                Export Summary
+                            </Button>
+                            <Button
+                                variant='outline'
+                                size='sm'
+                                onClick={handleExportHistory}
+                                disabled={transactionsLoading || transactions.length === 0}
+                                className='w-auto'
+                            >
+                                <Download className='mr-2 h-4 w-4' />
+                                Export History
+                            </Button>
+                        </div>
                     </div>
                 </div>
 

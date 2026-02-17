@@ -26,7 +26,7 @@ export function StatsCard({
                 <Icon className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-                <div className='text-2xl font-bold'>{value}</div>
+                <div className='text-lg font-bold sm:text-2xl'>{value}</div>
                 {(change || description) && (
                     <p className='flex items-center gap-1 text-xs text-muted-foreground'>
                         {changeType === 'positive' && (
@@ -40,8 +40,8 @@ export function StatsCard({
                                 changeType === 'positive'
                                     ? 'text-chart-2'
                                     : changeType === 'negative'
-                                      ? 'text-destructive'
-                                      : ''
+                                        ? 'text-destructive'
+                                        : ''
                             }
                         >
                             {change}

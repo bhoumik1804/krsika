@@ -131,6 +131,33 @@ export function DoReportActionDialog({
         }
     }, [currentRow, form])
 
+    const handleSuccess = () => {
+        onOpenChange(false)
+        form.reset({
+            date: format(new Date(), 'yyyy-MM-dd'),
+            samitiSangrahan: '',
+            doNo: '',
+            dhanMota: '' as unknown as number,
+            dhanPatla: '' as unknown as number,
+            dhanSarna: '' as unknown as number,
+            total: 0,
+        })
+        setUploadedFile(null)
+        setPreviewData([])
+        setCurrentRow(null)
+    }
+
+    const handleUpload = async () => {
+        if (previewData.length === 0) return
+
+        try {
+            await bulkCreateMutation.mutateAsync(previewData)
+            handleSuccess()
+        } catch (error) {
+            console.error('Error uploading file:', error)
+        }
+    }
+
     const onSubmit = async (data: DoReportData) => {
         const computedTotal =
             (data.dhanMota ?? 0) + (data.dhanPatla ?? 0) + (data.dhanSarna ?? 0)
@@ -140,9 +167,7 @@ export function DoReportActionDialog({
         }
 
         try {
-            if (activeTab === 'upload' && previewData.length > 0) {
-                await bulkCreateMutation.mutateAsync(previewData)
-            } else if (currentRow?._id) {
+            if (currentRow?._id) {
                 await updateMutation.mutateAsync({
                     _id: currentRow._id,
                     ...payload,
@@ -150,19 +175,7 @@ export function DoReportActionDialog({
             } else {
                 await createMutation.mutateAsync(payload)
             }
-            onOpenChange(false)
-            form.reset({
-                date: format(new Date(), 'yyyy-MM-dd'),
-                samitiSangrahan: '',
-                doNo: '',
-                dhanMota: '' as unknown as number,
-                dhanPatla: '' as unknown as number,
-                dhanSarna: '' as unknown as number,
-                total: 0,
-            })
-            setUploadedFile(null)
-            setPreviewData([])
-            setCurrentRow(null)
+            handleSuccess()
         } catch (error) {
             console.error('Error submitting form:', error)
         }
@@ -667,7 +680,17 @@ export function DoReportActionDialog({
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit' disabled={isLoading}>
+                            <Button
+                                type={
+                                    activeTab === 'upload' ? 'button' : 'submit'
+                                }
+                                onClick={
+                                    activeTab === 'upload'
+                                        ? handleUpload
+                                        : undefined
+                                }
+                                disabled={isLoading}
+                            >
                                 {isLoading
                                     ? activeTab === 'upload' &&
                                         previewData.length > 0
