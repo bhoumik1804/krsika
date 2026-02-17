@@ -1,9 +1,10 @@
 import mongoose from 'mongoose'
 import { GunnyInward } from '../models/gunny-inward.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createGunnyInwardEntry = async (millId, data) => {
+export const createGunnyInwardEntry = async (millId, data, userId) => {
     const entry = new GunnyInward({
         ...data,
         millId,
@@ -11,6 +12,26 @@ export const createGunnyInwardEntry = async (millId, data) => {
     })
     await entry.save()
     logger.info('Gunny inward entry created', { id: entry._id, millId })
+
+    // Record stock transaction (CREDIT - incoming gunny bags)
+    try {
+        const totalBags = (entry.gunnyNew || 0) + (entry.gunnyOld || 0) + (entry.gunnyPlastic || 0)
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: 'Gunny',
+            variety: null,
+            type: 'CREDIT',
+            action: 'Inward',
+            quantity: totalBags, // Gunny tracked by count
+            bags: totalBags,
+            refModel: 'GunnyInward',
+            refId: entry._id,
+            remarks: `Gunny Inward - ${entry.partyName || 'Party'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for gunny inward', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 

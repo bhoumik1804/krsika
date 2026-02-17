@@ -1,9 +1,10 @@
 import mongoose from 'mongoose'
 import { RiceInward } from '../models/rice-inward.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createRiceInwardEntry = async (millId, data) => {
+export const createRiceInwardEntry = async (millId, data, userId) => {
     const entry = new RiceInward({
         ...data,
         millId,
@@ -11,6 +12,26 @@ export const createRiceInwardEntry = async (millId, data) => {
     })
     await entry.save()
     logger.info('Rice inward entry created', { id: entry._id, millId })
+
+    // Record stock transaction (CREDIT - incoming rice)
+    try {
+        const totalQtl = (entry.riceMotaNetWeight || 0) + (entry.ricePatlaNetWeight || 0)
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: 'Rice',
+            variety: entry.riceType || null,
+            type: 'CREDIT',
+            action: 'Inward',
+            quantity: totalQtl / 100, // Convert Kg to Qtl
+            bags: 0,
+            refModel: 'RiceInward',
+            refId: entry._id,
+            remarks: `Rice Inward - ${entry.partyName || 'Party'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for rice inward', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 

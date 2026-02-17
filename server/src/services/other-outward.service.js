@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { OtherOutward } from '../models/other-outward.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
@@ -8,7 +9,7 @@ const escapeRegex = (str) => {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-export const createOtherOutwardEntry = async (millId, data) => {
+export const createOtherOutwardEntry = async (millId, data, userId) => {
     const entry = new OtherOutward({
         ...data,
         millId,
@@ -16,6 +17,26 @@ export const createOtherOutwardEntry = async (millId, data) => {
     })
     await entry.save()
     logger.info('Other outward entry created', { id: entry._id, millId })
+
+    // Record stock transaction (DEBIT - outgoing other items)
+    try {
+        const qty = entry.netWeight || entry.quantity || 0
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: entry.itemName,
+            variety: null,
+            type: 'DEBIT',
+            action: 'Outward',
+            quantity: entry.netWeight ? entry.netWeight / 100 : entry.quantity,
+            bags: (entry.gunnyNew || 0) + (entry.gunnyOld || 0) + (entry.gunnyPlastic || 0),
+            refModel: 'OtherOutward',
+            refId: entry._id,
+            remarks: `Other Outward - ${entry.partyName || 'Party'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for other outward', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 

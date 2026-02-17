@@ -1379,7 +1379,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={PurchaseDealsReport}
-                                moduleSlug='daily-receipt'
+                                moduleSlug='daily-reports-overview'
                             />
                         ),
                     },
@@ -1388,7 +1388,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={SalesDealsReport}
-                                moduleSlug='daily-payment'
+                                moduleSlug='daily-reports-overview'
                             />
                         ),
                     },

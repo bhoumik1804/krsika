@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { PrivateGunnyOutward } from '../models/private-gunny-outward.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
@@ -8,7 +9,7 @@ const escapeRegex = (str) => {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-export const createPrivateGunnyOutwardEntry = async (millId, data) => {
+export const createPrivateGunnyOutwardEntry = async (millId, data, userId) => {
     const entry = new PrivateGunnyOutward({
         ...data,
         millId,
@@ -19,6 +20,26 @@ export const createPrivateGunnyOutwardEntry = async (millId, data) => {
         id: entry._id,
         millId,
     })
+
+    // Record stock transaction (DEBIT - outgoing gunny)
+    try {
+        const totalBags = (entry.newGunnyQty || 0) + (entry.oldGunnyQty || 0) + (entry.plasticGunnyQty || 0)
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: 'Gunny',
+            variety: null,
+            type: 'DEBIT',
+            action: 'Outward',
+            quantity: totalBags,
+            bags: totalBags,
+            refModel: 'PrivateGunnyOutward',
+            refId: entry._id,
+            remarks: `Private Gunny Outward - ${entry.partyName || 'Party'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for private gunny outward', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 

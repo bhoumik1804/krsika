@@ -13,7 +13,8 @@ export const createRiceSaleEntry = async (millId, data) => {
     await entry.save()
 
     // Record stock transaction (DEBIT = stock decrease)
-    if (data.riceQty && data.riceType) {
+    // Removed conditional check to ensure transaction is always attempted/logged
+    try {
         await StockTransactionService.recordTransaction(millId, {
             date: data.date,
             commodity: 'Rice',
@@ -25,6 +26,11 @@ export const createRiceSaleEntry = async (millId, data) => {
             refModel: 'RiceSale',
             refId: entry._id,
             remarks: `Sale to ${data.partyName || 'Party'}`,
+        })
+    } catch (err) {
+        logger.error('Failed to record stock for rice sale', {
+            id: entry._id,
+            error: err.message,
         })
     }
 
@@ -142,17 +148,16 @@ export const updateRiceSaleEntry = async (millId, id, data) => {
     )
     if (!entry) throw new ApiError(404, 'Rice sale entry not found')
 
-    // Update stock transaction if quantity or type changed
-    if (data.riceQty || data.riceType || data.date) {
-        await StockTransactionService.updateTransaction('RiceSale', id, {
-            date: entry.date,
-            commodity: 'Rice',
-            variety: entry.riceType,
-            quantity: entry.riceQty,
-            bags: entry.bags || 0,
-            remarks: `Sale to ${entry.partyName || 'Party'}`,
-        })
-    }
+    // Update stock transaction
+    // Removed conditional check
+    await StockTransactionService.updateTransaction('RiceSale', id, {
+        date: entry.date,
+        commodity: 'Rice',
+        variety: entry.riceType,
+        quantity: entry.riceQty,
+        bags: entry.bags || 0,
+        remarks: `Sale to ${entry.partyName || 'Party'}`,
+    })
 
     logger.info('Rice sale entry updated', { id, millId })
     return entry
@@ -170,6 +175,11 @@ export const deleteRiceSaleEntry = async (millId, id) => {
 
 export const bulkDeleteRiceSaleEntries = async (millId, ids) => {
     const result = await RiceSale.deleteMany({ _id: { $in: ids }, millId })
+    
+    for (const id of ids) {
+        await StockTransactionService.deleteTransactionsByRef('RiceSale', id)
+    }
+
     logger.info('Rice sale entries bulk deleted', {
         millId,
         count: result.deletedCount,

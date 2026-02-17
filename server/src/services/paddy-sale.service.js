@@ -1,8 +1,42 @@
 import mongoose from 'mongoose'
 import { PaddySale } from '../models/paddy-sale.model.js'
+import { ApiError } from '../utils/ApiError.js'
+import logger from '../utils/logger.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 
 export const createPaddySaleEntry = async (millId, data) => {
-    return await PaddySale.create({ ...data, millId })
+    const entry = await PaddySale.create({ ...data, millId })
+
+    // Record stock transaction (DEBIT)
+    try {
+        await StockTransactionService.recordTransaction(
+            millId,
+            {
+                date: data.date,
+                commodity: 'Paddy',
+                variety: null, // Paddy sale usually has mixed varieties or specific ones? 
+                             // Model has dhanMotaQty, dhanPatlaQty etc.
+                             // We might need to record multiple transactions or a summary.
+                             // For now, let's treat it as generic 'Paddy' or check if there's a main type?
+                             // The summary uses dhanMotaQty etc.
+                             // If we track total quantity:
+                type: 'DEBIT',
+                action: 'Sale',
+                quantity: data.dhanQty,
+                bags: data.bags || 0,
+                refModel: 'PaddySale',
+                refId: entry._id,
+                remarks: `Sale to ${data.partyName || 'Party'}`,
+            }
+        )
+    } catch (err) {
+        logger.error('Failed to record stock for paddy sale', {
+            id: entry._id,
+            error: err.message,
+        })
+    }
+
+    return entry
 }
 
 export const getPaddySaleList = async (millId, query) => {
@@ -66,21 +100,47 @@ export const getPaddySaleById = async (millId, id) => {
 }
 
 export const updatePaddySaleEntry = async (millId, id, data) => {
-    return await PaddySale.findOneAndUpdate({ _id: id, millId }, data, {
+    const entry = await PaddySale.findOneAndUpdate({ _id: id, millId }, data, {
         new: true,
         runValidators: true,
     })
+    
+    if (!entry) throw new ApiError(404, 'Paddy sale entry not found')
+
+    // Update stock transaction
+    await StockTransactionService.updateTransaction('PaddySale', id, {
+        date: entry.date,
+        commodity: 'Paddy',
+        variety: null,
+        quantity: entry.dhanQty,
+        bags: entry.bags || 0,
+        remarks: `Sale to ${entry.partyName || 'Party'}`,
+    })
+
+    return entry
 }
 
 export const deletePaddySaleEntry = async (millId, id) => {
-    return await PaddySale.findOneAndDelete({ _id: id, millId })
+    const entry = await PaddySale.findOneAndDelete({ _id: id, millId })
+    if (!entry) throw new ApiError(404, 'Paddy sale entry not found')
+
+    // Delete associated stock transactions
+    await StockTransactionService.deleteTransactionsByRef('PaddySale', id)
+
+    return entry
 }
 
 export const bulkDeletePaddySaleEntries = async (millId, ids) => {
-    return await PaddySale.deleteMany({
+    const result = await PaddySale.deleteMany({
         _id: { $in: ids },
         millId,
     })
+    
+    for (const id of ids) {
+        await StockTransactionService.deleteTransactionsByRef('PaddySale', id)
+    }
+
+    return result.deletedCount // or result
 }
 
 export const getPaddySaleSummary = async (millId, startDate, endDate) => {

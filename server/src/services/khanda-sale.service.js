@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { KhandaSale } from '../models/khanda-sale.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 
 export const createKhandaSaleEntry = async (millId, data) => {
     const entry = new KhandaSale({
@@ -10,6 +11,31 @@ export const createKhandaSaleEntry = async (millId, data) => {
         date: new Date(data.date),
     })
     await entry.save()
+
+    // Record stock transaction (DEBIT)
+    try {
+        await StockTransactionService.recordTransaction(
+            millId,
+            {
+                date: data.date,
+                commodity: 'Khanda',
+                variety: null,
+                type: 'DEBIT',
+                action: 'Sale',
+                quantity: data.khandaQty, // Check model for field name
+                bags: data.bags || 0,
+                refModel: 'KhandaSale',
+                refId: entry._id,
+                remarks: `Sale to ${data.partyName || 'Party'}`,
+            }
+        )
+    } catch (err) {
+        logger.error('Failed to record stock for khanda sale', {
+            id: entry._id,
+            error: err.message,
+        })
+    }
+
     logger.info('Khanda sale entry created', { id: entry._id, millId })
     return entry
 }
@@ -113,6 +139,17 @@ export const updateKhandaSaleEntry = async (millId, id, data) => {
         { new: true, runValidators: true }
     )
     if (!entry) throw new ApiError(404, 'Khanda sale entry not found')
+
+    // Update stock transaction
+    await StockTransactionService.updateTransaction('KhandaSale', id, {
+        date: entry.date,
+        commodity: 'Khanda',
+        variety: null,
+        quantity: entry.khandaQty,
+        bags: entry.bags || 0,
+        remarks: `Sale to ${entry.partyName || 'Party'}`,
+    })
+
     logger.info('Khanda sale entry updated', { id, millId })
     return entry
 }
@@ -120,11 +157,20 @@ export const updateKhandaSaleEntry = async (millId, id, data) => {
 export const deleteKhandaSaleEntry = async (millId, id) => {
     const entry = await KhandaSale.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Khanda sale entry not found')
+
+    // Delete associated stock transactions
+    await StockTransactionService.deleteTransactionsByRef('KhandaSale', id)
+
     logger.info('Khanda sale entry deleted', { id, millId })
 }
 
 export const bulkDeleteKhandaSaleEntries = async (millId, ids) => {
     const result = await KhandaSale.deleteMany({ _id: { $in: ids }, millId })
+    
+    for (const id of ids) {
+        await StockTransactionService.deleteTransactionsByRef('KhandaSale', id)
+    }
+
     logger.info('Khanda sale entries bulk deleted', {
         millId,
         count: result.deletedCount,

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import NakkhiOutward from '../models/nakkhi-outward.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
@@ -8,7 +9,7 @@ const escapeRegex = (str) => {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-export const createNakkhiOutwardEntry = async (millId, data) => {
+export const createNakkhiOutwardEntry = async (millId, data, userId) => {
     const entry = new NakkhiOutward({
         ...data,
         millId,
@@ -16,6 +17,26 @@ export const createNakkhiOutwardEntry = async (millId, data) => {
     })
     await entry.save()
     logger.info('Nakkhi outward entry created', { id: entry._id, millId })
+
+    // Record stock transaction (DEBIT - outgoing nakkhi)
+    try {
+        const qty = entry.netWeight || 0
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: 'Nakkhi',
+            variety: null,
+            type: 'DEBIT',
+            action: 'Outward',
+            quantity: qty / 100,
+            bags: 0,
+            refModel: 'NakkhiOutward',
+            refId: entry._id,
+            remarks: `Nakkhi Outward - ${entry.partyName || 'Party'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for nakkhi outward', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 

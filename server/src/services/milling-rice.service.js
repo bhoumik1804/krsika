@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { MillingRice } from '../models/milling-rice.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
@@ -12,6 +13,26 @@ export const createMillingRiceEntry = async (millId, data, userId) => {
     })
     await entry.save()
     logger.info('Milling rice entry created', { id: entry._id, millId, userId })
+
+    // Record stock transaction (DEBIT - rice consumed in re-milling)
+    try {
+        const qty = entry.hopperInQintal || 0
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: 'Rice',
+            variety: entry.riceType || null,
+            type: 'DEBIT',
+            action: 'Milling',
+            quantity: qty,
+            bags: entry.hopperInGunny || 0,
+            refModel: 'MillingRice',
+            refId: entry._id,
+            remarks: `Milling Rice - ${entry.riceType || 'Unknown'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for milling rice', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 

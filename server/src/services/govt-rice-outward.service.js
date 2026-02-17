@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { GovtRiceOutward } from '../models/govt-rice-outward.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
@@ -8,7 +9,7 @@ const escapeRegex = (str) => {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-export const createGovtRiceOutwardEntry = async (millId, data) => {
+export const createGovtRiceOutwardEntry = async (millId, data, userId) => {
     const entry = new GovtRiceOutward({
         ...data,
         millId,
@@ -19,6 +20,26 @@ export const createGovtRiceOutwardEntry = async (millId, data) => {
         id: entry._id,
         millId,
     })
+
+    // Record stock transaction (DEBIT - outgoing rice)
+    try {
+        const qty = entry.netWeight || 0
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: 'Rice',
+            variety: entry.riceType || null,
+            type: 'DEBIT',
+            action: 'Outward',
+            quantity: qty / 100,
+            bags: (entry.gunnyNew || 0) + (entry.gunnyOld || 0),
+            refModel: 'GovtRiceOutward',
+            refId: entry._id,
+            remarks: `Govt Rice Outward - Lot ${entry.lotNo || 'N/A'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for govt rice outward', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 

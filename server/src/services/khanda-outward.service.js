@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import KhandaOutward from '../models/khanda-outward.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
@@ -8,7 +9,7 @@ const escapeRegex = (str) => {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-export const createKhandaOutwardEntry = async (millId, data) => {
+export const createKhandaOutwardEntry = async (millId, data, userId) => {
     const entry = new KhandaOutward({
         ...data,
         millId,
@@ -16,6 +17,26 @@ export const createKhandaOutwardEntry = async (millId, data) => {
     })
     await entry.save()
     logger.info('Khanda outward entry created', { id: entry._id, millId })
+
+    // Record stock transaction (DEBIT - outgoing khanda)
+    try {
+        const qty = entry.netWeight || 0
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: 'Khanda',
+            variety: null,
+            type: 'DEBIT',
+            action: 'Outward',
+            quantity: qty / 100,
+            bags: 0,
+            refModel: 'KhandaOutward',
+            refId: entry._id,
+            remarks: `Khanda Outward - ${entry.partyName || 'Party'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for khanda outward', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 

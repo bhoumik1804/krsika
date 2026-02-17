@@ -13,7 +13,8 @@ export const createPrivateGunnyOutward = async (req, res, next) => {
     try {
         const entry = await createPrivateGunnyOutwardEntry(
             req.params.millId,
-            req.body
+            req.body,
+            req.user._id
         )
         res.status(201).json(
             new ApiResponse(201, { entry }, 'Private gunny outward created')

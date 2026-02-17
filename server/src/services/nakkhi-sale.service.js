@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { NakkhiSale } from '../models/nakkhi-sale.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 
 export const createNakkhiSaleEntry = async (millId, data) => {
     const entry = new NakkhiSale({
@@ -10,6 +11,31 @@ export const createNakkhiSaleEntry = async (millId, data) => {
         date: new Date(data.date),
     })
     await entry.save()
+
+    // Record stock transaction (DEBIT)
+    try {
+        await StockTransactionService.recordTransaction(
+            millId,
+            {
+                date: data.date,
+                commodity: 'Nakkhi',
+                variety: null,
+                type: 'DEBIT',
+                action: 'Sale',
+                quantity: data.nakkhiQty,
+                bags: data.bags || 0,
+                refModel: 'NakkhiSale',
+                refId: entry._id,
+                remarks: `Sale to ${data.partyName || 'Party'}`,
+            }
+        )
+    } catch (err) {
+        logger.error('Failed to record stock for nakkhi sale', {
+            id: entry._id,
+            error: err.message,
+        })
+    }
+
     logger.info('Nakkhi sale entry created', { id: entry._id, millId })
     return entry
 }
@@ -113,6 +139,17 @@ export const updateNakkhiSaleEntry = async (millId, id, data) => {
         { new: true, runValidators: true }
     )
     if (!entry) throw new ApiError(404, 'Nakkhi sale entry not found')
+
+    // Update stock transaction
+    await StockTransactionService.updateTransaction('NakkhiSale', id, {
+        date: entry.date,
+        commodity: 'Nakkhi',
+        variety: null,
+        quantity: entry.nakkhiQty,
+        bags: entry.bags || 0,
+        remarks: `Sale to ${entry.partyName || 'Party'}`,
+    })
+
     logger.info('Nakkhi sale entry updated', { id, millId })
     return entry
 }
@@ -120,11 +157,20 @@ export const updateNakkhiSaleEntry = async (millId, id, data) => {
 export const deleteNakkhiSaleEntry = async (millId, id) => {
     const entry = await NakkhiSale.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Nakkhi sale entry not found')
+
+    // Delete associated stock transactions
+    await StockTransactionService.deleteTransactionsByRef('NakkhiSale', id)
+
     logger.info('Nakkhi sale entry deleted', { id, millId })
 }
 
 export const bulkDeleteNakkhiSaleEntries = async (millId, ids) => {
     const result = await NakkhiSale.deleteMany({ _id: { $in: ids }, millId })
+    
+    for (const id of ids) {
+        await StockTransactionService.deleteTransactionsByRef('NakkhiSale', id)
+    }
+
     logger.info('Nakkhi sale entries bulk deleted', {
         millId,
         count: result.deletedCount,

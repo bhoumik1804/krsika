@@ -64,9 +64,10 @@ export function DailyReportPage({
 }: DailyReportPageProps) {
     const { millId } = useParams<{ millId: string }>()
     const sidebarData = getMillAdminSidebarData(millId || '')
-    const [date, setDate] = useState<DateRange | undefined>({
-        from: new Date(),
-        to: new Date(),
+    const [date, setDate] = useState<DateRange | undefined>(() => {
+        const now = new Date()
+        const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+        return { from: firstDayOfMonth, to: now }
     })
     const [historyOpen, setHistoryOpen] = useState(false)
 

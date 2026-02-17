@@ -1,9 +1,10 @@
 import mongoose from 'mongoose'
 import { OtherInward } from '../models/other-inward.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createOtherInwardEntry = async (millId, data) => {
+export const createOtherInwardEntry = async (millId, data, userId) => {
     const entry = new OtherInward({
         ...data,
         millId,
@@ -11,6 +12,26 @@ export const createOtherInwardEntry = async (millId, data) => {
     })
     await entry.save()
     logger.info('Other inward entry created', { id: entry._id, millId })
+
+    // Record stock transaction (CREDIT - incoming other items)
+    try {
+        const qty = entry.netWeight || entry.quantity || 0
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: entry.itemName,
+            variety: null,
+            type: 'CREDIT',
+            action: 'Inward',
+            quantity: entry.netWeight ? entry.netWeight / 100 : entry.quantity, // Kg to Qtl if weight
+            bags: 0,
+            refModel: 'OtherInward',
+            refId: entry._id,
+            remarks: `Other Inward - ${entry.partyName || 'Party'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for other inward', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 

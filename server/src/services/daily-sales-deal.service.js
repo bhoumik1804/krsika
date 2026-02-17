@@ -14,7 +14,8 @@ export const createDailySalesDealEntry = async (millId, data, userId) => {
     await entry.save()
 
     // Record stock transaction (DEBIT = stock decrease)
-    if (data.commodity && data.quantity) {
+    // Removed conditional checks to ensure consistent logging
+    try {
         await StockTransactionService.recordTransaction(
             millId,
             {
@@ -31,6 +32,11 @@ export const createDailySalesDealEntry = async (millId, data, userId) => {
             },
             userId
         )
+    } catch (err) {
+        logger.error('Failed to record stock for daily sales deal', {
+            id: entry._id,
+            error: err.message,
+        })
     }
 
     logger.info('Daily sales deal entry created', {
@@ -171,17 +177,16 @@ export const updateDailySalesDealEntry = async (millId, id, data, userId) => {
         .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Daily sales deal entry not found')
 
-    // Update stock transaction if quantity or commodity changed
-    if (data.commodity || data.quantity || data.date) {
-        await StockTransactionService.updateTransaction('DailySalesDeal', id, {
-            date: entry.date,
-            commodity: entry.commodity,
-            variety: entry.commodityType || null,
-            quantity: entry.quantity,
-            bags: entry.bags || 0,
-            remarks: `Sales deal to ${entry.buyerName || 'Buyer'}`,
-        })
-    }
+    // Update stock transaction
+    // Removed conditional checks
+    await StockTransactionService.updateTransaction('DailySalesDeal', id, {
+        date: entry.date,
+        commodity: entry.commodity,
+        variety: entry.commodityType || null,
+        quantity: entry.quantity,
+        bags: entry.bags || 0,
+        remarks: `Sales deal to ${entry.buyerName || 'Buyer'}`,
+    })
 
     logger.info('Daily sales deal entry updated', { id, millId, userId })
     return entry
@@ -202,6 +207,11 @@ export const bulkDeleteDailySalesDealEntries = async (millId, ids) => {
         _id: { $in: ids },
         millId,
     })
+    
+    for (const id of ids) {
+        await StockTransactionService.deleteTransactionsByRef('DailySalesDeal', id)
+    }
+
     logger.info('Daily sales deal entries bulk deleted', {
         millId,
         count: result.deletedCount,
