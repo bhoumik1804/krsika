@@ -94,6 +94,7 @@ function OutwardBalanceLiftingRiceContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
+    const { t } = useTranslation('mill-staff')
     const context = useOutwardBalanceLiftingRice()
 
     if (context.isLoading) {
@@ -106,7 +107,9 @@ function OutwardBalanceLiftingRiceContent({
 
     if (context.isError) {
         return (
-            <div className='py-10 text-center text-red-500'>failed to load</div>
+            <div className='py-10 text-center text-red-500'>
+                {t('common.errorLoadingData')}
+            </div>
         )
     }
 

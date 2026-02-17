@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -44,6 +45,7 @@ export function OutwardBalanceLiftingRiceTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -116,7 +118,7 @@ export function OutwardBalanceLiftingRiceTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Filter...'
+                searchPlaceholder={t('common.searchPlaceholder')}
                 searchKey='partyName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -188,9 +190,7 @@ export function OutwardBalanceLiftingRiceTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {false // Assuming 'loading' state is not provided
-                                        ? 'loading'
-                                        : 'no records'}
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

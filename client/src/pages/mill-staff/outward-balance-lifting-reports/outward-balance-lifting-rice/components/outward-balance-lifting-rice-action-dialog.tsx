@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -57,6 +58,7 @@ export function OutwardBalanceLiftingRiceActionDialog({
     open,
     onOpenChange,
 }: OutwardBalanceLiftingRiceActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { currentRow, millId } = useOutwardBalanceLiftingRice()
     const { mutateAsync: createEntry, isPending: isCreating } =
         useCreatePrivateRiceOutward(millId)
@@ -170,10 +172,14 @@ export function OutwardBalanceLiftingRiceActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Rice Sale
+                        {isEditing
+                            ? t('outwardRiceSales.editRecord')
+                            : t('outwardRiceSales.addRecord')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the sale details below
+                        {isEditing
+                            ? t('outwardRiceSales.form.updateRiceDetails')
+                            : t('outwardRiceSales.form.enterRiceDetails')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -187,7 +193,9 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t('outwardRiceSales.form.date')}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -206,7 +214,9 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'outwardRiceSales.form.pickADate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -248,14 +258,22 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Party Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outwardRiceSales.form.partyName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
                                                 value={field.value ?? undefined}
                                                 onValueChange={field.onChange}
                                                 paginatedList={party}
-                                                placeholder='Search party...'
-                                                emptyText='No parties found'
+                                                placeholder={t(
+                                                    'outwardRiceSales.form.searchParty'
+                                                )}
+                                                emptyText={t(
+                                                    'outwardRiceSales.form.noPartiesFound'
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -267,14 +285,22 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                 name='brokerName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Broker Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outwardRiceSales.form.brokerName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
                                                 value={field.value ?? undefined}
                                                 onValueChange={field.onChange}
                                                 paginatedList={broker}
-                                                placeholder='Search broker...'
-                                                emptyText='No brokers found'
+                                                placeholder={t(
+                                                    'outwardRiceSales.form.searchBroker'
+                                                )}
+                                                emptyText={t(
+                                                    'outwardRiceSales.form.noBrokersFound'
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -286,14 +312,22 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                 name='deliveryType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Delivery Type</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outwardRiceSales.form.deliveryType'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder='Select delivery type' />
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'outwardRiceSales.form.selectDeliveryType'
+                                                        )}
+                                                    />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -314,14 +348,22 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                 name='lotOrOther'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>LOT/Other</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outwardRiceSales.form.lotOrOther'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder='Select type' />
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'outwardRiceSales.form.selectType'
+                                                        )}
+                                                    />
                                                 </SelectTrigger>
                                             </FormControl>
 
@@ -343,14 +385,22 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                 name='fciOrNAN'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>FCI/NAN</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outwardRiceSales.form.fciOrNAN'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder='Select' />
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'outwardRiceSales.form.select'
+                                                        )}
+                                                    />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -371,7 +421,11 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                 name='riceType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rice Type</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outwardRiceSales.form.riceType'
+                                            )}
+                                        </FormLabel>
                                         <Input {...field} />
                                         <FormMessage />
                                     </FormItem>
@@ -382,7 +436,9 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                 name='riceQty'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rice Qty</FormLabel>
+                                        <FormLabel>
+                                            {t('outwardRiceSales.form.riceQty')}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -408,16 +464,16 @@ export function OutwardBalanceLiftingRiceActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}
+                                      ? t('common.update')
+                                      : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

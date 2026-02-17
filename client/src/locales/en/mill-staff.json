@@ -83,7 +83,15 @@
         "tryAgainLater": "Please try again later.",
         "deleting": "Deleting...",
         "enterDetails": "Enter the details below",
-        "updateDetails": "Update the details below"
+        "updateDetails": "Update the details below",
+        "messages": {
+            "createdSuccessfully": "Entry created successfully",
+            "updatedSuccessfully": "Entry updated successfully",
+            "deletedSuccessfully": "Entry deleted successfully",
+            "failedToCreate": "Failed to create entry",
+            "failedToUpdate": "Failed to update entry",
+            "failedToDelete": "Failed to delete entry"
+        }
     },
     "frkInward": {
         "title": "FRK Inward Report",
@@ -1069,15 +1077,15 @@
         }
     },
     "sidebar": {
-        "balanceLiftingPurchases": "Balance Lifting of Purchases",
-        "balanceLiftingSales": "Balance Lifting of Sales",
-        "reportBalanceLiftingPaddyPurchases": "Report on Balance Lifting of Paddy Purchases",
-        "reportBalanceLiftingRicePurchases": "Report on Balance Lifting of Rice Purchases",
-        "reportBalanceLiftingGunnyPurchases": "Report on Balance Lifting of Gunny Purchases",
-        "reportBalanceLiftingFrkPurchases": "Report on Balance Lifting of FRK Purchases",
-        "reportBalanceLiftingPaddySales": "Report on Balance Lifting of Paddy Sales from Mill",
-        "outwardBalanceLiftingRiceSales": "Outward Balance Lifting of Rice Sales",
-        "outwardBalanceLiftingReportRiceSales": "Outward Balance Lifting Report of Rice Sales"
+        "balanceLiftingPurchases": "Balance Lifting (Purchases)",
+        "reportBalanceLiftingPaddyPurchases": "Paddy Purchase",
+        "reportBalanceLiftingRicePurchases": "Rice Purchase",
+        "reportBalanceLiftingGunnyPurchases": "Gunny Purchase",
+        "reportBalanceLiftingFrkPurchases": "FRK Purchase",
+        "balanceLiftingSales": "Balance Lifting (Sales)",
+        "reportBalanceLiftingPaddySales": "Paddy Sales",
+        "outwardBalanceLiftingRiceSales": "Outward Rice Sales",
+        "outwardBalanceLiftingReportRiceSales": "Outward Rice Sales"
     },
     "balanceLiftingPaddyPurchase": {
         "title": "Paddy Purchase Report",
@@ -2441,6 +2449,55 @@
             "selectLabourGroup": "Select a labour group",
             "pickDate": "Pick a date",
             "enterWorkDetails": "Enter work details"
+        }
+    },
+    "outwardRiceSales": {
+        "balanceLifting": {
+            "title": "Outward Rice Sales",
+            "description": "Manage outward rice sales and balance lifting records"
+        },
+        "table": {
+            "riceSalesDealNumber": "Sale Deal No.",
+            "partyName": "Party Name",
+            "deliveryType": "Delivery Type",
+            "lotOrOther": "LOT/Other",
+            "fciOrNan": "FCI/NAN",
+            "riceType": "Rice Type",
+            "riceQty": "Rice Qty",
+            "outwardQty": "Outward Qty",
+            "balanceOutward": "Balance Outward"
+        },
+        "brokerName": "Broker Name",
+        "addRecord": "Add Outward",
+        "editRecord": "Edit Rice Sale",
+        "form": {
+            "date": "Date",
+            "partyName": "Party Name",
+            "brokerName": "Broker Name",
+            "deliveryType": "Delivery Type",
+            "lotOrOther": "LOT/Other",
+            "fciOrNAN": "FCI/NAN",
+            "riceType": "Rice Type",
+            "riceQty": "Rice Qty",
+            "lotNumber": "LOT Number",
+            "pickADate": "Pick a date",
+            "searchParty": "Search party...",
+            "searchBroker": "Search broker...",
+            "noPartiesFound": "No parties found",
+            "noBrokersFound": "No brokers found",
+            "selectDeliveryType": "Select delivery type",
+            "selectType": "Select type",
+            "select": "Select",
+            "enterRiceDetails": "Enter the sale details below",
+            "updateRiceDetails": "Update the sale details below"
+        },
+        "deleteDialog": {
+            "title": "Delete Entry?",
+            "description": "Are you sure you want to delete this outward entry for {{name}}? This action cannot be undone."
+        },
+        "multiDeleteDialog": {
+            "title": "Delete {{count}} entries?",
+            "description": "Are you sure you want to delete the selected entries? This action cannot be undone."
         }
     }
 }

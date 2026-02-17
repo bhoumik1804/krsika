@@ -80,7 +80,15 @@
         "tryAgainLater": "कृपया बाद में पुनः प्रयास करें।",
         "deleting": "हटाया जा रहा है...",
         "enterDetails": "नीचे विवरण दर्ज करें",
-        "updateDetails": "नीचे विवरण अपडेट करें"
+        "updateDetails": "नीचे विवरण अपडेट करें",
+        "messages": {
+            "createdSuccessfully": "प्रविष्टि सफलतापूर्वक बनाई गई",
+            "updatedSuccessfully": "प्रविष्टि सफलतापूर्वक अपडेट की गई",
+            "deletedSuccessfully": "प्रविष्टि सफलतापूर्वक हटाई गई",
+            "failedToCreate": "प्रविष्टि बनाने में विफल",
+            "failedToUpdate": "प्रविष्टि अपडेट करने में विफल",
+            "failedToDelete": "प्रविष्टि हटाने में विफल"
+        }
     },
     "frkInward": {
         "title": "एफआरके आवक रिपोर्ट",
@@ -1045,15 +1053,15 @@
         }
     },
     "sidebar": {
-        "balanceLiftingPurchases": "खरीदी का उठाव शेष ",
+        "balanceLiftingPurchases": "खरीदी का उठाव शेष",
+        "reportBalanceLiftingPaddyPurchases": "धान खरीदी के उठाव शेष रिपोर्ट",
+        "reportBalanceLiftingRicePurchases": "चावल खरीदी के उठाव शेष रिपोर्ट",
+        "reportBalanceLiftingGunnyPurchases": "बारदाना खरीदी के उठाव शेष रिपोर्ट",
+        "reportBalanceLiftingFrkPurchases": "FRK खरीदी के उठाव शेष रिपोर्ट",
         "balanceLiftingSales": "बिक्री का उठाव शेष",
-        "reportBalanceLiftingPaddyPurchases": "धान खरीदी के उठाव शेष की रिपोर्ट",
-        "reportBalanceLiftingRicePurchases": "चावल खरीदी के उठाव शेष की रिपोर्ट",
-        "reportBalanceLiftingGunnyPurchases": "बारदाना खरीदी के उठाव शेष की रिपोर्ट",
-        "reportBalanceLiftingFrkPurchases": "FRK खरीदी के उठाव शेष की रिपोर्ट",
-        "reportBalanceLiftingPaddySales": "मिल से धान बिक्री के उठाव शेष की रिपोर्ट",
-        "outwardBalanceLiftingRiceSales": "चावल बिक्री का जावक उठाव शेष",
-        "outwardBalanceLiftingReportRiceSales": "चावल बिक्री की जावक उठाव शेष रिपोर्ट"
+        "reportBalanceLiftingPaddySales": "मिल से धान बिक्री के उठाव शेष रिपोर्ट",
+        "outwardBalanceLiftingRiceSales": "चावल बिक्री की जावक उठाव",
+        "outwardBalanceLiftingReportRiceSales": "चावल बिक्री की जावक उठाव"
     },
     "paddyPurchase": {
         "title": "धान खरीदी रिपोर्ट",
@@ -2339,6 +2347,55 @@
             "selectLabourGroup": "लेबर ग्रुप चुनें",
             "pickDate": "दिनांक चुनें",
             "enterWorkDetails": "कार्य विवरण दर्ज करें"
+        }
+    },
+    "outwardRiceSales": {
+        "balanceLifting": {
+            "title": "चावल बिक्री की जावक उठाव",
+            "description": "चावल की जावक बिक्री और उठाव शेष रिकॉर्ड प्रबंधित करें"
+        },
+        "table": {
+            "riceSalesDealNumber": "बिक्री सौदा नंबर",
+            "partyName": "पार्टी का नाम",
+            "deliveryType": "डिलीवरी का प्रकार",
+            "lotOrOther": "लॉट/अन्य",
+            "fciOrNan": "एफ.सी.आई/नान",
+            "riceType": "चावल का प्रकार",
+            "riceQty": "चावल की मात्रा",
+            "outwardQty": "जावक मात्रा",
+            "balanceOutward": "शेष जावक"
+        },
+        "brokerName": "दलाल का नाम",
+        "addRecord": "जावक जोड़ें",
+        "editRecord": "चावल बिक्री संपादित करें",
+        "form": {
+            "date": "दिनांक",
+            "partyName": "पार्टी का नाम",
+            "brokerName": "दलाल का नाम",
+            "deliveryType": "डिलीवरी का प्रकार",
+            "lotOrOther": "लॉट/अन्य",
+            "fciOrNAN": "एफ.सी.आई/नान",
+            "riceType": "चावल का प्रकार",
+            "riceQty": "चावल की मात्रा",
+            "lotNumber": "लॉट नंबर",
+            "pickADate": "दिनांक चुनें",
+            "searchParty": "पार्टी खोजें...",
+            "searchBroker": "दलाल खोजें...",
+            "noPartiesFound": "कोई पार्टी नहीं मिली",
+            "noBrokersFound": "कोई दलाल नहीं मिला",
+            "selectDeliveryType": "डिलीवरी का प्रकार चुनें",
+            "selectType": "प्रकार चुनें",
+            "select": "चुनें",
+            "enterRiceDetails": "बिक्री का विवरण नीचे दर्ज करें",
+            "updateRiceDetails": "बिक्री का विवरण नीचे अपडेट करें"
+        },
+        "deleteDialog": {
+            "title": "प्रविष्टि हटाएं?",
+            "description": "क्या आप {{name}} के लिए इस जावक प्रविष्टि को हटाना चाहते हैं? यह कार्रवाई वापस नहीं ली जा सकती।"
+        },
+        "multiDeleteDialog": {
+            "title": "{{count}} प्रविष्टियाँ हटाएँ?",
+            "description": "क्या आप चयनित प्रविष्टियों को हटाना चाहते हैं? यह कार्रवाई वापस नहीं ली जा सकती।"
         }
     }
 }
