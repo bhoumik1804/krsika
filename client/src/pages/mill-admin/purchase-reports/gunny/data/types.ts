@@ -50,7 +50,6 @@ export interface GunnyPurchaseResponse {
     oldGunnyRate?: number
     plasticGunnyQty?: number
     plasticGunnyRate?: number
-    createdBy: string
     createdAt: string
     updatedAt: string
     __v?: number

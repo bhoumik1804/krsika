@@ -14,21 +14,18 @@ export const createOtherSaleEntry = async (millId, data) => {
 
     // Record stock transaction (DEBIT)
     try {
-        await StockTransactionService.recordTransaction(
-            millId,
-            {
-                date: data.date,
-                commodity: data.otherSaleName, // Using item name as commodity
-                variety: null,
-                type: 'DEBIT',
-                action: 'Sale',
-                quantity: data.otherSaleQty || 0,
-                bags: data.bags || 0,
-                refModel: 'OtherSale',
-                refId: entry._id,
-                remarks: `Sale to ${data.partyName || 'Party'}`,
-            }
-        )
+        await StockTransactionService.recordTransaction(millId, {
+            date: data.date,
+            commodity: data.otherSaleName, // Using item name as commodity
+            variety: null,
+            type: 'DEBIT',
+            action: 'Sale',
+            quantity: data.otherSaleQty,
+            bags: data.bags || 0,
+            refModel: 'OtherSale',
+            refId: entry._id,
+            remarks: `Sale to ${data.partyName || 'Party'}`,
+        })
     } catch (err) {
         logger.error('Failed to record stock for other sale', {
             id: entry._id,
@@ -142,14 +139,24 @@ export const updateOtherSaleEntry = async (millId, id, data) => {
     if (!entry) throw new ApiError(404, 'Other sale entry not found')
 
     // Update stock transaction
-    await StockTransactionService.updateTransaction('OtherSale', id, {
+    const stockData = {
         date: entry.date,
         commodity: entry.otherSaleName,
         variety: null,
+        type: 'DEBIT',
+        action: 'Sale',
         quantity: entry.otherSaleQty || 0,
         bags: entry.bags || 0,
         remarks: `Sale to ${entry.partyName || 'Party'}`,
-    })
+    }
+
+    if (entry.otherSaleName) {
+        const updatedStock = await StockTransactionService.updateTransaction(
+            'OtherSale',
+            id,
+            stockData
+        )
+    }
 
     logger.info('Other sale entry updated', { id, millId })
     return entry
@@ -167,7 +174,7 @@ export const deleteOtherSaleEntry = async (millId, id) => {
 
 export const bulkDeleteOtherSaleEntries = async (millId, ids) => {
     const result = await OtherSale.deleteMany({ _id: { $in: ids }, millId })
-    
+
     for (const id of ids) {
         await StockTransactionService.deleteTransactionsByRef('OtherSale', id)
     }

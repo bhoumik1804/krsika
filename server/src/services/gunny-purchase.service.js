@@ -40,14 +40,16 @@ export const createGunnyPurchaseEntry = async (millId, data, userId) => {
         })
     }
 
-    logger.info('Gunny purchase entry created', { id: entry._id, millId, userId })
+    logger.info('Gunny purchase entry created', {
+        id: entry._id,
+        millId,
+        userId,
+    })
     return entry
 }
 
 export const getGunnyPurchaseById = async (millId, id) => {
     const entry = await GunnyPurchase.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Gunny purchase entry not found')
     return entry
 }
@@ -77,21 +79,6 @@ export const getGunnyPurchaseList = async (millId, options = {}) => {
     const aggregate = GunnyPurchase.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
     const result = await GunnyPurchase.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
@@ -173,8 +160,6 @@ export const updateGunnyPurchaseEntry = async (millId, id, data, userId) => {
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Gunny purchase entry not found')
 
     // Update stock transaction
@@ -205,9 +190,12 @@ export const deleteGunnyPurchaseEntry = async (millId, id) => {
 
 export const bulkDeleteGunnyPurchaseEntries = async (millId, ids) => {
     const result = await GunnyPurchase.deleteMany({ _id: { $in: ids }, millId })
-    
+
     for (const id of ids) {
-        await StockTransactionService.deleteTransactionsByRef('GunnyPurchase', id)
+        await StockTransactionService.deleteTransactionsByRef(
+            'GunnyPurchase',
+            id
+        )
     }
 
     logger.info('Gunny purchase entries bulk deleted', {

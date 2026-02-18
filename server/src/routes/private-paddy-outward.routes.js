@@ -22,6 +22,8 @@ import {
 
 const router = Router({ mergeParams: true })
 
+router.use(authenticate)
+
 /**
  * Private Paddy Outward Routes
  * Base path: /api/mills/:millId/private-paddy-outward

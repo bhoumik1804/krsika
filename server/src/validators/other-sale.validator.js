@@ -8,7 +8,7 @@ import { z } from 'zod'
 // Common fields schema
 const otherSaleBaseSchema = {
     date: z.string().min(1, 'Date is required'),
-    partyName: z.string().min(1, 'Party name is required'),
+    partyName: z.string().optional(),
     brokerName: z.string().optional(),
     otherSaleName: z.string().optional(),
     otherSaleQty: z.number().optional(),

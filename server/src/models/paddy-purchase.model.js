@@ -90,15 +90,6 @@ const PaddyPurchaseSchema = new Schema(
         balanceLifting: {
             type: Number,
         },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-        },
     },
     {
         timestamps: true,

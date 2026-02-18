@@ -21,7 +21,6 @@ const OtherSaleSchema = new Schema(
         },
         partyName: {
             type: String,
-            required: true,
             trim: true,
         },
         brokerName: {
