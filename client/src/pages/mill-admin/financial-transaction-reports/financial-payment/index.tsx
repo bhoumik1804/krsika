@@ -57,7 +57,7 @@ export function FinancialPaymentReport() {
         }
     }
 
-    if (isLoading) {
+    if (isLoading && !data) {
         return (
             <div className='flex h-screen items-center justify-center'>
                 <LoadingSpinner />
@@ -108,6 +108,7 @@ export function FinancialPaymentReport() {
                     )}
                     navigate={navigate}
                     pagination={data?.pagination}
+                    isLoading={isLoading}
                 />
             </Main>
 

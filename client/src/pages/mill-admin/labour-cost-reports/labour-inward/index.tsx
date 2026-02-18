@@ -56,7 +56,7 @@ export function LabourInwardReport() {
         }
     }
 
-    if (isLoading) {
+    if (isLoading && !data) {
         return (
             <div className='flex h-screen items-center justify-center'>
                 <LoadingSpinner />
@@ -107,6 +107,7 @@ export function LabourInwardReport() {
                     )}
                     navigate={navigate}
                     pagination={data?.pagination}
+                    isLoading={isLoading}
                 />
             </Main>
 
