@@ -1,14 +1,13 @@
-import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type RiceSales } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
-export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
+export const riceSalesColumns: ColumnDef<RiceSales>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -20,7 +19,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
                 onCheckedChange={(value) =>
                     table.toggleAllPageRowsSelected(!!value)
                 }
-                aria-label={t('common.selectAll')}
+                aria-label='Select all'
                 className='translate-y-[2px]'
             />
         ),
@@ -31,7 +30,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
             <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label={t('common.selectRow')}
+                aria-label='Select row'
                 className='translate-y-[2px]'
             />
         ),
@@ -41,10 +40,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.date')}
-            />
+            <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -62,10 +58,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.partyName')}
-            />
+            <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -76,10 +69,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.brokerName')}
-            />
+            <DataTableColumnHeader column={column} title='Broker Name' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -90,10 +80,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'deliveryType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.deliveryType')}
-            />
+            <DataTableColumnHeader column={column} title='Delivery Type' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -104,10 +91,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'lotOrOther',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.lotOrOther')}
-            />
+            <DataTableColumnHeader column={column} title='Lot / Other' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -118,10 +102,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'fciOrNAN',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.fciOrNAN')}
-            />
+            <DataTableColumnHeader column={column} title='FCI / NAN' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('fciOrNAN') || '-'}</div>
@@ -130,10 +111,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'riceType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.riceType')}
-            />
+            <DataTableColumnHeader column={column} title='Rice Type' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('riceType') || '-'}</div>
@@ -142,10 +120,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'riceQty',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.riceQty')}
-            />
+            <DataTableColumnHeader column={column} title='Qty (Qtl)' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -156,10 +131,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'riceRatePerQuintal',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.riceRatePerQuintal')}
-            />
+            <DataTableColumnHeader column={column} title='Rate/Qtl' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -170,10 +142,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'discountPercent',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.discountPercent')}
-            />
+            <DataTableColumnHeader column={column} title='Discount %' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -184,10 +153,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'brokeragePerQuintal',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.brokeragePerQuintal')}
-            />
+            <DataTableColumnHeader column={column} title='Brokerage/Qtl' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -198,10 +164,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'frkType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.frkType')}
-            />
+            <DataTableColumnHeader column={column} title='FRK Type' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('frkType') || '-'}</div>
@@ -210,10 +173,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'frkRatePerQuintal',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.frkRatePerQuintal')}
-            />
+            <DataTableColumnHeader column={column} title='FRK Rate/Qtl' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -224,10 +184,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'lotNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.lotNumber')}
-            />
+            <DataTableColumnHeader column={column} title='LOT No.' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -238,10 +195,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'gunnyType',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.gunnyType')}
-            />
+            <DataTableColumnHeader column={column} title='Gunny Type' />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>
@@ -252,10 +206,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'newGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.newGunnyRate')}
-            />
+            <DataTableColumnHeader column={column} title='New Gunny Rate' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -266,10 +217,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'oldGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.oldGunnyRate')}
-            />
+            <DataTableColumnHeader column={column} title='Old Gunny Rate' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -280,10 +228,7 @@ export const getRiceSalesColumns = (t: TFunction): ColumnDef<RiceSales>[] => [
     {
         accessorKey: 'plasticGunnyRate',
         header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('riceSales.table.plasticGunnyRate')}
-            />
+            <DataTableColumnHeader column={column} title='Plastic Gunny Rate' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>

@@ -16,9 +16,9 @@ import { useVehicleList } from './data/hooks'
 
 export function VehicleReport() {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
-    const { t } = useTranslation('mill-staff')
 
     const search = Object.fromEntries(searchParams.entries())
 
@@ -74,10 +74,10 @@ export function VehicleReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('vehicleReport.title')}
+                            {t('inputReports.vehicle.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('vehicleReport.description')}
+                            {t('inputReports.vehicle.description')}
                         </p>
                     </div>
                     <VehicleReportPrimaryButtons />

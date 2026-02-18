@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCommitteeList } from '@/pages/mill-admin/input-reports/committee-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { paddyTypeOptions } from '@/constants/purchase-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
@@ -58,7 +57,6 @@ export function GovtPaddyInwardActionDialog({
     currentRow,
 }: GovtPaddyInwardActionDialogProps) {
     const { millId } = useGovtPaddyInward()
-    const { t } = useTranslation('mill-staff')
     const { mutateAsync: createGovtPaddyInward, isPending: isCreating } =
         useCreateGovtPaddyInward(millId)
     const { mutateAsync: updateGovtPaddyInward, isPending: isUpdating } =
@@ -146,14 +144,10 @@ export function GovtPaddyInwardActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('govtPaddyInward.editRecord')
-                            : t('govtPaddyInward.addRecord')}
+                        {isEditing ? 'Edit' : 'Add'} Record
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t('common.updateDetails')
-                            : t('common.enterDetails')}
+                        {isEditing ? 'Update' : 'Enter'} the details below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -168,9 +162,7 @@ export function GovtPaddyInwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('govtPaddyInward.form.date')}
-                                        </FormLabel>
+                                        <FormLabel>Date</FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -189,9 +181,7 @@ export function GovtPaddyInwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : t(
-                                                                  'common.pickDate'
-                                                              )}
+                                                            : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -233,15 +223,11 @@ export function GovtPaddyInwardActionDialog({
                                 name='doNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('govtPaddyInward.form.doNumber')}
-                                        </FormLabel>
+                                        <FormLabel>DO Number</FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='doNumber'
-                                                placeholder={t(
-                                                    'govtPaddyInward.form.doNumber'
-                                                )}
+                                                placeholder='Enter DO Number'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -255,22 +241,14 @@ export function GovtPaddyInwardActionDialog({
                                 name='committeeName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtPaddyInward.form.committeeName'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Committee Name</FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
                                                 value={field.value}
                                                 onValueChange={field.onChange}
                                                 paginatedList={committee}
-                                                placeholder={t(
-                                                    'govtPaddyInward.form.searchDo'
-                                                )}
-                                                emptyText={t(
-                                                    'govtPaddyInward.form.noDosFound'
-                                                )}
+                                                placeholder='Search committee...'
+                                                emptyText='No committees found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -282,11 +260,7 @@ export function GovtPaddyInwardActionDialog({
                                 name='balanceDo'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtPaddyInward.form.balanceDo'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Balance DO</FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='balanceDo'
@@ -319,9 +293,7 @@ export function GovtPaddyInwardActionDialog({
                                 name='gunnyNew'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('govtPaddyInward.form.gunnyNew')}
-                                        </FormLabel>
+                                        <FormLabel>Gunny New</FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='gunnyNew'
@@ -351,9 +323,7 @@ export function GovtPaddyInwardActionDialog({
                                 name='gunnyOld'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('govtPaddyInward.form.gunnyOld')}
-                                        </FormLabel>
+                                        <FormLabel>Gunny Old</FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='gunnyOld'
@@ -383,11 +353,7 @@ export function GovtPaddyInwardActionDialog({
                                 name='gunnyPlastic'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtPaddyInward.form.gunnyPlastic'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Gunny Plastic</FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='gunnyPlastic'
@@ -419,11 +385,7 @@ export function GovtPaddyInwardActionDialog({
                                 name='juteWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtPaddyInward.form.juteWeight'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Jute Gunny Weight</FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='juteWeight'
@@ -455,9 +417,7 @@ export function GovtPaddyInwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t(
-                                                'govtPaddyInward.form.plasticWeight'
-                                            )}
+                                            Plastic Gunny Weight (kg.)
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -490,9 +450,7 @@ export function GovtPaddyInwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t(
-                                                'govtPaddyInward.form.gunnyWeight'
-                                            )}
+                                            Gunny Weight (kg.)
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -526,11 +484,7 @@ export function GovtPaddyInwardActionDialog({
                                 name='truckNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtPaddyInward.form.truckNumber'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Truck Number</FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='truckNumber'
@@ -548,17 +502,11 @@ export function GovtPaddyInwardActionDialog({
                                 name='rstNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtPaddyInward.form.rstNumber'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>RST Number</FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='rstNumber'
-                                                placeholder={t(
-                                                    'govtPaddyInward.form.enterRstNumber'
-                                                )}
+                                                placeholder='Enter RST Number'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -573,9 +521,7 @@ export function GovtPaddyInwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t(
-                                                'govtPaddyInward.form.truckLoadWeight'
-                                            )}
+                                            Truck Load Weight (Qtl.)
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -609,11 +555,7 @@ export function GovtPaddyInwardActionDialog({
                                 name='paddyType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtPaddyInward.form.paddyType'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Paddy Type</FormLabel>
                                         <Select
                                             name='paddyType'
                                             onValueChange={field.onChange}
@@ -624,11 +566,7 @@ export function GovtPaddyInwardActionDialog({
                                                     id='paddyType'
                                                     className='w-full'
                                                 >
-                                                    <SelectValue
-                                                        placeholder={t(
-                                                            'govtPaddyInward.form.selectPaddyType'
-                                                        )}
-                                                    />
+                                                    <SelectValue placeholder='Select Type' />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent className='w-full'>
@@ -656,9 +594,7 @@ export function GovtPaddyInwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t(
-                                                    'govtPaddyInward.form.paddyMota'
-                                                )}
+                                                Paddy Mota (Qtl.)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -695,9 +631,7 @@ export function GovtPaddyInwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t(
-                                                    'govtPaddyInward.form.paddyPatla'
-                                                )}
+                                                Paddy Patla (Qtl.)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -734,9 +668,7 @@ export function GovtPaddyInwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t(
-                                                    'govtPaddyInward.form.paddySarna'
-                                                )}
+                                                Paddy Sarna (Qtl.)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -773,9 +705,7 @@ export function GovtPaddyInwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t(
-                                                    'govtPaddyInward.form.paddyMahamaya'
-                                                )}
+                                                Paddy Mahamaya (Qtl.)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -812,9 +742,7 @@ export function GovtPaddyInwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t(
-                                                    'govtPaddyInward.form.paddyRbGold'
-                                                )}
+                                                Paddy RB Gold (Qtl.)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -851,16 +779,16 @@ export function GovtPaddyInwardActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                {t('common.cancel')}
+                                Cancel
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? t('common.updating')
-                                        : t('common.adding')
+                                        ? 'Updating...'
+                                        : 'Adding...'
                                     : isEditing
-                                      ? t('common.update')
-                                      : t('common.add')}
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

@@ -1,8 +1,7 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { getMillStaffSidebarData } from '@/components/layout/data'
+import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { LoadingSpinner } from '@/components/loading-spinner'
@@ -18,7 +17,6 @@ import {
 import { BalanceLiftingPurchasesRiceTable } from './components/balance-lifting-purchases-rice-table'
 
 export function BalanceLiftingPurchasesRiceReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -35,16 +33,12 @@ export function BalanceLiftingPurchasesRiceReport() {
         }
     }, [searchParams])
 
-    const sidebarData = getMillStaffSidebarData(millId || '')
+    const sidebarData = getMillAdminSidebarData(millId || '')
     const search = Object.fromEntries(searchParams.entries())
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
-            const newSearch = (
-                opts.search as (
-                    p: Record<string, string>
-                ) => Record<string, string>
-            )(search)
+            const newSearch = (opts.search as (p: Record<string, string>) => Record<string, string>)(search)
             setSearchParams(newSearch as Record<string, string>)
         } else if (opts.search !== true) {
             setSearchParams((opts.search as Record<string, string>) ?? {})
@@ -72,10 +66,10 @@ export function BalanceLiftingPurchasesRiceReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('ricePurchase.balanceLifting.title')}
+                            Rice Purchase Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('ricePurchase.balanceLifting.description')}
+                            Manage rice purchase transactions and records
                         </p>
                     </div>
                     <BalanceLiftingPurchasesRicePrimaryButtons />
@@ -106,15 +100,14 @@ function BalanceLiftingPurchasesRiceContent({
     if (ctx.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load data
+                Failed to load rice purchase data. Please try again later.
             </div>
         )
     }
 
     const searchRecord: Record<string, string> = {}
     if (ctx.queryParams?.page) searchRecord.page = String(ctx.queryParams.page)
-    if (ctx.queryParams?.limit)
-        searchRecord.limit = String(ctx.queryParams.limit)
+    if (ctx.queryParams?.limit) searchRecord.limit = String(ctx.queryParams.limit)
     if (ctx.queryParams?.search) searchRecord.partyName = ctx.queryParams.search
 
     return (

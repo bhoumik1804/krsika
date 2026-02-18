@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,7 +24,6 @@ export function GovtPaddyInwardDeleteDialog({
     currentRow,
 }: GovtPaddyInwardDeleteDialogProps) {
     const { millId } = useGovtPaddyInward()
-    const { t } = useTranslation('mill-staff')
     const { mutateAsync: deleteGovtPaddyInward, isPending } =
         useDeleteGovtPaddyInward(millId)
 
@@ -44,26 +42,24 @@ export function GovtPaddyInwardDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        {t('common.deleteRecord')}
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('common.deleteRecordFor')}{' '}
+                        Are you sure you want to delete this record for{' '}
                         <strong>{currentRow?.truckNumber}</strong>?
                         <br />
-                        {t('common.actionCannotBeUndone')}
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isPending}>
-                        {t('common.cancel')}
+                        Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         disabled={isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isPending ? t('common.deleting') : t('common.delete')}
+                        {isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

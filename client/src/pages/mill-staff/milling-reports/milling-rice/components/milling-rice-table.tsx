@@ -25,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type MillingRice } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { useMillingRiceColumns } from './milling-rice-columns'
+import { millingRiceColumns as columns } from './milling-rice-columns'
 
 type DataTableProps = {
     data: MillingRice[]
@@ -54,7 +54,6 @@ export function MillingRiceTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-    const columns = useMillingRiceColumns()
 
     const {
         columnFilters,

@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLabourGroupList } from '@/pages/mill-admin/input-reports/labour-group-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { outwardTypeOptions } from '@/constants/sale-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
@@ -54,7 +53,6 @@ export function LabourOutwardActionDialog({
     onOpenChange,
     currentRow,
 }: LabourOutwardActionDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -128,14 +126,10 @@ export function LabourOutwardActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('labourOutward.form.editTitle')
-                            : t('labourOutward.form.addTitle')}
+                        {isEditing ? 'Edit' : 'Add'} Record
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t('labourOutward.form.editDescription')
-                            : t('labourOutward.form.addDescription')}
+                        {isEditing ? 'Update' : 'Enter'} the details below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -149,9 +143,7 @@ export function LabourOutwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('labourOutward.form.date')}
-                                        </FormLabel>
+                                        <FormLabel>Date</FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -170,9 +162,7 @@ export function LabourOutwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : t(
-                                                                  'labourOutward.form.pickDate'
-                                                              )}
+                                                            : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -214,22 +204,14 @@ export function LabourOutwardActionDialog({
                                 name='outwardType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'labourOutward.form.outwardType'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Outward Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
-                                                    <SelectValue
-                                                        placeholder={t(
-                                                            'labourOutward.form.selectType'
-                                                        )}
-                                                    />
+                                                    <SelectValue placeholder='Select type' />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent className='w-full'>
@@ -254,11 +236,7 @@ export function LabourOutwardActionDialog({
                                 name='truckNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'labourOutward.form.truckNumber'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Truck Number</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder='XX-00-XX-0000'
@@ -274,9 +252,7 @@ export function LabourOutwardActionDialog({
                                 name='totalGunny'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('labourOutward.form.totalGunny')}
-                                        </FormLabel>
+                                        <FormLabel>Number of Gunny</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -306,9 +282,7 @@ export function LabourOutwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t(
-                                                    'labourOutward.form.numberOfGunnyBundle'
-                                                )}
+                                                Number of Gunny Bundle
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -339,11 +313,7 @@ export function LabourOutwardActionDialog({
                                 name='loadingRate'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'labourOutward.form.loadingRate'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Loading Rate</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -372,9 +342,7 @@ export function LabourOutwardActionDialog({
                                 name='dhulaiRate'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('labourOutward.form.dhulaiRate')}
-                                        </FormLabel>
+                                        <FormLabel>Dhulai Rate</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -403,19 +371,13 @@ export function LabourOutwardActionDialog({
                                 name='labourGroupName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'labourOutward.form.labourGroupName'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Labour Group Name</FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
                                                 value={field.value || ''}
                                                 onValueChange={field.onChange}
                                                 paginatedList={labourGroupList}
-                                                placeholder={t(
-                                                    'labourOutward.form.selectLabourGroup'
-                                                )}
+                                                placeholder='Select a labour group'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -424,13 +386,15 @@ export function LabourOutwardActionDialog({
                             />
                         </div>
                         <DialogFooter>
-                            <Button type='button' variant='outline'>
-                                {t('common.cancel')}
+                            <Button
+                                type='button'
+                                variant='outline'
+                                onClick={() => onOpenChange(false)}
+                            >
+                                Cancel
                             </Button>
                             <Button type='submit'>
-                                {isEditing
-                                    ? t('common.update')
-                                    : t('labourOutward.addRecord')}
+                                {isEditing ? 'Update' : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

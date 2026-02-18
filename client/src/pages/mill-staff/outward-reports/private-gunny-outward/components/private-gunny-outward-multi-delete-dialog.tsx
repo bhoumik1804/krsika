@@ -1,6 +1,4 @@
 import { Table } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,9 +9,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { usePrivateGunnyOutward } from './private-gunny-outward-provider'
 import { useBulkDeletePrivateGunnyOutward } from '../data/hooks'
 import { PrivateGunnyOutward } from '../data/schema'
-import { usePrivateGunnyOutward } from './private-gunny-outward-provider'
 
 interface Props<TData> {
     open: boolean
@@ -26,29 +24,22 @@ export function PrivateGunnyOutwardMultiDeleteDialog<TData>({
     onOpenChange,
     table,
 }: Props<TData>) {
-    const { t } = useTranslation('mill-staff')
     const { millId } = usePrivateGunnyOutward()
     const bulkDeleteMutation = useBulkDeletePrivateGunnyOutward(millId)
 
-    const handleBulkDelete = () => {
+    const handleBulkDelete = async () => {
         const selectedRows = table.getFilteredSelectedRowModel().rows
         const ids = selectedRows.map(
             (row) => (row.original as PrivateGunnyOutward)._id
         )
 
-        if (ids.length === 0) return
-
-        toast.promise(bulkDeleteMutation.mutateAsync(ids), {
-            loading: t('common.deleting'),
-            success: () => {
-                table.resetRowSelection()
-                onOpenChange(false)
-                return t('common.deletedSelectedSuccess', {
-                    count: selectedRows.length,
-                })
-            },
-            error: t('common.error'),
-        })
+        try {
+            await bulkDeleteMutation.mutateAsync(ids)
+            table.resetRowSelection()
+            onOpenChange(false)
+        } catch (error) {
+            // Error handling is done in the mutation hook
+        }
     }
 
     return (
@@ -56,24 +47,24 @@ export function PrivateGunnyOutwardMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t('common.deleteSelectedTitle', {
-                            count: table.getFilteredSelectedRowModel().rows
-                                .length,
-                        })}
+                        Are you absolutely sure?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('common.deleteSelectedDescription')}
-                        <br />
-                        {t('common.actionCannotBeUndone')}
+                        This action cannot be undone. This will permanently
+                        delete {table.getFilteredSelectedRowModel().rows.length}{' '}
+                        selected record(s).
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                    <AlertDialogCancel disabled={bulkDeleteMutation.isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                         onClick={handleBulkDelete}
+                        disabled={bulkDeleteMutation.isPending}
                     >
-                        {t('common.delete')}
+                        {bulkDeleteMutation.isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

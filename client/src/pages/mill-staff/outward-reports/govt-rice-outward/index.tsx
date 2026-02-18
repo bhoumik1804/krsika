@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -16,7 +15,6 @@ import { useGovtRiceOutwardList } from './data/hooks'
 import type { GovtRiceOutwardQueryParams } from './data/types'
 
 function GovtRiceOutwardContent() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -67,10 +65,10 @@ function GovtRiceOutwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('govtRiceOutward.title')}
+                            Govt Rice Outward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('govtRiceOutward.description')}
+                            Manage govt rice outward transactions and records
                         </p>
                     </div>
                 </div>
@@ -87,10 +85,10 @@ function GovtRiceOutwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('govtRiceOutward.title')}
+                            Govt Rice Outward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('govtRiceOutward.description')}
+                            Manage govt rice outward transactions and records
                         </p>
                     </div>
                 </div>
@@ -108,10 +106,10 @@ function GovtRiceOutwardContent() {
             <div className='flex flex-wrap items-end justify-between gap-2'>
                 <div>
                     <h2 className='text-2xl font-bold tracking-tight'>
-                        {t('govtRiceOutward.title')}
+                        Govt Rice Outward Report
                     </h2>
                     <p className='text-muted-foreground'>
-                        {t('govtRiceOutward.description')}
+                        Manage govt rice outward transactions and records
                     </p>
                 </div>
                 <GovtRiceOutwardPrimaryButtons />

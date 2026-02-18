@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -39,8 +38,6 @@ export function PaddySalesReport() {
         }
     }, [searchParams])
 
-    const { t } = useTranslation('mill-staff')
-
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
@@ -76,10 +73,10 @@ export function PaddySalesReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('paddySales.title')}
+                            Paddy Sales Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('paddySales.description')}
+                            Manage paddy sales transactions and records
                         </p>
                     </div>
                     <PaddySalesPrimaryButtons />
@@ -99,7 +96,6 @@ function PaddySalesContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = usePaddySales()
-    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (
@@ -112,10 +108,7 @@ function PaddySalesContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t(
-                    'common.errors.failedToLoad',
-                    'Failed to load paddy sales data. Please try again later.'
-                )}
+                Failed to load paddy sales data. Please try again later.
             </div>
         )
     }

@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
@@ -47,7 +46,6 @@ export function NakkhiSalesActionDialog({
     onOpenChange,
     currentRow,
 }: NakkhiSalesActionDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const party = usePaginatedList(
         millId || '',
@@ -143,14 +141,10 @@ export function NakkhiSalesActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('nakkhiSales.form.editTitle')
-                            : t('nakkhiSales.form.addTitle')}
+                        {isEditing ? 'Edit' : 'Add'} Nakkhi Sale
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t('nakkhiSales.form.editDescription')
-                            : t('nakkhiSales.form.addDescription')}
+                        {isEditing ? 'Update' : 'Enter'} the sale details below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -165,9 +159,7 @@ export function NakkhiSalesActionDialog({
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t('nakkhiSales.form.date')}
-                                            </FormLabel>
+                                            <FormLabel>Date</FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
                                                 onOpenChange={
@@ -188,9 +180,7 @@ export function NakkhiSalesActionDialog({
                                                                       ),
                                                                       'MMM dd, yyyy'
                                                                   )
-                                                                : t(
-                                                                      'nakkhiSales.form.placeholders.date'
-                                                                  )}
+                                                                : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
@@ -232,11 +222,7 @@ export function NakkhiSalesActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t(
-                                                    'nakkhiSales.form.partyName'
-                                                )}
-                                            </FormLabel>
+                                            <FormLabel>Party Name</FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -244,12 +230,8 @@ export function NakkhiSalesActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={party}
-                                                    placeholder={t(
-                                                        'nakkhiSales.form.placeholders.party'
-                                                    )}
-                                                    emptyText={t(
-                                                        'nakkhiSales.form.placeholders.noParties'
-                                                    )}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -261,11 +243,7 @@ export function NakkhiSalesActionDialog({
                                     name='brokerName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t(
-                                                    'nakkhiSales.form.brokerName'
-                                                )}
-                                            </FormLabel>
+                                            <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -273,12 +251,8 @@ export function NakkhiSalesActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={broker}
-                                                    placeholder={t(
-                                                        'nakkhiSales.form.placeholders.broker'
-                                                    )}
-                                                    emptyText={t(
-                                                        'nakkhiSales.form.placeholders.noBrokers'
-                                                    )}
+                                                    placeholder='Search broker...'
+                                                    emptyText='No brokers found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -291,7 +265,7 @@ export function NakkhiSalesActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t('nakkhiSales.form.quantity')}
+                                                Quantity (Qtl)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -324,7 +298,7 @@ export function NakkhiSalesActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t('nakkhiSales.form.rate')}
+                                                Rate (per Quintal)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -356,11 +330,7 @@ export function NakkhiSalesActionDialog({
                                     name='discountPercent'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t(
-                                                    'nakkhiSales.form.discountPercent'
-                                                )}
-                                            </FormLabel>
+                                            <FormLabel>Discount (%)</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -392,9 +362,7 @@ export function NakkhiSalesActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t(
-                                                    'nakkhiSales.form.brokerage'
-                                                )}
+                                                Brokerage (per Quintal)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -430,16 +398,16 @@ export function NakkhiSalesActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                {t('common.cancel')}
+                                Cancel
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? t('common.updating')
-                                        : t('common.adding')
+                                        ? 'Updating...'
+                                        : 'Adding...'
                                     : isEditing
-                                      ? t('common.update')
-                                      : t('common.add')}
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

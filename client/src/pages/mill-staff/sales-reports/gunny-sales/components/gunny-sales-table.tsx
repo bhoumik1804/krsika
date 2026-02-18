@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import type { GunnySalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getGunnySalesColumns } from './gunny-sales-columns'
+import { gunnySalesColumns as columns } from './gunny-sales-columns'
 
 type DataTableProps = {
     data: GunnySalesResponse[]
@@ -34,14 +33,11 @@ type DataTableProps = {
 }
 
 export function GunnySalesTable({ data, search, navigate }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-
-    const columns = useMemo(() => getGunnySalesColumns(t), [t])
 
     const {
         columnFilters,
@@ -98,7 +94,7 @@ export function GunnySalesTable({ data, search, navigate }: DataTableProps) {
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t('gunnySales.form.placeholders.party')}
+                searchPlaceholder='Search...'
                 searchKey='partyName'
                 filters={[]}
             />
@@ -171,7 +167,7 @@ export function GunnySalesTable({ data, search, navigate }: DataTableProps) {
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

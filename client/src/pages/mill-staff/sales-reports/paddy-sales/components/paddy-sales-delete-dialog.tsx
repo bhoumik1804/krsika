@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import {
@@ -24,15 +23,14 @@ export function PaddySalesDeleteDialog({
     onOpenChange,
     currentRow,
 }: PaddySalesDeleteDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const handleDelete = () => {
         toast.promise(sleep(2000), {
-            loading: t('common.deleting', 'Deleting...'),
+            loading: 'Deleting...',
             success: () => {
                 onOpenChange(false)
-                return t('common.deletedSuccessfully', 'Deleted successfully')
+                return 'Deleted successfully'
             },
-            error: t('common.errors.failedToDelete', 'Failed to delete'),
+            error: 'Failed to delete',
         })
     }
 
@@ -40,22 +38,21 @@ export function PaddySalesDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        {t('paddySales.delete.title')}
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('paddySales.delete.description', {
-                            name: currentRow?.partyName,
-                        })}
+                        Are you sure you want to delete this record for{' '}
+                        <strong>{currentRow?.partyName}</strong>?
+                        <br />
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {t('common.delete')}
+                        Delete
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

@@ -288,6 +288,14 @@
 //     )
 // }
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
+import { getMillStaffSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { ThemeSwitch } from '@/components/theme-switch'
 
 interface WelcomeMessageProps {
     userName?: string
@@ -295,16 +303,40 @@ interface WelcomeMessageProps {
 
 export function MillStaffDashboard({ userName }: WelcomeMessageProps) {
     const { t } = useTranslation()
+    const { millId } = useParams<{ millId: string }>()
+    const sidebarData = getMillStaffSidebarData(millId || '')
 
     // Get current hour to determine greeting if needed,
     // or just use the static translation key from your i18n
     return (
-        <div className='mb-6'>
-            <h1 className='text-2xl font-bold tracking-tight text-foreground'>
-                {t('dashboard.goodMorning')}
-                {userName ? `, ${userName}` : ''} 👋
-            </h1>
-            <p className='text-muted-foreground'>{t('dashboard.overview')}</p>
-        </div>
+        <>
+            <Header>
+                <div className='flex items-center gap-2'>
+                    <h1 className='text-lg font-semibold'>
+                        {t('dashboard.title')}
+                    </h1>
+                </div>
+                <div className='ms-auto flex items-center space-x-4'>
+                    <LanguageSwitch />
+                    <ThemeSwitch />
+                    <ConfigDrawer />
+                    <ProfileDropdown
+                        user={sidebarData.user}
+                        links={sidebarData.profileLinks}
+                    />
+                </div>
+            </Header>
+            <Main className='flex min-h-[calc(100svh-4rem)] items-center justify-center'>
+                <div className='text-center'>
+                    <h1 className='text-2xl font-bold tracking-tight text-foreground'>
+                        {t('dashboard.goodMorning')}
+                        {userName ? `, ${userName}` : ''} 👋
+                    </h1>
+                    <p className='text-muted-foreground'>
+                        {t('dashboard.overview')}
+                    </p>
+                </div>
+            </Main>
+        </>
     )
 }

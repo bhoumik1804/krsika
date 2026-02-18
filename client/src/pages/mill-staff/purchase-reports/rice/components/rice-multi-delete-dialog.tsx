@@ -1,5 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,7 +24,6 @@ export function RiceMultiDeleteDialog({
     open,
     onOpenChange,
 }: RiceMultiDeleteDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useRice()
     const { mutateAsync: bulkDeleteRicePurchases, isPending: isDeleting } =
         useBulkDeleteRicePurchases(millId)
@@ -50,26 +48,25 @@ export function RiceMultiDeleteDialog({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t('ricePurchase.multiDelete.title', {
-                            count: selectedRows.length,
-                        })}
+                        Delete {selectedRows.length} rice purchase record
+                        {selectedRows.length > 1 ? 's' : ''}?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('ricePurchase.multiDelete.description')}
+                        Are you sure you want to delete the selected rice
+                        purchase records? <br />
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                        {t('common.cancel')}
+                        Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting
-                            ? t('ricePurchase.delete.deleting')
-                            : t('ricePurchase.delete.confirm')}
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

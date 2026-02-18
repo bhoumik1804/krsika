@@ -3,7 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -50,7 +49,6 @@ export function InwardsActionDialog({
     onOpenChange,
     currentRow,
 }: InwardsActionDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -84,17 +82,15 @@ export function InwardsActionDialog({
 
     const onSubmit = () => {
         toast.promise(sleep(2000), {
-            loading: isEditing ? t('inwards.updating') : t('inwards.adding'),
+            loading: isEditing ? 'Updating entry...' : 'Adding entry...',
             success: () => {
                 onOpenChange(false)
                 form.reset()
                 return isEditing
-                    ? t('inwards.updatedSuccess')
-                    : t('inwards.addedSuccess')
+                    ? 'Entry updated successfully'
+                    : 'Entry added successfully'
             },
-            error: isEditing
-                ? t('inwards.updateFailed')
-                : t('inwards.addFailed'),
+            error: isEditing ? 'Failed to update entry' : 'Failed to add entry',
         })
     }
 
@@ -103,12 +99,11 @@ export function InwardsActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? t('common.edit') : t('common.add')}{' '}
-                        {t('inwards.title')}
+                        {isEditing ? 'Edit' : 'Add'} Inward Entry
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? t('common.update') : t('common.add')}{' '}
-                        {t('common.gatePass')}
+                        {isEditing ? 'Update' : 'Enter'} the gate pass details
+                        below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -122,14 +117,10 @@ export function InwardsActionDialog({
                                 name='gatePassNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.gatePass')} No.
-                                        </FormLabel>
+                                        <FormLabel>Gate Pass No.</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'inwards.gatePassPlaceholder'
-                                                )}
+                                                placeholder='GP-XXXX'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -142,9 +133,7 @@ export function InwardsActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.date')}
-                                        </FormLabel>
+                                        <FormLabel>Date</FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -163,9 +152,7 @@ export function InwardsActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : t(
-                                                                  'common.pickADate'
-                                                              )}
+                                                            : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -207,14 +194,10 @@ export function InwardsActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.partyName')}
-                                        </FormLabel>
+                                        <FormLabel>Party Name</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'inwards.partyPlaceholder'
-                                                )}
+                                                placeholder='Enter party name'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -227,14 +210,10 @@ export function InwardsActionDialog({
                                 name='item'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.item')}
-                                        </FormLabel>
+                                        <FormLabel>Item</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'inwards.itemPlaceholder'
-                                                )}
+                                                placeholder='e.g. Paddy, Rice'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -247,14 +226,10 @@ export function InwardsActionDialog({
                                 name='vehicleNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.vehicleNo')}
-                                        </FormLabel>
+                                        <FormLabel>Vehicle Number</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'inwards.vehiclePlaceholder'
-                                                )}
+                                                placeholder='Enter vehicle no.'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -267,14 +242,10 @@ export function InwardsActionDialog({
                                 name='driverName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.driverName')}
-                                        </FormLabel>
+                                        <FormLabel>Driver Name</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'inwards.driverPlaceholder'
-                                                )}
+                                                placeholder='Driver name (Optional)'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -287,9 +258,7 @@ export function InwardsActionDialog({
                                 name='bags'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            No. of {t('common.bags')}
-                                        </FormLabel>
+                                        <FormLabel>No. of Bags</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -310,9 +279,7 @@ export function InwardsActionDialog({
                                 name='weight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.netWeight')}
-                                        </FormLabel>
+                                        <FormLabel>Net Weight (Kg)</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -333,34 +300,28 @@ export function InwardsActionDialog({
                                 name='status'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.status')}
-                                        </FormLabel>
+                                        <FormLabel>Status</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue
-                                                        placeholder={t(
-                                                            'common.select'
-                                                        )}
-                                                    />
+                                                    <SelectValue placeholder='Select status' />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
                                                 <SelectItem value='pending'>
-                                                    {t('common.pending')}
+                                                    Pending
                                                 </SelectItem>
                                                 <SelectItem value='completed'>
-                                                    {t('common.completed')}
+                                                    Completed
                                                 </SelectItem>
                                                 <SelectItem value='verified'>
-                                                    {t('common.verified')}
+                                                    Verified
                                                 </SelectItem>
                                                 <SelectItem value='rejected'>
-                                                    {t('common.rejected')}
+                                                    Rejected
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -374,12 +335,10 @@ export function InwardsActionDialog({
                             name='remarks'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{t('common.remarks')}</FormLabel>
+                                    <FormLabel>Remarks</FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder={t(
-                                                'inwards.remarksPlaceholder'
-                                            )}
+                                            placeholder='Optional remarks'
                                             {...field}
                                         />
                                     </FormControl>
@@ -393,13 +352,10 @@ export function InwardsActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                {t('common.cancel')}
+                                Cancel
                             </Button>
                             <Button type='submit'>
-                                {isEditing
-                                    ? t('common.update')
-                                    : t('common.add')}{' '}
-                                {t('common.gatePass')}
+                                {isEditing ? 'Update' : 'Add'} Entry
                             </Button>
                         </DialogFooter>
                     </form>
@@ -408,4 +364,3 @@ export function InwardsActionDialog({
         </Dialog>
     )
 }
-

@@ -3,8 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { fciOrNANOptions, riceTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -37,11 +35,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { GovtRiceOutwardSchema, type GovtRiceOutward } from '../data/schema'
 import {
     useCreateGovtRiceOutward,
     useUpdateGovtRiceOutward,
 } from '../data/hooks'
-import { GovtRiceOutwardSchema, type GovtRiceOutward } from '../data/schema'
 import { useGovtRiceOutward } from './govt-rice-outward-provider'
 
 type GovtRiceOutwardActionDialogProps = {
@@ -55,7 +53,6 @@ export function GovtRiceOutwardActionDialog({
     onOpenChange,
     currentRow,
 }: GovtRiceOutwardActionDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
     const { millId, setOpen: setDialogOpen } = useGovtRiceOutward()
@@ -106,35 +103,16 @@ export function GovtRiceOutwardActionDialog({
     const onSubmit = async (data: GovtRiceOutward) => {
         try {
             if (isEditing && currentRow?._id) {
-                toast.promise(
-                    updateMutation.mutateAsync({
-                        id: currentRow._id,
-                        data,
-                    }),
-                    {
-                        loading: t('common.updating'),
-                        success: () => {
-                            setDialogOpen(null)
-                            onOpenChange(false)
-                            form.reset()
-                            return t('common.success')
-                        },
-                        error: (error: any) =>
-                            error.message || t('common.error'),
-                    }
-                )
-            } else {
-                toast.promise(createMutation.mutateAsync(data), {
-                    loading: t('common.adding'),
-                    success: () => {
-                        setDialogOpen(null)
-                        onOpenChange(false)
-                        form.reset()
-                        return t('common.success')
-                    },
-                    error: (error) => error.message || t('common.error'),
+                await updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data,
                 })
+            } else {
+                await createMutation.mutateAsync(data)
             }
+            setDialogOpen(null)
+            onOpenChange(false)
+            form.reset()
         } catch {
             // Error is handled by mutation hooks
         }
@@ -145,14 +123,10 @@ export function GovtRiceOutwardActionDialog({
             <DialogContent className='max-h-[90vh] max-w-3xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('govtRiceOutward.editRecord')
-                            : t('govtRiceOutward.addRecord')}
+                        {isEditing ? 'Edit' : 'Add'} Govt Rice Outward
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t('common.updateDetails')
-                            : t('common.enterDetails')}
+                        {isEditing ? 'Update' : 'Enter'} the details below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -167,9 +141,7 @@ export function GovtRiceOutwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('govtRiceOutward.form.date')}
-                                        </FormLabel>
+                                        <FormLabel>Date</FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -183,14 +155,12 @@ export function GovtRiceOutwardActionDialog({
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                  new Date(
-                                                                      field.value
-                                                                  ),
-                                                                  'MMM dd, yyyy'
-                                                              )
-                                                            : t(
-                                                                  'common.pickADate'
-                                                              )}
+                                                                new Date(
+                                                                    field.value
+                                                                ),
+                                                                'MMM dd, yyyy'
+                                                            )
+                                                            : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -203,17 +173,17 @@ export function GovtRiceOutwardActionDialog({
                                                     selected={
                                                         field.value
                                                             ? new Date(
-                                                                  field.value
-                                                              )
+                                                                field.value
+                                                            )
                                                             : undefined
                                                     }
                                                     onSelect={(date) => {
                                                         field.onChange(
                                                             date
                                                                 ? format(
-                                                                      date,
-                                                                      'yyyy-MM-dd'
-                                                                  )
+                                                                    date,
+                                                                    'yyyy-MM-dd'
+                                                                )
                                                                 : ''
                                                         )
                                                         setDatePopoverOpen(
@@ -234,14 +204,10 @@ export function GovtRiceOutwardActionDialog({
                                 name='lotNo'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('govtRiceOutward.form.lotNo')}
-                                        </FormLabel>
+                                        <FormLabel>LOT No.</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'govtRiceOutward.form.enterLotNo'
-                                                )}
+                                                placeholder='LOT-1234'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -257,20 +223,16 @@ export function GovtRiceOutwardActionDialog({
                                 name='fciNan'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('govtRiceOutward.form.fciNan')}
-                                        </FormLabel>
+                                        <FormLabel>FCI/NAN</FormLabel>
                                         <FormControl>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                value={field.value || undefined}
+                                                value={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <SelectTrigger className='w-full'>
-                                                    <SelectValue
-                                                        placeholder={t(
-                                                            'govtRiceOutward.form.fciNan'
-                                                        )}
-                                                    />
+                                                    <SelectValue placeholder='Select FCI/NAN' />
                                                 </SelectTrigger>
                                                 <SelectContent className='w-full'>
                                                     {fciOrNANOptions.map(
@@ -301,20 +263,16 @@ export function GovtRiceOutwardActionDialog({
                                 name='riceType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('govtRiceOutward.form.riceType')}
-                                        </FormLabel>
+                                        <FormLabel>Rice Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            value={field.value || undefined}
+                                            value={
+                                                field.value || undefined
+                                            }
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
-                                                    <SelectValue
-                                                        placeholder={t(
-                                                            'govtRiceOutward.form.riceType'
-                                                        )}
-                                                    />
+                                                    <SelectValue placeholder='Select type' />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent className='w-full'>
@@ -339,9 +297,7 @@ export function GovtRiceOutwardActionDialog({
                                 name='gunnyNew'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('govtRiceOutward.form.gunnyNew')}
-                                        </FormLabel>
+                                        <FormLabel>Gunny (New)</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -367,9 +323,7 @@ export function GovtRiceOutwardActionDialog({
                                 name='gunnyOld'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('govtRiceOutward.form.gunnyOld')}
-                                        </FormLabel>
+                                        <FormLabel>Gunny (Old)</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -395,11 +349,7 @@ export function GovtRiceOutwardActionDialog({
                                 name='juteWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtRiceOutward.form.juteWeight'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Jute Gunny Weight</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -426,14 +376,10 @@ export function GovtRiceOutwardActionDialog({
                                 name='truckNo'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('govtRiceOutward.form.truckNo')}
-                                        </FormLabel>
+                                        <FormLabel>Truck No.</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'govtRiceOutward.form.enterTruckNo'
-                                                )}
+                                                placeholder='XX-00-XX-0000'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -449,14 +395,10 @@ export function GovtRiceOutwardActionDialog({
                                 name='truckRst'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('govtRiceOutward.form.rstNo')}
-                                        </FormLabel>
+                                        <FormLabel>RST No.</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'govtRiceOutward.form.enterRstNo'
-                                                )}
+                                                placeholder='RST-12345'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -472,11 +414,7 @@ export function GovtRiceOutwardActionDialog({
                                 name='truckWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtRiceOutward.form.truckWeight'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Truck Weight</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -503,11 +441,7 @@ export function GovtRiceOutwardActionDialog({
                                 name='gunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtRiceOutward.form.gunnyWeight'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Gunny Weight</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -534,11 +468,7 @@ export function GovtRiceOutwardActionDialog({
                                 name='netWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtRiceOutward.form.netWeight'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Net Weight</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -565,12 +495,10 @@ export function GovtRiceOutwardActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                {t('common.cancel')}
+                                Cancel
                             </Button>
                             <Button type='submit'>
-                                {isEditing
-                                    ? t('common.update')
-                                    : t('common.add')}
+                                {isEditing ? 'Update' : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

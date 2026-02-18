@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import {
     paddyTypeOptions,
     deliveryTypeOptions,
@@ -60,7 +59,6 @@ export function PaddyActionDialog({
     onOpenChange,
     currentRow,
 }: PaddyActionDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const { millId } = usePaddy()
     const { mutateAsync: createPaddyPurchase, isPending: isCreating } =
         useCreatePaddyPurchase(millId)
@@ -194,14 +192,11 @@ export function PaddyActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('paddyPurchase.form.editTitle')
-                            : t('paddyPurchase.form.addTitle')}
+                        {isEditing ? 'Edit' : 'Add'} Paddy Purchase
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t('paddyPurchase.form.editDescription')
-                            : t('paddyPurchase.form.addDescription')}
+                        {isEditing ? 'Update' : 'Enter'} the purchase details
+                        below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -217,9 +212,7 @@ export function PaddyActionDialog({
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t('paddyPurchase.form.date')}
-                                            </FormLabel>
+                                            <FormLabel>Date</FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
                                                 onOpenChange={
@@ -240,9 +233,7 @@ export function PaddyActionDialog({
                                                                       ),
                                                                       'MMM dd, yyyy'
                                                                   )
-                                                                : t(
-                                                                      'paddyPurchase.form.placeholders.date'
-                                                                  )}
+                                                                : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
@@ -284,11 +275,7 @@ export function PaddyActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t(
-                                                    'paddyPurchase.form.partyName'
-                                                )}
-                                            </FormLabel>
+                                            <FormLabel>Party Name</FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -296,12 +283,8 @@ export function PaddyActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={party}
-                                                    placeholder={t(
-                                                        'paddyPurchase.form.placeholders.party'
-                                                    )}
-                                                    emptyText={t(
-                                                        'common.noResults'
-                                                    )}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -313,11 +296,7 @@ export function PaddyActionDialog({
                                     name='brokerName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t(
-                                                    'paddyPurchase.form.brokerName'
-                                                )}
-                                            </FormLabel>
+                                            <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -325,12 +304,8 @@ export function PaddyActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={broker}
-                                                    placeholder={t(
-                                                        'paddyPurchase.form.placeholders.broker'
-                                                    )}
-                                                    emptyText={t(
-                                                        'common.noResults'
-                                                    )}
+                                                    placeholder='Search broker...'
+                                                    emptyText='No brokers found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -343,9 +318,7 @@ export function PaddyActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t(
-                                                    'paddyPurchase.form.delivery'
-                                                )}
+                                                Delivery Option
                                             </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
@@ -382,11 +355,7 @@ export function PaddyActionDialog({
                                     name='purchaseType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t(
-                                                    'paddyPurchase.form.purchaseType'
-                                                )}
-                                            </FormLabel>
+                                            <FormLabel>Purchase Type</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
@@ -426,15 +395,11 @@ export function PaddyActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        {t(
-                                                            'paddyPurchase.form.doNumber'
-                                                        )}
+                                                        DO Number
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
-                                                            placeholder={t(
-                                                                'paddyPurchase.form.placeholders.doNumber'
-                                                            )}
+                                                            placeholder='Enter DO number'
                                                             {...field}
                                                         />
                                                     </FormControl>
@@ -448,15 +413,11 @@ export function PaddyActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        {t(
-                                                            'paddyPurchase.form.committee'
-                                                        )}
+                                                        Committee Name
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
-                                                            placeholder={t(
-                                                                'paddyPurchase.form.placeholders.committee'
-                                                            )}
+                                                            placeholder='Enter committee name'
                                                             {...field}
                                                         />
                                                     </FormControl>
@@ -470,17 +431,13 @@ export function PaddyActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        {t(
-                                                            'paddyPurchase.form.doQty'
-                                                        )}
+                                                        DO Paddy Quantity
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             type='number'
                                                             step='0.01'
-                                                            placeholder={t(
-                                                                'paddyPurchase.form.placeholders.qty'
-                                                            )}
+                                                            placeholder='0.00'
                                                             {...field}
                                                             onChange={(e) => {
                                                                 const val =
@@ -511,9 +468,7 @@ export function PaddyActionDialog({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    {t(
-                                                        'paddyPurchase.form.paddyType'
-                                                    )}
+                                                    Paddy Type
                                                 </FormLabel>
                                                 <Select
                                                     onValueChange={
@@ -523,11 +478,7 @@ export function PaddyActionDialog({
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger className='w-full'>
-                                                            <SelectValue
-                                                                placeholder={t(
-                                                                    'paddyPurchase.form.placeholders.select'
-                                                                )}
-                                                            />
+                                                            <SelectValue placeholder='Select' />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent className='w-full'>
@@ -541,9 +492,9 @@ export function PaddyActionDialog({
                                                                         option.value
                                                                     }
                                                                 >
-                                                                    {t(
-                                                                        `paddyPurchase.options.paddyType.${option.value === 'धान(मोटा)' ? 'mota' : option.value === 'धान(पतला)' ? 'patla' : option.value === 'धान(सरना)' ? 'sarna' : option.value === 'धान(महामाया)' ? 'mahamaya' : 'rbgold'}`
-                                                                    )}
+                                                                    {
+                                                                        option.label
+                                                                    }
                                                                 </SelectItem>
                                                             )
                                                         )}
@@ -561,17 +512,13 @@ export function PaddyActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t(
-                                                    'paddyPurchase.form.totalQty'
-                                                )}
+                                                Total Paddy Qty
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
                                                     step='0.01'
-                                                    placeholder={t(
-                                                        'paddyPurchase.form.placeholders.qty'
-                                                    )}
+                                                    placeholder='0.00'
                                                     {...field}
                                                     onChange={(e) => {
                                                         const val =
@@ -599,17 +546,13 @@ export function PaddyActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t(
-                                                    'paddyPurchase.form.ratePerQtl'
-                                                )}
+                                                Paddy Rate per Quintal
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
                                                     step='0.01'
-                                                    placeholder={t(
-                                                        'paddyPurchase.form.placeholders.qty'
-                                                    )}
+                                                    placeholder='0.00'
                                                     {...field}
                                                     onChange={(e) => {
                                                         const val =
@@ -635,18 +578,12 @@ export function PaddyActionDialog({
                                     name='discountPercent'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t(
-                                                    'paddyPurchase.form.discount'
-                                                )}
-                                            </FormLabel>
+                                            <FormLabel>Discount %</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
                                                     step='0.01'
-                                                    placeholder={t(
-                                                        'paddyPurchase.form.placeholders.qty'
-                                                    )}
+                                                    placeholder='0.00'
                                                     {...field}
                                                     onChange={(e) => {
                                                         const val =
@@ -672,11 +609,7 @@ export function PaddyActionDialog({
                                     name='brokerage'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t(
-                                                    'paddyPurchase.form.brokerage'
-                                                )}
-                                            </FormLabel>
+                                            <FormLabel>Brokerage</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -710,11 +643,7 @@ export function PaddyActionDialog({
                                     name='gunnyType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t(
-                                                    'paddyPurchase.form.gunnyOption'
-                                                )}
-                                            </FormLabel>
+                                            <FormLabel>Gunny Option</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
@@ -754,9 +683,7 @@ export function PaddyActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        {t(
-                                                            'paddyPurchase.form.newGunnyRate'
-                                                        )}
+                                                        New Gunny Rate
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -789,9 +716,7 @@ export function PaddyActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        {t(
-                                                            'paddyPurchase.form.oldGunnyRate'
-                                                        )}
+                                                        Old Gunny Rate
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -824,9 +749,7 @@ export function PaddyActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        {t(
-                                                            'paddyPurchase.form.plasticGunnyRate'
-                                                        )}
+                                                        Plastic Gunny Rate
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -864,16 +787,16 @@ export function PaddyActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                {t('common.cancel')}
+                                Cancel
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? t('common.updating')
-                                        : t('common.adding')
+                                        ? 'Updating...'
+                                        : 'Adding...'
                                     : isEditing
-                                      ? t('common.update')
-                                      : t('common.add')}
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

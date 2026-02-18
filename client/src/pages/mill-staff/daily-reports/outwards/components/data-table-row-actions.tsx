@@ -1,7 +1,6 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
 import { Trash2, Wrench } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
@@ -19,7 +18,6 @@ type DataTableRowActionsProps = {
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { t } = useTranslation('mill-staff')
     const { setOpen, setCurrentRow } = useOutwards()
     return (
         <DropdownMenu modal={false}>
@@ -29,7 +27,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                     className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
                 >
                     <DotsHorizontalIcon className='h-4 w-4' />
-                    <span className='sr-only'>{t('common.openMenu')}</span>
+                    <span className='sr-only'>Open menu</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' className='w-[160px]'>
@@ -39,7 +37,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                         setOpen('edit')
                     }}
                 >
-                    {t('common.edit')}
+                    Edit
                     <DropdownMenuShortcut>
                         <Wrench size={16} />
                     </DropdownMenuShortcut>
@@ -52,7 +50,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                     }}
                     className='text-red-500!'
                 >
-                    {t('common.delete')}
+                    Delete
                     <DropdownMenuShortcut>
                         <Trash2 size={16} />
                     </DropdownMenuShortcut>
@@ -61,4 +59,3 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         </DropdownMenu>
     )
 }
-

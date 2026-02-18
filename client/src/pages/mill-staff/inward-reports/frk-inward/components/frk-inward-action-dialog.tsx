@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useFrkPurchaseList } from '@/pages/mill-admin/purchase-reports/frk/data/hooks'
 import type { FrkPurchaseData } from '@/pages/mill-admin/purchase-reports/frk/data/schema'
 import { CalendarIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -47,9 +46,7 @@ export function FrkInwardActionDialog({
     onOpenChange,
     currentRow,
 }: FrkInwardActionDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useFrkInward()
-    const isEditing = !!currentRow
     const { mutateAsync: createFrkInward, isPending: isCreating } =
         useCreateFrkInward(millId)
     const { mutateAsync: updateFrkInward, isPending: isUpdating } =
@@ -87,6 +84,7 @@ export function FrkInwardActionDialog({
                 form.setValue('partyName', purchase.partyName)
         }
     }
+    const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -145,14 +143,10 @@ export function FrkInwardActionDialog({
             <DialogContent className='max-h-[90vh] max-w-2xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('frkInward.editRecord')
-                            : t('frkInward.addRecord')}
+                        {isEditing ? 'Edit' : 'Add'} Record
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t('common.updateDetails')
-                            : t('common.enterDetails')}
+                        {isEditing ? 'Update' : 'Enter'} the details below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -166,9 +160,7 @@ export function FrkInwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('frkInward.form.date')}
-                                        </FormLabel>
+                                        <FormLabel>Date</FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -187,9 +179,7 @@ export function FrkInwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : t(
-                                                                  'common.pickADate'
-                                                              )}
+                                                            : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -232,21 +222,15 @@ export function FrkInwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t(
-                                                'frkInward.form.frkPurchaseDealNumber'
-                                            )}
+                                            FRK Purchase Deal Number
                                         </FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
                                                 value={field.value || ''}
                                                 onValueChange={handleDealSelect}
                                                 paginatedList={frkPurchaseDeal}
-                                                placeholder={t(
-                                                    'frkInward.form.searchDeal'
-                                                )}
-                                                emptyText={t(
-                                                    'frkInward.form.noDealsFound'
-                                                )}
+                                                placeholder='Search deal...'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -258,14 +242,10 @@ export function FrkInwardActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('frkInward.form.partyName')}
-                                        </FormLabel>
+                                        <FormLabel>Party Name</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'frkInward.form.enterPartyName'
-                                                )}
+                                                placeholder='Enter Party Name'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -279,9 +259,7 @@ export function FrkInwardActionDialog({
                                 name='gunnyPlastic'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('frkInward.form.gunnyPlastic')}
-                                        </FormLabel>
+                                        <FormLabel>Gunny (Plastic)</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -311,7 +289,7 @@ export function FrkInwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t('frkInward.form.plasticWeight')}
+                                            Plastic Gunny Weight
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -342,14 +320,10 @@ export function FrkInwardActionDialog({
                                 name='truckNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('frkInward.form.truckNumber')}
-                                        </FormLabel>
+                                        <FormLabel>Truck No</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'frkInward.form.enterTruckNumber'
-                                                )}
+                                                placeholder='Enter Truck No'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -363,14 +337,10 @@ export function FrkInwardActionDialog({
                                 name='rstNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('frkInward.form.rstNumber')}
-                                        </FormLabel>
+                                        <FormLabel>RST No</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'frkInward.form.enterRstNumber'
-                                                )}
+                                                placeholder='Enter RST No'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -384,9 +354,7 @@ export function FrkInwardActionDialog({
                                 name='truckWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('frkInward.form.truckWeight')}
-                                        </FormLabel>
+                                        <FormLabel>Truck Weight</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -416,9 +384,7 @@ export function FrkInwardActionDialog({
                                 name='gunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('frkInward.form.gunnyWeight')}
-                                        </FormLabel>
+                                        <FormLabel>Gunny Weight</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -448,9 +414,7 @@ export function FrkInwardActionDialog({
                                 name='netWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('frkInward.form.netWeight')}
-                                        </FormLabel>
+                                        <FormLabel>Net Weight</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -483,16 +447,16 @@ export function FrkInwardActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                {t('common.cancel')}
+                                Cancel
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? t('common.updating')
-                                        : t('common.adding')
+                                        ? 'Updating...'
+                                        : 'Adding...'
                                     : isEditing
-                                      ? t('common.update')
-                                      : t('common.add')}
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

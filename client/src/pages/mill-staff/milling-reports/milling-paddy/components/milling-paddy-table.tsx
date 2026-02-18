@@ -25,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type MillingPaddy } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { useMillingPaddyColumns } from './milling-paddy-columns'
+import { millingPaddyColumns as columns } from './milling-paddy-columns'
 
 type DataTableProps = {
     data: MillingPaddy[]
@@ -54,7 +54,6 @@ export function MillingPaddyTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-    const columns = useMillingPaddyColumns()
 
     const {
         columnFilters,

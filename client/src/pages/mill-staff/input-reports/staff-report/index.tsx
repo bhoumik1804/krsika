@@ -19,8 +19,8 @@ import { StaffReportTable } from './components/staff-report-table'
 
 export function StaffReport() {
     const { millId } = useParams<{ millId: string }>()
-    const [searchParams, setSearchParams] = useSearchParams()
     const { t } = useTranslation('mill-staff')
+    const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
     const queryParams = useMemo(() => {
@@ -75,10 +75,10 @@ export function StaffReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('staffReport.title')}
+                            {t('inputReports.staff.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('staffReport.description')}
+                            {t('inputReports.staff.description')}
                         </p>
                     </div>
                     <StaffReportPrimaryButtons />
@@ -98,7 +98,6 @@ function StaffReportContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = useStaffReport()
-    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (
@@ -111,7 +110,7 @@ function StaffReportContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('common.error')}
+                Failed to load staff data. Please try again later.
             </div>
         )
     }

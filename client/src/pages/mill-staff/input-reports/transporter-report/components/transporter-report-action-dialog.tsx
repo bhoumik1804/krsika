@@ -37,13 +37,13 @@ export function TransporterReportActionDialog({
     open,
     onOpenChange,
 }: TransporterReportActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useTransporterReport()
     const isEditing = !!currentRow
     const { mutate: createTransporter, isPending: isCreating } =
         useCreateTransporter(millId)
     const { mutate: updateTransporter, isPending: isUpdating } =
         useUpdateTransporter(millId)
-    const { t } = useTranslation('mill-staff')
 
     const isLoading = isCreating || isUpdating
 
@@ -93,18 +93,14 @@ export function TransporterReportActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('transporterReport.form.editTitle')
-                            : t('transporterReport.form.addTitle')}
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('inputReports.transporter.form.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t(
-                                  'transporterReport.form.editDescription'
-                              )
-                            : t(
-                                  'transporterReport.form.addDescription'
-                              )}
+                        {t('common.enter')}{' '}
+                        {t(
+                            'inputReports.transporter.form.description'
+                        ).toLowerCase()}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -122,13 +118,13 @@ export function TransporterReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'transporterReport.form.name'
+                                                    'inputReports.transporter.form.fields.transporterName'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'transporterReport.form.placeholders.name'
+                                                        'inputReports.transporter.form.fields.transporterName'
                                                     )}
                                                     {...field}
                                                 />
@@ -144,13 +140,13 @@ export function TransporterReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'transporterReport.form.gstn'
+                                                    'inputReports.transporter.form.fields.gstn'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'transporterReport.form.placeholders.gstn'
+                                                        'inputReports.transporter.form.fields.gstn'
                                                     )}
                                                     {...field}
                                                 />
@@ -166,13 +162,13 @@ export function TransporterReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'transporterReport.form.phone'
+                                                    'inputReports.transporter.form.fields.phone'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'transporterReport.form.placeholders.phone'
+                                                        'inputReports.transporter.form.fields.phone'
                                                     )}
                                                     {...field}
                                                 />
@@ -188,14 +184,14 @@ export function TransporterReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'transporterReport.form.email'
+                                                    'inputReports.transporter.form.fields.email'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='email'
                                                     placeholder={t(
-                                                        'transporterReport.form.placeholders.email'
+                                                        'inputReports.transporter.form.fields.email'
                                                     )}
                                                     {...field}
                                                 />
@@ -211,13 +207,13 @@ export function TransporterReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'transporterReport.form.address'
+                                                    'inputReports.transporter.form.fields.address'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'transporterReport.form.placeholders.address'
+                                                        'inputReports.transporter.form.fields.address'
                                                     )}
                                                     {...field}
                                                 />
@@ -240,11 +236,11 @@ export function TransporterReportActionDialog({
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? t('common.updating')
-                                        : t('common.adding')
+                                        ? t('common.update') + '...'
+                                        : t('common.add') + '...'
                                     : isEditing
                                       ? t('common.update')
-                                      : t('common.add')}
+                                      : t('common.add')}{' '}
                             </Button>
                         </DialogFooter>
                     </form>

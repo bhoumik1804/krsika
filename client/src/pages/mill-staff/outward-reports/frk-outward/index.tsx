@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import type { NavigateFn } from '@/hooks/use-table-url-state'
 import { ConfigDrawer } from '@/components/config-drawer'
@@ -17,7 +16,6 @@ import { useFrkOutwardList } from './data/hooks'
 import type { FrkOutwardQueryParams } from './data/types'
 
 function FrkOutwardContent() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -90,10 +88,10 @@ function FrkOutwardContent() {
             <div className='flex flex-wrap items-end justify-between gap-2'>
                 <div>
                     <h2 className='text-2xl font-bold tracking-tight'>
-                        {t('frkOutward.title')}
+                        FRK Outward Report
                     </h2>
                     <p className='text-muted-foreground'>
-                        {t('frkOutward.description')}
+                        Manage FRK outward transactions and records
                     </p>
                 </div>
                 <FrkOutwardPrimaryButtons />

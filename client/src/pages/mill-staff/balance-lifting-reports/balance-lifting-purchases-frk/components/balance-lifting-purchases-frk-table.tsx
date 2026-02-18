@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BalanceLiftingPurchasesFrk } from '../data/schema'
-import { useBalanceLiftingPurchasesFrkColumns } from './balance-lifting-purchases-frk-columns'
+import { frkColumns as columns } from './balance-lifting-purchases-frk-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
@@ -49,7 +49,6 @@ export function BalanceLiftingPurchasesFrkTable({
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
-    const columns = useBalanceLiftingPurchasesFrkColumns()
     const [sorting, setSorting] = useState<SortingState>([])
 
     // Only handle column filters (pagination is server-side)
@@ -190,9 +189,7 @@ export function BalanceLiftingPurchasesFrkTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {false // Assuming 'loading' state is not provided
-                                        ? 'Loading...'
-                                        : 'No records found.'}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -16,7 +15,6 @@ import { GunnyTable } from './components/gunny-table'
 import type { GunnyPurchaseQueryParams } from './data/types'
 
 export function GunnyPurchaseReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -72,10 +70,10 @@ export function GunnyPurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('gunnyPurchase.title')}
+                            Gunny Purchase Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('gunnyPurchase.description')}
+                            Manage gunny purchase transactions and records
                         </p>
                     </div>
                     <GunnyPrimaryButtons />
@@ -94,7 +92,6 @@ function GunnyPurchaseContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('mill-staff')
     const context = useGunny()
 
     if (context.isLoading) {
@@ -108,7 +105,7 @@ function GunnyPurchaseContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('gunnyPurchase.failedToLoad')}
+                Failed to load gunny purchase data. Please try again later.
             </div>
         )
     }

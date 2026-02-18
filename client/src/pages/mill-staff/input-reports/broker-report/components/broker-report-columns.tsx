@@ -1,103 +1,97 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { TFunction } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BrokerReportData } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getBrokerReportColumns = (
-    t: TFunction
-): ColumnDef<BrokerReportData>[] => [
-    {
-        id: 'select',
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && 'indeterminate')
-                }
-                onCheckedChange={(value) =>
-                    table.toggleAllPageRowsSelected(!!value)
-                }
-                aria-label='Select all'
-                className='translate-y-[2px]'
-            />
-        ),
-        meta: {
-            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
-        },
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label='Select row'
-                className='translate-y-[2px]'
-            />
-        ),
+export function useBrokerReportColumns(): ColumnDef<BrokerReportData>[] {
+    const { t } = useTranslation('mill-staff')
 
-        enableSorting: false,
-        enableHiding: false,
-    },
-    {
-        accessorKey: 'brokerName',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('brokerReport.table.name')}
-            />
-        ),
-        cell: ({ row }) => <div>{row.getValue('brokerName')}</div>,
-        meta: {
-            className: cn(
-                'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-                'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+    return [
+        {
+            id: 'select',
+            header: ({ table }) => (
+                <Checkbox
+                    checked={
+                        table.getIsAllPageRowsSelected() ||
+                        (table.getIsSomePageRowsSelected() && 'indeterminate')
+                    }
+                    onCheckedChange={(value) =>
+                        table.toggleAllPageRowsSelected(!!value)
+                    }
+                    aria-label='Select all'
+                    className='translate-y-[2px]'
+                />
             ),
+            meta: {
+                className: cn(
+                    'max-md:sticky start-0 z-10 rounded-tl-[inherit]'
+                ),
+            },
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label='Select row'
+                    className='translate-y-[2px]'
+                />
+            ),
+
+            enableSorting: false,
+            enableHiding: false,
         },
-        enableHiding: false,
-    },
-    {
-        accessorKey: 'gstn',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('brokerReport.table.gstn')}
-            />
-        ),
-        cell: ({ row }) => <div>{row.getValue('gstn')}</div>,
-    },
-    {
-        accessorKey: 'phone',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('brokerReport.table.phone')}
-            />
-        ),
-        cell: ({ row }) => <div>{row.getValue('phone')}</div>,
-    },
-    {
-        accessorKey: 'email',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('brokerReport.table.email')}
-            />
-        ),
-        cell: ({ row }) => <div>{row.getValue('email')}</div>,
-    },
-    {
-        accessorKey: 'address',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('brokerReport.table.address')}
-            />
-        ),
-        cell: ({ row }) => <div>{row.getValue('address')}</div>,
-    },
-    {
-        id: 'actions',
-        cell: DataTableRowActions,
-    },
-]
+        {
+            accessorKey: 'brokerName',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('inputReports.broker.form.fields.brokerName')}
+                />
+            ),
+            cell: ({ row }) => <div>{row.getValue('brokerName')}</div>,
+            meta: {
+                className: cn(
+                    'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
+                    'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+                ),
+            },
+            enableHiding: false,
+        },
+        {
+            accessorKey: 'phone',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('inputReports.broker.form.fields.phone')}
+                />
+            ),
+            cell: ({ row }) => <div>{row.getValue('phone')}</div>,
+        },
+        {
+            accessorKey: 'email',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('inputReports.broker.form.fields.email')}
+                />
+            ),
+            cell: ({ row }) => <div>{row.getValue('email')}</div>,
+        },
+        {
+            accessorKey: 'address',
+            header: ({ column }) => (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('inputReports.broker.form.fields.address')}
+                />
+            ),
+            cell: ({ row }) => <div>{row.getValue('address')}</div>,
+        },
+        {
+            id: 'actions',
+            cell: DataTableRowActions,
+        },
+    ]
+}

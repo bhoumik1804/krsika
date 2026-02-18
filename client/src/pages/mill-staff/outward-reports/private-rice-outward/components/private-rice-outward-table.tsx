@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -26,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type PrivateRiceOutward } from '../data/schema'
 import type { PrivateRiceOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { usePrivateRiceOutwardColumns } from './private-rice-outward-columns'
+import { PrivateRiceOutwardColumns as columns } from './private-rice-outward-columns'
 
 type DataTableProps = {
     data: PrivateRiceOutward[]
@@ -41,8 +40,6 @@ export function PrivateRiceOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
-    const columns = usePrivateRiceOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -183,7 +180,7 @@ export function PrivateRiceOutwardTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import type { PaddySalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getPaddySalesColumns } from './paddy-sales-columns'
+import { paddySalesColumns as columns } from './paddy-sales-columns'
 
 type DataTableProps = {
     data: PaddySalesResponse[]
@@ -49,8 +48,6 @@ export function PaddySalesTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
-    const columns = useMemo(() => getPaddySalesColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -122,10 +119,7 @@ export function PaddySalesTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t(
-                    'common.placeholders.searchParty',
-                    'Search Party Name...'
-                )}
+                searchPlaceholder='Search Party Name...'
                 searchKey='partyName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -197,7 +191,7 @@ export function PaddySalesTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults', 'No results.')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

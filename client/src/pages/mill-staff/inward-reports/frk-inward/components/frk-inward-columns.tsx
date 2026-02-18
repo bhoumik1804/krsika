@@ -1,5 +1,4 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -8,186 +7,156 @@ import { type FrkInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 import { format } from 'date-fns'
 
-export function useFrkInwardColumns(): ColumnDef<FrkInward>[] {
-    const { t } = useTranslation('mill-staff')
-
-    return [
-        {
-            id: 'select',
-            header: ({ table }) => (
-                <Checkbox
-                    checked={
-                        table.getIsAllPageRowsSelected() ||
-                        (table.getIsSomePageRowsSelected() && 'indeterminate')
-                    }
-                    onCheckedChange={(value) =>
-                        table.toggleAllPageRowsSelected(!!value)
-                    }
-                    aria-label='Select all'
-                    className='translate-y-[2px]'
-                />
-            ),
-            meta: {
-                className: cn(
-                    'max-md:sticky start-0 z-10 rounded-tl-[inherit]'
-                ),
-            },
-            cell: ({ row }) => (
-                <Checkbox
-                    checked={row.getIsSelected()}
-                    onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    aria-label='Select row'
-                    className='translate-y-[2px]'
-                />
-            ),
-            enableSorting: false,
-            enableHiding: false,
+export const frkInwardColumns: ColumnDef<FrkInward>[] = [
+    {
+        id: 'select',
+        header: ({ table }) => (
+            <Checkbox
+                checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && 'indeterminate')
+                }
+                onCheckedChange={(value) =>
+                    table.toggleAllPageRowsSelected(!!value)
+                }
+                aria-label='Select all'
+                className='translate-y-[2px]'
+            />
+        ),
+        meta: {
+            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
         },
-        {
-            accessorKey: 'date',
-            header: ({ column }) => (
-                <DataTableColumnHeader
-                    column={column}
-                    title={t('frkInward.table.date')}
-                />
-            ),
-            cell: ({ row }) => (
-                <div className='ps-3 text-nowrap'>
-                    {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
-                </div>
-            ),
-            meta: {
-                className: cn(
-                    'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-                    'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
-                ),
-            },
-            enableHiding: false,
-        },
-        {
-            accessorKey: 'frkPurchaseDealNumber',
-            header: ({ column }) => (
-                <DataTableColumnHeader
-                    column={column}
-                    title={t('frkInward.table.frkPurchaseDealNumber')}
-                />
-            ),
-            cell: ({ row }) => (
-                <div className='text-nowrap'>
-                    {row.getValue('frkPurchaseDealNumber')}
-                </div>
+        cell: ({ row }) => (
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label='Select row'
+                className='translate-y-[2px]'
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
+    {
+        accessorKey: 'date',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Date' />
+        ),
+        cell: ({ row }) => (
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
+        ),
+        meta: {
+            className: cn(
+                'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
+                'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
             ),
         },
-        {
-            accessorKey: 'partyName',
-            header: ({ column }) => (
-                <DataTableColumnHeader
-                    column={column}
-                    title={t('frkInward.table.partyName')}
-                />
-            ),
-            cell: ({ row }) => (
-                <LongText className='max-w-36'>
-                    {row.getValue('partyName')}
-                </LongText>
-            ),
-            meta: { className: 'w-36' },
-        },
-        {
-            accessorKey: 'gunnyPlastic',
-            header: ({ column }) => (
-                <DataTableColumnHeader
-                    column={column}
-                    title={t('frkInward.table.gunnyPlastic')}
-                />
-            ),
-            cell: ({ row }) => (
-                <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
-            ),
-        },
-        {
-            accessorKey: 'plasticWeight',
-            header: ({ column }) => (
-                <DataTableColumnHeader
-                    column={column}
-                    title={t('frkInward.table.plasticWeight')}
-                />
-            ),
-            cell: ({ row }) => (
-                <div className='text-right'>
-                    {(row.getValue('plasticWeight') as number)?.toFixed(2)}
-                </div>
-            ),
-        },
-        {
-            accessorKey: 'truckNumber',
-            header: ({ column }) => (
-                <DataTableColumnHeader
-                    column={column}
-                    title={t('frkInward.table.truckNumber')}
-                />
-            ),
-            cell: ({ row }) => (
-                <div className='text-nowrap'>{row.getValue('truckNumber')}</div>
-            ),
-        },
-        {
-            accessorKey: 'rstNumber',
-            header: ({ column }) => (
-                <DataTableColumnHeader
-                    column={column}
-                    title={t('frkInward.table.rstNumber')}
-                />
-            ),
-            cell: ({ row }) => (
-                <div className='text-nowrap'>{row.getValue('rstNumber')}</div>
-            ),
-        },
-        {
-            accessorKey: 'truckWeight',
-            header: ({ column }) => (
-                <DataTableColumnHeader
-                    column={column}
-                    title={t('frkInward.table.truckWeight')}
-                />
-            ),
-            cell: ({ row }) => (
-                <div className='text-right'>
-                    {(row.getValue('truckWeight') as number)?.toFixed(2)}
-                </div>
-            ),
-        },
-        {
-            accessorKey: 'gunnyWeight',
-            header: ({ column }) => (
-                <DataTableColumnHeader
-                    column={column}
-                    title={t('frkInward.table.gunnyWeight')}
-                />
-            ),
-            cell: ({ row }) => (
-                <div className='text-right'>
-                    {(row.getValue('gunnyWeight') as number)?.toFixed(2)}
-                </div>
-            ),
-        },
-        {
-            accessorKey: 'netWeight',
-            header: ({ column }) => (
-                <DataTableColumnHeader
-                    column={column}
-                    title={t('frkInward.table.netWeight')}
-                />
-            ),
-            cell: ({ row }) => (
-                <div className='text-right font-medium'>
-                    {(row.getValue('netWeight') as number)?.toFixed(2)}
-                </div>
-            ),
-        },
-        {
-            id: 'actions',
-            cell: DataTableRowActions,
-        },
-    ]
-}
+        enableHiding: false,
+    },
+    {
+        accessorKey: 'frkPurchaseDealNumber',
+        header: ({ column }) => (
+            <DataTableColumnHeader
+                column={column}
+                title='FRK Purchase Deal Number'
+            />
+        ),
+        cell: ({ row }) => (
+            <div className='text-nowrap'>
+                {row.getValue('frkPurchaseDealNumber')}
+            </div>
+        ),
+    },
+    {
+        accessorKey: 'partyName',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Party Name' />
+        ),
+        cell: ({ row }) => (
+            <LongText className='max-w-36'>
+                {row.getValue('partyName')}
+            </LongText>
+        ),
+        meta: { className: 'w-36' },
+    },
+    {
+        accessorKey: 'gunnyPlastic',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Gunny (Plastic)' />
+        ),
+        cell: ({ row }) => (
+            <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
+        ),
+    },
+    {
+        accessorKey: 'plasticWeight',
+        header: ({ column }) => (
+            <DataTableColumnHeader
+                column={column}
+                title='Plastic Gunny Weight'
+            />
+        ),
+        cell: ({ row }) => (
+            <div className='text-right'>
+                {(row.getValue('plasticWeight') as number)?.toFixed(2)}
+            </div>
+        ),
+    },
+    {
+        accessorKey: 'truckNumber',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Truck No' />
+        ),
+        cell: ({ row }) => (
+            <div className='text-nowrap'>{row.getValue('truckNumber')}</div>
+        ),
+    },
+    {
+        accessorKey: 'rstNumber',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='RST No' />
+        ),
+        cell: ({ row }) => (
+            <div className='text-nowrap'>{row.getValue('rstNumber')}</div>
+        ),
+    },
+    {
+        accessorKey: 'truckWeight',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Truck Weight' />
+        ),
+        cell: ({ row }) => (
+            <div className='text-right'>
+                {(row.getValue('truckWeight') as number)?.toFixed(2)}
+            </div>
+        ),
+    },
+    {
+        accessorKey: 'gunnyWeight',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Gunny Weight' />
+        ),
+        cell: ({ row }) => (
+            <div className='text-right'>
+                {(row.getValue('gunnyWeight') as number)?.toFixed(2)}
+            </div>
+        ),
+    },
+    {
+        accessorKey: 'netWeight',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='Net Weight' />
+        ),
+        cell: ({ row }) => (
+            <div className='text-right font-medium'>
+                {(row.getValue('netWeight') as number)?.toFixed(2)}
+            </div>
+        ),
+    },
+    {
+        id: 'actions',
+        cell: DataTableRowActions,
+    },
+]

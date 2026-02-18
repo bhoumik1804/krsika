@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -17,7 +16,6 @@ import { useMillingPaddyList } from './data/hooks'
 
 export function MillingPaddyReport() {
     const { millId } = useParams<{ millId: string }>()
-    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     const queryParams = useMemo(() => {
@@ -91,10 +89,10 @@ export function MillingPaddyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('millingPaddy.title')}
+                            Milling Paddy Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('millingPaddy.description')}
+                            Manage milling paddy transactions and records
                         </p>
                     </div>
                     <MillingPaddyPrimaryButtons />

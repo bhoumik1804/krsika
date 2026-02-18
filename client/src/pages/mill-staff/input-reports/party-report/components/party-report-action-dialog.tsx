@@ -34,13 +34,13 @@ export function PartyReportActionDialog({
     open,
     onOpenChange,
 }: PartyReportActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = usePartyReport()
     const isEditing = !!currentRow
     const { mutate: createParty, isPending: isCreating } =
         useCreateParty(millId)
     const { mutate: updateParty, isPending: isUpdating } =
         useUpdateParty(millId)
-    const { t } = useTranslation('mill-staff')
 
     const isLoading = isCreating || isUpdating
 
@@ -91,13 +91,23 @@ export function PartyReportActionDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing
-                            ? t('partyReport.form.editTitle')
-                            : t('partyReport.form.addTitle')}
+                            ? t('common.edit') +
+                              ' ' +
+                              t('inputReports.party.title').replace(
+                                  ' Report',
+                                  ''
+                              )
+                            : t('inputReports.party.form.title')}
                     </DialogTitle>
                     <DialogDescription>
                         {isEditing
-                            ? t('partyReport.form.editDescription')
-                            : t('partyReport.form.addDescription')}
+                            ? t('common.update') +
+                              ' ' +
+                              t('inputReports.party.title').replace(
+                                  ' Report',
+                                  ''
+                              )
+                            : t('inputReports.party.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -114,13 +124,13 @@ export function PartyReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'partyReport.form.name'
+                                                    'inputReports.party.form.fields.partyName'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'partyReport.form.placeholders.name'
+                                                        'inputReports.party.form.fields.partyName'
                                                     )}
                                                     {...field}
                                                 />
@@ -136,13 +146,13 @@ export function PartyReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'partyReport.form.gstn'
+                                                    'inputReports.party.form.fields.gstn'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'partyReport.form.placeholders.gstn'
+                                                        'inputReports.party.form.fields.gstn'
                                                     )}
                                                     {...field}
                                                 />
@@ -158,13 +168,13 @@ export function PartyReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'partyReport.form.phone'
+                                                    'inputReports.party.form.fields.phone'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'partyReport.form.placeholders.phone'
+                                                        'inputReports.party.form.fields.phone'
                                                     )}
                                                     {...field}
                                                 />
@@ -180,14 +190,14 @@ export function PartyReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'partyReport.form.email'
+                                                    'inputReports.party.form.fields.email'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='email'
                                                     placeholder={t(
-                                                        'partyReport.form.placeholders.email'
+                                                        'inputReports.party.form.fields.email'
                                                     )}
                                                     {...field}
                                                 />
@@ -203,13 +213,13 @@ export function PartyReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'partyReport.form.address'
+                                                    'inputReports.party.form.fields.address'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'partyReport.form.placeholders.address'
+                                                        'inputReports.party.form.fields.address'
                                                     )}
                                                     {...field}
                                                 />
@@ -232,8 +242,8 @@ export function PartyReportActionDialog({
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? t('common.updating')
-                                        : t('common.adding')
+                                        ? t('common.update') + '...'
+                                        : t('common.add') + '...'
                                     : isEditing
                                       ? t('common.update')
                                       : t('common.add')}

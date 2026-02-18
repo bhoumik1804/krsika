@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -19,7 +18,6 @@ export function FrkInwardReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
-    const { t } = useTranslation('mill-staff')
 
     const queryParams = useMemo(() => {
         const search = Object.fromEntries(searchParams.entries())
@@ -71,10 +69,10 @@ export function FrkInwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('frkInward.title')}
+                            FRK Inward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('frkInward.description')}
+                            Manage FRK inward transactions and records
                         </p>
                     </div>
                     <FrkInwardPrimaryButtons />

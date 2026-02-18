@@ -9,7 +9,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import type { NavigateFn } from '@/hooks/use-table-url-state'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -23,7 +22,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type PrivateGunnyOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { usePrivateGunnyOutwardColumns } from './private-gunny-outward-columns'
+import { PrivateGunnyOutwardColumns as columns } from './private-gunny-outward-columns'
 
 interface DataTableProps {
     data: PrivateGunnyOutward[]
@@ -47,8 +46,6 @@ export function PrivateGunnyOutwardTable({
     navigate,
     serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
-    const columns = usePrivateGunnyOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -173,7 +170,7 @@ export function PrivateGunnyOutwardTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

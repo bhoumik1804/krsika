@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import {
     AlertDialog,
@@ -25,7 +24,6 @@ export function LabourGroupReportDeleteDialog({
     currentRow,
 }: LabourGroupReportDeleteDialogProps) {
     const { millId } = useParams<{ millId: string }>()
-    const { t } = useTranslation('mill-staff')
     const mutation = useDeleteLabourGroup(millId || '')
 
     const handleDelete = async () => {
@@ -43,20 +41,17 @@ export function LabourGroupReportDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        {t('delete.title')}
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('delete.description', {
-                            name: currentRow?.labourTeamName,
-                        })}
+                        Are you sure you want to delete this record for{' '}
+                        <strong>{currentRow?.labourTeamName}</strong>?
                         <br />
-                        {t('delete.undone')}
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={mutation.isPending}>
-                        {t('common.cancel')}
+                        Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={(e) => {
@@ -66,9 +61,7 @@ export function LabourGroupReportDeleteDialog({
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                         disabled={mutation.isPending}
                     >
-                        {mutation.isPending
-                            ? t('common.deleting')
-                            : t('common.delete')}
+                        {mutation.isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

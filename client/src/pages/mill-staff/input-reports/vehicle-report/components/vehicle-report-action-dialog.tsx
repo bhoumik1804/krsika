@@ -34,14 +34,13 @@ export function VehicleReportActionDialog({
     open,
     onOpenChange,
 }: VehicleReportActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useVehicleReport()
     const isEditing = !!currentRow
     const { mutate: createVehicle, isPending: isCreating } =
         useCreateVehicle(millId)
     const { mutate: updateVehicle, isPending: isUpdating } =
         useUpdateVehicle(millId)
-
-    const { t } = useTranslation('mill-staff')
 
     const isLoading = isCreating || isUpdating
 
@@ -87,18 +86,14 @@ export function VehicleReportActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('vehicleReport.form.editTitle')
-                            : t('vehicleReport.form.addTitle')}
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('inputReports.vehicle.form.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t(
-                                  'vehicleReport.form.editDescription'
-                              )
-                            : t(
-                                  'vehicleReport.form.addDescription'
-                              )}
+                        {t('common.enter')}{' '}
+                        {t(
+                            'inputReports.vehicle.form.description'
+                        ).toLowerCase()}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -115,13 +110,13 @@ export function VehicleReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'vehicleReport.form.truckNo'
+                                                    'inputReports.vehicle.form.fields.truckNo'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'vehicleReport.form.placeholders.truckNo'
+                                                        'inputReports.vehicle.form.fields.truckNo'
                                                     )}
                                                     {...field}
                                                 />
@@ -144,11 +139,15 @@ export function VehicleReportActionDialog({
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? t('common.updating')
-                                        : t('common.adding')
+                                        ? t('common.update') + '...'
+                                        : t('common.add') + '...'
                                     : isEditing
                                       ? t('common.update')
-                                      : t('common.add')}
+                                      : t('common.add')}{' '}
+                                {t('inputReports.vehicle.title').replace(
+                                    ' Report',
+                                    ''
+                                )}
                             </Button>
                         </DialogFooter>
                     </form>

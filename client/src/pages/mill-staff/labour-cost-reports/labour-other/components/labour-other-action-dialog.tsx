@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLabourGroupList } from '@/pages/mill-admin/input-reports/labour-group-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { labourTypeOptions } from '@/constants/purchase-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
@@ -55,7 +54,6 @@ export function LabourOtherActionDialog({
     onOpenChange,
     currentRow,
 }: LabourOtherActionDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -128,14 +126,10 @@ export function LabourOtherActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('labourOther.form.editTitle')
-                            : t('labourOther.form.addTitle')}
+                        {isEditing ? 'Edit' : 'Add'} Record
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t('labourOther.form.editDescription')
-                            : t('labourOther.form.addDescription')}
+                        {isEditing ? 'Update' : 'Enter'} the details below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -149,9 +143,7 @@ export function LabourOtherActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('labourOther.form.date')}
-                                        </FormLabel>
+                                        <FormLabel>Date</FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -170,9 +162,7 @@ export function LabourOtherActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : t(
-                                                                  'labourOther.form.pickDate'
-                                                              )}
+                                                            : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -214,20 +204,14 @@ export function LabourOtherActionDialog({
                                 name='labourType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('labourOther.form.labourType')}
-                                        </FormLabel>
+                                        <FormLabel>Labour Type</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value || ''}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
-                                                    <SelectValue
-                                                        placeholder={t(
-                                                            'labourOther.form.selectType'
-                                                        )}
-                                                    />
+                                                    <SelectValue placeholder='select labour type' />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -252,19 +236,13 @@ export function LabourOtherActionDialog({
                                 name='labourGroupName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'labourOther.form.labourGroupName'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Labour Group name</FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
                                                 value={field.value || ''}
                                                 onValueChange={field.onChange}
                                                 paginatedList={labourGroupList}
-                                                placeholder={t(
-                                                    'labourOther.form.selectLabourGroup'
-                                                )}
+                                                placeholder='select labour group name'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -279,9 +257,7 @@ export function LabourOtherActionDialog({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    {t(
-                                                        'labourOther.form.numberOfGunny'
-                                                    )}
+                                                    Number of Gunny
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
@@ -314,9 +290,7 @@ export function LabourOtherActionDialog({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    {t(
-                                                        'labourOther.form.labourRate'
-                                                    )}
+                                                    Labour Rate
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
@@ -354,15 +328,11 @@ export function LabourOtherActionDialog({
                                         render={({ field }) => (
                                             <FormItem className='col-span-2'>
                                                 <FormLabel>
-                                                    {t(
-                                                        'labourOther.form.workDetail'
-                                                    )}
+                                                    Work Detail
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Textarea
-                                                        placeholder={t(
-                                                            'labourOther.form.enterWorkDetails'
-                                                        )}
+                                                        placeholder='Enter work details'
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -376,9 +346,7 @@ export function LabourOtherActionDialog({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    {t(
-                                                        'labourOther.form.totalPrice'
-                                                    )}
+                                                    Total Price
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
@@ -415,12 +383,10 @@ export function LabourOtherActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                {t('common.cancel')}
+                                Cancel
                             </Button>
                             <Button type='submit'>
-                                {isEditing
-                                    ? t('common.update')
-                                    : t('labourOther.addRecord')}
+                                {isEditing ? 'Update' : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

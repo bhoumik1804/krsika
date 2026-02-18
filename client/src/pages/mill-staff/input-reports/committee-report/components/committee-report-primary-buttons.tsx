@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button'
 import { useCommitteeReport } from './committee-report-provider'
 
 export function CommitteeReportPrimaryButtons() {
-    const { setOpen, setCurrentRow } = useCommitteeReport()
     const { t } = useTranslation('mill-staff')
+    const { setOpen, setCurrentRow } = useCommitteeReport()
 
     return (
         <Button
@@ -15,7 +15,7 @@ export function CommitteeReportPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('committeeReport.addRecord')}
+            {t('inputReports.committee.form.primaryButton')}
         </Button>
     )
 }

@@ -1,5 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import {
     AlertDialog,
@@ -27,7 +26,6 @@ export function KhandaOutwardMultiDeleteDialog({
     onOpenChange,
     millId,
 }: KhandaOutwardMultiDeleteDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const selectedRows = table.getFilteredSelectedRowModel().rows
     const bulkDeleteMutation = useBulkDeleteKhandaOutward(millId)
 
@@ -39,15 +37,13 @@ export function KhandaOutwardMultiDeleteDialog({
         if (ids.length === 0) return
 
         toast.promise(bulkDeleteMutation.mutateAsync(ids), {
-            loading: t('common.deleting'),
+            loading: 'Deleting...',
             success: () => {
                 table.resetRowSelection()
                 onOpenChange(false)
-                return t('common.deletedSelectedSuccess', {
-                    count: ids.length,
-                })
+                return `Deleted ${ids.length} record${ids.length > 1 ? 's' : ''}`
             },
-            error: t('common.error'),
+            error: 'Error deleting records',
         })
     }
 
@@ -56,22 +52,22 @@ export function KhandaOutwardMultiDeleteDialog({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t('common.deleteSelectedTitle', {
-                            count: selectedRows.length,
-                        })}
+                        Delete {selectedRows.length}{' '}
+                        {selectedRows.length > 1 ? 'records' : 'record'}?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('common.deleteSelectedDescription')} <br />
-                        {t('common.actionCannotBeUndone')}
+                        Are you sure you want to delete the selected records?{' '}
+                        <br />
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {t('common.delete')}
+                        Delete
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

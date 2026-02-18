@@ -3,7 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -50,7 +49,6 @@ export function ProductionActionDialog({
     onOpenChange,
     currentRow,
 }: ProductionActionDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -83,18 +81,18 @@ export function ProductionActionDialog({
     const onSubmit = () => {
         toast.promise(sleep(2000), {
             loading: isEditing
-                ? t('production.updating')
-                : t('production.adding'),
+                ? 'Updating production entry...'
+                : 'Adding production entry...',
             success: () => {
                 onOpenChange(false)
                 form.reset()
                 return isEditing
-                    ? t('production.updatedSuccess')
-                    : t('production.addedSuccess')
+                    ? 'Production entry updated successfully'
+                    : 'Production entry added successfully'
             },
             error: isEditing
-                ? t('production.updateFailed')
-                : t('production.addFailed'),
+                ? 'Failed to update production entry'
+                : 'Failed to add production entry',
         })
     }
 
@@ -103,12 +101,11 @@ export function ProductionActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? t('common.edit') : t('common.add')}{' '}
-                        {t('production.title')}
+                        {isEditing ? 'Edit' : 'Add'} Production Entry
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? t('common.update') : t('common.add')}{' '}
-                        {t('production.title')}
+                        {isEditing ? 'Update' : 'Enter'} the daily finished
+                        goods production details
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -122,9 +119,7 @@ export function ProductionActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.date')}
-                                        </FormLabel>
+                                        <FormLabel>Date</FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -143,9 +138,7 @@ export function ProductionActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : t(
-                                                                  'common.pickADate'
-                                                              )}
+                                                            : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -187,14 +180,10 @@ export function ProductionActionDialog({
                                 name='itemName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.itemName')}
-                                        </FormLabel>
+                                        <FormLabel>Item Name</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'production.itemNamePlaceholder'
-                                                )}
+                                                placeholder='e.g. Rice'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -207,14 +196,10 @@ export function ProductionActionDialog({
                                 name='itemType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.variety')}
-                                        </FormLabel>
+                                        <FormLabel>Variety / Type</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'production.itemTypePlaceholder'
-                                                )}
+                                                placeholder='e.g. Basmati'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -227,9 +212,7 @@ export function ProductionActionDialog({
                                 name='bags'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            No. of {t('common.bags')}
-                                        </FormLabel>
+                                        <FormLabel>No. of Bags</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -250,9 +233,7 @@ export function ProductionActionDialog({
                                 name='weight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.netWeight')}
-                                        </FormLabel>
+                                        <FormLabel>Net Weight (Kg)</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -273,14 +254,10 @@ export function ProductionActionDialog({
                                 name='warehouse'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.warehouse')}
-                                        </FormLabel>
+                                        <FormLabel>Warehouse</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'production.warehousePlaceholder'
-                                                )}
+                                                placeholder='Enter warehouse name/ID'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -293,14 +270,10 @@ export function ProductionActionDialog({
                                 name='stackNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.stackNumber')}
-                                        </FormLabel>
+                                        <FormLabel>Stack Number</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'production.stackPlaceholder'
-                                                )}
+                                                placeholder='Optional stack ID'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -313,34 +286,28 @@ export function ProductionActionDialog({
                                 name='status'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.status')}
-                                        </FormLabel>
+                                        <FormLabel>Status</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue
-                                                        placeholder={t(
-                                                            'common.select'
-                                                        )}
-                                                    />
+                                                    <SelectValue placeholder='Select status' />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
                                                 <SelectItem value='pending'>
-                                                    {t('common.pending')}
+                                                    Pending
                                                 </SelectItem>
                                                 <SelectItem value='verified'>
-                                                    {t('common.verified')}
+                                                    Verified
                                                 </SelectItem>
                                                 <SelectItem value='stocked'>
-                                                    {t('common.stocked')}
+                                                    Stocked
                                                 </SelectItem>
                                                 <SelectItem value='rejected'>
-                                                    {t('common.rejected')}
+                                                    Rejected
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -354,12 +321,10 @@ export function ProductionActionDialog({
                             name='remarks'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{t('common.remarks')}</FormLabel>
+                                    <FormLabel>Remarks</FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder={t(
-                                                'production.remarksPlaceholder'
-                                            )}
+                                            placeholder='Optional remarks'
                                             {...field}
                                         />
                                     </FormControl>
@@ -373,13 +338,10 @@ export function ProductionActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                {t('common.cancel')}
+                                Cancel
                             </Button>
                             <Button type='submit'>
-                                {isEditing
-                                    ? t('common.update')
-                                    : t('common.add')}{' '}
-                                {t('common.entry')}
+                                {isEditing ? 'Update' : 'Add'} Entry
                             </Button>
                         </DialogFooter>
                     </form>
@@ -388,4 +350,3 @@ export function ProductionActionDialog({
         </Dialog>
     )
 }
-

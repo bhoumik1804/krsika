@@ -1,10 +1,8 @@
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
-import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -15,7 +13,6 @@ import { NakkhiSalesTable } from './components/nakkhi-sales-table'
 import { useNakkhiSalesList } from './data/hooks'
 
 export function NakkhiSalesReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -52,9 +49,7 @@ export function NakkhiSalesReport() {
             isError={isError}
         >
             <Header fixed>
-                <Search
-                    placeholder={t('nakkhiSales.form.placeholders.party')}
-                />
+                <Search />
                 <div className='ms-auto flex items-center space-x-4'>
                     <ThemeSwitch />
                     <ConfigDrawer />
@@ -69,25 +64,22 @@ export function NakkhiSalesReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('nakkhiSales.title')}
+                            Nakkhi Sales Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('nakkhiSales.description')}
+                            Manage nakkhi sales transactions and records
                         </p>
                     </div>
                     <NakkhiSalesPrimaryButtons />
                 </div>
                 {isLoading ? (
                     <div className='flex items-center justify-center py-10'>
-                        <LoadingSpinner />
-                        <div className='ml-2 text-muted-foreground'>
-                            {t('common.loading')}
-                        </div>
+                        <div className='text-muted-foreground'>Loading...</div>
                     </div>
                 ) : isError ? (
                     <div className='flex items-center justify-center py-10'>
                         <div className='text-destructive'>
-                            {t('common.errorLoading')}
+                            Error loading data
                         </div>
                     </div>
                 ) : (

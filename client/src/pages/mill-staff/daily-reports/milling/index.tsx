@@ -1,5 +1,4 @@
 import { Boxes, Package } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { DailyReportPage } from '../components/daily-report-page'
 
 function getIcon(commodity: string) {
@@ -9,17 +8,15 @@ function getIcon(commodity: string) {
 }
 
 export function MillingReport() {
-    const { t } = useTranslation('mill-staff')
     return (
         <DailyReportPage
             action='Milling'
-            title={t('milling.title')}
-            description={t('milling.description')}
-            emptyMessage={t('milling.emptyMessage')}
+            title='Milling'
+            description='Track daily milling operations by commodity'
+            emptyMessage='No milling data found for the selected date range'
             exportBaseFilename='milling-report'
             EmptyIcon={Boxes}
             getIcon={getIcon}
         />
     )
 }
-

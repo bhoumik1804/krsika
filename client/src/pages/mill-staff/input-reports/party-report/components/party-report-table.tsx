@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useMemo } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -12,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -26,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type PartyReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getPartyReportColumns } from './party-report-columns'
+import { usePartyReportColumns } from './party-report-columns'
 
 type DataTableProps = {
     data: PartyReportData[]
@@ -50,13 +48,13 @@ export function PartyReportTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
-    const columns = useMemo(() => getPartyReportColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+
+    const columns = usePartyReportColumns()
 
     const {
         columnFilters,
@@ -123,9 +121,7 @@ export function PartyReportTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t(
-                    'partyReport.form.placeholders.name'
-                )}
+                searchPlaceholder='Search...'
                 searchKey='partyName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -197,7 +193,7 @@ export function PartyReportTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

@@ -1,8 +1,7 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { getMillStaffSidebarData } from '@/components/layout/data'
+import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { LoadingSpinner } from '@/components/loading-spinner'
@@ -18,7 +17,6 @@ import {
 import { OutwardBalanceLiftingRiceTable } from './components/outward-balance-lifting-rice-table'
 
 export function OutwardBalanceLiftingRiceReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -39,7 +37,7 @@ export function OutwardBalanceLiftingRiceReport() {
         }
     }, [searchParams])
 
-    const sidebarData = getMillStaffSidebarData(millId || '')
+    const sidebarData = getMillAdminSidebarData(millId || '')
     const search = Object.fromEntries(searchParams.entries())
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
@@ -74,10 +72,10 @@ export function OutwardBalanceLiftingRiceReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('outwardRiceSales.balanceLifting.title')}
+                            Private Rice Outward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('outwardRiceSales.balanceLifting.description')}
+                            Manage private rice outward transactions and records
                         </p>
                     </div>
                     <OutwardBalanceLiftingRicePrimaryButtons />
@@ -94,7 +92,6 @@ function OutwardBalanceLiftingRiceContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('mill-staff')
     const context = useOutwardBalanceLiftingRice()
 
     if (context.isLoading) {
@@ -108,7 +105,8 @@ function OutwardBalanceLiftingRiceContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('common.errorLoadingData')}
+                Failed to load Private Rice Outward data. Please try again
+                later.
             </div>
         )
     }

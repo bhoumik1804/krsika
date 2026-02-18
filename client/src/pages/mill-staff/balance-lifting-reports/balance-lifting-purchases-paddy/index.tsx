@@ -1,8 +1,7 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { getMillStaffSidebarData } from '@/components/layout/data'
+import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { LoadingSpinner } from '@/components/loading-spinner'
@@ -18,7 +17,6 @@ import {
 import { BalanceLiftingPurchasesPaddyTable } from './components/balance-lifting-purchases-paddy-table'
 
 export function BalanceLiftingPurchasesPaddyReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -40,7 +38,7 @@ export function BalanceLiftingPurchasesPaddyReport() {
         }
     }, [searchParams])
 
-    const sidebarData = getMillStaffSidebarData(millId || '')
+    const sidebarData = getMillAdminSidebarData(millId || '')
 
     // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
@@ -77,10 +75,10 @@ export function BalanceLiftingPurchasesPaddyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('paddyPurchase.balanceLiftingtitle')}
+                            Paddy Purchase Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('paddyPurchase.balanceLifting.description')}
+                            Manage paddy purchase transactions and records
                         </p>
                     </div>
                     <BalanceLiftingPurchasesPaddyPrimaryButtons />
@@ -111,7 +109,7 @@ function BalanceLiftingPurchasesPaddyContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load data
+                Failed to load Paddy purchase data. Please try again later.
             </div>
         )
     }

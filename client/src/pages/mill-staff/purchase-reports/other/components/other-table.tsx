@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type OtherPurchase } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getOtherColumns } from './other-columns'
+import { otherColumns as columns } from './other-columns'
 
 type DataTableProps = {
     data: OtherPurchase[]
@@ -45,7 +44,6 @@ export function OtherTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -75,8 +73,6 @@ export function OtherTable({
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
         ],
     })
-
-    const columns = useMemo(() => getOtherColumns(t), [t])
 
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
@@ -121,7 +117,7 @@ export function OtherTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t('otherPurchase.form.placeholders.party')}
+                searchPlaceholder='Filter purchases...'
                 searchKey='partyName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -193,7 +189,7 @@ export function OtherTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

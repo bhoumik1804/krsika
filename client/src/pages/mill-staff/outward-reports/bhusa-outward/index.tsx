@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -15,7 +14,6 @@ import { BhusaOutwardTable } from './components/bhusa-outward-table'
 import { useBhusaOutwardList } from './data/hooks'
 
 export function BhusaOutwardReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -89,9 +87,7 @@ export function BhusaOutwardReport() {
                     </div>
                 </Header>
                 <Main className='flex flex-1 items-center justify-center'>
-                    <p className='text-destructive'>
-                        {t('common.errorLoading')}
-                    </p>
+                    <p className='text-destructive'>Error loading data</p>
                 </Main>
             </>
         )
@@ -115,10 +111,10 @@ export function BhusaOutwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('bhusaOutward.title')}
+                            Bhusa Outward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('bhusaOutward.description')}
+                            Manage Bhusa outward transactions and records
                         </p>
                     </div>
                     <BhusaOutwardPrimaryButtons />

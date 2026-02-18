@@ -1,5 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,7 +24,6 @@ export function OtherMultiDeleteDialog({
     open,
     onOpenChange,
 }: OtherMultiDeleteDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useOther()
     const { mutateAsync: bulkDeleteOtherPurchases, isPending: isDeleting } =
         useBulkDeleteOtherPurchases(millId)
@@ -50,26 +48,25 @@ export function OtherMultiDeleteDialog({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t('otherPurchase.multiDelete.title', {
-                            count: selectedRows.length,
-                        })}
+                        Delete {selectedRows.length}{' '}
+                        {selectedRows.length > 1 ? 'purchases' : 'purchase'}?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('otherPurchase.multiDelete.description')}
+                        Are you sure you want to delete the selected purchases?{' '}
+                        <br />
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                        {t('common.cancel')}
+                        Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting
-                            ? t('otherPurchase.delete.deleting')
-                            : t('otherPurchase.delete.confirm')}
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

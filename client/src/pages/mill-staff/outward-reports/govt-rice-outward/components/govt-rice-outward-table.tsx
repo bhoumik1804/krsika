@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -26,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type GovtRiceOutward } from '../data/schema'
 import type { GovtRiceOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { useGovtRiceOutwardColumns } from './govt-rice-outward-columns'
+import { GovtRiceOutwardColumns as columns } from './govt-rice-outward-columns'
 
 type DataTableProps = {
     data: GovtRiceOutward[]
@@ -41,8 +40,6 @@ export function GovtRiceOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
-    const columns = useGovtRiceOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -183,7 +180,7 @@ export function GovtRiceOutwardTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

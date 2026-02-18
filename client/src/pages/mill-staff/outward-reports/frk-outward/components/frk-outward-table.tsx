@@ -9,7 +9,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import type { NavigateFn } from '@/hooks/use-table-url-state'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -23,7 +22,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FrkOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { useFrkOutwardColumns } from './frk-outward-columns'
+import { frkOutwardColumns as columns } from './frk-outward-columns'
 import { FrkOutwardMultiDeleteDialog } from './frk-outward-multi-delete-dialog'
 import { useFrkOutward } from './frk-outward-provider'
 
@@ -49,9 +48,7 @@ export function FrkOutwardTable({
     navigate,
     serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
     const { open, setOpen } = useFrkOutward()
-    const columns = useFrkOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -176,7 +173,7 @@ export function FrkOutwardTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

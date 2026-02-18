@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import {
     riceTypeOptions,
@@ -62,7 +61,6 @@ export function RiceSalesActionDialog({
     onOpenChange,
     currentRow,
 }: RiceSalesActionDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const party = usePaginatedList(
         millId || '',
@@ -184,41 +182,9 @@ export function RiceSalesActionDialog({
             }
             onOpenChange(false)
         } catch (error) {
+            // Error handling is managed by mutation hooks (onSuccess/onError)
             console.error('Form submission error:', error)
         }
-    }
-
-    // Option mapping helpers
-    const deliveryTypeMap: Record<string, string> = {
-        'पड़े में': 'pede',
-        'पहुंचा कर': 'delivered',
-    }
-
-    const lotOrOtherMap: Record<string, string> = {
-        'LOT बिक्री': 'lot',
-        'अन्य बिक्री': 'other',
-    }
-
-    const fciOrNANMap: Record<string, string> = {
-        FCI: 'fci',
-        NAN: 'nan',
-    }
-
-    const frkTypeMap: Record<string, string> = {
-        'FRK साहित': 'sahit',
-        'FRK देना है': 'dena',
-        'NON FRK': 'non',
-    }
-
-    const riceTypeMap: Record<string, string> = {
-        'चावल(मोटा)': 'mota',
-        'चावल(पतला)': 'patla',
-    }
-
-    const gunnyTypeMap: Record<string, string> = {
-        'सहित (वजन में)': 'vajanWeight',
-        'सहित (भाव में)': 'bhavRate',
-        वापसी: 'vapsiReturn',
     }
 
     return (
@@ -226,14 +192,11 @@ export function RiceSalesActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('riceSales.form.editTitle')
-                            : t('riceSales.form.addTitle')}
+                        {isEditing ? 'Edit' : 'Add'} Rice Sale
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t('riceSales.form.editDescription')
-                            : t('riceSales.form.addDescription')}
+                        {isEditing ? 'Update' : 'Enter'} rice sale details
+                        below.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -248,9 +211,7 @@ export function RiceSalesActionDialog({
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t('riceSales.form.date')}
-                                            </FormLabel>
+                                            <FormLabel>Date</FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
                                                 onOpenChange={
@@ -271,9 +232,7 @@ export function RiceSalesActionDialog({
                                                                       ),
                                                                       'MMM dd, yyyy'
                                                                   )
-                                                                : t(
-                                                                      'riceSales.form.placeholders.date'
-                                                                  )}
+                                                                : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
@@ -315,9 +274,7 @@ export function RiceSalesActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t('riceSales.form.partyName')}
-                                            </FormLabel>
+                                            <FormLabel>Party Name</FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -325,12 +282,8 @@ export function RiceSalesActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={party}
-                                                    placeholder={t(
-                                                        'riceSales.form.placeholders.party'
-                                                    )}
-                                                    emptyText={t(
-                                                        'common.noResults'
-                                                    )}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -342,9 +295,7 @@ export function RiceSalesActionDialog({
                                     name='brokerName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t('riceSales.form.brokerName')}
-                                            </FormLabel>
+                                            <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -352,12 +303,8 @@ export function RiceSalesActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={broker}
-                                                    placeholder={t(
-                                                        'riceSales.form.placeholders.broker'
-                                                    )}
-                                                    emptyText={t(
-                                                        'common.noResults'
-                                                    )}
+                                                    placeholder='Search broker...'
+                                                    emptyText='No brokers found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -369,22 +316,14 @@ export function RiceSalesActionDialog({
                                     name='deliveryType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t(
-                                                    'riceSales.form.deliveryType'
-                                                )}
-                                            </FormLabel>
+                                            <FormLabel>Delivery Type</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
-                                                        <SelectValue
-                                                            placeholder={t(
-                                                                'riceSales.form.placeholders.select'
-                                                            )}
-                                                        />
+                                                        <SelectValue placeholder='Select' />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent className='w-full'>
@@ -398,9 +337,7 @@ export function RiceSalesActionDialog({
                                                                     option.value
                                                                 }
                                                             >
-                                                                {t(
-                                                                    `riceSales.options.deliveryType.${deliveryTypeMap[option.value]}`
-                                                                )}
+                                                                {option.label}
                                                             </SelectItem>
                                                         )
                                                     )}
@@ -411,25 +348,20 @@ export function RiceSalesActionDialog({
                                     )}
                                 />
 
+                                {/* Common Fields */}
                                 <FormField
                                     control={form.control}
                                     name='lotOrOther'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t('riceSales.form.lotOrOther')}
-                                            </FormLabel>
+                                            <FormLabel>LOT/Other</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
-                                                        <SelectValue
-                                                            placeholder={t(
-                                                                'riceSales.form.placeholders.select'
-                                                            )}
-                                                        />
+                                                        <SelectValue placeholder='Select' />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent className='w-full'>
@@ -443,9 +375,7 @@ export function RiceSalesActionDialog({
                                                                     option.value
                                                                 }
                                                             >
-                                                                {t(
-                                                                    `riceSales.options.lotOrOther.${lotOrOtherMap[option.value]}`
-                                                                )}
+                                                                {option.label}
                                                             </SelectItem>
                                                         )
                                                     )}
@@ -456,6 +386,7 @@ export function RiceSalesActionDialog({
                                     )}
                                 />
 
+                                {/* LOT Sale Fields */}
                                 {isLotSale && (
                                     <>
                                         <FormField
@@ -464,9 +395,7 @@ export function RiceSalesActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        {t(
-                                                            'riceSales.form.fciOrNAN'
-                                                        )}
+                                                        FCI/NAN
                                                     </FormLabel>
                                                     <Select
                                                         onValueChange={
@@ -478,11 +407,7 @@ export function RiceSalesActionDialog({
                                                     >
                                                         <FormControl>
                                                             <SelectTrigger className='w-full'>
-                                                                <SelectValue
-                                                                    placeholder={t(
-                                                                        'riceSales.form.placeholders.select'
-                                                                    )}
-                                                                />
+                                                                <SelectValue placeholder='Select' />
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent className='w-full'>
@@ -496,9 +421,9 @@ export function RiceSalesActionDialog({
                                                                             option.value
                                                                         }
                                                                     >
-                                                                        {t(
-                                                                            `riceSales.options.fciOrNAN.${fciOrNANMap[option.value]}`
-                                                                        )}
+                                                                        {
+                                                                            option.label
+                                                                        }
                                                                     </SelectItem>
                                                                 )
                                                             )}
@@ -514,15 +439,11 @@ export function RiceSalesActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        {t(
-                                                            'riceSales.form.lotNumber'
-                                                        )}
+                                                        LOT No.
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
-                                                            placeholder={t(
-                                                                'riceSales.form.placeholders.lotNumber'
-                                                            )}
+                                                            placeholder='Enter LOT No.'
                                                             {...field}
                                                         />
                                                     </FormControl>
@@ -535,11 +456,7 @@ export function RiceSalesActionDialog({
                                             name='frkType'
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>
-                                                        {t(
-                                                            'riceSales.form.frkType'
-                                                        )}
-                                                    </FormLabel>
+                                                    <FormLabel>FRK</FormLabel>
                                                     <Select
                                                         onValueChange={
                                                             field.onChange
@@ -550,11 +467,7 @@ export function RiceSalesActionDialog({
                                                     >
                                                         <FormControl>
                                                             <SelectTrigger className='w-full'>
-                                                                <SelectValue
-                                                                    placeholder={t(
-                                                                        'riceSales.form.placeholders.select'
-                                                                    )}
-                                                                />
+                                                                <SelectValue placeholder='Select' />
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent className='w-full'>
@@ -568,9 +481,9 @@ export function RiceSalesActionDialog({
                                                                             option.value
                                                                         }
                                                                     >
-                                                                        {t(
-                                                                            `riceSales.options.frkType.${frkTypeMap[option.value]}`
-                                                                        )}
+                                                                        {
+                                                                            option.label
+                                                                        }
                                                                     </SelectItem>
                                                                 )
                                                             )}
@@ -587,9 +500,7 @@ export function RiceSalesActionDialog({
                                                 render={({ field }) => (
                                                     <FormItem>
                                                         <FormLabel>
-                                                            {t(
-                                                                'riceSales.form.frkRatePerQuintal'
-                                                            )}
+                                                            FRK Rate (per Qtl)
                                                         </FormLabel>
                                                         <FormControl>
                                                             <Input
@@ -629,20 +540,14 @@ export function RiceSalesActionDialog({
                                     name='riceType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t('riceSales.form.riceType')}
-                                            </FormLabel>
+                                            <FormLabel>Rice Type</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
-                                                        <SelectValue
-                                                            placeholder={t(
-                                                                'riceSales.form.placeholders.select'
-                                                            )}
-                                                        />
+                                                        <SelectValue placeholder='Select' />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent className='w-full'>
@@ -656,9 +561,7 @@ export function RiceSalesActionDialog({
                                                                     option.value
                                                                 }
                                                             >
-                                                                {t(
-                                                                    `riceSales.options.riceType.${riceTypeMap[option.value]}`
-                                                                )}
+                                                                {option.label}
                                                             </SelectItem>
                                                         )
                                                     )}
@@ -669,13 +572,14 @@ export function RiceSalesActionDialog({
                                     )}
                                 />
 
+                                {/* Rice Details */}
                                 <FormField
                                     control={form.control}
                                     name='riceQty'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t('riceSales.form.riceQty')}
+                                                Quantity (Qtl)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -708,9 +612,7 @@ export function RiceSalesActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t(
-                                                    'riceSales.form.riceRatePerQuintal'
-                                                )}
+                                                Rice Rate (per Qtl)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -742,11 +644,7 @@ export function RiceSalesActionDialog({
                                     name='discountPercent'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t(
-                                                    'riceSales.form.discountPercent'
-                                                )}
-                                            </FormLabel>
+                                            <FormLabel>Discount (%)</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -778,9 +676,7 @@ export function RiceSalesActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t(
-                                                    'riceSales.form.brokeragePerQuintal'
-                                                )}
+                                                Brokerage (per Qtl)
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -808,25 +704,20 @@ export function RiceSalesActionDialog({
                                     )}
                                 />
 
+                                {/* Gunny Options */}
                                 <FormField
                                     control={form.control}
                                     name='gunnyType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>
-                                                {t('riceSales.form.gunnyType')}
-                                            </FormLabel>
+                                            <FormLabel>Gunny Option</FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
-                                                        <SelectValue
-                                                            placeholder={t(
-                                                                'riceSales.form.placeholders.select'
-                                                            )}
-                                                        />
+                                                        <SelectValue placeholder='Select' />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent className='w-full'>
@@ -840,9 +731,7 @@ export function RiceSalesActionDialog({
                                                                     option.value
                                                                 }
                                                             >
-                                                                {t(
-                                                                    `riceSales.options.gunnyType.${gunnyTypeMap[option.value]}`
-                                                                )}
+                                                                {option.label}
                                                             </SelectItem>
                                                         )
                                                     )}
@@ -861,9 +750,7 @@ export function RiceSalesActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        {t(
-                                                            'riceSales.form.newGunnyRate'
-                                                        )}
+                                                        New Gunny Rate
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -896,9 +783,7 @@ export function RiceSalesActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        {t(
-                                                            'riceSales.form.oldGunnyRate'
-                                                        )}
+                                                        Old Gunny Rate
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -931,9 +816,7 @@ export function RiceSalesActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        {t(
-                                                            'riceSales.form.plasticGunnyRate'
-                                                        )}
+                                                        Plastic Gunny Rate
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -971,16 +854,16 @@ export function RiceSalesActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                {t('riceSales.form.buttons.cancel')}
+                                Cancel
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? t('riceSales.form.buttons.updating')
-                                        : t('riceSales.form.buttons.adding')
+                                        ? 'Updating...'
+                                        : 'Adding...'
                                     : isEditing
-                                      ? t('riceSales.form.buttons.update')
-                                      : t('riceSales.form.buttons.add')}
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

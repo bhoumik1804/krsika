@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import {
     AlertDialog,
@@ -26,7 +25,6 @@ export function LabourMillingDeleteDialog({
     onOpenChange,
     currentRow,
 }: LabourMillingDeleteDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const deleteMutation = useDeleteLabourMilling(millId || '')
 
@@ -44,23 +42,21 @@ export function LabourMillingDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        {t('common.deleteRecord')}
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('common.deleteRecordFor')}{' '}
+                        Are you sure you want to delete this record for{' '}
                         <strong>{currentRow?.labourGroupName}</strong>?
                         <br />
-                        {t('common.actionCannotBeUndone')}
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {t('common.delete')}
+                        Delete
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

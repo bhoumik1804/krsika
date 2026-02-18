@@ -68,8 +68,12 @@ const formSchema = z.object({
             .regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, 'Invalid PAN number format'),
         mnmNumber: z
             .string()
-            .min(1, 'MNM number is required')
-            .max(20, 'MNM number is too long'),
+            .trim()
+            .length(8, 'MNM number must be exactly 8 characters')
+            .regex(
+                /^[A-Z]{2}\d{6}$/,
+                'MNM number must contain 2 uppercase letters followed by 6 digits (e.g., MA432447)'
+            ),
     }),
 })
 

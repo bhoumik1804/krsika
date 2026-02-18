@@ -1,10 +1,8 @@
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
-import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -15,7 +13,6 @@ import { KhandaSalesTable } from './components/khanda-sales-table'
 import { useKhandaSalesList } from './data/hooks'
 
 export function KhandaSalesReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -30,7 +27,7 @@ export function KhandaSalesReport() {
     } = useKhandaSalesList(millId || '', {
         page: Number(search.page) || 1,
         limit: Number(search.pageSize) || 10,
-        search: (search.partyName as string) || (search.search as string),
+        search: search.partyName as string,
     })
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
@@ -52,9 +49,7 @@ export function KhandaSalesReport() {
             isError={isError}
         >
             <Header fixed>
-                <Search
-                    placeholder={t('khandaSales.form.placeholders.party')}
-                />
+                <Search />
                 <div className='ms-auto flex items-center space-x-4'>
                     <ThemeSwitch />
                     <ConfigDrawer />
@@ -69,25 +64,22 @@ export function KhandaSalesReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('khandaSales.title')}
+                            Khanda Sales Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('khandaSales.description')}
+                            Manage khanda sales transactions and records
                         </p>
                     </div>
                     <KhandaSalesPrimaryButtons />
                 </div>
                 {isLoading ? (
                     <div className='flex items-center justify-center py-10'>
-                        <LoadingSpinner />
-                        <div className='ml-2 text-muted-foreground'>
-                            {t('common.loading')}
-                        </div>
+                        <div className='text-muted-foreground'>Loading...</div>
                     </div>
                 ) : isError ? (
                     <div className='flex items-center justify-center py-10'>
                         <div className='text-destructive'>
-                            {t('common.errorLoading')}
+                            Error loading data
                         </div>
                     </div>
                 ) : (

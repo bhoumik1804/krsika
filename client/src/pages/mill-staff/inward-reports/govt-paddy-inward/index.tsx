@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -16,7 +15,6 @@ import { GovtPaddyInwardTable } from './components/govt-paddy-inward-table'
 import { useGovtPaddyInwardList } from './data/hooks'
 
 export function GovtPaddyInwardReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -76,10 +74,10 @@ export function GovtPaddyInwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('govtPaddyInward.title')}
+                            Govt Paddy Inward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('govtPaddyInward.description')}
+                            Manage paddy inward transactions and records
                         </p>
                     </div>
                     <GovtPaddyInwardPrimaryButtons />

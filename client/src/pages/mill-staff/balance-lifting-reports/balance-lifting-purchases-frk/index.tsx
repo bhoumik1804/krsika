@@ -1,8 +1,7 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { getMillStaffSidebarData } from '@/components/layout/data'
+import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { LoadingSpinner } from '@/components/loading-spinner'
@@ -18,7 +17,6 @@ import {
 import { BalanceLiftingPurchasesFrkTable } from './components/balance-lifting-purchases-frk-table'
 
 export function BalanceLiftingPurchasesFrkReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -40,7 +38,7 @@ export function BalanceLiftingPurchasesFrkReport() {
         }
     }, [searchParams])
 
-    const sidebarData = getMillStaffSidebarData(millId || '')
+    const sidebarData = getMillAdminSidebarData(millId || '')
 
     // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
@@ -77,10 +75,10 @@ export function BalanceLiftingPurchasesFrkReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('frkPurchase.balanceLifting.title')}
+                            FRK Purchase Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('frkPurchase.balanceLifting.description')}
+                            Manage FRK purchase transactions and records
                         </p>
                     </div>
                     <BalanceLiftingPurchasesFrkPrimaryButtons />
@@ -112,7 +110,7 @@ function BalanceLiftingPurchasesFrkContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Error while loading data
+                Failed to load FRK purchase data. Please try again later.
             </div>
         )
     }

@@ -8,7 +8,6 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { useTranslation } from 'react-i18next'
 import { useDeleteDoReport } from '../data/hooks'
 import { type DoReportData } from '../data/schema'
 import { useDoReport } from './do-report-provider'
@@ -25,7 +24,6 @@ export function DoReportDeleteDialog({
     currentRow,
 }: DoReportDeleteDialogProps) {
     const { millId } = useDoReport()
-    const { t } = useTranslation('mill-staff')
     const { mutate: deleteDoReport, isPending: isDeleting } = useDeleteDoReport(
         millId || ''
     )
@@ -45,26 +43,24 @@ export function DoReportDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        {t('delete.title')}
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('delete.descriptionItem')}
+                        Are you sure you want to delete this record for{' '}
                         <strong>{currentRow.doNo}</strong>?
                         <br />
-                        {t('delete.undone')}
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                        {t('common.cancel')}
+                        Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting ? t('common.deleting') : t('common.delete')}
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

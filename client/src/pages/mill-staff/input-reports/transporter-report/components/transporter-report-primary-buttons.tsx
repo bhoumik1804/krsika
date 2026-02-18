@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button'
 import { useTransporterReport } from './transporter-report-provider'
 
 export function TransporterReportPrimaryButtons() {
-    const { setOpen, setCurrentRow } = useTransporterReport()
     const { t } = useTranslation('mill-staff')
+    const { setOpen, setCurrentRow } = useTransporterReport()
 
     return (
         <Button
@@ -15,7 +15,7 @@ export function TransporterReportPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('transporterReport.form.addTitle')}
+            {t('inputReports.transporter.form.primaryButton')}
         </Button>
     )
 }

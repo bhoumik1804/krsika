@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type PaddySalesResponse } from '../data/types'
-import { useBalanceLiftingSalesPaddyColumns } from './balance-lifting-sales-paddy-columns'
+import { paddySalesColumns as columns } from './balance-lifting-sales-paddy-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
@@ -48,7 +48,6 @@ export function BalanceLiftingSalesPaddyTable({
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
-    const columns = useBalanceLiftingSalesPaddyColumns()
     const [sorting, setSorting] = useState<SortingState>([])
 
     const {
@@ -188,9 +187,7 @@ export function BalanceLiftingSalesPaddyTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {false // Assuming 'loading' state is not provided
-                                        ? 'Loading...'
-                                        : 'No records found'}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

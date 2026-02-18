@@ -52,8 +52,8 @@ export function DoReportActionDialog({
     open,
     onOpenChange,
 }: DoReportActionDialogProps) {
-    const { currentRow, millId, setCurrentRow } = useDoReport()
     const { t } = useTranslation('mill-staff')
+    const { currentRow, millId, setCurrentRow } = useDoReport()
     const isEditing = !!currentRow
 
     // Paginated committee selection for samitiSangrahan
@@ -133,6 +133,33 @@ export function DoReportActionDialog({
         }
     }, [currentRow, form])
 
+    const handleSuccess = () => {
+        onOpenChange(false)
+        form.reset({
+            date: format(new Date(), 'yyyy-MM-dd'),
+            samitiSangrahan: '',
+            doNo: '',
+            dhanMota: '' as unknown as number,
+            dhanPatla: '' as unknown as number,
+            dhanSarna: '' as unknown as number,
+            total: 0,
+        })
+        setUploadedFile(null)
+        setPreviewData([])
+        setCurrentRow(null)
+    }
+
+    const handleUpload = async () => {
+        if (previewData.length === 0) return
+
+        try {
+            await bulkCreateMutation.mutateAsync(previewData)
+            handleSuccess()
+        } catch (error) {
+            console.error('Error uploading file:', error)
+        }
+    }
+
     const onSubmit = async (data: DoReportData) => {
         const computedTotal =
             (data.dhanMota ?? 0) + (data.dhanPatla ?? 0) + (data.dhanSarna ?? 0)
@@ -142,9 +169,7 @@ export function DoReportActionDialog({
         }
 
         try {
-            if (activeTab === 'upload' && previewData.length > 0) {
-                await bulkCreateMutation.mutateAsync(previewData)
-            } else if (currentRow?._id) {
+            if (currentRow?._id) {
                 await updateMutation.mutateAsync({
                     _id: currentRow._id,
                     ...payload,
@@ -152,19 +177,7 @@ export function DoReportActionDialog({
             } else {
                 await createMutation.mutateAsync(payload)
             }
-            onOpenChange(false)
-            form.reset({
-                date: format(new Date(), 'yyyy-MM-dd'),
-                samitiSangrahan: '',
-                doNo: '',
-                dhanMota: '' as unknown as number,
-                dhanPatla: '' as unknown as number,
-                dhanSarna: '' as unknown as number,
-                total: 0,
-            })
-            setUploadedFile(null)
-            setPreviewData([])
-            setCurrentRow(null)
+            handleSuccess()
         } catch (error) {
             console.error('Error submitting form:', error)
         }
@@ -230,39 +243,22 @@ export function DoReportActionDialog({
         total: 'कुल',
     }
 
-    const getFieldLabel = (field: (typeof fieldOrder)[number]) => {
-        const translatedFieldLabels: Record<string, string> = {
-            samitiSangrahan: t('doReport.table.committee'),
-            doNo: t('doReport.table.doNumber'),
-            date: t('doReport.table.date'),
-            dhanMota: t('doReport.table.paddyMota'),
-            dhanPatla: t('doReport.table.paddyPatla'),
-            dhanSarna: t('doReport.table.paddySarna'),
-            total: t('doReport.form.total'),
-        }
-
-        return translatedFieldLabels[field] ?? fieldLabels[field]
-    }
-
     return (
         <Dialog open={open} onOpenChange={handleDialogClose}>
-            <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
+            <DialogContent className='max-h-[90vh] overflow-y-auto p-4 sm:max-w-4xl sm:p-6'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('doReport.form.editTitle')
-                            : t('doReport.form.addTitle')}
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('inputReports.do.title').replace(' Report', '')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t('doReport.form.editDescription')
-                            : t('doReport.form.addDescription')}
+                        {t('inputReports.do.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
-                        className='space-y-4'
+                        className='w-full max-w-full space-y-4'
                     >
                         <Tabs
                             value={activeTab}
@@ -271,13 +267,13 @@ export function DoReportActionDialog({
                         >
                             <TabsList className='grid w-full grid-cols-2'>
                                 <TabsTrigger value='manual'>
-                                    {t('doReport.form.tabs.manual')}
+                                    {t('common.manualEntry')}
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value='upload'
                                     disabled={isEditing}
                                 >
-                                    {t('doReport.form.tabs.upload')}
+                                    {t('common.uploadFile')}
                                 </TabsTrigger>
                             </TabsList>
                             <TabsContent
@@ -292,7 +288,7 @@ export function DoReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'doReport.form.date'
+                                                        'inputReports.do.form.fields.date'
                                                     )}
                                                 </FormLabel>
                                                 <Popover>
@@ -310,9 +306,7 @@ export function DoReportActionDialog({
                                                                           ),
                                                                           'MMM dd, yyyy'
                                                                       )
-                                                                    : t(
-                                                                          'doReport.form.placeholders.date'
-                                                                      )}
+                                                                    : 'Pick a date'}
                                                             </Button>
                                                         </FormControl>
                                                     </PopoverTrigger>
@@ -355,7 +349,7 @@ export function DoReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'doReport.form.committee'
+                                                        'inputReports.do.form.fields.samitiSangrahan'
                                                     )}
                                                 </FormLabel>
                                                 <FormControl>
@@ -368,10 +362,10 @@ export function DoReportActionDialog({
                                                             committee
                                                         }
                                                         placeholder={t(
-                                                            'doReport.form.placeholders.committee'
+                                                            'inputReports.do.form.fields.samitiSangrahan'
                                                         )}
                                                         emptyText={t(
-                                                            'doReport.form.placeholders.noCommittee'
+                                                            'common.noResults'
                                                         )}
                                                     />
                                                 </FormControl>
@@ -386,13 +380,13 @@ export function DoReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'doReport.form.doNumber'
+                                                        'inputReports.do.form.fields.doNo'
                                                     )}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         placeholder={t(
-                                                            'doReport.form.placeholders.doNumber'
+                                                            'inputReports.do.form.fields.doNo'
                                                         )}
                                                         {...field}
                                                     />
@@ -408,7 +402,7 @@ export function DoReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'doReport.form.paddyMota'
+                                                        'inputReports.do.form.fields.dhanMota'
                                                     )}
                                                 </FormLabel>
                                                 <FormControl>
@@ -447,7 +441,7 @@ export function DoReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'doReport.form.paddyPatla'
+                                                        'inputReports.do.form.fields.dhanPatla'
                                                     )}
                                                 </FormLabel>
                                                 <FormControl>
@@ -485,7 +479,7 @@ export function DoReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'doReport.form.paddySarna'
+                                                        'inputReports.do.form.fields.dhanSarna'
                                                     )}
                                                 </FormLabel>
                                                 <FormControl>
@@ -523,7 +517,7 @@ export function DoReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'doReport.form.total'
+                                                        'inputReports.do.form.fields.total'
                                                     )}
                                                 </FormLabel>
                                                 <FormControl>
@@ -546,11 +540,7 @@ export function DoReportActionDialog({
                                 className='w-full space-y-4'
                             >
                                 <FormItem>
-                                    <FormLabel>
-                                        {t(
-                                            'doReport.form.upload.label'
-                                        )}
-                                    </FormLabel>
+                                    <FormLabel>Upload Excel File</FormLabel>
                                     <FormControl>
                                         <Input
                                             type='file'
@@ -560,19 +550,12 @@ export function DoReportActionDialog({
                                         />
                                     </FormControl>
                                     <p className='mt-2 text-sm text-gray-500'>
-                                        {t(
-                                            'doReport.form.upload.supportedFormats'
-                                        )}
+                                        Supported formats: Excel (.xlsx, .xls)
+                                        or CSV
                                     </p>
                                     {uploadedFile && (
-                                        <p className='mt-2 text-sm text-green-600'>
-                                            {t(
-                                                'doReport.form.upload.fileSelected',
-                                                {
-                                                    fileName:
-                                                        uploadedFile.name,
-                                                }
-                                            )}
+                                        <p className='mt-2 text-sm break-all text-green-600'>
+                                            File selected: {uploadedFile.name}
                                         </p>
                                     )}
                                 </FormItem>
@@ -581,16 +564,12 @@ export function DoReportActionDialog({
                                     <div className='mt-6 w-full'>
                                         <div className='mb-4'>
                                             <h3 className='mb-3 text-sm font-semibold'>
-                                                {t(
-                                                    'doReport.form.upload.parseStatistics'
-                                                )}
+                                                Parse Statistics
                                             </h3>
-                                            <div className='grid grid-cols-3 gap-3'>
+                                            <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
                                                 <div className='rounded-lg border bg-primary/10 p-3'>
                                                     <p className='text-xs text-muted-foreground'>
-                                                        {t(
-                                                            'doReport.form.upload.totalRows'
-                                                        )}
+                                                        Total Rows
                                                     </p>
                                                     <p className='text-lg font-bold text-primary'>
                                                         {parseStats?.totalRows ||
@@ -599,9 +578,7 @@ export function DoReportActionDialog({
                                                 </div>
                                                 <div className='rounded-lg border bg-chart-2/10 p-3'>
                                                     <p className='text-xs text-muted-foreground'>
-                                                        {t(
-                                                            'doReport.form.upload.successfullyParsed'
-                                                        )}
+                                                        Successfully Parsed
                                                     </p>
                                                     <p className='text-lg font-bold text-chart-2'>
                                                         {parseStats?.successRows ||
@@ -610,9 +587,7 @@ export function DoReportActionDialog({
                                                 </div>
                                                 <div className='rounded-lg border bg-destructive/10 p-3'>
                                                     <p className='text-xs text-muted-foreground'>
-                                                        {t(
-                                                            'doReport.form.upload.failedOrSkipped'
-                                                        )}
+                                                        Failed/Skipped
                                                     </p>
                                                     <p className='text-lg font-bold text-destructive'>
                                                         {parseStats?.failedRows ||
@@ -626,9 +601,7 @@ export function DoReportActionDialog({
                                                     0 && (
                                                     <div className='mt-3'>
                                                         <p className='mb-2 text-xs font-semibold text-gray-600'>
-                                                            {t(
-                                                                'doReport.form.upload.errorDetails'
-                                                            )}
+                                                            Error Details:
                                                         </p>
                                                         <div className='max-h-24 overflow-y-auto rounded border border-red-200 bg-red-50 p-2'>
                                                             <ul className='space-y-1 text-xs text-red-700'>
@@ -661,12 +634,10 @@ export function DoReportActionDialog({
                                         </div>
 
                                         <h3 className='mb-3 text-sm font-semibold'>
-                                            {t(
-                                                'doReport.form.upload.previewTitle',
-                                                { count: previewData.length }
-                                            )}
+                                            Preview - {previewData.length}{' '}
+                                            records
                                         </h3>
-                                        <div className='w-full overflow-x-auto rounded-lg border'>
+                                        <div className='w-full max-w-[calc(100vw-5rem)] overflow-x-auto rounded-lg border sm:max-w-full'>
                                             <div className='h-80 overflow-y-auto'>
                                                 <Table>
                                                     <TableBody>
@@ -683,9 +654,9 @@ export function DoReportActionDialog({
                                                                         className='text-sm font-semibold text-muted-foreground'
                                                                     >
                                                                         {
-                                                                            getFieldLabel(
+                                                                            fieldLabels[
                                                                                 field
-                                                                            )
+                                                                            ]
                                                                         }
                                                                     </TableCell>
                                                                 )
@@ -737,25 +708,35 @@ export function DoReportActionDialog({
                             >
                                 {t('common.cancel')}
                             </Button>
-                            <Button type='submit' disabled={isLoading}>
+                            <Button
+                                type={
+                                    activeTab === 'upload' ? 'button' : 'submit'
+                                }
+                                onClick={
+                                    activeTab === 'upload'
+                                        ? handleUpload
+                                        : undefined
+                                }
+                                disabled={isLoading}
+                            >
                                 {isLoading
                                     ? activeTab === 'upload' &&
                                       previewData.length > 0
-                                        ? t(
-                                              'doReport.form.buttons.uploading'
-                                          )
+                                        ? t('common.uploading') + '...'
                                         : isEditing
-                                          ? t('common.updating')
-                                          : t('common.adding')
+                                          ? t('common.update') + '...'
+                                          : t('common.add') + '...'
                                     : activeTab === 'upload' &&
                                         previewData.length > 0
-                                      ? t(
-                                            'doReport.form.buttons.uploadWithCount',
-                                            { count: previewData.length }
-                                        )
+                                      ? `${t('common.upload')} ${previewData.length} ${previewData.length > 1 ? t('inputReports.do.title').replace(' Report', 's') : t('inputReports.do.title').replace(' Report', '')}`
                                       : isEditing
                                         ? t('common.update')
-                                        : t('common.add')}
+                                        : t('common.add')}{' '}
+                                {activeTab === 'manual' &&
+                                    t('inputReports.do.title').replace(
+                                        ' Report',
+                                        ''
+                                    )}
                             </Button>
                         </DialogFooter>
                     </form>

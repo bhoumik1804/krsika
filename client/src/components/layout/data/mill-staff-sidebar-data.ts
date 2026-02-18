@@ -93,6 +93,7 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
                     title: 'Paddy Sales Report',
                     url: `/staff/${millId}/sales/paddy/report`,
                     icon: FileBarChart,
+                    moduleSlug: 'paddy-sales-report',
                 },
                 {
                     title: 'Gunny Sales Report',

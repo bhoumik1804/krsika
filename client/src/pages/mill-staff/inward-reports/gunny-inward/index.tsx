@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -17,9 +16,9 @@ import {
 import { GunnyInwardTable } from './components/gunny-inward-table'
 
 function GunnyInwardContent() {
-    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
-    const { data, isLoading, error, setQueryParams } = gunnyInward()
+    const { data, isLoading, error, setQueryParams } =
+        gunnyInward()
 
     const search = Object.fromEntries(searchParams.entries())
 
@@ -55,10 +54,10 @@ function GunnyInwardContent() {
             <Main className='flex flex-1 flex-col items-center justify-center'>
                 <div className='text-center'>
                     <h2 className='text-2xl font-bold text-destructive'>
-                        {t('common.errorLoadingData')}
+                        Error loading data
                     </h2>
                     <p className='mt-2 text-muted-foreground'>
-                        {error.message || t('gunnyInward.errorLoading')}
+                        {error.message || 'Failed to load gunny inward records'}
                     </p>
                 </div>
             </Main>
@@ -71,10 +70,10 @@ function GunnyInwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('gunnyInward.title')}
+                            Gunny Inward / Samiti-Sangrahan Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('gunnyInward.description')}
+                            Manage gunny inward transactions and records
                         </p>
                     </div>
                     <GunnyInwardPrimaryButtons />
@@ -98,7 +97,6 @@ function GunnyInwardContent() {
 }
 
 export function GunnyInwardReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const sidebarData = getMillAdminSidebarData(millId || '')
 
@@ -107,7 +105,7 @@ export function GunnyInwardReport() {
             <Main className='flex flex-1 flex-col items-center justify-center'>
                 <div className='text-center'>
                     <h2 className='text-2xl font-bold text-destructive'>
-                        {t('common.millIdRequired')}
+                        Mill ID is required
                     </h2>
                 </div>
             </Main>

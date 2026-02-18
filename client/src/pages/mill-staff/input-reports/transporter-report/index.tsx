@@ -18,8 +18,8 @@ import {
 import { TransporterReportTable } from './components/transporter-report-table'
 
 export function TransporterReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
@@ -75,10 +75,10 @@ export function TransporterReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('transporterReport.title')}
+                            {t('inputReports.transporter.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('transporterReport.description')}
+                            {t('inputReports.transporter.description')}
                         </p>
                     </div>
                     <TransporterReportPrimaryButtons />
@@ -98,7 +98,6 @@ function TransporterReportContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = useTransporterReport()
-    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (
@@ -111,7 +110,7 @@ function TransporterReportContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('common.error')}
+                Failed to load transporter data. Please try again later.
             </div>
         )
     }

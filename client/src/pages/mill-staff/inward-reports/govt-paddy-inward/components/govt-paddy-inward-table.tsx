@@ -12,7 +12,7 @@ import {
     useReactTable,
 } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
-import { useTableUrlState } from '@/hooks/use-table-url-state'
+import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
     Table,
     TableBody,
@@ -24,17 +24,21 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type GovtPaddyInward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { useGovtPaddyInwardColumns } from './govt-paddy-inward-columns'
+import { govtPaddyInwardColumns as columns } from './govt-paddy-inward-columns'
 
-interface GovtPaddyInwardTableProps {
+type DataTableProps = {
     data: GovtPaddyInward[]
-    search: Record<string, string>
-    navigate: (opts: { search: unknown; replace?: boolean }) => void
+    search: Record<string, unknown>
+    navigate: NavigateFn
     pagination?: {
         page: number
         limit: number
         total: number
         totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
     }
 }
 
@@ -43,8 +47,7 @@ export function GovtPaddyInwardTable({
     search,
     navigate,
     pagination: serverPagination,
-}: GovtPaddyInwardTableProps) {
-    const columns = useGovtPaddyInwardColumns()
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

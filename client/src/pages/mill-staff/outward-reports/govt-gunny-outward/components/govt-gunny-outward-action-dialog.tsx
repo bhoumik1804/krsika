@@ -4,8 +4,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCommitteeList } from '@/pages/mill-admin/input-reports/committee-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -50,7 +48,6 @@ export function GovtGunnyOutwardActionDialog({
     onOpenChange,
     currentRow,
 }: GovtGunnyOutwardActionDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
     const { millId, setOpen: setDialogOpen } = useGovtGunnyOutward()
@@ -100,34 +97,20 @@ export function GovtGunnyOutwardActionDialog({
     }, [currentRow, form, open])
 
     const onSubmit = async (data: GovtGunnyOutward) => {
-        if (isEditing && currentRow?._id) {
-            toast.promise(
-                updateMutation.mutateAsync({
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({
                     id: currentRow._id,
                     data,
-                }),
-                {
-                    loading: t('common.updating'),
-                    success: () => {
-                        setDialogOpen(null)
-                        onOpenChange(false)
-                        form.reset()
-                        return t('common.success')
-                    },
-                    error: (error: any) => error.message || t('common.error'),
-                }
-            )
-        } else {
-            toast.promise(createMutation.mutateAsync(data), {
-                loading: t('common.adding'),
-                success: () => {
-                    setDialogOpen(null)
-                    onOpenChange(false)
-                    form.reset()
-                    return t('common.success')
-                },
-                error: (error) => error.message || t('common.error'),
-            })
+                })
+            } else {
+                await createMutation.mutateAsync(data)
+            }
+            setDialogOpen(null)
+            onOpenChange(false)
+            form.reset()
+        } catch {
+            // Error is handled by mutation hooks
         }
     }
 
@@ -136,14 +119,10 @@ export function GovtGunnyOutwardActionDialog({
             <DialogContent className='max-w-xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('govtGunnyOutward.editRecord')
-                            : t('govtGunnyOutward.addRecord')}
+                        {isEditing ? 'Edit' : 'Add'} Govt Gunny Outward
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t('common.updateDetails')
-                            : t('common.enterDetails')}
+                        {isEditing ? 'Update' : 'Enter'} the details below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -158,9 +137,7 @@ export function GovtGunnyOutwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('govtGunnyOutward.form.date')}
-                                        </FormLabel>
+                                        <FormLabel>Date</FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -179,9 +156,7 @@ export function GovtGunnyOutwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : t(
-                                                                  'common.pickADate'
-                                                              )}
+                                                            : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -225,16 +200,10 @@ export function GovtGunnyOutwardActionDialog({
                                 name='gunnyDmNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtGunnyOutward.form.gunnyDmNumber'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Gunny DM Number</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'govtGunnyOutward.form.enterGunnyDmNumber'
-                                                )}
+                                                placeholder='DM-1234'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -250,22 +219,14 @@ export function GovtGunnyOutwardActionDialog({
                                 name='samitiSangrahan'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtGunnyOutward.form.samitiSangrahan'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Samiti Sangrahan</FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
                                                 value={field.value || ''}
                                                 onValueChange={field.onChange}
                                                 paginatedList={committee}
-                                                placeholder={t(
-                                                    'govtGunnyOutward.form.samitiSangrahan'
-                                                )}
-                                                emptyText={t(
-                                                    'common.noResults'
-                                                )}
+                                                placeholder='Select samiti...'
+                                                emptyText='No samiti found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -279,11 +240,7 @@ export function GovtGunnyOutwardActionDialog({
                                 name='oldGunnyQty'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtGunnyOutward.form.oldGunnyQty'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Old Gunny Qty</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -309,11 +266,7 @@ export function GovtGunnyOutwardActionDialog({
                                 name='plasticGunnyQty'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t(
-                                                'govtGunnyOutward.form.plasticGunnyQty'
-                                            )}
-                                        </FormLabel>
+                                        <FormLabel>Plastic Gunny Qty</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -338,14 +291,10 @@ export function GovtGunnyOutwardActionDialog({
                                 name='truckNo'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('govtGunnyOutward.form.truckNo')}
-                                        </FormLabel>
+                                        <FormLabel>Truck No.</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'govtGunnyOutward.form.enterTruckNo'
-                                                )}
+                                                placeholder='XX-00-XX-0000'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -362,12 +311,10 @@ export function GovtGunnyOutwardActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                {t('common.cancel')}
+                                Cancel
                             </Button>
                             <Button type='submit'>
-                                {isEditing
-                                    ? t('common.update')
-                                    : t('common.add')}
+                                {isEditing ? 'Update' : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

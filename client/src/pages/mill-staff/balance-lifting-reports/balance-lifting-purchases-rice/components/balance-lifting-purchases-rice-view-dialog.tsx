@@ -130,82 +130,113 @@ export function BalanceLiftingPurchasesRiceViewDialog({
             const html = `
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"></head>
-<body style="margin:0;padding:20px;background:#fff;color:#000;font-family:sans-serif;">
-<div id="print-content" style="width:210mm;background:#fff;color:#000;margin:0 auto;">
-  <div style="margin-bottom:24px;display:flex;flex-direction:column;align-items:center;">
-    <h2 style="margin:0 0 4px;font-size:20px;font-weight:bold;text-decoration:underline;">चावल खरीदी सौडे की जानकारी</h2>
-    <p style="margin:0;font-size:12px;color:#6b7280;">Generated on: ${format(new Date(), 'dd/MM/yyyy HH:mm')}</p>
-  </div>
-  
-  <div style="margin-bottom:24px;display:grid;grid-template-columns:1fr 1fr;gap:8px 32px;border:1px solid #e5e7eb;border-radius:6px;padding:16px;font-size:14px;">
-    <div style="display:flex;justify-content:space-between;"><span style="font-weight:bold;">चावल खरीदी सौदा क्रमांक:</span><span>${currentRow.ricePurchaseDealNumber || 'N/A'}</span></div>
-    <div style="display:flex;justify-content:space-between;"><span style="font-weight:bold;">सौदा दिनांक:</span><span>${currentRow.date ? format(new Date(currentRow.date), 'dd/MM/yyyy') : 'N/A'}</span></div>
-    <div style="display:flex;justify-content:space-between;"><span style="font-weight:bold;">पार्टी का नाम:</span><span>${currentRow.partyName || 'N/A'}</span></div>
-    <div style="display:flex;justify-content:space-between;"><span style="font-weight:bold;">ब्रोकर का नाम:</span><span>${currentRow.brokerName || 'N/A'}</span></div>
+<head>
+<meta charset="utf-8">
+<title>Rice-Purchase-Report-${currentRow.ricePurchaseDealNumber || 'Details'}</title>
+<style>
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+  body {
+    margin: 0;
+  }
+</style>
+</head>
+
+<body style="margin:0;padding:20px;background:#fff;color:#000;font-family:Arial, sans-serif;">
+
+<div id="pdf-content" style="width:210mm;box-sizing:border-box;padding:20px;background:#fff;color:#000;">
+
+  <div style="text-align:center;margin-bottom:10px;">
+    <h2 style="font-size:15px;font-weight:bold;">चावल खरीदी सौडे की जानकारी</h2>
   </div>
 
-  <table style="margin-bottom:24px;width:100%;border-collapse:collapse;border:1px solid #000;font-size:14px;">
-    <thead><tr><th colspan="2" style="border:1px solid #000;background:#f3f4f6;padding:8px;text-align:center;font-weight:bold;">सौदा विवरण</th></tr></thead>
-    <tbody>
-      <tr>
-        <td style="width:50%;border:1px solid #000;padding:8px;"><span style="font-weight:bold;">डिलीवरी:</span> ${currentRow.deliveryType || 'N/A'}</td>
-        <td style="width:50%;border:1px solid #000;padding:8px;"><span style="font-weight:bold;">चावल का भाव/दर:</span> ${riceRate.toFixed(2)}</td>
-      </tr>
-      <tr>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">LOT/अन्य:</span> ${currentRow.lotOrOther || 'N/A'}</td>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">बटाव %:</span> ${discountPercent}%</td>
-      </tr>
-      <tr>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">FCI/NAN:</span> ${currentRow.fciOrNAN || 'N/A'}</td>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">दलाली:</span> ${brokerage.toFixed(2)}</td>
-      </tr>
-      <tr>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">चावल का प्रकार:</span> ${currentRow.riceType || 'N/A'}</td>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">बारदाना सहित/वापसी:</span> ${currentRow.gunnyType || 'N/A'}</td>
-      </tr>
-      <tr>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">FRK:</span> ${currentRow.frkType || 'N/A'}</td>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">नया बारदाना दर:</span> ${newGunnyRate.toFixed(2)}</td>
-      </tr>
-      <tr>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">FRK दर (प्रति किं.):</span> ${safeNumber(currentRow.frkRatePerQuintal).toFixed(2)}</td>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">पुराना बारदाना दर:</span> ${oldGunnyRate.toFixed(2)}</td>
-      </tr>
-      <tr>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">LOT No.:</span> ${currentRow.lotNumber || 'N/A'}</td>
-        <td style="border:1px solid #000;padding:8px;"><span style="font-weight:bold;">प्लास्टिक बारदाना दर:</span> ${plasticGunnyRate.toFixed(2)}</td>
-      </tr>
-    </tbody>
+  <!-- ================= HEADER TABLE ================= -->
+  <table style="width:100%;border-collapse:collapse;border:1px solid #000;margin-bottom:10px;font-size:12px;">
+    <tr style="border-bottom:1px solid #000;">
+      <td style="padding:5px;width:20%;">चावल खरीदी सौदा क्रमांक -</td>
+      <td style="padding:5px;width:30%;">${currentRow.ricePurchaseDealNumber || ''}</td>
+      <td style="padding:5px;width:20%;text-align:right;">सौदा दिनांक-</td>
+      <td style="padding:5px;width:30%;">${currentRow.date ? format(new Date(currentRow.date), 'dd/MM/yyyy') : ''}</td>
+    </tr>
+    <tr>
+      <td style="padding:5px;">पार्टी का नाम -</td>
+      <td style="padding:5px;" colspan="3">${currentRow.partyName || ''}</td>
+    </tr>
+    <tr>
+      <td style="padding:5px;">ब्रोकर का नाम -</td>
+      <td style="padding:5px;" colspan="3">${currentRow.brokerName || ''}</td>
+    </tr>
   </table>
 
-  <table style="width:100%;border-collapse:collapse;border:1px solid #000;font-size:14px;">
-    <tbody>
-      <tr><td style="width:66%;border:1px solid #000;padding:8px;font-weight:bold;">आवक / LOT जमा</td><td style="width:33%;border:1px solid #000;padding:8px;text-align:right;">${lifting.toFixed(2)}</td></tr>
-      <tr><td style="border:1px solid #000;padding:8px;font-weight:bold;">धान की राशि (उठाव * दर)</td><td style="border:1px solid #000;padding:8px;text-align:right;">${riceAmount.toFixed(2)}</td></tr>
-      <tr><td style="border:1px solid #000;padding:8px;font-weight:bold;">(-) बटाव राशि (${discountPercent}%)</td><td style="border:1px solid #000;padding:8px;text-align:right;color:#dc2626;">${discountAmount.toFixed(2)}</td></tr>
-      <tr><td style="border:1px solid #000;padding:8px;font-weight:bold;">(+) बारदाने की राशि<div style="font-size:12px;font-weight:normal;color:#6b7280;">(New: ${totalNewGunny}, Old: ${totalOldGunny}, Plastic: ${totalPlasticGunny})</div></td><td style="border:1px solid #000;padding:8px;text-align:right;vertical-align:top;">${gunnyAmount.toFixed(2)}</td></tr>
-      <tr style="background:#f3f4f6;"><td style="border:1px solid #000;padding:8px;font-size:16px;font-weight:bold;">पार्टी को भुगतान योग्य राशि</td><td style="border:1px solid #000;padding:8px;text-align:right;font-size:16px;font-weight:bold;">${payableToParty.toFixed(2)}</td></tr>
-      <tr><td style="border:1px solid #000;padding:8px;font-weight:bold;">ब्रोकर को भुगतान योग्य राशि (उठाव * दलाली)</td><td style="border:1px solid #000;padding:8px;text-align:right;">${payableToBroker.toFixed(2)}</td></tr>
-    </tbody>
+  <!-- ================= DEAL DETAILS TABLE ================= -->
+  <table style="width:100%;border-collapse:collapse;border:1px solid #000;margin-bottom:10px;font-size:12px;">
+    <tr style="border-bottom:1px solid #000;">
+      <td colspan="2" style="padding:5px;font-weight:bold;">सौदा विवरण</td>
+    </tr>
+
+    ${[
+                    ['डिलीवरी -', currentRow.deliveryType || '', 'चावल का भाव/दर -', riceRate.toFixed(2)],
+                    ['LOT/अन्य -', currentRow.lotOrOther || '', 'बटाव % -', discountPercent],
+                    ['FCI/NAN -', currentRow.fciOrNAN || '', 'दलाली -', brokerage.toFixed(2)],
+                    ['चावल का प्रकार -', currentRow.riceType || '', 'बारदाना सहित/वापसी -', currentRow.gunnyType || ''],
+                    ['FRK -', currentRow.frkType || '', 'नया बारदाना दर -', newGunnyRate.toFixed(2)],
+                    ['FRK दर (प्रति किं.) -', safeNumber(currentRow.frkRatePerQuintal).toFixed(2), 'पुराना बारदाना दर -', oldGunnyRate.toFixed(2)],
+                    ['LOT No. -', currentRow.lotNumber || '', 'प्लास्टिक बारदाना दर -', plasticGunnyRate.toFixed(2)],
+                ].map(row => `
+      <tr>
+        <td style="padding:5px;width:50%;border-right:1px solid #000;">
+          <span style="display:inline-block;width:130px;">${row[0]}</span> ${row[1]}
+        </td>
+        <td style="padding:5px;width:50%;">
+          ${row[2] ? `<span style="display:inline-block;width:130px;">${row[2]}</span> ${row[3]}` : ''}
+        </td>
+      </tr>
+    `).join('')}
+
   </table>
+
+  <!-- ================= SUMMARY TABLE ================= -->
+  <table style="width:100%;border-collapse:collapse;border:1px solid #000;font-size:12px;">
+    ${[
+                    ['आवक / LOT जमा', lifting.toFixed(2)],
+                    ['धान की राशि (उठाव * दर)', riceAmount.toFixed(2)],
+                    [`(-) बटाव राशि (${discountPercent}%)`, discountAmount.toFixed(2)],
+                    ['(+) बारदाने की राशि', gunnyAmount.toFixed(2)],
+                    ['पार्टी को भुगतान योग्य राशि', payableToParty.toFixed(2), true],
+                    ['ब्रोकर को भुगतान योग्य राशि (उठाव * दलाली)', payableToBroker.toFixed(2), true]
+                ].map(row => `
+      <tr style="border-bottom:1px solid #000;">
+        <td style="padding:5px;width:60%;border-right:1px solid #000;${row[2] ? 'font-weight:bold;' : ''}">
+          ${row[0] === '(+) बारदाने की राशि' ? `
+            ${row[0]} <span style="font-size:10px;font-weight:normal;color:#666;">(New: ${totalNewGunny}, Old: ${totalOldGunny}, Plastic: ${totalPlasticGunny})</span>
+          ` : row[0]}
+        </td>
+        <td style="padding:5px;width:40%;text-align:right;${row[2] ? 'font-weight:bold;' : ''}">
+          ${row[1]}
+        </td>
+      </tr>
+    `).join('')}
+  </table>
+
 </div>
 </body>
 </html>
-            `.trim()
+`.trim();
 
             const iframe = document.createElement('iframe')
             iframe.style.position = 'absolute'
             iframe.style.left = '-9999px'
+            iframe.style.width = '210mm'
             document.body.appendChild(iframe)
-            const iframeDoc =
-                iframe.contentDocument || iframe.contentWindow?.document
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
             if (!iframeDoc) throw new Error('Could not access iframe document')
             iframeDoc.open()
             iframeDoc.write(html)
             iframeDoc.close()
 
-            // Wait for images if any, or just a bit for rendering
+            // Wait for rendering
             setTimeout(() => {
                 iframe.contentWindow?.focus()
                 iframe.contentWindow?.print()
@@ -215,8 +246,11 @@ export function BalanceLiftingPurchasesRiceViewDialog({
                 toast.success('Print dialog opened', { id: toastId })
             }, 500)
         } catch (error) {
-            console.error('Error printing:', error)
-            toast.error('Failed to prepare print document', { id: toastId })
+            console.error('Error generating PDF:', error)
+            toast.error(
+                `Failed to generate PDF: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                { id: toastId }
+            )
         }
     }
 
@@ -255,9 +289,9 @@ export function BalanceLiftingPurchasesRiceViewDialog({
                                 <span>
                                     {currentRow.date
                                         ? format(
-                                              new Date(currentRow.date),
-                                              'dd/MM/yyyy'
-                                          )
+                                            new Date(currentRow.date),
+                                            'dd/MM/yyyy'
+                                        )
                                         : 'N/A'}
                                 </span>
                             </div>

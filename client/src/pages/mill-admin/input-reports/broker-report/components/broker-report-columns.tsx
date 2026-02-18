@@ -51,13 +51,6 @@ export const brokerReportColumns: ColumnDef<BrokerReportData>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'gstn',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='GSTN' />
-        ),
-        cell: ({ row }) => <div>{row.getValue('gstn')}</div>,
-    },
-    {
         accessorKey: 'phone',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Phone' />

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type TransporterReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getTransporterReportColumns } from './transporter-report-columns'
+import { useTransporterReportColumns } from './transporter-report-columns'
 
 type DataTableProps = {
     data: TransporterReportData[]
@@ -49,15 +48,12 @@ export function TransporterReportTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
-
-    const columns = useMemo(() => getTransporterReportColumns(t), [t])
-
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const columns = useTransporterReportColumns()
 
     const {
         columnFilters,
@@ -128,9 +124,7 @@ export function TransporterReportTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t(
-                    'transporterReport.form.placeholders.name'
-                )}
+                searchPlaceholder='Search...'
                 searchKey='transporterName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -202,7 +196,7 @@ export function TransporterReportTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}
