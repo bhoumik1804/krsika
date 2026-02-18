@@ -27,8 +27,8 @@ export const createFrkPurchaseEntry = async (millId, data, userId) => {
                 // Wait, in summary it is $frkQty. In create data, check input.
                 // Looking at getFrkPurchaseSummary: totalFrkQty: { $sum: '$frkQty' }
                 // So field name is likely `frkQty`.
-                // In data object from client? Usually matches model. 
-                // Let's assume input data key is 'frkQty' or 'quantity'. 
+                // In data object from client? Usually matches model.
+                // Let's assume input data key is 'frkQty' or 'quantity'.
                 // To be safe, let's use data.frkQty || data.quantity.
                 bags: data.bags || 0,
                 refModel: 'FrkPurchase',
@@ -50,8 +50,6 @@ export const createFrkPurchaseEntry = async (millId, data, userId) => {
 
 export const getFrkPurchaseById = async (millId, id) => {
     const entry = await FrkPurchase.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'FRK purchase entry not found')
     return entry
 }
@@ -78,21 +76,6 @@ export const getFrkPurchaseList = async (millId, options = {}) => {
     const aggregate = FrkPurchase.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
     const result = await FrkPurchase.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
@@ -160,8 +143,6 @@ export const updateFrkPurchaseEntry = async (millId, id, data, userId) => {
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'FRK purchase entry not found')
 
     // Update stock transaction
@@ -192,7 +173,7 @@ export const deleteFrkPurchaseEntry = async (millId, id) => {
 
 export const bulkDeleteFrkPurchaseEntries = async (millId, ids) => {
     const result = await FrkPurchase.deleteMany({ _id: { $in: ids }, millId })
-    
+
     for (const id of ids) {
         await StockTransactionService.deleteTransactionsByRef('FrkPurchase', id)
     }

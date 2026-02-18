@@ -51,8 +51,6 @@ export const createPaddyPurchaseEntry = async (millId, data, userId) => {
 
 export const getPaddyPurchaseById = async (millId, id) => {
     const entry = await PaddyPurchase.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Paddy purchase entry not found')
     return entry
 }
@@ -84,25 +82,10 @@ export const getPaddyPurchaseList = async (millId, options = {}) => {
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
         {
             $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $lookup: {
                 from: 'privatepaddyinwards',
                 localField: 'paddyPurchaseDealNumber',
                 foreignField: 'paddyPurchaseDealNumber',
                 as: 'inwardData',
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
             },
         },
     ])
@@ -174,8 +157,6 @@ export const updatePaddyPurchaseEntry = async (millId, id, data, userId) => {
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Paddy purchase entry not found')
 
     // Update stock transaction if quantity or type changed
@@ -206,9 +187,12 @@ export const deletePaddyPurchaseEntry = async (millId, id) => {
 
 export const bulkDeletePaddyPurchaseEntries = async (millId, ids) => {
     const result = await PaddyPurchase.deleteMany({ _id: { $in: ids }, millId })
-    
+
     for (const id of ids) {
-        await StockTransactionService.deleteTransactionsByRef('PaddyPurchase', id)
+        await StockTransactionService.deleteTransactionsByRef(
+            'PaddyPurchase',
+            id
+        )
     }
 
     logger.info('Paddy purchase entries bulk deleted', {

@@ -38,14 +38,16 @@ export const createOtherPurchaseEntry = async (millId, data, userId) => {
         })
     }
 
-    logger.info('Other purchase entry created', { id: entry._id, millId, userId })
+    logger.info('Other purchase entry created', {
+        id: entry._id,
+        millId,
+        userId,
+    })
     return entry
 }
 
 export const getOtherPurchaseById = async (millId, id) => {
     const entry = await OtherPurchase.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Other purchase entry not found')
     return entry
 }
@@ -76,21 +78,6 @@ export const getOtherPurchaseList = async (millId, options = {}) => {
     const aggregate = OtherPurchase.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
     const result = await OtherPurchase.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
@@ -137,7 +124,7 @@ export const getOtherPurchaseSummary = async (millId, options = {}) => {
                 _id: null,
                 totalEntries: { $sum: 1 },
                 totalOtherPurchaseQty: { $sum: '$otherPurchaseQty' },
-                totalAmount: { $sum: '$amount' }, // Simplified amount calc as per previous logic it might be multiplying rate, but let's stick to what we saw or consistent pattern. 
+                totalAmount: { $sum: '$amount' }, // Simplified amount calc as per previous logic it might be multiplying rate, but let's stick to what we saw or consistent pattern.
                 // The previous logic had a complex multiply. I will restore it to be safe.
             },
         },
@@ -145,12 +132,16 @@ export const getOtherPurchaseSummary = async (millId, options = {}) => {
             $project: {
                 _id: 0,
                 totalEntries: 1,
-                totalOtherPurchaseQty: { $round: ['$totalOtherPurchaseQty', 2] },
+                totalOtherPurchaseQty: {
+                    $round: ['$totalOtherPurchaseQty', 2],
+                },
                 totalAmount: { $round: ['$totalAmount', 2] },
             },
         },
     ])
-    return summary || { totalEntries: 0, totalOtherPurchaseQty: 0, totalAmount: 0 }
+    return (
+        summary || { totalEntries: 0, totalOtherPurchaseQty: 0, totalAmount: 0 }
+    )
 }
 
 export const updateOtherPurchaseEntry = async (millId, id, data, userId) => {
@@ -161,8 +152,6 @@ export const updateOtherPurchaseEntry = async (millId, id, data, userId) => {
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Other purchase entry not found')
 
     // Update stock transaction
@@ -193,9 +182,12 @@ export const deleteOtherPurchaseEntry = async (millId, id) => {
 
 export const bulkDeleteOtherPurchaseEntries = async (millId, ids) => {
     const result = await OtherPurchase.deleteMany({ _id: { $in: ids }, millId })
-    
+
     for (const id of ids) {
-        await StockTransactionService.deleteTransactionsByRef('OtherPurchase', id)
+        await StockTransactionService.deleteTransactionsByRef(
+            'OtherPurchase',
+            id
+        )
     }
 
     logger.info('Other purchase entries bulk deleted', {

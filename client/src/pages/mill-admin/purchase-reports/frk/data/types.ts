@@ -20,7 +20,6 @@ export interface FrkPurchaseResponse {
     frkRate?: number
     gst?: number
     millId?: string
-    createdBy?: string
     createdAt?: string
     updatedAt?: string
     __v?: number

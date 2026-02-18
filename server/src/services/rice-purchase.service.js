@@ -38,14 +38,16 @@ export const createRicePurchaseEntry = async (millId, data, userId) => {
         })
     }
 
-    logger.info('Rice purchase entry created', { id: entry._id, millId, userId })
+    logger.info('Rice purchase entry created', {
+        id: entry._id,
+        millId,
+        userId,
+    })
     return entry
 }
 
 export const getRicePurchaseById = async (millId, id) => {
     const entry = await RicePurchase.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Rice purchase entry not found')
     return entry
 }
@@ -76,21 +78,6 @@ export const getRicePurchaseList = async (millId, options = {}) => {
     const aggregate = RicePurchase.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
     const result = await RicePurchase.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
@@ -158,8 +145,6 @@ export const updateRicePurchaseEntry = async (millId, id, data, userId) => {
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Rice purchase entry not found')
 
     // Update stock transaction if quantity or type changed
@@ -190,10 +175,13 @@ export const deleteRicePurchaseEntry = async (millId, id) => {
 
 export const bulkDeleteRicePurchaseEntries = async (millId, ids) => {
     const result = await RicePurchase.deleteMany({ _id: { $in: ids }, millId })
-    
+
     // Bulk delete stock transactions
     for (const id of ids) {
-        await StockTransactionService.deleteTransactionsByRef('RicePurchase', id)
+        await StockTransactionService.deleteTransactionsByRef(
+            'RicePurchase',
+            id
+        )
     }
 
     logger.info('Rice purchase entries bulk deleted', {
