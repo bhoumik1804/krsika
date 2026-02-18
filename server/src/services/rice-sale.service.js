@@ -21,7 +21,7 @@ export const createRiceSaleEntry = async (millId, data) => {
             variety: data.riceType,
             type: 'DEBIT',
             action: 'Sale',
-            quantity: data.riceQty,
+            quantity: data.riceQty || 0,
             bags: data.bags || 0,
             refModel: 'RiceSale',
             refId: entry._id,
@@ -154,7 +154,7 @@ export const updateRiceSaleEntry = async (millId, id, data) => {
         date: entry.date,
         commodity: 'Rice',
         variety: entry.riceType,
-        quantity: entry.riceQty,
+        quantity: entry.riceQty || 0,
         bags: entry.bags || 0,
         remarks: `Sale to ${entry.partyName || 'Party'}`,
     })

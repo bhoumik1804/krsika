@@ -23,7 +23,7 @@ export const createRicePurchaseEntry = async (millId, data, userId) => {
                 variety: data.riceType,
                 type: 'CREDIT',
                 action: 'Purchase',
-                quantity: data.totalRiceQty,
+                quantity: data.riceQty,
                 bags: data.bags || 0,
                 refModel: 'RicePurchase',
                 refId: entry._id,
@@ -148,12 +148,12 @@ export const updateRicePurchaseEntry = async (millId, id, data, userId) => {
     if (!entry) throw new ApiError(404, 'Rice purchase entry not found')
 
     // Update stock transaction if quantity or type changed
-    if (data.totalRiceQty || data.riceType || data.date) {
+    if (data.riceQty || data.riceType || data.date) {
         await StockTransactionService.updateTransaction('RicePurchase', id, {
             date: entry.date,
             commodity: 'Rice',
             variety: entry.riceType,
-            quantity: entry.totalRiceQty,
+            quantity: entry.riceQty,
             bags: entry.bags || 0,
             remarks: `Purchase from ${entry.partyName || 'Party'}`,
         })

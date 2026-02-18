@@ -23,7 +23,7 @@ export const createOtherPurchaseEntry = async (millId, data, userId) => {
                 variety: null,
                 type: 'CREDIT',
                 action: 'Purchase',
-                quantity: data.otherPurchaseQty, // Changed from data.quantity to data.otherPurchaseQty
+                quantity: data.otherPurchaseQty || 0, // Changed from data.quantity to data.otherPurchaseQty
                 bags: data.bags || 0,
                 refModel: 'OtherPurchase',
                 refId: entry._id,
@@ -160,7 +160,7 @@ export const updateOtherPurchaseEntry = async (millId, id, data, userId) => {
             date: entry.date,
             commodity: entry.otherPurchaseName,
             variety: null,
-            quantity: entry.otherPurchaseQty,
+            quantity: entry.otherPurchaseQty || 0,
             bags: entry.bags || 0,
             remarks: `Purchase from ${entry.partyName || 'Party'}`,
         })
