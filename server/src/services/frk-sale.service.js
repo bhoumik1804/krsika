@@ -23,7 +23,7 @@ export const createFrkSaleEntry = async (millId, data, userId) => {
                 variety: null,
                 type: 'DEBIT',
                 action: 'Sale',
-                quantity: data.quantity, 
+                quantity: data.quantity || 0, 
                 bags: data.bags || 0,
                 refModel: 'FrkSale',
                 refId: entry._id,
@@ -174,7 +174,7 @@ export const updateFrkSaleEntry = async (millId, id, data, userId) => {
         date: entry.date,
         commodity: 'FRK',
         variety: null,
-        quantity: entry.quantity,
+        quantity: entry.quantity || 0,
         bags: entry.bags || 0,
         remarks: `Sale to ${entry.partyName || 'Party'}`,
     })

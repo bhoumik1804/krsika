@@ -14,21 +14,18 @@ export const createKhandaSaleEntry = async (millId, data) => {
 
     // Record stock transaction (DEBIT)
     try {
-        await StockTransactionService.recordTransaction(
-            millId,
-            {
-                date: data.date,
-                commodity: 'Khanda',
-                variety: null,
-                type: 'DEBIT',
-                action: 'Sale',
-                quantity: data.khandaQty, // Check model for field name
-                bags: data.bags || 0,
-                refModel: 'KhandaSale',
-                refId: entry._id,
-                remarks: `Sale to ${data.partyName || 'Party'}`,
-            }
-        )
+        await StockTransactionService.recordTransaction(millId, {
+            date: data.date,
+            commodity: 'Khanda',
+            variety: null,
+            type: 'DEBIT',
+            action: 'Sale',
+            quantity: data.khandaQty || 0,
+            bags: data.bags || 0,
+            refModel: 'KhandaSale',
+            refId: entry._id,
+            remarks: `Sale to ${data.partyName || 'Party'}`,
+        })
     } catch (err) {
         logger.error('Failed to record stock for khanda sale', {
             id: entry._id,
@@ -145,7 +142,7 @@ export const updateKhandaSaleEntry = async (millId, id, data) => {
         date: entry.date,
         commodity: 'Khanda',
         variety: null,
-        quantity: entry.khandaQty,
+        quantity: entry.khandaQty || 0,
         bags: entry.bags || 0,
         remarks: `Sale to ${entry.partyName || 'Party'}`,
     })
@@ -166,7 +163,7 @@ export const deleteKhandaSaleEntry = async (millId, id) => {
 
 export const bulkDeleteKhandaSaleEntries = async (millId, ids) => {
     const result = await KhandaSale.deleteMany({ _id: { $in: ids }, millId })
-    
+
     for (const id of ids) {
         await StockTransactionService.deleteTransactionsByRef('KhandaSale', id)
     }

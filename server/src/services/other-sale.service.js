@@ -22,7 +22,7 @@ export const createOtherSaleEntry = async (millId, data) => {
                 variety: null,
                 type: 'DEBIT',
                 action: 'Sale',
-                quantity: data.otherSaleQty,
+                quantity: data.otherSaleQty || 0,
                 bags: data.bags || 0,
                 refModel: 'OtherSale',
                 refId: entry._id,
@@ -146,7 +146,7 @@ export const updateOtherSaleEntry = async (millId, id, data) => {
         date: entry.date,
         commodity: entry.otherSaleName,
         variety: null,
-        quantity: entry.otherSaleQty,
+        quantity: entry.otherSaleQty || 0,
         bags: entry.bags || 0,
         remarks: `Sale to ${entry.partyName || 'Party'}`,
     })

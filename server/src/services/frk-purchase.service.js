@@ -23,7 +23,7 @@ export const createFrkPurchaseEntry = async (millId, data, userId) => {
                 variety: null,
                 type: 'CREDIT',
                 action: 'Purchase',
-                quantity: data.frkQty, // Changed from data.quantity to data.frkQty based on model/service context (usually frkQty in summary)
+                quantity: data.frkQty || 0, // Changed from data.quantity to data.frkQty based on model/service context (usually frkQty in summary)
                 // Wait, in summary it is $frkQty. In create data, check input.
                 // Looking at getFrkPurchaseSummary: totalFrkQty: { $sum: '$frkQty' }
                 // So field name is likely `frkQty`.
@@ -170,7 +170,7 @@ export const updateFrkPurchaseEntry = async (millId, id, data, userId) => {
             date: entry.date,
             commodity: 'FRK',
             variety: null,
-            quantity: entry.frkQty,
+            quantity: entry.frkQty || 0,
             bags: entry.bags || 0,
             remarks: `Purchase from ${entry.partyName || 'Party'}`,
         })
