@@ -139,14 +139,24 @@ export const updateOtherSaleEntry = async (millId, id, data) => {
     if (!entry) throw new ApiError(404, 'Other sale entry not found')
 
     // Update stock transaction
-    await StockTransactionService.updateTransaction('OtherSale', id, {
+    const stockData = {
         date: entry.date,
         commodity: entry.otherSaleName,
         variety: null,
+        type: 'DEBIT',
+        action: 'Sale',
         quantity: entry.otherSaleQty || 0,
         bags: entry.bags || 0,
         remarks: `Sale to ${entry.partyName || 'Party'}`,
-    })
+    }
+
+    if (entry.otherSaleName) {
+        const updatedStock = await StockTransactionService.updateTransaction(
+            'OtherSale',
+            id,
+            stockData
+        )
+    }
 
     logger.info('Other sale entry updated', { id, millId })
     return entry
