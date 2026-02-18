@@ -26,7 +26,7 @@ export const createPaddyPurchaseEntry = async (millId, data, userId) => {
                 variety: data.paddyType,
                 type: 'CREDIT',
                 action: 'Purchase',
-                quantity: data.totalPaddyQty,
+                quantity: data.totalPaddyQty || 0,
                 bags: data.bags || 0,
                 refModel: 'PaddyPurchase',
                 refId: entry._id,
@@ -184,7 +184,7 @@ export const updatePaddyPurchaseEntry = async (millId, id, data, userId) => {
             date: entry.date,
             commodity: 'Paddy',
             variety: entry.paddyType,
-            quantity: entry.totalPaddyQty,
+            quantity: entry.totalPaddyQty || 0,
             bags: entry.bags || 0,
             remarks: `Purchase from ${entry.partyName || 'Party'}`,
         })

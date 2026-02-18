@@ -22,7 +22,7 @@ export const createOtherInwardEntry = async (millId, data, userId) => {
             variety: null,
             type: 'CREDIT',
             action: 'Inward',
-            quantity: entry.netWeight ? entry.netWeight / 100 : entry.quantity, // Kg to Qtl if weight
+            quantity: (entry.netWeight ? entry.netWeight / 100 : entry.quantity) || 0, // Kg to Qtl if weight
             bags: 0,
             refModel: 'OtherInward',
             refId: entry._id,

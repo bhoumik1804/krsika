@@ -27,7 +27,7 @@ export const createOtherOutwardEntry = async (millId, data, userId) => {
             variety: null,
             type: 'DEBIT',
             action: 'Outward',
-            quantity: entry.netWeight ? entry.netWeight / 100 : entry.quantity,
+            quantity: (entry.netWeight ? entry.netWeight / 100 : entry.quantity) || 0,
             bags: (entry.gunnyNew || 0) + (entry.gunnyOld || 0) + (entry.gunnyPlastic || 0),
             refModel: 'OtherOutward',
             refId: entry._id,

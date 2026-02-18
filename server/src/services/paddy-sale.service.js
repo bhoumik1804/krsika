@@ -22,7 +22,7 @@ export const createPaddySaleEntry = async (millId, data) => {
                              // If we track total quantity:
                 type: 'DEBIT',
                 action: 'Sale',
-                quantity: data.dhanQty,
+                quantity: data.dhanQty || 0,
                 bags: data.bags || 0,
                 refModel: 'PaddySale',
                 refId: entry._id,
@@ -112,7 +112,7 @@ export const updatePaddySaleEntry = async (millId, id, data) => {
         date: entry.date,
         commodity: 'Paddy',
         variety: null,
-        quantity: entry.dhanQty,
+        quantity: entry.dhanQty || 0,
         bags: entry.bags || 0,
         remarks: `Sale to ${entry.partyName || 'Party'}`,
     })
