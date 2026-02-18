@@ -41,6 +41,7 @@ type DataTableProps = {
         prevPage: number | null
         nextPage: number | null
     }
+    isLoading?: boolean
 }
 
 export function LabourOutwardTable({
@@ -48,6 +49,7 @@ export function LabourOutwardTable({
     search,
     navigate,
     pagination: serverPagination,
+    isLoading,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -173,7 +175,12 @@ export function LabourOutwardTable({
                             </TableRow>
                         ))}
                     </TableHeader>
-                    <TableBody>
+                    <TableBody
+                        className={cn(
+                            isLoading &&
+                                'pointer-events-none opacity-50 transition-opacity'
+                        )}
+                    >
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow

@@ -55,7 +55,7 @@ export function LabourMillingReport() {
         }
     }
 
-    if (isLoading) {
+    if (isLoading && !data) {
         return (
             <div className='flex h-screen items-center justify-center'>
                 <LoadingSpinner />
@@ -106,6 +106,7 @@ export function LabourMillingReport() {
                     )}
                     navigate={navigate}
                     pagination={data?.pagination}
+                    isLoading={isLoading}
                 />
             </Main>
 
