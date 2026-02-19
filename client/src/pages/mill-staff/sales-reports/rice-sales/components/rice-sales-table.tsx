@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +26,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type RiceSales } from '../data/schema'
 import { type RiceSalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { riceSalesColumns as columns } from './rice-sales-columns'
+import { useRiceSalesColumns } from './rice-sales-columns'
 
 type DataTableProps = {
     data: RiceSales[] | RiceSalesResponse[]
@@ -34,6 +35,8 @@ type DataTableProps = {
 }
 
 export function RiceSalesTable({ data, search, navigate }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
+    const columns = useRiceSalesColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -95,7 +98,7 @@ export function RiceSalesTable({ data, search, navigate }: DataTableProps) {
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
+                searchPlaceholder={t('common.search')}
                 searchKey='partyName'
                 filters={[]}
             />
@@ -168,7 +171,7 @@ export function RiceSalesTable({ data, search, navigate }: DataTableProps) {
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

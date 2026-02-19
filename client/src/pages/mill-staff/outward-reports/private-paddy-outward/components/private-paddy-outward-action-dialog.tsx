@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { usePaddySalesList } from '@/pages/mill-admin/sales-reports/paddy-sales/data/hooks'
 import type { PaddySalesResponse } from '@/pages/mill-admin/sales-reports/paddy-sales/data/types'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { paddyTypeOptions } from '@/constants/purchase-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
@@ -62,6 +63,7 @@ export function PrivatePaddyOutwardActionDialog({
     currentRow,
 }: PrivatePaddyOutwardActionDialogProps) {
     const isEditing = !!currentRow
+    const { t } = useTranslation('mill-staff')
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
     const { millId, setOpen: setDialogOpen } = usePrivatePaddyOutward()
 
@@ -185,11 +187,16 @@ export function PrivatePaddyOutwardActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Private Paddy Outward
-                        Record
+                        {isEditing
+                            ? t('outward.privatePaddyOutward.form.title', {
+                                  context: 'edit',
+                              })
+                            : t('outward.privatePaddyOutward.form.title', {
+                                  context: 'add',
+                              })}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {t('outward.privatePaddyOutward.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -204,7 +211,11 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.date'
+                                            )}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -223,7 +234,7 @@ export function PrivatePaddyOutwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : 'Select Date'}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -268,15 +279,19 @@ export function PrivatePaddyOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Paddy Sale Deal Number
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.paddySaleDealNumber'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
                                                 value={field.value || ''}
                                                 onValueChange={handleDealSelect}
                                                 paginatedList={paddySaleDeal}
-                                                placeholder='Search deal...'
-                                                emptyText='No deals found'
+                                                placeholder='Select deal number'
+                                                emptyText={t(
+                                                    'common.noDealsFound'
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -290,7 +305,11 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Party Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.partyName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder='Enter party name'
@@ -309,7 +328,11 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='brokerName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Broker Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.brokerName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder='Enter broker name'
@@ -328,14 +351,20 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='paddyType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Paddy Type</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.paddyType'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             value={field.value || undefined}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
-                                                    <SelectValue placeholder='Select type' />
+                                                    <SelectValue
+                                                        placeholder='Select paddy type'
+                                                    />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent className='w-full'>
@@ -362,11 +391,16 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='doQty'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>DO Qty</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.dealQuantity'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
                                                 step='0.01'
+                                                placeholder='Enter quantity'
                                                 {...field}
                                                 onChange={(e) =>
                                                     field.onChange(
@@ -389,10 +423,15 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='gunnyNew'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>New Gunny</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.gunnyNew'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
+                                                placeholder='Enter quantity'
                                                 {...field}
                                                 onChange={(e) =>
                                                     field.onChange(
@@ -415,10 +454,15 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='gunnyOld'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Old Gunny</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.gunnyOld'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
+                                                placeholder='Enter quantity'
                                                 {...field}
                                                 onChange={(e) =>
                                                     field.onChange(
@@ -441,10 +485,15 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='gunnyPlastic'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Plastic Gunny</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.gunnyPlastic'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
+                                                placeholder='Enter quantity'
                                                 {...field}
                                                 onChange={(e) =>
                                                     field.onChange(
@@ -467,11 +516,16 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='juteWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Jute Gunny Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.juteWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
                                                 step='0.01'
+                                                placeholder='Enter quantity'
                                                 {...field}
                                                 onChange={(e) =>
                                                     field.onChange(
@@ -495,12 +549,15 @@ export function PrivatePaddyOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Plastic Gunny Weight
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.plasticWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
                                                 step='0.01'
+                                                placeholder='Enter quantity'
                                                 {...field}
                                                 onChange={(e) =>
                                                     field.onChange(
@@ -523,10 +580,14 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='truckNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck Number</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.truckNumber'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='XX-00-XX-0000'
+                                                placeholder='Enter truck number'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -542,10 +603,14 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='rstNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>RST Number</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.rstNumber'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='RST0000'
+                                                placeholder='Enter RST number'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -561,11 +626,16 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='truckWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.truckWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
                                                 step='0.01'
+                                                placeholder='Enter quantity'
                                                 {...field}
                                                 onChange={(e) =>
                                                     field.onChange(
@@ -588,11 +658,16 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='gunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.gunnyWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
                                                 step='0.01'
+                                                placeholder='Enter quantity'
                                                 {...field}
                                                 onChange={(e) =>
                                                     field.onChange(
@@ -615,11 +690,16 @@ export function PrivatePaddyOutwardActionDialog({
                                 name='netWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Net Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privatePaddyOutward.form.fields.netWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
                                                 step='0.01'
+                                                placeholder='Enter quantity'
                                                 {...field}
                                                 onChange={(e) =>
                                                     field.onChange(
@@ -642,10 +722,16 @@ export function PrivatePaddyOutwardActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel', { defaultValue: 'Cancel' })}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {isEditing
+                                    ? t('common.update', {
+                                          defaultValue: 'Update',
+                                      })
+                                    : t(
+                                          'outward.privatePaddyOutward.form.primaryButton'
+                                      )}
                             </Button>
                         </DialogFooter>
                     </form>

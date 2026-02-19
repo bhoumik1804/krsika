@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -15,6 +16,7 @@ import { FrkTable } from './components/frk-table'
 
 export function FrkPurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
@@ -71,10 +73,10 @@ export function FrkPurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            FRK Purchase Report
+                            {t('purchaseReports.frk.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage FRK purchase transactions and records
+                            {t('purchaseReports.frk.description')}
                         </p>
                     </div>
                     <FrkPrimaryButtons />

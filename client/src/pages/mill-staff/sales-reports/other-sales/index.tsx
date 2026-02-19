@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -44,6 +45,7 @@ function OtherSalesContent({
 }
 
 export function OtherSalesReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -87,10 +89,10 @@ export function OtherSalesReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Other Sales Report
+                            {t('salesReports.other.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage other sales transactions and records
+                            {t('salesReports.other.description')}
                         </p>
                     </div>
                     <OtherSalesPrimaryButtons />

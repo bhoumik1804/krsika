@@ -24,7 +24,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type KodhaOutward } from '../data/schema'
 import type { KodhaOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { kodhaOutwardColumns as columns } from './kodha-outward-columns'
+import { KodhaOutwardColumns } from './kodha-outward-columns'
 import { KodhaOutwardMultiDeleteDialog } from './kodha-outward-multi-delete-dialog'
 import { kodhaOutward } from './kodha-outward-provider'
 
@@ -66,7 +66,7 @@ export function KodhaOutwardTable({
 
     const table = useReactTable({
         data,
-        columns,
+        columns: KodhaOutwardColumns(),
         pageCount: serverPagination?.totalPages ?? -1,
         state: {
             sorting,
@@ -165,7 +165,7 @@ export function KodhaOutwardTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

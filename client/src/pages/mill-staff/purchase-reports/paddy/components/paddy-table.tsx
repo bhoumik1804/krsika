@@ -24,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type PaddyPurchaseData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { paddyColumns as columns } from './paddy-columns'
+import { usePaddyColumns } from './paddy-columns'
 
 type DataTableProps = {
     data: PaddyPurchaseData[]
@@ -44,6 +44,7 @@ export function PaddyTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const columns = usePaddyColumns()
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(

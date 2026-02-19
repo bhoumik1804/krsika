@@ -25,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { outwardTypes } from '../data/data'
 import { type LabourOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { labourOutwardColumns as columns } from './labour-outward-columns'
+import { LabourOutwardColumns } from './labour-outward-columns'
 
 type DataTableProps = {
     data: LabourOutward[]
@@ -89,9 +89,10 @@ export function LabourOutwardTable({
     })
 
     // eslint-disable-next-line react-hooks/incompatible-library
+    const columns = LabourOutwardColumns()
     const table = useReactTable({
-        data,
         columns,
+        data,
         state: {
             sorting,
             pagination,
@@ -212,7 +213,7 @@ export function LabourOutwardTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

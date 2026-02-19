@@ -25,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { inwardTypes } from '../data/data'
 import { type LabourInward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { labourInwardColumns as columns } from './labour-inward-columns'
+import { LabourInwardColumns } from './labour-inward-columns'
 
 type DataTableProps = {
     data: LabourInward[]
@@ -85,9 +85,10 @@ export function LabourInwardTable({
     })
 
     // eslint-disable-next-line react-hooks/incompatible-library
+    const columns = LabourInwardColumns()
     const table = useReactTable({
-        data,
         columns,
+        data,
         state: {
             sorting,
             pagination,
@@ -208,7 +209,7 @@ export function LabourInwardTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

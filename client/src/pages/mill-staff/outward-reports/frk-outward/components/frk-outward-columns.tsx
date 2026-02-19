@@ -1,5 +1,6 @@
 import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { t } from 'i18next'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
@@ -36,7 +37,12 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.date', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => {
             const date = row.getValue('date')
@@ -51,7 +57,12 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.partyName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -63,7 +74,12 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (Plastic)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.gunnyPlastic', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -74,7 +90,9 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Plastic Gunny Weight'
+                title={t('outward.frkOutward.form.fields.plasticWeight', {
+                    ns: 'mill-staff',
+                })}
             />
         ),
         cell: ({ row }) => (
@@ -86,7 +104,12 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.truckNo', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -97,7 +120,12 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
     {
         accessorKey: 'truckRst',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.truckRst', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>{row.getValue('truckRst')}</div>
@@ -106,7 +134,12 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.truckWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -117,7 +150,12 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.gunnyWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -128,7 +166,12 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Net Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.netWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>

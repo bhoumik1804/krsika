@@ -25,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type MillingRice } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { millingRiceColumns as columns } from './milling-rice-columns'
+import { MillingRiceColumns } from './milling-rice-columns'
 
 type DataTableProps = {
     data: MillingRice[]
@@ -84,7 +84,7 @@ export function MillingRiceTable({
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
-        columns,
+        columns: MillingRiceColumns(),
         state: {
             sorting,
             pagination,
@@ -200,7 +200,7 @@ export function MillingRiceTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

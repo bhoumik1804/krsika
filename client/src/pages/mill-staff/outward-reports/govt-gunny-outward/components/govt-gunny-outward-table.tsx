@@ -25,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type GovtGunnyOutward } from '../data/schema'
 import type { GovtGunnyOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { GovtGunnyOutwardColumns as columns } from './govt-gunny-outward-columns'
+import { GovtGunnyOutwardColumns } from './govt-gunny-outward-columns'
 
 type DataTableProps = {
     data: GovtGunnyOutward[]
@@ -64,14 +64,18 @@ export function GovtGunnyOutwardTable({
         },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'samitiSangrahan', searchKey: 'samitiSangrahan', type: 'string' },
+            {
+                columnId: 'samitiSangrahan',
+                searchKey: 'samitiSangrahan',
+                type: 'string',
+            },
         ],
     })
 
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
-        columns,
+        columns: GovtGunnyOutwardColumns(),
         state: {
             sorting,
             pagination,
@@ -177,7 +181,7 @@ export function GovtGunnyOutwardTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

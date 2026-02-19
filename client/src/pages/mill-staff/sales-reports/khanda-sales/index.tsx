@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -13,6 +14,7 @@ import { KhandaSalesTable } from './components/khanda-sales-table'
 import { useKhandaSalesList } from './data/hooks'
 
 export function KhandaSalesReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -64,10 +66,10 @@ export function KhandaSalesReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Khanda Sales Report
+                            {t('salesReports.khanda.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage khanda sales transactions and records
+                            {t('salesReports.khanda.description')}
                         </p>
                     </div>
                     <KhandaSalesPrimaryButtons />

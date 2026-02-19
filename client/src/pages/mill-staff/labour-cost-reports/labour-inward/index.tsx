@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -16,6 +17,7 @@ import { useLabourInwardList } from './data/hooks'
 
 export function LabourInwardReport() {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     const queryParams = useMemo(() => {
@@ -90,10 +92,10 @@ export function LabourInwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Labour Inward Report
+                            {t('labourCostReports.inward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage labour inward transactions and records
+                            {t('labourCostReports.inward.description')}
                         </p>
                     </div>
                     <LabourInwardPrimaryButtons />

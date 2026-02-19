@@ -116,7 +116,6 @@ function GovtPaddyInwardContent({
     search: Record<string, string>
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('mill-staff')
     const {
         data: listData,
         isLoading,

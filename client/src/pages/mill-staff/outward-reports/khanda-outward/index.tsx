@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -14,6 +15,7 @@ import { KhandaOutwardTable } from './components/khanda-outward-table'
 import { useKhandaOutwardList } from './data/hooks'
 
 export function KhandaOutwardReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -77,10 +79,10 @@ export function KhandaOutwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Khanda Outward Report
+                            {t('outward.khandaOutward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage khanda outward transactions and records
+                            {t('outward.khandaOutward.description')}
                         </p>
                     </div>
                     <KhandaOutwardPrimaryButtons />

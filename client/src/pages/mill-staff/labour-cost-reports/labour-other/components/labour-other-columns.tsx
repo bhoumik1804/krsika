@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,7 +8,10 @@ import { type LabourOther } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 import { format } from 'date-fns'
 
-export const labourOtherColumns: ColumnDef<LabourOther>[] = [
+export function LabourOtherColumns(): ColumnDef<LabourOther>[] {
+    const { t } = useTranslation('mill-staff')
+    
+    return [
     {
         id: 'select',
         header: ({ table }) => (
@@ -40,7 +44,7 @@ export const labourOtherColumns: ColumnDef<LabourOther>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader column={column} title={t('labourCostReports.other.form.fields.date')} />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -58,7 +62,7 @@ export const labourOtherColumns: ColumnDef<LabourOther>[] = [
     {
         accessorKey: 'labourType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Labour Type' />
+            <DataTableColumnHeader column={column} title={t('labourCostReports.other.form.fields.hamaliType')} />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -70,7 +74,7 @@ export const labourOtherColumns: ColumnDef<LabourOther>[] = [
     {
         accessorKey: 'labourGroupName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Labour Group Name' />
+            <DataTableColumnHeader column={column} title={t('labourCostReports.other.form.fields.hamalRejaToliName')} />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -82,7 +86,7 @@ export const labourOtherColumns: ColumnDef<LabourOther>[] = [
     {
         accessorKey: 'numberOfGunny',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Number of Gunny' />
+            <DataTableColumnHeader column={column} title={t('labourCostReports.other.form.fields.gunnyCount')} />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -93,7 +97,7 @@ export const labourOtherColumns: ColumnDef<LabourOther>[] = [
     {
         accessorKey: 'labourRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Labour Rate' />
+            <DataTableColumnHeader column={column} title={t('labourCostReports.other.form.fields.hamaliRate')} />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -106,7 +110,7 @@ export const labourOtherColumns: ColumnDef<LabourOther>[] = [
     {
         accessorKey: 'workDetail',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Work Detail' />
+            <DataTableColumnHeader column={column} title={t('labourCostReports.other.form.fields.workDetail')} />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -118,7 +122,7 @@ export const labourOtherColumns: ColumnDef<LabourOther>[] = [
     {
         accessorKey: 'totalPrice',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Total Price' />
+            <DataTableColumnHeader column={column} title={t('labourCostReports.other.form.fields.totalAmount')} />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -132,4 +136,5 @@ export const labourOtherColumns: ColumnDef<LabourOther>[] = [
         id: 'actions',
         cell: DataTableRowActions,
     },
-]
+    ]
+}

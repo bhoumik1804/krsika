@@ -22,7 +22,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type PrivateGunnyOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { PrivateGunnyOutwardColumns as columns } from './private-gunny-outward-columns'
+import { PrivateGunnyOutwardColumns } from './private-gunny-outward-columns'
 
 interface DataTableProps {
     data: PrivateGunnyOutward[]
@@ -73,7 +73,7 @@ export function PrivateGunnyOutwardTable({
 
     const table = useReactTable({
         data,
-        columns,
+        columns: PrivateGunnyOutwardColumns(),
         state: {
             pagination,
             rowSelection,
@@ -167,7 +167,7 @@ export function PrivateGunnyOutwardTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

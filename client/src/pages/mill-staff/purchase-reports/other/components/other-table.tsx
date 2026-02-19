@@ -24,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type OtherPurchase } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { otherColumns as columns } from './other-columns'
+import { useOtherColumns } from './other-columns'
 
 type DataTableProps = {
     data: OtherPurchase[]
@@ -50,6 +50,7 @@ export function OtherTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const columns = useOtherColumns()
 
     // Only handle column filters (pagination is server-side)
     const {

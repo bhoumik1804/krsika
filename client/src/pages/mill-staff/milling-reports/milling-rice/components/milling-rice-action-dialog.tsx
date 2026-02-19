@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { riceTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
@@ -51,6 +52,7 @@ export function MillingRiceActionDialog({
     currentRow,
 }: MillingRiceActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -112,10 +114,12 @@ export function MillingRiceActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('millingReports.rice.form.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing ? t('common.update') : t('common.enter')}{' '}
+                        {t('common.updateDetails')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -129,7 +133,11 @@ export function MillingRiceActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.rice.form.fields.date'
+                                            )}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -148,7 +156,9 @@ export function MillingRiceActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickDate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -190,7 +200,11 @@ export function MillingRiceActionDialog({
                                 name='riceType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rice Type</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.rice.form.fields.riceType'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             value={field.value || ''}
@@ -220,7 +234,11 @@ export function MillingRiceActionDialog({
                                 name='hopperInGunny'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Hopper (Gunny)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.rice.form.fields.hopperInGunny'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -248,7 +266,11 @@ export function MillingRiceActionDialog({
                                 name='hopperInQintal'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Hopper (Quintal)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.rice.form.fields.hopperInQintal'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -277,7 +299,11 @@ export function MillingRiceActionDialog({
                                 name='riceQuantity'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rice (Quintal)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.rice.form.fields.riceQuantity'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -306,7 +332,11 @@ export function MillingRiceActionDialog({
                                 name='ricePercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rice %</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.rice.form.fields.ricePercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -335,7 +365,11 @@ export function MillingRiceActionDialog({
                                 name='khandaQuantity'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Khanda (Quintal)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.rice.form.fields.khandaQuantity'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -364,7 +398,11 @@ export function MillingRiceActionDialog({
                                 name='khandaPercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Khanda %</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.rice.form.fields.khandaPercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -394,7 +432,9 @@ export function MillingRiceActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Silky Kodha (Quintal)
+                                            {t(
+                                                'millingReports.rice.form.fields.silkyKodhaQuantity'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -424,7 +464,11 @@ export function MillingRiceActionDialog({
                                 name='silkyKodhaPercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Silky Kodha %</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.rice.form.fields.silkyKodhaPercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -453,7 +497,11 @@ export function MillingRiceActionDialog({
                                 name='wastagePercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Wastage %</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.rice.form.fields.wastagePercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -484,10 +532,10 @@ export function MillingRiceActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {t(isEditing ? 'common.update' : 'common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

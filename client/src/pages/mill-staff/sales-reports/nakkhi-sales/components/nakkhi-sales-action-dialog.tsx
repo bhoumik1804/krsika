@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
@@ -46,6 +47,7 @@ export function NakkhiSalesActionDialog({
     onOpenChange,
     currentRow,
 }: NakkhiSalesActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const party = usePaginatedList(
         millId || '',
@@ -141,10 +143,20 @@ export function NakkhiSalesActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Nakkhi Sale
+                        {isEditing
+                            ? t('salesReports.nakkhi.form.title').replace(
+                                  'Add',
+                                  'Edit'
+                              )
+                            : t('salesReports.nakkhi.form.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the sale details below
+                        {isEditing
+                            ? t('salesReports.nakkhi.form.description').replace(
+                                  'Enter',
+                                  'Update'
+                              )
+                            : t('salesReports.nakkhi.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -159,7 +171,11 @@ export function NakkhiSalesActionDialog({
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Date</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'salesReports.nakkhi.form.fields.date'
+                                                )}
+                                            </FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
                                                 onOpenChange={
@@ -222,7 +238,11 @@ export function NakkhiSalesActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'salesReports.nakkhi.form.fields.partyName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -243,7 +263,11 @@ export function NakkhiSalesActionDialog({
                                     name='brokerName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Broker Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'salesReports.nakkhi.form.fields.brokerName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -265,7 +289,9 @@ export function NakkhiSalesActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Quantity (Qtl)
+                                                {t(
+                                                    'salesReports.nakkhi.form.fields.quantity'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -298,7 +324,9 @@ export function NakkhiSalesActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Rate (per Quintal)
+                                                {t(
+                                                    'salesReports.nakkhi.form.fields.rate'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -330,7 +358,11 @@ export function NakkhiSalesActionDialog({
                                     name='discountPercent'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Discount (%)</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'salesReports.nakkhi.form.fields.discountPercent'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -362,7 +394,9 @@ export function NakkhiSalesActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Brokerage (per Quintal)
+                                                {t(
+                                                    'salesReports.nakkhi.form.fields.brokerage'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -398,16 +432,16 @@ export function NakkhiSalesActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}
+                                      ? t('common.update')
+                                      : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

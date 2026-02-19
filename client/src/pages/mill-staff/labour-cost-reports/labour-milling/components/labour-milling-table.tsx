@@ -24,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type LabourMilling } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { labourMillingColumns as columns } from './labour-milling-columns'
+import { LabourMillingColumns } from './labour-milling-columns'
 
 type DataTableProps = {
     data: LabourMilling[]
@@ -83,9 +83,10 @@ export function LabourMillingTable({
     })
 
     // eslint-disable-next-line react-hooks/incompatible-library
+    const columns = LabourMillingColumns()
     const table = useReactTable({
-        data,
         columns,
+        data,
         state: {
             sorting,
             pagination,
@@ -200,7 +201,7 @@ export function LabourMillingTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

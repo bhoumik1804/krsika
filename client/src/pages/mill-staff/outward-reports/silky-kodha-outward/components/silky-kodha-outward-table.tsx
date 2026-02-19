@@ -24,7 +24,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type SilkyKodhaOutward } from '../data/schema'
 import type { SilkyKodhaOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { silkyKodhaOutwardColumns as columns } from './silky-kodha-outward-columns'
+import { SilkyKodhaOutwardColumns } from './silky-kodha-outward-columns'
 import { SilkyKodhaOutwardMultiDeleteDialog } from './silky-kodha-outward-multi-delete-dialog'
 import { silkyKodhaOutward } from './silky-kodha-outward-provider'
 
@@ -46,6 +46,8 @@ export function SilkyKodhaOutwardTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+
+    const columns = SilkyKodhaOutwardColumns()
 
     const { open, setOpen } = silkyKodhaOutward()
 

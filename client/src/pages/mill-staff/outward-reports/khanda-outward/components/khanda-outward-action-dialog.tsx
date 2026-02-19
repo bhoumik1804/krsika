@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useKhandaSalesList } from '@/pages/mill-admin/sales-reports/khanda-sales/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
@@ -53,6 +54,7 @@ export function KhandaOutwardActionDialog({
     currentRow,
     millId,
 }: KhandaOutwardActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const salesDeals = usePaginatedList(
         millId,
         open,
@@ -164,10 +166,16 @@ export function KhandaOutwardActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing
+                            ? t('outward.khandaOutward.form.title', {
+                                  context: 'edit',
+                              })
+                            : t('outward.khandaOutward.form.title', {
+                                  context: 'add',
+                              })}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {t('outward.khandaOutward.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -181,7 +189,11 @@ export function KhandaOutwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.khandaOutward.form.fields.date'
+                                            )}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -200,7 +212,9 @@ export function KhandaOutwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickDate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -243,7 +257,9 @@ export function KhandaOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Khanda Sale Deal Number
+                                            {t(
+                                                'outward.khandaOutward.form.fields.khandaSaleDealNumber'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
@@ -252,8 +268,12 @@ export function KhandaOutwardActionDialog({
                                                     handleDealSelect(value)
                                                 }
                                                 paginatedList={salesDeals}
-                                                placeholder='Select deal number'
-                                                emptyText='No deals found'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
+                                                emptyText={t(
+                                                    'outward.khandaOutward.form.fields.khandaSaleDealNumber.emptyText'
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -265,10 +285,16 @@ export function KhandaOutwardActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Party Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.khandaOutward.form.fields.partyName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter party name'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -282,10 +308,16 @@ export function KhandaOutwardActionDialog({
                                 name='brokerName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Broker Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.khandaOutward.form.fields.brokerName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter broker name'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -299,9 +331,16 @@ export function KhandaOutwardActionDialog({
                                 name='gunnyPlastic'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny (Plastic)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.khandaOutward.form.fields.gunnyPlastic'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 type='number'
                                                 {...field}
                                                 onChange={(e) =>
@@ -323,9 +362,16 @@ export function KhandaOutwardActionDialog({
                                 name='plasticGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Plastic Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.khandaOutward.form.fields.plasticGunnyWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 type='number'
                                                 step='0.001'
                                                 {...field}
@@ -348,10 +394,16 @@ export function KhandaOutwardActionDialog({
                                 name='truckNo'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck No</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.khandaOutward.form.fields.truckNo'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='XX-00-XX-0000'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -365,10 +417,16 @@ export function KhandaOutwardActionDialog({
                                 name='truckRst'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>RST No</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.khandaOutward.form.fields.truckRst'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='RST-000'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -382,7 +440,11 @@ export function KhandaOutwardActionDialog({
                                 name='truckWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.khandaOutward.form.fields.truckWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -407,7 +469,11 @@ export function KhandaOutwardActionDialog({
                                 name='gunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.khandaOutward.form.fields.gunnyWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -432,7 +498,11 @@ export function KhandaOutwardActionDialog({
                                 name='netWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Net Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.khandaOutward.form.fields.netWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -459,10 +529,12 @@ export function KhandaOutwardActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {isEditing
+                                    ? t('common.update')
+                                    : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

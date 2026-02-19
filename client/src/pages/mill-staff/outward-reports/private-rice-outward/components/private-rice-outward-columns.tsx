@@ -1,4 +1,6 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { t } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -6,7 +8,6 @@ import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type PrivateRiceOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
-import { format } from 'date-fns'
 
 export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
@@ -41,7 +42,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.date', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -59,7 +65,15 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'riceSaleDealNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Sale Auto No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t(
+                    'outward.privateRiceOutward.form.fields.riceSaleDealNumber',
+                    {
+                        ns: 'mill-staff',
+                    }
+                )}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>
@@ -70,7 +84,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.partyName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-32'>
@@ -81,7 +100,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.brokerName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-32'>
@@ -92,7 +116,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'lotNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='LOT No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.lotNo', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>{row.getValue('lotNo')}</div>
@@ -101,7 +130,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'fciNan',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='FCI/NAN' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.fciNan', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => {
             const value = row.getValue('fciNan') as string
@@ -115,7 +149,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'riceType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rice Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.riceType', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-32'>{row.getValue('riceType')}</LongText>
@@ -124,7 +163,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'riceQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rice Qty' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.riceQty', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -135,7 +179,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'gunnyNew',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (New)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.gunnyNew', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyNew')}</div>
@@ -144,7 +193,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'gunnyOld',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (Old)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.gunnyOld', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyOld')}</div>
@@ -153,7 +207,15 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (Plastic)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t(
+                    'outward.privateRiceOutward.form.fields.gunnyPlastic',
+                    {
+                        ns: 'mill-staff',
+                    }
+                )}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -162,7 +224,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'juteWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Jute Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.juteWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -173,7 +240,15 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'plasticWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t(
+                    'outward.privateRiceOutward.form.fields.plasticWeight',
+                    {
+                        ns: 'mill-staff',
+                    }
+                )}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -184,7 +259,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'truckNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.truckNumber', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -195,7 +275,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'truckRst',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.truckRst', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>{row.getValue('truckRst')}</div>
@@ -204,7 +289,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.truckWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -215,7 +305,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.gunnyWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -226,7 +321,12 @@ export const PrivateRiceOutwardColumns: ColumnDef<PrivateRiceOutward>[] = [
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Net Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privateRiceOutward.form.fields.netWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>

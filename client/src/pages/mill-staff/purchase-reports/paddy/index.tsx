@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -15,6 +16,7 @@ import { PaddyTable } from './components/paddy-table'
 
 export function PaddyPurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
@@ -69,10 +71,10 @@ export function PaddyPurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Paddy Purchase Report
+                            {t('purchaseReports.paddy.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage paddy purchase transactions and records
+                            {t('purchaseReports.paddy.description')}
                         </p>
                     </div>
                     <PaddyPrimaryButtons />

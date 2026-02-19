@@ -1,11 +1,12 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { t } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type PrivatePaddyOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
-import { format } from 'date-fns'
 
 export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
@@ -40,7 +41,12 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privatePaddyOutward.form.fields.date', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -60,7 +66,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Paddy Sale Deal Number'
+                title={t(
+                    'outward.privatePaddyOutward.form.fields.paddySaleDealNumber',
+                    { ns: 'mill-staff' }
+                )}
             />
         ),
         cell: ({ row }) => (
@@ -72,7 +81,12 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privatePaddyOutward.form.fields.partyName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -84,7 +98,12 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privatePaddyOutward.form.fields.brokerName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -96,7 +115,12 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'paddyType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Paddy Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privatePaddyOutward.form.fields.paddyType', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-center'>{row.getValue('paddyType')}</div>
@@ -105,7 +129,15 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'doQty',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='DO Qty' />
+            <DataTableColumnHeader
+                column={column}
+                title={t(
+                    'outward.privatePaddyOutward.form.fields.dealQuantity',
+                    {
+                        ns: 'mill-staff',
+                    }
+                )}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -116,7 +148,12 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'gunnyNew',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='New Gunny' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privatePaddyOutward.form.fields.gunnyNew', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyNew')}</div>
@@ -125,7 +162,12 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'gunnyOld',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Old Gunny' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privatePaddyOutward.form.fields.gunnyOld', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyOld')}</div>
@@ -134,7 +176,13 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Gunny' />
+            <DataTableColumnHeader
+                column={column}
+                title={t(
+                    'outward.privatePaddyOutward.form.fields.gunnyPlastic',
+                    { ns: 'mill-staff' }
+                )}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -143,7 +191,12 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'juteWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Jute Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privatePaddyOutward.form.fields.juteWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -156,7 +209,10 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Plastic Gunny Weight'
+                title={t(
+                    'outward.privatePaddyOutward.form.fields.plasticWeight',
+                    { ns: 'mill-staff' }
+                )}
             />
         ),
         cell: ({ row }) => (
@@ -168,7 +224,15 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'truckNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t(
+                    'outward.privatePaddyOutward.form.fields.truckNumber',
+                    {
+                        ns: 'mill-staff',
+                    }
+                )}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -179,7 +243,12 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'rstNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privatePaddyOutward.form.fields.rstNumber', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('rstNumber')}</div>
@@ -188,7 +257,15 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t(
+                    'outward.privatePaddyOutward.form.fields.truckWeight',
+                    {
+                        ns: 'mill-staff',
+                    }
+                )}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -199,7 +276,15 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t(
+                    'outward.privatePaddyOutward.form.fields.gunnyWeight',
+                    {
+                        ns: 'mill-staff',
+                    }
+                )}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -210,7 +295,12 @@ export const PrivatePaddyOutwardColumns: ColumnDef<PrivatePaddyOutward>[] = [
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Net Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.privatePaddyOutward.form.fields.netWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>

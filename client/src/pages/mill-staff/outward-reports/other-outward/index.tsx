@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -15,6 +16,7 @@ import { useOtherOutwardList } from './data/hooks'
 import { type OtherOutwardQueryParams } from './data/types'
 
 export function OtherOutwardReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
@@ -117,10 +119,10 @@ export function OtherOutwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Other Outward Report
+                            {t('outward.otherOutward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage other outward transactions and records
+                            {t('outward.otherOutward.description')}
                         </p>
                     </div>
                     <OtherOutwardPrimaryButtons />

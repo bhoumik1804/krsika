@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -15,6 +16,7 @@ import { RiceTable } from './components/rice-table'
 
 export function RicePurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
@@ -69,10 +71,10 @@ export function RicePurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Rice Purchase Report
+                            {t('purchaseReports.rice.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage rice purchase transactions and records
+                            {t('purchaseReports.rice.description')}
                         </p>
                     </div>
                     <RicePrimaryButtons />

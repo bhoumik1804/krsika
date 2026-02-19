@@ -24,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FrkPurchaseData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { frkColumns as columns } from './frk-columns'
+import { useFrkColumns } from './frk-columns'
 
 type DataTableProps = {
     data: FrkPurchaseData[]
@@ -50,6 +50,7 @@ export function FrkTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const columns = useFrkColumns()
 
     // Only handle column filters (pagination is server-side)
     const {

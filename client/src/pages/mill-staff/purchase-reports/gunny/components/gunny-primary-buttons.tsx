@@ -1,8 +1,10 @@
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useGunny } from './gunny-provider'
 
 export function GunnyPrimaryButtons() {
+    const { t } = useTranslation('mill-staff')
     const { setOpen, setCurrentRow } = useGunny()
 
     return (
@@ -13,7 +15,7 @@ export function GunnyPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            Add Purchase
+            {t('purchaseReports.gunny.form.primaryButton')}
         </Button>
     )
 }

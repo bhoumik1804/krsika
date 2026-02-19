@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import type { KhandaSalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { khandaSalesColumns as columns } from './khanda-sales-columns'
+import { useKhandaSalesColumns } from './khanda-sales-columns'
 
 type DataTableProps = {
     data: KhandaSalesResponse[]
@@ -33,6 +34,8 @@ type DataTableProps = {
 }
 
 export function KhandaSalesTable({ data, search, navigate }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
+    const columns = useKhandaSalesColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -94,7 +97,7 @@ export function KhandaSalesTable({ data, search, navigate }: DataTableProps) {
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
+                searchPlaceholder={t('common.search')}
                 searchKey='partyName'
                 filters={[]}
             />
@@ -167,7 +170,7 @@ export function KhandaSalesTable({ data, search, navigate }: DataTableProps) {
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

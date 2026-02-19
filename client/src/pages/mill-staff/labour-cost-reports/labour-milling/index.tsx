@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
@@ -16,6 +17,7 @@ import { useLabourMillingList } from './data/hooks'
 
 export function LabourMillingReport() {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     const queryParams = useMemo(() => {
@@ -89,10 +91,10 @@ export function LabourMillingReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Labour Milling Report
+                            {t('labourCostReports.milling.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage labour milling transactions and records
+                            {t('labourCostReports.milling.description')}
                         </p>
                     </div>
                     <LabourMillingPrimaryButtons />

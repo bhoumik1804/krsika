@@ -1,14 +1,16 @@
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useNakkhiSales } from './nakkhi-sales-provider'
 
 export function NakkhiSalesPrimaryButtons() {
+    const { t } = useTranslation('mill-staff')
     const { setOpen } = useNakkhiSales()
 
     return (
         <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
-            Add Record
+            {t('salesReports.nakkhi.form.primaryButton')}
         </Button>
     )
 }

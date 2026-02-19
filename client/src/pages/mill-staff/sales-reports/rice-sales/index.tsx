@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -18,6 +19,7 @@ import { RiceSalesTable } from './components/rice-sales-table'
 import { useRiceSalesList } from './data/hooks'
 
 export function RiceSalesReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -84,10 +86,10 @@ export function RiceSalesReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Rice Sales Report
+                            {t('salesReports.rice.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage rice sales transactions and records
+                            {t('salesReports.rice.description')}
                         </p>
                     </div>
                     <RiceSalesPrimaryButtons />

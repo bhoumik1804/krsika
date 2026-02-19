@@ -25,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type MillingPaddy } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { millingPaddyColumns as columns } from './milling-paddy-columns'
+import { MillingPaddyColumns } from './milling-paddy-columns'
 
 type DataTableProps = {
     data: MillingPaddy[]
@@ -80,7 +80,7 @@ export function MillingPaddyTable({
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
-        columns,
+        columns: MillingPaddyColumns(),
         state: {
             sorting,
             pagination,
@@ -194,7 +194,7 @@ export function MillingPaddyTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

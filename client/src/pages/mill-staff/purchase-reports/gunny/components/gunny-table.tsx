@@ -23,7 +23,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type GunnyPurchaseData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { gunnyColumns as columns } from './gunny-columns'
+import { useGunnyColumns } from './gunny-columns'
 import { useGunny } from './gunny-provider'
 
 type DataTableProps = {
@@ -52,6 +52,7 @@ export function GunnyTable({
     )
     const [sorting, setSorting] = useState<SortingState>([])
     const { queryParams, setQueryParams } = useGunny()
+    const columns = useGunnyColumns()
 
     // Pagination state from provider (server-side)
     const paginationState = {

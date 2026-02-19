@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/sale-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
@@ -54,6 +55,7 @@ export function OtherSalesActionDialog({
     onOpenChange,
     currentRow,
 }: OtherSalesActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const party = usePaginatedList(
         millId || '',
@@ -150,10 +152,20 @@ export function OtherSalesActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Other Sale
+                        {isEditing
+                            ? t('salesReports.other.form.title').replace(
+                                  'Add',
+                                  'Edit'
+                              )
+                            : t('salesReports.other.form.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the sale details below
+                        {isEditing
+                            ? t('salesReports.other.form.description').replace(
+                                  'Enter',
+                                  'Update'
+                              )
+                            : t('salesReports.other.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -168,7 +180,11 @@ export function OtherSalesActionDialog({
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Date</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'salesReports.other.form.fields.date'
+                                                )}
+                                            </FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
                                                 onOpenChange={
@@ -231,7 +247,11 @@ export function OtherSalesActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'salesReports.other.form.fields.partyName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -252,7 +272,11 @@ export function OtherSalesActionDialog({
                                     name='brokerName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Broker Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'salesReports.other.form.fields.brokerName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -273,7 +297,11 @@ export function OtherSalesActionDialog({
                                     name='otherSaleName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Item Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'salesReports.other.form.fields.otherSaleName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter item name'
@@ -289,7 +317,11 @@ export function OtherSalesActionDialog({
                                     name='otherSaleQty'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Quantity</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'salesReports.other.form.fields.otherSaleQty'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -318,7 +350,11 @@ export function OtherSalesActionDialog({
                                     name='qtyType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Quantity Type</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'salesReports.other.form.fields.qtyType'
+                                                )}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
@@ -354,7 +390,11 @@ export function OtherSalesActionDialog({
                                     name='rate'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Rate</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'salesReports.other.form.fields.rate'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -383,7 +423,11 @@ export function OtherSalesActionDialog({
                                     name='discountPercent'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Discount (%)</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'salesReports.other.form.fields.discountPercent'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -412,7 +456,11 @@ export function OtherSalesActionDialog({
                                     name='gst'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>GST (%)</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'salesReports.other.form.fields.gst'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -444,7 +492,7 @@ export function OtherSalesActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button
                                 type='submit'
@@ -453,7 +501,9 @@ export function OtherSalesActionDialog({
                                     updateOtherSalesMutation.isPending
                                 }
                             >
-                                {isEditing ? 'Update' : 'Add'} Sale
+                                {isEditing
+                                    ? t('common.update')
+                                    : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

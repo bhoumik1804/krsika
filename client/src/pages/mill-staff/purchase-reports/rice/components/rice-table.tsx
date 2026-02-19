@@ -24,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type RicePurchaseData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { riceColumns as columns } from './rice-columns'
+import { useRiceColumns } from './rice-columns'
 
 type DataTableProps = {
     data: RicePurchaseData[]
@@ -50,8 +50,7 @@ export function RiceTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-
-    // Only handle column filters (pagination is server-side)
+    const columns = useRiceColumns()
     const {
         columnFilters,
         onColumnFiltersChange,

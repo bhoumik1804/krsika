@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/purchase-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
@@ -54,6 +55,7 @@ export function OtherActionDialog({
     onOpenChange,
     currentRow,
 }: OtherActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useOther()
     const { mutateAsync: createOtherPurchase, isPending: isCreating } =
         useCreateOtherPurchase(millId)
@@ -144,11 +146,13 @@ export function OtherActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Other Purchase
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('purchaseReports.other.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the purchase details
-                        below
+                        {isEditing
+                            ? t('purchaseReports.other.form.description.update')
+                            : t('purchaseReports.other.form.description.add')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -163,7 +167,11 @@ export function OtherActionDialog({
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Date</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'purchaseReports.other.form.fields.date'
+                                                )}
+                                            </FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
                                                 onOpenChange={
@@ -226,7 +234,11 @@ export function OtherActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'purchaseReports.other.form.fields.partyName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -247,7 +259,11 @@ export function OtherActionDialog({
                                     name='brokerName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Broker Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'purchaseReports.other.form.fields.brokerName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={field.value}
@@ -268,7 +284,11 @@ export function OtherActionDialog({
                                     name='otherPurchaseName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Item Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'purchaseReports.other.form.fields.otherPurchaseName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder='Enter item name'
@@ -285,7 +305,11 @@ export function OtherActionDialog({
                                     name='otherPurchaseQty'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Quantity</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'purchaseReports.other.form.fields.otherPurchaseQty'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -317,7 +341,11 @@ export function OtherActionDialog({
                                     name='qtyType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Quantity Type</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'purchaseReports.other.form.fields.qtyType'
+                                                )}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 value={field.value || ''}
@@ -353,7 +381,11 @@ export function OtherActionDialog({
                                     name='rate'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Rate</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'purchaseReports.other.form.fields.rate'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -385,7 +417,11 @@ export function OtherActionDialog({
                                     name='discountPercent'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Discount (%)</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'purchaseReports.other.form.fields.discountPercent'
+                                                )}{' '}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -417,7 +453,11 @@ export function OtherActionDialog({
                                     name='gst'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>GST (%)</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'purchaseReports.other.form.fields.gst'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -458,12 +498,12 @@ export function OtherActionDialog({
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}{' '}
-                                Purchase
+                                      ? t('common.update')
+                                      : t('common.add')}{' '}
+                                {t('common.purchase')}
                             </Button>
                         </DialogFooter>
                     </form>
