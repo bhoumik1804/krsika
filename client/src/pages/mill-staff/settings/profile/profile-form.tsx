@@ -1,13 +1,9 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-    useUser,
-    useUpdateProfile,
-    useChangePassword,
-} from '@/pages/landing/hooks'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { useUser, useUpdateProfile, useChangePassword } from '@/pages/landing/hooks'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -21,55 +17,64 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 
-const profileFormSchema = z
-    .object({
-        name: z
-            .string()
-            .min(2, 'Name must be at least 2 characters.')
-            .max(30, 'Name must not be longer than 30 characters.'),
-        email: z.string().email('Please enter a valid email.'),
-        role: z.string().optional(),
-        post: z.string().optional(),
-        currentPassword: z.string().optional(),
-        newPassword: z.string().optional(),
-        confirmPassword: z.string().optional(),
-    })
-    .superRefine((data, ctx) => {
-        if (data.newPassword && data.newPassword.length > 0) {
-            if (data.newPassword.length < 6) {
-                ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
-                    message: 'Password must be at least 6 characters.',
-                    path: ['newPassword'],
-                })
+const createProfileFormSchema = (t: (key: string) => string) =>
+    z
+        .object({
+            name: z
+                .string()
+                .min(2, t('settings.form.validation.nameMin'))
+                .max(30, t('settings.form.validation.nameMax')),
+            email: z.string().email(t('settings.form.validation.emailInvalid')),
+            role: z.string().optional(),
+            post: z.string().optional(),
+            currentPassword: z.string().optional(),
+            newPassword: z.string().optional(),
+            confirmPassword: z.string().optional(),
+        })
+        .superRefine((data, ctx) => {
+            if (data.newPassword && data.newPassword.length > 0) {
+                if (data.newPassword.length < 6) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: t('settings.form.validation.passwordMin'),
+                        path: ['newPassword'],
+                    })
+                }
+                if (!data.currentPassword) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: t(
+                            'settings.form.validation.currentPasswordRequired'
+                        ),
+                        path: ['currentPassword'],
+                    })
+                }
+                if (data.newPassword !== data.confirmPassword) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: t('settings.form.validation.passwordMatch'),
+                        path: ['confirmPassword'],
+                    })
+                }
             }
-            if (!data.currentPassword) {
-                ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
-                    message: 'Current password is required to change password.',
-                    path: ['currentPassword'],
-                })
-            }
-            if (data.newPassword !== data.confirmPassword) {
-                ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
-                    message: 'Passwords do not match.',
-                    path: ['confirmPassword'],
-                })
-            }
-        }
-    })
+        })
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>
+type ProfileFormValues = z.infer<ReturnType<typeof createProfileFormSchema>>
 
 export function ProfileForm() {
-    const { t } = useTranslation('mill-staff')
+    const { t } = useTranslation()
     const { user } = useUser()
     const { updateProfileAsync, isLoading: isUpdating } = useUpdateProfile()
     const { changePasswordAsync, isLoading: isChangingPassword } =
         useChangePassword()
 
     const isLoading = isUpdating || isChangingPassword
+    const profileFormSchema = createProfileFormSchema(t)
+    const roleLabels: Record<string, string> = {
+        'super-admin': t('settings.form.roles.superAdmin'),
+        'mill-admin': t('settings.form.roles.millAdmin'),
+        'mill-staff': t('settings.form.roles.millStaff'),
+    }
 
     const form = useForm<ProfileFormValues>({
         resolver: zodResolver(profileFormSchema),
@@ -97,38 +102,41 @@ export function ProfileForm() {
                     newPassword: data.newPassword,
                 })
                 toast.success(
-                    t('settings.profileForm.profileAndPasswordUpdated')
+                    t('settings.form.success.profileAndPasswordUpdated')
                 )
             } else {
-                toast.success(t('settings.profileForm.profileUpdated'))
+                toast.success(t('settings.form.success.profileUpdated'))
             }
         } catch (error: any) {
-            toast.error(error.message || t('settings.profileForm.updateFailed'))
+            toast.error(
+                error.message || t('settings.form.error.failedToUpdateProfile')
+            )
         }
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+            <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className='space-y-8'
+            >
                 <div className='grid gap-4 md:grid-cols-2'>
                     <FormField
                         control={form.control}
                         name='name'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>
-                                    {t('settings.profileForm.name')}
-                                </FormLabel>
+                                <FormLabel>{t('settings.form.name')}</FormLabel>
                                 <FormControl>
                                     <Input
                                         placeholder={t(
-                                            'settings.profileForm.namePlaceholder'
+                                            'settings.form.namePlaceholder'
                                         )}
                                         {...field}
                                     />
                                 </FormControl>
                                 <FormDescription>
-                                    {t('settings.profileForm.nameDescription')}
+                                    {t('settings.form.nameDesc')}
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -139,21 +147,19 @@ export function ProfileForm() {
                         name='email'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>
-                                    {t('settings.profileForm.email')}
-                                </FormLabel>
+                                <FormLabel>{t('settings.form.email')}</FormLabel>
                                 <FormControl>
                                     <Input
                                         type='email'
                                         placeholder={t(
-                                            'settings.profileForm.emailPlaceholder'
+                                            'settings.form.emailPlaceholder'
                                         )}
                                         {...field}
                                         readOnly
                                     />
                                 </FormControl>
                                 <FormDescription>
-                                    {t('settings.profileForm.emailDescription')}
+                                    {t('settings.form.emailDesc')}
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -164,9 +170,7 @@ export function ProfileForm() {
                         name='post'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>
-                                    {t('settings.profileForm.post')}
-                                </FormLabel>
+                                <FormLabel>{t('settings.form.post')}</FormLabel>
                                 <FormControl>
                                     <Input type='text' {...field} readOnly />
                                 </FormControl>
@@ -178,7 +182,7 @@ export function ProfileForm() {
 
                 <div className='space-y-4 rounded-lg border p-4'>
                     <h3 className='text-lg font-medium'>
-                        {t('settings.profileForm.changePassword')}
+                        {t('settings.form.changePassword')}
                     </h3>
                     <div className='grid gap-4 md:grid-cols-2'>
                         <FormField
@@ -187,15 +191,13 @@ export function ProfileForm() {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>
-                                        {t(
-                                            'settings.profileForm.currentPassword'
-                                        )}
+                                        {t('settings.form.currentPassword')}
                                     </FormLabel>
                                     <FormControl>
                                         <Input
                                             type='password'
                                             placeholder={t(
-                                                'settings.profileForm.currentPasswordPlaceholder'
+                                                'settings.form.currentPasswordPlaceholder'
                                             )}
                                             {...field}
                                         />
@@ -211,13 +213,13 @@ export function ProfileForm() {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>
-                                        {t('settings.profileForm.newPassword')}
+                                        {t('settings.form.newPassword')}
                                     </FormLabel>
                                     <FormControl>
                                         <Input
                                             type='password'
                                             placeholder={t(
-                                                'settings.profileForm.newPasswordPlaceholder'
+                                                'settings.form.newPasswordPlaceholder'
                                             )}
                                             {...field}
                                         />
@@ -232,15 +234,13 @@ export function ProfileForm() {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>
-                                        {t(
-                                            'settings.profileForm.confirmPassword'
-                                        )}
+                                        {t('settings.form.confirmPassword')}
                                     </FormLabel>
                                     <FormControl>
                                         <Input
                                             type='password'
                                             placeholder={t(
-                                                'settings.profileForm.confirmPasswordPlaceholder'
+                                                'settings.form.confirmPasswordPlaceholder'
                                             )}
                                             {...field}
                                         />
@@ -257,28 +257,15 @@ export function ProfileForm() {
                     name='role'
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>
-                                {t('settings.profileForm.role')}
-                            </FormLabel>
+                            <FormLabel>{t('settings.form.role')}</FormLabel>
                             <div className='pt-1'>
                                 <Badge variant='secondary'>
-                                    {field.value === 'super-admin'
-                                        ? t(
-                                              'settings.profileForm.roles.superAdmin'
-                                          )
-                                        : field.value === 'mill-admin'
-                                          ? t(
-                                                'settings.profileForm.roles.millAdmin'
-                                            )
-                                          : field.value === 'mill-staff'
-                                            ? t(
-                                                  'settings.profileForm.roles.millStaff'
-                                              )
-                                            : field.value}
+                                    {roleLabels[field.value ?? ''] ??
+                                        field.value}
                                 </Badge>
                             </div>
                             <FormDescription>
-                                {t('settings.profileForm.roleDescription')}
+                                {t('settings.form.roleDesc')}
                             </FormDescription>
                         </FormItem>
                     )}
@@ -286,8 +273,8 @@ export function ProfileForm() {
 
                 <Button type='submit' disabled={isLoading}>
                     {isLoading
-                        ? t('settings.profileForm.updating')
-                        : t('settings.profileForm.updateProfile')}
+                        ? t('settings.form.updating')
+                        : t('settings.form.updateProfile')}
                 </Button>
             </form>
         </Form>
