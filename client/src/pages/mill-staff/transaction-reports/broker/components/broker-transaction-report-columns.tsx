@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { type ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -6,7 +7,9 @@ import { type BrokerTransaction } from '../data/schema'
 import { format } from 'date-fns'
 
 /** Read-only columns for Broker Transaction Report (aggregated from deals) */
-export const brokerTransactionReportColumns: ColumnDef<BrokerTransaction>[] = [
+export function BrokerTransactionReportColumns(): ColumnDef<BrokerTransaction>[] {
+    const { t } = useTranslation()
+    return [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,7 +42,7 @@ export const brokerTransactionReportColumns: ColumnDef<BrokerTransaction>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader column={column} title={t('transactionReports.broker.columns.brokerName')} />
         ),
         cell: ({ row }) => (
             <div className='font-medium'>{row.getValue('brokerName')}</div>
@@ -55,14 +58,14 @@ export const brokerTransactionReportColumns: ColumnDef<BrokerTransaction>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party' />
+            <DataTableColumnHeader column={column} title={t('transactionReports.broker.columns.partyName')} />
         ),
         cell: ({ row }) => <div>{row.getValue('partyName') || '-'}</div>,
     },
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader column={column} title={t('transactionReports.broker.columns.date')} />
         ),
         cell: ({ row }) => (
             <div>{format(new Date(row.getValue('date')), 'yyyy-MM-dd')}</div>
@@ -71,7 +74,7 @@ export const brokerTransactionReportColumns: ColumnDef<BrokerTransaction>[] = [
     {
         accessorKey: 'purchaseDeal',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Purchase Deal' />
+            <DataTableColumnHeader column={column} title={t('transactionReports.broker.columns.purchaseDeal')} />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -82,7 +85,7 @@ export const brokerTransactionReportColumns: ColumnDef<BrokerTransaction>[] = [
     {
         accessorKey: 'salesDeal',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Sales Deal' />
+            <DataTableColumnHeader column={column} title={t('transactionReports.broker.columns.saleDeal')} />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -93,7 +96,7 @@ export const brokerTransactionReportColumns: ColumnDef<BrokerTransaction>[] = [
     {
         accessorKey: 'brokerage',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Brokerage' />
+            <DataTableColumnHeader column={column} title={t('transactionReports.broker.columns.brokerage')} />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -101,4 +104,5 @@ export const brokerTransactionReportColumns: ColumnDef<BrokerTransaction>[] = [
             </div>
         ),
     },
-]
+    ]
+}

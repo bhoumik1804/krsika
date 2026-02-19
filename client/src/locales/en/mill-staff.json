@@ -1023,5 +1023,46 @@
                 }
             }
         }
+    },
+    "transactionReports": {
+        "sidebarTitle": "Transaction Reports",
+        "broker": {
+            "title": "Broker Account",
+            "description": "Manage broker transaction records",
+            "columns": {
+                "brokerName": "Broker Name",
+                "partyName": "Party Name",
+                "date": "Date",
+                "purchaseDeal": "Purchase Deal",
+                "saleDeal": "Sale Deal",
+                "inward": "Inward",
+                "outward": "Outward",
+                "accountReceipt": "Account (Receipt)",
+                "accountPayment": "Account (Payment)",
+                "accountBrokerage": "Account (Brokerage)",
+                "receipt": "Receipt",
+                "payment": "Payment",
+                "brokerage": "Brokerage"
+            }
+        },
+        "party": {
+            "title": "Party Account",
+            "description": "Manage party transaction records",
+            "columns": {
+                "partyName": "Party Name",
+                "brokerName": "Broker Name",
+                "date": "Date",
+                "purchaseDeal": "Purchase Deal",
+                "saleDeal": "Sale Deal",
+                "inward": "Inward",
+                "outward": "Outward",
+                "accountReceipt": "Account (Receipt)",
+                "accountPayment": "Account (Payment)",
+                "accountBrokerage": "Account (Brokerage)",
+                "receipt": "Receipt",
+                "payment": "Payment",
+                "brokerage": "Brokerage"
+            }
+        }
     }
 }

@@ -8,6 +8,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -20,15 +21,19 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type PartyTransaction } from '../data/schema'
-import { partyTransactionReportColumns as columns } from './party-transaction-report-columns'
-import { Loader2 } from 'lucide-react'
+import { PartyTransactionReportColumns } from './party-transaction-report-columns'
 
 type DataTableProps = {
     data: PartyTransaction[]
     search: Record<string, unknown>
     navigate: NavigateFn
     loading?: boolean
-    serverPagination?: { page: number; limit: number; total: number; totalPages: number }
+    serverPagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+    }
 }
 
 export function PartyTransactionReportTable({
@@ -38,7 +43,9 @@ export function PartyTransactionReportTable({
     loading = false,
     serverPagination,
 }: DataTableProps) {
-    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+        {}
+    )
     const [sorting, setSorting] = useState<SortingState>([])
 
     const {
@@ -59,7 +66,7 @@ export function PartyTransactionReportTable({
 
     const table = useReactTable({
         data,
-        columns,
+        columns: PartyTransactionReportColumns(),
         getRowId: (row) => row._id,
         manualPagination: true,
         pageCount: serverPagination?.totalPages ?? 0,
@@ -105,21 +112,27 @@ export function PartyTransactionReportTable({
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id} className='group/row'>
+                            <TableRow
+                                key={headerGroup.id}
+                                className='group/row'
+                            >
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
                                         colSpan={header.colSpan}
                                         className={cn(
                                             'bg-background',
-                                            header.column.columnDef.meta?.className,
-                                            header.column.columnDef.meta?.thClassName
+                                            header.column.columnDef.meta
+                                                ?.className,
+                                            header.column.columnDef.meta
+                                                ?.thClassName
                                         )}
                                     >
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
-                                                  header.column.columnDef.header,
+                                                  header.column.columnDef
+                                                      .header,
                                                   header.getContext()
                                               )}
                                     </TableHead>
@@ -136,8 +149,10 @@ export function PartyTransactionReportTable({
                                             key={cell.id}
                                             className={cn(
                                                 'bg-background',
-                                                cell.column.columnDef.meta?.className,
-                                                cell.column.columnDef.meta?.tdClassName
+                                                cell.column.columnDef.meta
+                                                    ?.className,
+                                                cell.column.columnDef.meta
+                                                    ?.tdClassName
                                             )}
                                         >
                                             {flexRender(
@@ -151,10 +166,12 @@ export function PartyTransactionReportTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
-                                    {loading ? 'Loading...' : 'No transactions found.'}
+                                    {loading
+                                        ? 'Loading...'
+                                        : 'No transactions found.'}
                                 </TableCell>
                             </TableRow>
                         )}
