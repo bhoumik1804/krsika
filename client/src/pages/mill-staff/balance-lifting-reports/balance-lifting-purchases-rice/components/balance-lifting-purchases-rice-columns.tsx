@@ -6,6 +6,7 @@ import { LongText } from '@/components/long-text'
 import { type BalanceLiftingPurchasesRice } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 import { format } from 'date-fns'
+import { useTranslation } from 'react-i18next'
 
 export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     {
@@ -39,9 +40,15 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     },
     {
         accessorKey: 'date',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.purchase.rice.form.fields.date')}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
                 {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
@@ -57,9 +64,17 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     },
     {
         accessorKey: 'partyName',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.partyName'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <LongText className='max-w-36'>
                 {row.getValue('partyName') || '-'}
@@ -68,9 +83,17 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     },
     {
         accessorKey: 'brokerName',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.brokerName'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-nowrap'>
                 {row.getValue('brokerName') || '-'}
@@ -79,9 +102,17 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     },
     {
         accessorKey: 'deliveryType',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Delivery Type' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.deliveryType'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-nowrap'>
                 {row.getValue('deliveryType') || '-'}
@@ -90,9 +121,17 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     },
     {
         accessorKey: 'lotOrOther',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Lot / Other' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.lotOrOther'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-nowrap'>
                 {row.getValue('lotOrOther') || '-'}
@@ -101,45 +140,83 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     },
     {
         accessorKey: 'fciOrNAN',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='FCI / NAN' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.fciOrNAN'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('fciOrNAN') || '-'}</div>
         ),
     },
     {
         accessorKey: 'riceType',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rice Type' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.riceType'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('riceType') || '-'}</div>
         ),
     },
     {
         accessorKey: 'riceQty',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Qty (Qtl)' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.purchase.rice.form.fields.riceQty')}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>{row.original.riceQty || 0}</div>
         ),
     },
     {
         accessorKey: 'riceRate',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rate/Qtl' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.riceRate'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>₹{row.original.riceRate || 0}</div>
         ),
     },
     {
         accessorKey: 'discountPercent',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Discount %' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.discountPercent'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>
                 {row.original.discountPercent || 0}%
@@ -148,9 +225,17 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     },
     {
         accessorKey: 'brokeragePerQuintal',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Brokerage/Qtl' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.brokeragePerQuintal'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>
                 ₹{row.original.brokeragePerQuintal || 0}
@@ -159,18 +244,32 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     },
     {
         accessorKey: 'frkType',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='FRK Type' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.purchase.rice.form.fields.frkType')}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('frkType') || '-'}</div>
         ),
     },
     {
         accessorKey: 'frkRatePerQuintal',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='FRK Rate/Qtl' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.frkRatePerQuintal'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>
                 ₹{row.original.frkRatePerQuintal || 0}
@@ -179,9 +278,17 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     },
     {
         accessorKey: 'lotNumber',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='LOT No.' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.lotNumber'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-nowrap'>
                 {row.getValue('lotNumber') || '-'}
@@ -190,9 +297,17 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     },
     {
         accessorKey: 'gunnyType',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Type' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.gunnyType'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-nowrap'>
                 {row.getValue('gunnyType') || '-'}
@@ -201,27 +316,51 @@ export const riceColumns: ColumnDef<BalanceLiftingPurchasesRice>[] = [
     },
     {
         accessorKey: 'newGunnyRate',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='New Gunny Rate' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.newGunnyRate'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>₹{row.original.newGunnyRate || 0}</div>
         ),
     },
     {
         accessorKey: 'oldGunnyRate',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Old Gunny Rate' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.oldGunnyRate'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>₹{row.original.oldGunnyRate || 0}</div>
         ),
     },
     {
         accessorKey: 'plasticGunnyRate',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Gunny Rate' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.rice.form.fields.plasticGunnyRate'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>
                 ₹{row.original.plasticGunnyRate || 0}

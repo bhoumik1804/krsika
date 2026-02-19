@@ -1376,5 +1376,226 @@
                 "millStaff": "Mill Staff"
             }
         }
+    },
+    "sidebar": {
+        "dashboard": "Dashboard",
+        "overview": "Overview",
+        "staff": "Staff",
+        "staffDirectory": "Staff Directory",
+        "purchaseReports": "Purchase Reports",
+        "paddyPurchaseReport": "Paddy Purchase Report",
+        "ricePurchaseReport": "Rice Purchase Report",
+        "gunnyPurchaseReport": "Gunny Purchase Report",
+        "frkPurchaseReport": "FRK Purchase Report",
+        "otherPurchaseReport": "Other Purchase Report",
+        "salesReports": "Sales Reports",
+        "riceSalesReport": "Rice Sales Report",
+        "paddySalesReport": "Paddy Sales Report",
+        "gunnySalesReport": "Gunny Sales Report",
+        "khandaSalesReport": "Khanda Sales Report",
+        "nakkhiSalesReport": "Nakkhi Sales Report",
+        "otherSalesReport": "Other Sales Report",
+        "inputReports": "Input Reports",
+        "partyReport": "Party Report",
+        "transporterReport": "Transporter Report",
+        "brokerReport": "Broker Report",
+        "committeeReport": "Committee Report",
+        "doReport": "DO Report",
+        "vehicleReport": "Vehicle Report",
+        "staffReport": "Staff Report",
+        "labourGroupReport": "Labour Group Report",
+        "dailyReports": "Daily Reports",
+        "purchaseDeals": "Purchase Deals",
+        "salesDeals": "Sales Deals",
+        "inwards": "Inwards",
+        "outwards": "Outwards",
+        "milling": "Milling",
+        "production": "Production",
+        "receipt": "Receipt",
+        "payment": "Payment",
+        "stockReports": "Stock Reports",
+        "stockOverview": "Stock Overview",
+        "transaction": "Transaction",
+        "brokerTransaction": "Broker's Transaction",
+        "partyTransaction": "Party's Transaction",
+        "inwardAndOutward": "Inward & Outward",
+        "inward": "Inward",
+        "outward": "Outward",
+        "govtPaddyInwardReport": "Govt Paddy Inward Report",
+        "privatePaddyInwardReport": "Private Paddy Inward Report",
+        "riceInwardReport": "Rice Inward Report",
+        "gunnyInwardReport": "Gunny Inward Report",
+        "otherInwardReport": "Other Inward Report",
+        "frkInwardReport": "FRK Inward Report",
+        "privatePaddyOutwardReport": "Private Paddy Outward Report",
+        "privateRiceOutwardReport": "Private Rice Outward Report",
+        "govtRiceOutwardReport": "Govt Rice Outward Report",
+        "govtGunnyOutwardReport": "Govt Gunny Outward Report",
+        "privateGunnyOutwardReport": "Private Gunny Outward Report",
+        "frkOutwardReport": "FRK Outward Report",
+        "khandaOutwardReport": "Khanda Outward Report",
+        "nakkhiOutwardReport": "Nakkhi Outward Report",
+        "bhusaOutwardReport": "Bhusa Outward Report",
+        "kodhaOutwardReport": "Kodha Outward Report",
+        "silkyKodhaOutwardReport": "Silky Kodha Outward Report",
+        "otherOutwardReport": "Other Outward Report",
+        "millingReports": "Milling Reports",
+        "paddyMillingReport": "Paddy Milling Report",
+        "riceMillingReport": "Rice Milling Report",
+        "labourCostReport": "Labour Cost Report",
+        "inwardLabourCostReport": "Inward Labour Cost Report",
+        "outwardLabourCostReport": "Outward Labour Cost Report",
+        "millingLabourCostReport": "Milling Labour Cost Report",
+        "otherLabourCostReport": "Other Labour Cost Report",
+        "financialTransactionReports": "Financial Transaction Reports",
+        "financialReceiptReport": "Financial Receipt Report",
+        "financialPaymentReport": "Financial Payment Report",
+        "other": "Other",
+        "settings": "Settings",
+        "profile": "Profile",
+        "appearance": "Appearance",
+        "myProfile": "My Profile",
+        "balanceLiftingPurchases": "Balance Lifting Purchases",
+        "reportBalanceLiftingPaddyPurchases": "Balance Lifting Paddy Purchase Report",
+        "reportBalanceLiftingRicePurchases": "Balance Lifting Rice Purchase Report",
+        "reportBalanceLiftingGunnyPurchases": "Balance Lifting Gunny Purchase Report",
+        "reportBalanceLiftingFrkPurchases": "Balance Lifting FRK Purchase Report",
+        "balanceLiftingSales": "Balance Lifting Sales",
+        "reportBalanceLiftingPaddySales": "Balance Lifting Paddy Sales Report",
+        "outwardBalanceLiftingRiceSales": "Outward Balance Lifting Rice Sales",
+        "outwardBalanceLiftingReportRiceSales": "Outward Balance Lifting Rice Sales Report"
+    },
+    "balanceLifting": {
+        "purchase": {
+            "paddy": {
+                "title": "Paddy Purchase Report",
+                "description": "Manage paddy purchase transactions and records",
+                "form": {
+                    "title_add": "Add Paddy Purchase",
+                    "title_edit": "Edit Paddy Purchase",
+                    "description_add": "Enter the purchase details below",
+                    "description_edit": "Update the purchase details below",
+                    "fields": {
+                        "date": "Date",
+                        "dealNumber": "Paddy Purchase Deal Number",
+                        "partyName": "Party Name",
+                        "paddyQty": "Paddy Qty",
+                        "balance": "Balance",
+                        "balanceLifting": "Balance Lifting"
+                    }
+                }
+            },
+            "rice": {
+                "title": "Rice Purchase Report",
+                "description": "Manage Rice purchase transactions and records",
+                "form": {
+                    "title_add": "Add Rice Purchase",
+                    "title_edit": "Edit Rice Purchase",
+                    "description_add": "Enter the purchase details below",
+                    "description_edit": "Update the purchase details below",
+                    "fields": {
+                        "date": "Date",
+                        "partyName": "Party Name",
+                        "brokerName": "Broker Name",
+                        "deliveryType": "Delivery Type",
+                        "lotOrOther": "Lot / Other",
+                        "fciOrNAN": "FCI / NAN",
+                        "lotNumber": "Lot No.",
+                        "frkType": "FRK",
+                        "frkRatePerQuintal": "FRK Rate (Per Qtl)",
+                        "riceType": "Rice Type",
+                        "riceQty": "Quantity (Quintal)",
+                        "riceRate": "Rice Rate",
+                        "discountPercent": "Batav %",
+                        "brokeragePerQuintal": "Brokerage (Per Quintal)",
+                        "gunnyType": "Gunny Included / Return",
+                        "newGunnyRate": "New Gunny Rate",
+                        "oldGunnyRate": "Old Gunny Rate",
+                        "plasticGunnyRate": "Plastic Gunny Rate"
+                    }
+                }
+            },
+            "frk": {
+                "title": "FRK Purchase Report",
+                "description": "Manage FRK purchase transactions and records",
+                "form": {
+                    "title_add": "Add FRK Purchase",
+                    "title_edit": "Edit FRK Purchase",
+                    "description_add": "Enter the purchase details below",
+                    "description_edit": "Update the purchase details below",
+                    "fields": {
+                        "date": "Date",
+                        "dealNumber": "FRK Purchase Deal Number",
+                        "partyName": "Party Name",
+                        "frkQty": "FRK Qty",
+                        "balance": "Balance",
+                        "balanceLifting": "Balance Lifting"
+                    }
+                }
+            },
+            "gunny": {
+                "title": "Gunny Purchase Report",
+                "description": "View and manage gunny purchase records",
+                "form": {
+                    "title_add": "Add Gunny Purchase",
+                    "title_edit": "Edit Gunny Purchase",
+                    "description_add": "Enter the purchase details below",
+                    "description_edit": "Update the purchase details below",
+                    "fields": {
+                        "date": "Date",
+                        "partyName": "Party Name",
+                        "deliveryType": "Delivery Type",
+                        "newGunnyQty": "New Gunny Qty",
+                        "newGunnyRate": "New Gunny Rate",
+                        "oldGunnyQty": "Old Gunny Qty",
+                        "oldGunnyRate": "Old Gunny Rate",
+                        "plasticGunnyQty": "Plastic Gunny Qty",
+                        "plasticGunnyRate": "Plastic Gunny Rate"
+                    }
+                }
+            }
+        },
+        "sales": {
+            "paddy": {
+                "title": "Paddy Sale Report",
+                "description": "Manage paddy sale transactions and records",
+                "form": {
+                    "title_add": "Add Paddy Sale",
+                    "title_edit": "Edit Paddy Sale",
+                    "description_add": "Enter the sale details below",
+                    "description_edit": "Update the sale details below",
+                    "fields": {
+                        "date": "Date",
+                        "dealNumber": "Paddy Sales Deal Number",
+                        "partyName": "Party Name",
+                        "brokerName": "Broker Name",
+                        "paddyQty": "Paddy Qty",
+                        "lifting": "Lifting",
+                        "balance": "Balance",
+                        "balanceLifting": "Balance Lifting"
+                    }
+                }
+            }
+        },
+        "outward": {
+            "rice": {
+                "title": "Rice Outward Report",
+                "description": "Manage rice outward transactions and records",
+                "form": {
+                    "title_add": "Add Rice Outward",
+                    "title_edit": "Edit Rice Outward",
+                    "description_add": "Enter the outward details below",
+                    "description_edit": "Update the outward details below",
+                    "fields": {
+                        "date": "Date",
+                        "dealNumber": "Rice Outward Deal Number",
+                        "partyName": "Party Name",
+                        "riceQty": "Rice Qty",
+                        "balance": "Balance",
+                        "balanceLifting": "Balance Lifting"
+                    }
+                }
+            }
+        }
     }
 }

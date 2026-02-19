@@ -21,6 +21,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table'
+import { useTranslation } from 'react-i18next'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BalanceLiftingPurchasesGunny } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
@@ -108,6 +109,8 @@ export function BalanceLiftingPurchasesGunnyTable({
         }
     }, [table, ensurePageInRange, serverPagination])
 
+    const { t } = useTranslation('mill-staff')
+
     return (
         <div
             className={cn(
@@ -117,7 +120,7 @@ export function BalanceLiftingPurchasesGunnyTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Filter purchases...'
+                searchPlaceholder={t('common.search')}
                 searchKey='partyName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -144,10 +147,10 @@ export function BalanceLiftingPurchasesGunnyTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}
@@ -189,7 +192,7 @@ export function BalanceLiftingPurchasesGunnyTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

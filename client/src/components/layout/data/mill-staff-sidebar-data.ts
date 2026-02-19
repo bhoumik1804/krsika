@@ -24,10 +24,10 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
     },
     navGroups: [
         {
-            title: 'Dashboard',
+            title: 'sidebar.dashboard',
             items: [
                 {
-                    title: 'Overview',
+                    title: 'sidebar.overview',
                     url: `/staff/${millId}`,
                     icon: LayoutDashboard,
                     // moduleSlug: 'dashboard-overview',
@@ -35,10 +35,10 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Staff',
+            title: 'sidebar.staff',
             items: [
                 {
-                    title: 'Staff Directory',
+                    title: 'sidebar.staffDirectory',
                     url: `/staff/${millId}/manage/staff`,
                     icon: UserCog,
                     moduleSlug: 'staff-directory',
@@ -46,34 +46,34 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Purchase Reports',
+            title: 'sidebar.purchaseReports',
             items: [
                 {
-                    title: 'Paddy Purchase Report',
+                    title: 'sidebar.paddyPurchaseReport',
                     url: `/staff/${millId}/purchases/paddy/report`,
                     icon: FileBarChart,
                     moduleSlug: 'paddy-purchase-report',
                 },
                 {
-                    title: 'Rice Purchase Report',
+                    title: 'sidebar.ricePurchaseReport',
                     url: `/staff/${millId}/purchases/rice/report`,
                     icon: FileBarChart,
                     moduleSlug: 'rice-purchase-report',
                 },
                 {
-                    title: 'Gunny Purchase Report',
+                    title: 'sidebar.gunnyPurchaseReport',
                     url: `/staff/${millId}/purchases/gunny/report`,
                     icon: FileBarChart,
                     moduleSlug: 'gunny-purchase-report',
                 },
                 {
-                    title: 'FRK Purchase Report',
+                    title: 'sidebar.frkPurchaseReport',
                     url: `/staff/${millId}/purchases/frk/report`,
                     icon: FileBarChart,
                     moduleSlug: 'frk-purchase-report',
                 },
                 {
-                    title: 'Other Purchase Report',
+                    title: 'sidebar.otherPurchaseReport',
                     url: `/staff/${millId}/purchases/other/report`,
                     icon: FileBarChart,
                     moduleSlug: 'other-purchase-report',
@@ -81,40 +81,40 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Sales Reports',
+            title: 'sidebar.salesReports',
             items: [
                 {
-                    title: 'Rice Sales Report',
+                    title: 'sidebar.riceSalesReport',
                     url: `/staff/${millId}/sales/rice/report`,
                     icon: FileBarChart,
                     moduleSlug: 'rice-sales-report',
                 },
                 {
-                    title: 'Paddy Sales Report',
+                    title: 'sidebar.paddySalesReport',
                     url: `/staff/${millId}/sales/paddy/report`,
                     icon: FileBarChart,
                     moduleSlug: 'paddy-sales-report',
                 },
                 {
-                    title: 'Gunny Sales Report',
+                    title: 'sidebar.gunnySalesReport',
                     url: `/staff/${millId}/sales/gunny/report`,
                     icon: FileBarChart,
                     moduleSlug: 'gunny-sales-report',
                 },
                 {
-                    title: 'Khanda Sales Report',
+                    title: 'sidebar.khandaSalesReport',
                     url: `/staff/${millId}/sales/khanda/report`,
                     icon: FileBarChart,
                     moduleSlug: 'khanda-sales-report',
                 },
                 {
-                    title: 'Nakkhi Sales Report',
+                    title: 'sidebar.nakkhiSalesReport',
                     url: `/staff/${millId}/sales/nakkhi/report`,
                     icon: FileBarChart,
                     moduleSlug: 'nakkhi-sales-report',
                 },
                 {
-                    title: 'Other Sales Report',
+                    title: 'sidebar.otherSalesReport',
                     url: `/staff/${millId}/sales/other/report`,
                     icon: FileBarChart,
                     moduleSlug: 'other-sales-report',
@@ -122,52 +122,52 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Input Reports',
+            title: 'sidebar.inputReports',
             items: [
                 {
-                    title: 'Party Report',
+                    title: 'sidebar.partyReport',
                     url: `/staff/${millId}/input/reports/party`,
                     icon: FileBarChart,
                     moduleSlug: 'party-report',
                 },
                 {
-                    title: 'Transporter Report',
+                    title: 'sidebar.transporterReport',
                     url: `/staff/${millId}/input/reports/transporter`,
                     icon: FileBarChart,
                     moduleSlug: 'transporter-report',
                 },
                 {
-                    title: 'Broker Report',
+                    title: 'sidebar.brokerReport',
                     url: `/staff/${millId}/input/reports/broker`,
                     icon: FileBarChart,
                     moduleSlug: 'broker-report',
                 },
                 {
-                    title: 'Committee Report',
+                    title: 'sidebar.committeeReport',
                     url: `/staff/${millId}/input/reports/committee`,
                     icon: FileBarChart,
                     moduleSlug: 'committee-report',
                 },
                 {
-                    title: 'DO Report',
+                    title: 'sidebar.doReport',
                     url: `/staff/${millId}/input/reports/do`,
                     icon: FileBarChart,
                     moduleSlug: 'do-report',
                 },
                 {
-                    title: 'Vehicle Report',
+                    title: 'sidebar.vehicleReport',
                     url: `/staff/${millId}/input/reports/vehicle`,
                     icon: FileBarChart,
                     moduleSlug: 'vehicle-report',
                 },
                 {
-                    title: 'Staff Report',
+                    title: 'sidebar.staffReport',
                     url: `/staff/${millId}/input/reports/staff`,
                     icon: FileBarChart,
                     moduleSlug: 'staff-report',
                 },
                 {
-                    title: 'Labour Group Report',
+                    title: 'sidebar.labourGroupReport',
                     url: `/staff/${millId}/input/reports/labour-group`,
                     icon: FileBarChart,
                     moduleSlug: 'labour-group-report',
@@ -175,52 +175,52 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Daily Reports',
+            title: 'sidebar.dailyReports',
             items: [
                 {
-                    title: 'Purchase Deals',
+                    title: 'sidebar.purchaseDeals',
                     url: `/staff/${millId}/daily/reports/purchase`,
                     icon: FileBarChart,
                     moduleSlug: 'daily-receipt',
                 },
                 {
-                    title: 'Sales Deals',
+                    title: 'sidebar.salesDeals',
                     url: `/staff/${millId}/daily/reports/sales`,
                     icon: FileBarChart,
                     moduleSlug: 'daily-payment',
                 },
                 {
-                    title: 'Inwards',
+                    title: 'sidebar.inwards',
                     url: `/staff/${millId}/daily/reports/inwards`,
                     icon: FileBarChart,
                     moduleSlug: 'daily-reports-overview',
                 },
                 {
-                    title: 'Outwards',
+                    title: 'sidebar.outwards',
                     url: `/staff/${millId}/daily/reports/outwards`,
                     icon: FileBarChart,
                     moduleSlug: 'daily-reports-overview',
                 },
                 {
-                    title: 'Milling',
+                    title: 'sidebar.milling',
                     url: `/staff/${millId}/daily/reports/milling`,
                     icon: FileBarChart,
                     moduleSlug: 'daily-reports-overview',
                 },
                 {
-                    title: 'Production',
+                    title: 'sidebar.production',
                     url: `/staff/${millId}/daily/reports/production`,
                     icon: FileBarChart,
                     moduleSlug: 'daily-reports-overview',
                 },
                 {
-                    title: 'Receipt',
+                    title: 'sidebar.receipt',
                     url: `/staff/${millId}/daily/reports/receipt`,
                     icon: FileBarChart,
                     moduleSlug: 'daily-receipt',
                 },
                 {
-                    title: 'Payment',
+                    title: 'sidebar.payment',
                     url: `/staff/${millId}/daily/reports/payment`,
                     icon: FileBarChart,
                     moduleSlug: 'daily-payment',
@@ -228,10 +228,10 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Stock Reports',
+            title: 'sidebar.stockReports',
             items: [
                 {
-                    title: 'Stock Overview',
+                    title: 'sidebar.stockOverview',
                     url: `/staff/${millId}/stock/overview/report`,
                     icon: Package,
                     moduleSlug: 'stock-overview',
@@ -239,16 +239,16 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Transaction',
+            title: 'sidebar.transaction',
             items: [
                 {
-                    title: "Broker's Transaction",
+                    title: 'sidebar.brokerTransaction',
                     url: `/staff/${millId}/transaction/broker`,
                     icon: ArrowLeftRight,
                     moduleSlug: 'broker-transaction',
                 },
                 {
-                    title: "Party's Transaction",
+                    title: 'sidebar.partyTransaction',
                     url: `/staff/${millId}/transaction/party`,
                     icon: ArrowLeftRight,
                     moduleSlug: 'party-transaction',
@@ -307,105 +307,105 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Inward & Outward',
+            title: 'sidebar.inwardAndOutward',
             items: [
                 {
-                    title: 'Inward',
+                    title: 'sidebar.inward',
                     icon: ArrowLeftToLine,
                     items: [
                         {
-                            title: 'Govt Paddy Inward Report',
+                            title: 'sidebar.govtPaddyInwardReport',
                             url: `/staff/${millId}/inward/govt/paddy/report`,
                             moduleSlug: 'inward-govt-paddy',
                         },
                         {
-                            title: 'Private Paddy Inward Report',
+                            title: 'sidebar.privatePaddyInwardReport',
                             url: `/staff/${millId}/inward/private/paddy/report`,
                             moduleSlug: 'inward-private-paddy',
                         },
                         {
-                            title: 'Rice Inward Report',
+                            title: 'sidebar.riceInwardReport',
                             url: `/staff/${millId}/inward/rice/report`,
                             moduleSlug: 'inward-rice',
                         },
                         {
-                            title: 'Gunny Inward Report',
+                            title: 'sidebar.gunnyInwardReport',
                             url: `/staff/${millId}/inward/gunny/report`,
                             moduleSlug: 'inward-gunny',
                         },
                         {
-                            title: 'Other Inward Report',
+                            title: 'sidebar.otherInwardReport',
                             url: `/staff/${millId}/inward/other/report`,
                             moduleSlug: 'inward-other',
                         },
                         {
-                            title: 'FRK Inward Report',
+                            title: 'sidebar.frkInwardReport',
                             url: `/staff/${millId}/inward/frk/report`,
                             moduleSlug: 'inward-frk',
                         },
                     ],
                 },
                 {
-                    title: 'Outward',
+                    title: 'sidebar.outward',
                     icon: ArrowRightFromLine,
                     items: [
                         {
-                            title: 'Private Paddy Outward Report',
+                            title: 'sidebar.privatePaddyOutwardReport',
                             url: `/staff/${millId}/outward/private/paddy/report`,
                             moduleSlug: 'outward-private-paddy',
                         },
                         {
-                            title: 'Private Rice Outward Report',
+                            title: 'sidebar.privateRiceOutwardReport',
                             url: `/staff/${millId}/outward/private/rice/report`,
                             moduleSlug: 'outward-private-rice',
                         },
                         {
-                            title: 'Govt Rice Outward Report',
+                            title: 'sidebar.govtRiceOutwardReport',
                             url: `/staff/${millId}/outward/govt/rice/report`,
                             moduleSlug: 'outward-govt-rice',
                         },
                         {
-                            title: 'Govt Gunny Outward Report',
+                            title: 'sidebar.govtGunnyOutwardReport',
                             url: `/staff/${millId}/outward/govt/gunny/report`,
                             moduleSlug: 'outward-govt-gunny',
                         },
                         {
-                            title: 'Private Gunny Outward Report',
+                            title: 'sidebar.privateGunnyOutwardReport',
                             url: `/staff/${millId}/outward/private/gunny/report`,
                             moduleSlug: 'outward-private-gunny',
                         },
                         {
-                            title: 'FRK Outward Report',
+                            title: 'sidebar.frkOutwardReport',
                             url: `/staff/${millId}/outward/frk/report`,
                             moduleSlug: 'outward-frk',
                         },
                         {
-                            title: 'Khanda Outward Report',
+                            title: 'sidebar.khandaOutwardReport',
                             url: `/staff/${millId}/outward/khanda/report`,
                             moduleSlug: 'outward-khanda',
                         },
                         {
-                            title: 'Nakkhi Outward Report',
+                            title: 'sidebar.nakkhiOutwardReport',
                             url: `/staff/${millId}/outward/nakkhi/report`,
                             moduleSlug: 'outward-nakkhi',
                         },
                         {
-                            title: 'Bhusa Outward Report',
+                            title: 'sidebar.bhusaOutwardReport',
                             url: `/staff/${millId}/outward/bhusa/report`,
                             moduleSlug: 'outward-bhusa',
                         },
                         {
-                            title: 'Kodha Outward Report',
+                            title: 'sidebar.kodhaOutwardReport',
                             url: `/staff/${millId}/outward/kodha/report`,
                             moduleSlug: 'outward-kodha',
                         },
                         {
-                            title: 'Silky Kodha Outward Report',
+                            title: 'sidebar.silkyKodhaOutwardReport',
                             url: `/staff/${millId}/outward/silky-kodha/report`,
                             moduleSlug: 'outward-silky-kodha',
                         },
                         {
-                            title: 'Other Outward Report',
+                            title: 'sidebar.otherOutwardReport',
                             url: `/staff/${millId}/outward/other/report`,
                             moduleSlug: 'outward-other',
                         },
@@ -414,16 +414,16 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Milling Reports',
+            title: 'sidebar.millingReports',
             items: [
                 {
-                    title: 'Paddy Milling Report',
+                    title: 'sidebar.paddyMillingReport',
                     url: `/staff/${millId}/milling/paddy/report`,
                     icon: BarChart3,
                     moduleSlug: 'paddy-milling-report',
                 },
                 {
-                    title: 'Rice Milling Report',
+                    title: 'sidebar.riceMillingReport',
                     url: `/staff/${millId}/milling/rice/report`,
                     icon: BarChart3,
                     moduleSlug: 'rice-milling-report',
@@ -431,28 +431,28 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Labour Cost Report',
+            title: 'sidebar.labourCostReport',
             items: [
                 {
-                    title: 'Inward Labour Cost Report',
+                    title: 'sidebar.inwardLabourCostReport',
                     url: `/staff/${millId}/labour/inward/report`,
                     icon: BarChart3,
                     moduleSlug: 'inward-labour-cost-report',
                 },
                 {
-                    title: 'Outward Labour Cost Report',
+                    title: 'sidebar.outwardLabourCostReport',
                     url: `/staff/${millId}/labour/outward/report`,
                     icon: BarChart3,
                     moduleSlug: 'outward-labour-cost-report',
                 },
                 {
-                    title: 'Milling Labour Cost Report',
+                    title: 'sidebar.millingLabourCostReport',
                     url: `/staff/${millId}/labour/milling/report`,
                     icon: BarChart3,
                     moduleSlug: 'milling-labour-cost-report',
                 },
                 {
-                    title: 'Other Labour Cost Report',
+                    title: 'sidebar.otherLabourCostReport',
                     url: `/staff/${millId}/labour/other/report`,
                     icon: BarChart3,
                     moduleSlug: 'other-labour-cost-report',
@@ -460,16 +460,16 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Financial Transaction Reports',
+            title: 'sidebar.financialTransactionReports',
             items: [
                 {
-                    title: 'Financial Receipt Report',
+                    title: 'sidebar.financialReceiptReport',
                     url: `/staff/${millId}/financial/transaction/receipt/report`,
                     icon: FileBarChart,
                     moduleSlug: 'financial-receipt-report',
                 },
                 {
-                    title: 'Financial Payment Report',
+                    title: 'sidebar.financialPaymentReport',
                     url: `/staff/${millId}/financial/transaction/payment/report`,
                     icon: FileBarChart,
                     moduleSlug: 'financial-payment-report',
@@ -477,19 +477,19 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
             ],
         },
         {
-            title: 'Other',
+            title: 'sidebar.other',
             items: [
                 {
-                    title: 'Settings',
+                    title: 'sidebar.settings',
                     icon: Settings,
                     items: [
                         {
-                            title: 'Profile',
+                            title: 'sidebar.profile',
                             url: `/staff/${millId}/profile`,
                             icon: UserCog,
                         },
                         {
-                            title: 'Appearance',
+                            title: 'sidebar.appearance',
                             url: `/staff/${millId}/settings/appearance`,
                             icon: Palette,
                         },
@@ -505,12 +505,12 @@ export const getMillStaffSidebarData = (millId: string): SidebarData => ({
     ],
     profileLinks: [
         {
-            title: 'My Profile',
+            title: 'sidebar.myProfile',
             url: `/staff/${millId}/profile`,
             icon: UserCog,
         },
         {
-            title: 'Appearance',
+            title: 'sidebar.appearance',
             url: `/staff/${millId}/settings/appearance`,
             icon: Palette,
         },

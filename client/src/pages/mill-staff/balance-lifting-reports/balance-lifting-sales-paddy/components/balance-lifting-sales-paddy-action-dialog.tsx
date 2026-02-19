@@ -33,6 +33,7 @@ import {
 import { useCreatePaddySale, useUpdatePaddySale } from '../data/hooks'
 import { paddySalesSchema, type PaddySales } from '../data/schema'
 import { useBalanceLiftingSalesPaddy } from './balance-lifting-sales-paddy-provider'
+import { useTranslation } from 'react-i18next'
 
 type BalanceLiftingSalesPaddyActionDialogProps = {
     open: boolean
@@ -43,6 +44,7 @@ export function BalanceLiftingSalesPaddyActionDialog({
     open,
     onOpenChange,
 }: BalanceLiftingSalesPaddyActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { currentRow, millId } = useBalanceLiftingSalesPaddy()
     const { mutateAsync: createSale, isPending: isCreating } =
         useCreatePaddySale()
@@ -140,10 +142,14 @@ export function BalanceLiftingSalesPaddyActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Paddy Sale
+                        {isEditing
+                            ? t('balanceLifting.sales.paddy.form.title_edit')
+                            : t('balanceLifting.sales.paddy.form.title_add')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the sale details below
+                        {isEditing
+                            ? t('balanceLifting.sales.paddy.form.description_edit')
+                            : t('balanceLifting.sales.paddy.form.description_add')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -158,7 +164,7 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Date</FormLabel>
+                                            <FormLabel>{t('balanceLifting.sales.paddy.form.fields.date')}</FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
                                                 onOpenChange={
@@ -174,12 +180,12 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
-                                                                : 'Pick a date'}
+                                                                    new Date(
+                                                                        field.value
+                                                                    ),
+                                                                    'MMM dd, yyyy'
+                                                                )
+                                                                : t('common.pickDate')}
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
@@ -192,17 +198,17 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                      field.value
-                                                                  )
+                                                                    field.value
+                                                                )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -221,7 +227,7 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
+                                            <FormLabel>{t('balanceLifting.sales.paddy.form.fields.partyName')}</FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={
@@ -231,8 +237,8 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={party}
-                                                    placeholder='Search party...'
-                                                    emptyText='No parties found'
+                                                    placeholder={t('common.searchObject', { object: t('balanceLifting.sales.paddy.form.fields.partyName') })}
+                                                    emptyText={t('common.noResults')}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -244,7 +250,7 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                     name='dhanQty'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Paddy Qty</FormLabel>
+                                            <FormLabel>{t('balanceLifting.sales.paddy.form.fields.paddyQty')}</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -279,16 +285,16 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}
+                                        ? t('common.update')
+                                        : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

@@ -47,6 +47,7 @@ import {
     gunnyPurchaseSchema,
     type BalanceLiftingPurchasesGunny,
 } from '../data/schema'
+import { useTranslation } from 'react-i18next'
 
 type BalanceLiftingPurchasesGunnyActionDialogProps = {
     open: boolean
@@ -59,6 +60,7 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
     onOpenChange,
     currentRow,
 }: BalanceLiftingPurchasesGunnyActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const party = usePaginatedList(
         millId || '',
@@ -134,11 +136,18 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Gunny Purchase
+                        {isEditing
+                            ? t('balanceLifting.purchase.gunny.form.title_edit')
+                            : t('balanceLifting.purchase.gunny.form.title_add')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the purchase details
-                        below
+                        {isEditing
+                            ? t(
+                                'balanceLifting.purchase.gunny.form.description_edit'
+                            )
+                            : t(
+                                'balanceLifting.purchase.gunny.form.description_add'
+                            )}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -153,7 +162,11 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Date</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.gunny.form.fields.date'
+                                                )}
+                                            </FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
                                                 onOpenChange={
@@ -169,11 +182,11 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
+                                                                    new Date(
+                                                                        field.value
+                                                                    ),
+                                                                    'MMM dd, yyyy'
+                                                                )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -187,17 +200,17 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                      field.value
-                                                                  )
+                                                                    field.value
+                                                                )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -216,7 +229,11 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.gunny.form.fields.partyName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={
@@ -226,8 +243,12 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={party}
-                                                    placeholder='Search party...'
-                                                    emptyText='No parties found'
+                                                    placeholder={t(
+                                                        'common.search'
+                                                    )}
+                                                    emptyText={t(
+                                                        'common.noResults'
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -239,7 +260,11 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                     name='deliveryType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Delivery Type</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.gunny.form.fields.deliveryType'
+                                                )}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 defaultValue={
@@ -279,7 +304,9 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                New Gunny Quantity
+                                                {t(
+                                                    'balanceLifting.purchase.gunny.form.fields.newGunnyQty'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -312,7 +339,9 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                New Gunny Rate
+                                                {t(
+                                                    'balanceLifting.purchase.gunny.form.fields.newGunnyRate'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -346,7 +375,9 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Old Gunny Quantity
+                                                {t(
+                                                    'balanceLifting.purchase.gunny.form.fields.oldGunnyQty'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -379,7 +410,9 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Old Gunny Rate
+                                                {t(
+                                                    'balanceLifting.purchase.gunny.form.fields.oldGunnyRate'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -413,7 +446,9 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Plastic Gunny Quantity
+                                                {t(
+                                                    'balanceLifting.purchase.gunny.form.fields.plasticGunnyQty'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -446,7 +481,9 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Plastic Gunny Rate
+                                                {t(
+                                                    'balanceLifting.purchase.gunny.form.fields.plasticGunnyRate'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -481,7 +518,7 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button
                                 type='submit'
@@ -490,7 +527,7 @@ export function BalanceLiftingPurchasesGunnyActionDialog({
                                     updateMutation.isPending
                                 }
                             >
-                                {isEditing ? 'Update' : 'Add'} Purchase
+                                {isEditing ? t('common.update') : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

@@ -38,12 +38,16 @@ type DataTableProps = {
     }
 }
 
+import { useTranslation } from 'react-i18next'
+// ... imports
+
 export function BalanceLiftingPurchasesPaddyTable({
     data,
     search,
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -115,7 +119,7 @@ export function BalanceLiftingPurchasesPaddyTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Filter purchases...'
+                searchPlaceholder={t('common.search')}
                 searchKey='partyName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -142,10 +146,10 @@ export function BalanceLiftingPurchasesPaddyTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}
@@ -187,7 +191,7 @@ export function BalanceLiftingPurchasesPaddyTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}
