@@ -1024,5 +1024,46 @@
                 }
             }
         }
+    },
+    "transactionReports": {
+        "sidebarTitle": "लेनदेन रिपोर्ट",
+        "broker": {
+            "title": "ब्रोकर हिसाब",
+            "description": "ब्रोकर लेनदेन रिकॉर्ड प्रबंधित करें",
+            "columns": {
+                "brokerName": "ब्रोकर का नाम",
+                "partyName": "पार्टी का नाम",
+                "date": "दिनांक",
+                "purchaseDeal": "खरीदी सौदा",
+                "saleDeal": "बिक्री सौदा",
+                "inward": "आवक",
+                "outward": "जावक",
+                "accountReceipt": "हिसाब (प्राप्ति)",
+                "accountPayment": "हिसाब (भुगतान)",
+                "accountBrokerage": "हिसाब (दलाली)",
+                "receipt": "प्राप्ति",
+                "payment": "भुगतान",
+                "brokerage": "दलाली"
+            }
+        },
+        "party": {
+            "title": "पार्टी हिसाब",
+            "description": "पार्टी लेनदेन रिकॉर्ड प्रबंधित करें",
+            "columns": {
+                "partyName": "पार्टी का नाम",
+                "brokerName": "ब्रोकर का नाम",
+                "date": "दिनांक",
+                "purchaseDeal": "खरीदी सौदा",
+                "saleDeal": "बिक्री सौदा",
+                "inward": "आवक",
+                "outward": "जावक",
+                "accountReceipt": "हिसाब (प्राप्ति)",
+                "accountPayment": "हिसाब (भुगतान)",
+                "accountBrokerage": "हिसाब (दलाली)",
+                "receipt": "प्राप्ति",
+                "payment": "भुगतान",
+                "brokerage": "दलाली"
+            }
+        }
     }
 }
