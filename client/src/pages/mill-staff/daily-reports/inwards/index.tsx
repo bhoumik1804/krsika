@@ -1,4 +1,5 @@
 import { Boxes, Package, Scale, Info } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { DailyReportPage } from '../components/daily-report-page'
 
 const COMMODITY_ICONS: Record<string, React.ElementType> = {
@@ -16,12 +17,14 @@ function getIcon(commodity: string) {
 }
 
 export function InwardsReport() {
+    const { t } = useTranslation('mill-staff')
+
     return (
         <DailyReportPage
             action='Inward'
-            title='Inwards'
-            description='Track daily inward transactions by commodity'
-            emptyMessage='No inward data found for the selected date range'
+            title={t('dailyReports.inwards.title')}
+            description={t('dailyReports.inwards.description')}
+            emptyMessage={t('dailyReports.inwards.emptyMessage')}
             exportBaseFilename='inwards-report'
             EmptyIcon={Boxes}
             getIcon={getIcon}

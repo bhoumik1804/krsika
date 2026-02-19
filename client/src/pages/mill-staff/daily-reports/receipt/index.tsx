@@ -1,6 +1,4 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useParams } from 'react-router'
-import { DateRange } from 'react-day-picker'
 import { format } from 'date-fns'
 import {
     ArrowDownLeft,
@@ -13,7 +11,27 @@ import {
     Landmark,
     QrCode,
 } from 'lucide-react'
+import { DateRange } from 'react-day-picker'
+import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router'
+import {
+    DailyReceipt,
+    DailyReceiptSummary,
+    getDailyReceiptList,
+    getDailyReceiptSummary,
+    exportDailyReceiptsAsCsv,
+    formatDateForApi,
+} from '@/lib/daily-receipt-api'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { DateRangePicker } from '@/components/date-range-picker'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -23,29 +41,15 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { StatsCard } from '@/components/stats-card'
 import { ThemeSwitch } from '@/components/theme-switch'
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import {
-    DailyReceipt,
-    DailyReceiptSummary,
-    getDailyReceiptList,
-    getDailyReceiptSummary,
-    exportDailyReceiptsAsCsv,
-    formatDateForApi,
-} from '@/lib/daily-receipt-api'
 
 const STATUS_COLORS: Record<string, string> = {
-    pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-    cleared: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+    pending:
+        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+    cleared:
+        'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
     cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-    bounced: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
+    bounced:
+        'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
 }
 
 const PAYMENT_MODE_ICONS: Record<string, React.ElementType> = {
@@ -56,6 +60,7 @@ const PAYMENT_MODE_ICONS: Record<string, React.ElementType> = {
 }
 
 export function ReceiptReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const sidebarData = getMillAdminSidebarData(millId || '')
     const [date, setDate] = useState<DateRange | undefined>(() => {
@@ -80,11 +85,11 @@ export function ReceiptReport() {
         try {
             const dateParams = date?.from
                 ? {
-                    startDate: formatDateForApi(date.from),
-                    endDate: date.to
-                        ? formatDateForApi(date.to)
-                        : formatDateForApi(date.from),
-                }
+                      startDate: formatDateForApi(date.from),
+                      endDate: date.to
+                          ? formatDateForApi(date.to)
+                          : formatDateForApi(date.from),
+                  }
                 : {}
 
             const [listRes, summaryRes] = await Promise.all([
@@ -152,13 +157,13 @@ export function ReceiptReport() {
                 <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Receipt
+                            {t('dailyReports.receipt.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Track daily receipt transactions
+                            {t('dailyReports.receipt.description')}
                         </p>
                     </div>
-                    <div className='flex flex-col gap-2 sm:flex-row sm:items-center items-start'>
+                    <div className='flex flex-col items-start gap-2 sm:flex-row sm:items-center'>
                         <DateRangePicker date={date} setDate={setDate} />
                         <Button
                             variant='outline'
@@ -168,7 +173,7 @@ export function ReceiptReport() {
                             className='w-auto'
                         >
                             <Download className='mr-2 h-4 w-4' />
-                            Export CSV
+                            {t('dailyReports.buttons.exportCsv')}
                         </Button>
                     </div>
                 </div>
@@ -190,16 +195,24 @@ export function ReceiptReport() {
                         {/* Summary Cards */}
                         <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
                             <StatsCard
-                                title='Total Receipts'
+                                title={t(
+                                    'dailyReports.receipt.statsCard.totalReceipts'
+                                )}
                                 value={summary.totalEntries.toString()}
                                 icon={Receipt}
-                                description='Total receipt entries'
+                                description={t(
+                                    'dailyReports.receipt.statsCard.totalReceiptEntries'
+                                )}
                             />
                             <StatsCard
-                                title='Total Amount'
+                                title={t(
+                                    'dailyReports.receipt.statsCard.totalAmount'
+                                )}
                                 value={`₹${summary.totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
                                 icon={IndianRupee}
-                                description='Total receipt amount'
+                                description={t(
+                                    'dailyReports.receipt.statsCard.totalReceiptAmount'
+                                )}
                             />
                             {Object.entries(byPaymentMode).map(
                                 ([mode, data]) => (
@@ -211,7 +224,7 @@ export function ReceiptReport() {
                                             PAYMENT_MODE_ICONS[mode] ||
                                             CreditCard
                                         }
-                                        description={`${data.count} entries`}
+                                        description={`${data.count} ${t('dailyReports.receipt.statsCard.entries')}`}
                                     />
                                 )
                             )}
@@ -221,10 +234,7 @@ export function ReceiptReport() {
                         {receipts.length === 0 ? (
                             <div className='flex flex-col items-center justify-center py-12 text-muted-foreground'>
                                 <ArrowDownLeft className='mb-2 h-12 w-12' />
-                                <p>
-                                    No receipt entries found for the selected
-                                    date range
-                                </p>
+                                <p>{t('dailyReports.receipt.emptyMessage')}</p>
                             </div>
                         ) : (
                             <div className='rounded-lg border'>
@@ -248,16 +258,16 @@ export function ReceiptReport() {
                                             <TableRow key={receipt._id}>
                                                 <TableCell>
                                                     {typeof receipt.date ===
-                                                        'string'
+                                                    'string'
                                                         ? receipt.date.split(
-                                                            'T'
-                                                        )[0]
+                                                              'T'
+                                                          )[0]
                                                         : format(
-                                                            new Date(
-                                                                receipt.date
-                                                            ),
-                                                            'yyyy-MM-dd'
-                                                        )}
+                                                              new Date(
+                                                                  receipt.date
+                                                              ),
+                                                              'yyyy-MM-dd'
+                                                          )}
                                                 </TableCell>
                                                 <TableCell className='font-mono'>
                                                     {receipt.voucherNumber}
@@ -285,7 +295,7 @@ export function ReceiptReport() {
                                                         variant='outline'
                                                         className={
                                                             STATUS_COLORS[
-                                                            receipt.status
+                                                                receipt.status
                                                             ] || ''
                                                         }
                                                     >

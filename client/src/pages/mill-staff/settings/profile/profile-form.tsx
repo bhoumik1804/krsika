@@ -1,8 +1,13 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import {
+    useUser,
+    useUpdateProfile,
+    useChangePassword,
+} from '@/pages/landing/hooks'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { useUser, useUpdateProfile, useChangePassword } from '@/pages/landing/hooks'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -57,13 +62,8 @@ const profileFormSchema = z
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>
 
-const roleLabels: Record<string, string> = {
-    'super-admin': 'Super Admin',
-    'mill-admin': 'Mill Admin',
-    'mill-staff': 'Mill Staff',
-}
-
 export function ProfileForm() {
+    const { t } = useTranslation('mill-staff')
     const { user } = useUser()
     const { updateProfileAsync, isLoading: isUpdating } = useUpdateProfile()
     const { changePasswordAsync, isLoading: isChangingPassword } =
@@ -97,34 +97,38 @@ export function ProfileForm() {
                     newPassword: data.newPassword,
                 })
                 toast.success(
-                    'Profile and password updated successfully. You have been logged out.'
+                    t('settings.profileForm.profileAndPasswordUpdated')
                 )
             } else {
-                toast.success('Profile updated successfully')
+                toast.success(t('settings.profileForm.profileUpdated'))
             }
         } catch (error: any) {
-            toast.error(error.message || 'Failed to update profile')
+            toast.error(error.message || t('settings.profileForm.updateFailed'))
         }
     }
 
     return (
         <Form {...form}>
-            <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className='space-y-8'
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
                 <div className='grid gap-4 md:grid-cols-2'>
                     <FormField
                         control={form.control}
                         name='name'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Name</FormLabel>
+                                <FormLabel>
+                                    {t('settings.profileForm.name')}
+                                </FormLabel>
                                 <FormControl>
-                                    <Input placeholder='Your name' {...field} />
+                                    <Input
+                                        placeholder={t(
+                                            'settings.profileForm.namePlaceholder'
+                                        )}
+                                        {...field}
+                                    />
                                 </FormControl>
                                 <FormDescription>
-                                    Your public display name.
+                                    {t('settings.profileForm.nameDescription')}
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -135,17 +139,21 @@ export function ProfileForm() {
                         name='email'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Email</FormLabel>
+                                <FormLabel>
+                                    {t('settings.profileForm.email')}
+                                </FormLabel>
                                 <FormControl>
                                     <Input
                                         type='email'
-                                        placeholder='your@email.com'
+                                        placeholder={t(
+                                            'settings.profileForm.emailPlaceholder'
+                                        )}
                                         {...field}
                                         readOnly
                                     />
                                 </FormControl>
                                 <FormDescription>
-                                    Your login email address.
+                                    {t('settings.profileForm.emailDescription')}
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -156,7 +164,9 @@ export function ProfileForm() {
                         name='post'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Post</FormLabel>
+                                <FormLabel>
+                                    {t('settings.profileForm.post')}
+                                </FormLabel>
                                 <FormControl>
                                     <Input type='text' {...field} readOnly />
                                 </FormControl>
@@ -167,18 +177,26 @@ export function ProfileForm() {
                 </div>
 
                 <div className='space-y-4 rounded-lg border p-4'>
-                    <h3 className='text-lg font-medium'>Change Password</h3>
+                    <h3 className='text-lg font-medium'>
+                        {t('settings.profileForm.changePassword')}
+                    </h3>
                     <div className='grid gap-4 md:grid-cols-2'>
                         <FormField
                             control={form.control}
                             name='currentPassword'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Current Password</FormLabel>
+                                    <FormLabel>
+                                        {t(
+                                            'settings.profileForm.currentPassword'
+                                        )}
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             type='password'
-                                            placeholder='Current password'
+                                            placeholder={t(
+                                                'settings.profileForm.currentPasswordPlaceholder'
+                                            )}
                                             {...field}
                                         />
                                     </FormControl>
@@ -192,11 +210,15 @@ export function ProfileForm() {
                             name='newPassword'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>New Password</FormLabel>
+                                    <FormLabel>
+                                        {t('settings.profileForm.newPassword')}
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             type='password'
-                                            placeholder='New password'
+                                            placeholder={t(
+                                                'settings.profileForm.newPasswordPlaceholder'
+                                            )}
                                             {...field}
                                         />
                                     </FormControl>
@@ -209,11 +231,17 @@ export function ProfileForm() {
                             name='confirmPassword'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Confirm Password</FormLabel>
+                                    <FormLabel>
+                                        {t(
+                                            'settings.profileForm.confirmPassword'
+                                        )}
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             type='password'
-                                            placeholder='Confirm new password'
+                                            placeholder={t(
+                                                'settings.profileForm.confirmPasswordPlaceholder'
+                                            )}
                                             {...field}
                                         />
                                     </FormControl>
@@ -229,22 +257,37 @@ export function ProfileForm() {
                     name='role'
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Role</FormLabel>
+                            <FormLabel>
+                                {t('settings.profileForm.role')}
+                            </FormLabel>
                             <div className='pt-1'>
                                 <Badge variant='secondary'>
-                                    {roleLabels[field.value ?? ''] ??
-                                        field.value}
+                                    {field.value === 'super-admin'
+                                        ? t(
+                                              'settings.profileForm.roles.superAdmin'
+                                          )
+                                        : field.value === 'mill-admin'
+                                          ? t(
+                                                'settings.profileForm.roles.millAdmin'
+                                            )
+                                          : field.value === 'mill-staff'
+                                            ? t(
+                                                  'settings.profileForm.roles.millStaff'
+                                              )
+                                            : field.value}
                                 </Badge>
                             </div>
                             <FormDescription>
-                                Your role determines your access permissions.
+                                {t('settings.profileForm.roleDescription')}
                             </FormDescription>
                         </FormItem>
                     )}
                 />
 
                 <Button type='submit' disabled={isLoading}>
-                    {isLoading ? 'Updating...' : 'Update profile'}
+                    {isLoading
+                        ? t('settings.profileForm.updating')
+                        : t('settings.profileForm.updateProfile')}
                 </Button>
             </form>
         </Form>
