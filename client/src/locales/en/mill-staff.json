@@ -19,7 +19,8 @@
         "selectType": "Select type",
         "updateDetails": "Update recorded details",
         "delete": "Delete",
-        "openMenu": "Open menu"
+        "openMenu": "Open menu",
+        "errorLoadingData": "Error loading data"
     },
     "dashboard": {
         "title": "Dashboard",
@@ -1518,6 +1519,7 @@
             "frk": {
                 "title": "FRK Purchase Report",
                 "description": "Manage FRK purchase transactions and records",
+                "primaryButton": "Add Purchase",
                 "form": {
                     "title_add": "Add FRK Purchase",
                     "title_edit": "Edit FRK Purchase",
@@ -1525,11 +1527,11 @@
                     "description_edit": "Update the purchase details below",
                     "fields": {
                         "date": "Date",
-                        "dealNumber": "FRK Purchase Deal Number",
+                        "frkPurchaseDealNumber": "FRK Purchase Deal Number",
                         "partyName": "Party Name",
                         "frkQty": "FRK Qty",
-                        "balance": "Balance",
-                        "balanceLifting": "Balance Lifting"
+                        "frkRate": "FRK Rate",
+                        "gst": "GST"
                     }
                 }
             },
@@ -1579,8 +1581,9 @@
         },
         "outward": {
             "rice": {
-                "title": "Rice Outward Report",
-                "description": "Manage rice outward transactions and records",
+                "title": "Private Rice Outward Report",
+                "description": "Manage private rice outward transactions and records",
+                "primaryButton": "Add Outward",
                 "form": {
                     "title_add": "Add Rice Outward",
                     "title_edit": "Edit Rice Outward",
@@ -1588,11 +1591,24 @@
                     "description_edit": "Update the outward details below",
                     "fields": {
                         "date": "Date",
-                        "dealNumber": "Rice Outward Deal Number",
+                        "riceSalesDealNumber": "Rice Sales Deal Number",
                         "partyName": "Party Name",
+                        "brokerName": "Broker Name",
+                        "deliveryType": "Delivery Type",
+                        "lotOrOther": "LOT/Other",
+                        "fciOrNAN": "FCI/NAN",
+                        "riceType": "Rice Type",
                         "riceQty": "Rice Qty",
-                        "balance": "Balance",
-                        "balanceLifting": "Balance Lifting"
+                        "riceRatePerQuintal": "Rice Rate/Quintal",
+                        "discountPercent": "Discount %",
+                        "brokeragePerQuintal": "Brokerage/Quintal",
+                        "gunnyType": "Gunny Type",
+                        "newGunnyRate": "New Gunny Rate",
+                        "oldGunnyRate": "Old Gunny Rate",
+                        "plasticGunnyRate": "Plastic Gunny Rate",
+                        "frkType": "FRK",
+                        "frkRatePerQuintal": "FRK Rate/Quintal",
+                        "lotNumber": "Lot No."
                     }
                 }
             }

@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -57,6 +58,7 @@ export function OutwardBalanceLiftingRiceActionDialog({
     open,
     onOpenChange,
 }: OutwardBalanceLiftingRiceActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { currentRow, millId } = useOutwardBalanceLiftingRice()
     const { mutateAsync: createEntry, isPending: isCreating } =
         useCreatePrivateRiceOutward(millId)
@@ -170,10 +172,18 @@ export function OutwardBalanceLiftingRiceActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Rice Sale
+                        {isEditing
+                            ? t('balanceLifting.outward.rice.form.title_edit')
+                            : t('balanceLifting.outward.rice.form.title_add')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the sale details below
+                        {isEditing
+                            ? t(
+                                  'balanceLifting.outward.rice.form.description_edit'
+                              )
+                            : t(
+                                  'balanceLifting.outward.rice.form.description_add'
+                              )}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>

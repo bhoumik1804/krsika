@@ -1517,19 +1517,21 @@
                 }
             },
             "frk": {
+                "title": "FRK खरीद रिपोर्ट",
                 "description": "बैलेंस लिफ्टिंग FRK खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "primaryButton": "खरीदी जोड़ें",
                 "form": {
-                    "title_add": "बैलेंस लिफ्टिंग FRK खरीदी जोड़ें",
-                    "title_edit": "बैलेंस लिफ्टिंग FRK खरीदी संपादित करें",
+                    "title_add": "FRK खरीदी जोड़ें",
+                    "title_edit": "FRK खरीदी संपादित करें",
                     "description_add": "खरीदी विवरण नीचे दर्ज करें",
                     "description_edit": "खरीदी विवरण नीचे अपडेट करें",
                     "fields": {
                         "date": "दिनांक",
-                        "dealNumber": "FRK खरीदी सौदा क्रमांक",
+                        "frkPurchaseDealNumber": "FRK खरीदी सौदा क्रमांक",
                         "partyName": "पार्टी का नाम",
                         "frkQty": "FRK की मात्रा",
-                        "balance": "शेष",
-                        "balanceLifting": "उठाव शेष"
+                        "frkRate": "FRK दर",
+                        "gst": "GST"
                     }
                 }
             },
@@ -1581,18 +1583,32 @@
             "rice": {
                 "title": "जावक बैलेंस लिफ्टिंग चावल रिपोर्ट",
                 "description": "जावक बैलेंस लिफ्टिंग चावल लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "primaryButton": "जावक जोड़ें",
                 "form": {
-                    "title_add": "जावक बैलेंस लिफ्टिंग चावल जोड़ें",
-                    "title_edit": "जावक बैलेंस लिफ्टिंग चावल संपादित करें",
+                    "title_add": "चावल जावक जोड़ें",
+                    "title_edit": "चावल जावक संपादित करें",
                     "description_add": "जावक विवरण नीचे दर्ज करें",
                     "description_edit": "जावक विवरण नीचे अपडेट करें",
                     "fields": {
                         "date": "दिनांक",
-                        "dealNumber": "चावल जावक सौदा क्रमांक",
+                        "riceSalesDealNumber": "चावल बिक्री सौदा क्रमांक",
                         "partyName": "पार्टी का नाम",
+                        "brokerName": "दलाल का नाम",
+                        "deliveryType": "डिलीवरी का प्रकार",
+                        "lotOrOther": "LOT/अन्य",
+                        "fciOrNAN": "FCI/NAN",
+                        "riceType": "चावल का प्रकार",
                         "riceQty": "चावल की मात्रा",
-                        "balance": "शेष",
-                        "balanceLifting": "उठाव शेष"
+                        "riceRatePerQuintal": "चावल दर/क्विंटल",
+                        "discountPercent": "छूट %",
+                        "brokeragePerQuintal": "दलाली/क्विंटल",
+                        "gunnyType": "बारदाना का प्रकार",
+                        "newGunnyRate": "नया बारदाना दर",
+                        "oldGunnyRate": "पुराना बारदाना दर",
+                        "plasticGunnyRate": "प्लास्टिक बारदाना दर",
+                        "frkType": "FRK",
+                        "frkRatePerQuintal": "FRK दर/क्विंटल",
+                        "lotNumber": "लॉट नंबर"
                     }
                 }
             }
