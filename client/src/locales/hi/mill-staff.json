@@ -776,19 +776,24 @@
                     "brokerName": "ब्रोकर का नाम",
                     "delivery": "डिलीवरी",
                     "lotOther": "LOT/अन्य",
+                    "lotOrOther": "LOT/अन्य",
                     "fciNan": "FCI/NAN",
+                    "fciOrNan": "FCI/NAN",
                     "riceType": "चावल का प्रकार",
                     "quantity": "मात्रा (क्विंटल में.)",
                     "riceRate": "चावल का भाव/दर",
                     "batav": "बटाव %",
+                    "discount": "बटाव %",
                     "brokerage": "दलाली (प्रति क्विंटल)",
                     "gunnyIncluded": "बारदाना सहित/वापसी",
+                    "gunnyOption": "बारदाना सहित/वापसी",
                     "newGunnyRate": "नया बारदाना दर",
                     "oldGunnyRate": "पुराना बारदाना दर",
                     "plasticGunnyRate": "प्लास्टिक बारदाना दर",
                     "frk": "FRK",
                     "frkRate": "FRK दर (प्रति क्विं.)",
                     "lotNo": "LOT No.",
+                    "lotNumber": "LOT No.",
                     "riceArrival": "चावल आवक",
                     "riceArrivalBalance": "चावल आवक शेष"
                 }
@@ -1141,6 +1146,64 @@
             }
         }
     },
+    "settings": {
+        "title": "सेटिंग्स",
+        "subtitle": "अपनी प्रोफाइल और ऐप की प्राथमिकताओं को प्रबंधित करें।",
+        "profile": "प्रोफाइल",
+        "profileDesc": "अपनी प्रोफाइल जानकारी और अकाउंट विवरण अपडेट करें।",
+        "appearance": "दिखावट",
+        "appearanceDesc": "ऐप की दिखावट को अनुकूलित करें। दिन और रात थीम के बीच स्वचालित रूप से बदलें।",
+        "language": "भाषा",
+        "selectLanguage": "भाषा चुनें",
+        "languageDesc": "इंटरफेस के लिए अपनी पसंदीदा भाषा चुनें।",
+        "font": "फ़ॉन्ट",
+        "fontDesc": "डैशबोर्ड में उपयोग के लिए फ़ॉन्ट चुनें।",
+        "theme": "थीम",
+        "themeDesc": "डैशबोर्ड के लिए थीम चुनें।",
+        "light": "लाइट",
+        "dark": "डार्क",
+        "updatePreferences": "प्राथमिकताएं अपडेट करें",
+        "form": {
+            "name": "नाम",
+            "namePlaceholder": "अपना नाम दर्ज करें",
+            "nameDesc": "आपका सार्वजनिक प्रदर्शन नाम।",
+            "email": "ईमेल",
+            "emailPlaceholder": "your@email.com",
+            "emailDesc": "आपका लॉगिन ईमेल पता।",
+            "post": "पद",
+            "changePassword": "पासवर्ड बदलें",
+            "currentPassword": "वर्तमान पासवर्ड",
+            "currentPasswordPlaceholder": "वर्तमान पासवर्ड",
+            "newPassword": "नया पासवर्ड",
+            "newPasswordPlaceholder": "नया पासवर्ड",
+            "confirmPassword": "पासवर्ड की पुष्टि करें",
+            "confirmPasswordPlaceholder": "नए पासवर्ड की पुष्टि करें",
+            "role": "भूमिका",
+            "roleDesc": "आपकी भूमिका आपके एक्सेस परमिशन निर्धारित करती है।",
+            "updating": "अपडेट हो रहा है...",
+            "updateProfile": "प्रोफाइल अपडेट करें",
+            "roles": {
+                "superAdmin": "सुपर एडमिन",
+                "millAdmin": "मिल एडमिन",
+                "millStaff": "मिल स्टाफ"
+            },
+            "validation": {
+                "nameMin": "नाम कम से कम 2 अक्षरों का होना चाहिए।",
+                "nameMax": "नाम 30 अक्षरों से अधिक नहीं होना चाहिए।",
+                "emailInvalid": "कृपया एक मान्य ईमेल दर्ज करें।",
+                "passwordMin": "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।",
+                "currentPasswordRequired": "पासवर्ड बदलने के लिए वर्तमान पासवर्ड आवश्यक है।",
+                "passwordMatch": "पासवर्ड मेल नहीं खा रहे हैं।"
+            },
+            "success": {
+                "profileAndPasswordUpdated": "प्रोफाइल और पासवर्ड सफलतापूर्वक अपडेट हो गए। आपको लॉग आउट कर दिया गया है।",
+                "profileUpdated": "प्रोफाइल सफलतापूर्वक अपडेट हो गई।"
+            },
+            "error": {
+                "failedToUpdateProfile": "प्रोफाइल अपडेट करने में विफल"
+            }
+        }
+    },
     "staff": {
         "title": "कर्मचारी प्रबंधन",
         "subtitle": "सभी मिल कर्मचारियों को प्रबंधित और निगरानी करें",
@@ -1150,6 +1213,16 @@
         "addStaff": "कर्मचारी जोड़ें",
         "editStaff": "कर्मचारी संपादित करें",
         "deleteStaff": "कर्मचारी हटाएं",
+        "markAttendance": "उपस्थिति दर्ज करें",
+        "edit": "संपादित करें",
+        "delete": "हटाएं",
+        "markAttendanceDescription": "{{name}} के लिए उपस्थिति दर्ज करें",
+        "selectAttendanceStatus": "उपस्थिति स्थिति चुनें",
+        "present": "उपस्थित",
+        "halfDay": "आधा दिन",
+        "absent": "अनुपस्थित",
+        "cancel": "रद्द करें",
+        "saveAttendance": "उपस्थिति सहेजें",
         "addStaffDescription": "यहां नए कर्मचारी बनाएं।",
         "editStaffDescription": "यहां कर्मचारी को अपडेट करें।",
         "clickSave": "जब आप पूरा कर लें तो सेव करें क्लिक करें।",
@@ -1324,60 +1397,7 @@
             "export": "निर्यात करें"
         }
     },
-    "settings": {
-        "title": "सेटिंग्स",
-        "subtitle": "अपने खाते और पसंद का प्रबंधन करें",
-        "profile": "प्रोफाइल",
-        "profileDesc": "अपनी व्यक्तिगत जानकारी अपडेट करें और अपने खाते का प्रबंधन करें",
-        "appearance": "दिखावट",
-        "appearanceDesc": "एप के दिखावट को अनुकूलित करें। दिन और रात की थीम के बीच स्वचालित रूप से स्विच करें।",
-        "language": "भाषा",
-        "selectLanguage": "भाषा चुनें",
-        "languageDesc": "इंटरफेस के लिए अपनी पसंदीदा भाषा चुनें।",
-        "font": "फॉन्ट",
-        "fontDesc": "डैशबोर्ड में उपयोग करने के लिए फॉन्ट सेट करें।",
-        "theme": "थीम",
-        "themeDesc": "डैशबोर्ड के लिए थीम चुनें।",
-        "light": "हल्का",
-        "dark": "गहरा",
-        "updatePreferences": "पसंद अपडेट करें",
-        "profileForm": {
-            "name": "नाम",
-            "namePlaceholder": "आपका नाम",
-            "nameDescription": "आपका सार्वजनिक प्रदर्शन नाम।",
-            "email": "ईमेल",
-            "emailPlaceholder": "your@email.com",
-            "emailDescription": "आपका लॉगिन ईमेल पता।",
-            "post": "पद",
-            "changePassword": "पासवर्ड बदलें",
-            "currentPassword": "वर्तमान पासवर्ड",
-            "currentPasswordPlaceholder": "वर्तमान पासवर्ड",
-            "newPassword": "नया पासवर्ड",
-            "newPasswordPlaceholder": "नया पासवर्ड",
-            "confirmPassword": "पासवर्ड की पुष्टि करें",
-            "confirmPasswordPlaceholder": "नए पासवर्ड की पुष्टि करें",
-            "role": "भूमिका",
-            "roleDescription": "आपकी भूमिका आपकी पहुंच अनुमतियों को निर्धारित करती है।",
-            "updateProfile": "प्रोफाइल अपडेट करें",
-            "updating": "अपडेट हो रहा है...",
-            "profileUpdated": "प्रोफाइल सफलतापूर्वक अपडेट हो गई",
-            "profileAndPasswordUpdated": "प्रोफाइल और पासवर्ड सफलतापूर्वक अपडेट हो गए। आप लॉग आउट हो गए हैं।",
-            "updateFailed": "प्रोफाइल अपडेट करने में विफल",
-            "validation": {
-                "nameMin": "नाम कम से कम 2 अक्षर का होना चाहिए।",
-                "nameMax": "नाम 30 अक्षरों से अधिक नहीं होना चाहिए।",
-                "emailInvalid": "कृपया एक मान्य ईमेल दर्ज करें।",
-                "passwordMin": "पासवर्ड कम से कम 6 अक्षर का होना चाहिए।",
-                "passwordRequired": "पासवर्ड बदलने के लिए वर्तमान पासवर्ड आवश्यक है।",
-                "passwordMismatch": "पासवर्ड मेल नहीं खाते।"
-            },
-            "roles": {
-                "superAdmin": "सुपर अडमिन",
-                "millAdmin": "मिल अडमिन",
-                "millStaff": "मिल स्टाफ"
-            }
-        }
-    },
+  
     "sidebar": {
         "dashboard": "डैशबोर्ड",
         "overview": "अवलोकन",
@@ -1464,7 +1484,8 @@
         "balanceLiftingSales": "बैलेंस लिफ्टिंग बिक्री",
         "reportBalanceLiftingPaddySales": "बैलेंस लिफ्टिंग धान बिक्री रिपोर्ट",
         "outwardBalanceLiftingRiceSales": "जावक बैलेंस लिफ्टिंग चावल बिक्री",
-        "outwardBalanceLiftingReportRiceSales": "जावक बैलेंस लिफ्टिंग चावल बिक्री रिपोर्ट"
+        "outwardBalanceLiftingReportRiceSales": "जावक बैलेंस लिफ्टिंग चावल बिक्री रिपोर्ट",
+        "signOut": "साइन आउट"
     },
     "balanceLifting": {
         "purchase": {

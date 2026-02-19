@@ -33,7 +33,7 @@ import { useTranslation } from 'react-i18next'
 
 export function NavUser({ user, links }: NavUserProps) {
     const { isMobile } = useSidebar()
-    const { t } = useTranslation()
+    const { t } = useTranslation('mill-staff')
     const [open, setOpen] = useDialogState()
 
     const initials = user.name
@@ -123,7 +123,7 @@ export function NavUser({ user, links }: NavUserProps) {
                                 onClick={() => setOpen(true)}
                             >
                                 <LogOut />
-                                Sign out
+                                {t('sidebar.signOut')}
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
