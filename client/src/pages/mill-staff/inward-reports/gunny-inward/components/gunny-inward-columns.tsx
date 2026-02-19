@@ -1,11 +1,12 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { t } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type GunnyInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
-import { format } from 'date-fns'
 
 export const gunnyInwardColumns: ColumnDef<GunnyInward>[] = [
     {
@@ -40,7 +41,12 @@ export const gunnyInwardColumns: ColumnDef<GunnyInward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.gunnyInward.form.fields.date', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -60,7 +66,10 @@ export const gunnyInwardColumns: ColumnDef<GunnyInward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Gunny Purchase Deal Number'
+                title={t(
+                    'inward.gunnyInward.form.fields.gunnyPurchaseDealNumber',
+                    { ns: 'mill-staff' }
+                )}
             />
         ),
         cell: ({ row }) => (
@@ -72,7 +81,12 @@ export const gunnyInwardColumns: ColumnDef<GunnyInward>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.gunnyInward.form.fields.partyName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -84,7 +98,12 @@ export const gunnyInwardColumns: ColumnDef<GunnyInward>[] = [
     {
         accessorKey: 'delivery',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Delivery' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.gunnyInward.form.fields.delivery', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('delivery')}</div>
@@ -93,7 +112,12 @@ export const gunnyInwardColumns: ColumnDef<GunnyInward>[] = [
     {
         accessorKey: 'samitiSangrahan',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Samiti Sangrahan' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.gunnyInward.form.fields.samitiSangrahan', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('samitiSangrahan')}</div>
@@ -102,7 +126,12 @@ export const gunnyInwardColumns: ColumnDef<GunnyInward>[] = [
     {
         accessorKey: 'gunnyNew',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny New' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.gunnyInward.form.fields.gunnyNew', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyNew')}</div>
@@ -111,7 +140,12 @@ export const gunnyInwardColumns: ColumnDef<GunnyInward>[] = [
     {
         accessorKey: 'gunnyOld',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Old' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.gunnyInward.form.fields.gunnyOld', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyOld')}</div>
@@ -120,7 +154,12 @@ export const gunnyInwardColumns: ColumnDef<GunnyInward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Plastic' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.gunnyInward.form.fields.gunnyPlastic', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>

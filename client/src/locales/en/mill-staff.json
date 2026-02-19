@@ -1,16 +1,23 @@
 {
     "common": {
         "add": "Add",
-        "edit": "Edit",
+        "adding": "Adding...",
         "update": "Update",
+        "updating": "Updating...",
+        "edit": "Edit",
         "cancel": "Cancel",
         "enter": "Enter",
+        "enterValue": "Enter value",
         "search": "Search...",
+        "searchObject": "Search {{object}}...",
         "manualEntry": "Manual Entry",
         "uploadFile": "Upload File",
         "uploading": "Uploading",
         "upload": "Upload",
-        "noResults": "No results found"
+        "noResults": "No results found",
+        "pickDate": "Pick a date",
+        "selectType": "Select type",
+        "updateDetails": "Update recorded details"
     },
     "inputReports": {
         "sidebarTitle": "Input Reports",
@@ -129,6 +136,173 @@
                 "primaryButton": "Add Labour Group",
                 "fields": {
                     "labourTeamName": "Labour Group Name"
+                }
+            }
+        }
+    },
+    "inward": {
+        "govtPaddyInward": {
+            "title": "Government Paddy Inward",
+            "description": "Manage government paddy inward entries",
+            "form": {
+                "title": "Add Government Paddy Inward",
+                "description": "Enter details for government paddy inward",
+                "primaryButton": "Add Govt Paddy Inward",
+                "fields": {
+                    "date": "Date",
+                    "doNumber": "DO Number",
+                    "committeeName": "Committee/Collection Name",
+                    "balanceDo": "Lifting Balance",
+                    "gunnyNew": "Gunny (New)",
+                    "gunnyOld": "Gunny (Old)",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "juteWeight": "Jute Gunny Weight",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "gunnyWeight": "Gunny Weight (Quintal)",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckLoadWeight": "Truck Weight (Quintal)",
+                    "paddyType": "Inward Paddy Type",
+                    "paddyMota": "Paddy (Mota) Net Weight",
+                    "paddyPatla": "Paddy (Patla) Net Weight",
+                    "paddySarna": "Paddy (Sarna) Net Weight",
+                    "paddyMahamaya": "Paddy (Mahamaya) Net Weight",
+                    "paddyRbGold": "Paddy (RB Gold) Net Weight"
+                }
+            }
+        },
+        "privatePaddyInward": {
+            "title": "Private Paddy Inward",
+            "description": "Manage private paddy inward entries",
+            "form": {
+                "title": "Add Private Paddy Inward",
+                "description": "Enter details for private paddy inward",
+                "primaryButton": "Add Private Paddy Inward",
+                "fields": {
+                    "date": "Date",
+                    "paddyPurchaseDealNumber": "Paddy Purchase Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "balanceDo": "Lifting Balance",
+                    "purchaseType": "Purchase Type",
+                    "doNumber": "DO Number",
+                    "committeeName": "Committee/Collection Name",
+                    "gunnyOption": "Gunny Included/Return",
+                    "gunnyNew": "Gunny (New)",
+                    "gunnyOld": "Gunny (Old)",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "juteWeight": "Jute Gunny Weight",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckLoadWeight": "Truck Weight (Quintal)",
+                    "paddyType": "Paddy Type",
+                    "paddyMota": "Paddy (Mota) Net Weight",
+                    "paddyPatla": "Paddy (Patla) Net Weight",
+                    "paddySarna": "Paddy (Sarna) Net Weight",
+                    "paddyMahamaya": "Paddy (Mahamaya) Net Weight",
+                    "paddyRbGold": "Paddy (RB Gold) Net Weight"
+                }
+            }
+        },
+        "riceInward": {
+            "title": "Rice Inward / Lot Deposit",
+            "description": "Manage rice inward and lot deposit entries",
+            "form": {
+                "title": "Add Rice Inward / Lot Deposit",
+                "description": "Enter details for rice inward or lot deposit",
+                "primaryButton": "Add Rice Inward",
+                "fields": {
+                    "date": "Date",
+                    "ricePurchaseDealNumber": "Rice Purchase Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "riceType": "Rice Type",
+                    "balanceInward": "Inward Balance / Lot Deposit Balance",
+                    "inwardType": "Inward / Lot",
+                    "lotNumber": "Lot No.",
+                    "frkOrNAN": "FRK/Non FRK",
+                    "gunnyOption": "Gunny",
+                    "gunnyNew": "Gunny (New)",
+                    "gunnyOld": "Gunny (Old)",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "juteWeight": "Jute Gunny Weight",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckLoadWeight": "Truck Weight",
+                    "riceMotaNetWeight": "Rice (Mota) Net Weight",
+                    "ricePatlaNetWeight": "Rice (Patla) Net Weight"
+                }
+            }
+        },
+        "gunnyInward": {
+            "title": "Gunny Inward / Committee Deposit",
+            "description": "Manage gunny inward and committee deposit entries",
+            "form": {
+                "title": "Add Gunny Inward / Committee Deposit",
+                "description": "Enter details for gunny inward or committee deposit",
+                "primaryButton": "Add Gunny Inward",
+                "fields": {
+                    "date": "Date",
+                    "gunnyPurchaseDealNumber": "Gunny Purchase Deal Number",
+                    "partyName": "Party Name",
+                    "delivery": "Delivery",
+                    "samitiSangrahan": "Committee Collection",
+                    "gunnyNew": "Gunny (New)",
+                    "gunnyOld": "Gunny (Old)",
+                    "gunnyPlastic": "Gunny (Plastic)"
+                }
+            }
+        },
+        "frkInward": {
+            "title": "FRK Inward",
+            "description": "Manage FRK inward entries",
+            "form": {
+                "title": "Add FRK Inward",
+                "description": "Enter details for FRK inward",
+                "primaryButton": "Add FRK Inward",
+                "fields": {
+                    "date": "Date",
+                    "frkPurchaseDealNumber": "FRK Purchase Deal Number",
+                    "partyName": "Party Name",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckWeight": "Truck Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "netWeight": "Net Weight (Minus Gunny)"
+                }
+            }
+        },
+        "otherInward": {
+            "title": "Other Inward",
+            "description": "Manage other inward entries",
+            "form": {
+                "title": "Add Other Inward",
+                "description": "Enter details for other inward",
+                "primaryButton": "Add Other Inward",
+                "fields": {
+                    "date": "Date",
+                    "otherPurchaseDealNumber": "Other Purchase Deal Number",
+                    "itemName": "Item Name",
+                    "quantity": "Quantity",
+                    "quantityType": "Quantity Type",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "gunnyNew": "Gunny (New)",
+                    "gunnyOld": "Gunny (Old)",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "juteGunnyWeight": "Jute Gunny Weight",
+                    "plasticGunnyWeight": "Plastic Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckWeight": "Truck Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "netWeight": "Net Weight (Minus Gunny)"
                 }
             }
         }

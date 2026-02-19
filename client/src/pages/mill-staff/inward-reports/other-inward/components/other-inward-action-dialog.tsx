@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useOtherPurchaseList } from '@/pages/mill-admin/purchase-reports/other/data/hooks'
 import type { OtherPurchaseResponse } from '@/pages/mill-admin/purchase-reports/other/data/types'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/purchase-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
@@ -59,6 +60,7 @@ export function OtherInwardActionDialog({
     onOpenChange,
     currentRow,
 }: OtherInwardActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useOtherInward()
     const { mutateAsync: createOtherInward, isPending: isCreating } =
         useCreateOtherInward(millId)
@@ -190,10 +192,14 @@ export function OtherInwardActionDialog({
             <DialogContent className='max-h-[90vh] max-w-2xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing
+                            ? t('common.edit')
+                            : t('inward.otherInward.form.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing
+                            ? t('common.updateDetails')
+                            : t('inward.otherInward.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -207,7 +213,11 @@ export function OtherInwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.otherInward.form.fields.date'
+                                            )}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -226,7 +236,9 @@ export function OtherInwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickDate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -269,7 +281,9 @@ export function OtherInwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Other Purchase Deal Number
+                                            {t(
+                                                'inward.otherInward.form.fields.otherPurchaseDealNumber'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
@@ -278,8 +292,17 @@ export function OtherInwardActionDialog({
                                                 paginatedList={
                                                     otherPurchaseDeal
                                                 }
-                                                placeholder='Search deal...'
-                                                emptyText='No deals found'
+                                                placeholder={t(
+                                                    'common.searchObject',
+                                                    {
+                                                        object: t(
+                                                            'inward.otherInward.form.fields.otherPurchaseDealNumber'
+                                                        ),
+                                                    }
+                                                )}
+                                                emptyText={t(
+                                                    'common.noResults'
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -291,10 +314,16 @@ export function OtherInwardActionDialog({
                                 name='itemName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Item Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.otherInward.form.fields.itemName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter Item Name'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -309,7 +338,11 @@ export function OtherInwardActionDialog({
                                     name='quantity'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Quantity</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inward.otherInward.form.fields.quantity'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -335,14 +368,22 @@ export function OtherInwardActionDialog({
                                     name='quantityType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Qty Type</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inward.otherInward.form.fields.quantityType'
+                                                )}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
                                                 value={field.value || undefined}
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
-                                                        <SelectValue placeholder='Select' />
+                                                        <SelectValue
+                                                            placeholder={t(
+                                                                'common.select'
+                                                            )}
+                                                        />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent className='w-full'>
@@ -372,10 +413,16 @@ export function OtherInwardActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Party Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.otherInward.form.fields.partyName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter Party Name'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -389,10 +436,16 @@ export function OtherInwardActionDialog({
                                 name='brokerName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Broker Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.otherInward.form.fields.brokerName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter Broker Name'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -406,7 +459,11 @@ export function OtherInwardActionDialog({
                                 name='gunnyNew'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny (New)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.otherInward.form.fields.gunnyNew'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -430,7 +487,11 @@ export function OtherInwardActionDialog({
                                 name='gunnyOld'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny (Old)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.otherInward.form.fields.gunnyOld'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -454,7 +515,11 @@ export function OtherInwardActionDialog({
                                 name='gunnyPlastic'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny (Plastic)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.otherInward.form.fields.gunnyPlastic'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -478,7 +543,11 @@ export function OtherInwardActionDialog({
                                 name='juteGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Jute Gunny Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.otherInward.form.fields.juteGunnyWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -504,7 +573,9 @@ export function OtherInwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Plastic Gunny Weight
+                                            {t(
+                                                'inward.otherInward.form.fields.plasticGunnyWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -530,10 +601,16 @@ export function OtherInwardActionDialog({
                                 name='truckNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck No</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.otherInward.form.fields.truckNumber'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter Truck No'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -547,10 +624,16 @@ export function OtherInwardActionDialog({
                                 name='rstNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>RST No</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.otherInward.form.fields.rstNumber'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter RST No'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -564,7 +647,11 @@ export function OtherInwardActionDialog({
                                 name='truckWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.otherInward.form.fields.truckWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -589,7 +676,11 @@ export function OtherInwardActionDialog({
                                 name='gunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.otherInward.form.fields.gunnyWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -614,7 +705,11 @@ export function OtherInwardActionDialog({
                                 name='netWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Net Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.otherInward.form.fields.netWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -642,16 +737,16 @@ export function OtherInwardActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}
+                                      ? t('common.update')
+                                      : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

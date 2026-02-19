@@ -1,11 +1,12 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { t } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type OtherInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
-import { format } from 'date-fns'
 
 export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
@@ -40,7 +41,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.date', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -60,7 +66,10 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Other Purchase Deal Number'
+                title={t(
+                    'inward.otherInward.form.fields.otherPurchaseDealNumber',
+                    { ns: 'mill-staff' }
+                )}
             />
         ),
         cell: ({ row }) => (
@@ -72,7 +81,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.partyName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -84,7 +98,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'itemName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Item Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.itemName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('itemName')}</div>
@@ -93,7 +112,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'quantity',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Quantity' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.quantity', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-center'>{row.getValue('quantity')}</div>
@@ -102,7 +126,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'quantityType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Quantity Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.quantityType', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-center'>{row.getValue('quantityType')}</div>
@@ -111,7 +140,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'gunnyNew',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (New)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.gunnyNew', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyNew')}</div>
@@ -120,7 +154,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'gunnyOld',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (Old)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.gunnyOld', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyOld')}</div>
@@ -129,7 +168,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (Plastic)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.gunnyPlastic', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -138,7 +182,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'juteGunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Jute Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.juteGunnyWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -149,7 +198,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'plasticGunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.plasticGunnyWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -160,7 +214,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'truckNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.truckNumber', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('truckNumber')}</div>
@@ -169,7 +228,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'rstNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.rstNumber', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('rstNumber')}</div>
@@ -178,7 +242,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.truckWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -189,7 +258,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.gunnyWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -200,7 +274,12 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Net Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.otherInward.form.fields.netWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>

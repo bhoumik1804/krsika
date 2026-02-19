@@ -1,11 +1,12 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { t } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type RiceInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
-import { format } from 'date-fns'
 
 export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
@@ -40,7 +41,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.date', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='ps-3 text-nowrap'>
@@ -60,7 +66,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Rice Purchase Deal Number'
+                title={t(
+                    'inward.riceInward.form.fields.ricePurchaseDealNumber',
+                    {
+                        ns: 'mill-staff',
+                    }
+                )}
             />
         ),
         cell: ({ row }) => (
@@ -72,7 +83,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.partyName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -84,7 +100,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.brokerName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -96,7 +117,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'riceType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rice Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.riceType', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('riceType')}</div>
@@ -105,7 +131,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'inwardType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Inward Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.inwardType', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('inwardType')}</div>
@@ -114,7 +145,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'lotNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='LOT No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.lotNumber', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('lotNumber')}</div>
@@ -123,7 +159,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'balanceInward',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Balance Inward' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.balanceInward', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('balanceInward')}</div>
@@ -132,7 +173,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'frkOrNAN',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='FRK Status' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.frkStatus', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('frkOrNAN')}</div>
@@ -141,7 +187,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'gunnyOption',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Option' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.gunnyOption', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('gunnyOption')}</div>
@@ -150,7 +201,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'gunnyNew',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny New' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.gunnyNew', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyNew')}</div>
@@ -159,7 +215,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'gunnyOld',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Old' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.gunnyOld', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyOld')}</div>
@@ -168,7 +229,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Plastic' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.gunnyPlastic', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -177,7 +243,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'juteWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Jute Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.juteWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -188,7 +259,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'plasticWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.plasticWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -199,7 +275,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight (kg.)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.gunnyWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -210,7 +291,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'truckNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.truckNumber', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('truckNumber')}</div>
@@ -219,7 +305,12 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
     {
         accessorKey: 'rstNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('inward.riceInward.form.fields.rstNumber', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('rstNumber')}</div>
@@ -230,7 +321,9 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Truck Load Weight (Qtl.)'
+                title={t('inward.riceInward.form.fields.truckLoadWeight', {
+                    ns: 'mill-staff',
+                })}
             />
         ),
         cell: ({ row }) => (
@@ -244,7 +337,9 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Rice Mota Net Wt (Qtl)'
+                title={t('inward.riceInward.form.fields.riceMotaNetWeight', {
+                    ns: 'mill-staff',
+                })}
             />
         ),
         cell: ({ row }) => (
@@ -258,7 +353,9 @@ export const riceInwardColumns: ColumnDef<RiceInward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Rice Patla Net Wt (Qtl)'
+                title={t('inward.riceInward.form.fields.ricePatlaNetWeight', {
+                    ns: 'mill-staff',
+                })}
             />
         ),
         cell: ({ row }) => (

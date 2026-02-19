@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -16,9 +17,9 @@ import {
 import { GunnyInwardTable } from './components/gunny-inward-table'
 
 function GunnyInwardContent() {
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
-    const { data, isLoading, error, setQueryParams } =
-        gunnyInward()
+    const { data, isLoading, error, setQueryParams } = gunnyInward()
 
     const search = Object.fromEntries(searchParams.entries())
 
@@ -70,10 +71,10 @@ function GunnyInwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Gunny Inward / Samiti-Sangrahan Report
+                            {t('inward.gunnyInward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage gunny inward transactions and records
+                            {t('inward.gunnyInward.description')}
                         </p>
                     </div>
                     <GunnyInwardPrimaryButtons />

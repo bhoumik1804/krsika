@@ -1,16 +1,25 @@
 {
     "common": {
         "add": "जोड़ें",
-        "edit": "संपादित करें",
+        "adding": "जोड़ा जा रहा है...",
         "update": "अपडेट करें",
+        "updating": "अपडेट किया जा रहा है...",
+        "edit": "संपादित करें",
         "cancel": "रद्द करें",
         "enter": "दर्ज करें",
+        "enterValue": "मान दर्ज करें",
         "search": "खोजें...",
+        "searchObject": "{{object}} खोजें...",
         "manualEntry": "मैनुअल प्रविष्टि",
         "uploadFile": "फ़ाइल अपलोड करें",
         "uploading": "अपलोड हो रहा है",
         "upload": "अपलोड",
-        "noResults": "कोई परिणाम नहीं मिला"
+        "noResults": "कोई परिणाम नहीं मिला",
+        "pickDate": "तारीख चुनें",
+        "selectType": "प्रकार चुनें",
+        "updateDetails": "दर्ज विवरण अपडेट करें",
+        "errorLoadingData": "डेटा लोड करने में त्रुटि",
+        "millIdRequired": "मिल आईडी आवश्यक है"
     },
     "inputReports": {
         "sidebarTitle": "प्रविष्टि रिपोर्ट",
@@ -130,6 +139,173 @@
                 "primaryButton": "हमाल/रेजा टोली जोड़ें",
                 "fields": {
                     "labourTeamName": "हमाल/रेजा टोली का नाम"
+                }
+            }
+        }
+    },
+    "inward": {
+        "govtPaddyInward": {
+            "title": "शासकीय धान आवक",
+            "description": "शासकीय धान आवक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "शासकीय धान आवक जोड़ें",
+                "description": "शासकीय धान आवक के लिए विवरण दर्ज करें",
+                "primaryButton": "शासकीय धान आवक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "doNumber": "DO क्रमांक",
+                    "committeeName": "समिति/संग्रहण का नाम",
+                    "balanceDo": "उठाव शेष",
+                    "gunnyNew": "बारदाना (नया)",
+                    "gunnyOld": "बारदाना (पुराना)",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "juteWeight": "जुट बारदाना वजन",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "gunnyWeight": "बारदाना वजन (क्विंटल में.)",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST No.",
+                    "truckLoadWeight": "गाड़ी वजन  (क्विंटल में.)",
+                    "paddyType": "आवक धान का प्रकार",
+                    "paddyMota": "धान(मोटा) नेट वजन",
+                    "paddyPatla": "धान(पतला) नेट वजन",
+                    "paddySarna": "धान(सरना) नेट वजन",
+                    "paddyMahamaya": "धान(महामाया) नेट वजन",
+                    "paddyRbGold": "धान(RB GOLD) नेट वजन"
+                }
+            }
+        },
+        "privatePaddyInward": {
+            "title": "निजी धान आवक",
+            "description": "निजी धान आवक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "निजी धान आवक जोड़ें",
+                "description": "निजी धान आवक के लिए विवरण दर्ज करें",
+                "primaryButton": "निजी धान आवक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "paddyPurchaseDealNumber": "धान खरीदी सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "balanceDo": "उठाव शेष",
+                    "purchaseType": "खरीदी प्रकार",
+                    "doNumber": "DO क्रमांक",
+                    "committeeName": "समिति/संग्रहण का नाम",
+                    "gunnyOption": "बारदाना सहित/वापसी",
+                    "gunnyNew": "बारदाना (नया)",
+                    "gunnyOld": "बारदाना (पुराना)",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "juteWeight": "जुट बारदाना वजन",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST No.",
+                    "truckLoadWeight": "गाड़ी वजन  (क्विंटल में.)",
+                    "paddyType": "धान का प्रकार",
+                    "paddyMota": "धान(मोटा) नेट वजन",
+                    "paddyPatla": "धान(पतला) नेट वजन",
+                    "paddySarna": "धान(सरना) नेट वजन",
+                    "paddyMahamaya": "धान(महामाया) नेट वजन",
+                    "paddyRbGold": "धान(RB GOLD) नेट वजन"
+                }
+            }
+        },
+        "riceInward": {
+            "title": "चावल आवक / LOT जमा",
+            "description": "चावल आवक और लॉट जमा प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "चावल आवक / LOT जमा जोड़ें",
+                "description": "चावल आवक या लॉट जमा के लिए विवरण दर्ज करें",
+                "primaryButton": "चावल आवक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "ricePurchaseDealNumber": "चावल खरीदी सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "riceType": "चावल का प्रकार",
+                    "balanceInward": "आवक शेष/ LOT जमा शेष",
+                    "inwardType": "आवक / LOT",
+                    "lotNumber": "LOT No.",
+                    "frkOrNAN": "FRK/NON FRK",
+                    "gunnyOption": "बारदाना",
+                    "gunnyNew": "बारदाना (नया)",
+                    "gunnyOld": "बारदाना (पुराना)",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "juteWeight": "जुट बारदाना वजन",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST No.",
+                    "truckLoadWeight": "गाड़ी वजन",
+                    "riceMotaNetWeight": "चावल(मोटा) नेट वजन",
+                    "ricePatlaNetWeight": "चावल(पतला) नेट वजन"
+                }
+            }
+        },
+        "gunnyInward": {
+            "title": "बारदाना आवक/ समिति-संग्रहण में जमा",
+            "description": "बारदाना आवक और समिति जमा प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "बारदाना आवक/ समिति-संग्रहण में जमा जोड़ें",
+                "description": "बारदाना आवक या समिति जमा के लिए विवरण दर्ज करें",
+                "primaryButton": "बारदाना आवक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "gunnyPurchaseDealNumber": "बारदाना खरीदी सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "delivery": "डिलीवरी",
+                    "samitiSangrahan": "समिति संग्रहण",
+                    "gunnyNew": "बारदाना (नया)",
+                    "gunnyOld": "बारदाना (पुराना)",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)"
+                }
+            }
+        },
+        "frkInward": {
+            "title": "FRK आवक",
+            "description": "FRK आवक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "FRK आवक जोड़ें",
+                "description": "FRK आवक के लिए विवरण दर्ज करें",
+                "primaryButton": "FRK आवक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "frkPurchaseDealNumber": "FRK खरीदी सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST No.",
+                    "truckWeight": "गाड़ी वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "netWeight": "नेट वजन (बारदाना घटा कर)"
+                }
+            }
+        },
+        "otherInward": {
+            "title": "अन्य आवक",
+            "description": "अन्य आवक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "अन्य आवक जोड़ें",
+                "description": "अन्य आवक के लिए विवरण दर्ज करें",
+                "primaryButton": "अन्य आवक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "otherPurchaseDealNumber": "अन्य खरीदी सौदा क्रमांक",
+                    "itemName": "वस्तु का नाम",
+                    "quantity": "मात्रा",
+                    "quantityType": "मात्रा का प्रकार",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "gunnyNew": "बारदाना (नया)",
+                    "gunnyOld": "बारदाना (पुराना)",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "juteGunnyWeight": "जुट बारदाना वजन",
+                    "plasticGunnyWeight": "प्लास्टिक बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST No.",
+                    "truckWeight": "गाड़ी वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "netWeight": "नेट वजन (बारदाना घटा कर)"
                 }
             }
         }
