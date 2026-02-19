@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -26,7 +26,6 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -72,7 +71,7 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
         open,
         {
             useListHook: usePartyList,
-            extractItems: (data) =>
+            extractItems: (data: { parties: Array<{ partyName: string }> }) =>
                 data.parties
                     .map((c: { partyName: string }) => c.partyName)
                     .filter(Boolean) as string[],
@@ -83,7 +82,6 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
-    const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
     const form = useForm<BalanceLiftingPurchasesPaddy>({
         resolver: zodResolver(paddyPurchaseSchema),
@@ -263,11 +261,11 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                                             )}
                                                         >
                                                             {field.value
-                                                                ? parties.find(
-                                                                    (party) =>
-                                                                        party.label ===
+                                                                ? party.items.find(
+                                                                    (p: string) =>
+                                                                        p ===
                                                                         field.value
-                                                                )?.label
+                                                                )
                                                                 : t(
                                                                     'common.select'
                                                                 )}
@@ -286,33 +284,33 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                                             {t('common.noResults')}
                                                         </CommandEmpty>
                                                         <CommandGroup>
-                                                            {parties.map(
-                                                                (party) => (
+                                                            {party.items.map(
+                                                                (partyName: string) => (
                                                                     <CommandItem
                                                                         value={
-                                                                            party.label
+                                                                            partyName
                                                                         }
                                                                         key={
-                                                                            party.value
+                                                                            partyName
                                                                         }
                                                                         onSelect={() => {
                                                                             form.setValue(
                                                                                 'partyName',
-                                                                                party.label
+                                                                                partyName
                                                                             )
                                                                         }}
                                                                     >
                                                                         <CheckIcon
                                                                             className={cn(
                                                                                 'mr-2 h-4 w-4',
-                                                                                party.label ===
+                                                                                partyName ===
                                                                                     field.value
                                                                                     ? 'opacity-100'
                                                                                     : 'opacity-0'
                                                                             )}
                                                                         />
                                                                         {
-                                                                            party.label
+                                                                            partyName
                                                                         }
                                                                     </CommandItem>
                                                                 )
