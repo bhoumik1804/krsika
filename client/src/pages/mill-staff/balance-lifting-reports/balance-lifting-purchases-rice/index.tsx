@@ -16,7 +16,11 @@ import {
 } from './components/balance-lifting-purchases-rice-provider'
 import { BalanceLiftingPurchasesRiceTable } from './components/balance-lifting-purchases-rice-table'
 
+import { useTranslation } from 'react-i18next'
+// ...
+
 export function BalanceLiftingPurchasesRiceReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -66,10 +70,10 @@ export function BalanceLiftingPurchasesRiceReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Rice Purchase Report
+                            {t('balanceLifting.purchase.rice.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage rice purchase transactions and records
+                            {t('balanceLifting.purchase.rice.description')}
                         </p>
                     </div>
                     <BalanceLiftingPurchasesRicePrimaryButtons />
@@ -87,6 +91,7 @@ function BalanceLiftingPurchasesRiceContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
+    const { t } = useTranslation('mill-staff')
     const ctx = useBalanceLiftingPurchasesRice()
 
     if (ctx.isLoading) {
@@ -100,7 +105,7 @@ function BalanceLiftingPurchasesRiceContent({
     if (ctx.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load rice purchase data. Please try again later.
+                {t('common.errorLoadingData')}
             </div>
         )
     }

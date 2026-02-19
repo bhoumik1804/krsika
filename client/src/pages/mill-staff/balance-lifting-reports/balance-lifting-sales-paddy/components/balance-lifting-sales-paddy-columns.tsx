@@ -4,6 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table/column-header'
 import { type PaddySalesResponse } from '../data/types'
 import { DataTableRowActions } from './data-table-row-actions'
+import { useTranslation } from 'react-i18next'
 
 export const paddySalesColumns: ColumnDef<PaddySalesResponse>[] = [
     {
@@ -34,12 +35,15 @@ export const paddySalesColumns: ColumnDef<PaddySalesResponse>[] = [
     },
     {
         accessorKey: 'paddySalesDealNumber',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title='Paddy Sales Deal Number'
-            />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.sales.paddy.form.fields.dealNumber')}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='w-[100px] font-medium'>
                 {row.getValue('paddySalesDealNumber')}
@@ -48,9 +52,15 @@ export const paddySalesColumns: ColumnDef<PaddySalesResponse>[] = [
     },
     {
         accessorKey: 'date',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.sales.paddy.form.fields.date')}
+                />
+            )
+        },
         cell: ({ row }) => {
             const date = new Date(row.getValue('date'))
             return <div className='w-[100px]'>{format(date, 'dd-MM-yyyy')}</div>
@@ -58,36 +68,60 @@ export const paddySalesColumns: ColumnDef<PaddySalesResponse>[] = [
     },
     {
         accessorKey: 'partyName',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.sales.paddy.form.fields.partyName')}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='w-[150px]'>{row.getValue('partyName')}</div>
         ),
     },
     {
         accessorKey: 'brokerName',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.sales.paddy.form.fields.brokerName')}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='w-[150px]'>{row.getValue('brokerName')}</div>
         ),
     },
     {
         accessorKey: 'dhanQty',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Paddy Qty' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.sales.paddy.form.fields.paddyQty')}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='w-[100px]'>{row.getValue('dhanQty')}</div>
         ),
     },
     {
         id: 'lifting',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Lifting' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.sales.paddy.form.fields.lifting')}
+                />
+            )
+        },
         cell: ({ row }) => {
             const outwardData = row.original.outwardData || []
             const totalLifting = outwardData.reduce(
@@ -99,9 +133,15 @@ export const paddySalesColumns: ColumnDef<PaddySalesResponse>[] = [
     },
     {
         id: 'balance',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Balance Lifting' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.sales.paddy.form.fields.balanceLifting')}
+                />
+            )
+        },
         cell: ({ row }) => {
             const qty = row.original.dhanQty || 0
             const outwardData = row.original.outwardData || []

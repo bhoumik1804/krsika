@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router'
 import { getCookie } from '@/lib/cookies'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/stores/auth-store'
 import { LayoutProvider } from '@/context/layout-provider'
 import { SearchProvider } from '@/context/search-provider'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
@@ -13,8 +14,24 @@ type SuperAdminLayoutProps = {
 
 export function SuperAdminLayout({ children }: SuperAdminLayoutProps) {
     const defaultOpen = getCookie('sidebar_state') !== 'false'
+    const user = useAuthStore((state) => state.user)
+    let sidebarData = superAdminSidebarData
+    
+    // Override with actual user data if logged in
+    if (user) {
+        sidebarData = {
+            ...sidebarData,
+            user: {
+                name: user.fullName || 'Guest User',
+                email: user.email || 'guest@example.com',
+                avatar: user.fullName || 'Guest User',
+                role: user.role,
+            },
+        }
+    }
+    
     return (
-        <SearchProvider sidebarData={superAdminSidebarData}>
+        <SearchProvider sidebarData={sidebarData}>
             <LayoutProvider>
                 <SidebarProvider defaultOpen={defaultOpen}>
                     <AppSidebar sidebarData={superAdminSidebarData} />

@@ -16,7 +16,10 @@ import {
 } from './components/balance-lifting-purchases-gunny-provider'
 import { BalanceLiftingPurchasesGunnyTable } from './components/balance-lifting-purchases-gunny-table'
 
+import { useTranslation } from 'react-i18next'
+
 export function BalanceLiftingPurchasesGunnyReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -66,10 +69,10 @@ export function BalanceLiftingPurchasesGunnyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Gunny Purchase Report
+                            {t('balanceLifting.purchase.gunny.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage gunny purchase transactions and records
+                            {t('balanceLifting.purchase.gunny.description')}
                         </p>
                     </div>
                     <BalanceLiftingPurchasesGunnyPrimaryButtons />
@@ -98,9 +101,11 @@ function BalanceLiftingPurchasesGunnyContent({
     }
 
     if (ctx.isError) {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const { t } = useTranslation('mill-staff')
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load gunny purchase data. Please try again later.
+                {t('common.errorLoadingData')}
             </div>
         )
     }

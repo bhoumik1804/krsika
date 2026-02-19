@@ -39,6 +39,7 @@ import {
     type BalanceLiftingPurchasesFrk,
 } from '../data/schema'
 import { useBalanceLiftingPurchasesFrk } from './balance-lifting-purchases-frk-provider'
+import { useTranslation } from 'react-i18next'
 
 type BalanceLiftingPurchasesFrkActionDialogProps = {
     open: boolean
@@ -49,6 +50,7 @@ export function BalanceLiftingPurchasesFrkActionDialog({
     open,
     onOpenChange,
 }: BalanceLiftingPurchasesFrkActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { currentRow, millId } = useBalanceLiftingPurchasesFrk()
     const { mutateAsync: createPurchase, isPending: isCreating } =
         useCreateBalanceLiftingFrkPurchase(millId)
@@ -120,11 +122,18 @@ export function BalanceLiftingPurchasesFrkActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} FRK Purchase
+                        {isEditing
+                            ? t('balanceLifting.purchase.frk.form.title_edit')
+                            : t('balanceLifting.purchase.frk.form.title_add')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the purchase details
-                        below
+                        {isEditing
+                            ? t(
+                                'balanceLifting.purchase.frk.form.description_edit'
+                            )
+                            : t(
+                                'balanceLifting.purchase.frk.form.description_add'
+                            )}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -139,7 +148,11 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Date</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.frk.form.fields.date'
+                                                )}
+                                            </FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
                                                 onOpenChange={
@@ -155,11 +168,11 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
+                                                                    new Date(
+                                                                        field.value
+                                                                    ),
+                                                                    'MMM dd, yyyy'
+                                                                )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -173,17 +186,17 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                      field.value
-                                                                  )
+                                                                    field.value
+                                                                )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -202,7 +215,11 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.frk.form.fields.partyName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
                                                     value={
@@ -212,8 +229,12 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={party}
-                                                    placeholder='Search party...'
-                                                    emptyText='No parties found'
+                                                    placeholder={t(
+                                                        'common.search'
+                                                    )}
+                                                    emptyText={t(
+                                                        'common.noResults'
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -227,7 +248,9 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                FRK Quantity (Qtl)
+                                                {t(
+                                                    'balanceLifting.purchase.frk.form.fields.frkQty'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -260,7 +283,9 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                FRK Rate (per Qtl)
+                                                {t(
+                                                    'balanceLifting.purchase.frk.form.fields.frkRate'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -293,7 +318,11 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                     name='gst'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>GST (%)</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.frk.form.fields.gst'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -328,16 +357,16 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}
+                                        ? t('common.update')
+                                        : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

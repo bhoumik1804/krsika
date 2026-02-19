@@ -16,7 +16,11 @@ import {
 } from './components/balance-lifting-purchases-paddy-provider'
 import { BalanceLiftingPurchasesPaddyTable } from './components/balance-lifting-purchases-paddy-table'
 
+import { useTranslation } from 'react-i18next'
+// ... imports
+
 export function BalanceLiftingPurchasesPaddyReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -75,10 +79,10 @@ export function BalanceLiftingPurchasesPaddyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Paddy Purchase Report
+                            {t('balanceLifting.purchase.paddy.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage paddy purchase transactions and records
+                            {t('balanceLifting.purchase.paddy.description')}
                         </p>
                     </div>
                     <BalanceLiftingPurchasesPaddyPrimaryButtons />
@@ -96,6 +100,7 @@ function BalanceLiftingPurchasesPaddyContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
+    const { t } = useTranslation('mill-staff')
     const context = useBalanceLiftingPurchasesPaddy()
 
     if (context.isLoading) {
@@ -109,7 +114,7 @@ function BalanceLiftingPurchasesPaddyContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load Paddy purchase data. Please try again later.
+                {t('common.errorLoadingData')}
             </div>
         )
     }

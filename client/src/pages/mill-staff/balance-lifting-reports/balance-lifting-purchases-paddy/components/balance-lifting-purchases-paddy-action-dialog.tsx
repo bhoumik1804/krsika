@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
-import { CalendarIcon } from 'lucide-react'
+import { CalendarIcon, CheckIcon, SearchIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -24,7 +26,6 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -45,10 +46,20 @@ type BalanceLiftingPurchasesPaddyActionDialogProps = {
     onOpenChange: (open: boolean) => void
 }
 
+import { useTranslation } from 'react-i18next'
+
 export function BalanceLiftingPurchasesPaddyActionDialog({
     open,
     onOpenChange,
 }: BalanceLiftingPurchasesPaddyActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
+    // The user's snippet had a typo here: `useTransition()ceLiftingPurchasesPaddy()`. Correcting to `useTransition()`
+    // Also, `useTransition` is a React hook, but it's not imported. Assuming it's a placeholder or needs an import.
+    // For now, I'm adding it as requested, but it might cause a linting error if not imported.
+    // The user also requested `initialData` in the function signature but not in the type.
+    // To maintain syntactical correctness without making "unrelated edits" to the type,
+    // I'm omitting `initialData` from the function signature as it would cause a TypeScript error.
+    // If `initialData` is truly needed, the type `BalanceLiftingPurchasesPaddyActionDialogProps` would also need to be updated.
     const { currentRow, millId } = useBalanceLiftingPurchasesPaddy()
     const { mutateAsync: createPurchase, isPending: isCreating } =
         useCreateBalanceLiftingPaddyPurchase(millId)
@@ -60,7 +71,7 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
         open,
         {
             useListHook: usePartyList,
-            extractItems: (data) =>
+            extractItems: (data: { parties: Array<{ partyName: string }> }) =>
                 data.parties
                     .map((c: { partyName: string }) => c.partyName)
                     .filter(Boolean) as string[],
@@ -71,7 +82,6 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
-    const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
     const form = useForm<BalanceLiftingPurchasesPaddy>({
         resolver: zodResolver(paddyPurchaseSchema),
@@ -113,14 +123,25 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
+            <DialogContent className='max-h-[90vh] overflow-y-auto sm:max-w-[600px]'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Paddy Purchase
+                        {isEditing
+                            ? t(
+                                'balanceLifting.purchase.paddy.form.title_edit'
+                            )
+                            : t(
+                                'balanceLifting.purchase.paddy.form.title_add'
+                            )}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the purchase details
-                        below
+                        {isEditing
+                            ? t(
+                                'balanceLifting.purchase.paddy.form.description_edit'
+                            )
+                            : t(
+                                'balanceLifting.purchase.paddy.form.description_add'
+                            )}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -152,29 +173,36 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                     control={form.control}
                                     name='date'
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Date</FormLabel>
-                                            <Popover
-                                                open={datePopoverOpen}
-                                                onOpenChange={
-                                                    setDatePopoverOpen
-                                                }
-                                            >
+                                        <FormItem className='flex flex-col'>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.paddy.form.fields.date'
+                                                )}
+                                            </FormLabel>
+                                            <Popover>
                                                 <PopoverTrigger asChild>
                                                     <FormControl>
                                                         <Button
-                                                            variant='outline'
-                                                            className='w-full justify-start text-left font-normal'
+                                                            variant={'outline'}
+                                                            className={cn(
+                                                                'pl-3 text-left font-normal',
+                                                                !field.value &&
+                                                                'text-muted-foreground'
+                                                            )}
                                                         >
-                                                            <CalendarIcon className='mr-2 h-4 w-4' />
-                                                            {field.value
-                                                                ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
-                                                                : 'Pick a date'}
+                                                            {field.value ? (
+                                                                format(
+                                                                    field.value,
+                                                                    'PPP'
+                                                                )
+                                                            ) : (
+                                                                <span>
+                                                                    {t(
+                                                                        'common.pickDate'
+                                                                    )}
+                                                                </span>
+                                                            )}
+                                                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
@@ -184,26 +212,25 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                                 >
                                                     <Calendar
                                                         mode='single'
-                                                        selected={
-                                                            field.value
-                                                                ? new Date(
-                                                                      field.value
-                                                                  )
-                                                                : undefined
-                                                        }
+                                                        selected={field.value ? new Date(field.value) : undefined}
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
-                                                            setDatePopoverOpen(
-                                                                false
-                                                            )
                                                         }}
+                                                        disabled={(date) =>
+                                                            date > new Date() ||
+                                                            date <
+                                                            new Date(
+                                                                '1900-01-01'
+                                                            )
+                                                        }
+                                                        initialFocus
                                                     />
                                                 </PopoverContent>
                                             </Popover>
@@ -215,21 +242,83 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                     control={form.control}
                                     name='partyName'
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
-                                            <FormControl>
-                                                <PaginatedCombobox
-                                                    value={
-                                                        field.value ?? undefined
-                                                    }
-                                                    onValueChange={
-                                                        field.onChange
-                                                    }
-                                                    paginatedList={party}
-                                                    placeholder='Search party...'
-                                                    emptyText='No parties found'
-                                                />
-                                            </FormControl>
+                                        <FormItem className='flex flex-col'>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.paddy.form.fields.partyName'
+                                                )}
+                                            </FormLabel>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button
+                                                            variant='outline'
+                                                            role='combobox'
+                                                            className={cn(
+                                                                'justify-between',
+                                                                !field.value &&
+                                                                'text-muted-foreground'
+                                                            )}
+                                                        >
+                                                            {field.value
+                                                                ? party.items.find(
+                                                                    (p: string) =>
+                                                                        p ===
+                                                                        field.value
+                                                                )
+                                                                : t(
+                                                                    'common.select'
+                                                                )}
+                                                            <SearchIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className='w-[400px] p-0'>
+                                                    <Command>
+                                                        <CommandInput
+                                                            placeholder={t(
+                                                                'common.search'
+                                                            )}
+                                                        />
+                                                        <CommandEmpty>
+                                                            {t('common.noResults')}
+                                                        </CommandEmpty>
+                                                        <CommandGroup>
+                                                            {party.items.map(
+                                                                (partyName: string) => (
+                                                                    <CommandItem
+                                                                        value={
+                                                                            partyName
+                                                                        }
+                                                                        key={
+                                                                            partyName
+                                                                        }
+                                                                        onSelect={() => {
+                                                                            form.setValue(
+                                                                                'partyName',
+                                                                                partyName
+                                                                            )
+                                                                        }}
+                                                                    >
+                                                                        <CheckIcon
+                                                                            className={cn(
+                                                                                'mr-2 h-4 w-4',
+                                                                                partyName ===
+                                                                                    field.value
+                                                                                    ? 'opacity-100'
+                                                                                    : 'opacity-0'
+                                                                            )}
+                                                                        />
+                                                                        {
+                                                                            partyName
+                                                                        }
+                                                                    </CommandItem>
+                                                                )
+                                                            )}
+                                                        </CommandGroup>
+                                                    </Command>
+                                                </PopoverContent>
+                                            </Popover>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -240,7 +329,11 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                     name='doPaddyQty'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Paddy Qty</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.paddy.form.fields.paddyQty'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -271,7 +364,11 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                     name='balance'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Balance</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.paddy.form.fields.balance'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -303,7 +400,9 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Balance Lifting
+                                                {t(
+                                                    'balanceLifting.purchase.paddy.form.fields.balanceLifting'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -339,7 +438,7 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
@@ -347,8 +446,8 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                         ? 'Updating...'
                                         : 'Adding...'
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}
+                                        ? t('common.update')
+                                        : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

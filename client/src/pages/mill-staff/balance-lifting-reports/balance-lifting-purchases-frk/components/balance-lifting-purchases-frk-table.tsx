@@ -21,6 +21,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table'
+import { useTranslation } from 'react-i18next'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BalanceLiftingPurchasesFrk } from '../data/schema'
 import { frkColumns as columns } from './balance-lifting-purchases-frk-columns'
@@ -108,6 +109,8 @@ export function BalanceLiftingPurchasesFrkTable({
         }
     }, [table, ensurePageInRange, serverPagination])
 
+    const { t } = useTranslation('mill-staff')
+
     return (
         <div
             className={cn(
@@ -117,37 +120,27 @@ export function BalanceLiftingPurchasesFrkTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Filter purchases...'
+                searchPlaceholder={t('common.search')}
                 searchKey='partyName'
             />
-            <div className='overflow-hidden rounded-md border'>
+            <div className='relative flex-1 rounded-md border'>
                 <Table>
-                    <TableHeader>
+                    <TableHeader className='bg-muted/50 sticky top-0 z-10'>
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow
-                                key={headerGroup.id}
-                                className='group/row'
-                            >
+                            <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
                                         <TableHead
                                             key={header.id}
                                             colSpan={header.colSpan}
-                                            className={cn(
-                                                'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
-                                                header.column.columnDef.meta
-                                                    ?.className,
-                                                header.column.columnDef.meta
-                                                    ?.thClassName
-                                            )}
                                         >
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}
@@ -162,19 +155,9 @@ export function BalanceLiftingPurchasesFrkTable({
                                     data-state={
                                         row.getIsSelected() && 'selected'
                                     }
-                                    className='group/row'
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell
-                                            key={cell.id}
-                                            className={cn(
-                                                'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
-                                                cell.column.columnDef.meta
-                                                    ?.className,
-                                                cell.column.columnDef.meta
-                                                    ?.tdClassName
-                                            )}
-                                        >
+                                        <TableCell key={cell.id}>
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext()
@@ -189,7 +172,7 @@ export function BalanceLiftingPurchasesFrkTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}
