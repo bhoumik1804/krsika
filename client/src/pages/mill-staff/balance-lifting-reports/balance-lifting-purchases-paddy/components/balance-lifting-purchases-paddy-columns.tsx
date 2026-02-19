@@ -3,6 +3,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table/column-header'
 import { type BalanceLiftingPurchasesPaddy } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { useTranslation } from 'react-i18next'
 
 export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     {
@@ -33,9 +34,15 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     },
     {
         accessorKey: 'date',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.purchase.paddy.form.fields.date')}
+                />
+            )
+        },
         cell: ({ row }) => {
             const date = new Date(row.getValue('date'))
             return <div className='w-[80px]'>{date.toLocaleDateString()}</div>
@@ -43,12 +50,17 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     },
     {
         accessorKey: 'paddyPurchaseDealNumber',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title='Paddy Purchase Deal Number'
-            />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.paddy.form.fields.dealNumber'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => {
             return (
                 <div className='flex flex-col space-y-1'>
@@ -61,9 +73,17 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     },
     {
         accessorKey: 'partyName',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.paddy.form.fields.partyName'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => {
             return (
                 <div className='flex space-x-2'>
@@ -76,9 +96,17 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     },
     {
         accessorKey: 'doPaddyQty',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Paddy Qty' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.paddy.form.fields.paddyQty'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => {
             return (
                 <div className='flex space-x-2'>
@@ -91,9 +119,17 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     },
     {
         accessorKey: 'balance',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Balance' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.paddy.form.fields.balance'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => {
             const total = (row.original.inwardData || []).reduce(
                 (acc: number, curr: any) => acc + (Number(curr.paddyMota) || 0),
@@ -110,9 +146,17 @@ export const paddyColumns: ColumnDef<BalanceLiftingPurchasesPaddy>[] = [
     },
     {
         accessorKey: 'balanceLifting',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Balance Lifting' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.paddy.form.fields.balanceLifting'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => {
             const totalInward = (row.original.inwardData || []).reduce(
                 (acc: number, curr: any) => acc + (Number(curr.paddyMota) || 0),

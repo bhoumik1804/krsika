@@ -15,8 +15,10 @@ import {
     useBalanceLiftingSalesPaddy,
 } from './components/balance-lifting-sales-paddy-provider'
 import { BalanceLiftingSalesPaddyTable } from './components/balance-lifting-sales-paddy-table'
+import { useTranslation } from 'react-i18next'
 
 export function BalanceLiftingSalesPaddyReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -75,10 +77,10 @@ export function BalanceLiftingSalesPaddyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Paddy Sale Report
+                            {t('balanceLifting.sales.paddy.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage paddy sales transactions and records
+                            {t('balanceLifting.sales.paddy.description')}
                         </p>
                     </div>
                     <BalanceLiftingSalesPaddyPrimaryButtons />
@@ -96,6 +98,7 @@ function BalanceLiftingSalesPaddyContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
+    const { t } = useTranslation('mill-staff')
     const context = useBalanceLiftingSalesPaddy()
 
     if (context.isLoading) {
@@ -109,7 +112,7 @@ function BalanceLiftingSalesPaddyContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load Paddy sales data. Please try again later.
+                {t('common.errorLoadingData')}
             </div>
         )
     }

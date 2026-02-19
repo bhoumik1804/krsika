@@ -1192,5 +1192,225 @@
             "operator": "ऑपरेटर",
             "accountant": "लेखाकार"
         }
+    },
+    "sidebar": {
+        "dashboard": "डैशबोर्ड",
+        "overview": "अवलोकन",
+        "staff": "स्टाफ",
+        "staffDirectory": "कर्मचारी निर्देशिका",
+        "purchaseReports": "खरीदी रिपोर्ट",
+        "paddyPurchaseReport": "धान खरीदी रिपोर्ट",
+        "ricePurchaseReport": "चावल खरीदी रिपोर्ट",
+        "gunnyPurchaseReport": "बारदाना खरीदी रिपोर्ट",
+        "frkPurchaseReport": "FRK खरीदी रिपोर्ट",
+        "otherPurchaseReport": "अन्य खरीदी रिपोर्ट",
+        "salesReports": "बिक्री रिपोर्ट",
+        "riceSalesReport": "चावल बिक्री रिपोर्ट",
+        "paddySalesReport": "धान बिक्री रिपोर्ट",
+        "gunnySalesReport": "बारदाना बिक्री रिपोर्ट",
+        "khandaSalesReport": "खंडा बिक्री रिपोर्ट",
+        "nakkhiSalesReport": "नक्खी बिक्री रिपोर्ट",
+        "otherSalesReport": "अन्य बिक्री रिपोर्ट",
+        "inputReports": "इनपुट रिपोर्ट",
+        "partyReport": "पार्टी रिपोर्ट",
+        "transporterReport": "परिवहनकर्ता रिपोर्ट",
+        "brokerReport": "ब्रोकर रिपोर्ट",
+        "committeeReport": "समिति रिपोर्ट",
+        "doReport": "DO रिपोर्ट",
+        "vehicleReport": "वाहन रिपोर्ट",
+        "staffReport": "स्टाफ रिपोर्ट",
+        "labourGroupReport": "हमाल/रेजा टोली रिपोर्ट",
+        "dailyReports": "दैनिक रिपोर्ट",
+        "purchaseDeals": "खरीदी सौदे",
+        "salesDeals": "बिक्री सौदे",
+        "inwards": "आवक",
+        "outwards": "जावक",
+        "milling": "मिलिंग",
+        "production": "उत्पादन",
+        "receipt": "प्राप्ति",
+        "payment": "भुगतान",
+        "stockReports": "स्टॉक रिपोर्ट",
+        "stockOverview": "स्टॉक अवलोकन",
+        "transaction": "लेनदेन",
+        "brokerTransaction": "ब्रोकर का हिसाब",
+        "partyTransaction": "पार्टी का हिसाब",
+        "inwardAndOutward": "आवक और जावक",
+        "inward": "आवक",
+        "outward": "जावक",
+        "govtPaddyInwardReport": "शासकीय धान आवक रिपोर्ट",
+        "privatePaddyInwardReport": "निजी धान आवक रिपोर्ट",
+        "riceInwardReport": "चावल आवक रिपोर्ट",
+        "gunnyInwardReport": "बारदाना आवक रिपोर्ट",
+        "otherInwardReport": "अन्य आवक रिपोर्ट",
+        "frkInwardReport": "FRK आवक रिपोर्ट",
+        "privatePaddyOutwardReport": "निजी धान जावक रिपोर्ट",
+        "privateRiceOutwardReport": "निजी चावल जावक रिपोर्ट",
+        "govtRiceOutwardReport": "शासकीय चावल जावक रिपोर्ट",
+        "govtGunnyOutwardReport": "शासकीय बारदाना जावक रिपोर्ट",
+        "privateGunnyOutwardReport": "निजी बारदाना जावक रिपोर्ट",
+        "frkOutwardReport": "FRK जावक रिपोर्ट",
+        "khandaOutwardReport": "खंडा जावक रिपोर्ट",
+        "nakkhiOutwardReport": "नक्खी जावक रिपोर्ट",
+        "bhusaOutwardReport": "भूसा जावक रिपोर्ट",
+        "kodhaOutwardReport": "कोढा जावक रिपोर्ट",
+        "silkyKodhaOutwardReport": "सिल्की कोढा जावक रिपोर्ट",
+        "otherOutwardReport": "अन्य जावक रिपोर्ट",
+        "millingReports": "मिलिंग रिपोर्ट",
+        "paddyMillingReport": "धान मिलिंग रिपोर्ट",
+        "riceMillingReport": "चावल मिलिंग रिपोर्ट",
+        "labourCostReport": "हमाली रिपोर्ट",
+        "inwardLabourCostReport": "आवक हमाली रिपोर्ट",
+        "outwardLabourCostReport": "जावक हमाली रिपोर्ट",
+        "millingLabourCostReport": "मिलिंग हमाली रिपोर्ट",
+        "otherLabourCostReport": "अन्य हमाली रिपोर्ट",
+        "financialTransactionReports": "वित्तीय लेनदेन रिपोर्ट",
+        "financialReceiptReport": "वित्तीय प्राप्ति रिपोर्ट",
+        "financialPaymentReport": "वित्तीय भुगतान रिपोर्ट",
+        "other": "अन्य",
+        "settings": "सेटिंग्स",
+        "profile": "प्रोफ़ाइल",
+        "appearance": "दिखावट",
+        "myProfile": "मेरी प्रोफ़ाइल",
+        "balanceLiftingPurchases": "बैलेंस लिफ्टिंग खरीदी",
+        "reportBalanceLiftingPaddyPurchases": "बैलेंस लिफ्टिंग धान खरीदी रिपोर्ट",
+        "reportBalanceLiftingRicePurchases": "बैलेंस लिफ्टिंग चावल खरीदी रिपोर्ट",
+        "reportBalanceLiftingGunnyPurchases": "बैलेंस लिफ्टिंग बारदाना खरीदी रिपोर्ट",
+        "reportBalanceLiftingFrkPurchases": "बैलेंस लिफ्टिंग FRK खरीदी रिपोर्ट",
+        "balanceLiftingSales": "बैलेंस लिफ्टिंग बिक्री",
+        "reportBalanceLiftingPaddySales": "बैलेंस लिफ्टिंग धान बिक्री रिपोर्ट",
+        "outwardBalanceLiftingRiceSales": "जावक बैलेंस लिफ्टिंग चावल बिक्री",
+        "outwardBalanceLiftingReportRiceSales": "जावक बैलेंस लिफ्टिंग चावल बिक्री रिपोर्ट"
+    },
+    "balanceLifting": {
+        "purchase": {
+            "paddy": {
+                "title": "बैलेंस लिफ्टिंग धान खरीदी रिपोर्ट",
+                "description": "बैलेंस लिफ्टिंग धान खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "form": {
+                    "title_add": "बैलेंस लिफ्टिंग धान खरीदी जोड़ें",
+                    "title_edit": "बैलेंस लिफ्टिंग धान खरीदी संपादित करें",
+                    "description_add": "खरीदी विवरण नीचे दर्ज करें",
+                    "description_edit": "खरीदी विवरण नीचे अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "dealNumber": "धान खरीदी सौदा क्रमांक",
+                        "partyName": "पार्टी का नाम",
+                        "paddyQty": "धान की मात्रा",
+                        "balance": "शेष",
+                        "balanceLifting": "उठाव शेष"
+                    }
+                }
+            },
+            "rice": {
+                "title": "चावल खरीद रिपोर्ट",
+                "description": "चावल खरीद लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "form": {
+                    "title_add": "चावल खरीद जोड़ें",
+                    "title_edit": "चावल खरीद संपादित करें",
+                    "description_add": "नीचे खरीद विवरण दर्ज करें",
+                    "description_edit": "नीचे खरीद विवरण अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "partyName": "पार्टी का नाम",
+                        "brokerName": "ब्रोकर का नाम",
+                        "deliveryType": "डिलीवरी का प्रकार",
+                        "lotOrOther": "लॉट / अन्य",
+                        "fciOrNAN": "FCI / NAN",
+                        "lotNumber": "लॉट नंबर",
+                        "frkType": "FRK",
+                        "frkRatePerQuintal": "FRK दर (प्रति क्विंटल)",
+                        "riceType": "चावल का प्रकार",
+                        "riceQty": "मात्रा (क्विंटल)",
+                        "riceRate": "चावल की दर",
+                        "discountPercent": "बटाव %",
+                        "brokeragePerQuintal": "दलाली (प्रति क्विंटल)",
+                        "gunnyType": "बारदाना शामिल / वापसी",
+                        "newGunnyRate": "नई बारदाना दर",
+                        "oldGunnyRate": "पुरानी बारदाना दर",
+                        "plasticGunnyRate": "प्लास्टिक बारदाना दर"
+                    }
+                }
+            },
+            "frk": {
+                "description": "बैलेंस लिफ्टिंग FRK खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "form": {
+                    "title_add": "बैलेंस लिफ्टिंग FRK खरीदी जोड़ें",
+                    "title_edit": "बैलेंस लिफ्टिंग FRK खरीदी संपादित करें",
+                    "description_add": "खरीदी विवरण नीचे दर्ज करें",
+                    "description_edit": "खरीदी विवरण नीचे अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "dealNumber": "FRK खरीदी सौदा क्रमांक",
+                        "partyName": "पार्टी का नाम",
+                        "frkQty": "FRK की मात्रा",
+                        "balance": "शेष",
+                        "balanceLifting": "उठाव शेष"
+                    }
+                }
+            },
+            "gunny": {
+                "title": "बारदाना खरीद रिपोर्ट",
+                "description": "बारदाना खरीद रिकॉर्ड देखें और प्रबंधित करें",
+                "form": {
+                    "title_add": "बारदाना खरीद जोड़ें",
+                    "title_edit": "बारदाना खरीद संपादित करें",
+                    "description_add": "नीचे खरीद विवरण दर्ज करें",
+                    "description_edit": "नीचे खरीद विवरण अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "partyName": "पार्टी का नाम",
+                        "deliveryType": "डिलीवरी प्रकार",
+                        "newGunnyQty": "नए बारदाने की मात्रा",
+                        "newGunnyRate": "नए बारदाने की दर",
+                        "oldGunnyQty": "पुराने बारदाने की मात्रा",
+                        "oldGunnyRate": "पुराने बारदाने की दर",
+                        "plasticGunnyQty": "प्लास्टिक बारदाने की मात्रा",
+                        "plasticGunnyRate": "प्लास्टिक बारदाने की दर"
+                    }
+                }
+            }
+        },
+        "sales": {
+            "paddy": {
+                "title": "बैलेंस लिफ्टिंग धान बिक्री रिपोर्ट",
+                "description": "बैलेंस लिफ्टिंग धान बिक्री लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "form": {
+                    "title_add": "बैलेंस लिफ्टिंग धान बिक्री जोड़ें",
+                    "title_edit": "बैलेंस लिफ्टिंग धान बिक्री संपादित करें",
+                    "description_add": "बिक्री विवरण नीचे दर्ज करें",
+                    "description_edit": "बिक्री विवरण नीचे अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "dealNumber": "धान बिक्री सौदा क्रमांक",
+                        "partyName": "पार्टी का नाम",
+                        "brokerName": "दलाल का नाम",
+                        "paddyQty": "धान की मात्रा",
+                        "lifting": "उठाव",
+                        "balance": "शेष",
+                        "balanceLifting": "उठाव शेष"
+                    }
+                }
+            }
+        },
+        "outward": {
+            "rice": {
+                "title": "जावक बैलेंस लिफ्टिंग चावल रिपोर्ट",
+                "description": "जावक बैलेंस लिफ्टिंग चावल लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "form": {
+                    "title_add": "जावक बैलेंस लिफ्टिंग चावल जोड़ें",
+                    "title_edit": "जावक बैलेंस लिफ्टिंग चावल संपादित करें",
+                    "description_add": "जावक विवरण नीचे दर्ज करें",
+                    "description_edit": "जावक विवरण नीचे अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "dealNumber": "चावल जावक सौदा क्रमांक",
+                        "partyName": "पार्टी का नाम",
+                        "riceQty": "चावल की मात्रा",
+                        "balance": "शेष",
+                        "balanceLifting": "उठाव शेष"
+                    }
+                }
+            }
+        }
     }
 }

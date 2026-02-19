@@ -29,8 +29,11 @@ type NavUserProps = {
     links?: NavItem[]
 }
 
+import { useTranslation } from 'react-i18next'
+
 export function NavUser({ user, links }: NavUserProps) {
     const { isMobile } = useSidebar()
+    const { t } = useTranslation()
     const [open, setOpen] = useDialogState()
 
     const initials = user.name
@@ -109,7 +112,7 @@ export function NavUser({ user, links }: NavUserProps) {
                                     <DropdownMenuItem key={link.title} asChild>
                                         <Link to={link.url || '#'}>
                                             {link.icon && <link.icon />}
-                                            {link.title}
+                                            {t(link.title)}
                                         </Link>
                                     </DropdownMenuItem>
                                 ))}
