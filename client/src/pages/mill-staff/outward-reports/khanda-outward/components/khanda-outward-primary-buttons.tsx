@@ -15,7 +15,7 @@ export function KhandaOutwardPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('khandaOutward.addRecord')}
+            {t('outward.khandaOutward.form.primaryButton')}
         </Button>
     )
 }

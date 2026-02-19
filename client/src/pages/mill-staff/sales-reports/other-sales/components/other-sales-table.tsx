@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -25,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type OtherSales } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getOtherSalesColumns } from './other-sales-columns'
+import { useOtherSalesColumns } from './other-sales-columns'
 
 type DataTableProps = {
     data: OtherSales[]
@@ -46,13 +46,12 @@ export function OtherSalesTable({
     pagination: serverPagination,
 }: DataTableProps) {
     const { t } = useTranslation('mill-staff')
+    const columns = useOtherSalesColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-
-    const columns = useMemo(() => getOtherSalesColumns(t), [t])
 
     const {
         columnFilters,
@@ -111,7 +110,7 @@ export function OtherSalesTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t('otherSales.form.placeholders.party')}
+                searchPlaceholder={t('common.search')}
                 searchKey='partyName'
                 filters={[]}
             />

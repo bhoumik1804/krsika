@@ -1,6 +1,5 @@
-import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router'
 import { toast } from 'sonner'
+import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,7 +10,6 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { useDeletePrivatePaddyOutward } from '../data/hooks'
 import { type PrivatePaddyOutward } from '../data/schema'
 
 type PrivatePaddyOutwardDeleteDialogProps = {
@@ -25,19 +23,14 @@ export function PrivatePaddyOutwardDeleteDialog({
     onOpenChange,
     currentRow,
 }: PrivatePaddyOutwardDeleteDialogProps) {
-    const { t } = useTranslation('mill-staff')
-    const { millId } = useParams<{ millId: string }>()
-    const deleteMutation = useDeletePrivatePaddyOutward(millId || '')
-
     const handleDelete = () => {
-        if (!currentRow?._id) return
-        toast.promise(deleteMutation.mutateAsync(currentRow._id), {
-            loading: t('common.deleting'),
+        toast.promise(sleep(2000), {
+            loading: 'Deleting...',
             success: () => {
                 onOpenChange(false)
-                return t('common.success')
+                return 'Deleted successfully'
             },
-            error: t('common.error'),
+            error: 'Failed to delete',
         })
     }
 
@@ -45,23 +38,21 @@ export function PrivatePaddyOutwardDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        {t('common.deleteRecord')}
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('common.deleteRecordFor')}{' '}
+                        Are you sure you want to delete this record for{' '}
                         <strong>{currentRow?.partyName}</strong>?
                         <br />
-                        {t('common.actionCannotBeUndone')}
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {t('common.delete')}
+                        Delete
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

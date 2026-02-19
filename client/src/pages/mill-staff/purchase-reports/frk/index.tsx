@@ -15,8 +15,8 @@ import { FrkProvider, useFrk } from './components/frk-provider'
 import { FrkTable } from './components/frk-table'
 
 export function FrkPurchaseReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
@@ -73,10 +73,10 @@ export function FrkPurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('frkPurchase.title')}
+                            {t('purchaseReports.frk.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('frkPurchase.description')}
+                            {t('purchaseReports.frk.description')}
                         </p>
                     </div>
                     <FrkPrimaryButtons />
@@ -95,7 +95,6 @@ function FrkPurchaseContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('mill-staff')
     const context = useFrk()
 
     if (context.isLoading) {
@@ -109,7 +108,7 @@ function FrkPurchaseContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('frkPurchase.failedToLoad')}
+                Failed to load FRK purchase data. Please try again later.
             </div>
         )
     }

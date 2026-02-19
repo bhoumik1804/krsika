@@ -89,9 +89,7 @@ export function BhusaOutwardReport() {
                     </div>
                 </Header>
                 <Main className='flex flex-1 items-center justify-center'>
-                    <p className='text-destructive'>
-                        {t('common.errorLoading')}
-                    </p>
+                    <p className='text-destructive'>Error loading data</p>
                 </Main>
             </>
         )
@@ -115,10 +113,10 @@ export function BhusaOutwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('bhusaOutward.title')}
+                            {t('outward.bhusaOutward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('bhusaOutward.description')}
+                            {t('outward.bhusaOutward.description')}
                         </p>
                     </div>
                     <BhusaOutwardPrimaryButtons />

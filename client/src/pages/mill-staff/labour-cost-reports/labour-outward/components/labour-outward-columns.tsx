@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import '@/constants'
 import { useTranslation } from 'react-i18next'
@@ -7,9 +8,8 @@ import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type LabourOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
-import { format } from 'date-fns'
 
-export const useLabourOutwardColumns = (): ColumnDef<LabourOutward>[] => {
+export function LabourOutwardColumns(): ColumnDef<LabourOutward>[] {
     const { t } = useTranslation('mill-staff')
 
     return [
@@ -49,7 +49,7 @@ export const useLabourOutwardColumns = (): ColumnDef<LabourOutward>[] => {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('labourOutward.table.date')}
+                    title={t('labourCostReports.outward.form.fields.date')}
                 />
             ),
             cell: ({ row }) => (
@@ -70,7 +70,7 @@ export const useLabourOutwardColumns = (): ColumnDef<LabourOutward>[] => {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('labourOutward.table.outwardType')}
+                    title={t('labourCostReports.outward.form.fields.type')}
                 />
             ),
             cell: ({ row }) => (
@@ -83,7 +83,7 @@ export const useLabourOutwardColumns = (): ColumnDef<LabourOutward>[] => {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('labourOutward.table.truckNumber')}
+                    title={t('labourCostReports.outward.form.fields.truckNo')}
                 />
             ),
             cell: ({ row }) => (
@@ -97,7 +97,9 @@ export const useLabourOutwardColumns = (): ColumnDef<LabourOutward>[] => {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('labourOutward.table.totalGunny')}
+                    title={t(
+                        'labourCostReports.outward.form.fields.numberOfBags'
+                    )}
                 />
             ),
             cell: ({ row }) => (
@@ -111,7 +113,9 @@ export const useLabourOutwardColumns = (): ColumnDef<LabourOutward>[] => {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('labourOutward.table.numberOfGunnyBundle')}
+                    title={t(
+                        'labourCostReports.outward.form.fields.gunnyBundleCount'
+                    )}
                 />
             ),
             cell: ({ row }) => (
@@ -125,7 +129,9 @@ export const useLabourOutwardColumns = (): ColumnDef<LabourOutward>[] => {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('labourOutward.table.loadingRate')}
+                    title={t(
+                        'labourCostReports.outward.form.fields.loadingRate'
+                    )}
                 />
             ),
             cell: ({ row }) => (
@@ -137,7 +143,9 @@ export const useLabourOutwardColumns = (): ColumnDef<LabourOutward>[] => {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('labourOutward.table.dhulaiRate')}
+                    title={t(
+                        'labourCostReports.outward.form.fields.transportationRate'
+                    )}
                 />
             ),
             cell: ({ row }) => (
@@ -149,7 +157,9 @@ export const useLabourOutwardColumns = (): ColumnDef<LabourOutward>[] => {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('labourOutward.table.labourGroupName')}
+                    title={t(
+                        'labourCostReports.outward.form.fields.hamalRejaToliName'
+                    )}
                 />
             ),
             cell: ({ row }) => (

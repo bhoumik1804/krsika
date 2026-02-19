@@ -15,7 +15,7 @@ export function RicePrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('ricePurchase.form.addTitle')}
+            {t('purchaseReports.rice.form.primaryButton')}
         </Button>
     )
 }

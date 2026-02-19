@@ -47,12 +47,12 @@ export function LabourMillingActionDialog({
     currentRow,
 }: LabourMillingActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
     const createMutation = useCreateLabourMilling(millId || '')
     const updateMutation = useUpdateLabourMilling(millId || '')
-    const { t } = useTranslation('mill-staff')
 
     const labourGroupList = usePaginatedList(
         millId || '',
@@ -113,10 +113,14 @@ export function LabourMillingActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('labourCostReports.milling.form.title')
+                            .split('आवक')[1]
+                            ?.trim() || 'Record'}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing ? t('common.update') : t('common.enter')}{' '}
+                        {t('common.updateDetails')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -131,7 +135,9 @@ export function LabourMillingActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t('labourMilling.form.date')}
+                                            {t(
+                                                'labourCostReports.milling.form.fields.date'
+                                            )}
                                         </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
@@ -151,7 +157,9 @@ export function LabourMillingActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickDate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -195,7 +203,7 @@ export function LabourMillingActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'labourMilling.form.hopperInGunny'
+                                                'labourCostReports.milling.form.fields.hopperCutting'
                                             )}
                                         </FormLabel>
                                         <FormControl>
@@ -226,7 +234,9 @@ export function LabourMillingActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t('labourMilling.form.hopperRate')}
+                                            {t(
+                                                'labourCostReports.milling.form.fields.hopperCuttingRate'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -258,7 +268,7 @@ export function LabourMillingActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'labourMilling.form.labourGroupName'
+                                                'labourCostReports.milling.form.fields.hamalRejaToliName'
                                             )}
                                         </FormLabel>
                                         <FormControl>
@@ -266,9 +276,7 @@ export function LabourMillingActionDialog({
                                                 value={field.value || ''}
                                                 onValueChange={field.onChange}
                                                 paginatedList={labourGroupList}
-                                                placeholder={t(
-                                                    'labourMilling.form.selectLabourGroup'
-                                                )}
+                                                placeholder='Select a labour group'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -287,7 +295,7 @@ export function LabourMillingActionDialog({
                             <Button type='submit'>
                                 {isEditing
                                     ? t('common.update')
-                                    : t('labourMilling.addRecord')}
+                                    : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

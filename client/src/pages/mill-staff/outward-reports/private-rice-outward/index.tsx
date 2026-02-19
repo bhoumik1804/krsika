@@ -67,10 +67,10 @@ function PrivateRiceOutwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('privateRiceOutward.title')}
+                            Private Rice Outward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('privateRiceOutward.description')}
+                            Manage private rice outward transactions and records
                         </p>
                     </div>
                 </div>
@@ -108,10 +108,10 @@ function PrivateRiceOutwardContent() {
             <div className='flex flex-wrap items-end justify-between gap-2'>
                 <div>
                     <h2 className='text-2xl font-bold tracking-tight'>
-                        {t('privateRiceOutward.title')}
+                        {t('outward.privateRiceOutward.title')}
                     </h2>
                     <p className='text-muted-foreground'>
-                        {t('privateRiceOutward.description')}
+                        {t('outward.privateRiceOutward.description')}
                     </p>
                 </div>
                 <PrivateRiceOutwardPrimaryButtons />

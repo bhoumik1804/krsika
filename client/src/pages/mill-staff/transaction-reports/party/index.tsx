@@ -1,37 +1,31 @@
 import { useCallback, useMemo } from 'react'
-import { format } from 'date-fns'
-import { DateRange } from 'react-day-picker'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
+import { DateRange } from 'react-day-picker'
+import { format } from 'date-fns'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { DateRangePicker } from '@/components/date-range-picker'
-import { getMillStaffSidebarData } from '@/components/layout/data'
+import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { usePartyTransactionReport } from '../data/use-transaction-report'
 import { PartyTransactionReportTable } from './components/party-transaction-report-table'
+import { usePartyTransactionReport } from '../data/use-transaction-report'
 
 const formatDateForApi = (d: Date) => format(d, 'yyyy-MM-dd')
 
 export function TransactionPartyReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
-    const sidebarData = getMillStaffSidebarData(millId || '')
+    const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
 
     const navigate = useCallback(
         (opts: { search: unknown; replace?: boolean }) => {
             if (typeof opts.search === 'function') {
-                const newSearch = (
-                    opts.search as (
-                        p: Record<string, string>
-                    ) => Record<string, string>
-                )(search)
+                const newSearch = (opts.search as (p: Record<string, string>) => Record<string, string>)(search)
                 setSearchParams(newSearch as Record<string, string>)
             } else if (opts.search !== true) {
                 setSearchParams((opts.search as Record<string, string>) ?? {})
@@ -89,10 +83,10 @@ export function TransactionPartyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('transactionReports.partyReport.title')}
+                            Party Transaction Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('transactionReports.partyReport.description')}
+                            Aggregated from purchase, sale, inward, outward, receipt & payment
                         </p>
                     </div>
                     <DateRangePicker date={dateRange} setDate={setDateRange} />

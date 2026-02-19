@@ -15,7 +15,7 @@ export function GunnyPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('gunnyPurchase.form.addTitle')}
+            {t('purchaseReports.gunny.form.primaryButton')}
         </Button>
     )
 }

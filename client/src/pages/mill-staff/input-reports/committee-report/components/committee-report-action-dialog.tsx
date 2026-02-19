@@ -49,6 +49,7 @@ export function CommitteeReportActionDialog({
     open,
     onOpenChange,
 }: CommitteeReportActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { currentRow, millId, setCurrentRow } = useCommitteeReport()
     const { mutate: createCommittee, isPending: isCreating } =
         useCreateCommittee(millId)
@@ -56,7 +57,6 @@ export function CommitteeReportActionDialog({
         useUpdateCommittee(millId)
     const { mutate: bulkCreateCommittees, isPending: isBulkCreating } =
         useBulkCreateCommittees(millId)
-    const { t } = useTranslation('mill-staff')
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating || isBulkCreating
@@ -162,18 +162,15 @@ export function CommitteeReportActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-x-hidden overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('committeeReport.form.editTitle')
-                            : t('committeeReport.form.addTitle')}
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('inputReports.committee.title').replace(
+                            ' Report',
+                            ''
+                        )}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t(
-                                  'committeeReport.form.editDescription'
-                              )
-                            : t(
-                                  'committeeReport.form.addDescription'
-                              )}
+                        {t('common.enter')}{' '}
+                        {t('inputReports.committee.description').toLowerCase()}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -188,17 +185,13 @@ export function CommitteeReportActionDialog({
                         >
                             <TabsList className='grid w-full grid-cols-2'>
                                 <TabsTrigger value='manual'>
-                                    {t(
-                                        'committeeReport.form.tabs.manual'
-                                    )}
+                                    {t('common.manualEntry')}
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value='upload'
                                     disabled={isEditing}
                                 >
-                                    {t(
-                                        'committeeReport.form.tabs.upload'
-                                    )}
+                                    {t('common.uploadFile')}
                                 </TabsTrigger>
                             </TabsList>
                             <TabsContent value='manual' className='space-y-6'>
@@ -210,7 +203,7 @@ export function CommitteeReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'committeeReport.form.type'
+                                                        'inputReports.committee.form.fields.committeeType'
                                                     )}
                                                 </FormLabel>
                                                 <Select
@@ -223,7 +216,7 @@ export function CommitteeReportActionDialog({
                                                         <SelectTrigger className='w-full'>
                                                             <SelectValue
                                                                 placeholder={t(
-                                                                    'committeeReport.form.placeholders.select'
+                                                                    'common.select'
                                                                 )}
                                                             />
                                                         </SelectTrigger>
@@ -258,13 +251,13 @@ export function CommitteeReportActionDialog({
                                             <FormItem>
                                                 <FormLabel>
                                                     {t(
-                                                        'committeeReport.form.name'
+                                                        'inputReports.committee.form.fields.committeeName'
                                                     )}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         placeholder={t(
-                                                            'committeeReport.form.placeholders.name'
+                                                            'inputReports.committee.form.fields.committeeName'
                                                         )}
                                                         {...field}
                                                     />
@@ -277,11 +270,7 @@ export function CommitteeReportActionDialog({
                             </TabsContent>
                             <TabsContent value='upload' className='space-y-4'>
                                 <FormItem>
-                                    <FormLabel>
-                                        {t(
-                                            'committeeReport.form.uploadTitle'
-                                        )}
-                                    </FormLabel>
+                                    <FormLabel>Upload Excel File</FormLabel>
                                     <FormControl>
                                         <Input
                                             type='file'
@@ -291,16 +280,12 @@ export function CommitteeReportActionDialog({
                                         />
                                     </FormControl>
                                     <p className='mt-2 text-sm text-gray-500'>
-                                        {t(
-                                            'committeeReport.form.uploadDescription'
-                                        )}
+                                        Supported formats: Excel (.xlsx, .xls)
+                                        or CSV
                                     </p>
                                     {uploadedFile && (
                                         <p className='mt-2 text-sm text-green-600'>
-                                            {t(
-                                                'committeeReport.form.fileSelected'
-                                            )}
-                                            : {uploadedFile.name}
+                                            File selected: {uploadedFile.name}
                                         </p>
                                     )}
                                 </FormItem>
@@ -309,16 +294,12 @@ export function CommitteeReportActionDialog({
                                     <div className='mt-6 w-full'>
                                         <div className='mb-4'>
                                             <h3 className='mb-3 text-sm font-semibold'>
-                                                {t(
-                                                    'committeeReport.form.stats.title'
-                                                )}
+                                                Parse Statistics
                                             </h3>
                                             <div className='grid grid-cols-3 gap-3'>
                                                 <div className='rounded-lg border bg-primary/10 p-3'>
                                                     <p className='text-xs text-muted-foreground'>
-                                                        {t(
-                                                            'committeeReport.form.stats.total'
-                                                        )}
+                                                        Total Rows
                                                     </p>
                                                     <p className='text-lg font-bold text-primary'>
                                                         {parseStats?.totalRows ||
@@ -327,9 +308,7 @@ export function CommitteeReportActionDialog({
                                                 </div>
                                                 <div className='rounded-lg border bg-chart-2/10 p-3'>
                                                     <p className='text-xs text-muted-foreground'>
-                                                        {t(
-                                                            'committeeReport.form.stats.success'
-                                                        )}
+                                                        Successfully Parsed
                                                     </p>
                                                     <p className='text-lg font-bold text-chart-2'>
                                                         {parseStats?.successRows ||
@@ -338,9 +317,7 @@ export function CommitteeReportActionDialog({
                                                 </div>
                                                 <div className='rounded-lg border bg-destructive/10 p-3'>
                                                     <p className='text-xs text-muted-foreground'>
-                                                        {t(
-                                                            'committeeReport.form.stats.failed'
-                                                        )}
+                                                        Failed/Skipped
                                                     </p>
                                                     <p className='text-lg font-bold text-destructive'>
                                                         {parseStats?.failedRows ||
@@ -354,10 +331,7 @@ export function CommitteeReportActionDialog({
                                                     0 && (
                                                     <div className='mt-3'>
                                                         <p className='mb-2 text-xs font-semibold text-gray-600'>
-                                                            {t(
-                                                                'committeeReport.form.stats.errorDetails'
-                                                            )}
-                                                            :
+                                                            Error Details:
                                                         </p>
                                                         <div className='max-h-24 overflow-y-auto rounded border border-red-200 bg-red-50 p-2'>
                                                             <ul className='space-y-1 text-xs text-red-700'>
@@ -390,15 +364,8 @@ export function CommitteeReportActionDialog({
                                         </div>
 
                                         <h3 className='mb-3 text-sm font-semibold'>
-                                            {t(
-                                                'committeeReport.form.uploadTitle'
-                                            )}
-                                            {t(
-                                                'committeeReport.form.uploadCount',
-                                                {
-                                                    count: previewData.length,
-                                                }
-                                            )}
+                                            Preview - {previewData.length}{' '}
+                                            records
                                         </h3>
                                         <div className='overflow-x-auto rounded-lg border'>
                                             <div className='h-80 overflow-x-auto overflow-y-auto'>
@@ -459,19 +426,21 @@ export function CommitteeReportActionDialog({
                                 {isLoading
                                     ? activeTab === 'upload' &&
                                       previewData.length > 0
-                                        ? t('common.uploading')
+                                        ? t('common.uploading') + '...'
                                         : isEditing
-                                          ? t('common.updating')
-                                          : t('common.adding')
+                                          ? t('common.update') + '...'
+                                          : t('common.add') + '...'
                                     : activeTab === 'upload' &&
                                         previewData.length > 0
-                                      ? t(
-                                            'committeeReport.form.uploadCount',
-                                            { count: previewData.length }
-                                        )
+                                      ? `${t('common.upload')} ${previewData.length} ${previewData.length > 1 ? t('inputReports.committee.title').replace(' Report', 's') : t('inputReports.committee.title').replace(' Report', '')}`
                                       : isEditing
                                         ? t('common.update')
-                                        : t('common.add')}
+                                        : t('common.add')}{' '}
+                                {activeTab === 'manual' &&
+                                    t('inputReports.committee.title').replace(
+                                        ' Report',
+                                        ''
+                                    )}
                             </Button>
                         </DialogFooter>
                     </form>

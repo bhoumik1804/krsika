@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -25,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import type { PaddySalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getPaddySalesColumns } from './paddy-sales-columns'
+import { usePaddySalesColumns } from './paddy-sales-columns'
 
 type DataTableProps = {
     data: PaddySalesResponse[]
@@ -50,7 +50,7 @@ export function PaddySalesTable({
     pagination: serverPagination,
 }: DataTableProps) {
     const { t } = useTranslation('mill-staff')
-    const columns = useMemo(() => getPaddySalesColumns(t), [t])
+    const columns = usePaddySalesColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -122,10 +122,7 @@ export function PaddySalesTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t(
-                    'common.placeholders.searchParty',
-                    'Search Party Name...'
-                )}
+                searchPlaceholder={t('common.search')}
                 searchKey='partyName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -197,7 +194,7 @@ export function PaddySalesTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults', 'No results.')}
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

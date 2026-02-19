@@ -25,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { outwardTypes } from '../data/data'
 import { type LabourOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { useLabourOutwardColumns } from './labour-outward-columns'
+import { LabourOutwardColumns } from './labour-outward-columns'
 
 type DataTableProps = {
     data: LabourOutward[]
@@ -41,6 +41,7 @@ type DataTableProps = {
         prevPage: number | null
         nextPage: number | null
     }
+    isLoading?: boolean
 }
 
 export function LabourOutwardTable({
@@ -48,14 +49,13 @@ export function LabourOutwardTable({
     search,
     navigate,
     pagination: serverPagination,
+    isLoading,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-
-    const columns = useLabourOutwardColumns()
 
     const {
         columnFilters,
@@ -89,9 +89,10 @@ export function LabourOutwardTable({
     })
 
     // eslint-disable-next-line react-hooks/incompatible-library
+    const columns = LabourOutwardColumns()
     const table = useReactTable({
-        data,
         columns,
+        data,
         state: {
             sorting,
             pagination,
@@ -175,7 +176,12 @@ export function LabourOutwardTable({
                             </TableRow>
                         ))}
                     </TableHeader>
-                    <TableBody>
+                    <TableBody
+                        className={cn(
+                            isLoading &&
+                                'pointer-events-none opacity-50 transition-opacity'
+                        )}
+                    >
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
@@ -207,7 +213,7 @@ export function LabourOutwardTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

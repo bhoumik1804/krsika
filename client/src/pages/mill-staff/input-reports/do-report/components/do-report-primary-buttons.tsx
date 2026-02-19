@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button'
 import { useDoReport } from './do-report-provider'
 
 export function DoReportPrimaryButtons() {
-    const { setOpen, setCurrentRow } = useDoReport()
     const { t } = useTranslation('mill-staff')
+    const { setOpen, setCurrentRow } = useDoReport()
 
     return (
         <Button
@@ -15,7 +15,7 @@ export function DoReportPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('doReport.addRecord')}
+            {t('inputReports.do.form.primaryButton')}
         </Button>
     )
 }

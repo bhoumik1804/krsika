@@ -15,8 +15,8 @@ import { PaddyProvider, usePaddy } from './components/paddy-provider'
 import { PaddyTable } from './components/paddy-table'
 
 export function PaddyPurchaseReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
@@ -71,10 +71,10 @@ export function PaddyPurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('paddyPurchase.title')}
+                            {t('purchaseReports.paddy.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('paddyPurchase.description')}
+                            {t('purchaseReports.paddy.description')}
                         </p>
                     </div>
                     <PaddyPrimaryButtons />
@@ -93,7 +93,6 @@ function PaddyPurchaseContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('mill-staff')
     const context = usePaddy()
 
     if (context.isLoading) {
@@ -107,7 +106,7 @@ function PaddyPurchaseContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('paddyPurchase.failedToLoad')}
+                Failed to load paddy purchase data. Please try again later.
             </div>
         )
     }

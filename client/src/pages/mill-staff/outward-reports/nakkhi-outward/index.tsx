@@ -55,7 +55,7 @@ export function NakkhiOutwardReport() {
         return (
             <Main className='flex flex-1 items-center justify-center'>
                 <p className='text-destructive'>
-                    {t('common.errorLoadingData')}
+                    Failed to load nakkhi outward data
                 </p>
             </Main>
         )
@@ -79,10 +79,10 @@ export function NakkhiOutwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('nakkhiOutward.title')}
+                            {t('outward.nakkhiOutward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('nakkhiOutward.description')}
+                            {t('outward.nakkhiOutward.description')}
                         </p>
                     </div>
                     <NakkhiOutwardPrimaryButtons />

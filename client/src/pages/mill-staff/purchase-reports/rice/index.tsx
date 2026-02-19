@@ -16,8 +16,8 @@ import { RiceTable } from './components/rice-table'
 
 export function RicePurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
-    const [searchParams, setSearchParams] = useSearchParams()
     const { t } = useTranslation('mill-staff')
+    const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
     const queryParams = useMemo(() => {
@@ -71,10 +71,10 @@ export function RicePurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('ricePurchase.title')}
+                            {t('purchaseReports.rice.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('ricePurchase.description')}
+                            {t('purchaseReports.rice.description')}
                         </p>
                     </div>
                     <RicePrimaryButtons />
@@ -94,7 +94,6 @@ function RicePurchaseContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = useRice()
-    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (
@@ -107,7 +106,7 @@ function RicePurchaseContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('ricePurchase.failedToLoad')}
+                Failed to load rice purchase data. Please try again later.
             </div>
         )
     }

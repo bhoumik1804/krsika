@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -26,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type GovtGunnyOutward } from '../data/schema'
 import type { GovtGunnyOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { useGovtGunnyOutwardColumns } from './govt-gunny-outward-columns'
+import { GovtGunnyOutwardColumns } from './govt-gunny-outward-columns'
 
 type DataTableProps = {
     data: GovtGunnyOutward[]
@@ -41,8 +40,6 @@ export function GovtGunnyOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
-    const columns = useGovtGunnyOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -78,7 +75,7 @@ export function GovtGunnyOutwardTable({
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
-        columns,
+        columns: GovtGunnyOutwardColumns(),
         state: {
             sorting,
             pagination,
@@ -184,10 +181,10 @@ export function GovtGunnyOutwardTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

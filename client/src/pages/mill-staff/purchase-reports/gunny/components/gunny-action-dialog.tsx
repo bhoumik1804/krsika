@@ -140,14 +140,13 @@ export function GunnyActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('gunnyPurchase.form.editTitle')
-                            : t('gunnyPurchase.form.addTitle')}
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('purchaseReports.gunny.title')}
                     </DialogTitle>
                     <DialogDescription>
                         {isEditing
-                            ? t('gunnyPurchase.form.editDescription')
-                            : t('gunnyPurchase.form.addDescription')}
+                            ? t('purchaseReports.gunny.form.description.update')
+                            : t('purchaseReports.gunny.form.description.add')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -163,7 +162,9 @@ export function GunnyActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t('gunnyPurchase.form.date')}
+                                                {t(
+                                                    'purchaseReports.gunny.form.fields.date'
+                                                )}
                                             </FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
@@ -229,7 +230,7 @@ export function GunnyActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'gunnyPurchase.form.partyName'
+                                                    'purchaseReports.gunny.form.fields.partyName'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -239,12 +240,8 @@ export function GunnyActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={party}
-                                                    placeholder={t(
-                                                        'gunnyPurchase.form.placeholders.party'
-                                                    )}
-                                                    emptyText={t(
-                                                        'common.noResults'
-                                                    )}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -258,7 +255,7 @@ export function GunnyActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'gunnyPurchase.form.deliveryType'
+                                                    'purchaseReports.gunny.form.fields.deliveryType'
                                                 )}
                                             </FormLabel>
                                             <Select
@@ -267,11 +264,7 @@ export function GunnyActionDialog({
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
-                                                        <SelectValue
-                                                            placeholder={t(
-                                                                'gunnyPurchase.form.placeholders.select'
-                                                            )}
-                                                        />
+                                                        <SelectValue placeholder='Select' />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent className='w-full'>
@@ -285,9 +278,7 @@ export function GunnyActionDialog({
                                                                     option.value
                                                                 }
                                                             >
-                                                                {t(
-                                                                    `ricePurchase.options.delivery.${option.value === 'पड़े में' ? 'pade' : 'pahunch'}`
-                                                                )}
+                                                                {option.label}
                                                             </SelectItem>
                                                         )
                                                     )}
@@ -305,7 +296,7 @@ export function GunnyActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'gunnyPurchase.form.newGunnyQty'
+                                                    'purchaseReports.gunny.form.fields.newGunnyQty'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -340,8 +331,8 @@ export function GunnyActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'gunnyPurchase.form.newGunnyRate'
-                                                )}
+                                                    'purchaseReports.gunny.form.fields.newGunnyRate'
+                                                )}{' '}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -376,7 +367,7 @@ export function GunnyActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'gunnyPurchase.form.oldGunnyQty'
+                                                    'purchaseReports.gunny.form.fields.oldGunnyQty'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -411,7 +402,7 @@ export function GunnyActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'gunnyPurchase.form.oldGunnyRate'
+                                                    'purchaseReports.gunny.form.fields.oldGunnyRate'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -447,7 +438,7 @@ export function GunnyActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'gunnyPurchase.form.plasticGunnyQty'
+                                                    'purchaseReports.gunny.form.fields.plasticGunnyQty'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -482,7 +473,7 @@ export function GunnyActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'gunnyPurchase.form.plasticGunnyRate'
+                                                    'purchaseReports.gunny.form.fields.plasticGunnyRate'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -518,7 +509,7 @@ export function GunnyActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                {t('common.cancel')}
+                                Cancel
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
@@ -526,8 +517,9 @@ export function GunnyActionDialog({
                                         ? t('common.updating')
                                         : t('common.adding')
                                     : isEditing
-                                      ? t('gunnyPurchase.form.editTitle')
-                                      : t('gunnyPurchase.form.addTitle')}
+                                      ? t('common.update')
+                                      : t('common.add')}{' '}
+                                {t('common.purchase')}
                             </Button>
                         </DialogFooter>
                     </form>

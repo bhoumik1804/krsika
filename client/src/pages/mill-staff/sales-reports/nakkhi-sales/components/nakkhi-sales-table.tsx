@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -25,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import type { NakkhiSalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getNakkhiSalesColumns } from './nakkhi-sales-columns'
+import { useNakkhiSalesColumns } from './nakkhi-sales-columns'
 
 type DataTableProps = {
     data: NakkhiSalesResponse[]
@@ -35,13 +35,12 @@ type DataTableProps = {
 
 export function NakkhiSalesTable({ data, search, navigate }: DataTableProps) {
     const { t } = useTranslation('mill-staff')
+    const columns = useNakkhiSalesColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-
-    const columns = useMemo(() => getNakkhiSalesColumns(t), [t])
 
     const {
         columnFilters,
@@ -98,7 +97,7 @@ export function NakkhiSalesTable({ data, search, navigate }: DataTableProps) {
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t('nakkhiSales.form.placeholders.party')}
+                searchPlaceholder={t('common.search')}
                 searchKey='partyName'
                 filters={[]}
             />

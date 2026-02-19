@@ -10,7 +10,7 @@ export function LabourOtherPrimaryButtons() {
     return (
         <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
-            {t('labourOther.addRecord')}
+            {t('labourCostReports.other.form.primaryButton')}
         </Button>
     )
 }

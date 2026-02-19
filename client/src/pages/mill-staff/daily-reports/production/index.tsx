@@ -1,5 +1,4 @@
 import { Package, ShoppingCart } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { DailyReportPage } from '../components/daily-report-page'
 
 const COMMODITY_ICONS: Record<string, React.ElementType> = {
@@ -19,13 +18,12 @@ function getIcon(commodity: string) {
 }
 
 export function ProductionReport() {
-    const { t } = useTranslation('mill-staff')
     return (
         <DailyReportPage
             action='Production'
-            title={t('production.title')}
-            description={t('production.description')}
-            emptyMessage={t('production.emptyMessage')}
+            title='Production'
+            description='Track daily production output by commodity'
+            emptyMessage='No production data found for the selected date range'
             exportBaseFilename='production-report'
             EmptyIcon={Package}
             getIcon={getIcon}
@@ -33,4 +31,3 @@ export function ProductionReport() {
         />
     )
 }
-

@@ -9,8 +9,8 @@ export function RiceSalesPrimaryButtons() {
 
     return (
         <Button onClick={() => setOpen('add')}>
-            <Plus className='mr-2 h-4 w-4' />
-            {t('riceSales.form.buttons.add')}
+            <Plus className='mr-2 size-4' />
+            {t('salesReports.rice.form.primaryButton')}
         </Button>
     )
 }

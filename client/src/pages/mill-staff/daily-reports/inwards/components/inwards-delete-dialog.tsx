@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import {
@@ -24,16 +23,14 @@ export function InwardsDeleteDialog({
     onOpenChange,
     currentRow,
 }: InwardsDeleteDialogProps) {
-    const { t } = useTranslation('mill-staff')
-
     const handleDelete = () => {
         toast.promise(sleep(2000), {
-            loading: t('inwards.deleting'),
+            loading: 'Deleting entry...',
             success: () => {
                 onOpenChange(false)
-                return t('inwards.deletedSuccess')
+                return 'Entry deleted successfully'
             },
-            error: t('inwards.deleteFailed'),
+            error: 'Failed to delete entry',
         })
     }
 
@@ -41,27 +38,24 @@ export function InwardsDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        {t('inwards.deleteTitle')}
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Delete Entry?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('inwards.deleteDescription')}{' '}
+                        Are you sure you want to delete this entry for{' '}
                         <strong>{currentRow?.gatePassNumber}</strong>?
                         <br />
-                        {t('common.actionCannotBeUndone')}
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {t('common.delete')}
+                        Delete
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
     )
 }
-

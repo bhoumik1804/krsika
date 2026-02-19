@@ -24,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type LabourMilling } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { useLabourMillingColumns } from './labour-milling-columns'
+import { LabourMillingColumns } from './labour-milling-columns'
 
 type DataTableProps = {
     data: LabourMilling[]
@@ -40,6 +40,7 @@ type DataTableProps = {
         prevPage: number | null
         nextPage: number | null
     }
+    isLoading?: boolean
 }
 
 export function LabourMillingTable({
@@ -47,14 +48,13 @@ export function LabourMillingTable({
     search,
     navigate,
     pagination: serverPagination,
+    isLoading,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-
-    const columns = useLabourMillingColumns()
 
     const {
         columnFilters,
@@ -83,9 +83,10 @@ export function LabourMillingTable({
     })
 
     // eslint-disable-next-line react-hooks/incompatible-library
+    const columns = LabourMillingColumns()
     const table = useReactTable({
-        data,
         columns,
+        data,
         state: {
             sorting,
             pagination,
@@ -163,7 +164,12 @@ export function LabourMillingTable({
                             </TableRow>
                         ))}
                     </TableHeader>
-                    <TableBody>
+                    <TableBody
+                        className={cn(
+                            isLoading &&
+                                'pointer-events-none opacity-50 transition-opacity'
+                        )}
+                    >
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
@@ -195,7 +201,7 @@ export function LabourMillingTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

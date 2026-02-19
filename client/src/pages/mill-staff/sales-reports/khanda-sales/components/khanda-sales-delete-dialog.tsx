@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -24,7 +23,6 @@ export function KhandaSalesDeleteDialog({
     onOpenChange,
     currentRow,
 }: KhandaSalesDeleteDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useKhandaSales()
     const { mutateAsync: deleteKhandaSales, isPending } =
         useDeleteKhandaSales(millId)
@@ -44,29 +42,24 @@ export function KhandaSalesDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        {t('khandaSales.delete.title')}
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        <span
-                            dangerouslySetInnerHTML={{
-                                __html: t('khandaSales.delete.description', {
-                                    name: currentRow?.partyName || '',
-                                }),
-                            }}
-                        />
+                        Are you sure you want to delete this record for{' '}
+                        <strong>{currentRow?.partyName}</strong>?
+                        <br />
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isPending}>
-                        {t('common.cancel')}
+                        Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         disabled={isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isPending ? t('common.deleting') : t('common.delete')}
+                        {isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

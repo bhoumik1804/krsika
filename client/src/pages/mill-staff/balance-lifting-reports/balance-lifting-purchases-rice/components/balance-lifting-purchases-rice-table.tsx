@@ -23,8 +23,8 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BalanceLiftingPurchasesRice } from '../data/schema'
-import { useBalanceLiftingPurchasesRiceColumns } from './balance-lifting-purchases-rice-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
+import { riceColumns as columns } from './balance-lifting-purchases-rice-columns'
 
 type DataTableProps = {
     data: BalanceLiftingPurchasesRice[]
@@ -49,7 +49,6 @@ export function BalanceLiftingPurchasesRiceTable({
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
-    const columns = useBalanceLiftingPurchasesRiceColumns()
     const [sorting, setSorting] = useState<SortingState>([])
 
     // Synced with URL states
@@ -190,9 +189,7 @@ export function BalanceLiftingPurchasesRiceTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {false // Assuming 'loading' state is not provided
-                                        ? 'Loading...'
-                                        : 'No records found.'}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

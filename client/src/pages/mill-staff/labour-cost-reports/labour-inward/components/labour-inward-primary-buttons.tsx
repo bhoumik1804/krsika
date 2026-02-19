@@ -10,7 +10,7 @@ export function LabourInwardPrimaryButtons() {
     return (
         <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
-            {t('labourInward.addRecord')}
+            {t('labourCostReports.inward.form.primaryButton')}
         </Button>
     )
 }

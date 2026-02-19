@@ -4,6 +4,7 @@ import {
     useQueryClient,
     type UseMutationResult,
     type UseQueryResult,
+    keepPreviousData,
 } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import {
@@ -58,6 +59,7 @@ export const useFinancialPaymentList = (
         queryKey: financialPaymentKeys.list(millId, params),
         queryFn: () => fetchFinancialPaymentList(millId, params),
         enabled: !!millId,
+        placeholderData: keepPreviousData,
     })
 }
 

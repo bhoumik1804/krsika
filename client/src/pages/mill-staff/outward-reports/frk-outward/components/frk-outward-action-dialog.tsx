@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -110,38 +109,19 @@ export function FrkOutwardActionDialog({
 
             if (isEditing && currentRow._id) {
                 const { _id, ...updatePayload } = submissionData
-                toast.promise(
-                    updateMutation.mutateAsync({
-                        millId,
-                        id: currentRow._id,
-                        payload: updatePayload,
-                    }),
-                    {
-                        loading: t('common.updating'),
-                        success: () => {
-                            onOpenChange(false)
-                            return t('common.success')
-                        },
-                        error: (error) => error.message || t('common.error'),
-                    }
-                )
+                await updateMutation.mutateAsync({
+                    millId,
+                    id: currentRow._id,
+                    payload: updatePayload,
+                })
             } else {
                 const { _id, ...createPayload } = submissionData
-                toast.promise(
-                    createMutation.mutateAsync({
-                        millId,
-                        payload: createPayload,
-                    }),
-                    {
-                        loading: t('common.adding'),
-                        success: () => {
-                            onOpenChange(false)
-                            return t('common.success')
-                        },
-                        error: (error) => error.message || t('common.error'),
-                    }
-                )
+                await createMutation.mutateAsync({
+                    millId,
+                    payload: createPayload,
+                })
             }
+            onOpenChange(false)
         } catch (error) {
             // Error is handled by the mutation hooks
         }
@@ -153,13 +133,15 @@ export function FrkOutwardActionDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing
-                            ? t('frkOutward.editRecord')
-                            : t('frkOutward.addRecord')}
+                            ? t('outward.frkOutward.form.title', {
+                                  context: 'edit',
+                              })
+                            : t('outward.frkOutward.form.title', {
+                                  context: 'add',
+                              })}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t('common.updateDetails')
-                            : t('common.enterDetails')}
+                        {t('outward.frkOutward.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -174,7 +156,9 @@ export function FrkOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t('frkOutward.form.date')}
+                                            {t(
+                                                'outward.frkOutward.form.fields.date'
+                                            )}
                                         </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
@@ -194,9 +178,7 @@ export function FrkOutwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : t(
-                                                                  'common.pickADate'
-                                                              )}
+                                                            : 'Select Date'}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -239,18 +221,18 @@ export function FrkOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t('frkOutward.form.partyName')}
+                                            {t(
+                                                'outward.frkOutward.form.fields.partyName'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
                                                 value={field.value || undefined}
                                                 onValueChange={field.onChange}
                                                 paginatedList={party}
-                                                placeholder={t(
-                                                    'frkOutward.form.partyName'
-                                                )}
+                                                placeholder='Select party'
                                                 emptyText={t(
-                                                    'common.noResults'
+                                                    'outward.frkOutward.form.fields.partyName.emptyText'
                                                 )}
                                             />
                                         </FormControl>
@@ -264,10 +246,13 @@ export function FrkOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t('frkOutward.form.gunnyPlastic')}
+                                            {t(
+                                                'outward.frkOutward.form.fields.gunnyPlastic'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
+                                                placeholder='Enter quantity'
                                                 type='number'
                                                 {...field}
                                                 onChange={(e) =>
@@ -290,10 +275,13 @@ export function FrkOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t('frkOutward.form.plasticWeight')}
+                                            {t(
+                                                'outward.frkOutward.form.fields.plasticGunnyWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
+                                                placeholder='Enter quantity'
                                                 type='number'
                                                 step='0.001'
                                                 {...field}
@@ -317,13 +305,13 @@ export function FrkOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t('frkOutward.form.truckNo')}
+                                            {t(
+                                                'outward.frkOutward.form.fields.truckNo'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'frkOutward.form.enterTruckNo'
-                                                )}
+                                                placeholder='Enter truck number'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -338,13 +326,13 @@ export function FrkOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t('frkOutward.form.rstNo')}
+                                            {t(
+                                                'outward.frkOutward.form.fields.truckRst'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'frkOutward.form.enterRstNo'
-                                                )}
+                                                placeholder='Enter RST number'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -359,7 +347,9 @@ export function FrkOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t('frkOutward.form.truckWeight')}
+                                            {t(
+                                                'outward.frkOutward.form.fields.truckWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -386,7 +376,9 @@ export function FrkOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t('frkOutward.form.gunnyWeight')}
+                                            {t(
+                                                'outward.frkOutward.form.fields.gunnyWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -413,7 +405,9 @@ export function FrkOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t('frkOutward.form.netWeight')}
+                                            {t(
+                                                'outward.frkOutward.form.fields.netWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input

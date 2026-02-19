@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import {
     AlertDialog,
@@ -26,19 +25,18 @@ export function NakkhiOutwardDeleteDialog({
     currentRow,
     millId,
 }: NakkhiOutwardDeleteDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const deleteMutation = useDeleteNakkhiOutward(millId)
 
     const handleDelete = () => {
         if (!currentRow?._id) return
 
         toast.promise(deleteMutation.mutateAsync(currentRow._id), {
-            loading: t('common.deleting'),
+            loading: 'Deleting...',
             success: () => {
                 onOpenChange(false)
-                return t('common.success')
+                return 'Deleted successfully'
             },
-            error: (error) => error.message || t('common.error'),
+            error: 'Failed to delete',
         })
     }
 
@@ -46,23 +44,21 @@ export function NakkhiOutwardDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        {t('common.deleteRecord')}
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('common.deleteRecordFor')}{' '}
+                        Are you sure you want to delete this record for{' '}
                         <strong>{currentRow?.partyName}</strong>?
                         <br />
-                        {t('common.actionCannotBeUndone')}
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {t('common.delete')}
+                        Delete
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

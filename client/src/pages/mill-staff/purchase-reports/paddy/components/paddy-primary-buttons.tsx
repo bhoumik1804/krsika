@@ -10,7 +10,7 @@ export function PaddyPrimaryButtons() {
     return (
         <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
-            {t('paddyPurchase.form.addTitle')}
+            {t('purchaseReports.paddy.form.primaryButton')}
         </Button>
     )
 }

@@ -144,13 +144,19 @@ export function KhandaSalesActionDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing
-                            ? t('khandaSales.form.editTitle')
-                            : t('khandaSales.form.addTitle')}
+                            ? t('salesReports.khanda.form.title').replace(
+                                  'Add',
+                                  'Edit'
+                              )
+                            : t('salesReports.khanda.form.title')}
                     </DialogTitle>
                     <DialogDescription>
                         {isEditing
-                            ? t('khandaSales.form.editDescription')
-                            : t('khandaSales.form.addDescription')}
+                            ? t('salesReports.khanda.form.description').replace(
+                                  'Enter',
+                                  'Update'
+                              )
+                            : t('salesReports.khanda.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -166,7 +172,9 @@ export function KhandaSalesActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t('khandaSales.form.date')}
+                                                {t(
+                                                    'salesReports.khanda.form.fields.date'
+                                                )}
                                             </FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
@@ -188,9 +196,7 @@ export function KhandaSalesActionDialog({
                                                                       ),
                                                                       'MMM dd, yyyy'
                                                                   )
-                                                                : t(
-                                                                      'khandaSales.form.placeholders.date'
-                                                                  )}
+                                                                : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
@@ -234,7 +240,7 @@ export function KhandaSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'khandaSales.form.partyName'
+                                                    'salesReports.khanda.form.fields.partyName'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -244,12 +250,8 @@ export function KhandaSalesActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={party}
-                                                    placeholder={t(
-                                                        'khandaSales.form.placeholders.party'
-                                                    )}
-                                                    emptyText={t(
-                                                        'khandaSales.form.placeholders.noParties'
-                                                    )}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -263,7 +265,7 @@ export function KhandaSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'khandaSales.form.brokerName'
+                                                    'salesReports.khanda.form.fields.brokerName'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -273,12 +275,8 @@ export function KhandaSalesActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={broker}
-                                                    placeholder={t(
-                                                        'khandaSales.form.placeholders.broker'
-                                                    )}
-                                                    emptyText={t(
-                                                        'khandaSales.form.placeholders.noBrokers'
-                                                    )}
+                                                    placeholder='Search broker...'
+                                                    emptyText='No brokers found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -292,7 +290,7 @@ export function KhandaSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'khandaSales.form.khandaQty'
+                                                    'salesReports.khanda.form.fields.quantity'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -327,7 +325,7 @@ export function KhandaSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'khandaSales.form.khandaRate'
+                                                    'salesReports.khanda.form.fields.rate'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -362,7 +360,7 @@ export function KhandaSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'khandaSales.form.discountPercent'
+                                                    'salesReports.khanda.form.fields.discountPercent'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -397,7 +395,7 @@ export function KhandaSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'khandaSales.form.brokeragePerQuintal'
+                                                    'salesReports.khanda.form.fields.brokerage'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -434,16 +432,16 @@ export function KhandaSalesActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                {t('khandaSales.form.buttons.cancel')}
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? t('khandaSales.form.buttons.updating')
-                                        : t('khandaSales.form.buttons.adding')
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
-                                      ? t('khandaSales.form.buttons.update')
-                                      : t('khandaSales.form.buttons.add')}
+                                      ? t('common.update')
+                                      : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

@@ -76,10 +76,10 @@ export function GovtPaddyInwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('govtPaddyInward.title')}
+                            {t('inward.govtPaddyInward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('govtPaddyInward.description')}
+                            {t('inward.govtPaddyInward.description')}
                         </p>
                     </div>
                     <GovtPaddyInwardPrimaryButtons />

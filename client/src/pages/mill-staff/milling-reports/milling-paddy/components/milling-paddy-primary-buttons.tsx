@@ -10,7 +10,7 @@ export function MillingPaddyPrimaryButtons() {
     return (
         <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
-            {t('millingPaddy.addRecord')}
+            {t('millingReports.paddy.form.primaryButton')}
         </Button>
     )
 }

@@ -1,6 +1,5 @@
 'use client'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
+
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,8 +10,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { useDeleteGovtGunnyOutward } from '../data/hooks'
 import { GovtGunnyOutward } from '../data/schema'
+import { useDeleteGovtGunnyOutward } from '../data/hooks'
 import { useGovtGunnyOutward } from './govt-gunny-outward-provider'
 
 interface Props {
@@ -26,23 +25,19 @@ export function GovtGunnyOutwardDeleteDialog({
     onOpenChange,
     currentRow,
 }: Props) {
-    const { t } = useTranslation('mill-staff')
     const { millId, setOpen, setCurrentRow } = useGovtGunnyOutward()
     const deleteMutation = useDeleteGovtGunnyOutward(millId)
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (!currentRow?._id) return
-
-        toast.promise(deleteMutation.mutateAsync(currentRow._id), {
-            loading: t('common.deleting'),
-            success: () => {
-                setCurrentRow(null)
-                setOpen(null)
-                onOpenChange(false)
-                return t('common.success')
-            },
-            error: t('common.error'),
-        })
+        try {
+            await deleteMutation.mutateAsync(currentRow._id)
+            setCurrentRow(null)
+            setOpen(null)
+            onOpenChange(false)
+        } catch {
+            // Error is handled by mutation hook
+        }
     }
 
     return (
@@ -50,22 +45,21 @@ export function GovtGunnyOutwardDeleteDialog({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t('common.deleteRecord')}
+                        Are you absolutely sure?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('common.deleteRecordFor')}{' '}
-                        <strong>{currentRow?.gunnyDmNumber}</strong>?
-                        <br />
-                        {t('common.actionCannotBeUndone')}
+                        This action cannot be undone. This will permanently
+                        delete the record for{' '}
+                        <strong>{currentRow?.gunnyDmNumber}</strong>.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                         onClick={handleDelete}
                     >
-                        {t('common.delete')}
+                        Delete
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

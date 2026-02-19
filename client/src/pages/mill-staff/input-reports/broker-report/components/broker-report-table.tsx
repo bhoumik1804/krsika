@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,7 +23,7 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BrokerReportData } from '../data/schema'
-import { getBrokerReportColumns } from './broker-report-columns'
+import { useBrokerReportColumns } from './broker-report-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
@@ -54,9 +53,7 @@ export function BrokerReportTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-    const { t } = useTranslation('mill-staff')
-
-    const columns = useMemo(() => getBrokerReportColumns(t), [t])
+    const columns = useBrokerReportColumns()
 
     const {
         columnFilters,
@@ -123,9 +120,7 @@ export function BrokerReportTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t(
-                    'brokerReport.table.searchPlaceholder'
-                )}
+                searchPlaceholder='Search...'
                 searchKey='brokerName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -197,9 +192,7 @@ export function BrokerReportTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t(
-                                        'brokerReport.table.noResults'
-                                    )}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

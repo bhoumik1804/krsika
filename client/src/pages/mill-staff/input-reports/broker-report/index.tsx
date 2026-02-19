@@ -19,8 +19,8 @@ import { BrokerReportTable } from './components/broker-report-table'
 
 export function BrokerReport() {
     const { millId } = useParams<{ millId: string }>()
-    const [searchParams, setSearchParams] = useSearchParams()
     const { t } = useTranslation('mill-staff')
+    const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
     const queryParams = useMemo(() => {
@@ -75,10 +75,10 @@ export function BrokerReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('brokerReport.title')}
+                            {t('inputReports.broker.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('brokerReport.description')}
+                            {t('inputReports.broker.description')}
                         </p>
                     </div>
                     <BrokerReportPrimaryButtons />
@@ -98,7 +98,6 @@ function BrokerReportContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = useBrokerReport()
-    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (
@@ -111,7 +110,7 @@ function BrokerReportContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('brokerReport.error')}
+                Failed to load broker data. Please try again later.
             </div>
         )
     }

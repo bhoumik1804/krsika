@@ -16,10 +16,10 @@ import { FrkInwardTable } from './components/frk-inward-table'
 import { useFrkInwardList } from './data/hooks'
 
 export function FrkInwardReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
-    const { t } = useTranslation('mill-staff')
 
     const queryParams = useMemo(() => {
         const search = Object.fromEntries(searchParams.entries())
@@ -71,10 +71,10 @@ export function FrkInwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('frkInward.title')}
+                            {t('inward.frkInward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('frkInward.description')}
+                            {t('inward.frkInward.description')}
                         </p>
                     </div>
                     <FrkInwardPrimaryButtons />

@@ -67,10 +67,10 @@ function GovtRiceOutwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('govtRiceOutward.title')}
+                            Govt Rice Outward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('govtRiceOutward.description')}
+                            Manage govt rice outward transactions and records
                         </p>
                     </div>
                 </div>
@@ -87,10 +87,10 @@ function GovtRiceOutwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('govtRiceOutward.title')}
+                            Govt Rice Outward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('govtRiceOutward.description')}
+                            Manage govt rice outward transactions and records
                         </p>
                     </div>
                 </div>
@@ -108,10 +108,10 @@ function GovtRiceOutwardContent() {
             <div className='flex flex-wrap items-end justify-between gap-2'>
                 <div>
                     <h2 className='text-2xl font-bold tracking-tight'>
-                        {t('govtRiceOutward.title')}
+                        {t('outward.govtRiceOutward.title')}
                     </h2>
                     <p className='text-muted-foreground'>
-                        {t('govtRiceOutward.description')}
+                        {t('outward.govtRiceOutward.description')}
                     </p>
                 </div>
                 <GovtRiceOutwardPrimaryButtons />

@@ -10,7 +10,7 @@ export function PrivatePaddyOutwardPrimaryButtons() {
     return (
         <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
-            {t('privatePaddyOutward.addRecord')}
+            {t('outward.privatePaddyOutward.form.primaryButton')}
         </Button>
     )
 }

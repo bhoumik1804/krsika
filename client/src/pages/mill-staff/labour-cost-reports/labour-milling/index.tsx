@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
@@ -16,8 +16,8 @@ import { LabourMillingTable } from './components/labour-milling-table'
 import { useLabourMillingList } from './data/hooks'
 
 export function LabourMillingReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     const queryParams = useMemo(() => {
@@ -57,7 +57,7 @@ export function LabourMillingReport() {
         }
     }
 
-    if (isLoading) {
+    if (isLoading && !data) {
         return (
             <div className='flex h-screen items-center justify-center'>
                 <LoadingSpinner />
@@ -91,10 +91,10 @@ export function LabourMillingReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('labourMilling.title')}
+                            {t('labourCostReports.milling.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('labourMilling.description')}
+                            {t('labourCostReports.milling.description')}
                         </p>
                     </div>
                     <LabourMillingPrimaryButtons />
@@ -108,6 +108,7 @@ export function LabourMillingReport() {
                     )}
                     navigate={navigate}
                     pagination={data?.pagination}
+                    isLoading={isLoading}
                 />
             </Main>
 

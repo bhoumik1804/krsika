@@ -10,7 +10,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -24,7 +23,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type OtherOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { useOtherOutwardColumns } from './other-outward-columns'
+import { otherOutwardColumns as columns } from './other-outward-columns'
 
 type PaginationInfo = {
     page: number
@@ -48,8 +47,6 @@ export function OtherOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
-    const columns = useOtherOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -113,7 +110,7 @@ export function OtherOutwardTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t('common.searchPlaceholder')}
+                searchPlaceholder='Search...'
                 searchKey='partyName'
                 filters={[]}
             />
@@ -186,7 +183,7 @@ export function OtherOutwardTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

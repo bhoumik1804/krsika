@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -10,7 +10,6 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
-    type ColumnDef,
 } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -24,29 +23,25 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
+import { type RiceSales } from '../data/schema'
 import { type RiceSalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getRiceSalesColumns } from './rice-sales-columns'
+import { useRiceSalesColumns } from './rice-sales-columns'
 
-interface RiceSalesTableProps {
-    data: RiceSalesResponse[]
-    search: Record<string, string>
+type DataTableProps = {
+    data: RiceSales[] | RiceSalesResponse[]
+    search: Record<string, unknown>
     navigate: NavigateFn
 }
 
-export function RiceSalesTable({
-    data,
-    search,
-    navigate,
-}: RiceSalesTableProps) {
+export function RiceSalesTable({ data, search, navigate }: DataTableProps) {
     const { t } = useTranslation('mill-staff')
-    const [sorting, setSorting] = useState<SortingState>([])
+    const columns = useRiceSalesColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
-
-    const columns = useMemo(() => getRiceSalesColumns(t), [t])
+    const [sorting, setSorting] = useState<SortingState>([])
 
     const {
         columnFilters,
@@ -64,9 +59,10 @@ export function RiceSalesTable({
         ],
     })
 
+    // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
-        data: data as any,
-        columns: columns as ColumnDef<any, any>[],
+        data,
+        columns,
         state: {
             sorting,
             pagination,
@@ -86,7 +82,7 @@ export function RiceSalesTable({
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-        getRowId: (row: any) => row._id || '',
+        getRowId: (row) => row._id || '',
     })
 
     useEffect(() => {
@@ -102,7 +98,7 @@ export function RiceSalesTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t('riceSales.form.placeholders.party')}
+                searchPlaceholder={t('common.search')}
                 searchKey='partyName'
                 filters={[]}
             />
@@ -121,14 +117,10 @@ export function RiceSalesTable({
                                             colSpan={header.colSpan}
                                             className={cn(
                                                 'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
-                                                (
-                                                    header.column.columnDef
-                                                        .meta as any
-                                                )?.className,
-                                                (
-                                                    header.column.columnDef
-                                                        .meta as any
-                                                )?.thClassName
+                                                header.column.columnDef.meta
+                                                    ?.className,
+                                                header.column.columnDef.meta
+                                                    ?.thClassName
                                             )}
                                         >
                                             {header.isPlaceholder
@@ -159,14 +151,10 @@ export function RiceSalesTable({
                                             key={cell.id}
                                             className={cn(
                                                 'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
-                                                (
-                                                    cell.column.columnDef
-                                                        .meta as any
-                                                )?.className,
-                                                (
-                                                    cell.column.columnDef
-                                                        .meta as any
-                                                )?.tdClassName
+                                                cell.column.columnDef.meta
+                                                    ?.className,
+                                                cell.column.columnDef.meta
+                                                    ?.tdClassName
                                             )}
                                         >
                                             {flexRender(

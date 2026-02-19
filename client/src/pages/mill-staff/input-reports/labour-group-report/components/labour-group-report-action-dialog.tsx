@@ -40,10 +40,10 @@ export function LabourGroupReportActionDialog({
     currentRow,
 }: LabourGroupReportActionDialogProps) {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const createMutation = useCreateLabourGroup(millId || '')
     const updateMutation = useUpdateLabourGroup(millId || '')
-    const { t } = useTranslation('mill-staff')
     const isLoading = createMutation.isPending || updateMutation.isPending
 
     const form = useForm<LabourGroupReportData>({
@@ -110,18 +110,17 @@ export function LabourGroupReportActionDialog({
             <DialogContent className='max-w-md'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('labourGroupReport.form.editTitle')
-                            : t('labourGroupReport.form.addTitle')}
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('inputReports.labourGroup.title').replace(
+                            ' Report',
+                            ''
+                        )}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t(
-                                  'labourGroupReport.form.editDescription'
-                              )
-                            : t(
-                                  'labourGroupReport.form.addDescription'
-                              )}
+                        {t('common.enter')}{' '}
+                        {t(
+                            'inputReports.labourGroup.form.description'
+                        ).toLowerCase()}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -136,13 +135,13 @@ export function LabourGroupReportActionDialog({
                                 <FormItem>
                                     <FormLabel>
                                         {t(
-                                            'labourGroupReport.form.name'
+                                            'inputReports.labourGroup.form.fields.labourTeamName'
                                         )}
                                     </FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder={t(
-                                                'labourGroupReport.form.placeholders.name'
+                                                'inputReports.labourGroup.form.fields.labourTeamName'
                                             )}
                                             disabled={isLoading}
                                             {...field}
@@ -163,14 +162,10 @@ export function LabourGroupReportActionDialog({
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
-                                    ? t('common.loading')
-                                    : isEditing
-                                      ? t(
-                                            'labourGroupReport.form.editTitle'
-                                        )
-                                      : t(
-                                            'labourGroupReport.form.addTitle'
-                                        )}
+                                    ? 'Loading...'
+                                    : t(
+                                          'inputReports.labourGroup.form.primaryButton'
+                                      )}
                             </Button>
                         </DialogFooter>
                     </form>

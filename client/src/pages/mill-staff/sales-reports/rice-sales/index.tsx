@@ -19,6 +19,7 @@ import { RiceSalesTable } from './components/rice-sales-table'
 import { useRiceSalesList } from './data/hooks'
 
 export function RiceSalesReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -41,8 +42,6 @@ export function RiceSalesReport() {
     }, [searchParams])
 
     // Call GET API here
-    const { t } = useTranslation('mill-staff')
-
     const {
         data: apiResponse,
         isLoading,
@@ -87,10 +86,10 @@ export function RiceSalesReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('riceSales.title')}
+                            {t('salesReports.rice.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('riceSales.description')}
+                            {t('salesReports.rice.description')}
                         </p>
                     </div>
                     <RiceSalesPrimaryButtons />
@@ -110,7 +109,6 @@ function RiceSalesContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = useRiceSales()
-    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (
@@ -123,7 +121,7 @@ function RiceSalesContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('common.errorLoading')}
+                Failed to load rice sales data. Please try again later.
             </div>
         )
     }

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { CheckCircle, Trash2 } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -21,7 +20,6 @@ type DataTableBulkActionsProps<TData> = {
 export function DataTableBulkActions<TData>({
     table,
 }: DataTableBulkActionsProps<TData>) {
-    const { t } = useTranslation('mill-staff')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
@@ -68,13 +66,11 @@ export function DataTableBulkActions<TData>({
                             className='size-8'
                         >
                             <Trash2 />
-                            <span className='sr-only'>
-                                {t('inputReports.delete.selected')}
-                            </span>
+                            <span className='sr-only'>Delete selected</span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>{t('inputReports.delete.selectedRecords')}</p>
+                        <p>Delete selected entries</p>
                     </TooltipContent>
                 </Tooltip>
             </BulkActionsToolbar>

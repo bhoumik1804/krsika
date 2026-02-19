@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button'
 import { useBrokerReport } from './broker-report-provider'
 
 export function BrokerReportPrimaryButtons() {
-    const { setOpen, setCurrentRow } = useBrokerReport()
     const { t } = useTranslation('mill-staff')
+    const { setOpen, setCurrentRow } = useBrokerReport()
 
     return (
         <Button
@@ -15,7 +15,7 @@ export function BrokerReportPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('brokerReport.form.addTitle')}
+            {t('inputReports.broker.form.primaryButton')}
         </Button>
     )
 }

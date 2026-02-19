@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -24,7 +23,6 @@ export function FrkDeleteDialog({
     onOpenChange,
     currentRow,
 }: FrkDeleteDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useFrk()
     const { mutateAsync: deleteFrkPurchase, isPending: isDeleting } =
         useDeleteFrkPurchase(millId)
@@ -44,28 +42,24 @@ export function FrkDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        {t('frkPurchase.delete.title')}
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Delete Purchase?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('frkPurchase.delete.description', {
-                            partyName: currentRow?.partyName,
-                            date: currentRow?.date,
-                        })}
+                        Are you sure you want to delete this purchase record for{' '}
+                        <strong>{currentRow?.partyName}</strong>?
+                        <br />
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                        {t('common.cancel')}
+                        Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting
-                            ? t('frkPurchase.delete.deleting')
-                            : t('frkPurchase.delete.confirm')}
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

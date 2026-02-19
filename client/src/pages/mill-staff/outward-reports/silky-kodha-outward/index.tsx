@@ -114,10 +114,10 @@ export function SilkyKodhaOutwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('silkyKodhaOutward.title')}
+                            {t('outward.silkyKodhaOutward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('silkyKodhaOutward.description')}
+                            {t('outward.silkyKodhaOutward.description')}
                         </p>
                     </div>
                     <SilkyKodhaOutwardPrimaryButtons />

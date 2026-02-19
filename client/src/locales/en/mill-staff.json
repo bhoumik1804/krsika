@@ -1,2503 +1,1027 @@
 {
     "common": {
-        "date": "Date",
-        "commodity": "Commodity",
-        "item": "Item",
-        "variety": "Variety",
-        "type": "Type",
-        "quantity": "Quantity",
-        "bags": "Bags",
-        "quintal": "Qtl",
-        "weight": "Weight",
-        "remarks": "Remarks",
-        "status": "Status",
-        "actions": "Actions",
-        "save": "Save",
-        "cancel": "Cancel",
-        "edit": "Edit",
         "add": "Add",
-        "delete": "Delete",
-        "update": "Update",
-        "view": "View",
-        "loading": "Loading...",
-        "success": "Success",
-        "error": "Error",
         "adding": "Adding...",
+        "update": "Update",
         "updating": "Updating...",
-        "exportSummary": "Export Summary",
-        "exportHistory": "Export History",
-        "dateWiseHistory": "Date-wise history",
-        "transactions": "Transactions",
-        "search": "Search...",
-        "searchPlaceholder": "Filter entries...",
-        "noResults": "No results.",
-        "select": "Select...",
-        "selectRow": "Select row",
-        "all": "All",
-        "pending": "Pending",
-        "completed": "Completed",
-        "verified": "Verified",
-        "rejected": "Rejected",
-        "dispatched": "Dispatched",
-        "cancelled": "Cancelled",
-        "stocked": "Stocked",
-        "scheduled": "Scheduled",
-        "in-progress": "In Progress",
-        "halted": "Halted",
-        "gatePass": "Gate Pass",
-        "partyName": "Party Name",
-        "vehicleNo": "Vehicle No",
-        "driverName": "Driver Name",
-        "netWeight": "Net Weight (Kg)",
-        "pickADate": "Pick a date",
-        "actionCannotBeUndone": "This action cannot be undone.",
-        "openMenu": "Open menu",
-        "paddy": "Paddy",
-        "rice": "Rice",
-        "bran": "Bran",
-        "warehouse": "Warehouse",
-        "stackNumber": "Stack Number",
-        "itemName": "Item Name",
-        "entry": "Entry",
-        "shift": "Shift",
-        "day": "Day",
-        "night": "Night",
-        "paddyType": "Paddy Type",
-        "paddyQuantity": "Paddy Consumed (Qtl)",
-        "riceYield": "Rice Yield (Kg)",
-        "brokenRice": "Broken Rice (Kg)",
-        "branYield": "Bran Yield (Kg)",
-        "huskYield": "Husk Yield (Kg)",
-
-        "truckNumber": "Truck Number",
-        "deleteRecord": "Delete Record?",
-        "deleteRecordFor": "Are you sure you want to delete this record for",
-        "deleteSelectedTitle": "Delete {{count}} {{count, plural, one {record} other {records}}}?",
-        "deleteSelectedDescription": "Are you sure you want to delete the selected records?",
-        "deletingSelected": "Deleting...",
-        "deletedSelectedSuccess": "Deleted {{count}} {{count, plural, one {record} other {records}}}",
-        "deleteSelectedError": "Error deleting records",
-        "areYouSure": "Are you absolutely sure?",
-        "deleteWarning": "This action cannot be undone. This will permanently delete the record for",
-        "errorLoadingData": "Error loading data",
-        "tryAgainLater": "Please try again later.",
-        "deleting": "Deleting...",
-        "enterDetails": "Enter the details below",
-        "updateDetails": "Update the details below",
-        "messages": {
-            "createdSuccessfully": "Entry created successfully",
-            "updatedSuccessfully": "Entry updated successfully",
-            "deletedSuccessfully": "Entry deleted successfully",
-            "failedToCreate": "Failed to create entry",
-            "failedToUpdate": "Failed to update entry",
-            "failedToDelete": "Failed to delete entry"
-        }
-    },
-    "frkInward": {
-        "title": "FRK Inward Report",
-        "description": "Manage FRK inward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "form": {
-            "date": "Date",
-            "frkPurchaseDealNumber": "FRK Purchase Deal Number",
-            "selectDeal": "Select Deal",
-            "searchDeal": "Search deal...",
-            "noDealsFound": "No deals found",
-            "partyName": "Party Name",
-            "enterPartyName": "Enter Party Name",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "plasticWeight": "Plastic Gunny Weight",
-            "truckNumber": "Truck No",
-            "enterTruckNumber": "Enter Truck No",
-            "rstNumber": "RST No",
-            "enterRstNumber": "Enter RST No",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight"
-        },
-        "table": {
-            "date": "Date",
-            "frkPurchaseDealNumber": "FRK Purchase Deal Number",
-            "partyName": "Party Name",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "plasticWeight": "Plastic Gunny Weight",
-            "truckNumber": "Truck No",
-            "rstNumber": "RST No",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight"
-        }
-    },
-    "gunnyInward": {
-        "title": "Bardana Inward Report",
-        "description": "Manage gunny bag inward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "table": {
-            "date": "Date",
-            "gunnyPurchaseDealNumber": "Purchase Deal No",
-            "partyName": "Party Name",
-            "delivery": "Delivery",
-            "samitiSangrahan": "Samiti/Sangrahan",
-            "gunnyNew": "Gunny (New)",
-            "gunnyOld": "Gunny (Old)",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "actions": "Actions"
-        },
-        "form": {
-            "date": "Date",
-            "gunnyPurchaseDealNumber": "Purchase Deal No",
-            "searchDeal": "Search deal...",
-            "noDealsFound": "No deals found",
-            "partyName": "Party Name",
-            "enterPartyName": "Enter Party Name",
-            "delivery": "Delivery",
-            "enterDelivery": "Enter delivery details",
-            "samitiSangrahan": "Samiti/Sangrahan",
-            "enterSamitiSangrahan": "Enter Samiti/Sangrahan",
-            "gunnyNew": "Gunny (New)",
-            "gunnyOld": "Gunny (Old)",
-            "gunnyPlastic": "Gunny (Plastic)"
-        }
-    },
-    "govtPaddyInward": {
-        "title": "Govt Paddy Inward Report",
-        "description": "Manage paddy inward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "form": {
-            "date": "Date",
-            "doNumber": "DO Number",
-            "selectDo": "Select DO",
-            "searchDo": "Search DO...",
-            "noDosFound": "No DOs found",
-            "committeeName": "Committee Name",
-            "enterCommitteeName": "Enter Committee Name",
-            "balanceDo": "Balance DO",
-            "gunnyNew": "Gunny New",
-            "gunnyOld": "Gunny Old",
-            "gunnyPlastic": "Gunny Plastic",
-            "juteWeight": "Jute Gunny Weight (kg.)",
-            "plasticWeight": "Plastic Gunny Weight (kg.)",
-            "gunnyWeight": "Gunny Weight (kg.)",
-            "truckNumber": "Truck Number",
-            "enterTruckNumber": "Enter Truck Number",
-            "rstNumber": "RST Number",
-            "enterRstNumber": "Enter RST Number",
-            "truckLoadWeight": "Truck Load Weight (Qtl.)",
-            "paddyType": "Paddy Type",
-            "selectPaddyType": "Select Paddy Type",
-            "paddyMota": "Paddy Mota (Qtl.)",
-            "paddyPatla": "Paddy Patla (Qtl.)",
-            "paddySarna": "Paddy Sarna (Qtl.)",
-            "paddyMahamaya": "Paddy Mahamaya (Qtl.)",
-            "paddyRbGold": "Paddy RB Gold (Qtl.)"
-        },
-        "table": {
-            "date": "Date",
-            "doNumber": "DO Number",
-            "committeeName": "Committee Name",
-            "balanceDo": "Balance DO",
-            "gunnyNew": "Gunny New",
-            "gunnyOld": "Gunny Old",
-            "gunnyPlastic": "Gunny Plastic",
-            "juteWeight": "Jute Weight",
-            "plasticWeight": "Plastic Weight",
-            "gunnyWeight": "Gunny Weight",
-            "truckNumber": "Truck Number",
-            "rstNumber": "RST Number",
-            "truckLoadWeight": "Truck Load Weight",
-            "paddyType": "Paddy Type",
-            "paddyMota": "Paddy Mota",
-            "paddyPatla": "Paddy Patla",
-            "paddySarna": "Paddy Sarna",
-            "paddyMahamaya": "Paddy Mahamaya",
-            "paddyRbGold": "Paddy RB Gold"
-        }
-    },
-    "otherInward": {
-        "title": "Other Inward Report",
-        "description": "Manage other inward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "errorLoading": "Failed to load other inward records",
-        "form": {
-            "date": "Date",
-            "otherPurchaseDealNumber": "Other Purchase Deal Number",
-            "itemName": "Item Name",
-            "quantity": "Quantity",
-            "quantityType": "Qty Type",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "gunnyNew": "Gunny (New)",
-            "gunnyOld": "Gunny (Old)",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "juteGunnyWeight": "Jute Gunny Weight",
-            "plasticGunnyWeight": "Plastic Gunny Weight",
-            "truckNumber": "Truck No",
-            "rstNumber": "RST No",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight",
-            "searchDeal": "Search deal...",
-            "noDealsFound": "No deals found",
-            "enterItemName": "Enter Item Name",
-            "enterPartyName": "Enter Party Name",
-            "enterBrokerName": "Enter Broker Name",
-            "enterTruckNo": "Enter Truck No",
-            "enterRstNo": "Enter RST No"
-        },
-        "table": {
-            "date": "Date",
-            "otherPurchaseDealNumber": "Purchase Deal No",
-            "partyName": "Party Name",
-            "itemName": "Item Name",
-            "quantity": "Quantity",
-            "quantityType": "Qty Type",
-            "gunnyNew": "Gunny (New)",
-            "gunnyOld": "Gunny (Old)",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "juteGunnyWeight": "Jute Weight",
-            "plasticGunnyWeight": "Plastic Weight",
-            "truckNumber": "Truck No",
-            "rstNumber": "RST No",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight"
-        }
-    },
-    "otherOutward": {
-        "title": "Other Outward Report",
-        "description": "Manage other outward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "table": {
-            "date": "Date",
-            "otherSaleDealNumber": "Sale Deal No",
-            "partyName": "Party Name",
-            "itemName": "Item Name",
-            "quantity": "Quantity",
-            "quantityType": "Qty Type",
-            "gunnyNew": "Gunny (New)",
-            "gunnyOld": "Gunny (Old)",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "juteWeight": "Jute Weight",
-            "plasticWeight": "Plastic Weight",
-            "truckNo": "Truck No",
-            "rstNo": "RST No",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight",
-            "actions": "Actions"
-        },
-        "form": {
-            "date": "Date",
-            "otherSaleDealNumber": "Other Sale Deal Number",
-            "searchDeal": "Search deal...",
-            "noDealsFound": "No deals found",
-            "itemName": "Item Name",
-            "enterItemName": "Enter Item Name",
-            "quantity": "Quantity",
-            "quantityType": "Qty Type",
-            "partyName": "Party Name",
-            "enterPartyName": "Enter Party Name",
-            "brokerName": "Broker Name",
-            "enterBrokerName": "Enter Broker Name",
-            "gunnyNew": "Gunny (New)",
-            "gunnyOld": "Gunny (Old)",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "juteGunnyWeight": "Jute Gunny Weight",
-            "plasticGunnyWeight": "Plastic Gunny Weight",
-            "truckNumber": "Truck No",
-            "enterTruckNo": "XX-00-XX-0000",
-            "rstNumber": "RST No",
-            "enterRstNo": "RST-000",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight"
-        }
-    },
-    "bhusaOutward": {
-        "title": "Bhusa Outward Report",
-        "description": "Manage bhusa outward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "table": {
-            "date": "Date",
-            "bhusaSaleDealNumber": "Bhusa Sale Deal No",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "rate": "Rate",
-            "brokerage": "Brokerage",
-            "truckNo": "Truck No",
-            "rstNo": "RST No",
-            "truckWeight": "Truck Weight",
-            "actions": "Actions"
-        },
-        "form": {
-            "date": "Date",
-            "bhusaSaleDealNumber": "Bhusa Sale Deal Number",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "rate": "Rate",
-            "brokerage": "Brokerage",
-            "truckNo": "Truck No",
-            "rstNo": "RST No",
-            "truckWeight": "Truck Weight",
-            "enterDealNumber": "Enter deal number",
-            "searchParty": "Search party...",
-            "searchBroker": "Search broker...",
-            "enterTruckNo": "XX-00-XX-0000",
-            "enterRstNo": "RST-000"
-        }
-    },
-    "nakkhiOutward": {
-        "title": "Nakkhi Outward Report",
-        "description": "Manage nakkhi outward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "table": {
-            "date": "Date",
-            "nakkhiSaleDealNumber": "Nakkhi Sale Deal No",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "rate": "Rate",
-            "brokerage": "Brokerage",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "plasticWeight": "Plastic Weight",
-            "truckNo": "Truck No",
-            "rstNo": "RST No",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight",
-            "actions": "Actions"
-        },
-        "form": {
-            "date": "Date",
-            "nakkhiSaleDealNumber": "Nakkhi Sale Deal Number",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "rate": "Rate",
-            "brokerage": "Brokerage",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "plasticGunnyWeight": "Plastic Gunny Weight",
-            "truckNo": "Truck No",
-            "rstNo": "RST No",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight",
-            "enterDealNumber": "Enter deal number",
-            "searchParty": "Search party...",
-            "searchBroker": "Search broker...",
-            "enterTruckNo": "XX-00-XX-0000",
-            "enterRstNo": "RST-000"
-        }
-    },
-    "frkOutward": {
-        "title": "FRK Outward Report",
-        "description": "Manage FRK outward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "plasticWeight": "Plastic Gunny Weight",
-            "truckNo": "Truck No",
-            "rstNo": "RST No",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight",
-            "actions": "Actions"
-        },
-        "form": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "enterPartyName": "Enter Party Name",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "plasticWeight": "Plastic Gunny Weight",
-            "truckNo": "Truck No",
-            "enterTruckNo": "XX-00-XX-0000",
-            "rstNo": "RST No",
-            "enterRstNo": "RST-000",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight"
-        }
-    },
-    "govtGunnyOutward": {
-        "title": "Govt Gunny Outward Report",
-        "description": "Manage government gunny outward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "table": {
-            "date": "Date",
-            "gunnyDmNumber": "Gunny DM No.",
-            "samitiSangrahan": "Samiti Sangrahan",
-            "oldGunnyQty": "Old Gunny Qty",
-            "plasticGunnyQty": "Plastic Gunny Qty",
-            "truckNo": "Truck No.",
-            "actions": "Actions"
-        },
-        "form": {
-            "date": "Date",
-            "gunnyDmNumber": "Gunny DM Number",
-            "enterGunnyDmNumber": "Enter Gunny DM Number",
-            "samitiSangrahan": "Samiti Sangrahan",
-            "enterSamitiSangrahan": "Enter Samiti/Sangrahan",
-            "oldGunnyQty": "Old Gunny Qty",
-            "plasticGunnyQty": "Plastic Gunny Qty",
-            "truckNo": "Truck No.",
-            "enterTruckNo": "XX-00-XX-0000"
-        }
-    },
-    "govtRiceOutward": {
-        "title": "Govt Rice Outward Report",
-        "description": "Manage government rice outward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "table": {
-            "date": "Date",
-            "lotNo": "LOT No.",
-            "fciNan": "FCI/NAN",
-            "riceType": "Rice Type",
-            "gunnyNew": "Gunny (New)",
-            "gunnyOld": "Gunny (Old)",
-            "juteWeight": "Jute Weight",
-            "truckNo": "Truck No.",
-            "rstNo": "RST No.",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight",
-            "actions": "Actions"
-        },
-        "form": {
-            "date": "Date",
-            "lotNo": "LOT No.",
-            "enterLotNo": "Enter LOT No.",
-            "fciNan": "FCI/NAN",
-            "riceType": "Rice Type",
-            "enterRiceType": "Enter Rice Type",
-            "gunnyNew": "Gunny (New)",
-            "gunnyOld": "Gunny (Old)",
-            "juteWeight": "Jute Weight",
-            "truckNo": "Truck No.",
-            "enterTruckNo": "XX-00-XX-0000",
-            "rstNo": "RST No.",
-            "enterRstNo": "RST-000",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight"
-        }
-    },
-    "khandaOutward": {
-        "title": "Khanda Outward Report",
-        "description": "Manage khanda outward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "table": {
-            "date": "Date",
-            "khandaSaleDealNumber": "Khanda Sale Deal No",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "plasticGunnyWeight": "Plastic Gunny Weight",
-            "truckNo": "Truck No",
-            "rstNo": "RST No",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight",
-            "actions": "Actions"
-        },
-        "form": {
-            "date": "Date",
-            "khandaSaleDealNumber": "Khanda Sale Deal Number",
-            "searchDeal": "Search deal...",
-            "noDealsFound": "No deals found",
-            "partyName": "Party Name",
-            "enterPartyName": "Enter Party Name",
-            "brokerName": "Broker Name",
-            "enterBrokerName": "Enter Broker Name",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "plasticGunnyWeight": "Plastic Gunny Weight",
-            "truckNo": "Truck No",
-            "enterTruckNo": "XX-00-XX-0000",
-            "rstNo": "RST No",
-            "enterRstNo": "RST-000",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight"
-        }
-    },
-    "kodhaOutward": {
-        "title": "Kodha Outward Report",
-        "description": "Manage kodha outward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "table": {
-            "date": "Date",
-            "kodhaSaleDealNumber": "Kodha Sale Deal No",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "rate": "Rate",
-            "oil": "OIL %",
-            "brokerage": "Brokerage",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "plasticWeight": "Plastic Gunny Weight",
-            "truckNo": "Truck No",
-            "rstNo": "RST No",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight",
-            "actions": "Actions"
-        },
-        "form": {
-            "date": "Date",
-            "kodhaSaleDealNumber": "Kodha Sale Deal Number",
-            "searchDeal": "Search deal...",
-            "noDealsFound": "No deals found",
-            "partyName": "Party Name",
-            "enterPartyName": "Enter Party Name",
-            "brokerName": "Broker Name",
-            "enterBrokerName": "Enter Broker Name",
-            "rate": "Rate",
-            "oil": "OIL %",
-            "brokerage": "Brokerage",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "plasticWeight": "Plastic Gunny Weight",
-            "truckNo": "Truck No",
-            "enterTruckNo": "XX-00-XX-0000",
-            "rstNo": "RST No",
-            "enterRstNo": "RST-000",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight"
-        }
-    },
-    "privateGunnyOutward": {
-        "title": "Private Gunny Outward Report",
-        "description": "Manage private gunny outward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "table": {
-            "date": "Date",
-            "gunnySaleDealNumber": "Gunny Sale Deal No",
-            "partyName": "Party Name",
-            "newGunnyQty": "New Gunny Qty",
-            "oldGunnyQty": "Old Gunny Qty",
-            "plasticGunnyQty": "Plastic Gunny Qty",
-            "truckNo": "Truck No.",
-            "actions": "Actions"
-        },
-        "form": {
-            "date": "Date",
-            "gunnySaleDealNumber": "Gunny Sale Deal Number",
-            "searchDeal": "Search deal...",
-            "noDealsFound": "No deals found",
-            "partyName": "Party Name",
-            "enterPartyName": "Enter Party Name",
-            "newGunnyQty": "New Gunny Qty",
-            "oldGunnyQty": "Old Gunny Qty",
-            "plasticGunnyQty": "Plastic Gunny Qty",
-            "truckNo": "Truck No.",
-            "enterTruckNo": "XX-00-XX-0000"
-        }
-    },
-    "privatePaddyOutward": {
-        "title": "Private Paddy Outward Report",
-        "description": "Manage private paddy outward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "table": {
-            "date": "Date",
-            "paddySaleDealNumber": "Paddy Sale Deal No",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "paddyType": "Paddy Type",
-            "doQty": "DO Qty",
-            "gunnyNew": "New Gunny",
-            "gunnyOld": "Old Gunny",
-            "gunnyPlastic": "Plastic Gunny",
-            "juteWeight": "Jute Gunny Weight",
-            "plasticWeight": "Plastic Gunny Weight",
-            "truckNumber": "Truck Number",
-            "rstNumber": "RST Number",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight",
-            "actions": "Actions"
-        },
-        "form": {
-            "date": "Date",
-            "paddySaleDealNumber": "Paddy Sale Deal Number",
-            "searchDeal": "Search deal...",
-            "noDealsFound": "No deals found",
-            "partyName": "Party Name",
-            "enterPartyName": "Enter Party Name",
-            "brokerName": "Broker Name",
-            "enterBrokerName": "Enter Broker Name",
-            "paddyType": "Paddy Type",
-            "doQty": "DO Qty",
-            "gunnyNew": "New Gunny",
-            "gunnyOld": "Old Gunny",
-            "gunnyPlastic": "Plastic Gunny",
-            "juteWeight": "Jute Gunny Weight",
-            "plasticWeight": "Plastic Gunny Weight",
-            "truckNumber": "Truck Number",
-            "enterTruckNo": "XX-00-XX-0000",
-            "rstNumber": "RST Number",
-            "enterRstNo": "RST-000",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight"
-        }
-    },
-    "privateRiceOutward": {
-        "title": "Private Rice Outward Report",
-        "description": "Manage private rice outward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "table": {
-            "date": "Date",
-            "riceSaleDealNumber": "Sale Auto No.",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "lotNo": "LOT No.",
-            "fciNan": "FCI/NAN",
-            "riceType": "Rice Type",
-            "riceQty": "Rice Qty",
-            "gunnyNew": "Gunny (New)",
-            "gunnyOld": "Gunny (Old)",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "juteWeight": "Jute Weight",
-            "plasticWeight": "Plastic Weight",
-            "truckNumber": "Truck No.",
-            "truckRst": "RST No.",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight",
-            "actions": "Actions"
-        },
-        "form": {
-            "date": "Date",
-            "riceSaleDealNumber": "Rice Sale Deal Number",
-            "searchDeal": "Search deal...",
-            "noDealsFound": "No deals found",
-            "partyName": "Party Name",
-            "enterPartyName": "Enter Party Name",
-            "brokerName": "Broker Name",
-            "enterBrokerName": "Enter Broker Name",
-            "lotNo": "LOT No.",
-            "enterLotNo": "Enter LOT No.",
-            "fciNan": "FCI/NAN",
-            "riceType": "Rice Type",
-            "enterRiceType": "Enter Rice Type",
-            "riceQty": "Rice Qty",
-            "gunnyNew": "Gunny (New)",
-            "gunnyOld": "Gunny (Old)",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "juteWeight": "Jute Weight",
-            "plasticWeight": "Plastic Weight",
-            "truckNumber": "Truck No.",
-            "enterTruckNo": "XX-00-XX-0000",
-            "truckRst": "RST No.",
-            "enterRstNo": "RST-000",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight"
-        }
-    },
-    "silkyKodhaOutward": {
-        "title": "Silky Kodha Outward Report",
-        "description": "Manage silky kodha outward transactions and records",
-        "addRecord": "Add Record",
-        "editRecord": "Edit Record",
-        "table": {
-            "date": "Date",
-            "silkyKodhaSaleDealNumber": "Silky Kodha Sale Deal No",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "rate": "Rate",
-            "oil": "OIL %",
-            "brokerage": "Brokerage",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "plasticWeight": "Plastic Gunny Weight",
-            "truckNo": "Truck No",
-            "rstNo": "RST No",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight",
-            "actions": "Actions"
-        },
-        "form": {
-            "date": "Date",
-            "silkyKodhaSaleDealNumber": "Silky Kodha Sale Deal Number",
-            "searchDeal": "Search deal...",
-            "noDealsFound": "No deals found",
-            "partyName": "Party Name",
-            "enterPartyName": "Enter Party Name",
-            "brokerName": "Broker Name",
-            "enterBrokerName": "Enter Broker Name",
-            "rate": "Rate",
-            "oil": "OIL %",
-            "brokerage": "Brokerage",
-            "gunnyPlastic": "Gunny (Plastic)",
-            "plasticWeight": "Plastic Gunny Weight",
-            "truckNo": "Truck No",
-            "enterTruckNo": "XX-00-XX-0000",
-            "rstNo": "RST No",
-            "enterRstNo": "RST-000",
-            "truckWeight": "Truck Weight",
-            "gunnyWeight": "Gunny Weight",
-            "netWeight": "Net Weight"
-        }
-    },
-    "dashboard": {
-        "title": "Staff Dashboard",
-        "goodMorning": "Good Morning, Staff",
-        "overview": "Here is what's happening today.",
-        "markAttendance": "Mark Attendance",
-        "attendanceMarkedAs": "Attendance marked as",
-        "halfDay": "Half Day",
-        "present": "Present",
-        "absent": "Absent",
-        "attendanceHistory": "Attendance History",
-        "recentEntriesTitle": "Recent Entries",
-        "yourLatestEntries": "Your latest activity across the mill.",
-        "recentEntries": {
-            "paddyFromRamesh": "Paddy from Ramesh - {{val}}",
-            "riceToPatelStore": "Rice to Patel Store - {{val}}",
-            "paddyFromSuresh": "Paddy from Suresh - {{val}}",
-            "paddyFromKumar": "Paddy from Kumar - {{val}}",
-            "riceToKrishnaTraders": "Rice to Krishna Traders - {{val}}"
-        }
-    },
-    "inwards": {
-        "title": "Inwards",
-        "description": "Track daily inward transactions by commodity",
-        "addEntry": "Add Inward Entry",
-        "editEntry": "Edit Inward Entry",
-        "deleteEntry": "Delete Inward Entry",
-        "emptyMessage": "No inward data found for the selected date range",
-        "gatePassPlaceholder": "GP-XXXX",
-        "partyPlaceholder": "Enter party name",
-        "itemPlaceholder": "e.g. Paddy, Rice",
-        "vehiclePlaceholder": "Enter vehicle no.",
-        "driverPlaceholder": "Driver name (Optional)",
-        "remarksPlaceholder": "Optional remarks",
-        "adding": "Adding entry...",
-        "deleting": "Deleting entry...",
-        "deletedSuccess": "Entry deleted successfully",
-        "deleteFailed": "Failed to delete entry"
-    },
-    "outwards": {
-        "title": "Outwards",
-        "description": "Track daily outward transactions by commodity",
-        "addEntry": "Add Outward Entry",
-        "editEntry": "Edit Outward Entry",
-        "deleteEntry": "Delete Outward Entry",
-        "emptyMessage": "No outward data found for the selected date range",
-        "gatePassPlaceholder": "GP-OUT-XXXX",
-        "partyPlaceholder": "Enter party name",
-        "itemPlaceholder": "e.g. Rice, Bran",
-        "vehiclePlaceholder": "Enter vehicle no.",
-        "driverPlaceholder": "Driver name (Optional)",
-        "remarksPlaceholder": "Optional remarks",
-        "adding": "Adding entry...",
-        "updating": "Updating entry...",
-        "deleting": "Deleting entry...",
-        "addedSuccess": "Entry added successfully",
-        "updatedSuccess": "Entry updated successfully",
-        "deletedSuccess": "Entry deleted successfully",
-        "addFailed": "Failed to add entry",
-        "updateFailed": "Failed to update entry",
-        "deleteFailed": "Failed to delete entry",
-        "deleteTitle": "Delete Entry?",
-        "deleteDescription": "Are you sure you want to delete this entry for"
-    },
-    "production": {
-        "title": "Production",
-        "description": "Track daily production output by commodity",
-        "addEntry": "Add Production Entry",
-        "editEntry": "Edit Production Entry",
-        "deleteEntry": "Delete Production Entry",
-        "emptyMessage": "No production data found for the selected date range",
-        "itemNamePlaceholder": "e.g. Rice",
-        "itemTypePlaceholder": "e.g. Basmati",
-        "warehousePlaceholder": "Enter warehouse name/ID",
-        "stackPlaceholder": "Optional stack ID",
-        "remarksPlaceholder": "Optional remarks",
-        "adding": "Adding entry...",
-        "updating": "Updating entry...",
-        "deleting": "Deleting entry...",
-        "addedSuccess": "Entry added successfully",
-        "updatedSuccess": "Entry updated successfully",
-        "deletedSuccess": "Entry deleted successfully",
-        "addFailed": "Failed to add entry",
-        "updateFailed": "Failed to update entry",
-        "deleteFailed": "Failed to delete entry",
-        "deleteTitle": "Delete Entry?",
-        "deleteDescription": "Are you sure you want to delete this entry for"
-    },
-    "milling": {
-        "title": "Milling",
-        "description": "Track daily milling output",
-        "addEntry": "Add Milling Entry",
-        "editEntry": "Edit Milling Entry",
-        "deleteEntry": "Delete Milling Entry",
-        "emptyMessage": "No milling data found for the selected date range",
-        "adding": "Adding entry...",
-        "updating": "Updating entry...",
-        "deleting": "Deleting entry...",
-        "addedSuccess": "Entry added successfully",
-        "updatedSuccess": "Entry updated successfully",
-        "deletedSuccess": "Entry deleted successfully",
-        "addFailed": "Failed to add entry",
-        "updateFailed": "Failed to update entry",
-        "deleteFailed": "Failed to delete entry",
-        "deleteTitle": "Delete Entry?",
-        "deleteDescription": "Are you sure you want to delete this entry for"
-    },
-    "dailyReports": {
-        "title": "Daily Reports",
-        "overview": {
-            "title": "Reports Overview",
-            "description": "Quick access to all daily report modules"
-        },
-        "summaryCardDescription": "{{count}} entries • {{bags}} bags",
-        "delete": {
-            "title": "Delete record?",
-            "description": "Are you sure you want to delete this record for {{name}}?",
-            "descriptionWithVoucher": "Are you sure you want to delete this record for {{name}} (Voucher: {{voucher}})?",
-            "loading": "Deleting record...",
-            "success": "Record deleted successfully",
-            "error": "Failed to delete record"
-        },
-        "purchaseDeals": {
-            "title": "Purchase Deals",
-            "description": "Track daily purchase transactions by commodity",
-            "emptyMessage": "No purchase deals found for the selected date range",
-            "primaryButton": "Add Deal"
-        },
-        "salesDeals": {
-            "title": "Sales Deals",
-            "description": "Track daily sales transactions by commodity",
-            "emptyMessage": "No sales deals found for the selected date range",
-            "primaryButton": "Add Sale Deal"
-        },
-        "inwards": {
-            "title": "Inwards",
-            "description": "Monitor stock arrivals"
-        },
-        "outwards": {
-            "title": "Outwards",
-            "description": "Track stock departures"
-        },
-        "milling": {
-            "title": "Milling",
-            "description": "View milling operations"
-        },
-        "production": {
-            "title": "Production",
-            "description": "Track daily production"
-        },
-        "payment": {
-            "title": "Daily Payments",
-            "description": "Track all daily payment transactions",
-            "primaryButton": "New Payment",
-            "categories": {
-                "partyBroker": "Party Name / Broker Name",
-                "transporter": "Transporter",
-                "diesel": "Diesel",
-                "allowance": "Allowance",
-                "repairMaintenance": "Repair / Maintenance",
-                "hamali": "Hamali",
-                "salary": "Salary",
-                "otherExpenses": "Other Expenses"
-            }
-        },
-        "receipt": {
-            "title": "Daily Receipt",
-            "description": "Track daily financial receipts",
-            "primaryButton": "New Receipt",
-            "partyPrefix": "Party",
-            "brokerPrefix": "Broker"
-        },
-        "stockOverview": {
-            "title": "Stock Overview",
-            "currentDescription": "Current stock positions grouped by commodity",
-            "balanceAsOf": "Stock balance as of {{date}}",
-            "export": "Export",
-            "noData": "No stock data available",
-            "fetchError": "Failed to fetch stock balance",
-            "totalBags": "Total Bags",
-            "currentStock": "Current Stock",
-            "sections": {
-                "paddy": "Paddy Stock",
-                "rice": "Rice Stock",
-                "other": "Other Stock",
-                "byProduct": "By Product Stock",
-                "gunny": "Gunny Stock"
-            }
-        },
-
-        "balanceLifting": {
-            "common": {
-                "dealNumber": "Deal Number",
-                "qty": "Qty",
-                "lifting": "Lifting",
-                "balance": "Balance",
-                "searchPlaceholder": "Search transactions...",
-                "noRecords": "No records found.",
-                "failedToLoad": "Failed to load data. Please try again later."
-            },
-            "paddyPurchase": {
-                "title": "Paddy Purchase Balance Lifting",
-                "description": "Manage paddy purchase transactions and balance lifting records",
-                "dealNumber": "Paddy Purchase Deal Number"
-            },
-            "ricePurchase": {
-                "title": "Rice Purchase Balance Lifting",
-                "description": "Manage rice purchase transactions and balance lifting records",
-                "dealNumber": "Rice Purchase Deal Number"
-            },
-            "gunnyPurchase": {
-                "title": "Gunny Purchase Balance Lifting",
-                "description": "Manage gunny purchase transactions and balance lifting records",
-                "dealNumber": "Gunny Purchase Deal Number"
-            },
-            "frkPurchase": {
-                "title": "FRK Purchase Balance Lifting",
-                "description": "Manage FRK purchase transactions and balance lifting records",
-                "dealNumber": "FRK Purchase Deal Number"
-            },
-            "paddySales": {
-                "title": "Paddy Sales Balance Lifting",
-                "description": "Manage paddy sales transactions and balance lifting records from mill",
-                "dealNumber": "Paddy Sales Deal Number"
-            },
-            "outwardRiceSales": {
-                "title": "Outward Rice Sales Balance Lifting",
-                "description": "Outward balance lifting report for rice sales",
-                "dealNumber": "Rice Sales Deal Number",
-                "outwardNumber": "Outward Number",
-                "saleNumber": "Sale Number"
-            }
-        }
-    },
-    "staff": {
-        "title": "Staff Management",
-        "subtitle": "Manage and track mill staff members, their roles and attendance.",
-        "allStaff": "All Staff",
-        "activeStaff": "Active",
-        "inactiveStaff": "Inactive",
-        "failedToLoad": "Failed to load staff data",
-        "addStaff": "Add Staff",
-        "editStaff": "Edit Staff",
-        "deleteStaff": "Delete Staff",
         "edit": "Edit",
-        "delete": "Delete",
-        "markAttendance": "Mark Attendance",
-        "activateSelected": "Activate selected staff",
-        "deactivateSelected": "Deactivate selected staff",
-        "deleteSelected": "Delete selected staff",
-        "saveChanges": "Save changes",
         "cancel": "Cancel",
-        "saveAttendance": "Save Attendance",
-        "selectAttendanceStatus": "Select attendance status:",
-        "present": "Present",
-        "halfDay": "Half-day",
-        "absent": "Absent",
-        "warning": "Warning!",
-        "actionRollbackWarning": "Please be careful, this operation can not be rolled back.",
-        "deleteDescription": "Are you sure you want to delete {{name}}? This action will permanently remove the staff member with the post of {{post}} from the system. This cannot be undone.",
-        "deleteConfirmPlaceholder": "Enter full name to confirm deletion.",
-        "deleteConfirmLabel": "Full Name:",
-        "deletedStaffInfo": "The following staff member has been deleted:",
-        "multiDeleteTitle": "Delete {{count}} staff {{member}}",
-        "multiDeleteDescription": "Are you sure you want to delete the selected staff members? This action cannot be undone.",
-        "multiDeleteConfirmLabel": "Confirm by typing \"{{word}}\":",
-        "multiDeleteConfirmPlaceholder": "Type \"{{word}}\" to confirm.",
-        "deletingStaff": "Deleting staff...",
-        "deletedStaffSuccess": "Deleted {{count}} staff {{member}} successfully",
-        "bulkStatusChange": {
-            "activating": "Activating staff...",
-            "deactivating": "Deactivating staff...",
-            "activatedSuccess": "Activated {{count}} staff member(s)",
-            "deactivatedSuccess": "Deactivated {{count}} staff member(s)",
-            "activationError": "Error activating staff",
-            "deactivationError": "Error deactivating staff"
-        },
-        "form": {
-            "fullName": "Full Name",
-            "fullNamePlaceholder": "John Doe",
-            "email": "Email",
-            "emailPlaceholder": "john.doe@gmail.com",
-            "phoneNumber": "Phone Number",
-            "phoneNumberPlaceholder": "+123456789",
-            "post": "Post",
-            "postPlaceholder": "Select a post",
-            "salary": "Salary",
-            "salaryPlaceholder": "10000",
-            "address": "Address",
-            "addressPlaceholder": "Enter address",
-            "password": "Password",
-            "passwordPlaceholder": "e.g., S3cur3P@ssw0rd",
-            "confirmPassword": "Confirm Password",
-            "confirmPasswordPlaceholder": "e.g., S3cur3P@ssw0rd",
-            "validation": {
-                "nameMin": "Full Name must be at least 2 characters.",
-                "emailRequired": "Email is required.",
-                "emailInvalid": "Invalid email address.",
-                "passwordRequired": "Password is required.",
-                "passwordMin": "Password must be at least 8 characters long.",
-                "passwordLower": "Password must contain at least one lowercase letter.",
-                "passwordNumber": "Password must contain at least one number.",
-                "passwordMatch": "Passwords don't match."
-            }
-        },
-        "table": {
-            "fullName": "Full Name",
-            "email": "Email",
-            "phoneNumber": "Phone Number",
-            "status": "Status",
-            "post": "Post",
-            "todaysAttendance": "Today",
-            "monthCount": "Month Count",
-            "searchPlaceholder": "Search by name...",
-            "active": "Active",
-            "inactive": "Inactive"
-        },
-        "posts": {
-            "manager": "Manager",
-            "supervisor": "Supervisor",
-            "operator": "Operator",
-            "accountant": "Accountant"
-        }
+        "enter": "Enter",
+        "enterValue": "Enter value",
+        "search": "Search...",
+        "searchObject": "Search {{object}}...",
+        "manualEntry": "Manual Entry",
+        "uploadFile": "Upload File",
+        "uploading": "Uploading",
+        "upload": "Upload",
+        "noResults": "No results found",
+        "pickDate": "Pick a date",
+        "selectType": "Select type",
+        "updateDetails": "Update recorded details",
+        "delete": "Delete",
+        "openMenu": "Open menu"
     },
-    "sidebar": {
-        "balanceLiftingPurchases": "Balance Lifting (Purchases)",
-        "reportBalanceLiftingPaddyPurchases": "Paddy Purchase",
-        "reportBalanceLiftingRicePurchases": "Rice Purchase",
-        "reportBalanceLiftingGunnyPurchases": "Gunny Purchase",
-        "reportBalanceLiftingFrkPurchases": "FRK Purchase",
-        "balanceLiftingSales": "Balance Lifting (Sales)",
-        "reportBalanceLiftingPaddySales": "Paddy Sales",
-        "outwardBalanceLiftingRiceSales": "Outward Rice Sales",
-        "outwardBalanceLiftingReportRiceSales": "Outward Rice Sales"
-    },
-    "balanceLiftingPaddyPurchase": {
-        "title": "Paddy Purchase Report",
-        "description": "Manage paddy purchase transactions and records",
-        "table": {
-            "date": "Date",
-            "dealNumber": "Paddy Purchase Deal Number",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "paddyQty": "Paddy Qty",
-            "balance": "Balance",
-            "balanceLifting": "Balance Lifting"
-        },
-        "addPurchase": "Add Purchase"
-    },
-    "balanceLiftingRicePurchase": {
-        "title": "Rice Purchase Report",
-        "description": "Manage rice purchase transactions and records",
-        "addPurchase": "Add Purchase",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "deliveryType": "Delivery Type",
-            "lotOrOther": "Lot / Other",
-            "fciOrNan": "FCI / NAN",
-            "riceType": "Rice Type",
-            "riceQty": "Qty (Qtl)",
-            "riceRate": "Rate/Qtl",
-            "discountPercent": "Discount %",
-            "brokeragePerQuintal": "Brokerage/Qtl",
-            "frkType": "FRK Type",
-            "frkRatePerQuintal": "FRK Rate/Qtl",
-            "lotNumber": "LOT No.",
-            "gunnyType": "Gunny Type",
-            "newGunnyRate": "New Gunny Rate",
-            "oldGunnyRate": "Old Gunny Rate",
-            "plasticGunnyRate": "Plastic Gunny Rate"
-        }
-    },
-    "balanceLiftingGunnyPurchase": {
-        "title": "Gunny Purchase Report",
-        "description": "Manage gunny purchase transactions and records",
-        "addPurchase": "Add Purchase",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "deliveryType": "Delivery Type",
-            "newGunnyQty": "New Gunny Qty",
-            "newGunnyRate": "New Gunny Rate",
-            "oldGunnyQty": "Old Gunny Qty",
-            "oldGunnyRate": "Old Gunny Rate",
-            "plasticGunnyQty": "Plastic Gunny Qty",
-            "plasticGunnyRate": "Plastic Gunny Rate"
-        }
-    },
-    "balanceLiftingFrkPurchase": {
-        "title": "FRK Purchase Report",
-        "description": "Manage FRK purchase transactions and records",
-        "addPurchase": "Add Purchase",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "frkQty": "FRK Quantity",
-            "frkRate": "FRK Rate",
-            "gst": "GST (%)"
-        }
-    },
-    "paddyPurchase": {
-        "title": "Paddy Purchase Report",
-        "description": "Manage paddy purchase transactions and records",
-        "failedToLoad": "Failed to load paddy purchase data. Please try again later.",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "delivery": "Delivery",
-            "purchaseType": "Purchase Type",
-            "doNumber": "DO Number",
-            "committee": "Committee",
-            "paddyType": "Paddy Type",
-            "doQty": "DO Qty (Qtl)",
-            "totalPaddyQty": "Total Paddy Qty (Qtl)",
-            "paddyRatePerQtl": "Paddy Rate/Qtl",
-            "discountPercent": "Discount %",
-            "brokerage": "Brokerage",
-            "gunnyOption": "Gunny Option",
-            "newGunnyRate": "New Gunny Rate",
-            "oldGunnyRate": "Old Gunny Rate",
-            "plasticGunnyRate": "Plastic Gunny Rate"
-        },
-        "form": {
-            "addTitle": "Add Paddy Purchase",
-            "editTitle": "Edit Paddy Purchase",
-            "addDescription": "Enter the purchase details below",
-            "editDescription": "Update the purchase details below",
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "delivery": "Delivery Option",
-            "purchaseType": "Purchase Type",
-            "doNumber": "DO Number",
-            "committee": "Committee Name",
-            "doQty": "DO Paddy Quantity",
-            "paddyType": "Paddy Type",
-            "totalQty": "Total Paddy Qty",
-            "ratePerQtl": "Paddy Rate per Quintal",
-            "discount": "Discount %",
-            "brokerage": "Brokerage",
-            "gunnyOption": "Gunny Option",
-            "newGunnyRate": "New Gunny Rate",
-            "oldGunnyRate": "Old Gunny Rate",
-            "plasticGunnyRate": "Plastic Gunny Rate",
-            "placeholders": {
-                "party": "Search party...",
-                "broker": "Search broker...",
-                "select": "Select",
-                "doNumber": "Enter DO number",
-                "committee": "Enter committee name",
-                "qty": "0.00"
-            }
-        },
-        "options": {
-            "delivery": {
-                "pade": "In Pade",
-                "pahunch": "Delivered"
-            },
-            "purchase": {
-                "do": "DO Purchase",
-                "other": "Other Purchase"
-            },
-            "paddyType": {
-                "mota": "Mota",
-                "patla": "Patla",
-                "sarna": "Sarna",
-                "mahamaya": "Mahamaya",
-                "rbgold": "RB GOLD"
-            },
-            "gunny": {
-                "sahitVajan": "Sahit (By Weight)",
-                "sahitBhav": "Sahit (By Rate)",
-                "vapsi": "Return"
-            }
-        },
-        "delete": {
-            "title": "Delete Purchase?",
-            "description": "Are you sure you want to delete this purchase record for <b>{{partyName}}</b>?<br />This action cannot be undone.",
-            "confirm": "Delete",
-            "deleting": "Deleting..."
-        },
-        "multiDelete": {
-            "title": "Delete {{count}} {{item}}?",
-            "description": "Are you sure you want to delete the selected purchase records?<br />This action cannot be undone.",
-            "confirm": "Delete",
-            "deleting": "Deleting...",
-            "item_one": "purchase",
-            "item_other": "purchases"
-        }
-    },
-    "ricePurchase": {
-        "title": "Rice Purchase Report",
-        "description": "Manage rice purchase transactions and records",
-        "failedToLoad": "Failed to load rice purchase data. Please try again later.",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "delivery": "Delivery",
-            "purchaseType": "Purchase Type",
-            "variety": "Rice Variety",
-            "lotOrOther": "Lot / Other",
-            "fciOrNAN": "FCI / NAN",
-            "variety_fci": "FCI / NAN",
-            "type": "Rice Type",
-            "packingSize": "Packing Size",
-            "quantity": "Quantity (Bags)",
-            "weight": "Qty (Qtl)",
-            "riceRatePerQtl": "Rice Rate/Qtl",
-            "discount": "Discount %",
-            "brokerage": "Brokerage/Qtl",
-            "frkType": "FRK",
-            "frkRate": "FRK Rate/Qtl",
-            "lotNumber": "LOT No.",
-            "gunnyOption": "Gunny Option",
-            "newGunnyRate": "New Gunny Rate",
-            "oldGunnyRate": "Old Gunny Rate",
-            "plasticGunnyRate": "Plastic Gunny Rate",
-            "totalAmount": "Total Amount"
-        },
-        "form": {
-            "addTitle": "Add Rice Purchase",
-            "editTitle": "Edit Rice Purchase",
-            "addDescription": "Enter the purchase details below",
-            "editDescription": "Update the purchase details below",
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "delivery": "Delivery Option",
-            "purchaseType": "Purchase Type",
-            "variety": "Rice Variety",
-            "type": "Rice Type",
-            "packingSize": "Packing Size",
-            "quantity": "Rice Quantity (Bags)",
-            "weight": "Total Rice Weight (Qtl)",
-            "rate": "Rice Rate per Quintal",
-            "discount": "Discount %",
-            "brokerage": "Brokerage",
-            "totalAmount": "Total Amount",
-            "placeholders": {
-                "party": "Search party...",
-                "broker": "Search broker...",
-                "select": "Select",
-                "qty": "0",
-                "weight": "0.00",
-                "rate": "0.00"
-            }
-        },
-        "delete": {
-            "title": "Delete Purchase?",
-            "description": "Are you sure you want to delete this purchase record for <b>{{partyName}}</b>?<br />This action cannot be undone.",
-            "confirm": "Delete",
-            "deleting": "Deleting..."
-        },
-        "multiDelete": {
-            "title": "Delete {{count}} {{item}}?",
-            "description": "Are you sure you want to delete the selected purchase records?<br />This action cannot be undone.",
-            "confirm": "Delete",
-            "deleting": "Deleting...",
-            "item_one": "purchase",
-            "item_other": "purchases"
-        }
-    },
-    "gunnyPurchase": {
-        "title": "Gunny Purchase Report",
-        "description": "Manage gunny purchase transactions and records",
-        "failedToLoad": "Failed to load gunny purchase data. Please try again later.",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "deliveryType": "Delivery Type",
-            "newGunnyQty": "New Gunny Qty",
-            "newGunnyRate": "New Gunny Rate",
-            "oldGunnyQty": "Old Gunny Qty",
-            "oldGunnyRate": "Old Gunny Rate",
-            "plasticGunnyQty": "Plastic Gunny Qty",
-            "plasticGunnyRate": "Plastic Gunny Rate"
-        },
-        "form": {
-            "addTitle": "Add Gunny Purchase",
-            "editTitle": "Edit Gunny Purchase",
-            "addDescription": "Add a new gunny purchase record",
-            "editDescription": "Update gunny purchase record",
-            "date": "Date",
-            "partyName": "Party Name",
-            "deliveryType": "Delivery Type",
-            "newGunnyQty": "New Gunny Qty",
-            "newGunnyRate": "New Gunny Rate",
-            "oldGunnyQty": "Old Gunny Qty",
-            "oldGunnyRate": "Old Gunny Rate",
-            "plasticGunnyQty": "Plastic Gunny Qty",
-            "plasticGunnyRate": "Plastic Gunny Rate",
-            "placeholders": {
-                "party": "Search party...",
-                "select": "Select",
-                "qty": "0",
-                "rate": "0.00"
-            }
-        },
-        "delete": {
-            "title": "Delete Gunny Purchase?",
-            "description": "Are you sure you want to delete the gunny purchase from <b>{{partyName}}</b> on <b>{{date}}</b>?<br />This action cannot be undone.",
-            "confirm": "Delete",
-            "deleting": "Deleting..."
-        },
-        "multiDelete": {
-            "title": "Delete {{count}} records?",
-            "description": "Are you sure you want to delete the selected gunny purchase records?<br />This action cannot be undone."
-        }
-    },
-    "frkPurchase": {
-        "title": "FRK Purchase Report",
-        "description": "Manage FRK purchase transactions and records",
-        "failedToLoad": "Failed to load FRK purchase data. Please try again later.",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "frkQty": "FRK Qty (Qtl)",
-            "frkRate": "FRK Rate",
-            "gst": "GST %"
-        },
-        "form": {
-            "addTitle": "Add FRK Purchase",
-            "editTitle": "Edit FRK Purchase",
-            "addDescription": "Add a new FRK purchase record",
-            "editDescription": "Update FRK purchase record",
-            "date": "Date",
-            "partyName": "Party Name",
-            "frkQty": "FRK Qty",
-            "frkRate": "FRK Rate",
-            "gst": "GST %",
-            "placeholders": {
-                "party": "Search party...",
-                "select": "Select",
-                "qty": "0",
-                "rate": "0.00",
-                "gst": "0"
-            }
-        },
-        "delete": {
-            "title": "Delete FRK Purchase?",
-            "description": "Are you sure you want to delete the FRK purchase from <b>{{partyName}}</b> on <b>{{date}}</b>?<br />This action cannot be undone.",
-            "confirm": "Delete",
-            "deleting": "Deleting..."
-        },
-        "multiDelete": {
-            "title": "Delete {{count}} records?",
-            "description": "Are you sure you want to delete the selected FRK purchase records?<br />This action cannot be undone."
-        }
-    },
-    "otherPurchase": {
-        "title": "Other Purchase Report",
-        "description": "Manage other purchase transactions and records",
-        "failedToLoad": "Failed to load other purchase data. Please try again later.",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "itemName": "Other Item Name",
-            "qty": "Quantity",
-            "qtyType": "Quantity Type",
-            "rate": "Rate",
-            "discount": "Discount %",
-            "gst": "GST"
-        },
-        "form": {
-            "addTitle": "Add Other Purchase",
-            "editTitle": "Edit Other Purchase",
-            "addDescription": "Add a new other purchase record",
-            "editDescription": "Update other purchase record",
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "itemName": "Item Name",
-            "qty": "Quantity",
-            "qtyType": "Quantity Type",
-            "rate": "Rate (per unit)",
-            "discount": "Discount %",
-            "gst": "GST %",
-            "placeholders": {
-                "party": "Search party...",
-                "broker": "Search broker...",
-                "item": "Enter item name",
-                "qty": "0",
-                "qtyType": "Enter quantity type",
-                "rate": "0.00",
-                "discount": "0",
-                "gst": "0",
-                "select": "Select"
-            },
-            "options": {
-                "qtyType": {
-                    "quintal": "Quintal",
-                    "kg": "Kg",
-                    "ton": "Ton",
-                    "nag": "Nag",
-                    "other": "Other"
+    "inputReports": {
+        "sidebarTitle": "Input Reports",
+        "party": {
+            "title": "Party Report",
+            "description": "Manage party records",
+            "form": {
+                "title": "Add Party",
+                "description": "Enter party details",
+                "primaryButton": "Add Party",
+                "fields": {
+                    "partyName": "Party Name",
+                    "gstn": "GSTN",
+                    "phone": "Phone No.",
+                    "email": "Email",
+                    "address": "Address"
                 }
             }
         },
-        "delete": {
-            "title": "Delete Other Purchase?",
-            "description": "Are you sure you want to delete the other purchase from <b>{{partyName}}</b> on <b>{{date}}</b>?<br />This action cannot be undone.",
-            "confirm": "Delete",
-            "deleting": "Deleting..."
+        "transporter": {
+            "title": "Transporter Report",
+            "description": "Manage transporter records",
+            "form": {
+                "title": "Add Transporter",
+                "description": "Enter transporter details",
+                "primaryButton": "Add Transporter",
+                "fields": {
+                    "transporterName": "Transporter Name",
+                    "gstn": "GSTN",
+                    "phone": "Phone No.",
+                    "email": "Email",
+                    "address": "Address"
+                }
+            }
         },
-        "multiDelete": {
-            "title": "Delete {{count}} records?",
-            "description": "Are you sure you want to delete the selected other purchase records?<br />This action cannot be undone."
+        "broker": {
+            "title": "Broker Report",
+            "description": "Manage broker records",
+            "form": {
+                "title": "Add Broker",
+                "description": "Enter broker details",
+                "primaryButton": "Add Broker",
+                "fields": {
+                    "brokerName": "Broker Name",
+                    "phone": "Phone No.",
+                    "email": "Email",
+                    "address": "Address"
+                }
+            }
         },
-        "options": {
-            "qtyType": {
-                "quintal": "Quintal",
-                "kg": "Kg",
-                "ton": "Ton",
-                "nag": "Nag",
-                "other": "Other"
+        "committee": {
+            "title": "Committee Report",
+            "description": "Manage committee collections",
+            "form": {
+                "title": "Add Committee Collection",
+                "description": "Enter committee collection details",
+                "primaryButton": "Add Committee Collection",
+                "fields": {
+                    "committeeType": "Select",
+                    "committeeName": "Committee Collection"
+                }
+            }
+        },
+        "vehicle": {
+            "title": "Vehicle Report",
+            "description": "Manage vehicle records",
+            "form": {
+                "title": "Add Own Vehicle",
+                "description": "Enter vehicle details",
+                "primaryButton": "Add Own Vehicle",
+                "fields": {
+                    "truckNo": "Truck No"
+                }
+            }
+        },
+        "staff": {
+            "title": "Staff Report",
+            "description": "Manage mill staff records",
+            "form": {
+                "title": "Add Mill Staff",
+                "description": "Enter staff details",
+                "primaryButton": "Add Mill Staff",
+                "fields": {
+                    "fullName": "Name",
+                    "post": "Designation",
+                    "salary": "Salary",
+                    "phoneNumber": "Phone No.",
+                    "email": "Email",
+                    "address": "Address"
+                }
+            }
+        },
+        "do": {
+            "title": "DO Report",
+            "description": "Manage DO entries",
+            "form": {
+                "title": "Add DO Entry",
+                "description": "Enter DO details",
+                "primaryButton": "DO Entry",
+                "fields": {
+                    "date": "Date",
+                    "samitiSangrahan": "Committee Collection",
+                    "doNo": "DO Number",
+                    "dhanMota": "Paddy (Mota)",
+                    "dhanPatla": "Paddy (Patla)",
+                    "dhanSarna": "Paddy (Sarna)"
+                }
+            }
+        },
+        "labourGroup": {
+            "title": "Labour Group Report",
+            "description": "Manage labour group records",
+            "form": {
+                "title": "Add Labour Group",
+                "description": "Enter labour group details",
+                "primaryButton": "Add Labour Group",
+                "fields": {
+                    "labourTeamName": "Labour Group Name"
+                }
             }
         }
     },
-    "paddySales": {
-        "title": "Paddy Sales Report",
-        "description": "Manage paddy sales transactions and records",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "saleType": "Sale Type",
-            "doNumber": "DO Number",
-            "dhanMotaQty": "Dhan Mota Qty",
-            "dhanPatlaQty": "Dhan Patla Qty",
-            "dhanSarnaQty": "Dhan Sarna Qty",
-            "dhanType": "Dhan Type",
-            "dhanQty": "Quantity",
-            "paddyRatePerQuintal": "Rate",
-            "deliveryType": "Delivery Type",
-            "discountPercent": "Discount %",
-            "brokerage": "Brokerage",
-            "gunnyType": "Gunny Type",
-            "newGunnyRate": "New Gunny Rate",
-            "oldGunnyRate": "Old Gunny Rate",
-            "plasticGunnyRate": "Plastic Gunny Rate",
-            "actions": "Actions"
-        },
-        "form": {
-            "addTitle": "Add Paddy Sale",
-            "editTitle": "Edit Paddy Sale",
-            "addDescription": "Enter the sale details below",
-            "editDescription": "Update the sale details below",
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "saleType": "Sale Type",
-            "doNumber": "DO Number",
-            "dhanMotaQty": "Dhan Mota Qty",
-            "dhanPatlaQty": "Dhan Patla Qty",
-            "dhanSarnaQty": "Dhan Sarna Qty",
-            "dhanType": "Dhan Type",
-            "dhanQty": "Quantity (Qtl)",
-            "paddyRatePerQuintal": "Rate (per Quintal)",
-            "deliveryType": "Delivery Type",
-            "discountPercent": "Discount (%)",
-            "brokerage": "Brokerage",
-            "gunnyType": "Gunny Type",
-            "newGunnyRate": "New Gunny Rate",
-            "oldGunnyRate": "Old Gunny Rate",
-            "plasticGunnyRate": "Plastic Gunny Rate",
-            "placeholders": {
-                "date": "Pick a date",
-                "party": "Search party...",
-                "broker": "Search broker...",
-                "saleType": "Select",
-                "doNumber": "Enter DO number",
-                "dhanType": "Select",
-                "deliveryType": "Select",
-                "gunnyType": "Select"
-            },
-            "buttons": {
-                "add": "Add Sale",
-                "update": "Update Sale",
-                "cancel": "Cancel",
-                "adding": "Adding...",
-                "updating": "Updating..."
+    "inward": {
+        "govtPaddyInward": {
+            "title": "Government Paddy Inward",
+            "description": "Manage government paddy inward entries",
+            "form": {
+                "title": "Add Government Paddy Inward",
+                "description": "Enter details for government paddy inward",
+                "primaryButton": "Add Govt Paddy Inward",
+                "fields": {
+                    "date": "Date",
+                    "doNumber": "DO Number",
+                    "committeeName": "Committee/Collection Name",
+                    "balanceDo": "Lifting Balance",
+                    "gunnyNew": "Gunny (New)",
+                    "gunnyOld": "Gunny (Old)",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "juteWeight": "Jute Gunny Weight",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "gunnyWeight": "Gunny Weight (Quintal)",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckLoadWeight": "Truck Weight (Quintal)",
+                    "paddyType": "Inward Paddy Type",
+                    "paddyMota": "Paddy (Mota) Net Weight",
+                    "paddyPatla": "Paddy (Patla) Net Weight",
+                    "paddySarna": "Paddy (Sarna) Net Weight",
+                    "paddyMahamaya": "Paddy (Mahamaya) Net Weight",
+                    "paddyRbGold": "Paddy (RB Gold) Net Weight"
+                }
             }
         },
-        "options": {
-            "saleType": {
-                "doSale": "DO Sale",
-                "directSale": "Direct Sale"
-            },
-            "dhanType": {
-                "mota": "Mota",
-                "patla": "Patla",
-                "sarna": "Sarna"
-            },
-            "deliveryType": {
-                "exMill": "Ex Mill",
-                "delivered": "Delivered"
-            },
-            "gunnyType": {
-                "bardanaSahit": "Bardana Sahit",
-                "bardanaRahit": "Bardana Rahit"
+        "privatePaddyInward": {
+            "title": "Private Paddy Inward",
+            "description": "Manage private paddy inward entries",
+            "form": {
+                "title": "Add Private Paddy Inward",
+                "description": "Enter details for private paddy inward",
+                "primaryButton": "Add Private Paddy Inward",
+                "fields": {
+                    "date": "Date",
+                    "paddyPurchaseDealNumber": "Paddy Purchase Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "balanceDo": "Lifting Balance",
+                    "purchaseType": "Purchase Type",
+                    "doNumber": "DO Number",
+                    "committeeName": "Committee/Collection Name",
+                    "gunnyOption": "Gunny Included/Return",
+                    "gunnyNew": "Gunny (New)",
+                    "gunnyOld": "Gunny (Old)",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "juteWeight": "Jute Gunny Weight",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckLoadWeight": "Truck Weight (Quintal)",
+                    "paddyType": "Paddy Type",
+                    "paddyMota": "Paddy (Mota) Net Weight",
+                    "paddyPatla": "Paddy (Patla) Net Weight",
+                    "paddySarna": "Paddy (Sarna) Net Weight",
+                    "paddyMahamaya": "Paddy (Mahamaya) Net Weight",
+                    "paddyRbGold": "Paddy (RB Gold) Net Weight"
+                }
             }
         },
-        "delete": {
-            "title": "Delete Record?",
-            "description": "Are you sure you want to delete this record for <strong>{{name}}</strong>?<br />This action cannot be undone."
-        },
-        "multiDelete": {
-            "title": "Delete {{count}} records?",
-            "description": "Are you sure you want to delete the selected paddy sales records?<br />This action cannot be undone."
-        }
-    },
-    "riceSales": {
-        "title": "Rice Sales Report",
-        "description": "Manage rice sales transactions and records",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "deliveryType": "Delivery Type",
-            "lotOrOther": "Lot / Other",
-            "fciOrNAN": "FCI / NAN",
-            "riceType": "Rice Type",
-            "riceQty": "Qty (Qtl)",
-            "riceRatePerQuintal": "Rate/Qtl",
-            "discountPercent": "Discount %",
-            "brokeragePerQuintal": "Brokerage/Qtl",
-            "frkType": "FRK Type",
-            "frkRatePerQuintal": "FRK Rate/Qtl",
-            "lotNumber": "LOT No.",
-            "gunnyType": "Gunny Type",
-            "newGunnyRate": "New Gunny Rate",
-            "oldGunnyRate": "Old Gunny Rate",
-            "plasticGunnyRate": "Plastic Gunny Rate",
-            "actions": "Actions"
-        },
-        "form": {
-            "addTitle": "Add Rice Sale",
-            "editTitle": "Edit Rice Sale",
-            "addDescription": "Enter rice sale details below",
-            "editDescription": "Update rice sale details below",
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "deliveryType": "Delivery Type",
-            "lotOrOther": "LOT/Other",
-            "fciOrNAN": "FCI/NAN",
-            "lotNumber": "LOT No.",
-            "frkType": "FRK",
-            "frkRatePerQuintal": "FRK Rate (per Qtl)",
-            "riceType": "Rice Type",
-            "riceQty": "Quantity (Qtl)",
-            "riceRatePerQuintal": "Rice Rate (per Qtl)",
-            "discountPercent": "Discount (%)",
-            "brokeragePerQuintal": "Brokerage (per Qtl)",
-            "gunnyType": "Gunny Option",
-            "newGunnyRate": "New Gunny Rate",
-            "oldGunnyRate": "Old Gunny Rate",
-            "plasticGunnyRate": "Plastic Gunny Rate",
-            "placeholders": {
-                "date": "Pick a date",
-                "party": "Search party...",
-                "broker": "Search broker...",
-                "select": "Select",
-                "lotNumber": "Enter LOT No."
-            },
-            "buttons": {
-                "add": "Add Sale",
-                "update": "Update Sale",
-                "cancel": "Cancel",
-                "adding": "Adding...",
-                "updating": "Updating..."
+        "riceInward": {
+            "title": "Rice Inward / Lot Deposit",
+            "description": "Manage rice inward and lot deposit entries",
+            "form": {
+                "title": "Add Rice Inward / Lot Deposit",
+                "description": "Enter details for rice inward or lot deposit",
+                "primaryButton": "Add Rice Inward",
+                "fields": {
+                    "date": "Date",
+                    "ricePurchaseDealNumber": "Rice Purchase Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "riceType": "Rice Type",
+                    "balanceInward": "Inward Balance / Lot Deposit Balance",
+                    "inwardType": "Inward / Lot",
+                    "lotNumber": "Lot No.",
+                    "frkOrNAN": "FRK/Non FRK",
+                    "gunnyOption": "Gunny",
+                    "gunnyNew": "Gunny (New)",
+                    "gunnyOld": "Gunny (Old)",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "juteWeight": "Jute Gunny Weight",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckLoadWeight": "Truck Weight",
+                    "riceMotaNetWeight": "Rice (Mota) Net Weight",
+                    "ricePatlaNetWeight": "Rice (Patla) Net Weight"
+                }
             }
         },
-        "options": {
-            "deliveryType": {
-                "pede": "Ex Mill",
-                "delivered": "Delivered"
-            },
-            "lotOrOther": {
-                "lot": "LOT Sale",
-                "other": "Other Sale"
-            },
-            "fciOrNAN": {
-                "fci": "FCI",
-                "nan": "NAN"
-            },
-            "frkType": {
-                "sahit": "With FRK",
-                "dena": "FRK to be given",
-                "non": "Non FRK"
-            },
-            "riceType": {
-                "mota": "Mota",
-                "patla": "Patla"
-            },
-            "gunnyType": {
-                "vajanWeight": "Weight (Sahit)",
-                "bhavRate": "Rate (Sahit)",
-                "vapsiReturn": "Return"
+        "gunnyInward": {
+            "title": "Gunny Inward / Committee Deposit",
+            "description": "Manage gunny inward and committee deposit entries",
+            "form": {
+                "title": "Add Gunny Inward / Committee Deposit",
+                "description": "Enter details for gunny inward or committee deposit",
+                "primaryButton": "Add Gunny Inward",
+                "fields": {
+                    "date": "Date",
+                    "gunnyPurchaseDealNumber": "Gunny Purchase Deal Number",
+                    "partyName": "Party Name",
+                    "delivery": "Delivery",
+                    "samitiSangrahan": "Committee Collection",
+                    "gunnyNew": "Gunny (New)",
+                    "gunnyOld": "Gunny (Old)",
+                    "gunnyPlastic": "Gunny (Plastic)"
+                }
             }
         },
-        "delete": {
-            "title": "Delete Record?",
-            "description": "Are you sure you want to delete this record for {{name}}? This action cannot be undone."
-        },
-        "multiDelete": {
-            "title": "{{count}} records delete?",
-            "description": "Are you sure you want to delete the selected rice sales records? This action cannot be undone."
-        }
-    },
-    "gunnySales": {
-        "title": "Gunny Sales Report",
-        "description": "Manage gunny sales transactions and records",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "newGunnyQty": "New Gunny Qty",
-            "newGunnyRate": "New Gunny Rate",
-            "oldGunnyQty": "Old Gunny Qty",
-            "oldGunnyRate": "Old Gunny Rate",
-            "plasticGunnyQty": "Plastic Gunny Qty",
-            "plasticGunnyRate": "Plastic Gunny Rate",
-            "actions": "Actions"
-        },
-        "form": {
-            "addTitle": "Add Gunny Sale",
-            "editTitle": "Edit Gunny Sale",
-            "addDescription": "Enter gunny sale details below",
-            "editDescription": "Update gunny sale details below",
-            "date": "Date",
-            "partyName": "Party Name",
-            "newGunnyQty": "New Gunny Quantity",
-            "newGunnyRate": "New Gunny Rate",
-            "oldGunnyQty": "Old Gunny Quantity",
-            "oldGunnyRate": "Old Gunny Rate",
-            "plasticGunnyQty": "Plastic Gunny Quantity",
-            "plasticGunnyRate": "Plastic Gunny Rate",
-            "placeholders": {
-                "date": "Pick a date",
-                "party": "Search party...",
-                "noResults": "No parties found"
-            },
-            "buttons": {
-                "add": "Add Sale",
-                "update": "Update Sale",
-                "cancel": "Cancel",
-                "adding": "Adding...",
-                "updating": "Updating..."
+        "frkInward": {
+            "title": "FRK Inward",
+            "description": "Manage FRK inward entries",
+            "form": {
+                "title": "Add FRK Inward",
+                "description": "Enter details for FRK inward",
+                "primaryButton": "Add FRK Inward",
+                "fields": {
+                    "date": "Date",
+                    "frkPurchaseDealNumber": "FRK Purchase Deal Number",
+                    "partyName": "Party Name",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckWeight": "Truck Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "netWeight": "Net Weight (Minus Gunny)"
+                }
             }
         },
-        "delete": {
-            "title": "Delete Record?",
-            "description": "Are you sure you want to delete this record for <strong>{{name}}</strong>?<br />This action cannot be undone."
-        },
-        "multiDelete": {
-            "title": "{{count}} records delete?",
-            "description": "Are you sure you want to delete the selected gunny sales records?<br />This action cannot be undone."
-        }
-    },
-    "khandaSales": {
-        "title": "Khanda Sales Report",
-        "description": "Manage khanda sales transactions and records",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "khandaQty": "Khanda (Qtl)",
-            "khandaRate": "Khanda Rate",
-            "discountPercent": "Discount %",
-            "brokeragePerQuintal": "Brokerage",
-            "actions": "Actions"
-        },
-        "form": {
-            "addTitle": "Add Khanda Sale",
-            "editTitle": "Edit Khanda Sale",
-            "addDescription": "Enter the sale details below",
-            "editDescription": "Update the sale details below",
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "khandaQty": "Quantity (Qtl)",
-            "khandaRate": "Rate (Per Quintal)",
-            "discountPercent": "Discount (%)",
-            "brokeragePerQuintal": "Brokerage (Per Quintal)",
-            "placeholders": {
-                "date": "Pick a date",
-                "party": "Search party...",
-                "broker": "Search broker...",
-                "noParties": "No parties found",
-                "noBrokers": "No brokers found"
-            },
-            "buttons": {
-                "add": "Add Sale",
-                "update": "Update Sale",
-                "cancel": "Cancel",
-                "adding": "Adding...",
-                "updating": "Updating..."
-            }
-        },
-        "delete": {
-            "title": "Delete Record?",
-            "description": "Are you sure you want to delete this record for <strong>{{name}}</strong>?<br />This action cannot be undone."
-        },
-        "multiDelete": {
-            "title": "{{count}} records delete?",
-            "description": "Are you sure you want to delete the selected khanda sales records?<br />This action cannot be undone."
-        }
-    },
-    "nakkhiSales": {
-        "title": "Nakkhi Sales Report",
-        "description": "Manage nakkhi sales transactions and records",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "nakkhiQty": "Nakkhi (Qtl)",
-            "nakkhiRate": "Nakkhi Rate",
-            "discountPercent": "Discount %",
-            "brokeragePerQuintal": "Brokerage",
-            "actions": "Actions"
-        },
-        "form": {
-            "addTitle": "Add Nakkhi Sale",
-            "editTitle": "Edit Nakkhi Sale",
-            "addDescription": "Enter the sale details below",
-            "editDescription": "Update the sale details below",
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "nakkhiQty": "Quantity (Qtl)",
-            "nakkhiRate": "Rate (per Quintal)",
-            "discountPercent": "Discount (%)",
-            "brokeragePerQuintal": "Brokerage (per Quintal)",
-            "placeholders": {
-                "date": "Pick a date",
-                "party": "Search party...",
-                "broker": "Search broker...",
-                "noParties": "No parties found",
-                "noBrokers": "No brokers found"
-            },
-            "buttons": {
-                "add": "Add Sale",
-                "update": "Update Sale",
-                "cancel": "Cancel",
-                "adding": "Adding...",
-                "updating": "Updating..."
-            }
-        },
-        "delete": {
-            "title": "Delete Record?",
-            "description": "Are you sure you want to delete this record for <strong>{{name}}</strong>?<br />This action cannot be undone."
-        },
-        "multiDelete": {
-            "title": "{{count}} records delete?",
-            "description": "Are you sure you want to delete the selected nakkhi sales records?<br />This action cannot be undone."
-        }
-    },
-    "otherSales": {
-        "title": "Other Sales Report",
-        "description": "Manage other sales transactions and records",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "itemName": "Item Name",
-            "quantity": "Quantity",
-            "qtyType": "Qty Type",
-            "rate": "Rate",
-            "discountPercent": "Discount %",
-            "gst": "GST",
-            "actions": "Actions"
-        },
-        "form": {
-            "addTitle": "Add Other Sale",
-            "editTitle": "Edit Other Sale",
-            "addDescription": "Enter the sale details below",
-            "editDescription": "Update the sale details below",
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "itemName": "Item Name",
-            "quantity": "Quantity",
-            "qtyType": "Quantity Type",
-            "rate": "Rate",
-            "discountPercent": "Discount (%)",
-            "gst": "GST (%)",
-            "placeholders": {
-                "date": "Pick a date",
-                "party": "Search party...",
-                "broker": "Search broker...",
-                "itemName": "Enter item name",
-                "noParties": "No parties found",
-                "noBrokers": "No brokers found"
-            },
-            "buttons": {
-                "add": "Add Sale",
-                "update": "Update Sale",
-                "cancel": "Cancel",
-                "adding": "Adding...",
-                "updating": "Updating..."
-            }
-        },
-        "delete": {
-            "title": "Delete Record?",
-            "description": "Are you sure you want to delete this record for <strong>{{name}}</strong>?<br />This action cannot be undone."
-        },
-        "multiDelete": {
-            "title": "{{count}} records delete?",
-            "description": "Are you sure you want to delete the selected other sales records?<br />This action cannot be undone."
-        }
-    },
-    "partyReport": {
-        "title": "Party Report",
-        "description": "Manage party transactions and records",
-        "table": {
-            "name": "Party Name",
-            "gstn": "GSTN",
-            "phone": "Phone No.",
-            "email": "Email",
-            "address": "Address",
-            "actions": "Actions"
-        },
-        "form": {
-            "addTitle": "Add Party",
-            "editTitle": "Edit Party",
-            "addDescription": "Enter the party details below",
-            "editDescription": "Update the party details below",
-            "name": "Party Name",
-            "gstn": "GSTN",
-            "phone": "Phone No.",
-            "email": "Email",
-            "address": "Address",
-            "placeholders": {
-                "name": "Enter name",
-                "gstn": "Enter GSTN",
-                "phone": "Enter phone number",
-                "email": "Enter email",
-                "address": "Enter address"
+        "otherInward": {
+            "title": "Other Inward",
+            "description": "Manage other inward entries",
+            "form": {
+                "title": "Add Other Inward",
+                "description": "Enter details for other inward",
+                "primaryButton": "Add Other Inward",
+                "fields": {
+                    "date": "Date",
+                    "otherPurchaseDealNumber": "Other Purchase Deal Number",
+                    "itemName": "Item Name",
+                    "quantity": "Quantity",
+                    "quantityType": "Quantity Type",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "gunnyNew": "Gunny (New)",
+                    "gunnyOld": "Gunny (Old)",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "juteGunnyWeight": "Jute Gunny Weight",
+                    "plasticGunnyWeight": "Plastic Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckWeight": "Truck Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "netWeight": "Net Weight (Minus Gunny)"
+                }
             }
         }
     },
-    "transporterReport": {
-        "title": "Transporter Report",
-        "description": "Manage transporter transactions and records",
-        "table": {
-            "name": "Transporter Name",
-            "gstn": "GSTN",
-            "phone": "Phone No.",
-            "email": "Email",
-            "address": "Address",
-            "actions": "Actions"
+    "outward": {
+        "privatePaddyOutward": {
+            "title": "Private Paddy Outward",
+            "description": "Manage private paddy outward entries",
+            "form": {
+                "title": "Add Private Paddy Outward",
+                "description": "Enter details for private paddy outward",
+                "primaryButton": "Add Private Paddy Outward",
+                "fields": {
+                    "date": "Date",
+                    "paddySaleDealNumber": "Paddy Sale Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "paddyType": "Paddy Type",
+                    "dealQuantity": "Deal Quantity",
+                    "gunnyNew": "Gunny (New)",
+                    "gunnyOld": "Gunny (Old)",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "juteWeight": "Jute Gunny Weight",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckWeight": "Truck Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "netWeight": "Net Weight (Minus Gunny)"
+                }
+            }
         },
-        "form": {
-            "addTitle": "Add Transporter",
-            "editTitle": "Edit Transporter",
-            "addDescription": "Enter the transporter details below",
-            "editDescription": "Update the transporter details below",
-            "name": "Transporter Name",
-            "gstn": "GSTN",
-            "phone": "Phone No.",
-            "email": "Email",
-            "address": "Address",
-            "placeholders": {
-                "name": "Enter name",
-                "gstn": "Enter GSTN",
-                "phone": "Enter phone number",
-                "email": "Enter email",
-                "address": "Enter address"
+        "govtRiceOutward": {
+            "title": "Government Rice Outward",
+            "description": "Manage government rice outward entries",
+            "form": {
+                "title": "Add Government Rice Outward",
+                "description": "Enter details for government rice outward",
+                "primaryButton": "Add Govt Rice Outward",
+                "fields": {
+                    "date": "Date",
+                    "lotNo": "Lot No.",
+                    "fciNan": "FCI/NAN",
+                    "riceType": "Rice Type",
+                    "gunnyNew": "Gunny (New)",
+                    "gunnyOld": "Gunny (Old)",
+                    "juteWeight": "Jute Gunny Weight",
+                    "truckNo": "Truck Number",
+                    "truckRst": "RST No.",
+                    "truckWeight": "Truck Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "netWeight": "Net Weight (Minus Gunny)"
+                }
+            }
+        },
+        "privateRiceOutward": {
+            "title": "Private Rice Outward",
+            "description": "Manage private rice outward entries",
+            "form": {
+                "title": "Add Private Rice Outward",
+                "description": "Enter details for private rice outward",
+                "primaryButton": "Add Private Rice Outward",
+                "fields": {
+                    "date": "Date",
+                    "riceSaleDealNumber": "Rice Sale Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "lotNo": "Lot No.",
+                    "fciNan": "FCI/NAN",
+                    "riceType": "Rice Type",
+                    "riceQty": "Rice Quantity",
+                    "gunnyNew": "Gunny (New)",
+                    "gunnyOld": "Gunny (Old)",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "juteWeight": "Jute Gunny Weight",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "truckRst": "RST No.",
+                    "truckWeight": "Truck Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "netWeight": "Net Weight (Minus Gunny)"
+                }
+            }
+        },
+        "frkOutward": {
+            "title": "FRK Outward",
+            "description": "Manage FRK outward entries",
+            "form": {
+                "title": "Add FRK Outward",
+                "description": "Enter details for FRK outward",
+                "primaryButton": "Add FRK Outward",
+                "fields": {
+                    "date": "Date",
+                    "partyName": "Party Name",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "plasticGunnyWeight": "Plastic Gunny Weight",
+                    "truckNo": "Truck Number",
+                    "truckRst": "RST No.",
+                    "truckWeight": "Truck Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "netWeight": "Net Weight (Minus Gunny)"
+                }
+            }
+        },
+        "khandaOutward": {
+            "title": "Broken Rice Outward",
+            "description": "Manage broken rice outward entries",
+            "form": {
+                "title": "Add Broken Rice Outward",
+                "description": "Enter details for broken rice outward",
+                "primaryButton": "Add Broken Rice Outward",
+                "fields": {
+                    "date": "Date",
+                    "brokenRiceSaleDealNumber": "Broken Rice Sale Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckWeight": "Truck Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "netWeight": "Net Weight (Minus Gunny)"
+                }
+            }
+        },
+        "nakkhiOutward": {
+            "title": "Nakkhi Outward",
+            "description": "Manage nakkhi outward entries",
+            "form": {
+                "title": "Add Nakkhi Outward",
+                "description": "Enter details for nakkhi outward",
+                "primaryButton": "Add Nakkhi Outward",
+                "fields": {
+                    "date": "Date",
+                    "nakkhiSaleDealNumber": "Nakkhi Sale Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "rate": "Rate",
+                    "brokerage": "Brokerage (Per Quintal)",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckWeight": "Truck Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "netWeight": "Net Weight (Minus Gunny)"
+                }
+            }
+        },
+        "bhusaOutward": {
+            "title": "Bhusa Outward",
+            "description": "Manage bhusa outward entries",
+            "form": {
+                "title": "Add Bhusa Outward",
+                "description": "Enter details for bhusa outward",
+                "primaryButton": "Add Bhusa Outward",
+                "fields": {
+                    "date": "Date",
+                    "bhusaPurchaseDealNumber": "Bhusa Purchase Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "rate": "Rate",
+                    "brokerage": "Brokerage (Per Ton)",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckWeight": "Truck Weight"
+                }
+            }
+        },
+        "kodhaOutward": {
+            "title": "Bran Outward",
+            "description": "Manage bran outward entries",
+            "form": {
+                "title": "Add Bran Outward",
+                "description": "Enter details for bran outward",
+                "primaryButton": "Add Bran Outward",
+                "fields": {
+                    "date": "Date",
+                    "branSaleDealNumber": "Bran Sale Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "rate": "Rate",
+                    "oilPercent": "Oil %",
+                    "brokerage": "Brokerage (Per Quintal)",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckWeight": "Truck Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "netWeight": "Net Weight (Minus Gunny)"
+                }
+            }
+        },
+        "silkyKodhaOutward": {
+            "title": "Silky Bran Outward",
+            "description": "Manage silky bran outward entries",
+            "form": {
+                "title": "Add Silky Bran Outward",
+                "description": "Enter details for silky bran outward",
+                "primaryButton": "Add Silky Bran Outward",
+                "fields": {
+                    "date": "Date",
+                    "silkyBranSaleDealNumber": "Silky Bran Sale Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "rate": "Rate",
+                    "oilPercent": "Oil %",
+                    "brokerage": "Brokerage (Per Quintal)",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckWeight": "Truck Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "netWeight": "Net Weight (Minus Gunny)"
+                }
+            }
+        },
+        "otherOutward": {
+            "title": "Other Outward",
+            "description": "Manage other outward entries",
+            "form": {
+                "title": "Add Other Outward",
+                "description": "Enter details for other outward",
+                "primaryButton": "Add Other Inward",
+                "fields": {
+                    "date": "Date",
+                    "otherSaleDealNumber": "Other Sale Deal Number",
+                    "itemName": "Item Name",
+                    "dealQuantity": "Deal Quantity",
+                    "quantityType": "Quantity Type",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "gunnyNew": "Gunny (New)",
+                    "gunnyOld": "Gunny (Old)",
+                    "gunnyPlastic": "Gunny (Plastic)",
+                    "juteWeight": "Jute Gunny Weight",
+                    "plasticWeight": "Plastic Gunny Weight",
+                    "truckNumber": "Truck Number",
+                    "rstNumber": "RST No.",
+                    "truckWeight": "Truck Weight",
+                    "gunnyWeight": "Gunny Weight",
+                    "netWeight": "Net Weight (Minus Gunny)"
+                }
+            }
+        },
+        "govtGunnyOutward": {
+            "title": "Govt Gunny Outward",
+            "description": "Manage government gunny outward transactions",
+            "form": {
+                "title_add": "Add Govt Gunny Outward",
+                "title_edit": "Edit Govt Gunny Outward",
+                "description": "Enter Govt Gunny Outward details",
+                "primaryButton": "Add Govt Gunny Outward",
+                "fields": {
+                    "date": "Date",
+                    "gunnyDmNumber": "Gunny DM Number",
+                    "samitiSangrahan": "Samiti/Sangrahan Kendra",
+                    "oldGunnyQty": "Old Gunny Quantity",
+                    "plasticGunnyQty": "Plastic Gunny Quantity",
+                    "truckNo": "Truck Number"
+                }
+            }
+        },
+        "privateGunnyOutward": {
+            "title": "Private Gunny Outward",
+            "description": "Manage private gunny outward transactions",
+            "form": {
+                "title_add": "Add Private Gunny Outward",
+                "title_edit": "Edit Private Gunny Outward",
+                "description": "Enter Private Gunny Outward details",
+                "primaryButton": "Add Private Gunny Outward",
+                "fields": {
+                    "date": "Date",
+                    "gunnySaleDealNumber": "Gunny Sale Deal Number",
+                    "partyName": "Party Name",
+                    "newGunnyQty": "New Gunny Quantity",
+                    "oldGunnyQty": "Old Gunny Quantity",
+                    "plasticGunnyQty": "Plastic Gunny Quantity",
+                    "truckNo": "Truck Number"
+                }
             }
         }
     },
-    "brokerReport": {
-        "title": "Broker Report",
-        "description": "Manage broker transactions and records",
-        "table": {
-            "name": "Broker Name",
-            "gstn": "GSTIN",
-            "phone": "Phone No.",
-            "email": "Email",
-            "address": "Address",
-            "actions": "Actions",
-            "searchPlaceholder": "Search broker name...",
-            "noResults": "No brokers found."
+    "purchaseReports": {
+        "paddy": {
+            "title": "Paddy Purchase",
+            "description": "Manage paddy purchase transactions and records",
+            "form": {
+                "title": "Add Paddy Purchase",
+                "description": "Enter paddy purchase details",
+                "primaryButton": "Add Paddy Purchase",
+                "fields": {
+                    "date": "Date",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "deliveryType": "Delivery",
+                    "purchaseType": "Purchase Type",
+                    "doNumber": "DO Number",
+                    "committeeName": "Committee/Collection Name",
+                    "doPaddyQty": "Paddy Qty in DO",
+                    "paddyType": "Paddy Type",
+                    "totalPaddyQty": "Total Paddy Quantity",
+                    "paddyRatePerQuintal": "Paddy Rate",
+                    "discountPercent": "Batav %",
+                    "brokerage": "Brokerage",
+                    "gunnyType": "Gunny Included/Return",
+                    "newGunnyRate": "New Gunny Rate",
+                    "oldGunnyRate": "Old Gunny Rate",
+                    "plasticGunnyRate": "Plastic Gunny Rate"
+                }
+            }
         },
-        "form": {
-            "addTitle": "Add Broker",
-            "editTitle": "Edit Broker",
-            "addDescription": "Enter the broker details below",
-            "editDescription": "Update the broker details below",
-            "name": "Broker Name",
-            "gstn": "GSTIN",
-            "phone": "Phone No.",
-            "email": "Email",
-            "address": "Address",
-            "placeholders": {
-                "name": "Enter name",
-                "gstn": "Enter GSTIN",
-                "phone": "Enter phone number",
-                "email": "Enter email",
-                "address": "Enter address"
+        "rice": {
+            "title": "Rice Purchase",
+            "description": "Manage rice purchase transactions and records",
+            "form": {
+                "title": "Add Rice Purchase",
+                "description": "Enter rice purchase details",
+                "primaryButton": "Add Rice Purchase",
+                "fields": {
+                    "date": "Date",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "deliveryType": "Delivery",
+                    "lotOrOther": "Lot/Other",
+                    "fciOrNAN": "FCI/NAN",
+                    "riceType": "Rice Type",
+                    "riceQty": "Quantity (Quintal)",
+                    "riceRate": "Rice Rate",
+                    "discountPercent": "Batav %",
+                    "brokeragePerQuintal": "Brokerage (Per Quintal)",
+                    "gunnyType": "Gunny Included/Return",
+                    "newGunnyRate": "New Gunny Rate",
+                    "oldGunnyRate": "Old Gunny Rate",
+                    "plasticGunnyRate": "Plastic Gunny Rate",
+                    "frkType": "FRK",
+                    "frkRatePerQuintal": "FRK Rate (Per Quintal)",
+                    "lotNumber": "Lot No."
+                }
+            }
+        },
+        "gunny": {
+            "title": "Gunny Purchase",
+            "description": "Manage gunny purchase transactions and records",
+            "form": {
+                "title": "Add Gunny Purchase",
+                "description": "Enter gunny purchase details",
+                "primaryButton": "Add Gunny Purchase",
+                "fields": {
+                    "date": "Date",
+                    "partyName": "Party Name",
+                    "deliveryType": "Delivery",
+                    "newGunnyQty": "New Gunny Quantity",
+                    "newGunnyRate": "New Gunny Rate",
+                    "oldGunnyQty": "Old Gunny Quantity",
+                    "oldGunnyRate": "Old Gunny Rate",
+                    "plasticGunnyQty": "Plastic Gunny Quantity",
+                    "plasticGunnyRate": "Plastic Gunny Rate"
+                }
+            }
+        },
+        "frk": {
+            "title": "FRK Purchase",
+            "description": "Manage FRK purchase transactions and records",
+            "form": {
+                "title": "Add FRK Purchase",
+                "description": "Enter FRK purchase details",
+                "primaryButton": "Add FRK Purchase",
+                "fields": {
+                    "date": "Date",
+                    "frkPurchaseDealNumber": "FRK Purchase Deal Number",
+                    "partyName": "Party Name",
+                    "frkQty": "Quantity (Quintal)",
+                    "frkRate": "Rate",
+                    "gst": "GST"
+                }
+            }
+        },
+        "other": {
+            "title": "Other Purchase",
+            "description": "Manage other purchase transactions and records",
+            "form": {
+                "title": "Add Other Purchase",
+                "description": "Enter other purchase details",
+                "primaryButton": "Add Other Purchase",
+                "fields": {
+                    "date": "Date",
+                    "otherPurchaseDealNumber": "Purchase Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "otherPurchaseName": "Enter Other Item",
+                    "otherPurchaseQty": "Quantity",
+                    "qtyType": "Quantity Type",
+                    "rate": "Rate",
+                    "discountPercent": "Batav %",
+                    "gst": "GST"
+                }
             }
         }
     },
-    "committeeReport": {
-        "title": "Committee Report",
-        "description": "Manage committee transactions and records",
-        "addRecord": "Add Committee Record",
-        "table": {
-            "type": "Committee Type",
-            "name": "Committee Name",
-            "actions": "Actions"
+    "salesReports": {
+        "sidebarTitle": "Sales Reports",
+        "paddy": {
+            "title": "Paddy Sale",
+            "description": "Manage paddy sale transactions",
+            "form": {
+                "title": "Add Paddy Sale Deal",
+                "description": "Enter paddy sale deal details",
+                "primaryButton": "Add Paddy Sale Deal",
+                "fields": {
+                    "paddySaleDealNumber": "Paddy Sale Deal Number",
+                    "date": "Date",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "type": "Type",
+                    "enterDo": "Enter DO",
+                    "doNumber": "DO Number",
+                    "paddyMota": "Paddy (Mota)",
+                    "paddyPatla": "Paddy (Patla)",
+                    "paddySarna": "Paddy (Sarna)",
+                    "paddyType": "Paddy Type",
+                    "quantity": "Quantity (Quintal)",
+                    "delivery": "Delivery",
+                    "paddyRate": "Paddy Rate",
+                    "batav": "Batav %",
+                    "brokerage": "Brokerage",
+                    "gunnyIncluded": "Gunny Included/Return",
+                    "newGunnyRate": "New Gunny Rate",
+                    "oldGunnyRate": "Old Gunny Rate",
+                    "plasticGunnyRate": "Plastic Gunny Rate"
+                }
+            }
         },
-        "form": {
-            "addTitle": "Add Committee",
-            "editTitle": "Edit Committee",
-            "addDescription": "Add a new committee record.",
-            "editDescription": "Edit the existing committee record.",
-            "tabs": {
-                "manual": "Manual Entry",
-                "upload": "Upload File"
-            },
-            "type": "Committee Type",
-            "name": "Committee Name",
-            "placeholders": {
-                "select": "Select committee type",
-                "name": "Enter committee name"
-            },
-            "uploadDescription": "Upload a CSV or Excel file containing committee records.",
-            "uploadCount": " ({{count}} records) "
-        }
-    },
-    "vehicleReport": {
-        "title": "Vehicle Report",
-        "description": "Manage vehicle transactions and records",
-        "table": {
-            "truckNo": "Truck No.",
-            "actions": "Actions"
+        "rice": {
+            "title": "Rice Sale",
+            "description": "Manage rice sale transactions",
+            "form": {
+                "title": "Add Rice Sale Deal",
+                "description": "Enter rice sale deal details",
+                "primaryButton": "Add Rice Sale Deal",
+                "fields": {
+                    "riceSaleDealNumber": "Rice Sale Deal Number",
+                    "date": "Date",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "delivery": "Delivery",
+                    "lotOther": "Lot/Other",
+                    "fciNan": "FCI/NAN",
+                    "riceType": "Rice Type",
+                    "quantity": "Quantity (Quintal)",
+                    "riceRate": "Rice Rate",
+                    "batav": "Batav %",
+                    "brokerage": "Brokerage (Per Quintal)",
+                    "gunnyIncluded": "Gunny Included/Return",
+                    "newGunnyRate": "New Gunny Rate",
+                    "oldGunnyRate": "Old Gunny Rate",
+                    "plasticGunnyRate": "Plastic Gunny Rate",
+                    "frk": "FRK",
+                    "frkRate": "FRK Rate (Per Quintal)",
+                    "lotNo": "Lot No.",
+                    "riceArrival": "Rice Arrival",
+                    "riceArrivalBalance": "Rice Arrival Balance"
+                }
+            }
         },
-        "form": {
-            "addTitle": "Add Vehicle",
-            "editTitle": "Edit Vehicle",
-            "addDescription": "Enter the vehicle details below",
-            "editDescription": "Update the vehicle details below",
-            "truckNo": "Truck No.",
-            "placeholders": {
-                "truckNo": "Enter truck number"
+        "gunny": {
+            "title": "Gunny Sale",
+            "description": "Manage gunny sale transactions",
+            "form": {
+                "title": "Add Gunny Sale Deal",
+                "description": "Enter gunny sale deal details",
+                "primaryButton": "Add Gunny Sale Deal",
+                "fields": {
+                    "gunnySaleDealNumber": "Gunny Sale Deal Number",
+                    "date": "Date",
+                    "partyName": "Party Name",
+                    "newGunnyQty": "New Gunny Quantity",
+                    "newGunnyRate": "New Gunny Rate",
+                    "oldGunnyQty": "Old Gunny Quantity",
+                    "oldGunnyRate": "Old Gunny Rate",
+                    "plasticGunnyQty": "Plastic Gunny Quantity",
+                    "plasticGunnyRate": "Plastic Gunny Rate"
+                }
+            }
+        },
+        "khanda": {
+            "title": "Broken Rice Sale",
+            "description": "Manage broken rice sale transactions",
+            "form": {
+                "title": "Add Broken Rice Sale Deal",
+                "description": "Enter broken rice sale deal details",
+                "primaryButton": "Add Broken Rice Sale Deal",
+                "fields": {
+                    "brokenRiceSaleDealNumber": "Broken Rice Sale Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "quantity": "Broken Rice (Quintal)",
+                    "rate": "Broken Rice Rate",
+                    "discountPercent": "Discount (%)",
+                    "date": "Date",
+                    "brokerage": "Brokerage (Per Quintal)"
+                }
+            }
+        },
+        "nakkhi": {
+            "title": "Nakkhi Sale",
+            "description": "Manage nakkhi sale transactions",
+            "form": {
+                "title": "Add Nakkhi Sale Deal",
+                "description": "Enter nakkhi sale deal details",
+                "primaryButton": "Add Nakkhi Sale Deal",
+                "fields": {
+                    "nakkhiSaleDealNumber": "Nakkhi Sale Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "quantity": "Nakkhi (Quintal)",
+                    "rate": "Nakkhi Rate",
+                    "discountPercent": "Discount (%)",
+                    "date": "Date",
+                    "brokerage": "Brokerage (Per Quintal)"
+                }
+            }
+        },
+        "bran": {
+            "title": "Bran Sale",
+            "description": "Manage bran sale transactions",
+            "form": {
+                "title": "Add Bran Sale Deal",
+                "description": "Enter bran sale deal details",
+                "primaryButton": "Add Bran Sale Deal",
+                "fields": {
+                    "branSaleDealNumber": "Bran Sale Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "quantity": "Bran (Quintal)",
+                    "rate": "Bran Rate",
+                    "amount": "Bran Amount",
+                    "gst": "GST",
+                    "gstAmount": "GST Amount",
+                    "totalAmount": "Total Amount (with GST)",
+                    "brokerage": "Brokerage (Per Quintal)",
+                    "brokerageAmount": "Brokerage Amount",
+                    "totalPayable": "Total Payable Amount"
+                }
+            }
+        },
+        "silkyBran": {
+            "title": "Silky Bran Sale",
+            "description": "Manage silky bran sale transactions",
+            "form": {
+                "title": "Add Silky Bran Sale Deal",
+                "description": "Enter silky bran sale deal details",
+                "primaryButton": "Add Silky Bran Sale Deal",
+                "fields": {
+                    "silkyBranSaleDealNumber": "Silky Bran Sale Deal Number",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "quantity": "Silky Bran (Quintal)",
+                    "rate": "Silky Bran Rate",
+                    "amount": "Silky Bran Amount",
+                    "gst": "GST %",
+                    "gstAmount": "GST Amount",
+                    "totalAmount": "Total Amount (with GST)",
+                    "brokerage": "Brokerage (Per Quintal)",
+                    "brokerageAmount": "Brokerage Amount",
+                    "totalPayable": "Total Payable Amount"
+                }
+            }
+        },
+        "other": {
+            "title": "Other Sale",
+            "description": "Manage other sale transactions",
+            "form": {
+                "title": "Add Other Sale Deal",
+                "description": "Enter other sale deal details",
+                "primaryButton": "Add Other Sale Deal",
+                "fields": {
+                    "date": "Date",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "otherSaleName": "Item Name",
+                    "otherSaleQty": "Quantity",
+                    "qtyType": "Quantity Type",
+                    "rate": "Rate",
+                    "discountPercent": "Discount (%)",
+                    "gst": "GST (%)"
+                }
             }
         }
     },
-    "staffReport": {
-        "title": "Staff Report",
-        "description": "Manage staff transactions and records",
-        "addRecord": "Add Staff Record",
-        "table": {
-            "fullName": "Full Name",
-            "post": "Post",
-            "salary": "Salary",
-            "phoneNumber": "Phone Number",
-            "email": "Email",
-            "address": "Address",
-            "actions": "Actions",
-            "searchPlaceholder": "Search staff..."
+    "millingReports": {
+        "sidebarTitle": "Milling Reports",
+        "paddy": {
+            "title": "Paddy Milling",
+            "description": "Manage paddy milling records",
+            "form": {
+                "title": "Add Paddy Milling Record",
+                "description": "Enter paddy milling details",
+                "primaryButton": "Add Record",
+                "fields": {
+                    "date": "Date",
+                    "paddyType": "Paddy Type",
+                    "hopperInGunny": "Hopper Cutting (Gunny)",
+                    "hopperInQintal": "Hopper Cutting (Quintal)",
+                    "riceType": "Rice Type",
+                    "riceQuantity": "Rice (Quintal)",
+                    "ricePercentage": "Rice %",
+                    "khandaQuantity": "Broken Rice (Quintal)",
+                    "khandaPercentage": "Broken Rice %",
+                    "kodhaQuantity": "Bran (Quintal)",
+                    "kodhaPercentage": "Bran %",
+                    "bhusaTon": "Bhusa (Ton)",
+                    "bhusaPercentage": "Bhusa %",
+                    "nakkhiQuantity": "Nakkhi (Quintal)",
+                    "nakkhiPercentage": "Nakkhi %",
+                    "wastagePercentage": "Wastage %"
+                }
+            }
         },
-        "form": {
-            "addTitle": "Add Staff",
-            "editTitle": "Edit Staff",
-            "addDescription": "Enter the staff details below",
-            "editDescription": "Update the staff details below",
-            "fullName": "Full Name",
-            "post": "Post",
-            "name": "Name",
-            "designation": "Designation",
-            "salary": "Salary",
-            "phone": "Phone No.",
-            "email": "Email",
-            "address": "Address",
-            "placeholders": {
-                "name": "Enter name",
-                "post": "Enter post/designation",
-                "designation": "Enter designation",
-                "salary": "Enter salary",
-                "phone": "Enter phone number",
-                "email": "Enter email",
-                "address": "Enter address"
+        "rice": {
+            "title": "Rice Milling",
+            "description": "Manage rice milling records",
+            "form": {
+                "title": "Add Rice Milling Record",
+                "description": "Enter rice milling details",
+                "primaryButton": "Add Record",
+                "fields": {
+                    "date": "Date",
+                    "riceType": "Rice Inward Type",
+                    "hopperInGunny": "Hopper Cutting (Gunny)",
+                    "hopperInQintal": "Hopper Cutting (Quintal)",
+                    "riceQuantity": "Rice (Quintal)",
+                    "ricePercentage": "Rice %",
+                    "khandaQuantity": "Broken Rice (Quintal)",
+                    "khandaPercentage": "Broken Rice %",
+                    "silkyKodhaQuantity": "Silky Bran (Quintal)",
+                    "silkyKodhaPercentage": "Silky Bran %",
+                    "wastagePercentage": "Wastage %"
+                }
             }
         }
     },
-    "doReport": {
-        "title": "DO Report",
-        "description": "Manage DO report transactions and records",
-        "addRecord": "Add DO Record",
-        "table": {
-            "uniqueId": "Unique ID",
-            "date": "Date",
-            "committee": "Committee",
-            "doNumber": "DO Number",
-            "paddyMota": "Paddy (Mota)",
-            "paddyPatla": "Paddy (Patla)",
-            "paddySarna": "Paddy (Sarna)",
-            "actions": "Actions",
-            "searchPlaceholder": "Search samiti..."
-        },
-        "form": {
-            "addTitle": "Add DO Entry",
-            "editTitle": "Edit DO Entry",
-            "addDescription": "Enter the DO entry details below",
-            "editDescription": "Update the DO entry details below",
-            "uniqueId": "Unique ID",
-            "date": "Date",
-            "committee": "Committee",
-            "doNumber": "DO Number",
-            "paddyMota": "Paddy (Mota)",
-            "paddyPatla": "Paddy (Patla)",
-            "paddySarna": "Paddy (Sarna)",
-            "total": "Total",
-            "tabs": {
-                "manual": "Manual Entry",
-                "upload": "Upload File"
-            },
-            "buttons": {
-                "uploading": "Uploading...",
-                "uploadWithCount_one": "Upload {{count}} Report",
-                "uploadWithCount_other": "Upload {{count}} Reports"
-            },
-            "upload": {
-                "label": "Upload Excel File",
-                "supportedFormats": "Supported formats: Excel (.xlsx, .xls) or CSV",
-                "fileSelected": "File selected: {{fileName}}",
-                "parseStatistics": "Parse Statistics",
-                "totalRows": "Total Rows",
-                "successfullyParsed": "Successfully Parsed",
-                "failedOrSkipped": "Failed/Skipped",
-                "errorDetails": "Error Details:",
-                "previewTitle": "Preview - {{count}} records"
-            },
-            "placeholders": {
-                "date": "Pick a date",
-                "committee": "Select committee",
-                "noCommittee": "No committees found",
-                "doNumber": "Enter DO number",
-                "paddy": "0.00"
-            }
-        }
-    },
-    "labourGroupReport": {
-        "title": "Labour Group Report",
-        "description": "Manage labour group transactions and records",
-        "addRecord": "Add Labour Group",
-        "table": {
-            "name": "Labour Team Name",
-            "actions": "Actions",
-            "searchPlaceholder": "Search labour team..."
-        },
-        "form": {
-            "addTitle": "Add Labour Group",
-            "editTitle": "Edit Labour Group",
-            "addDescription": "Enter the labour group details below",
-            "editDescription": "Update the labour group details below",
-            "name": "Labour Team Name",
-            "placeholders": {
-                "name": "Enter labour team name"
-            }
-        }
-    },
-    "inputReports": "Input Reports",
-    "financialTransactionReports": "Financial Transaction Reports",
-    "financialPayment": {
-        "title": "Financial Payment Report",
-        "description": "Manage financial payment transactions and records",
-        "addRecord": "Add Payment Record",
-        "table": {
-            "date": "Date",
-            "paymentType": "Payment Type",
-            "partyName": "Party Name",
-            "transporterName": "Transporter Name",
-            "labourGroupName": "Labour Group Name",
-            "staffName": "Staff Name",
-            "paymentAmount": "Payment Amount",
-            "remarks": "Remarks",
-            "actions": "Actions",
-            "searchPlaceholder": "Search records..."
-        },
-        "form": {
-            "addTitle": "Add Payment Record",
-            "editTitle": "Edit Payment Record",
-            "addDescription": "Enter payment details below",
-            "editDescription": "Update payment details below",
-            "date": "Date",
-            "paymentType": "Payment Type",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "dealType": "Deal Type",
-            "dealNumber": "Deal Number",
-            "transporterName": "Transporter Name",
-            "truckNumber": "Truck Number",
-            "diesel": "Diesel",
-            "bhatta": "Bhatta",
-            "repairMaintenance": "Repair/Maintenance",
-            "labourType": "Labour Type",
-            "labourGroupName": "Labour Group Name",
-            "staffName": "Staff Name",
-            "salary": "Salary",
-            "month": "Month",
-            "attendance": "Attendance",
-            "allowedLeave": "Allowed Leave",
-            "payableSalary": "Payable Salary",
-            "paymentAmount": "Payment Amount",
-            "remarks": "Remarks",
-            "options": {
-                "dealPayment": "Deal Payment",
-                "transportPayment": "Transport Payment",
-                "hamaliPayment": "Hamali Payment",
-                "salaryPayment": "Salary/Wages Payment"
-            },
-            "placeholders": {
-                "date": "Pick a date",
-                "party": "Search party...",
-                "broker": "Search broker...",
-                "dealType": "Select deal type",
-                "dealNumber": "Enter deal number",
-                "transporter": "Search transporter...",
-                "truckNumber": "Enter truck number",
-                "diesel": "0.00",
-                "bhatta": "0.00",
-                "repairMaintenance": "0.00",
-                "labourType": "Select labour type",
-                "labourGroup": "Search labour group...",
-                "staff": "Search staff...",
-                "salary": "Enter salary",
-                "month": "Select month",
-                "attendance": "Enter attendance",
-                "allowedLeave": "Enter allowed leave",
-                "amount": "0.00",
-                "remarks": "Enter remarks"
-            }
-        }
-    },
-    "financialReceipt": {
-        "title": "Financial Receipt Report",
-        "description": "Manage financial receipt transactions and records",
-        "addRecord": "Add Receipt Record",
-        "table": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "dealType": "Sales Deal Type",
-            "dealNumber": "Sales Deal Number",
-            "receivedAmount": "Received Amount",
-            "remarks": "Remarks",
-            "actions": "Actions",
-            "searchPlaceholder": "Search records..."
-        },
-        "form": {
-            "addTitle": "Add Record",
-            "editTitle": "Edit Record",
-            "addDescription": "Enter the details below",
-            "editDescription": "Update the details below",
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "dealType": "Sales Deal Type",
-            "dealNumber": "Sales Deal Number",
-            "receivedAmount": "Received Amount",
-            "remarks": "Remarks",
-            "placeholders": {
-                "date": "Pick a date",
-                "party": "Search party...",
-                "broker": "Search broker...",
-                "dealType": "Select a sales deal type",
-                "dealNumber": "Enter sales deal number",
-                "amount": "0.00",
-                "remarks": "Enter remarks"
+    "labourCostReports": {
+        "sidebarTitle": "Labour Cost Reports",
+        "inward": {
+            "title": "Inward Hamali",
+            "description": "Manage inward hamali labour cost records",
+            "form": {
+                "title": "Add Inward Hamali Record",
+                "description": "Enter inward hamali details",
+                "primaryButton": "Add Record",
+                "fields": {
+                    "date": "Date",
+                    "inwardType": "Inward Type",
+                    "truckNo": "Truck No.",
+                    "numberOfBags": "Number of Bags",
+                    "gunnyBundleCount": "Gunny Bundle Count",
+                    "unloadingRate": "Unloading Rate",
+                    "stackingRate": "Stacking Rate",
+                    "hamalRejaToliName": "Hamal/Reja Toli"
+                }
             }
         },
-        "options": {
-            "purchase": "Purchase",
-            "sale": "Sale"
-        }
-    },
-    "delete": {
-        "title": "Delete Record?",
-        "description": "Are you sure you want to delete this record for <strong>{{name}}</strong>?",
-        "descriptionItem": "Are you sure you want to delete this record for ",
-        "selected": "Delete selected",
-        "selectedRecords": "Delete selected records",
-        "multiTitle": "Delete {{count}} records?",
-        "multiDescription": "Are you sure you want to delete the selected records?",
-        "undone": "This action cannot be undone."
-    },
-    "transactionReports": {
-        "brokerName": "Broker Name",
-        "partyName": "Party Name",
-        "purchaseDeal": "Purchase Deal",
-        "salesDeal": "Sales Deal",
-        "inwardKg": "Inward",
-        "outwardKg": "Outward",
-        "accountBrokerage": "Account (Brokerage)",
-        "accountReceipt": "Account (Receipt)",
-        "accountPayment": "Account (Payment)",
-        "receipt": "Receipt",
-        "payment": "Payment",
-        "brokerage": "Brokerage",
-        "noTransactions": "No transactions found.",
-        "brokerReport": {
-            "title": "Broker Transaction Report",
-            "description": "Aggregated from purchase & sales deals by broker",
-            "filterPlaceholder": "Filter by broker..."
-        },
-        "partyReport": {
-            "title": "Party Transaction Report",
-            "description": "Aggregated from purchase, sale, inward, outward, receipt & payment",
-            "filterPlaceholder": "Filter by party..."
-        }
-    },
-    "millingPaddy": {
-        "title": "Milling Paddy Report",
-        "description": "Manage milling paddy transactions and records",
-        "addRecord": "Add Record",
-        "table": {
-            "date": "Date",
-            "paddyType": "Paddy Type",
-            "hopperInGunny": "Hopper (In Gunny)",
-            "hopperInQuintal": "Hopper (In Quintal)",
-            "riceType": "Rice Type",
-            "riceQuantity": "Rice Quantity (Qtl)",
-            "ricePercentage": "Rice (%)",
-            "khandaQuantity": "Khanda Quantity (Qtl)",
-            "khandaPercentage": "Khanda (%)",
-            "kodhaQuantity": "Kodha Quantity (Qtl)",
-            "kodhaPercentage": "Kodha (%)",
-            "bhusaTon": "Bhusa Quantity (Ton)",
-            "bhusaPercentage": "Bhusa (%)",
-            "nakkhiQuantity": "Nakkhi Quantity (Qtl)",
-            "nakkhiPercentage": "Nakkhi (%)",
-            "wastagePercentage": "Wastage (%)"
-        },
-        "form": {
-            "addTitle": "Add Record",
-            "editTitle": "Edit Record",
-            "addDescription": "Enter the details below",
-            "editDescription": "Update the details below",
-            "date": "Date",
-            "paddyType": "Paddy Type",
-            "hopperInGunny": "Hopper (Gunny)",
-            "hopperInQuintal": "Hopper (Quintal)",
-            "riceType": "Rice Type",
-            "riceQuantity": "Rice Quantity (Quintal)",
-            "ricePercentage": "Rice (%)",
-            "khandaQuantity": "Khanda Quantity (Quintal)",
-            "khandaPercentage": "Khanda (%)",
-            "kodhaQuantity": "Kodha Quantity (Quintal)",
-            "kodhaPercentage": "Kodha (%)",
-            "bhusaTon": "Bhusa Quantity (Ton)",
-            "bhusaPercentage": "Bhusa (%)",
-            "nakkhiQuantity": "Nakkhi Quantity (Quintal)",
-            "nakkhiPercentage": "Nakkhi (%)",
-            "wastagePercentage": "Wastage (%)",
-            "placeholders": {
-                "pickDate": "Pick a date",
-                "selectPaddyType": "Select paddy type",
-                "selectRiceType": "Select rice type"
+        "outward": {
+            "title": "Outward Hamali",
+            "description": "Manage outward hamali labour cost records",
+            "form": {
+                "title": "Add Outward Hamali Record",
+                "description": "Enter outward hamali details",
+                "primaryButton": "Add Record",
+                "fields": {
+                    "date": "Date",
+                    "type": "Type",
+                    "truckNo": "Truck No.",
+                    "numberOfBags": "Number of Bags",
+                    "gunnyBundleCount": "Gunny Bundle Count",
+                    "loadingRate": "Loading Rate",
+                    "transportationRate": "Transportation Rate",
+                    "hamalRejaToliName": "Hamal/Reja Toli"
+                }
             }
-        }
-    },
-    "millingRice": {
-        "title": "Milling Rice Report",
-        "description": "Manage milling rice transactions and records",
-        "addRecord": "Add Record",
-        "table": {
-            "date": "Date",
-            "riceType": "Rice Type",
-            "hopperInGunny": "Hopper (In Gunny)",
-            "hopperInQuintal": "Hopper (In Quintal)",
-            "riceQuantity": "Rice Quantity (Qtl)",
-            "ricePercentage": "Rice (%)",
-            "khandaQuantity": "Khanda Quantity (Qtl)",
-            "khandaPercentage": "Khanda (%)",
-            "silkyKodhaQuantity": "Silky Kodha Quantity (Qtl)",
-            "silkyKodhaPercentage": "Silky Kodha (%)",
-            "wastagePercentage": "Wastage (%)"
         },
-        "form": {
-            "addTitle": "Add Record",
-            "editTitle": "Edit Record",
-            "addDescription": "Enter the details below",
-            "editDescription": "Update the details below",
-            "date": "Date",
-            "riceType": "Rice Type",
-            "hopperInGunny": "Hopper (Gunny)",
-            "hopperInQuintal": "Hopper (Quintal)",
-            "riceQuantity": "Rice (Quintal)",
-            "ricePercentage": "Rice (%)",
-            "khandaQuantity": "Khanda (Quintal)",
-            "khandaPercentage": "Khanda (%)",
-            "silkyKodhaQuantity": "Silky Kodha (Quintal)",
-            "silkyKodhaPercentage": "Silky Kodha (%)",
-            "wastagePercentage": "Wastage (%)",
-            "placeholders": {
-                "pickDate": "Pick a date",
-                "selectRiceType": "Select rice type"
+        "milling": {
+            "title": "Milling Hamali",
+            "description": "Manage milling hamali labour cost records",
+            "form": {
+                "title": "Add Milling Hamali Record",
+                "description": "Enter milling hamali details",
+                "primaryButton": "Add Record",
+                "fields": {
+                    "date": "Date",
+                    "hopperCutting": "Hopper Cutting",
+                    "hopperCuttingRate": "Hopper Cutting Rate",
+                    "hamalRejaToliName": "Hamal/Reja Toli"
+                }
             }
-        }
-    },
-    "labourInward": {
-        "title": "Labour Inward Report",
-        "description": "Manage labour inward transactions and records",
-        "addRecord": "Add Record",
-        "table": {
-            "date": "Date",
-            "inwardType": "Inward Type",
-            "truckNumber": "Truck Number",
-            "totalGunny": "Number of Gunny",
-            "numberOfGunnyBundle": "Number of Gunny Bundle",
-            "unloadingRate": "Unloading Rate",
-            "stackingRate": "Stacking Rate",
-            "labourGroupName": "Labour Group Name"
         },
-        "form": {
-            "addTitle": "Add Record",
-            "editTitle": "Edit Record",
-            "addDescription": "Enter the details below",
-            "editDescription": "Update the details below",
-            "selectType": "Select type",
-            "selectLabourGroup": "Select a labour group",
-            "pickDate": "Pick a date"
-        }
-    },
-    "labourOutward": {
-        "title": "Labour Outward Report",
-        "description": "Manage labour outward transactions and records",
-        "addRecord": "Add Record",
-        "table": {
-            "date": "Date",
-            "outwardType": "Outward Type",
-            "truckNumber": "Truck Number",
-            "totalGunny": "Number of Gunny",
-            "numberOfGunnyBundle": "Number of Gunny Bundle",
-            "loadingRate": "Loading Rate",
-            "dhulaiRate": "Dhulai Rate",
-            "labourGroupName": "Labour Group Name"
-        },
-        "form": {
-            "addTitle": "Add Record",
-            "editTitle": "Edit Record",
-            "addDescription": "Enter the details below",
-            "editDescription": "Update the details below",
-            "selectType": "Select type",
-            "selectLabourGroup": "Select a labour group",
-            "pickDate": "Pick a date"
-        }
-    },
-    "labourMilling": {
-        "title": "Labour Milling Report",
-        "description": "Manage labour milling transactions and records",
-        "addRecord": "Add Record",
-        "table": {
-            "date": "Date",
-            "hopperInGunny": "Hopper (In Gunny)",
-            "hopperRate": "Hopper Rate",
-            "labourGroupName": "Labour Group Name"
-        },
-        "form": {
-            "addTitle": "Add Record",
-            "editTitle": "Edit Record",
-            "addDescription": "Enter the details below",
-            "editDescription": "Update the details below",
-            "selectLabourGroup": "Select a labour group",
-            "pickDate": "Pick a date"
-        }
-    },
-    "labourOther": {
-        "title": "Labour Other Report",
-        "description": "Manage other labour transactions and records",
-        "addRecord": "Add Record",
-        "table": {
-            "date": "Date",
-            "labourType": "Labour Type",
-            "labourGroupName": "Labour Group Name",
-            "numberOfGunny": "Number of Gunny",
-            "labourRate": "Labour Rate",
-            "workDetail": "Work Detail",
-            "totalPrice": "Total Price"
-        },
-        "form": {
-            "addTitle": "Add Record",
-            "editTitle": "Edit Record",
-            "addDescription": "Enter the details below",
-            "editDescription": "Update the details below",
-            "selectType": "Select type",
-            "selectLabourGroup": "Select a labour group",
-            "pickDate": "Pick a date",
-            "enterWorkDetails": "Enter work details"
-        }
-    },
-    "outwardRiceSales": {
-        "balanceLifting": {
-            "title": "Outward Rice Sales",
-            "description": "Manage outward rice sales and balance lifting records"
-        },
-        "table": {
-            "riceSalesDealNumber": "Sale Deal No.",
-            "partyName": "Party Name",
-            "deliveryType": "Delivery Type",
-            "lotOrOther": "LOT/Other",
-            "fciOrNan": "FCI/NAN",
-            "riceType": "Rice Type",
-            "riceQty": "Rice Qty",
-            "outwardQty": "Outward Qty",
-            "balanceOutward": "Balance Outward"
-        },
-        "brokerName": "Broker Name",
-        "addRecord": "Add Outward",
-        "editRecord": "Edit Rice Sale",
-        "form": {
-            "date": "Date",
-            "partyName": "Party Name",
-            "brokerName": "Broker Name",
-            "deliveryType": "Delivery Type",
-            "lotOrOther": "LOT/Other",
-            "fciOrNAN": "FCI/NAN",
-            "riceType": "Rice Type",
-            "riceQty": "Rice Qty",
-            "lotNumber": "LOT Number",
-            "pickADate": "Pick a date",
-            "searchParty": "Search party...",
-            "searchBroker": "Search broker...",
-            "noPartiesFound": "No parties found",
-            "noBrokersFound": "No brokers found",
-            "selectDeliveryType": "Select delivery type",
-            "selectType": "Select type",
-            "select": "Select",
-            "enterRiceDetails": "Enter the sale details below",
-            "updateRiceDetails": "Update the sale details below"
-        },
-        "deleteDialog": {
-            "title": "Delete Entry?",
-            "description": "Are you sure you want to delete this outward entry for {{name}}? This action cannot be undone."
-        },
-        "multiDeleteDialog": {
-            "title": "Delete {{count}} entries?",
-            "description": "Are you sure you want to delete the selected entries? This action cannot be undone."
+        "other": {
+            "title": "Other Hamali",
+            "description": "Manage other hamali labour cost records",
+            "form": {
+                "title": "Add Other Hamali Record",
+                "description": "Enter other hamali details",
+                "primaryButton": "Add Record",
+                "fields": {
+                    "date": "Date",
+                    "hamaliType": "Hamali Type",
+                    "hamalRejaToliName": "Hamal/Reja Toli",
+                    "gunnyCount": "Gunny Count",
+                    "hamaliRate": "Hamali Rate",
+                    "workDetail": "Work Detail",
+                    "totalAmount": "Total Amount"
+                }
+            }
         }
     }
 }

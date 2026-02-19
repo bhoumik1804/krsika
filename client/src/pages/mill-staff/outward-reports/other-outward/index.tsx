@@ -91,7 +91,7 @@ export function OtherOutwardReport() {
                 </Header>
                 <Main className='flex flex-1 items-center justify-center'>
                     <p className='text-destructive'>
-                        {t('common.errorLoadingData')}: {error.message}
+                        Error loading data: {error.message}
                     </p>
                 </Main>
             </>
@@ -119,10 +119,10 @@ export function OtherOutwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('otherOutward.title')}
+                            {t('outward.otherOutward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('otherOutward.description')}
+                            {t('outward.otherOutward.description')}
                         </p>
                     </div>
                     <OtherOutwardPrimaryButtons />

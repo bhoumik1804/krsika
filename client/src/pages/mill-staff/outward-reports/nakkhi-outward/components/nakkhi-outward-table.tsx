@@ -10,7 +10,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +24,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type NakkhiOutward } from '../data/schema'
 import type { NakkhiOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { useNakkhiOutwardColumns } from './nakkhi-outward-columns'
+import { nakkhiOutwardColumns as columns } from './nakkhi-outward-columns'
 import { NakkhiOutwardMultiDeleteDialog } from './nakkhi-outward-multi-delete-dialog'
 import { nakkhiOutward } from './nakkhi-outward-provider'
 
@@ -42,8 +41,6 @@ export function NakkhiOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
-    const columns = useNakkhiOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -102,7 +99,7 @@ export function NakkhiOutwardTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t('common.searchPlaceholder')}
+                searchPlaceholder='Search...'
                 searchKey='partyName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -174,7 +171,7 @@ export function NakkhiOutwardTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

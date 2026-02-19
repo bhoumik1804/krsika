@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button'
 import { useStaffReport } from './staff-report-provider'
 
 export function StaffReportPrimaryButtons() {
-    const { setOpen, setCurrentRow } = useStaffReport()
     const { t } = useTranslation('mill-staff')
+    const { setOpen, setCurrentRow } = useStaffReport()
 
     return (
         <Button
@@ -15,7 +15,7 @@ export function StaffReportPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('staffReport.addRecord')}
+            {t('inputReports.staff.form.primaryButton')}
         </Button>
     )
 }

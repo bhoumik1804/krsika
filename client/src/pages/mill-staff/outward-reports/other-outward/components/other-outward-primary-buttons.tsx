@@ -15,7 +15,7 @@ export function OtherOutwardPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('otherOutward.addRecord')}
+            {t('outward.otherOutward.form.primaryButton')}
         </Button>
     )
 }

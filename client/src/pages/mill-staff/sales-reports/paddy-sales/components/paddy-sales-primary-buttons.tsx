@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button'
 import { usePaddySales } from './paddy-sales-provider'
 
 export function PaddySalesPrimaryButtons() {
-    const { setOpen, setCurrentRow } = usePaddySales()
     const { t } = useTranslation('mill-staff')
+    const { setOpen, setCurrentRow } = usePaddySales()
 
     return (
         <Button
@@ -15,7 +15,7 @@ export function PaddySalesPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('common.addRecord', 'Add Record')}
+            {t('salesReports.paddy.form.primaryButton')}
         </Button>
     )
 }

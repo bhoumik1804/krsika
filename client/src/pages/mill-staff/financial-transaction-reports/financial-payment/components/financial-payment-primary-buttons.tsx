@@ -1,10 +1,8 @@
 import { Plus } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useFinancialPayment } from './financial-payment-provider'
 
 export function FinancialPaymentPrimaryButtons() {
-    const { t } = useTranslation('mill-staff')
     const { setOpen, setCurrentRow } = useFinancialPayment()
 
     return (
@@ -15,7 +13,7 @@ export function FinancialPaymentPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('financialPayment.addRecord')}
+            Add Record
         </Button>
     )
 }

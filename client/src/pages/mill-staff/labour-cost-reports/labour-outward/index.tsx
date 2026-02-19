@@ -16,8 +16,8 @@ import { LabourOutwardTable } from './components/labour-outward-table'
 import { useLabourOutwardList } from './data/hooks'
 
 export function LabourOutwardReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     const queryParams = useMemo(() => {
@@ -58,7 +58,7 @@ export function LabourOutwardReport() {
         }
     }
 
-    if (isLoading) {
+    if (isLoading && !data) {
         return (
             <div className='flex h-screen items-center justify-center'>
                 <LoadingSpinner />
@@ -92,10 +92,10 @@ export function LabourOutwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('labourOutward.title')}
+                            {t('labourCostReports.outward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('labourOutward.description')}
+                            {t('labourCostReports.outward.description')}
                         </p>
                     </div>
                     <LabourOutwardPrimaryButtons />
@@ -110,6 +110,7 @@ export function LabourOutwardReport() {
                     navigate={navigate}
                     // Pagination data from API
                     pagination={data?.pagination}
+                    isLoading={isLoading}
                 />
             </Main>
 

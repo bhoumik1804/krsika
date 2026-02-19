@@ -1,5 +1,6 @@
-import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import '@/constants'
+import { format } from 'date-fns/format'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -8,7 +9,7 @@ import { LongText } from '@/components/long-text'
 import { type KodhaOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
+export const KodhaOutwardColumns = (): ColumnDef<KodhaOutward>[] => {
     const { t } = useTranslation('mill-staff')
 
     return [
@@ -23,7 +24,7 @@ export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
                     onCheckedChange={(value) =>
                         table.toggleAllPageRowsSelected(!!value)
                     }
-                    aria-label={t('common.selectAll')}
+                    aria-label='Select all'
                     className='translate-y-[2px]'
                 />
             ),
@@ -36,7 +37,7 @@ export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
                 <Checkbox
                     checked={row.getIsSelected()}
                     onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    aria-label={t('common.selectRow')}
+                    aria-label='Select row'
                     className='translate-y-[2px]'
                 />
             ),
@@ -48,7 +49,7 @@ export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('kodhaOutward.table.date')}
+                    title={t('outward.kodhaOutward.form.fields.date')}
                 />
             ),
             cell: ({ row }) => (
@@ -69,7 +70,9 @@ export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('kodhaOutward.table.kodhaSaleDealNumber')}
+                    title={t(
+                        'outward.kodhaOutward.form.fields.branSaleDealNumber'
+                    )}
                 />
             ),
             cell: ({ row }) => <div>{row.getValue('kodhaSaleDealNumber')}</div>,
@@ -79,7 +82,7 @@ export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('kodhaOutward.table.partyName')}
+                    title={t('outward.kodhaOutward.form.fields.partyName')}
                 />
             ),
             cell: ({ row }) => (
@@ -94,7 +97,7 @@ export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('kodhaOutward.table.brokerName')}
+                    title={t('outward.kodhaOutward.form.fields.brokerName')}
                 />
             ),
             cell: ({ row }) => (
@@ -109,7 +112,7 @@ export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('kodhaOutward.table.rate')}
+                    title={t('outward.kodhaOutward.form.fields.rate')}
                 />
             ),
             cell: ({ row }) => (
@@ -121,11 +124,11 @@ export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('kodhaOutward.table.oil')}
+                    title={t('outward.kodhaOutward.form.fields.oilPercent')}
                 />
             ),
             cell: ({ row }) => (
-                <div className='text-right'>{row.getValue('oil')}</div>
+                <div className='text-right'>{row.getValue('oil')}%</div>
             ),
         },
         {
@@ -133,7 +136,7 @@ export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('kodhaOutward.table.brokerage')}
+                    title={t('outward.kodhaOutward.form.fields.brokerage')}
                 />
             ),
             cell: ({ row }) => (
@@ -145,7 +148,7 @@ export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('kodhaOutward.table.gunnyPlastic')}
+                    title={t('outward.kodhaOutward.form.fields.gunnyPlastic')}
                 />
             ),
             cell: ({ row }) => (
@@ -157,12 +160,12 @@ export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('kodhaOutward.table.plasticWeight')}
+                    title={t('outward.kodhaOutward.form.fields.plasticWeight')}
                 />
             ),
             cell: ({ row }) => (
                 <div className='text-right'>
-                    {(row.getValue('plasticWeight') as number)?.toFixed(3)}
+                    {row.getValue('plasticWeight')}
                 </div>
             ),
         },
@@ -171,41 +174,31 @@ export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('kodhaOutward.table.truckNo')}
+                    title={t('outward.kodhaOutward.form.fields.truckNumber')}
                 />
             ),
-            cell: ({ row }) => (
-                <div className='font-mono text-sm text-nowrap'>
-                    {row.getValue('truckNo')}
-                </div>
-            ),
+            cell: ({ row }) => <div>{row.getValue('truckNo')}</div>,
         },
         {
             accessorKey: 'truckRst',
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('kodhaOutward.table.rstNo')}
+                    title={t('outward.kodhaOutward.form.fields.rstNumber')}
                 />
             ),
-            cell: ({ row }) => (
-                <div className='font-mono text-sm'>
-                    {row.getValue('truckRst')}
-                </div>
-            ),
+            cell: ({ row }) => <div>{row.getValue('truckRst')}</div>,
         },
         {
             accessorKey: 'truckWeight',
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('kodhaOutward.table.truckWeight')}
+                    title={t('outward.kodhaOutward.form.fields.truckWeight')}
                 />
             ),
             cell: ({ row }) => (
-                <div className='text-right'>
-                    {(row.getValue('truckWeight') as number)?.toFixed(2)}
-                </div>
+                <div className='text-right'>{row.getValue('truckWeight')}</div>
             ),
         },
         {
@@ -213,13 +206,11 @@ export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('kodhaOutward.table.gunnyWeight')}
+                    title={t('outward.kodhaOutward.form.fields.gunnyWeight')}
                 />
             ),
             cell: ({ row }) => (
-                <div className='text-right'>
-                    {(row.getValue('gunnyWeight') as number)?.toFixed(2)}
-                </div>
+                <div className='text-right'>{row.getValue('gunnyWeight')}</div>
             ),
         },
         {
@@ -227,23 +218,15 @@ export function useKodhaOutwardColumns(): ColumnDef<KodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('kodhaOutward.table.netWeight')}
+                    title={t('outward.kodhaOutward.form.fields.netWeight')}
                 />
             ),
             cell: ({ row }) => (
-                <div className='text-right'>
-                    {(row.getValue('netWeight') as number)?.toFixed(2)}
-                </div>
+                <div className='text-right'>{row.getValue('netWeight')}</div>
             ),
         },
         {
             id: 'actions',
-            header: ({ column }) => (
-                <DataTableColumnHeader
-                    column={column}
-                    title={t('kodhaOutward.table.actions')}
-                />
-            ),
             cell: DataTableRowActions,
         },
     ]

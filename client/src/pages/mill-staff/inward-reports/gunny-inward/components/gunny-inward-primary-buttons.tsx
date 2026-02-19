@@ -15,7 +15,7 @@ export function GunnyInwardPrimaryButtons() {
     return (
         <Button onClick={handleAdd}>
             <Plus className='mr-2 size-4' />
-            {t('gunnyInward.addRecord')}
+            {t('inward.gunnyInward.form.primaryButton')}
         </Button>
     )
 }

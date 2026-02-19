@@ -6,7 +6,6 @@ import { useRiceSalesList } from '@/pages/mill-admin/sales-reports/rice-sales/da
 import type { RiceSalesResponse } from '@/pages/mill-admin/sales-reports/rice-sales/data/types'
 import { CalendarIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { fciOrNANOptions, riceTypeOptions } from '@/constants/purchase-form'
 import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
@@ -62,8 +61,8 @@ export function PrivateRiceOutwardActionDialog({
     onOpenChange,
     currentRow,
 }: PrivateRiceOutwardActionDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
+    const { t } = useTranslation('mill-staff')
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
     const { millId, setOpen: setDialogOpen } = usePrivateRiceOutward()
     const riceSaleDataRef = useRef<RiceSalesResponse[]>([])
@@ -172,32 +171,15 @@ export function PrivateRiceOutwardActionDialog({
             }
 
             if (isEditing && currentRow?._id) {
-                toast.promise(
-                    updateMutation.mutateAsync({
-                        id: currentRow._id,
-                        data: submissionData,
-                    }),
-                    {
-                        loading: t('common.updating'),
-                        success: () => {
-                            setDialogOpen(null)
-                            onOpenChange(false)
-                            return t('common.success')
-                        },
-                        error: t('common.error'),
-                    }
-                )
-            } else {
-                toast.promise(createMutation.mutateAsync(submissionData), {
-                    loading: t('common.adding'),
-                    success: () => {
-                        setDialogOpen(null)
-                        onOpenChange(false)
-                        return t('common.success')
-                    },
-                    error: t('common.error'),
+                await updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data: submissionData,
                 })
+            } else {
+                await createMutation.mutateAsync(submissionData)
             }
+            setDialogOpen(null)
+            onOpenChange(false)
         } catch {
             // Error is handled by mutation hooks
         }
@@ -209,13 +191,15 @@ export function PrivateRiceOutwardActionDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing
-                            ? t('privateRiceOutward.editRecord')
-                            : t('privateRiceOutward.addRecord')}
+                            ? t('outward.privateRiceOutward.form.title', {
+                                  context: 'edit',
+                              })
+                            : t('outward.privateRiceOutward.form.title', {
+                                  context: 'add',
+                              })}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t('common.updateDetails')
-                            : t('common.enterDetails')}
+                        {t('outward.privateRiceOutward.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -231,7 +215,9 @@ export function PrivateRiceOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t('privateRiceOutward.form.date')}
+                                            {t(
+                                                'outward.privateRiceOutward.form.fields.date'
+                                            )}
                                         </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
@@ -251,9 +237,7 @@ export function PrivateRiceOutwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : t(
-                                                                  'common.pickADate'
-                                                              )}
+                                                            : 'Select Date'}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -299,7 +283,7 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.riceSaleDealNumber'
+                                                'outward.privateRiceOutward.form.fields.riceSaleDealNumber'
                                             )}
                                         </FormLabel>
                                         <FormControl>
@@ -307,12 +291,8 @@ export function PrivateRiceOutwardActionDialog({
                                                 value={field.value || ''}
                                                 onValueChange={handleDealSelect}
                                                 paginatedList={riceSaleDeal}
-                                                placeholder={t(
-                                                    'privateRiceOutward.form.searchDeal'
-                                                )}
-                                                emptyText={t(
-                                                    'common.noResults'
-                                                )}
+                                                placeholder='Select Deal Number'
+                                                emptyText='No deal found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -328,14 +308,12 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.partyName'
+                                                'outward.privateRiceOutward.form.fields.partyName'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'privateRiceOutward.form.enterPartyName'
-                                                )}
+                                                placeholder='Party Name'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -353,14 +331,12 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.brokerName'
+                                                'outward.privateRiceOutward.form.fields.brokerName'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'privateRiceOutward.form.enterBrokerName'
-                                                )}
+                                                placeholder='Broker Name'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -377,11 +353,13 @@ export function PrivateRiceOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            {t('privateRiceOutward.form.lotNo')}
+                                            {t(
+                                                'outward.privateRiceOutward.form.fields.lotNo'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='LOT-1234'
+                                                placeholder='LOT No'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -399,7 +377,7 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.fciNan'
+                                                'outward.privateRiceOutward.form.fields.fciNan'
                                             )}
                                         </FormLabel>
                                         <Select
@@ -408,11 +386,7 @@ export function PrivateRiceOutwardActionDialog({
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
-                                                    <SelectValue
-                                                        placeholder={t(
-                                                            'privateRiceOutward.form.selectFciNan'
-                                                        )}
-                                                    />
+                                                    <SelectValue placeholder='Select FCI/NAN' />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent className='w-full'>
@@ -441,7 +415,7 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.riceType'
+                                                'outward.privateRiceOutward.form.fields.riceType'
                                             )}
                                         </FormLabel>
                                         <Select
@@ -450,11 +424,7 @@ export function PrivateRiceOutwardActionDialog({
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
-                                                    <SelectValue
-                                                        placeholder={t(
-                                                            'common.selectType'
-                                                        )}
-                                                    />
+                                                    <SelectValue placeholder='Select Rice Type' />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent className='w-full'>
@@ -481,11 +451,12 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.riceQty'
+                                                'outward.privateRiceOutward.form.fields.riceQty'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
+                                                placeholder='Rice Quantity'
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
@@ -509,11 +480,12 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.gunnyNew'
+                                                'outward.privateRiceOutward.form.fields.gunnyNew'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
+                                                placeholder='Gunny New'
                                                 type='number'
                                                 {...field}
                                                 onChange={(e) =>
@@ -536,11 +508,12 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.gunnyOld'
+                                                'outward.privateRiceOutward.form.fields.gunnyOld'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
+                                                placeholder='Gunny Old'
                                                 type='number'
                                                 {...field}
                                                 onChange={(e) =>
@@ -563,11 +536,12 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.gunnyPlastic'
+                                                'outward.privateRiceOutward.form.fields.gunnyPlastic'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
+                                                placeholder='Gunny Plastic'
                                                 type='number'
                                                 {...field}
                                                 onChange={(e) =>
@@ -590,7 +564,7 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.juteWeight'
+                                                'outward.privateRiceOutward.form.fields.juteWeight'
                                             )}
                                         </FormLabel>
                                         <FormControl>
@@ -618,7 +592,7 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.plasticWeight'
+                                                'outward.privateRiceOutward.form.fields.plasticWeight'
                                             )}
                                         </FormLabel>
                                         <FormControl>
@@ -646,12 +620,12 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.truckNumber'
+                                                'outward.privateRiceOutward.form.fields.truckNumber'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='XX-00-XX-0000'
+                                                placeholder='Truck Number'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -669,14 +643,12 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.truckRst'
+                                                'outward.privateRiceOutward.form.fields.truckRst'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'privateRiceOutward.form.enterRstNo'
-                                                )}
+                                                placeholder='RST No'
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -694,11 +666,12 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.truckWeight'
+                                                'outward.privateRiceOutward.form.fields.truckWeight'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
+                                                placeholder='Truck Weight'
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
@@ -722,11 +695,12 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.gunnyWeight'
+                                                'outward.privateRiceOutward.form.fields.gunnyWeight'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
+                                                placeholder='Gunny Weight'
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
@@ -750,11 +724,12 @@ export function PrivateRiceOutwardActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'privateRiceOutward.form.netWeight'
+                                                'outward.privateRiceOutward.form.fields.netWeight'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
+                                                placeholder='Net Weight'
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
@@ -776,12 +751,16 @@ export function PrivateRiceOutwardActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                {t('common.cancel')}
+                                {t('common.cancel', { defaultValue: 'Cancel' })}
                             </Button>
                             <Button type='submit'>
                                 {isEditing
-                                    ? t('common.update')
-                                    : t('common.add')}
+                                    ? t('common.update', {
+                                          defaultValue: 'Update',
+                                      })
+                                    : t(
+                                          'outward.privateRiceOutward.form.primaryButton'
+                                      )}
                             </Button>
                         </DialogFooter>
                     </form>

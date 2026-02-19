@@ -35,12 +35,12 @@ export function BrokerReportActionDialog({
     onOpenChange,
     currentRow,
 }: BrokerReportActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useBrokerReport()
     const { mutate: createBroker, isPending: isCreating } =
         useCreateBroker(millId)
     const { mutate: updateBroker, isPending: isUpdating } =
         useUpdateBroker(millId)
-    const { t } = useTranslation('mill-staff')
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -105,17 +105,23 @@ export function BrokerReportActionDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing
-                            ? t('brokerReport.form.editTitle')
-                            : t('brokerReport.form.addTitle')}
+                            ? t('common.edit') +
+                              ' ' +
+                              t('inputReports.broker.title').replace(
+                                  ' Report',
+                                  ''
+                              )
+                            : t('inputReports.broker.form.title')}
                     </DialogTitle>
                     <DialogDescription>
                         {isEditing
-                            ? t(
-                                  'brokerReport.form.editDescription'
+                            ? t('common.update') +
+                              ' ' +
+                              t('inputReports.broker.title').replace(
+                                  ' Report',
+                                  ''
                               )
-                            : t(
-                                  'brokerReport.form.addDescription'
-                              )}
+                            : t('inputReports.broker.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -132,35 +138,13 @@ export function BrokerReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'brokerReport.form.name'
+                                                    'inputReports.broker.form.fields.brokerName'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'brokerReport.form.placeholders.name'
-                                                    )}
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name='gstn'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                {t(
-                                                    'brokerReport.form.gstn'
-                                                )}
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder={t(
-                                                        'brokerReport.form.placeholders.gstn'
+                                                        'inputReports.broker.form.fields.brokerName'
                                                     )}
                                                     {...field}
                                                 />
@@ -176,13 +160,13 @@ export function BrokerReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'brokerReport.form.phone'
+                                                    'inputReports.broker.form.fields.phone'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'brokerReport.form.placeholders.phone'
+                                                        'inputReports.broker.form.fields.phone'
                                                     )}
                                                     {...field}
                                                 />
@@ -198,14 +182,14 @@ export function BrokerReportActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'brokerReport.form.email'
+                                                    'inputReports.broker.form.fields.email'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='email'
                                                     placeholder={t(
-                                                        'brokerReport.form.placeholders.email'
+                                                        'inputReports.broker.form.fields.email'
                                                     )}
                                                     {...field}
                                                 />
@@ -218,16 +202,16 @@ export function BrokerReportActionDialog({
                                     control={form.control}
                                     name='address'
                                     render={({ field }) => (
-                                        <FormItem className='col-span-2'>
+                                        <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'brokerReport.form.address'
+                                                    'inputReports.broker.form.fields.address'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     placeholder={t(
-                                                        'brokerReport.form.placeholders.address'
+                                                        'inputReports.broker.form.fields.address'
                                                     )}
                                                     {...field}
                                                 />
@@ -249,11 +233,11 @@ export function BrokerReportActionDialog({
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? t('common.updating')
-                                        : t('common.adding')
+                                        ? t('common.update') + '...'
+                                        : t('common.add') + '...'
                                     : isEditing
                                       ? t('common.update')
-                                      : t('common.add')}
+                                      : t('common.add')}{' '}
                             </Button>
                         </DialogFooter>
                     </form>

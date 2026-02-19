@@ -8,7 +8,7 @@ import { LongText } from '@/components/long-text'
 import { type GovtGunnyOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export function useGovtGunnyOutwardColumns(): ColumnDef<GovtGunnyOutward>[] {
+export const GovtGunnyOutwardColumns = (): ColumnDef<GovtGunnyOutward>[] => {
     const { t } = useTranslation('mill-staff')
 
     return [
@@ -23,7 +23,7 @@ export function useGovtGunnyOutwardColumns(): ColumnDef<GovtGunnyOutward>[] {
                     onCheckedChange={(value) =>
                         table.toggleAllPageRowsSelected(!!value)
                     }
-                    aria-label={t('common.selectAll')}
+                    aria-label='Select all'
                     className='translate-y-[2px]'
                 />
             ),
@@ -36,7 +36,7 @@ export function useGovtGunnyOutwardColumns(): ColumnDef<GovtGunnyOutward>[] {
                 <Checkbox
                     checked={row.getIsSelected()}
                     onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    aria-label={t('common.selectRow')}
+                    aria-label='Select row'
                     className='translate-y-[2px]'
                 />
             ),
@@ -48,7 +48,7 @@ export function useGovtGunnyOutwardColumns(): ColumnDef<GovtGunnyOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('govtGunnyOutward.table.date')}
+                    title={t('outward.govtGunnyOutward.form.fields.date')}
                 />
             ),
             cell: ({ row }) => (
@@ -69,36 +69,47 @@ export function useGovtGunnyOutwardColumns(): ColumnDef<GovtGunnyOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('govtGunnyOutward.table.gunnyDmNumber')}
+                    title={t(
+                        'outward.govtGunnyOutward.form.fields.gunnyDmNumber'
+                    )}
                 />
             ),
-            cell: ({ row }) => <div>{row.getValue('gunnyDmNumber')}</div>,
+            cell: ({ row }) => (
+                <div className='font-mono text-sm'>
+                    {row.getValue('gunnyDmNumber')}
+                </div>
+            ),
         },
         {
             accessorKey: 'samitiSangrahan',
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('govtGunnyOutward.table.samitiSangrahan')}
+                    title={t(
+                        'outward.govtGunnyOutward.form.fields.samitiSangrahan'
+                    )}
                 />
             ),
             cell: ({ row }) => (
-                <LongText className='max-w-36'>
+                <LongText className='max-w-40'>
                     {row.getValue('samitiSangrahan')}
                 </LongText>
             ),
-            meta: { className: 'w-36' },
         },
         {
             accessorKey: 'oldGunnyQty',
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('govtGunnyOutward.table.oldGunnyQty')}
+                    title={t(
+                        'outward.govtGunnyOutward.form.fields.oldGunnyQty'
+                    )}
                 />
             ),
             cell: ({ row }) => (
-                <div className='text-right'>{row.getValue('oldGunnyQty')}</div>
+                <div className='text-right'>
+                    {(row.getValue('oldGunnyQty') as number)?.toFixed(2)}
+                </div>
             ),
         },
         {
@@ -106,12 +117,14 @@ export function useGovtGunnyOutwardColumns(): ColumnDef<GovtGunnyOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('govtGunnyOutward.table.plasticGunnyQty')}
+                    title={t(
+                        'outward.govtGunnyOutward.form.fields.plasticGunnyQty'
+                    )}
                 />
             ),
             cell: ({ row }) => (
                 <div className='text-right'>
-                    {row.getValue('plasticGunnyQty')}
+                    {(row.getValue('plasticGunnyQty') as number)?.toFixed(2)}
                 </div>
             ),
         },
@@ -120,7 +133,7 @@ export function useGovtGunnyOutwardColumns(): ColumnDef<GovtGunnyOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('govtGunnyOutward.table.truckNo')}
+                    title={t('outward.govtGunnyOutward.form.fields.truckNo')}
                 />
             ),
             cell: ({ row }) => (
@@ -131,12 +144,6 @@ export function useGovtGunnyOutwardColumns(): ColumnDef<GovtGunnyOutward>[] {
         },
         {
             id: 'actions',
-            header: ({ column }) => (
-                <DataTableColumnHeader
-                    column={column}
-                    title={t('govtGunnyOutward.table.actions')}
-                />
-            ),
             cell: DataTableRowActions,
         },
     ]

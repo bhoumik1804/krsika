@@ -1,147 +1,164 @@
+import { useMemo } from 'react'
 import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
-import { type TFunction } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import type { NakkhiSalesResponse } from '../data/types'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const getNakkhiSalesColumns = (
-    t: TFunction<'millStaff'>
-): ColumnDef<NakkhiSalesResponse>[] => [
-    {
-        id: 'select',
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && 'indeterminate')
-                }
-                onCheckedChange={(value) =>
-                    table.toggleAllPageRowsSelected(!!value)
-                }
-                aria-label='Select all'
-                className='translate-y-[2px]'
-            />
-        ),
-        meta: {
-            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
-        },
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label='Select row'
-                className='translate-y-[2px]'
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-    },
-    {
-        accessorKey: 'date',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('nakkhiSales.table.date')}
-            />
-        ),
-        cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>
-                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
-            </div>
-        ),
-        meta: {
-            className: cn(
-                'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-                'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
-            ),
-        },
-        enableHiding: false,
-    },
-    {
-        accessorKey: 'partyName',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('nakkhiSales.table.partyName')}
-            />
-        ),
-        cell: ({ row }) => (
-            <div className='text-nowrap'>
-                {row.getValue('partyName') || '-'}
-            </div>
-        ),
-    },
-    {
-        accessorKey: 'brokerName',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('nakkhiSales.table.brokerName')}
-            />
-        ),
-        cell: ({ row }) => (
-            <div className='text-nowrap'>
-                {row.getValue('brokerName') || '-'}
-            </div>
-        ),
-    },
-    {
-        accessorKey: 'nakkhiQty',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('nakkhiSales.table.nakkhiQty')}
-            />
-        ),
-        cell: ({ row }) => (
-            <div className='text-right'>{row.original.nakkhiQty || 0}</div>
-        ),
-    },
-    {
-        accessorKey: 'nakkhiRate',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('nakkhiSales.table.nakkhiRate')}
-            />
-        ),
-        cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.nakkhiRate || 0}</div>
-        ),
-    },
-    {
-        accessorKey: 'discountPercent',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('nakkhiSales.table.discountPercent')}
-            />
-        ),
-        cell: ({ row }) => (
-            <div className='text-right'>
-                {row.original.discountPercent || '-'}%
-            </div>
-        ),
-    },
-    {
-        accessorKey: 'brokerage',
-        header: ({ column }) => (
-            <DataTableColumnHeader
-                column={column}
-                title={t('nakkhiSales.table.brokeragePerQuintal')}
-            />
-        ),
-        cell: ({ row }) => (
-            <div className='text-right'>
-                ₹{row.original.brokeragePerQuintal || '-'}
-            </div>
-        ),
-    },
-    {
-        id: 'actions',
-        cell: DataTableRowActions,
-    },
-]
+export function useNakkhiSalesColumns(): ColumnDef<NakkhiSalesResponse>[] {
+    const { t } = useTranslation('mill-staff')
+
+    const columns: ColumnDef<NakkhiSalesResponse>[] = useMemo(
+        () => [
+            {
+                id: 'select',
+                header: ({ table }) => (
+                    <Checkbox
+                        checked={
+                            table.getIsAllPageRowsSelected() ||
+                            (table.getIsSomePageRowsSelected() &&
+                                'indeterminate')
+                        }
+                        onCheckedChange={(value) =>
+                            table.toggleAllPageRowsSelected(!!value)
+                        }
+                        aria-label='Select all'
+                        className='translate-y-[2px]'
+                    />
+                ),
+                meta: {
+                    className: cn(
+                        'max-md:sticky start-0 z-10 rounded-tl-[inherit]'
+                    ),
+                },
+                cell: ({ row }) => (
+                    <Checkbox
+                        checked={row.getIsSelected()}
+                        onCheckedChange={(value) => row.toggleSelected(!!value)}
+                        aria-label='Select row'
+                        className='translate-y-[2px]'
+                    />
+                ),
+                enableSorting: false,
+                enableHiding: false,
+            },
+            {
+                accessorKey: 'date',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('salesReports.nakkhi.form.fields.date')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='ps-3 text-nowrap'>
+                        {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+                    </div>
+                ),
+                meta: {
+                    className: cn(
+                        'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
+                        'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+                    ),
+                },
+                enableHiding: false,
+            },
+            {
+                accessorKey: 'partyName',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('salesReports.nakkhi.form.fields.partyName')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-nowrap'>
+                        {row.getValue('partyName') || '-'}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'brokerName',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('salesReports.nakkhi.form.fields.brokerName')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-nowrap'>
+                        {row.getValue('brokerName') || '-'}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'nakkhiQty',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('salesReports.nakkhi.form.fields.quantity')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-right'>
+                        {row.original.nakkhiQty || 0}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'nakkhiRate',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('salesReports.nakkhi.form.fields.rate')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-right'>
+                        ₹{row.original.nakkhiRate || 0}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'discountPercent',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t(
+                            'salesReports.nakkhi.form.fields.discountPercent'
+                        )}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-right'>
+                        {row.original.discountPercent || '-'}%
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'brokerage',
+                header: ({ column }) => (
+                    <DataTableColumnHeader
+                        column={column}
+                        title={t('salesReports.nakkhi.form.fields.brokerage')}
+                    />
+                ),
+                cell: ({ row }) => (
+                    <div className='text-right'>
+                        ₹{row.original.brokeragePerQuintal || '-'}
+                    </div>
+                ),
+            },
+            {
+                id: 'actions',
+                cell: DataTableRowActions,
+            },
+        ],
+        [t]
+    )
+
+    return columns
+}

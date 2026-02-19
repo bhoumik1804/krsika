@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button'
 import { usePartyReport } from './party-report-provider'
 
 export function PartyReportPrimaryButtons() {
-    const { setOpen, setCurrentRow } = usePartyReport()
     const { t } = useTranslation('mill-staff')
+    const { setOpen, setCurrentRow } = usePartyReport()
 
     return (
         <Button
@@ -15,7 +15,7 @@ export function PartyReportPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('partyReport.form.addTitle')}
+            {t('inputReports.party.form.primaryButton')}
         </Button>
     )
 }

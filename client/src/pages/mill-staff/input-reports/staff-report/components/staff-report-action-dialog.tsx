@@ -34,8 +34,8 @@ export function StaffReportActionDialog({
     open,
     onOpenChange,
 }: StaffReportActionDialogProps) {
-    const { millId } = useStaffReport()
     const { t } = useTranslation('mill-staff')
+    const { millId } = useStaffReport()
     const isEditing = !!currentRow
     const { mutate: createStaff, isPending: isCreating } =
         useCreateStaff(millId)
@@ -92,14 +92,12 @@ export function StaffReportActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('staffReport.form.editTitle')
-                            : t('staffReport.form.addTitle')}
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('inputReports.staff.form.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing
-                            ? t('staffReport.form.editDescription')
-                            : t('staffReport.form.addDescription')}
+                        {t('common.enter')}{' '}
+                        {t('inputReports.staff.form.description').toLowerCase()}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -115,13 +113,13 @@ export function StaffReportActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'staffReport.form.fullName'
+                                                'inputReports.staff.form.fields.fullName'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder={t(
-                                                    'staffReport.form.placeholders.name'
+                                                    'inputReports.staff.form.fields.fullName'
                                                 )}
                                                 {...field}
                                             />
@@ -137,13 +135,13 @@ export function StaffReportActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'staffReport.form.post'
+                                                'inputReports.staff.form.fields.post'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder={t(
-                                                    'staffReport.form.placeholders.post'
+                                                    'inputReports.staff.form.fields.post'
                                                 )}
                                                 {...field}
                                             />
@@ -159,7 +157,7 @@ export function StaffReportActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'staffReport.form.salary'
+                                                'inputReports.staff.form.fields.salary'
                                             )}
                                         </FormLabel>
                                         <FormControl>
@@ -167,7 +165,7 @@ export function StaffReportActionDialog({
                                                 type='number'
                                                 step='0.01'
                                                 placeholder={t(
-                                                    'staffReport.form.placeholders.salary'
+                                                    'inputReports.staff.form.fields.salary'
                                                 )}
                                                 {...field}
                                                 value={field.value ?? ''}
@@ -196,14 +194,14 @@ export function StaffReportActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'staffReport.form.phone'
+                                                'inputReports.staff.form.fields.phoneNumber'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='tel'
                                                 placeholder={t(
-                                                    'staffReport.form.placeholders.phone'
+                                                    'inputReports.staff.form.fields.phoneNumber'
                                                 )}
                                                 {...field}
                                             />
@@ -219,14 +217,14 @@ export function StaffReportActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'staffReport.form.email'
+                                                'inputReports.staff.form.fields.email'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='email'
                                                 placeholder={t(
-                                                    'staffReport.form.placeholders.email'
+                                                    'inputReports.staff.form.fields.email'
                                                 )}
                                                 {...field}
                                             />
@@ -242,13 +240,13 @@ export function StaffReportActionDialog({
                                     <FormItem>
                                         <FormLabel>
                                             {t(
-                                                'staffReport.form.address'
+                                                'inputReports.staff.form.fields.address'
                                             )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder={t(
-                                                    'staffReport.form.placeholders.address'
+                                                    'inputReports.staff.form.fields.address'
                                                 )}
                                                 {...field}
                                             />
@@ -271,11 +269,15 @@ export function StaffReportActionDialog({
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? t('common.updating')
-                                        : t('common.adding')
+                                        ? t('common.update') + '...'
+                                        : t('common.add') + '...'
                                     : isEditing
                                       ? t('common.update')
-                                      : t('common.add')}
+                                      : t('common.add')}{' '}
+                                {t('inputReports.staff.title').replace(
+                                    ' Report',
+                                    ''
+                                )}
                             </Button>
                         </DialogFooter>
                     </form>

@@ -46,7 +46,6 @@ export function GunnySalesActionDialog({
     onOpenChange,
     currentRow,
 }: GunnySalesActionDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const party = usePaginatedList(
         millId || '',
@@ -65,6 +64,8 @@ export function GunnySalesActionDialog({
         useCreateGunnySales(millId || '')
     const { mutateAsync: updateGunnySales, isPending: isUpdating } =
         useUpdateGunnySales(millId || '')
+
+    const { t } = useTranslation('mill-staff')
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -131,13 +132,17 @@ export function GunnySalesActionDialog({
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing
-                            ? t('gunnySales.form.editTitle')
-                            : t('gunnySales.form.addTitle')}
+                            ? t('common.edit') +
+                              ' ' +
+                              t('salesReports.gunny.title')
+                            : t('salesReports.gunny.form.title')}
                     </DialogTitle>
                     <DialogDescription>
                         {isEditing
-                            ? t('gunnySales.form.editDescription')
-                            : t('gunnySales.form.addDescription')}
+                            ? t('common.update') +
+                              ' ' +
+                              t('salesReports.gunny.description')
+                            : t('salesReports.gunny.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -153,7 +158,9 @@ export function GunnySalesActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t('gunnySales.form.date')}
+                                                {t(
+                                                    'salesReports.gunny.form.fields.date'
+                                                )}
                                             </FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
@@ -175,9 +182,7 @@ export function GunnySalesActionDialog({
                                                                       ),
                                                                       'MMM dd, yyyy'
                                                                   )
-                                                                : t(
-                                                                      'gunnySales.form.placeholders.date'
-                                                                  )}
+                                                                : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
@@ -220,7 +225,9 @@ export function GunnySalesActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t('gunnySales.form.partyName')}
+                                                {t(
+                                                    'salesReports.gunny.form.fields.partyName'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <PaginatedCombobox
@@ -229,12 +236,8 @@ export function GunnySalesActionDialog({
                                                         field.onChange
                                                     }
                                                     paginatedList={party}
-                                                    placeholder={t(
-                                                        'gunnySales.form.placeholders.party'
-                                                    )}
-                                                    emptyText={t(
-                                                        'gunnySales.form.placeholders.noResults'
-                                                    )}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -249,7 +252,7 @@ export function GunnySalesActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'gunnySales.form.newGunnyQty'
+                                                    'salesReports.gunny.form.fields.newGunnyQty'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -284,7 +287,7 @@ export function GunnySalesActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'gunnySales.form.newGunnyRate'
+                                                    'salesReports.gunny.form.fields.newGunnyRate'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -320,7 +323,7 @@ export function GunnySalesActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'gunnySales.form.oldGunnyQty'
+                                                    'salesReports.gunny.form.fields.oldGunnyQty'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -355,7 +358,7 @@ export function GunnySalesActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'gunnySales.form.oldGunnyRate'
+                                                    'salesReports.gunny.form.fields.oldGunnyRate'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -391,7 +394,7 @@ export function GunnySalesActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'gunnySales.form.plasticGunnyQty'
+                                                    'salesReports.gunny.form.fields.plasticGunnyQty'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -426,7 +429,7 @@ export function GunnySalesActionDialog({
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'gunnySales.form.plasticGunnyRate'
+                                                    'salesReports.gunny.form.fields.plasticGunnyRate'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -463,16 +466,17 @@ export function GunnySalesActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                {t('gunnySales.form.buttons.cancel')}
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? t('gunnySales.form.buttons.updating')
-                                        : t('gunnySales.form.buttons.adding')
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
-                                      ? t('gunnySales.form.buttons.update')
-                                      : t('gunnySales.form.buttons.add')}
+                                      ? t('common.update')
+                                      : t('common.add')}{' '}
+                                {t('salesReports.gunny.title')}
                             </Button>
                         </DialogFooter>
                     </form>

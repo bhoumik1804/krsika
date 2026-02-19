@@ -15,7 +15,7 @@ export function OtherPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('otherPurchase.form.addTitle')}
+            {t('purchaseReports.other.form.primaryButton')}
         </Button>
     )
 }

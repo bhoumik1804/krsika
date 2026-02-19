@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -25,7 +25,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import type { GunnySalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getGunnySalesColumns } from './gunny-sales-columns'
+import { useGunnySalesColumns } from './gunny-sales-columns'
 
 type DataTableProps = {
     data: GunnySalesResponse[]
@@ -35,13 +35,12 @@ type DataTableProps = {
 
 export function GunnySalesTable({ data, search, navigate }: DataTableProps) {
     const { t } = useTranslation('mill-staff')
+    const columns = useGunnySalesColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-
-    const columns = useMemo(() => getGunnySalesColumns(t), [t])
 
     const {
         columnFilters,
@@ -98,7 +97,7 @@ export function GunnySalesTable({ data, search, navigate }: DataTableProps) {
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t('gunnySales.form.placeholders.party')}
+                searchPlaceholder={t('common.search')}
                 searchKey='partyName'
                 filters={[]}
             />

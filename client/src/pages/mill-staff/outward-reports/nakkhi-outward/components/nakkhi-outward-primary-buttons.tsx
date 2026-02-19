@@ -15,7 +15,7 @@ export function NakkhiOutwardPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('nakkhiOutward.addRecord')}
+            {t('outward.nakkhiOutward.form.primaryButton')}
         </Button>
     )
 }

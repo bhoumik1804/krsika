@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRicePurchaseList } from '@/pages/mill-admin/purchase-reports/rice/data/hooks'
 import type { RicePurchaseResponse } from '@/pages/mill-admin/purchase-reports/rice/data/types'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import {
     riceTypeOptions,
@@ -68,6 +69,7 @@ export function RiceInwardActionDialog({
     currentRow,
 }: RiceInwardActionDialogProps) {
     const { millId } = riceInward()
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -229,10 +231,14 @@ export function RiceInwardActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing
+                            ? t('common.edit')
+                            : t('inward.riceInward.form.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing
+                            ? t('common.updateDetails')
+                            : t('inward.riceInward.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -247,7 +253,11 @@ export function RiceInwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.date'
+                                            )}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -266,7 +276,9 @@ export function RiceInwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickDate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -309,15 +321,26 @@ export function RiceInwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Rice Purchase Deal Number
+                                            {t(
+                                                'inward.riceInward.form.fields.ricePurchaseDealNumber'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <PaginatedCombobox
                                                 value={field.value || ''}
                                                 onValueChange={handleDealSelect}
                                                 paginatedList={riceDeal}
-                                                placeholder='Search deal...'
-                                                emptyText='No deals found'
+                                                placeholder={t(
+                                                    'common.searchObject',
+                                                    {
+                                                        object: t(
+                                                            'inward.riceInward.form.fields.ricePurchaseDealNumber'
+                                                        ),
+                                                    }
+                                                )}
+                                                emptyText={t(
+                                                    'common.noResults'
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -329,10 +352,16 @@ export function RiceInwardActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Party Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.partyName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter Party Name'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -346,10 +375,16 @@ export function RiceInwardActionDialog({
                                 name='brokerName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Broker Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.brokerName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter Broker Name'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -363,7 +398,11 @@ export function RiceInwardActionDialog({
                                 name='inwardType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Inward Type</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.inwardType'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             value={field.value || undefined}
@@ -399,11 +438,17 @@ export function RiceInwardActionDialog({
                                     name='lotNumber'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>LOT No.</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inward.riceInward.form.fields.lotNumber'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     id='lotNumber'
-                                                    placeholder='Enter LOT No'
+                                                    placeholder={t(
+                                                        'common.enterValue'
+                                                    )}
                                                     {...field}
                                                     value={field.value || ''}
                                                 />
@@ -419,7 +464,11 @@ export function RiceInwardActionDialog({
                                 name='balanceInward'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Balance Inward</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.balanceInward'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='balanceInward'
@@ -448,7 +497,11 @@ export function RiceInwardActionDialog({
                                 name='frkOrNAN'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>FRK Status</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.frkStatus'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             value={field.value || undefined}
@@ -482,7 +535,11 @@ export function RiceInwardActionDialog({
                                 name='gunnyOption'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny Option</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.gunnyOption'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             value={field.value || undefined}
@@ -516,7 +573,11 @@ export function RiceInwardActionDialog({
                                 name='gunnyNew'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny New</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.gunnyNew'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='gunnyNew'
@@ -544,7 +605,11 @@ export function RiceInwardActionDialog({
                                 name='gunnyOld'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny Old</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.gunnyOld'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='gunnyOld'
@@ -572,7 +637,11 @@ export function RiceInwardActionDialog({
                                 name='gunnyPlastic'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny Plastic</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.gunnyPlastic'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='gunnyPlastic'
@@ -602,7 +671,11 @@ export function RiceInwardActionDialog({
                                 name='juteWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Jute Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.juteWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='juteWeight'
@@ -631,7 +704,11 @@ export function RiceInwardActionDialog({
                                 name='plasticWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Plastic Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.plasticWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='plasticWeight'
@@ -661,7 +738,9 @@ export function RiceInwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Gunny Weight (kg.)
+                                            {t(
+                                                'inward.riceInward.form.fields.gunnyWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -693,7 +772,11 @@ export function RiceInwardActionDialog({
                                 name='truckNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck Number</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.truckNumber'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='truckNumber'
@@ -711,11 +794,17 @@ export function RiceInwardActionDialog({
                                 name='rstNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>RST Number</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.rstNumber'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 id='rstNumber'
-                                                placeholder='Enter RST Number'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
                                                 value={field.value || ''}
                                             />
@@ -730,7 +819,9 @@ export function RiceInwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Truck Load Weight (Qtl.)
+                                            {t(
+                                                'inward.riceInward.form.fields.truckLoadWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -762,7 +853,11 @@ export function RiceInwardActionDialog({
                                 name='riceType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rice Type</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.riceInward.form.fields.riceType'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             value={field.value || undefined}
@@ -797,7 +892,9 @@ export function RiceInwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Rice Mota Net Wt (Qtl)
+                                                {t(
+                                                    'inward.riceInward.form.fields.riceMotaNetWeight'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -834,7 +931,9 @@ export function RiceInwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Rice Patla Net Wt (Qtl)
+                                                {t(
+                                                    'inward.riceInward.form.fields.ricePatlaNetWeight'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -870,10 +969,12 @@ export function RiceInwardActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {isEditing
+                                    ? t('common.update')
+                                    : t('common.add')}
                             </Button>
                         </div>
                     </form>

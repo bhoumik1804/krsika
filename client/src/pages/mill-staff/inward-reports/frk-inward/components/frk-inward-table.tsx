@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FrkInward } from '../data/schema'
-import { useFrkInwardColumns } from './frk-inward-columns'
+import { frkInwardColumns as columns } from './frk-inward-columns'
 
 type DataTableProps = {
     data: FrkInward[]
@@ -47,7 +47,6 @@ export function FrkInwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const columns = useFrkInwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}

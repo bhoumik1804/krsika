@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FinancialPayment } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getFinancialPaymentColumns } from './financial-payment-columns'
+import { FinancialPaymentColumns as columns } from './financial-payment-columns'
 
 type DataTableProps = {
     data: FinancialPayment[]
@@ -41,6 +40,7 @@ type DataTableProps = {
         prevPage: number | null
         nextPage: number | null
     }
+    isLoading?: boolean
 }
 
 export function FinancialPaymentTable({
@@ -48,9 +48,8 @@ export function FinancialPaymentTable({
     search,
     navigate,
     pagination: serverPagination,
+    isLoading,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
-    const columns = useMemo(() => getFinancialPaymentColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -122,41 +121,21 @@ export function FinancialPaymentTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t(
-                    'financialPayment.table.searchPlaceholder'
-                )}
+                searchPlaceholder='Search by payment type...'
                 searchKey='paymentType'
                 filters={[
                     {
                         columnId: 'paymentType',
-                        title: t('financialPayment.table.paymentType'),
+                        title: 'Payment Type',
                         options: [
                             {
-                                label: t(
-                                    'financialPayment.options.dealPayment',
-                                    { defaultValue: 'सौदे का भुगतान' }
-                                ),
+                                label: 'सौदे का भुगतान',
                                 value: 'सौदे का भुगतान',
                             },
+                            { label: 'परिवहन भुगतान', value: 'परिवहन भुगतान' },
+                            { label: 'हमाली भुगतान', value: 'हमाली भुगतान' },
                             {
-                                label: t(
-                                    'financialPayment.options.transportPayment',
-                                    { defaultValue: 'परिवहन भुगतान' }
-                                ),
-                                value: 'परिवहन भुगतान',
-                            },
-                            {
-                                label: t(
-                                    'financialPayment.options.hamaliPayment',
-                                    { defaultValue: 'हमाली भुगतान' }
-                                ),
-                                value: 'हमाली भुगतान',
-                            },
-                            {
-                                label: t(
-                                    'financialPayment.options.salaryPayment',
-                                    { defaultValue: 'वेतन/मजदूरी भुगतान' }
-                                ),
+                                label: 'वेतन/मजदूरी भुगतान',
                                 value: 'वेतन/मजदूरी भुगतान',
                             },
                         ],
@@ -197,7 +176,12 @@ export function FinancialPaymentTable({
                             </TableRow>
                         ))}
                     </TableHeader>
-                    <TableBody>
+                    <TableBody
+                        className={cn(
+                            isLoading &&
+                                'pointer-events-none opacity-50 transition-opacity'
+                        )}
+                    >
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
@@ -232,7 +216,7 @@ export function FinancialPaymentTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

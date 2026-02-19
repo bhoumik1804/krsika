@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -26,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
 import { type ProductionEntry } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { useProductionColumns } from './production-columns'
+import { productionColumns as columns } from './production-columns'
 
 type DataTableProps = {
     data: ProductionEntry[]
@@ -35,8 +34,6 @@ type DataTableProps = {
 }
 
 export function ProductionTable({ data, search, navigate }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
-    const columns = useProductionColumns()
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -100,22 +97,13 @@ export function ProductionTable({ data, search, navigate }: DataTableProps) {
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t('common.searchPlaceholder')}
+                searchPlaceholder='Filter production records...'
                 searchKey='itemName'
                 filters={[
                     {
                         columnId: 'status',
-                        title: t('common.status'),
+                        title: 'Status',
                         options: statuses,
-                    },
-                    {
-                        columnId: 'itemName',
-                        title: t('common.item'),
-                        options: [
-                            { label: t('common.paddy'), value: 'Paddy' },
-                            { label: t('common.rice'), value: 'Rice' },
-                            { label: t('common.bran'), value: 'Bran' },
-                        ],
                     },
                 ]}
             />
@@ -188,7 +176,7 @@ export function ProductionTable({ data, search, navigate }: DataTableProps) {
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}
@@ -200,4 +188,3 @@ export function ProductionTable({ data, search, navigate }: DataTableProps) {
         </div>
     )
 }
-

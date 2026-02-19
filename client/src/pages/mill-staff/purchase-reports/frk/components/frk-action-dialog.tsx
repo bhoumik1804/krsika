@@ -111,14 +111,13 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing
-                            ? t('frkPurchase.form.editTitle')
-                            : t('frkPurchase.form.addTitle')}
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('purchaseReports.frk.title')}
                     </DialogTitle>
                     <DialogDescription>
                         {isEditing
-                            ? t('frkPurchase.form.editDescription')
-                            : t('frkPurchase.form.addDescription')}
+                            ? t('purchaseReports.frk.form.description.update')
+                            : t('purchaseReports.frk.form.description.add')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -134,7 +133,9 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t('frkPurchase.form.date')}
+                                                {t(
+                                                    'purchaseReports.frk.form.fields.date'
+                                                )}
                                             </FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
@@ -156,9 +157,7 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                                                       ),
                                                                       'MMM dd, yyyy'
                                                                   )
-                                                                : t(
-                                                                      'frkPurchase.form.placeholders.select'
-                                                                  )}
+                                                                : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
@@ -202,7 +201,7 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                         <FormItem>
                                             <FormLabel>
                                                 {t(
-                                                    'frkPurchase.form.partyName'
+                                                    'purchaseReports.frk.form.fields.partyName'
                                                 )}
                                             </FormLabel>
                                             <FormControl>
@@ -212,12 +211,8 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                                         field.onChange
                                                     }
                                                     paginatedList={party}
-                                                    placeholder={t(
-                                                        'frkPurchase.form.placeholders.party'
-                                                    )}
-                                                    emptyText={t(
-                                                        'common.noResults'
-                                                    )}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -231,15 +226,15 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t('frkPurchase.form.frkQty')}
+                                                {t(
+                                                    'purchaseReports.frk.form.fields.frkQty'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
                                                     step='0.01'
-                                                    placeholder={t(
-                                                        'frkPurchase.form.placeholders.qty'
-                                                    )}
+                                                    placeholder='0.00'
                                                     {...field}
                                                     onChange={(e) => {
                                                         const val =
@@ -266,7 +261,9 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t('frkPurchase.form.frkRate')}
+                                                {t(
+                                                    'purchaseReports.frk.form.fields.frkRate'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -300,7 +297,9 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                {t('frkPurchase.form.gst')}
+                                                {t(
+                                                    'purchaseReports.frk.form.fields.gst'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -336,7 +335,7 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                {t('common.cancel')}
+                                Cancel
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
@@ -344,8 +343,8 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                         ? t('common.updating')
                                         : t('common.adding')
                                     : isEditing
-                                      ? t('frkPurchase.form.editTitle')
-                                      : t('frkPurchase.form.addTitle')}
+                                      ? t('common.update')
+                                      : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

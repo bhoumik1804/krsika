@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type LabourGroupReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getLabourGroupReportColumns } from './labour-group-report-columns'
+import { useLabourGroupReportColumns } from './labour-group-report-columns'
 
 type Pagination = {
     page: number
@@ -55,13 +54,12 @@ export function LabourGroupReportTable({
     // isLoading,
     // isError,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
-    const columns = useMemo(() => getLabourGroupReportColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const columns = useLabourGroupReportColumns()
 
     const {
         columnFilters,
@@ -133,9 +131,7 @@ export function LabourGroupReportTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t(
-                    'labourGroupReport.table.searchPlaceholder'
-                )}
+                searchPlaceholder='Search labour team...'
                 searchKey='labourTeamName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -207,7 +203,7 @@ export function LabourGroupReportTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

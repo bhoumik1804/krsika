@@ -114,10 +114,10 @@ export function KodhaOutwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('kodhaOutward.title')}
+                            {t('outward.kodhaOutward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('kodhaOutward.description')}
+                            {t('outward.kodhaOutward.description')}
                         </p>
                     </div>
                     <KodhaOutwardPrimaryButtons />

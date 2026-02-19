@@ -3,7 +3,6 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -50,7 +49,6 @@ export function OutwardsActionDialog({
     onOpenChange,
     currentRow,
 }: OutwardsActionDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -84,17 +82,19 @@ export function OutwardsActionDialog({
 
     const onSubmit = () => {
         toast.promise(sleep(2000), {
-            loading: isEditing ? t('outwards.updating') : t('outwards.adding'),
+            loading: isEditing
+                ? 'Updating outward entry...'
+                : 'Adding outward entry...',
             success: () => {
                 onOpenChange(false)
                 form.reset()
                 return isEditing
-                    ? t('outwards.updatedSuccess')
-                    : t('outwards.addedSuccess')
+                    ? 'Outward entry updated successfully'
+                    : 'Outward entry added successfully'
             },
             error: isEditing
-                ? t('outwards.updateFailed')
-                : t('outwards.addFailed'),
+                ? 'Failed to update outward entry'
+                : 'Failed to add outward entry',
         })
     }
 
@@ -103,12 +103,11 @@ export function OutwardsActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? t('common.edit') : t('common.add')}{' '}
-                        {t('outwards.title')}
+                        {isEditing ? 'Edit' : 'Add'} Outward Entry
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? t('common.update') : t('common.add')}{' '}
-                        {t('common.gatePass')}
+                        {isEditing ? 'Update' : 'Enter'} the outward gate pass
+                        details below
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -122,14 +121,10 @@ export function OutwardsActionDialog({
                                 name='gatePassNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.gatePass')} No.
-                                        </FormLabel>
+                                        <FormLabel>Gate Pass No.</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'outwards.gatePassPlaceholder'
-                                                )}
+                                                placeholder='GP-OUT-XXXX'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -142,9 +137,7 @@ export function OutwardsActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.date')}
-                                        </FormLabel>
+                                        <FormLabel>Date</FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -163,9 +156,7 @@ export function OutwardsActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : t(
-                                                                  'common.pickADate'
-                                                              )}
+                                                            : 'Pick a date'}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -207,14 +198,10 @@ export function OutwardsActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.partyName')}
-                                        </FormLabel>
+                                        <FormLabel>Party Name</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'outwards.partyPlaceholder'
-                                                )}
+                                                placeholder='Enter party name'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -227,14 +214,10 @@ export function OutwardsActionDialog({
                                 name='item'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.item')}
-                                        </FormLabel>
+                                        <FormLabel>Item</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'outwards.itemPlaceholder'
-                                                )}
+                                                placeholder='e.g. Rice, Bran'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -247,14 +230,10 @@ export function OutwardsActionDialog({
                                 name='vehicleNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.vehicleNo')}
-                                        </FormLabel>
+                                        <FormLabel>Vehicle Number</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'outwards.vehiclePlaceholder'
-                                                )}
+                                                placeholder='Enter vehicle no.'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -267,14 +246,10 @@ export function OutwardsActionDialog({
                                 name='driverName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.driverName')}
-                                        </FormLabel>
+                                        <FormLabel>Driver Name</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={t(
-                                                    'outwards.driverPlaceholder'
-                                                )}
+                                                placeholder='Driver name (Optional)'
                                                 {...field}
                                             />
                                         </FormControl>
@@ -287,9 +262,7 @@ export function OutwardsActionDialog({
                                 name='bags'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            No. of {t('common.bags')}
-                                        </FormLabel>
+                                        <FormLabel>No. of Bags</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -310,9 +283,7 @@ export function OutwardsActionDialog({
                                 name='weight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.netWeight')}
-                                        </FormLabel>
+                                        <FormLabel>Net Weight (Kg)</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -333,34 +304,28 @@ export function OutwardsActionDialog({
                                 name='status'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {t('common.status')}
-                                        </FormLabel>
+                                        <FormLabel>Status</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue
-                                                        placeholder={t(
-                                                            'common.select'
-                                                        )}
-                                                    />
+                                                    <SelectValue placeholder='Select status' />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
                                                 <SelectItem value='pending'>
-                                                    {t('common.pending')}
+                                                    Pending
                                                 </SelectItem>
                                                 <SelectItem value='completed'>
-                                                    {t('common.completed')}
+                                                    Completed
                                                 </SelectItem>
                                                 <SelectItem value='dispatched'>
-                                                    {t('common.dispatched')}
+                                                    Dispatched
                                                 </SelectItem>
                                                 <SelectItem value='cancelled'>
-                                                    {t('common.cancelled')}
+                                                    Cancelled
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -374,12 +339,10 @@ export function OutwardsActionDialog({
                             name='remarks'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{t('common.remarks')}</FormLabel>
+                                    <FormLabel>Remarks</FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder={t(
-                                                'outwards.remarksPlaceholder'
-                                            )}
+                                            placeholder='Optional remarks'
                                             {...field}
                                         />
                                     </FormControl>
@@ -393,13 +356,10 @@ export function OutwardsActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                {t('common.cancel')}
+                                Cancel
                             </Button>
                             <Button type='submit'>
-                                {isEditing
-                                    ? t('common.update')
-                                    : t('common.add')}{' '}
-                                {t('common.gatePass')}
+                                {isEditing ? 'Update' : 'Add'} Entry
                             </Button>
                         </DialogFooter>
                     </form>
@@ -408,4 +368,3 @@ export function OutwardsActionDialog({
         </Dialog>
     )
 }
-

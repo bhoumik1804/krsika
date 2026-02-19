@@ -25,8 +25,8 @@ export function StaffReportMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: StaffReportMultiDeleteDialogProps<TData>) {
-    const { millId } = useStaffReport()
     const { t } = useTranslation('mill-staff')
+    const { millId } = useStaffReport()
     const { mutate: bulkDelete, isPending: isDeleting } =
         useBulkDeleteStaff(millId)
     const selectedRows = table.getFilteredSelectedRowModel().rows
@@ -52,14 +52,16 @@ export function StaffReportMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t('delete.multiTitle', {
-                            count: selectedRows.length,
-                        })}
+                        {t('common.delete')} {selectedRows.length}{' '}
+                        {selectedRows.length > 1
+                            ? t('common.records')
+                            : t('common.record')}
+                        ?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('delete.multiDescription')}
+                        {t('common.deleteConfirmationMulti')}
                         <br />
-                        {t('delete.undone')}
+                        {t('common.uCannotUndo')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -71,7 +73,9 @@ export function StaffReportMultiDeleteDialog<TData>({
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting ? t('common.deleting') : t('common.delete')}
+                        {isDeleting
+                            ? t('common.deleting') + '...'
+                            : t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

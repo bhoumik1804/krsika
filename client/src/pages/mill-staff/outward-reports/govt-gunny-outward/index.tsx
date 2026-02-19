@@ -67,10 +67,10 @@ function GovtGunnyOutwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('govtGunnyOutward.title')}
+                            Govt Gunny Outward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('govtGunnyOutward.description')}
+                            Manage government gunny outward transactions
                         </p>
                     </div>
                 </div>
@@ -87,10 +87,10 @@ function GovtGunnyOutwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('govtGunnyOutward.title')}
+                            Govt Gunny Outward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('govtGunnyOutward.description')}
+                            Manage government gunny outward transactions
                         </p>
                     </div>
                 </div>
@@ -108,10 +108,10 @@ function GovtGunnyOutwardContent() {
             <div className='flex flex-wrap items-end justify-between gap-2'>
                 <div>
                     <h2 className='text-2xl font-bold tracking-tight'>
-                        {t('govtGunnyOutward.title')}
+                        {t('outward.govtGunnyOutward.title')}
                     </h2>
                     <p className='text-muted-foreground'>
-                        {t('govtGunnyOutward.description')}
+                        {t('outward.govtGunnyOutward.description')}
                     </p>
                 </div>
                 <GovtGunnyOutwardPrimaryButtons />

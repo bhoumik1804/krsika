@@ -10,7 +10,7 @@ export function FrkOutwardPrimaryButtons() {
     return (
         <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
-            {t('frkOutward.addRecord')}
+            {t('outward.frkOutward.form.primaryButton')}
         </Button>
     )
 }

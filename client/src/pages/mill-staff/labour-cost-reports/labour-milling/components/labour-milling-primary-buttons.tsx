@@ -10,7 +10,7 @@ export function LabourMillingPrimaryButtons() {
     return (
         <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
-            {t('labourMilling.addRecord')}
+            {t('labourCostReports.milling.form.primaryButton')}
         </Button>
     )
 }

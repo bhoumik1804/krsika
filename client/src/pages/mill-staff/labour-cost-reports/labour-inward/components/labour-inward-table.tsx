@@ -25,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { inwardTypes } from '../data/data'
 import { type LabourInward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { useLabourInwardColumns } from './labour-inward-columns'
+import { LabourInwardColumns } from './labour-inward-columns'
 
 type DataTableProps = {
     data: LabourInward[]
@@ -41,6 +41,7 @@ type DataTableProps = {
         prevPage: number | null
         nextPage: number | null
     }
+    isLoading?: boolean
 }
 
 export function LabourInwardTable({
@@ -48,14 +49,13 @@ export function LabourInwardTable({
     search,
     navigate,
     pagination: serverPagination,
+    isLoading,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-
-    const columns = useLabourInwardColumns()
 
     const {
         columnFilters,
@@ -85,9 +85,10 @@ export function LabourInwardTable({
     })
 
     // eslint-disable-next-line react-hooks/incompatible-library
+    const columns = LabourInwardColumns()
     const table = useReactTable({
-        data,
         columns,
+        data,
         state: {
             sorting,
             pagination,
@@ -171,7 +172,12 @@ export function LabourInwardTable({
                             </TableRow>
                         ))}
                     </TableHeader>
-                    <TableBody>
+                    <TableBody
+                        className={cn(
+                            isLoading &&
+                                'pointer-events-none opacity-50 transition-opacity'
+                        )}
+                    >
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
@@ -203,7 +209,7 @@ export function LabourInwardTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

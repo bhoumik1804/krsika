@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -8,7 +9,6 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { useTranslation } from 'react-i18next'
 import { useDeleteStaff } from '../data/hooks'
 import { type StaffReportData } from '../data/schema'
 import { useStaffReport } from './staff-report-provider'
@@ -24,8 +24,8 @@ export function StaffReportDeleteDialog({
     open,
     onOpenChange,
 }: StaffReportDeleteDialogProps) {
-    const { millId } = useStaffReport()
     const { t } = useTranslation('mill-staff')
+    const { millId } = useStaffReport()
     const { mutate: deleteStaff, isPending: isDeleting } =
         useDeleteStaff(millId)
 
@@ -45,14 +45,13 @@ export function StaffReportDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        {t('delete.title')}
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>{t('common.delete')}?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('delete.descriptionItem')}
-                        <strong>{currentRow.fullName}</strong>?
+                        {t('common.deleteConfirmation', {
+                            name: currentRow.fullName,
+                        })}
                         <br />
-                        {t('delete.undone')}
+                        {t('common.uCannotUndo')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -64,7 +63,9 @@ export function StaffReportDeleteDialog({
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting ? t('common.deleting') : t('common.delete')}
+                        {isDeleting
+                            ? t('common.deleting') + '...'
+                            : t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

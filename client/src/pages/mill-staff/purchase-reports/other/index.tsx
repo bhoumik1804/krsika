@@ -15,8 +15,8 @@ import { OtherProvider, useOther } from './components/other-provider'
 import { OtherTable } from './components/other-table'
 
 export function OtherPurchaseReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
@@ -73,10 +73,10 @@ export function OtherPurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('otherPurchase.title')}
+                            {t('purchaseReports.other.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('otherPurchase.description')}
+                            {t('purchaseReports.other.description')}
                         </p>
                     </div>
                     <OtherPrimaryButtons />
@@ -95,7 +95,6 @@ function OtherPurchaseContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
-    const { t } = useTranslation('mill-staff')
     const context = useOther()
 
     if (context.isLoading) {
@@ -109,7 +108,7 @@ function OtherPurchaseContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('otherPurchase.failedToLoad')}
+                Failed to load other purchase data. Please try again later.
             </div>
         )
     }

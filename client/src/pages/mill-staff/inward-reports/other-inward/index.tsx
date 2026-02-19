@@ -72,10 +72,10 @@ export function OtherInwardReport() {
             <Main className='flex flex-1 items-center justify-center'>
                 <div className='text-center'>
                     <h2 className='text-lg font-semibold'>
-                        {t('common.errorLoadingData')}
+                        Error loading data
                     </h2>
                     <p className='text-muted-foreground'>
-                        {t('common.tryAgainLater')}
+                        Please try again later.
                     </p>
                 </div>
             </Main>
@@ -107,10 +107,10 @@ export function OtherInwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('otherInward.title')}
+                            {t('inward.otherInward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('otherInward.description')}
+                            {t('inward.otherInward.description')}
                         </p>
                     </div>
                     <OtherInwardPrimaryButtons />

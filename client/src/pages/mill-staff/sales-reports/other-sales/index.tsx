@@ -4,7 +4,6 @@ import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
-import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -15,6 +14,35 @@ import {
     useOtherSales,
 } from './components/other-sales-provider'
 import { OtherSalesTable } from './components/other-sales-table'
+
+function OtherSalesContent({
+    search,
+    navigate,
+}: {
+    search: Record<string, string>
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const { data, isLoading, pagination } = useOtherSales()
+
+    if (isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                Loading...
+            </div>
+        )
+    }
+
+    return (
+        <>
+            <OtherSalesTable
+                data={data}
+                search={search}
+                navigate={navigate}
+                pagination={pagination}
+            />
+        </>
+    )
+}
 
 export function OtherSalesReport() {
     const { t } = useTranslation('mill-staff')
@@ -46,7 +74,7 @@ export function OtherSalesReport() {
     return (
         <OtherSalesProvider millId={millId || ''} queryParams={queryParams}>
             <Header fixed>
-                <Search placeholder={t('otherSales.form.placeholders.party')} />
+                <Search />
                 <div className='ms-auto flex items-center space-x-4'>
                     <ThemeSwitch />
                     <ConfigDrawer />
@@ -61,10 +89,10 @@ export function OtherSalesReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('otherSales.title')}
+                            {t('salesReports.other.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('otherSales.description')}
+                            {t('salesReports.other.description')}
                         </p>
                     </div>
                     <OtherSalesPrimaryButtons />
@@ -74,38 +102,5 @@ export function OtherSalesReport() {
 
             <OtherSalesDialogs />
         </OtherSalesProvider>
-    )
-}
-
-function OtherSalesContent({
-    search,
-    navigate,
-}: {
-    search: Record<string, string>
-    navigate: (opts: { search: unknown; replace?: boolean }) => void
-}) {
-    const { t } = useTranslation('mill-staff')
-    const { data, isLoading, pagination } = useOtherSales()
-
-    if (isLoading) {
-        return (
-            <div className='flex items-center justify-center py-10'>
-                <LoadingSpinner />
-                <div className='ml-2 text-muted-foreground'>
-                    {t('common.loading')}
-                </div>
-            </div>
-        )
-    }
-
-    return (
-        <>
-            <OtherSalesTable
-                data={data}
-                search={search}
-                navigate={navigate}
-                pagination={pagination}
-            />
-        </>
     )
 }

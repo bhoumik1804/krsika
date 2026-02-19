@@ -1,5 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,7 +24,6 @@ export function PaddyMultiDeleteDialog({
     open,
     onOpenChange,
 }: PaddyMultiDeleteDialogProps) {
-    const { t } = useTranslation('mill-staff')
     const { millId } = usePaddy()
     const { mutateAsync: bulkDeletePaddyPurchases, isPending: isDeleting } =
         useBulkDeletePaddyPurchases(millId)
@@ -50,29 +48,25 @@ export function PaddyMultiDeleteDialog({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t('paddyPurchase.multiDelete.title', {
-                            count: selectedRows.length,
-                            item: t(`paddyPurchase.multiDelete.item`, {
-                                count: selectedRows.length,
-                            }),
-                        })}
+                        Delete {selectedRows.length}{' '}
+                        {selectedRows.length > 1 ? 'purchases' : 'purchase'}?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('paddyPurchase.multiDelete.description')}
+                        Are you sure you want to delete the selected purchases?{' '}
+                        <br />
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                        {t('common.cancel')}
+                        Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting
-                            ? t('paddyPurchase.multiDelete.deleting')
-                            : t('paddyPurchase.multiDelete.confirm')}
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

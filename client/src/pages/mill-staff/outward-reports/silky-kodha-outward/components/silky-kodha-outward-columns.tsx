@@ -8,7 +8,7 @@ import { LongText } from '@/components/long-text'
 import { type SilkyKodhaOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
+export const SilkyKodhaOutwardColumns = (): ColumnDef<SilkyKodhaOutward>[] => {
     const { t } = useTranslation('mill-staff')
 
     return [
@@ -23,7 +23,7 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
                     onCheckedChange={(value) =>
                         table.toggleAllPageRowsSelected(!!value)
                     }
-                    aria-label={t('common.selectAll')}
+                    aria-label='Select all'
                     className='translate-y-[2px]'
                 />
             ),
@@ -36,7 +36,7 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
                 <Checkbox
                     checked={row.getIsSelected()}
                     onCheckedChange={(value) => row.toggleSelected(!!value)}
-                    aria-label={t('common.selectRow')}
+                    aria-label='Select row'
                     className='translate-y-[2px]'
                 />
             ),
@@ -48,7 +48,7 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('silkyKodhaOutward.table.date')}
+                    title={t('outward.silkyKodhaOutward.form.fields.date')}
                 />
             ),
             cell: ({ row }) => (
@@ -70,7 +70,7 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
                 <DataTableColumnHeader
                     column={column}
                     title={t(
-                        'silkyKodhaOutward.table.silkyKodhaSaleDealNumber'
+                        'outward.silkyKodhaOutward.form.fields.silkyBranSaleDealNumber'
                     )}
                 />
             ),
@@ -83,7 +83,7 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('silkyKodhaOutward.table.partyName')}
+                    title={t('outward.silkyKodhaOutward.form.fields.partyName')}
                 />
             ),
             cell: ({ row }) => (
@@ -98,7 +98,9 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('silkyKodhaOutward.table.brokerName')}
+                    title={t(
+                        'outward.silkyKodhaOutward.form.fields.brokerName'
+                    )}
                 />
             ),
             cell: ({ row }) => (
@@ -113,7 +115,7 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('silkyKodhaOutward.table.rate')}
+                    title={t('outward.silkyKodhaOutward.form.fields.rate')}
                 />
             ),
             cell: ({ row }) => (
@@ -125,11 +127,13 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('silkyKodhaOutward.table.oil')}
+                    title={t(
+                        'outward.silkyKodhaOutward.form.fields.oilPercent'
+                    )}
                 />
             ),
             cell: ({ row }) => (
-                <div className='text-right'>{row.getValue('oil')}</div>
+                <div className='text-right'>{row.getValue('oil')}%</div>
             ),
         },
         {
@@ -137,7 +141,7 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('silkyKodhaOutward.table.brokerage')}
+                    title={t('outward.silkyKodhaOutward.form.fields.brokerage')}
                 />
             ),
             cell: ({ row }) => (
@@ -149,7 +153,9 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('silkyKodhaOutward.table.gunnyPlastic')}
+                    title={t(
+                        'outward.silkyKodhaOutward.form.fields.gunnyPlastic'
+                    )}
                 />
             ),
             cell: ({ row }) => (
@@ -161,12 +167,14 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('silkyKodhaOutward.table.plasticWeight')}
+                    title={t(
+                        'outward.silkyKodhaOutward.form.fields.plasticWeight'
+                    )}
                 />
             ),
             cell: ({ row }) => (
                 <div className='text-right'>
-                    {(row.getValue('plasticWeight') as number)?.toFixed(3)}
+                    {row.getValue('plasticWeight')}
                 </div>
             ),
         },
@@ -175,13 +183,13 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('silkyKodhaOutward.table.truckNo')}
+                    title={t(
+                        'outward.silkyKodhaOutward.form.fields.truckNumber'
+                    )}
                 />
             ),
             cell: ({ row }) => (
-                <div className='font-mono text-sm text-nowrap'>
-                    {row.getValue('truckNo')}
-                </div>
+                <div className='text-nowrap'>{row.getValue('truckNo')}</div>
             ),
         },
         {
@@ -189,27 +197,23 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('silkyKodhaOutward.table.rstNo')}
+                    title={t('outward.silkyKodhaOutward.form.fields.rstNumber')}
                 />
             ),
-            cell: ({ row }) => (
-                <div className='font-mono text-sm'>
-                    {row.getValue('truckRst')}
-                </div>
-            ),
+            cell: ({ row }) => <div>{row.getValue('truckRst')}</div>,
         },
         {
             accessorKey: 'truckWeight',
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('silkyKodhaOutward.table.truckWeight')}
+                    title={t(
+                        'outward.silkyKodhaOutward.form.fields.truckWeight'
+                    )}
                 />
             ),
             cell: ({ row }) => (
-                <div className='text-right'>
-                    {(row.getValue('truckWeight') as number)?.toFixed(2)}
-                </div>
+                <div className='text-right'>{row.getValue('truckWeight')}</div>
             ),
         },
         {
@@ -217,13 +221,13 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('silkyKodhaOutward.table.gunnyWeight')}
+                    title={t(
+                        'outward.silkyKodhaOutward.form.fields.gunnyWeight'
+                    )}
                 />
             ),
             cell: ({ row }) => (
-                <div className='text-right'>
-                    {(row.getValue('gunnyWeight') as number)?.toFixed(2)}
-                </div>
+                <div className='text-right'>{row.getValue('gunnyWeight')}</div>
             ),
         },
         {
@@ -231,23 +235,15 @@ export function useSilkyKodhaOutwardColumns(): ColumnDef<SilkyKodhaOutward>[] {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('silkyKodhaOutward.table.netWeight')}
+                    title={t('outward.silkyKodhaOutward.form.fields.netWeight')}
                 />
             ),
             cell: ({ row }) => (
-                <div className='text-right'>
-                    {(row.getValue('netWeight') as number)?.toFixed(2)}
-                </div>
+                <div className='text-right'>{row.getValue('netWeight')}</div>
             ),
         },
         {
             id: 'actions',
-            header: ({ column }) => (
-                <DataTableColumnHeader
-                    column={column}
-                    title={t('silkyKodhaOutward.table.actions')}
-                />
-            ),
             cell: DataTableRowActions,
         },
     ]

@@ -15,7 +15,7 @@ export function FrkPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('frkPurchase.form.addTitle')}
+            {t('purchaseReports.frk.form.primaryButton')}
         </Button>
     )
 }

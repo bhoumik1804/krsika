@@ -15,7 +15,7 @@ export function BhusaOutwardPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('bhusaOutward.addRecord')}
+            {t('outward.bhusaOutward.form.primaryButton')}
         </Button>
     )
 }

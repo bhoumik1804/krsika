@@ -19,8 +19,8 @@ import { CommitteeReportTable } from './components/committee-report-table'
 
 export function CommitteeReport() {
     const { millId } = useParams<{ millId: string }>()
-    const [searchParams, setSearchParams] = useSearchParams()
     const { t } = useTranslation('mill-staff')
+    const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
     const queryParams = useMemo(() => {
@@ -75,10 +75,10 @@ export function CommitteeReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('committeeReport.title')}
+                            {t('inputReports.committee.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('committeeReport.description')}
+                            {t('inputReports.committee.description')}
                         </p>
                     </div>
                     <CommitteeReportPrimaryButtons />
@@ -98,7 +98,6 @@ function CommitteeReportContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = useCommitteeReport()
-    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (
@@ -111,7 +110,7 @@ function CommitteeReportContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('committeeReport.error')}
+                Failed to load committee data. Please try again later.
             </div>
         )
     }

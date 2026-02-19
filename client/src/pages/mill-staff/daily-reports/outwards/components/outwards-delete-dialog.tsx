@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import {
@@ -24,16 +23,14 @@ export function OutwardsDeleteDialog({
     onOpenChange,
     currentRow,
 }: OutwardsDeleteDialogProps) {
-    const { t } = useTranslation('mill-staff')
-
     const handleDelete = () => {
         toast.promise(sleep(2000), {
-            loading: t('outwards.deleting'),
+            loading: 'Deleting outward entry...',
             success: () => {
                 onOpenChange(false)
-                return t('outwards.deletedSuccess')
+                return 'Outward entry deleted successfully'
             },
-            error: t('outwards.deleteFailed'),
+            error: 'Failed to delete outward entry',
         })
     }
 
@@ -41,27 +38,24 @@ export function OutwardsDeleteDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        {t('outwards.deleteTitle')}
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>Delete Outward Entry?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('outwards.deleteDescription')}{' '}
+                        Are you sure you want to delete this outward entry for{' '}
                         <strong>{currentRow?.gatePassNumber}</strong>?
                         <br />
-                        {t('common.actionCannotBeUndone')}
+                        This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {t('common.delete')}
+                        Delete
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
     )
 }
-

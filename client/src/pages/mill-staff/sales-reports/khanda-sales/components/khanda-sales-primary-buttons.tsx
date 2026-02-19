@@ -10,7 +10,7 @@ export function KhandaSalesPrimaryButtons() {
     return (
         <Button onClick={() => setOpen('add')}>
             <Plus className='mr-2 size-4' />
-            {t('common.add')}
+            {t('salesReports.khanda.form.primaryButton')}
         </Button>
     )
 }

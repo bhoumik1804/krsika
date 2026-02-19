@@ -14,7 +14,7 @@ export function SilkyKodhaOutwardPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('silkyKodhaOutward.addRecord')}
+            {t('outward.silkyKodhaOutward.form.primaryButton')}
         </Button>
     )
 }

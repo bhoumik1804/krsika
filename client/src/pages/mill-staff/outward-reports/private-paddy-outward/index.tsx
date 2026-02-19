@@ -67,10 +67,11 @@ function PrivatePaddyOutwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('privatePaddyOutward.title')}
+                            Private Paddy Outward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('privatePaddyOutward.description')}
+                            Manage private paddy outward transactions and
+                            records
                         </p>
                     </div>
                 </div>
@@ -87,10 +88,11 @@ function PrivatePaddyOutwardContent() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('privatePaddyOutward.title')}
+                            Private Paddy Outward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('privatePaddyOutward.description')}
+                            Manage private paddy outward transactions and
+                            records
                         </p>
                     </div>
                 </div>
@@ -108,10 +110,10 @@ function PrivatePaddyOutwardContent() {
             <div className='flex flex-wrap items-end justify-between gap-2'>
                 <div>
                     <h2 className='text-2xl font-bold tracking-tight'>
-                        {t('privatePaddyOutward.title')}
+                        {t('outward.privatePaddyOutward.title')}
                     </h2>
                     <p className='text-muted-foreground'>
-                        {t('privatePaddyOutward.description')}
+                        {t('outward.privatePaddyOutward.description')}
                     </p>
                 </div>
                 <PrivatePaddyOutwardPrimaryButtons />

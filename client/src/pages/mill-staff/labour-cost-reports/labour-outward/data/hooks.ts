@@ -2,7 +2,12 @@
  * Labour Outward Hooks
  * React Query hooks for Labour Outward data management
  */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+    useQuery,
+    useMutation,
+    useQueryClient,
+    keepPreviousData,
+} from '@tanstack/react-query'
 import { toast } from 'sonner'
 import {
     fetchLabourOutwardList,
@@ -58,6 +63,7 @@ export const useLabourOutwardList = (
         queryFn: () => fetchLabourOutwardList(millId, params),
         enabled: options?.enabled ?? !!millId,
         staleTime: 5 * 60 * 1000, // 5 minutes
+        placeholderData: keepPreviousData,
     })
 }
 

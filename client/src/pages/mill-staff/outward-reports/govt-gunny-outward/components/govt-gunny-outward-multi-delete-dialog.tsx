@@ -1,6 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -26,28 +24,23 @@ export function GovtGunnyOutwardMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: Props<TData>) {
-    const { t } = useTranslation('mill-staff')
     const selectedRows = table.getFilteredSelectedRowModel().rows
     const { millId } = useGovtGunnyOutward()
     const bulkDeleteMutation = useBulkDeleteGovtGunnyOutward(millId)
 
-    const handleDeleteSelected = () => {
+    const handleDeleteSelected = async () => {
         const ids = selectedRows
             .map((row) => (row.original as GovtGunnyOutward)._id)
             .filter((id): id is string => !!id)
         if (!ids.length) return
 
-        toast.promise(bulkDeleteMutation.mutateAsync(ids), {
-            loading: t('common.deleting'),
-            success: () => {
-                table.resetRowSelection()
-                onOpenChange(false)
-                return t('common.deletedSelectedSuccess', {
-                    count: selectedRows.length,
-                })
-            },
-            error: t('common.error'),
-        })
+        try {
+            await bulkDeleteMutation.mutateAsync(ids)
+            table.resetRowSelection()
+            onOpenChange(false)
+        } catch {
+            // Error is handled by mutation hook
+        }
     }
 
     return (
@@ -55,22 +48,21 @@ export function GovtGunnyOutwardMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t('common.deleteSelectedTitle', {
-                            count: selectedRows.length,
-                        })}
+                        Delete {selectedRows.length}{' '}
+                        {selectedRows.length > 1 ? 'records' : 'record'}?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        {t('common.deleteSelectedDescription')} <br />
-                        {t('common.actionCannotBeUndone')}
+                        This action cannot be undone. This will permanently
+                        delete selected records.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                         onClick={handleDeleteSelected}
                     >
-                        {t('common.delete')}
+                        Delete
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

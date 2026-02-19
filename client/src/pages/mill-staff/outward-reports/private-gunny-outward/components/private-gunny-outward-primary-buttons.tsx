@@ -9,7 +9,9 @@ export function PrivateGunnyOutwardPrimaryButtons() {
     return (
         <div className='flex gap-2'>
             <Button onClick={() => setOpen('add')} className='space-x-1'>
-                <span>{t('privateGunnyOutward.addRecord')}</span>{' '}
+                <span>
+                    {t('outward.privateGunnyOutward.form.primaryButton')}
+                </span>{' '}
                 <Plus size={18} />
             </Button>
         </div>

@@ -16,8 +16,8 @@ import { DoReportTable } from './components/do-report-table'
 
 export function DoReport() {
     const { millId } = useParams<{ millId: string }>()
-    const [searchParams, setSearchParams] = useSearchParams()
     const { t } = useTranslation('mill-staff')
+    const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
     const queryParams = useMemo(() => {
@@ -72,10 +72,10 @@ export function DoReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('doReport.title')}
+                            {t('inputReports.do.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('doReport.description')}
+                            {t('inputReports.do.description')}
                         </p>
                     </div>
                     <DoReportPrimaryButtons />
@@ -95,7 +95,6 @@ function DoReportContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = useDoReport()
-    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (
@@ -108,7 +107,7 @@ function DoReportContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('common.error')}
+                Failed to load DO report data. Please try again later.
             </div>
         )
     }

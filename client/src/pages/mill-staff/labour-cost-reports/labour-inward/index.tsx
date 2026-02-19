@@ -16,9 +16,8 @@ import { LabourInwardTable } from './components/labour-inward-table'
 import { useLabourInwardList } from './data/hooks'
 
 export function LabourInwardReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
-
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     const queryParams = useMemo(() => {
@@ -59,7 +58,7 @@ export function LabourInwardReport() {
         }
     }
 
-    if (isLoading) {
+    if (isLoading && !data) {
         return (
             <div className='flex h-screen items-center justify-center'>
                 <LoadingSpinner />
@@ -93,13 +92,12 @@ export function LabourInwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('labourInward.title')}
+                            {t('labourCostReports.inward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('labourInward.description')}
+                            {t('labourCostReports.inward.description')}
                         </p>
                     </div>
-
                     <LabourInwardPrimaryButtons />
                 </div>
                 <LabourInwardTable
@@ -111,6 +109,7 @@ export function LabourInwardReport() {
                     )}
                     navigate={navigate}
                     pagination={data?.pagination}
+                    isLoading={isLoading}
                 />
             </Main>
 

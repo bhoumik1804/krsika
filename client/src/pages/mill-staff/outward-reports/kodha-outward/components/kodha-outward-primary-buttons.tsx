@@ -14,7 +14,7 @@ export function KodhaOutwardPrimaryButtons() {
             }}
         >
             <Plus className='mr-2 size-4' />
-            {t('kodhaOutward.addRecord')}
+            {t('outward.kodhaOutward.form.primaryButton')}
         </Button>
     )
 }

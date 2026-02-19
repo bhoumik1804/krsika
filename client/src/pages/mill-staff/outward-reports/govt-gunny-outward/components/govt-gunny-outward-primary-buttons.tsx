@@ -9,7 +9,7 @@ export function GovtGunnyOutwardPrimaryButtons() {
     return (
         <div className='flex gap-2'>
             <Button onClick={() => setOpen('add')} className='space-x-1'>
-                <span>{t('govtGunnyOutward.addRecord')}</span>{' '}
+                <span>{t('outward.govtGunnyOutward.form.primaryButton')}</span>{' '}
                 <Plus size={18} />
             </Button>
         </div>

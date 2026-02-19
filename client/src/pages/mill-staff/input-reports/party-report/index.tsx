@@ -19,6 +19,7 @@ import { PartyReportTable } from './components/party-report-table'
 
 export function PartyReport() {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
@@ -53,8 +54,6 @@ export function PartyReport() {
         }
     }
 
-    const { t } = useTranslation('mill-staff')
-
     return (
         <PartyReportProvider
             millId={millId || ''}
@@ -76,10 +75,10 @@ export function PartyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('partyReport.title')}
+                            {t('inputReports.party.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('partyReport.description')}
+                            {t('inputReports.party.description')}
                         </p>
                     </div>
                     <PartyReportPrimaryButtons />
@@ -99,7 +98,6 @@ function PartyReportContent({
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
     const context = usePartyReport()
-    const { t } = useTranslation('mill-staff')
 
     if (context.isLoading) {
         return (
@@ -112,7 +110,7 @@ function PartyReportContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                {t('common.error')}
+                Failed to load party data. Please try again later.
             </div>
         )
     }

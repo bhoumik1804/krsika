@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -6,9 +7,8 @@ import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type LabourMilling } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
-import { format } from 'date-fns'
 
-export const useLabourMillingColumns = (): ColumnDef<LabourMilling>[] => {
+export function LabourMillingColumns(): ColumnDef<LabourMilling>[] {
     const { t } = useTranslation('mill-staff')
 
     return [
@@ -48,7 +48,7 @@ export const useLabourMillingColumns = (): ColumnDef<LabourMilling>[] => {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('labourMilling.table.date')}
+                    title={t('labourCostReports.milling.form.fields.date')}
                 />
             ),
             cell: ({ row }) => (
@@ -69,7 +69,9 @@ export const useLabourMillingColumns = (): ColumnDef<LabourMilling>[] => {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('labourMilling.table.hopperInGunny')}
+                    title={t(
+                        'labourCostReports.milling.form.fields.hopperCutting'
+                    )}
                 />
             ),
             cell: ({ row }) => (
@@ -83,7 +85,9 @@ export const useLabourMillingColumns = (): ColumnDef<LabourMilling>[] => {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('labourMilling.table.hopperRate')}
+                    title={t(
+                        'labourCostReports.milling.form.fields.hopperCuttingRate'
+                    )}
                 />
             ),
             cell: ({ row }) => (
@@ -99,7 +103,9 @@ export const useLabourMillingColumns = (): ColumnDef<LabourMilling>[] => {
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title={t('labourMilling.table.labourGroupName')}
+                    title={t(
+                        'labourCostReports.milling.form.fields.hamalRejaToliName'
+                    )}
                 />
             ),
             cell: ({ row }) => (

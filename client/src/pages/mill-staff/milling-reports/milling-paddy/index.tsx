@@ -16,8 +16,8 @@ import { MillingPaddyTable } from './components/milling-paddy-table'
 import { useMillingPaddyList } from './data/hooks'
 
 export function MillingPaddyReport() {
-    const { millId } = useParams<{ millId: string }>()
     const { t } = useTranslation('mill-staff')
+    const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
     const queryParams = useMemo(() => {
@@ -91,10 +91,10 @@ export function MillingPaddyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('millingPaddy.title')}
+                            {t('millingReports.paddy.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('millingPaddy.description')}
+                            {t('millingReports.paddy.description')}
                         </p>
                     </div>
                     <MillingPaddyPrimaryButtons />

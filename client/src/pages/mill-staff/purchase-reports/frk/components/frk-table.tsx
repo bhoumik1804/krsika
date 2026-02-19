@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,7 +11,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -25,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FrkPurchaseData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { getFrkColumns } from './frk-columns'
+import { useFrkColumns } from './frk-columns'
 
 type DataTableProps = {
     data: FrkPurchaseData[]
@@ -45,13 +44,13 @@ export function FrkTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
-    const { t } = useTranslation('mill-staff')
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const columns = useFrkColumns()
 
     // Only handle column filters (pagination is server-side)
     const {
@@ -75,8 +74,6 @@ export function FrkTable({
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
         ],
     })
-
-    const columns = useMemo(() => getFrkColumns(t), [t])
 
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
@@ -121,7 +118,7 @@ export function FrkTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder={t('frkPurchase.form.placeholders.party')}
+                searchPlaceholder='Filter purchases...'
                 searchKey='partyName'
             />
             <div className='overflow-hidden rounded-md border'>
@@ -193,7 +190,7 @@ export function FrkTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    {t('common.noResults')}
+                                    No results.
                                 </TableCell>
                             </TableRow>
                         )}

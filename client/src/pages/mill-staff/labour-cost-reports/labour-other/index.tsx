@@ -16,8 +16,8 @@ import { LabourOtherTable } from './components/labour-other-table'
 import { useLabourOtherList } from './data/hooks'
 
 export function LabourOtherReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
 
     const queryParams = useMemo(() => {
@@ -93,10 +93,10 @@ export function LabourOtherReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('labourOther.title')}
+                            {t('labourCostReports.other.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('labourOther.description')}
+                            {t('labourCostReports.other.description')}
                         </p>
                     </div>
                     <LabourOtherPrimaryButtons />

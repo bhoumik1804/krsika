@@ -1,8 +1,7 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { getMillStaffSidebarData } from '@/components/layout/data'
+import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { LoadingSpinner } from '@/components/loading-spinner'
@@ -18,7 +17,6 @@ import {
 import { BalanceLiftingSalesPaddyTable } from './components/balance-lifting-sales-paddy-table'
 
 export function BalanceLiftingSalesPaddyReport() {
-    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -40,7 +38,7 @@ export function BalanceLiftingSalesPaddyReport() {
         }
     }, [searchParams])
 
-    const sidebarData = getMillStaffSidebarData(millId || '')
+    const sidebarData = getMillAdminSidebarData(millId || '')
 
     // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
@@ -77,10 +75,10 @@ export function BalanceLiftingSalesPaddyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            {t('paddySales.balanceLifting.title')}
+                            Paddy Sale Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            {t('paddySales.balanceLifting.description')}
+                            Manage paddy sales transactions and records
                         </p>
                     </div>
                     <BalanceLiftingSalesPaddyPrimaryButtons />
@@ -111,7 +109,7 @@ function BalanceLiftingSalesPaddyContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load data
+                Failed to load Paddy sales data. Please try again later.
             </div>
         )
     }
