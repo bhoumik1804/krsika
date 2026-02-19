@@ -1,12 +1,11 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BalanceLiftingPurchasesFrk } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
-import { format } from 'date-fns'
-
-import { useTranslation } from 'react-i18next'
 
 export const frkColumns: ColumnDef<BalanceLiftingPurchasesFrk>[] = [
     {
@@ -103,9 +102,7 @@ export const frkColumns: ColumnDef<BalanceLiftingPurchasesFrk>[] = [
             return (
                 <DataTableColumnHeader
                     column={column}
-                    title={t(
-                        'balanceLifting.purchase.frk.form.fields.frkRate'
-                    )}
+                    title={t('balanceLifting.purchase.frk.form.fields.frkRate')}
                 />
             )
         },

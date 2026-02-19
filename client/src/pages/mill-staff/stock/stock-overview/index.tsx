@@ -8,6 +8,7 @@ import {
     Download,
 } from 'lucide-react'
 import { DateRange } from 'react-day-picker'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import {
     getStockBalance,
@@ -51,6 +52,7 @@ const getIcon = (commodity: string) => {
 }
 
 export function StockOverviewReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const sidebarData = getMillAdminSidebarData(millId || '')
     const [date, setDate] = useState<DateRange | undefined>({
@@ -105,8 +107,8 @@ export function StockOverviewReport() {
     const asOfDateStr = date?.to
         ? formatDateForApi(date.to)
         : date?.from
-            ? formatDateForApi(date.from)
-            : undefined
+          ? formatDateForApi(date.from)
+          : undefined
 
     const handleExport = useCallback(() => {
         exportStockBalanceAsCsv(data, 'stock-overview', asOfDateStr)
@@ -153,14 +155,14 @@ export function StockOverviewReport() {
                             icon={getIcon(item.commodity)}
                             change={
                                 item.totalBags > 0
-                                    ? `${item.totalBags} Bags`
+                                    ? `${item.totalBags} ${t('stockOverview.statsCard.bags')}`
                                     : undefined
                             }
                             changeType='neutral'
                             description={
                                 getCategory(item.commodity) === 'Gunny'
-                                    ? 'Total Bags'
-                                    : 'Current Stock'
+                                    ? t('stockOverview.statsCard.totalBags')
+                                    : t('stockOverview.statsCard.currentStock')
                             }
                         />
                     ))}
@@ -187,15 +189,17 @@ export function StockOverviewReport() {
                 <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Stock Overview
+                            {t('stockOverview.title')}
                         </h2>
                         <p className='text-muted-foreground'>
                             {asOfDateStr
-                                ? `Stock balance as of ${asOfDateStr}`
-                                : 'Current stock positions grouped by commodity'}
+                                ? t('stockOverview.descriptionWithDate', {
+                                      date: asOfDateStr,
+                                  })
+                                : t('stockOverview.descriptionDefault')}
                         </p>
                     </div>
-                    <div className='flex flex-col gap-2 sm:flex-row sm:items-center items-start'>
+                    <div className='flex flex-col items-start gap-2 sm:flex-row sm:items-center'>
                         <DateRangePicker date={date} setDate={setDate} />
                         <Button
                             variant='outline'
@@ -205,7 +209,7 @@ export function StockOverviewReport() {
                             className='w-auto'
                         >
                             <Download className='mr-2 h-4 w-4' />
-                            Export
+                            {t('stockOverview.buttons.export')}
                         </Button>
                     </div>
                 </div>
@@ -225,25 +229,28 @@ export function StockOverviewReport() {
                 {!loading && !error && data.length === 0 && (
                     <div className='flex flex-col items-center justify-center py-12 text-muted-foreground'>
                         <Activity className='mb-2 h-12 w-12' />
-                        <p>No stock data available</p>
+                        <p>{t('stockOverview.emptyMessage')}</p>
                     </div>
                 )}
 
                 {!loading && !error && data.length > 0 && (
                     <div className='space-y-8'>
-                        {renderSection('Paddy Stock', categorized.Paddy)}
+                        {renderSection(
+                            t('stockOverview.sections.paddyStock'),
+                            categorized.Paddy
+                        )}
 
                         <div className='grid gap-8 lg:grid-cols-3'>
                             <div className='lg:col-span-2'>
                                 {renderSection(
-                                    'Rice Stock',
+                                    t('stockOverview.sections.riceStock'),
                                     categorized.Rice,
                                     'sm:grid-cols-2'
                                 )}
                             </div>
                             <div className='lg:col-span-1'>
                                 {renderSection(
-                                    'Other Stock',
+                                    t('stockOverview.sections.otherStock'),
                                     categorized.Other,
                                     'grid-cols-1'
                                 )}
@@ -251,11 +258,11 @@ export function StockOverviewReport() {
                         </div>
 
                         {renderSection(
-                            'By Product Stock',
+                            t('stockOverview.sections.byProductStock'),
                             categorized['By-Product']
                         )}
                         {renderSection(
-                            'Gunny Stock',
+                            t('stockOverview.sections.gunnyStock'),
                             categorized.Gunny,
                             'sm:grid-cols-2 lg:grid-cols-4'
                         )}

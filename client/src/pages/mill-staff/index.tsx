@@ -289,6 +289,7 @@
 // }
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
+import { useAuthStore } from '@/stores/auth-store'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { LanguageSwitch } from '@/components/language-switch'
 import { getMillStaffSidebarData } from '@/components/layout/data'
@@ -297,17 +298,12 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
 
-interface WelcomeMessageProps {
-    userName?: string
-}
-
-export function MillStaffDashboard({ userName }: WelcomeMessageProps) {
+export function MillStaffDashboard() {
     const { t } = useTranslation()
     const { millId } = useParams<{ millId: string }>()
     const sidebarData = getMillStaffSidebarData(millId || '')
+    const user = useAuthStore((state) => state.user)
 
-    // Get current hour to determine greeting if needed,
-    // or just use the static translation key from your i18n
     return (
         <>
             <Header>
@@ -330,7 +326,7 @@ export function MillStaffDashboard({ userName }: WelcomeMessageProps) {
                 <div className='text-center'>
                     <h1 className='text-2xl font-bold tracking-tight text-foreground'>
                         {t('dashboard.goodMorning')}
-                        {userName ? `, ${userName}` : ''} 👋
+                        {user?.fullName ? `, ${user.fullName}` : ''} 👋
                     </h1>
                     <p className='text-muted-foreground'>
                         {t('dashboard.overview')}

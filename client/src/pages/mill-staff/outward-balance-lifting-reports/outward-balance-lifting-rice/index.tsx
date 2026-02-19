@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -19,6 +20,7 @@ import { OutwardBalanceLiftingRiceTable } from './components/outward-balance-lif
 export function OutwardBalanceLiftingRiceReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+    const { t } = useTranslation('mill-staff')
 
     const queryParams = useMemo(() => {
         const search = Object.fromEntries(searchParams.entries())
@@ -72,10 +74,10 @@ export function OutwardBalanceLiftingRiceReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Private Rice Outward Report
+                            {t('balanceLifting.outward.rice.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage private rice outward transactions and records
+                            {t('balanceLifting.outward.rice.description')}
                         </p>
                     </div>
                     <OutwardBalanceLiftingRicePrimaryButtons />
@@ -92,6 +94,7 @@ function OutwardBalanceLiftingRiceContent({
 }: {
     navigate: (opts: { search: unknown; replace?: boolean }) => void
 }) {
+    const { t } = useTranslation('mill-staff')
     const context = useOutwardBalanceLiftingRice()
 
     if (context.isLoading) {
@@ -105,8 +108,7 @@ function OutwardBalanceLiftingRiceContent({
     if (context.isError) {
         return (
             <div className='py-10 text-center text-red-500'>
-                Failed to load Private Rice Outward data. Please try again
-                later.
+                {t('common.errorLoadingData')}
             </div>
         )
     }

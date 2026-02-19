@@ -22,6 +22,26 @@
         "delete": "हटाएं",
         "openMenu": "मेनू खोलें"
     },
+    "dashboard": {
+        "title": "डैशबोर्ड",
+        "goodMorning": "सुप्रभात",
+        "overview": "यहां आपके मिल संचालन का अवलोकन है",
+        "markAttendance": "उपस्थिति दर्ज करें",
+        "attendanceHistory": "उपस्थिति इतिहास",
+        "attendanceMarkedAs": "उपस्थिति दर्ज की गई",
+        "present": "उपस्थित",
+        "absent": "अनुपस्थित",
+        "halfDay": "अर्ध दिवस",
+        "recentEntriesTitle": "हालिया प्रविष्टियां",
+        "yourLatestEntries": "आपकी नवीनतम लेनदेन प्रविष्टियां"
+    },
+    "recentEntries": {
+        "paddyFromRamesh": "रमेश से धान - {{val}}",
+        "riceToPatelStore": "पटेल स्टोर को चावल - {{val}}",
+        "paddyFromSuresh": "सुरेश से धान - {{val}}",
+        "paddyFromKumar": "कुमार से धान - {{val}}",
+        "riceToKrishnaTraders": "कृष्णा ट्रेडर्स को चावल - {{val}}"
+    },
     "inputReports": {
         "sidebarTitle": "प्रविष्टि रिपोर्ट",
         "party": {
@@ -1193,6 +1213,171 @@
             "accountant": "लेखाकार"
         }
     },
+    "dailyReports": {
+        "sidebarTitle": "दैनिक रिपोर्ट",
+        "inwards": {
+            "title": "आवक",
+            "description": "वस्तु के अनुसार दैनिक आवक लेनदेन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई आवक डेटा नहीं मिला",
+            "statsCard": {
+                "entries": "प्रविष्टियाँ",
+                "bags": "बोरे"
+            }
+        },
+        "milling": {
+            "title": "मिलिंग",
+            "description": "वस्तु के अनुसार दैनिक मिलिंग संचालन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई मिलिंग डेटा नहीं मिला",
+            "statsCard": {
+                "entries": "प्रविष्टियाँ",
+                "bags": "बोरे"
+            }
+        },
+        "outwards": {
+            "title": "जावक",
+            "description": "वस्तु के अनुसार दैनिक जावक लेनदेन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई जावक डेटा नहीं मिला",
+            "statsCard": {
+                "entries": "प्रविष्टियाँ",
+                "bags": "बोरे"
+            }
+        },
+        "production": {
+            "title": "उत्पादन",
+            "description": "वस्तु के अनुसार दैनिक उत्पादन आउटपुट ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई उत्पादन डेटा नहीं मिला",
+            "statsCard": {
+                "entries": "प्रविष्टियाँ",
+                "bags": "बोरे"
+            }
+        },
+        "purchaseDeals": {
+            "title": "खरीद सौदे",
+            "description": "वस्तु के अनुसार दैनिक खरीद लेनदेन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई खरीद सौदे नहीं मिले",
+            "statsCard": {
+                "entries": "प्रविष्टियाँ",
+                "bags": "बोरे"
+            }
+        },
+        "salesDeals": {
+            "title": "बिक्री सौदे",
+            "description": "वस्तु के अनुसार दैनिक बिक्री लेनदेन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई बिक्री सौदे नहीं मिले",
+            "statsCard": {
+                "entries": "प्रविष्टियाँ",
+                "bags": "बोरे"
+            }
+        },
+        "payment": {
+            "title": "भुगतान",
+            "description": "दैनिक भुगतान लेनदेन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई भुगतान प्रविष्टि नहीं मिली",
+            "statsCard": {
+                "totalPayments": "कुल भुगतान",
+                "totalAmount": "कुल राशि",
+                "totalPaymentEntries": "कुल भुगतान प्रविष्टियाँ",
+                "totalPaymentAmount": "कुल भुगतान राशि",
+                "entries": "प्रविष्टियाँ"
+            }
+        },
+        "receipt": {
+            "title": "रसीद",
+            "description": "दैनिक रसीद लेनदेन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई रसीद प्रविष्टि नहीं मिली",
+            "statsCard": {
+                "totalReceipts": "कुल रसीदें",
+                "totalAmount": "कुल राशि",
+                "totalReceiptEntries": "कुल रसीद प्रविष्टियाँ",
+                "totalReceiptAmount": "कुल रसीद राशि",
+                "entries": "प्रविष्टियाँ"
+            }
+        },
+        "buttons": {
+            "exportSummary": "सारांश निर्यात करें",
+            "exportHistory": "इतिहास निर्यात करें",
+            "exportCsv": "CSV निर्यात करें"
+        },
+        "history": {
+            "title": "तिथि-वार इतिहास",
+            "transactions": "लेनदेन"
+        }
+    },
+    "stockOverview": {
+        "title": "स्टॉक अवलोकन",
+        "descriptionWithDate": "{{date}} तक स्टॉक बैलेंस",
+        "descriptionDefault": "वस्तु के अनुसार समूहीकृत वर्तमान स्टॉक स्थिति",
+        "emptyMessage": "कोई स्टॉक डेटा उपलब्ध नहीं है",
+        "sections": {
+            "paddyStock": "धान स्टॉक",
+            "riceStock": "चावल स्टॉक",
+            "otherStock": "अन्य स्टॉक",
+            "byProductStock": "उप-उत्पाद स्टॉक",
+            "gunnyStock": "गनी बोरी स्टॉक"
+        },
+        "statsCard": {
+            "totalBags": "कुल बोरे",
+            "currentStock": "वर्तमान स्टॉक",
+            "bags": "बोरे"
+        },
+        "buttons": {
+            "export": "निर्यात करें"
+        }
+    },
+    "settings": {
+        "title": "सेटिंग्स",
+        "subtitle": "अपने खाते और पसंद का प्रबंधन करें",
+        "profile": "प्रोफाइल",
+        "profileDesc": "अपनी व्यक्तिगत जानकारी अपडेट करें और अपने खाते का प्रबंधन करें",
+        "appearance": "दिखावट",
+        "appearanceDesc": "एप के दिखावट को अनुकूलित करें। दिन और रात की थीम के बीच स्वचालित रूप से स्विच करें।",
+        "language": "भाषा",
+        "selectLanguage": "भाषा चुनें",
+        "languageDesc": "इंटरफेस के लिए अपनी पसंदीदा भाषा चुनें।",
+        "font": "फॉन्ट",
+        "fontDesc": "डैशबोर्ड में उपयोग करने के लिए फॉन्ट सेट करें।",
+        "theme": "थीम",
+        "themeDesc": "डैशबोर्ड के लिए थीम चुनें।",
+        "light": "हल्का",
+        "dark": "गहरा",
+        "updatePreferences": "पसंद अपडेट करें",
+        "profileForm": {
+            "name": "नाम",
+            "namePlaceholder": "आपका नाम",
+            "nameDescription": "आपका सार्वजनिक प्रदर्शन नाम।",
+            "email": "ईमेल",
+            "emailPlaceholder": "your@email.com",
+            "emailDescription": "आपका लॉगिन ईमेल पता।",
+            "post": "पद",
+            "changePassword": "पासवर्ड बदलें",
+            "currentPassword": "वर्तमान पासवर्ड",
+            "currentPasswordPlaceholder": "वर्तमान पासवर्ड",
+            "newPassword": "नया पासवर्ड",
+            "newPasswordPlaceholder": "नया पासवर्ड",
+            "confirmPassword": "पासवर्ड की पुष्टि करें",
+            "confirmPasswordPlaceholder": "नए पासवर्ड की पुष्टि करें",
+            "role": "भूमिका",
+            "roleDescription": "आपकी भूमिका आपकी पहुंच अनुमतियों को निर्धारित करती है।",
+            "updateProfile": "प्रोफाइल अपडेट करें",
+            "updating": "अपडेट हो रहा है...",
+            "profileUpdated": "प्रोफाइल सफलतापूर्वक अपडेट हो गई",
+            "profileAndPasswordUpdated": "प्रोफाइल और पासवर्ड सफलतापूर्वक अपडेट हो गए। आप लॉग आउट हो गए हैं।",
+            "updateFailed": "प्रोफाइल अपडेट करने में विफल",
+            "validation": {
+                "nameMin": "नाम कम से कम 2 अक्षर का होना चाहिए।",
+                "nameMax": "नाम 30 अक्षरों से अधिक नहीं होना चाहिए।",
+                "emailInvalid": "कृपया एक मान्य ईमेल दर्ज करें।",
+                "passwordMin": "पासवर्ड कम से कम 6 अक्षर का होना चाहिए।",
+                "passwordRequired": "पासवर्ड बदलने के लिए वर्तमान पासवर्ड आवश्यक है।",
+                "passwordMismatch": "पासवर्ड मेल नहीं खाते।"
+            },
+            "roles": {
+                "superAdmin": "सुपर अडमिन",
+                "millAdmin": "मिल अडमिन",
+                "millStaff": "मिल स्टाफ"
+            }
+        }
+    },
     "sidebar": {
         "dashboard": "डैशबोर्ड",
         "overview": "अवलोकन",
@@ -1332,19 +1517,21 @@
                 }
             },
             "frk": {
+                "title": "FRK खरीद रिपोर्ट",
                 "description": "बैलेंस लिफ्टिंग FRK खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "primaryButton": "खरीदी जोड़ें",
                 "form": {
-                    "title_add": "बैलेंस लिफ्टिंग FRK खरीदी जोड़ें",
-                    "title_edit": "बैलेंस लिफ्टिंग FRK खरीदी संपादित करें",
+                    "title_add": "FRK खरीदी जोड़ें",
+                    "title_edit": "FRK खरीदी संपादित करें",
                     "description_add": "खरीदी विवरण नीचे दर्ज करें",
                     "description_edit": "खरीदी विवरण नीचे अपडेट करें",
                     "fields": {
                         "date": "दिनांक",
-                        "dealNumber": "FRK खरीदी सौदा क्रमांक",
+                        "frkPurchaseDealNumber": "FRK खरीदी सौदा क्रमांक",
                         "partyName": "पार्टी का नाम",
                         "frkQty": "FRK की मात्रा",
-                        "balance": "शेष",
-                        "balanceLifting": "उठाव शेष"
+                        "frkRate": "FRK दर",
+                        "gst": "GST"
                     }
                 }
             },
@@ -1396,18 +1583,32 @@
             "rice": {
                 "title": "जावक बैलेंस लिफ्टिंग चावल रिपोर्ट",
                 "description": "जावक बैलेंस लिफ्टिंग चावल लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "primaryButton": "जावक जोड़ें",
                 "form": {
-                    "title_add": "जावक बैलेंस लिफ्टिंग चावल जोड़ें",
-                    "title_edit": "जावक बैलेंस लिफ्टिंग चावल संपादित करें",
+                    "title_add": "चावल जावक जोड़ें",
+                    "title_edit": "चावल जावक संपादित करें",
                     "description_add": "जावक विवरण नीचे दर्ज करें",
                     "description_edit": "जावक विवरण नीचे अपडेट करें",
                     "fields": {
                         "date": "दिनांक",
-                        "dealNumber": "चावल जावक सौदा क्रमांक",
+                        "riceSalesDealNumber": "चावल बिक्री सौदा क्रमांक",
                         "partyName": "पार्टी का नाम",
+                        "brokerName": "दलाल का नाम",
+                        "deliveryType": "डिलीवरी का प्रकार",
+                        "lotOrOther": "LOT/अन्य",
+                        "fciOrNAN": "FCI/NAN",
+                        "riceType": "चावल का प्रकार",
                         "riceQty": "चावल की मात्रा",
-                        "balance": "शेष",
-                        "balanceLifting": "उठाव शेष"
+                        "riceRatePerQuintal": "चावल दर/क्विंटल",
+                        "discountPercent": "छूट %",
+                        "brokeragePerQuintal": "दलाली/क्विंटल",
+                        "gunnyType": "बारदाना का प्रकार",
+                        "newGunnyRate": "नया बारदाना दर",
+                        "oldGunnyRate": "पुराना बारदाना दर",
+                        "plasticGunnyRate": "प्लास्टिक बारदाना दर",
+                        "frkType": "FRK",
+                        "frkRatePerQuintal": "FRK दर/क्विंटल",
+                        "lotNumber": "लॉट नंबर"
                     }
                 }
             }

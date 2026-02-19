@@ -1,5 +1,8 @@
 import { useState, useCallback } from 'react'
+import { format } from 'date-fns'
+import { ChevronDown, ChevronRight, Download, Loader2 } from 'lucide-react'
 import { DateRange } from 'react-day-picker'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import {
     exportStockDataAsCsv,
@@ -10,15 +13,6 @@ import {
 import { useStockByAction } from '@/hooks/use-stock-by-action'
 import { useStockTransactions } from '@/hooks/use-stock-transactions'
 import { Button } from '@/components/ui/button'
-import { ConfigDrawer } from '@/components/config-drawer'
-import { DateRangePicker } from '@/components/date-range-picker'
-import { getMillAdminSidebarData } from '@/components/layout/data'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { StatsCard } from '@/components/stats-card'
-import { ThemeSwitch } from '@/components/theme-switch'
 import {
     Collapsible,
     CollapsibleContent,
@@ -32,8 +26,15 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table'
-import { ChevronDown, ChevronRight, Download, Loader2 } from 'lucide-react'
-import { format } from 'date-fns'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { DateRangePicker } from '@/components/date-range-picker'
+import { getMillAdminSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { StatsCard } from '@/components/stats-card'
+import { ThemeSwitch } from '@/components/theme-switch'
 
 export interface DailyReportPageProps {
     action: string
@@ -62,6 +63,7 @@ export function DailyReportPage({
     getIcon,
     gridCols = 'sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5',
 }: DailyReportPageProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const sidebarData = getMillAdminSidebarData(millId || '')
     const [date, setDate] = useState<DateRange | undefined>(() => {
@@ -77,15 +79,13 @@ export function DailyReportPage({
         dateRange: date,
     })
 
-    const {
-        data: transactions,
-        loading: transactionsLoading,
-    } = useStockTransactions({
-        millId: millId || '',
-        action,
-        dateRange: date,
-        limit: 1000,
-    })
+    const { data: transactions, loading: transactionsLoading } =
+        useStockTransactions({
+            millId: millId || '',
+            action,
+            dateRange: date,
+            limit: 1000,
+        })
 
     const dateRangeForExport = {
         startDate: date?.from ? formatDateForApi(date.from) : undefined,
@@ -94,7 +94,12 @@ export function DailyReportPage({
 
     const handleExportSummary = useCallback(() => {
         exportStockDataAsCsv(data, exportBaseFilename, dateRangeForExport)
-    }, [data, exportBaseFilename, dateRangeForExport.startDate, dateRangeForExport.endDate])
+    }, [
+        data,
+        exportBaseFilename,
+        dateRangeForExport.startDate,
+        dateRangeForExport.endDate,
+    ])
 
     const handleExportHistory = useCallback(() => {
         exportStockTransactionsAsCsv(
@@ -102,7 +107,12 @@ export function DailyReportPage({
             `${exportBaseFilename}-history`,
             dateRangeForExport
         )
-    }, [transactions, exportBaseFilename, dateRangeForExport.startDate, dateRangeForExport.endDate])
+    }, [
+        transactions,
+        exportBaseFilename,
+        dateRangeForExport.startDate,
+        dateRangeForExport.endDate,
+    ])
 
     // Group transactions by date for display
     const byDate = transactions.reduce<Record<string, typeof transactions>>(
@@ -139,13 +149,11 @@ export function DailyReportPage({
                         <h2 className='text-2xl font-bold tracking-tight'>
                             {title}
                         </h2>
-                        <p className='text-muted-foreground'>
-                            {description}
-                        </p>
+                        <p className='text-muted-foreground'>{description}</p>
                     </div>
-                    <div className='flex flex-col gap-2 sm:flex-row sm:items-center items-start'>
+                    <div className='flex flex-col items-start gap-2 sm:flex-row sm:items-center'>
                         <DateRangePicker date={date} setDate={setDate} />
-                        <div className="flex flex-col gap-2 sm:flex-row items-start sm:items-center">
+                        <div className='flex flex-col items-start gap-2 sm:flex-row sm:items-center'>
                             <Button
                                 variant='outline'
                                 size='sm'
@@ -154,17 +162,20 @@ export function DailyReportPage({
                                 className='w-auto'
                             >
                                 <Download className='mr-2 h-4 w-4' />
-                                Export Summary
+                                {t('dailyReports.buttons.exportSummary')}
                             </Button>
                             <Button
                                 variant='outline'
                                 size='sm'
                                 onClick={handleExportHistory}
-                                disabled={transactionsLoading || transactions.length === 0}
+                                disabled={
+                                    transactionsLoading ||
+                                    transactions.length === 0
+                                }
                                 className='w-auto'
                             >
                                 <Download className='mr-2 h-4 w-4' />
-                                Export History
+                                {t('dailyReports.buttons.exportHistory')}
                             </Button>
                         </div>
                     </div>
@@ -198,7 +209,7 @@ export function DailyReportPage({
                                     title={getLabel(item)}
                                     value={`${item.totalQuantity.toFixed(2)} Qtl`}
                                     icon={getIcon(item.commodity)}
-                                    description={`${item.count} entries · ${item.totalBags} bags`}
+                                    description={`${item.count} ${t('dailyReports.inwards.statsCard.entries')} · ${item.totalBags} ${t('dailyReports.inwards.statsCard.bags')}`}
                                 />
                             ))}
                         </div>
@@ -209,13 +220,20 @@ export function DailyReportPage({
                                 onOpenChange={setHistoryOpen}
                             >
                                 <CollapsibleTrigger asChild>
-                                    <Button variant='ghost' size='sm' className='gap-2'>
+                                    <Button
+                                        variant='ghost'
+                                        size='sm'
+                                        className='gap-2'
+                                    >
                                         {historyOpen ? (
                                             <ChevronDown className='h-4 w-4' />
                                         ) : (
                                             <ChevronRight className='h-4 w-4' />
                                         )}
-                                        Date-wise history ({transactions.length} transactions)
+                                        {t('dailyReports.history.title')} (
+                                        {transactions.length}{' '}
+                                        {t('dailyReports.history.transactions')}
+                                        )
                                     </Button>
                                 </CollapsibleTrigger>
                                 <CollapsibleContent>
@@ -224,30 +242,52 @@ export function DailyReportPage({
                                             <TableHeader>
                                                 <TableRow>
                                                     <TableHead>Date</TableHead>
-                                                    <TableHead>Commodity</TableHead>
-                                                    <TableHead>Variety</TableHead>
+                                                    <TableHead>
+                                                        Commodity
+                                                    </TableHead>
+                                                    <TableHead>
+                                                        Variety
+                                                    </TableHead>
                                                     <TableHead>Type</TableHead>
-                                                    <TableHead className='text-right'>Qty (Qtl)</TableHead>
-                                                    <TableHead className='text-right'>Bags</TableHead>
-                                                    <TableHead>Remarks</TableHead>
+                                                    <TableHead className='text-right'>
+                                                        Qty (Qtl)
+                                                    </TableHead>
+                                                    <TableHead className='text-right'>
+                                                        Bags
+                                                    </TableHead>
+                                                    <TableHead>
+                                                        Remarks
+                                                    </TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
                                                 {sortedDates.flatMap((d) =>
                                                     byDate[d].map((t) => (
                                                         <TableRow key={t._id}>
-                                                            <TableCell>{d}</TableCell>
-                                                            <TableCell>{t.commodity}</TableCell>
-                                                            <TableCell>{t.variety || '-'}</TableCell>
-                                                            <TableCell>{t.type}</TableCell>
+                                                            <TableCell>
+                                                                {d}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {t.commodity}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {t.variety ||
+                                                                    '-'}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {t.type}
+                                                            </TableCell>
                                                             <TableCell className='text-right'>
-                                                                {t.quantity.toFixed(2)}
+                                                                {t.quantity.toFixed(
+                                                                    2
+                                                                )}
                                                             </TableCell>
                                                             <TableCell className='text-right'>
                                                                 {t.bags}
                                                             </TableCell>
                                                             <TableCell className='max-w-[200px] truncate'>
-                                                                {t.remarks || '-'}
+                                                                {t.remarks ||
+                                                                    '-'}
                                                             </TableCell>
                                                         </TableRow>
                                                     ))
