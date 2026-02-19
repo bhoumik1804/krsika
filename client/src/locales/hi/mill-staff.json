@@ -1065,5 +1065,132 @@
                 "brokerage": "दलाली"
             }
         }
+    },
+    "financialTransactionReports": {
+        "sidebarTitle": "वित्तीय रिपोर्ट",
+        "payment": {
+            "title": "वित्तीय भुगतान",
+            "description": "वित्तीय भुगतान रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "भुगतान रिकॉर्ड जोड़ें",
+                "description": "भुगतान विवरण दर्ज करें",
+                "primaryButton": "भुगतान जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "paymentType": "भुगतान का प्रकार",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "purchaseDealType": "सौदा प्रकार",
+                    "purchaseDealNumber": "सौदा क्रमांक",
+                    "paymentAmount": "भुगतान राशि",
+                    "remarks": "रिमार्क",
+                    "transporterName": "परिवहनकर्ता का नाम",
+                    "truckNumber": "ट्रक न.",
+                    "diesel": "डीजल",
+                    "bhatta": "भत्ता",
+                    "repairOrMaintenance": "रिपेयर/मेंटेनेंस",
+                    "labourType": "हमाली प्रकार",
+                    "labourGroupName": "हमाल/रेजा टोली",
+                    "staffName": "कर्मचारी का नाम",
+                    "salary": "वेतन",
+                    "month": "माह",
+                    "attendance": "उपस्थिति",
+                    "allowedLeave": "अर्जित अवकाश",
+                    "payableSalary": "भुगतान योग्य वेतन",
+                    "salaryPayment": "वेतन भुगतान",
+                    "advancePayment": "एडवांस भुगतान"
+                }
+            }
+        },
+        "receipt": {
+            "title": "वित्तीय प्राप्ति",
+            "description": "वित्तीय प्राप्ति रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "प्राप्ति रिकॉर्ड जोड़ें",
+                "description": "प्राप्ति विवरण दर्ज करें",
+                "primaryButton": "प्राप्ति जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "salesDealType": "सौदा प्रकार",
+                    "salesDealNumber": "सौदा क्रमांक",
+                    "receivedAmount": "प्राप्ति राशि",
+                    "remarks": "रिमार्क"
+                }
+            }
+        }
+    },
+    "staff": {
+        "title": "कर्मचारी प्रबंधन",
+        "subtitle": "सभी मिल कर्मचारियों को प्रबंधित और निगरानी करें",
+        "allStaff": "सभी कर्मचारी",
+        "activeStaff": "सक्रिय",
+        "inactiveStaff": "निष्क्रिय",
+        "addStaff": "कर्मचारी जोड़ें",
+        "editStaff": "कर्मचारी संपादित करें",
+        "deleteStaff": "कर्मचारी हटाएं",
+        "addStaffDescription": "यहां नए कर्मचारी बनाएं।",
+        "editStaffDescription": "यहां कर्मचारी को अपडेट करें।",
+        "clickSave": "जब आप पूरा कर लें तो सेव करें क्लिक करें।",
+        "saveChanges": "परिवर्तन सहेजें",
+        "failedToLoad": "कर्मचारी डेटा लोड करने में विफल।",
+        "deletedStaffInfo": "कर्मचारी सफलतापूर्वक हटा दिया गया",
+        "deleteDescription": "क्या आप वाकई {{name}} ({{post}}) को हटाना चाहते हैं? इस क्रिया को पूर्ववत नहीं किया जा सकता।",
+        "deleteConfirmLabel": "पुष्टि करने के लिए कर्मचारी का पूरा नाम टाइप करें:",
+        "deleteConfirmPlaceholder": "पूरा नाम दर्ज करें",
+        "warning": "चेतावनी",
+        "actionRollbackWarning": "इस क्रिया को पूर्ववत नहीं किया जा सकता।",
+        "multiDeleteTitle": "{{count}} कर्मचारी {{member}} हटाएं",
+        "multiDeleteDescription": "यह चयनित कर्मचारियों और सभी संबंधित डेटा को स्थायी रूप से हटा देगा।",
+        "multiDeleteConfirmLabel": "हटाने की पुष्टि करने के लिए {{word}} टाइप करें:",
+        "multiDeleteConfirmPlaceholder": "{{word}} टाइप करें",
+        "multiDeleteConfirmError": "कृपया पुष्टि करने के लिए \"{{word}}\" टाइप करें।",
+        "deletingStaff": "कर्मचारी हटाए जा रहे हैं...",
+        "deletedStaffSuccess": "{{count}} कर्मचारी {{member}} सफलतापूर्वक हटा दिए गए।",
+        "deleteSelectedError": "चयनित कर्मचारियों को हटाने में त्रुटि",
+        "form": {
+            "fullName": "पूरा नाम",
+            "fullNamePlaceholder": "पूरा नाम दर्ज करें",
+            "email": "ईमेल",
+            "emailPlaceholder": "ईमेल दर्ज करें",
+            "phoneNumber": "फोन नंबर",
+            "phoneNumberPlaceholder": "फोन नंबर दर्ज करें",
+            "post": "पद",
+            "postPlaceholder": "पद चुनें",
+            "salary": "वेतन",
+            "salaryPlaceholder": "वेतन दर्ज करें",
+            "address": "पता",
+            "addressPlaceholder": "पता दर्ज करें",
+            "password": "पासवर्ड",
+            "passwordPlaceholder": "पासवर्ड दर्ज करें",
+            "confirmPassword": "पासवर्ड की पुष्टि करें",
+            "confirmPasswordPlaceholder": "पासवर्ड फिर से दर्ज करें",
+            "validation": {
+                "nameMin": "नाम कम से कम 2 अक्षर लंबा होना चाहिए",
+                "emailInvalid": "अमान्य ईमेल पता",
+                "passwordRequired": "पासवर्ड आवश्यक है",
+                "passwordMin": "पासवर्ड कम से कम 8 अक्षर लंबा होना चाहिए",
+                "passwordLower": "पासवर्ड में कम से कम एक छोटा अक्षर होना चाहिए",
+                "passwordNumber": "पासवर्ड में कम से कम एक नंबर होना चाहिए",
+                "passwordMatch": "पासवर्ड मेल नहीं खाते"
+            }
+        },
+        "table": {
+            "fullName": "पूरा नाम",
+            "email": "ईमेल",
+            "phoneNumber": "फोन नंबर",
+            "status": "स्थिति",
+            "post": "पद",
+            "todaysAttendance": "आज की उपस्थिति",
+            "monthCount": "माह गणना",
+            "searchPlaceholder": "नाम से खोजें..."
+        },
+        "posts": {
+            "manager": "प्रबंधक",
+            "supervisor": "पर्यवेक्षक",
+            "operator": "ऑपरेटर",
+            "accountant": "लेखाकार"
+        }
     }
 }

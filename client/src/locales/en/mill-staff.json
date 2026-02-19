@@ -1064,5 +1064,132 @@
                 "brokerage": "Brokerage"
             }
         }
+    },
+    "financialTransactionReports": {
+        "sidebarTitle": "Financial Reports",
+        "payment": {
+            "title": "Financial Payment",
+            "description": "Manage financial payment records",
+            "form": {
+                "title": "Add Payment Record",
+                "description": "Enter payment details",
+                "primaryButton": "Add Payment",
+                "fields": {
+                    "date": "Date",
+                    "paymentType": "Payment Type",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "purchaseDealType": "Deal Type",
+                    "purchaseDealNumber": "Deal Number",
+                    "paymentAmount": "Payment Amount",
+                    "remarks": "Remark",
+                    "transporterName": "Transporter Name",
+                    "truckNumber": "Truck No",
+                    "diesel": "Diesel",
+                    "bhatta": "Allowance",
+                    "repairOrMaintenance": "Repair/Maintenance",
+                    "labourType": "Hamali Type",
+                    "labourGroupName": "Hamal/Reja Toli",
+                    "staffName": "Staff Name",
+                    "salary": "Salary",
+                    "month": "Month",
+                    "attendance": "Attendance",
+                    "allowedLeave": "Earned Leave",
+                    "payableSalary": "Payable Salary",
+                    "salaryPayment": "Salary Payment",
+                    "advancePayment": "Advance Payment"
+                }
+            }
+        },
+        "receipt": {
+            "title": "Financial Receipt",
+            "description": "Manage financial receipt records",
+            "form": {
+                "title": "Add Receipt Record",
+                "description": "Enter receipt details",
+                "primaryButton": "Add Receipt",
+                "fields": {
+                    "date": "Date",
+                    "partyName": "Party Name",
+                    "brokerName": "Broker Name",
+                    "salesDealType": "Deal Type",
+                    "salesDealNumber": "Deal Number",
+                    "receivedAmount": "Receipt Amount",
+                    "remarks": "Remark"
+                }
+            }
+        }
+    },
+    "staff": {
+        "title": "Staff Management",
+        "subtitle": "Manage and monitor all mill staff members",
+        "allStaff": "All Staff",
+        "activeStaff": "Active",
+        "inactiveStaff": "Inactive",
+        "addStaff": "Add Staff",
+        "editStaff": "Edit Staff",
+        "deleteStaff": "Delete Staff",
+        "addStaffDescription": "Create new staff member here.",
+        "editStaffDescription": "Update the staff member here.",
+        "clickSave": "Click save when you're done.",
+        "saveChanges": "Save Changes",
+        "failedToLoad": "Failed to load staff data.",
+        "deletedStaffInfo": "Staff member deleted successfully",
+        "deleteDescription": "Are you sure you want to delete {{name}} ({{post}})? This action cannot be undone.",
+        "deleteConfirmLabel": "Type the staff member's full name to confirm:",
+        "deleteConfirmPlaceholder": "Enter full name",
+        "warning": "Warning",
+        "actionRollbackWarning": "This action cannot be undone.",
+        "multiDeleteTitle": "Delete {{count}} staff {{member}}",
+        "multiDeleteDescription": "This will permanently delete the selected staff members and all associated data.",
+        "multiDeleteConfirmLabel": "Type {{word}} to confirm deletion:",
+        "multiDeleteConfirmPlaceholder": "Type {{word}}",
+        "multiDeleteConfirmError": "Please type \"{{word}}\" to confirm.",
+        "deletingStaff": "Deleting staff members...",
+        "deletedStaffSuccess": "Successfully deleted {{count}} staff {{member}}.",
+        "deleteSelectedError": "Error deleting selected staff members",
+        "form": {
+            "fullName": "Full Name",
+            "fullNamePlaceholder": "Enter full name",
+            "email": "Email",
+            "emailPlaceholder": "Enter email",
+            "phoneNumber": "Phone Number",
+            "phoneNumberPlaceholder": "Enter phone number",
+            "post": "Post",
+            "postPlaceholder": "Select post",
+            "salary": "Salary",
+            "salaryPlaceholder": "Enter salary",
+            "address": "Address",
+            "addressPlaceholder": "Enter address",
+            "password": "Password",
+            "passwordPlaceholder": "Enter password",
+            "confirmPassword": "Confirm Password",
+            "confirmPasswordPlaceholder": "Re-enter password",
+            "validation": {
+                "nameMin": "Name must be at least 2 characters",
+                "emailInvalid": "Invalid email address",
+                "passwordRequired": "Password is required",
+                "passwordMin": "Password must be at least 8 characters",
+                "passwordLower": "Password must contain at least one lowercase letter",
+                "passwordNumber": "Password must contain at least one number",
+                "passwordMatch": "Passwords do not match"
+            }
+        },
+        "table": {
+            "fullName": "Full Name",
+            "email": "Email",
+            "phoneNumber": "Phone Number",
+            "status": "Status",
+            "post": "Post",
+            "todaysAttendance": "Today's Attendance",
+            "monthCount": "Month Count",
+            "searchPlaceholder": "Search by name..."
+        },
+        "posts": {
+            "manager": "Manager",
+            "supervisor": "Supervisor",
+            "operator": "Operator",
+            "accountant": "Accountant"
+        }
     }
 }
