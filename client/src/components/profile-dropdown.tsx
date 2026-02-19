@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -25,6 +26,7 @@ interface ProfileDropdownProps {
 }
 
 export function ProfileDropdown({ user, links }: ProfileDropdownProps) {
+    const { t } = useTranslation('mill-staff')
     const [open, setOpen] = useDialogState()
 
     const displayName = user?.name || ''
@@ -69,7 +71,7 @@ export function ProfileDropdown({ user, links }: ProfileDropdownProps) {
                         {links?.map((link) => (
                             <DropdownMenuItem key={link.title} asChild>
                                 <Link to={link.url || '#'}>
-                                    {link.title}
+                                    {t(link.title)}
                                     {link.icon && (
                                         <DropdownMenuShortcut>
                                             <link.icon className='size-4' />
@@ -84,7 +86,7 @@ export function ProfileDropdown({ user, links }: ProfileDropdownProps) {
                         variant='destructive'
                         onClick={() => setOpen(true)}
                     >
-                        Sign out
+                        {t('sidebar.signOut')}
                         {/* <DropdownMenuShortcut className='text-current'>
                             ⇧⌘Q
                         </DropdownMenuShortcut> */}

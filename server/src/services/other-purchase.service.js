@@ -12,14 +12,14 @@ export const createOtherPurchaseEntry = async (millId, data, userId) => {
         date: new Date(data.date),
     })
     await entry.save()
-
+    console.log(data)
     // Record stock transaction (CREDIT)
     try {
         await StockTransactionService.recordTransaction(
             millId,
             {
                 date: data.date,
-                commodity: data.otherPurchaseName,
+                commodity: data?.commodity,
                 variety: null,
                 type: 'CREDIT',
                 action: 'Purchase',
@@ -155,10 +155,10 @@ export const updateOtherPurchaseEntry = async (millId, id, data, userId) => {
     if (!entry) throw new ApiError(404, 'Other purchase entry not found')
 
     // Update stock transaction
-    if (data.otherPurchaseQty || data.otherPurchaseName || data.date) {
+    if (data.otherPurchaseQty || data.commodity || data.date) {
         await StockTransactionService.updateTransaction('OtherPurchase', id, {
             date: entry.date,
-            commodity: entry.otherPurchaseName,
+            commodity: entry.commodity,
             variety: null,
             quantity: entry.otherPurchaseQty || 0,
             bags: entry.bags || 0,

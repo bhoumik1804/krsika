@@ -15,9 +15,6 @@ export const createPaddyPurchaseEntry = async (millId, data, userId) => {
     console.log(data)
     // Record stock transaction (CREDIT = stock increase)
     try {
-        console.log('Recording 111 stock transaction for paddy purchase', {
-            id: entry._id,
-        })
         await StockTransactionService.recordTransaction(
             millId,
             {

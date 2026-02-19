@@ -1150,6 +1150,16 @@
         "addStaff": "कर्मचारी जोड़ें",
         "editStaff": "कर्मचारी संपादित करें",
         "deleteStaff": "कर्मचारी हटाएं",
+        "markAttendance": "उपस्थिति दर्ज करें",
+        "edit": "संपादित करें",
+        "delete": "हटाएं",
+        "markAttendanceDescription": "{{name}} के लिए उपस्थिति दर्ज करें",
+        "selectAttendanceStatus": "उपस्थिति स्थिति चुनें",
+        "present": "उपस्थित",
+        "halfDay": "आधा दिन",
+        "absent": "अनुपस्थित",
+        "cancel": "रद्द करें",
+        "saveAttendance": "उपस्थिति सहेजें",
         "addStaffDescription": "यहां नए कर्मचारी बनाएं।",
         "editStaffDescription": "यहां कर्मचारी को अपडेट करें।",
         "clickSave": "जब आप पूरा कर लें तो सेव करें क्लिक करें।",
@@ -1464,7 +1474,8 @@
         "balanceLiftingSales": "बैलेंस लिफ्टिंग बिक्री",
         "reportBalanceLiftingPaddySales": "बैलेंस लिफ्टिंग धान बिक्री रिपोर्ट",
         "outwardBalanceLiftingRiceSales": "जावक बैलेंस लिफ्टिंग चावल बिक्री",
-        "outwardBalanceLiftingReportRiceSales": "जावक बैलेंस लिफ्टिंग चावल बिक्री रिपोर्ट"
+        "outwardBalanceLiftingReportRiceSales": "जावक बैलेंस लिफ्टिंग चावल बिक्री रिपोर्ट",
+        "signOut": "साइन आउट"
     },
     "balanceLifting": {
         "purchase": {

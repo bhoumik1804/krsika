@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { LanguageSwitch } from '@/components/language-switch'
 import { getMillStaffSidebarData } from '@/components/layout/data'
+import { useAuthStore } from '@/stores/auth-store'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -19,7 +20,21 @@ import type { StaffPost } from './data/types'
 
 export function MillStaffStaff() {
     const { millId } = useParams<{ millId: string; staffId: string }>()
-    const sidebarData = getMillStaffSidebarData(millId || '')
+    const user = useAuthStore((state) => state.user)
+    let sidebarData = getMillStaffSidebarData(millId || '')
+
+    if (user) {
+        sidebarData = {
+            ...sidebarData,
+            user: {
+                name: user.fullName || 'Guest User',
+                email: user.email || 'guest@example.com',
+                avatar: user.avatar || user.fullName || 'Guest User',
+                role: user.role,
+            },
+        }
+    }
+
     const [searchParams, setSearchParams] = useSearchParams()
 
     const search = Object.fromEntries(searchParams.entries())

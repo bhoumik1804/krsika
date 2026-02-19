@@ -112,7 +112,7 @@ export function Navbar() {
                                     <Link to='/sign-in'>Sign In</Link>
                                 </Button>
                                 <Button asChild>
-                                    <Link to='/sign-up'>Get Started</Link>
+                                    <Link to='/sign-up'>Register</Link>
                                 </Button>
                             </>
                         )}
@@ -216,7 +216,7 @@ export function Navbar() {
                                         </Button>
                                         <Button asChild>
                                             <Link to='/sign-up'>
-                                                Get Started
+                                                Register
                                             </Link>
                                         </Button>
                                     </>

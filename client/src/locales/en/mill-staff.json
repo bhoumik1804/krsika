@@ -1150,6 +1150,16 @@
         "addStaff": "Add Staff",
         "editStaff": "Edit Staff",
         "deleteStaff": "Delete Staff",
+        "markAttendance": "Mark Attendance",
+        "edit": "Edit",
+        "delete": "Delete",
+        "markAttendanceDescription": "Mark attendance for {{name}}",
+        "selectAttendanceStatus": "Select attendance status",
+        "present": "Present",
+        "halfDay": "Half Day",
+        "absent": "Absent",
+        "cancel": "Cancel",
+        "saveAttendance": "Save Attendance",
         "addStaffDescription": "Create new staff member here.",
         "editStaffDescription": "Update the staff member here.",
         "clickSave": "Click save when you're done.",
@@ -1464,7 +1474,8 @@
         "balanceLiftingSales": "Balance Lifting Sales",
         "reportBalanceLiftingPaddySales": "Balance Lifting Paddy Sales Report",
         "outwardBalanceLiftingRiceSales": "Outward Balance Lifting Rice Sales",
-        "outwardBalanceLiftingReportRiceSales": "Outward Balance Lifting Rice Sales Report"
+        "outwardBalanceLiftingReportRiceSales": "Outward Balance Lifting Rice Sales Report",
+        "signOut": "Sign out"
     },
     "balanceLifting": {
         "purchase": {
