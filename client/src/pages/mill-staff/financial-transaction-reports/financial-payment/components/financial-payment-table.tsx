@@ -24,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FinancialPayment } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { FinancialPaymentColumns as columns } from './financial-payment-columns'
+import { FinancialPaymentColumns } from './financial-payment-columns'
 
 type DataTableProps = {
     data: FinancialPayment[]
@@ -82,7 +82,7 @@ export function FinancialPaymentTable({
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
-        columns,
+        columns: FinancialPaymentColumns(),
         state: {
             sorting,
             pagination,
@@ -213,7 +213,7 @@ export function FinancialPaymentTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

@@ -24,7 +24,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FinancialReceipt } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { FinancialReceiptColumns as columns } from './financial-receipt-columns'
+import { FinancialReceiptColumns } from './financial-receipt-columns'
 
 type DataTableProps = {
     data: FinancialReceipt[]
@@ -81,7 +81,7 @@ export function FinancialReceiptTable({
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
-        columns,
+        columns: FinancialReceiptColumns(),
         state: {
             sorting,
             pagination,
@@ -202,7 +202,7 @@ export function FinancialReceiptTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

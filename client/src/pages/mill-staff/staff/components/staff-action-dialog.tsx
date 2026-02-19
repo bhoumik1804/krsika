@@ -30,7 +30,7 @@ import { SelectDropdown } from '@/components/select-dropdown'
 import { posts } from '../data/data'
 import { type Staff } from '../data/schema'
 
-const getFormSchema = (t: TFunction<'millStaff', undefined>) =>
+const getFormSchema = (t: TFunction<'mill-staff', undefined>) =>
     z
         .object({
             fullName: z.string().min(2, t('staff.form.validation.nameMin')),

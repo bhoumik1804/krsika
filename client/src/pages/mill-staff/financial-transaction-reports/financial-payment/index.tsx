@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -15,6 +16,7 @@ import { FinancialPaymentTable } from './components/financial-payment-table'
 import { useFinancialPaymentList } from './data/hooks'
 
 export function FinancialPaymentReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -91,10 +93,12 @@ export function FinancialPaymentReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Financial Payment Report
+                            {t('financialTransactionReports.payment.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage financial payment transactions and records
+                            {t(
+                                'financialTransactionReports.payment.description'
+                            )}
                         </p>
                     </div>
                     <FinancialPaymentPrimaryButtons />
