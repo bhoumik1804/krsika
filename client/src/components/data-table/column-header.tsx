@@ -5,6 +5,8 @@ import {
   EyeNoneIcon,
 } from '@radix-ui/react-icons'
 import { type Column } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
+import { useLocation } from 'react-router'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -26,6 +28,12 @@ export function DataTableColumnHeader<TData, TValue>({
   title,
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
+  const { t } = useTranslation('mill-staff')
+  const { pathname } = useLocation()
+  const isMillStaffRoute = pathname === '/staff' || pathname.startsWith('/staff/')
+  const ascLabel = isMillStaffRoute ? t('common.sortAsc') : 'Asc'
+  const descLabel = isMillStaffRoute ? t('common.sortDesc') : 'Desc'
+
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>
   }
@@ -52,13 +60,13 @@ export function DataTableColumnHeader<TData, TValue>({
         <DropdownMenuContent align='start'>
           <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
             <ArrowUpIcon className='size-3.5 text-muted-foreground/70' />
-            Asc
+            {ascLabel}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
             <ArrowDownIcon className='size-3.5 text-muted-foreground/70' />
-            Desc
+            {descLabel}
           </DropdownMenuItem>
-          {column.getCanHide() && (
+          {column.getCanHide() && !isMillStaffRoute && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>

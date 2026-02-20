@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/popover'
 import { brokerTransactionSchema, type BrokerTransaction } from '../data/schema'
 
+import { useTranslation } from 'react-i18next'
 type BrokerTransactionActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -42,6 +43,7 @@ export function BrokerTransactionActionDialog({
     onOpenChange,
     currentRow,
 }: BrokerTransactionActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -433,9 +435,7 @@ export function BrokerTransactionActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
-                            >
-                                Cancel
-                            </Button>
+                            >{t('common.cancel')}</Button>
                             <Button type='submit'>
                                 {isEditing ? 'Update' : 'Add'} Transaction
                             </Button>

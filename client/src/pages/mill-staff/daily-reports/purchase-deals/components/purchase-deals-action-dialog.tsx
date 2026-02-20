@@ -39,6 +39,7 @@ import {
 } from '@/components/ui/select'
 import { purchaseDealSchema, type PurchaseDeal } from '../data/schema'
 
+import { useTranslation } from 'react-i18next'
 type PurchaseDealsActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -50,6 +51,7 @@ export function PurchaseDealsActionDialog({
     onOpenChange,
     currentRow,
 }: PurchaseDealsActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -336,9 +338,7 @@ export function PurchaseDealsActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
-                            >
-                                Cancel
-                            </Button>
+                            >{t('common.cancel')}</Button>
                             <Button type='submit'>
                                 {isEditing ? 'Update' : 'Add'} Deal
                             </Button>

@@ -901,7 +901,7 @@ export function RiceActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading

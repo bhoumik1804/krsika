@@ -38,6 +38,7 @@ import {
 } from '@/components/ui/select'
 import { productionSchema, type ProductionEntry } from '../data/schema'
 
+import { useTranslation } from 'react-i18next'
 type ProductionActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -49,6 +50,7 @@ export function ProductionActionDialog({
     onOpenChange,
     currentRow,
 }: ProductionActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -337,9 +339,7 @@ export function ProductionActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
-                            >
-                                Cancel
-                            </Button>
+                            >{t('common.cancel')}</Button>
                             <Button type='submit'>
                                 {isEditing ? 'Update' : 'Add'} Entry
                             </Button>

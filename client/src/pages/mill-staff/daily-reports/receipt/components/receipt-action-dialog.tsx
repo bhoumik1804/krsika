@@ -38,6 +38,7 @@ import {
 } from '@/components/ui/select'
 import { receiptSchema, type ReceiptEntry } from '../data/schema'
 
+import { useTranslation } from 'react-i18next'
 type ReceiptActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -49,6 +50,7 @@ export function ReceiptActionDialog({
     onOpenChange,
     currentRow,
 }: ReceiptActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -333,9 +335,7 @@ export function ReceiptActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
-                            >
-                                Cancel
-                            </Button>
+                            >{t('common.cancel')}</Button>
                             <Button type='submit'>
                                 {isEditing ? 'Update' : 'Add'} Receipt
                             </Button>

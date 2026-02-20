@@ -18,8 +18,8 @@ import { type SidebarData } from '../types'
 
 export const getMillAdminSidebarData = (millId: string): SidebarData => ({
     user: {
-        name: 'Mill Admin',
-        email: 'admin@yourmill.com',
+        name: 'User',
+        email: '',
         avatar: '/avatars/mill-admin.jpg',
         role: 'mill-admin',
     },

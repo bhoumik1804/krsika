@@ -38,6 +38,7 @@ import {
 } from '@/components/ui/select'
 import { millingSchema, type MillingEntry } from '../data/schema'
 
+import { useTranslation } from 'react-i18next'
 type MillingActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -49,6 +50,7 @@ export function MillingActionDialog({
     onOpenChange,
     currentRow,
 }: MillingActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -384,9 +386,7 @@ export function MillingActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
-                            >
-                                Cancel
-                            </Button>
+                            >{t('common.cancel')}</Button>
                             <Button type='submit'>
                                 {isEditing ? 'Update' : 'Add'} Entry
                             </Button>

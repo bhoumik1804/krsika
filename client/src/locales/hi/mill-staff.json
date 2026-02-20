@@ -7,20 +7,23 @@
         "edit": "संपादित करें",
         "cancel": "रद्द करें",
         "enter": "दर्ज करें",
-        "enterValue": "मान दर्ज करें",
-        "search": "खोजें...",
-        "searchObject": "{{object}} खोजें...",
+        "enterValue": "Enter value",
+        "search": "Search...",
+        "searchObject": "Search...",
         "manualEntry": "मैनुअल प्रविष्टि",
         "uploadFile": "फ़ाइल अपलोड करें",
         "uploading": "अपलोड हो रहा है",
         "upload": "अपलोड",
         "noResults": "कोई परिणाम नहीं मिला",
         "pickDate": "तारीख चुनें",
-        "selectType": "प्रकार चुनें",
+        "selectType": "Select type",
         "updateDetails": "दर्ज विवरण अपडेट करें",
         "errorLoadingData": "डेटा लोड करने में त्रुटि",
         "delete": "हटाएं",
-        "openMenu": "मेनू खोलें"
+        "openMenu": "मेनू खोलें",
+        "sortAsc": "आरोही",
+        "sortDesc": "अवरोही",
+        "deleting": "हटा रहे हैं..."
     },
     "dashboard": {
         "title": "डैशबोर्ड",
@@ -646,7 +649,10 @@
             "description": "चावल खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
             "form": {
                 "title": "चावल खरीदी जोड़ें",
-                "description": "चावल खरीदी विवरण दर्ज करें",
+                "description": {
+                    "add": "चावल खरीदी विवरण दर्ज करें",
+                    "update": "दर्ज चावल खरीदी विवरण अपडेट करें"
+                },
                 "primaryButton": "चावल खरीदी जोड़ें",
                 "fields": {
                     "date": "दिनांक",
@@ -675,7 +681,10 @@
             "description": "बारदाना खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
             "form": {
                 "title": "बारदाना खरीदी जोड़ें",
-                "description": "बारदाना खरीदी विवरण दर्ज करें",
+                "description": {
+                    "add": "बारदाना खरीदी विवरण दर्ज करें",
+                    "update": "दर्ज बारदाना खरीदी विवरण अपडेट करें"
+                },
                 "primaryButton": "बारदाना खरीदी जोड़ें",
                 "fields": {
                     "date": "दिनांक",
@@ -695,7 +704,10 @@
             "description": "FRK खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
             "form": {
                 "title": "FRK खरीदी जोड़ें",
-                "description": "FRK खरीदी विवरण दर्ज करें",
+                "description": {
+                    "add": "FRK खरीदी विवरण दर्ज करें",
+                    "update": "दर्ज FRK खरीदी विवरण अपडेट करें"
+                },
                 "primaryButton": "FRK खरीदी जोड़ें",
                 "fields": {
                     "date": "दिनांक",
@@ -712,7 +724,10 @@
             "description": "अन्य खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
             "form": {
                 "title": "अन्य खरीदी जोड़ें",
-                "description": "अन्य खरीदी विवरण दर्ज करें",
+                "description": {
+                    "add": "अन्य खरीदी विवरण दर्ज करें",
+                    "update": "दर्ज अन्य खरीदी विवरण अपडेट करें"
+                },
                 "primaryButton": "अन्य खरीदी जोड़ें",
                 "fields": {
                     "date": "दिनांक",
@@ -1397,7 +1412,6 @@
             "export": "निर्यात करें"
         }
     },
-  
     "sidebar": {
         "dashboard": "डैशबोर्ड",
         "overview": "अवलोकन",
@@ -1597,6 +1611,18 @@
                         "balance": "शेष",
                         "balanceLifting": "उठाव शेष"
                     }
+                },
+                "primaryButton": "बिक्री जोड़ें",
+                "actions": {
+                    "deleteSelected": "चयनित हटाएं",
+                    "deleteSelectedSales": "चयनित बिक्री हटाएं",
+                    "deleteSaleTitle": "बिक्री हटाएं?",
+                    "deleteSaleMessagePrefix": "क्या आप वाकई यह बिक्री रिकॉर्ड हटाना चाहते हैं",
+                    "cannotUndo": "यह क्रिया पूर्ववत नहीं की जा सकती।",
+                    "deleteCountTitle": "{{count}} {{entity}} हटाएं?",
+                    "sales": "बिक्री रिकॉर्ड",
+                    "sale": "बिक्री रिकॉर्ड",
+                    "deleteSelectedSalesConfirm": "क्या आप चयनित बिक्री रिकॉर्ड हटाना चाहते हैं?"
                 }
             }
         },
@@ -1629,8 +1655,21 @@
                         "plasticGunnyRate": "प्लास्टिक बारदाना दर",
                         "frkType": "FRK",
                         "frkRatePerQuintal": "FRK दर/क्विंटल",
-                        "lotNumber": "लॉट नंबर"
+                        "lotNumber": "लॉट नंबर",
+                        "outwardLotDeposit": "जावक / LOT जमा",
+                        "outwardBalance": "जावक शेष"
                     }
+                },
+                "actions": {
+                    "deleteSelected": "चयनित हटाएं",
+                    "deleteSelectedEntries": "चयनित प्रविष्टियां हटाएं",
+                    "deleteEntryTitle": "प्रविष्टि हटाएं?",
+                    "deleteEntryMessagePrefix": "क्या आप वाकई यह जावक प्रविष्टि हटाना चाहते हैं",
+                    "cannotUndo": "यह क्रिया पूर्ववत नहीं की जा सकती।",
+                    "deleteCountTitle": "{{count}} {{entity}} हटाएं?",
+                    "entries": "प्रविष्टियां",
+                    "entry": "प्रविष्टि",
+                    "deleteSelectedEntriesConfirm": "क्या आप चयनित प्रविष्टियां हटाना चाहते हैं?"
                 }
             }
         }

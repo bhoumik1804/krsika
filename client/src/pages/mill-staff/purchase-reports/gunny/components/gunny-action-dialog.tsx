@@ -508,9 +508,7 @@ export function GunnyActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
-                            >
-                                Cancel
-                            </Button>
+                            >{t('common.cancel')}</Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
