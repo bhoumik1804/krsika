@@ -37,7 +37,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                     }}
                 >
                     <Pen className='mr-2 h-3.5 w-3.5 text-muted-foreground/70' />
-                    Edit
+                    {t('common.edit')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -47,7 +47,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                     }}
                 >
                     <Trash2 className='mr-2 h-3.5 w-3.5 text-muted-foreground/70' />
-                    Delete
+                    {t('common.delete')}
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

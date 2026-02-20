@@ -20,6 +20,7 @@ type DataTableRowActionsProps = {
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     const { t } = useTranslation('mill-staff')
+    const { t } = useTranslation()
     const { setOpen, setCurrentRow } = useRiceSales()
     return (
         <>

@@ -12,12 +12,15 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { type BalanceLiftingPurchasesRice } from '../data/schema'
 import { useBalanceLiftingPurchasesRice } from './balance-lifting-purchases-rice-provider'
+import { useTranslation } from 'react-i18next'
 
 type DataTableRowActionsProps = {
     row: Row<BalanceLiftingPurchasesRice>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
+        const { t } = useTranslation('mill-staff')
+    
     const { setOpen, setCurrentRow } = useBalanceLiftingPurchasesRice()
     return (
         <DropdownMenu modal={false}>
@@ -49,7 +52,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                         setOpen('edit')
                     }}
                 >
-                    Edit
+                    {t('common.edit')}
                     <DropdownMenuShortcut>
                         <Wrench size={16} />
                     </DropdownMenuShortcut>
@@ -62,7 +65,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                     }}
                     className='text-red-500!'
                 >
-                    Delete
+                    {t('common.delete')}
                     <DropdownMenuShortcut>
                         <Trash2 size={16} />
                     </DropdownMenuShortcut>
