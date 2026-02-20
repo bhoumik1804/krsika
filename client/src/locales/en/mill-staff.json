@@ -1562,6 +1562,7 @@
             "rice": {
                 "title": "Rice Purchase Report",
                 "description": "Manage Rice purchase transactions and records",
+                "primaryButton": "Add Purchase",
                 "form": {
                     "title_add": "Add Rice Purchase",
                     "title_edit": "Edit Rice Purchase",
@@ -1611,6 +1612,7 @@
             "gunny": {
                 "title": "Gunny Purchase Report",
                 "description": "View and manage gunny purchase records",
+                "primaryButton": "Add Purchase",
                 "form": {
                     "title_add": "Add Gunny Purchase",
                     "title_edit": "Edit Gunny Purchase",
