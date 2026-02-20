@@ -25,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type PrivatePaddyOutward } from '../data/schema'
 import type { PrivatePaddyOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { PrivatePaddyOutwardColumns as columns } from './private-paddy-outward-columns'
+import { PrivatePaddyOutwardColumns } from './private-paddy-outward-columns'
 
 type DataTableProps = {
     data: PrivatePaddyOutward[]
@@ -40,6 +40,7 @@ export function PrivatePaddyOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const columns = PrivatePaddyOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -135,10 +136,10 @@ export function PrivatePaddyOutwardTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}

@@ -24,7 +24,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statuses } from '../data/data'
 import { type KhandaOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { khandaOutwardColumns as columns } from './khanda-outward-columns'
+import { KhandaOutwardColumns } from './khanda-outward-columns'
 import { KhandaOutwardMultiDeleteDialog } from './khanda-outward-multi-delete-dialog'
 import { khandaOutward } from './khanda-outward-provider'
 
@@ -42,6 +42,7 @@ export function KhandaOutwardTable({
     pagination: serverPagination,
 }: DataTableProps) {
     const { millId, open, setOpen } = khandaOutward()
+    const columns = KhandaOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -133,10 +134,10 @@ export function KhandaOutwardTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}

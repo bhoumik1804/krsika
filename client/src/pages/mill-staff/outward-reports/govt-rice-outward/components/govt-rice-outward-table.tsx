@@ -25,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type GovtRiceOutward } from '../data/schema'
 import type { GovtRiceOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { GovtRiceOutwardColumns as columns } from './govt-rice-outward-columns'
+import { GovtRiceOutwardColumns } from './govt-rice-outward-columns'
 
 type DataTableProps = {
     data: GovtRiceOutward[]
@@ -40,6 +40,7 @@ export function GovtRiceOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const columns = GovtRiceOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -135,10 +136,10 @@ export function GovtRiceOutwardTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}

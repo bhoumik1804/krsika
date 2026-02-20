@@ -23,7 +23,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type OtherOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { otherOutwardColumns as columns } from './other-outward-columns'
+import { OtherOutwardColumns } from './other-outward-columns'
 
 type PaginationInfo = {
     page: number
@@ -47,6 +47,7 @@ export function OtherOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const columns = OtherOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -138,10 +139,10 @@ export function OtherOutwardTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}

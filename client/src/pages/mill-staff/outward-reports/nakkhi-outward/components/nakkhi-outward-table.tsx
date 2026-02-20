@@ -24,7 +24,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type NakkhiOutward } from '../data/schema'
 import type { NakkhiOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { nakkhiOutwardColumns as columns } from './nakkhi-outward-columns'
+import { NakkhiOutwardColumns } from './nakkhi-outward-columns'
 import { NakkhiOutwardMultiDeleteDialog } from './nakkhi-outward-multi-delete-dialog'
 import { nakkhiOutward } from './nakkhi-outward-provider'
 
@@ -41,6 +41,7 @@ export function NakkhiOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const columns = NakkhiOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -126,10 +127,10 @@ export function NakkhiOutwardTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}

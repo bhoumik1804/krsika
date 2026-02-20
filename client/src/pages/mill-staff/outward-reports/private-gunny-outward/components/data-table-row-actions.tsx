@@ -1,4 +1,5 @@
 import { Row } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { MoreHorizontal, Pen, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,6 +17,7 @@ interface DataTableRowActionsProps {
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
+    const { t } = useTranslation()
     const { setOpen, setCurrentRow } = usePrivateGunnyOutward()
 
     return (

@@ -25,7 +25,7 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type PrivateRiceOutward } from '../data/schema'
 import type { PrivateRiceOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { PrivateRiceOutwardColumns as columns } from './private-rice-outward-columns'
+import { PrivateRiceOutwardColumns } from './private-rice-outward-columns'
 
 type DataTableProps = {
     data: PrivateRiceOutward[]
@@ -40,6 +40,7 @@ export function PrivateRiceOutwardTable({
     navigate,
     pagination: serverPagination,
 }: DataTableProps) {
+    const columns = PrivateRiceOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -135,10 +136,10 @@ export function PrivateRiceOutwardTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}

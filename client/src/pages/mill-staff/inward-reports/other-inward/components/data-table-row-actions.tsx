@@ -1,4 +1,5 @@
 import { type Row } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { MoreHorizontal, Trash2, Wrench } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,6 +18,7 @@ type DataTableRowActionsProps = {
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
+    const { t } = useTranslation()
     const { setOpen, setCurrentRow } = useOtherInward()
     return (
         <>

@@ -22,7 +22,7 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FrkOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { frkOutwardColumns as columns } from './frk-outward-columns'
+import { FrkOutwardColumns } from './frk-outward-columns'
 import { FrkOutwardMultiDeleteDialog } from './frk-outward-multi-delete-dialog'
 import { useFrkOutward } from './frk-outward-provider'
 
@@ -49,6 +49,7 @@ export function FrkOutwardTable({
     serverPagination,
 }: DataTableProps) {
     const { open, setOpen } = useFrkOutward()
+    const columns = FrkOutwardColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -132,10 +133,10 @@ export function FrkOutwardTable({
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}
