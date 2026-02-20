@@ -23,7 +23,21 @@
         "errorLoadingData": "Error loading data",
         "sortAsc": "Asc",
         "sortDesc": "Desc",
-        "deleting": "Deleting..."
+        "deleting": "Deleting...",
+        "addedSuccessfully": "Added successfully",
+        "failedToAdd": "Failed to add",
+        "failedToUpdate": "Failed to update",
+        "updatedSuccessfully": "Updated successfully",
+        "loadingMore": "Loading more...",
+        "noDealsFound": "No deals found",
+        "purchase": "Purchase",
+        "record": "record",
+        "records": "records",
+        "saving": "Saving...",
+        "select": "Select",
+        "uCannotUndo": "This action cannot be undone.",
+        "deleteConfirmation": "Are you sure you want to delete {{item}}?",
+        "deleteConfirmationMulti": "Are you sure you want to delete selected {{item}}?"
     },
     "dashboard": {
         "title": "Dashboard",
@@ -149,7 +163,8 @@
                     "doNo": "DO Number",
                     "dhanMota": "Paddy (Mota)",
                     "dhanPatla": "Paddy (Patla)",
-                    "dhanSarna": "Paddy (Sarna)"
+                    "dhanSarna": "Paddy (Sarna)",
+                    "total": "Total"
                 }
             }
         },
@@ -260,7 +275,8 @@
                     "rstNumber": "RST No.",
                     "truckLoadWeight": "Truck Weight",
                     "riceMotaNetWeight": "Rice (Mota) Net Weight",
-                    "ricePatlaNetWeight": "Rice (Patla) Net Weight"
+                    "ricePatlaNetWeight": "Rice (Patla) Net Weight",
+                    "frkStatus": "FRK/Non FRK"
                 }
             }
         },
@@ -422,14 +438,17 @@
                 "primaryButton": "Add FRK Outward",
                 "fields": {
                     "date": "Date",
-                    "partyName": "Party Name",
+                    "partyName": {
+                        "emptyText": "Search party..."
+                    },
                     "gunnyPlastic": "Gunny (Plastic)",
                     "plasticGunnyWeight": "Plastic Gunny Weight",
                     "truckNo": "Truck Number",
                     "truckRst": "RST No.",
                     "truckWeight": "Truck Weight",
                     "gunnyWeight": "Gunny Weight",
-                    "netWeight": "Net Weight (Minus Gunny)"
+                    "netWeight": "Net Weight (Minus Gunny)",
+                    "plasticWeight": "Plastic Gunny Weight"
                 }
             }
         },
@@ -451,7 +470,11 @@
                     "rstNumber": "RST No.",
                     "truckWeight": "Truck Weight",
                     "gunnyWeight": "Gunny Weight",
-                    "netWeight": "Net Weight (Minus Gunny)"
+                    "netWeight": "Net Weight (Minus Gunny)",
+                    "khandaSaleDealNumber": "Khanda Sale Deal Number",
+                    "plasticGunnyWeight": "Plastic Gunny Weight",
+                    "truckNo": "Truck Number",
+                    "truckRst": "RST No."
                 }
             }
         },
@@ -475,7 +498,9 @@
                     "rstNumber": "RST No.",
                     "truckWeight": "Truck Weight",
                     "gunnyWeight": "Gunny Weight",
-                    "netWeight": "Net Weight (Minus Gunny)"
+                    "netWeight": "Net Weight (Minus Gunny)",
+                    "truckNo": "Truck Number",
+                    "truckRst": "RST No."
                 }
             }
         },
@@ -495,7 +520,10 @@
                     "brokerage": "Brokerage (Per Ton)",
                     "truckNumber": "Truck Number",
                     "rstNumber": "RST No.",
-                    "truckWeight": "Truck Weight"
+                    "truckWeight": "Truck Weight",
+                    "bhusaSaleDealNumber": "Bhusa Purchase Deal Number",
+                    "truckNo": "Truck Number",
+                    "truckRst": "RST No."
                 }
             }
         },
@@ -558,7 +586,7 @@
                 "primaryButton": "Add Other Inward",
                 "fields": {
                     "date": "Date",
-                    "otherSaleDealNumber": "Other Sale Deal Number",
+                    "otherSaleDealNumber": "Deal Number",
                     "itemName": "Item Name",
                     "dealQuantity": "Deal Quantity",
                     "quantityType": "Quantity Type",
@@ -573,7 +601,10 @@
                     "rstNumber": "RST No.",
                     "truckWeight": "Truck Weight",
                     "gunnyWeight": "Gunny Weight",
-                    "netWeight": "Net Weight (Minus Gunny)"
+                    "netWeight": "Net Weight (Minus Gunny)",
+                    "quantity": "Deal Quantity",
+                    "truckNo": "Truck Number",
+                    "truckRst": "RST No."
                 }
             }
         },
@@ -592,7 +623,8 @@
                     "oldGunnyQty": "Old Gunny Quantity",
                     "plasticGunnyQty": "Plastic Gunny Quantity",
                     "truckNo": "Truck Number"
-                }
+                },
+                "title": "Add Govt Gunny Outward"
             }
         },
         "privateGunnyOutward": {
@@ -611,7 +643,8 @@
                     "oldGunnyQty": "Old Gunny Quantity",
                     "plasticGunnyQty": "Plastic Gunny Quantity",
                     "truckNo": "Truck Number"
-                }
+                },
+                "title": "Add Private Gunny Outward"
             }
         }
     },
@@ -1299,7 +1332,11 @@
             "supervisor": "Supervisor",
             "operator": "Operator",
             "accountant": "Accountant"
-        }
+        },
+        "staffMember": "staff member",
+        "activateSelected": "Activate selected",
+        "deactivateSelected": "Deactivate selected",
+        "deleteSelected": "Delete selected"
     },
     "dailyReports": {
         "sidebarTitle": "Daily Reports",
@@ -1506,6 +1543,7 @@
             "paddy": {
                 "title": "Paddy Purchase Report",
                 "description": "Manage paddy purchase transactions and records",
+                "primaryButton": "Add Purchase",
                 "form": {
                     "title_add": "Add Paddy Purchase",
                     "title_edit": "Edit Paddy Purchase",
@@ -1673,5 +1711,10 @@
                 }
             }
         }
+    },
+    "attendance": {
+        "present": "Present",
+        "absent": "Absent",
+        "halfDay": "Half Day"
     }
 }

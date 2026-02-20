@@ -140,9 +140,7 @@ export function LabourGroupReportActionDialog({
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder={t(
-                                                'inputReports.labourGroup.form.fields.labourTeamName'
-                                            )}
+                                            placeholder='Labour Group Name'
                                             disabled={isLoading}
                                             {...field}
                                         />
@@ -164,8 +162,8 @@ export function LabourGroupReportActionDialog({
                                 {isLoading
                                     ? 'Loading...'
                                     : t(
-                                          'inputReports.labourGroup.form.primaryButton'
-                                      )}
+                                        'inputReports.labourGroup.form.primaryButton'
+                                    )}
                             </Button>
                         </DialogFooter>
                     </form>

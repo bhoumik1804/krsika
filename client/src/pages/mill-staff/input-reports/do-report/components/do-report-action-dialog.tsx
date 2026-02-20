@@ -301,12 +301,12 @@ export function DoReportActionDialog({
                                                                 <CalendarIcon className='mr-2 h-4 w-4' />
                                                                 {field.value
                                                                     ? format(
-                                                                          new Date(
-                                                                              field.value
-                                                                          ),
-                                                                          'MMM dd, yyyy'
-                                                                      )
-                                                                    : 'Pick a date'}
+                                                                        new Date(
+                                                                            field.value
+                                                                        ),
+                                                                        'MMM dd, yyyy'
+                                                                    )
+                                                                    : t('common.pickDate')}
                                                             </Button>
                                                         </FormControl>
                                                     </PopoverTrigger>
@@ -319,8 +319,8 @@ export function DoReportActionDialog({
                                                             selected={
                                                                 field.value
                                                                     ? new Date(
-                                                                          field.value
-                                                                      )
+                                                                        field.value
+                                                                    )
                                                                     : undefined
                                                             }
                                                             onSelect={(
@@ -329,9 +329,9 @@ export function DoReportActionDialog({
                                                                 field.onChange(
                                                                     date
                                                                         ? format(
-                                                                              date,
-                                                                              'yyyy-MM-dd'
-                                                                          )
+                                                                            date,
+                                                                            'yyyy-MM-dd'
+                                                                        )
                                                                         : ''
                                                                 )
                                                             }}
@@ -361,9 +361,7 @@ export function DoReportActionDialog({
                                                         paginatedList={
                                                             committee
                                                         }
-                                                        placeholder={t(
-                                                            'inputReports.do.form.fields.samitiSangrahan'
-                                                        )}
+                                                        placeholder='Committee Collection'
                                                         emptyText={t(
                                                             'common.noResults'
                                                         )}
@@ -385,9 +383,7 @@ export function DoReportActionDialog({
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
-                                                        placeholder={t(
-                                                            'inputReports.do.form.fields.doNo'
-                                                        )}
+                                                        placeholder='DO Number'
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -424,8 +420,8 @@ export function DoReportActionDialog({
                                                                 value === ''
                                                                     ? ''
                                                                     : Number(
-                                                                          value
-                                                                      )
+                                                                        value
+                                                                    )
                                                             )
                                                         }}
                                                     />
@@ -462,8 +458,8 @@ export function DoReportActionDialog({
                                                                 value === ''
                                                                     ? ''
                                                                     : Number(
-                                                                          value
-                                                                      )
+                                                                        value
+                                                                    )
                                                             )
                                                         }}
                                                     />
@@ -500,8 +496,8 @@ export function DoReportActionDialog({
                                                                 value === ''
                                                                     ? ''
                                                                     : Number(
-                                                                          value
-                                                                      )
+                                                                        value
+                                                                    )
                                                             )
                                                         }}
                                                     />
@@ -598,7 +594,7 @@ export function DoReportActionDialog({
 
                                             {parseStats?.errorDetails &&
                                                 parseStats.errorDetails.length >
-                                                    0 && (
+                                                0 && (
                                                     <div className='mt-3'>
                                                         <p className='mb-2 text-xs font-semibold text-gray-600'>
                                                             Error Details:
@@ -655,7 +651,7 @@ export function DoReportActionDialog({
                                                                     >
                                                                         {
                                                                             fieldLabels[
-                                                                                field
+                                                                            field
                                                                             ]
                                                                         }
                                                                     </TableCell>
@@ -683,7 +679,7 @@ export function DoReportActionDialog({
                                                                             >
                                                                                 {formatPreviewCell(
                                                                                     row[
-                                                                                        field as keyof DoReportData
+                                                                                    field as keyof DoReportData
                                                                                     ]
                                                                                 )}
                                                                             </TableCell>
@@ -721,17 +717,17 @@ export function DoReportActionDialog({
                             >
                                 {isLoading
                                     ? activeTab === 'upload' &&
-                                      previewData.length > 0
+                                        previewData.length > 0
                                         ? t('common.uploading') + '...'
                                         : isEditing
-                                          ? t('common.update') + '...'
-                                          : t('common.add') + '...'
+                                            ? t('common.update') + '...'
+                                            : t('common.add') + '...'
                                     : activeTab === 'upload' &&
                                         previewData.length > 0
-                                      ? `${t('common.upload')} ${previewData.length} ${previewData.length > 1 ? t('inputReports.do.title').replace(' Report', 's') : t('inputReports.do.title').replace(' Report', '')}`
-                                      : isEditing
-                                        ? t('common.update')
-                                        : t('common.add')}{' '}
+                                        ? `${t('common.upload')} ${previewData.length} ${previewData.length > 1 ? t('inputReports.do.title').replace(' Report', 's') : t('inputReports.do.title').replace(' Report', '')}`
+                                        : isEditing
+                                            ? t('common.update')
+                                            : t('common.add')}{' '}
                                 {activeTab === 'manual' &&
                                     t('inputReports.do.title').replace(
                                         ' Report',
