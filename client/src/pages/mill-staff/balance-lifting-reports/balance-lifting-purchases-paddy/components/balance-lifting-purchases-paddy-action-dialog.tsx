@@ -12,7 +12,6 @@ import { Calendar } from '@/components/ui/calendar'
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
@@ -134,15 +133,7 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                 'balanceLifting.purchase.paddy.form.title_add'
                             )}
                     </DialogTitle>
-                    <DialogDescription>
-                        {isEditing
-                            ? t(
-                                'balanceLifting.purchase.paddy.form.description_edit'
-                            )
-                            : t(
-                                'balanceLifting.purchase.paddy.form.description_add'
-                            )}
-                    </DialogDescription>
+
                 </DialogHeader>
                 <Form {...form}>
                     <form
@@ -157,7 +148,7 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Paddy Purchase Deal Number
+                                                {t('balanceLifting.purchase.paddy.form.fields.dealNumber')}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -443,8 +434,8 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.updating')
+                                        : t('common.adding')
                                     : isEditing
                                         ? t('common.update')
                                         : t('common.add')}

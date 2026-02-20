@@ -232,7 +232,10 @@ export function FrkOutwardActionDialog({
                                                 paginatedList={party}
                                                 placeholder='Select party'
                                                 emptyText={t(
-                                                    'outward.frkOutward.form.fields.partyName.emptyText'
+                                                    'common.searchObject',
+                                                    {
+                                                        object: 'party',
+                                                    }
                                                 )}
                                             />
                                         </FormControl>

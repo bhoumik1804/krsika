@@ -129,9 +129,7 @@ export function PartyReportActionDialog({
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder={t(
-                                                        'inputReports.party.form.fields.partyName'
-                                                    )}
+                                                    placeholder='Party Name'
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -151,9 +149,7 @@ export function PartyReportActionDialog({
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder={t(
-                                                        'inputReports.party.form.fields.gstn'
-                                                    )}
+                                                    placeholder='GSTN'
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -173,9 +169,7 @@ export function PartyReportActionDialog({
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder={t(
-                                                        'inputReports.party.form.fields.phone'
-                                                    )}
+                                                    placeholder='Phone No.'
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -196,9 +190,7 @@ export function PartyReportActionDialog({
                                             <FormControl>
                                                 <Input
                                                     type='email'
-                                                    placeholder={t(
-                                                        'inputReports.party.form.fields.email'
-                                                    )}
+                                                    placeholder='Email'
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -218,9 +210,7 @@ export function PartyReportActionDialog({
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder={t(
-                                                        'inputReports.party.form.fields.address'
-                                                    )}
+                                                    placeholder='Address'
                                                     {...field}
                                                 />
                                             </FormControl>

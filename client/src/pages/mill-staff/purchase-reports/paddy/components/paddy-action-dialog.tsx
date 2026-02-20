@@ -196,8 +196,8 @@ export function PaddyActionDialog({
                     <DialogTitle>
                         {isEditing
                             ? t('common.edit') +
-                              ' ' +
-                              t('purchaseReports.paddy.title')
+                            ' ' +
+                            t('purchaseReports.paddy.title')
                             : t('purchaseReports.paddy.form.title')}
                     </DialogTitle>
                     <DialogDescription>
@@ -239,11 +239,11 @@ export function PaddyActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
+                                                                    new Date(
+                                                                        field.value
+                                                                    ),
+                                                                    'MMM dd, yyyy'
+                                                                )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -257,17 +257,17 @@ export function PaddyActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                      field.value
-                                                                  )
+                                                                    field.value
+                                                                )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -850,8 +850,8 @@ export function PaddyActionDialog({
                                         ? t('common.updating')
                                         : t('common.adding')
                                     : isEditing
-                                      ? t('common.update')
-                                      : t('common.add')}
+                                        ? t('common.update')
+                                        : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

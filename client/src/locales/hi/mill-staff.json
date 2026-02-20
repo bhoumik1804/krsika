@@ -23,7 +23,21 @@
         "openMenu": "मेनू खोलें",
         "sortAsc": "आरोही",
         "sortDesc": "अवरोही",
-        "deleting": "हटा रहे हैं..."
+        "deleting": "हटा रहे हैं...",
+        "addedSuccessfully": "सफलतापूर्वक जोड़ा गया",
+        "failedToAdd": "जोड़ने में विफल",
+        "failedToUpdate": "अपडेट करने में विफल",
+        "updatedSuccessfully": "सफलतापूर्वक अपडेट किया गया",
+        "loadingMore": "और लोड हो रहा है...",
+        "noDealsFound": "कोई सौदा नहीं मिला",
+        "purchase": "खरीदी",
+        "record": "रिकॉर्ड",
+        "records": "रिकॉर्ड्स",
+        "saving": "सहेजा जा रहा है...",
+        "select": "चुनें",
+        "uCannotUndo": "यह क्रिया को पूर्ववत नहीं किया जा सकता है",
+        "deleteConfirmation": "क्या आप {{item}} हटाना चाहते हैं?",
+        "deleteConfirmationMulti": "क्या आप सभी {{item}} हटाना चाहते हैं?"
     },
     "dashboard": {
         "title": "डैशबोर्ड",
@@ -187,7 +201,7 @@
                     "plasticWeight": "प्लास्टिक बारदाना वजन",
                     "gunnyWeight": "बारदाना वजन (क्विंटल में.)",
                     "truckNumber": "गाड़ी नंबर",
-                    "rstNumber": "RST No.",
+                    "rstNumber": "RST नंबर",
                     "truckLoadWeight": "गाड़ी वजन  (क्विंटल में.)",
                     "paddyType": "आवक धान का प्रकार",
                     "paddyMota": "धान(मोटा) नेट वजन",
@@ -222,7 +236,7 @@
                     "plasticWeight": "प्लास्टिक बारदाना वजन",
                     "gunnyWeight": "बारदाना वजन",
                     "truckNumber": "गाड़ी नंबर",
-                    "rstNumber": "RST No.",
+                    "rstNumber": "RST नंबर",
                     "truckLoadWeight": "गाड़ी वजन  (क्विंटल में.)",
                     "paddyType": "धान का प्रकार",
                     "paddyMota": "धान(मोटा) नेट वजन",
@@ -248,7 +262,7 @@
                     "riceType": "चावल का प्रकार",
                     "balanceInward": "आवक शेष/ LOT जमा शेष",
                     "inwardType": "आवक / LOT",
-                    "lotNumber": "LOT No.",
+                    "lotNumber": "LOT नंबर",
                     "frkOrNAN": "FRK/NON FRK",
                     "gunnyOption": "बारदाना",
                     "gunnyNew": "बारदाना (नया)",
@@ -258,10 +272,11 @@
                     "plasticWeight": "प्लास्टिक बारदाना वजन",
                     "gunnyWeight": "बारदाना वजन",
                     "truckNumber": "गाड़ी नंबर",
-                    "rstNumber": "RST No.",
+                    "rstNumber": "RST नंबर",
                     "truckLoadWeight": "गाड़ी वजन",
                     "riceMotaNetWeight": "चावल(मोटा) नेट वजन",
-                    "ricePatlaNetWeight": "चावल(पतला) नेट वजन"
+                    "ricePatlaNetWeight": "चावल(पतला) नेट वजन",
+                    "frkStatus": "FRK/NON FRK"
                 }
             }
         },
@@ -298,7 +313,7 @@
                     "gunnyPlastic": "बारदाना (प्लास्टिक)",
                     "plasticWeight": "प्लास्टिक बारदाना वजन",
                     "truckNumber": "गाड़ी नंबर",
-                    "rstNumber": "RST No.",
+                    "rstNumber": "RST नंबर",
                     "truckWeight": "गाड़ी वजन",
                     "gunnyWeight": "बारदाना वजन",
                     "netWeight": "नेट वजन (बारदाना घटा कर)"
@@ -326,7 +341,7 @@
                     "juteGunnyWeight": "जुट बारदाना वजन",
                     "plasticGunnyWeight": "प्लास्टिक बारदाना वजन",
                     "truckNumber": "गाड़ी नंबर",
-                    "rstNumber": "RST No.",
+                    "rstNumber": "RST नंबर",
                     "truckWeight": "गाड़ी वजन",
                     "gunnyWeight": "बारदाना वजन",
                     "netWeight": "नेट वजन (बारदाना घटा कर)"
@@ -355,7 +370,7 @@
                     "juteWeight": "जुट बारदाना वजन",
                     "plasticWeight": "प्लास्टिक बारदाना वजन",
                     "truckNumber": "गाड़ी नंबर",
-                    "rstNumber": "RST No.",
+                    "rstNumber": "RST नंबर",
                     "truckWeight": "गाड़ी वजन",
                     "gunnyWeight": "बारदाना वजन",
                     "netWeight": "नेट वजन (बारदाना घटा कर)"
@@ -371,14 +386,14 @@
                 "primaryButton": "शासकीय चावल जावक जोड़ें",
                 "fields": {
                     "date": "दिनांक",
-                    "lotNo": "LOT No.",
+                    "lotNo": "LOT नंबर",
                     "fciNan": "FCI/NAN",
                     "riceType": "चावल का प्रकार",
                     "gunnyNew": "बारदाना (नया)",
                     "gunnyOld": "बारदाना (पुराना)",
                     "juteWeight": "जुट बारदाना वजन",
                     "truckNo": "गाड़ी नंबर",
-                    "truckRst": "RST No.",
+                    "truckRst": "RST नंबर",
                     "truckWeight": "गाड़ी वजन",
                     "gunnyWeight": "बारदाना वजन",
                     "netWeight": "नेट वजन (बारदाना घटा कर)"
@@ -397,7 +412,7 @@
                     "riceSaleDealNumber": "चावल बिक्री सौदा क्रमांक",
                     "partyName": "पार्टी का नाम",
                     "brokerName": "ब्रोकर का नाम",
-                    "lotNo": "LOT No.",
+                    "lotNo": "LOT नंबर",
                     "fciNan": "FCI/NAN",
                     "riceType": "चावल का प्रकार",
                     "riceQty": "चावल मात्रा",
@@ -407,7 +422,7 @@
                     "juteWeight": "जुट बारदाना वजन",
                     "plasticWeight": "प्लास्टिक बारदाना वजन",
                     "truckNumber": "गाड़ी नंबर",
-                    "truckRst": "RST No.",
+                    "truckRst": "RST नंबर",
                     "truckWeight": "गाड़ी वजन",
                     "gunnyWeight": "बारदाना वजन",
                     "netWeight": "नेट वजन (बारदाना घटा कर)"
@@ -441,14 +456,17 @@
                 "primaryButton": "FRK जावक जोड़ें",
                 "fields": {
                     "date": "दिनांक",
-                    "partyName": "पार्टी का नाम",
+                    "partyName": {
+                        "emptyText": "Search party..."
+                    },
                     "gunnyPlastic": "बारदाना (प्लास्टिक)",
                     "plasticGunnyWeight": "प्लास्टिक बारदाना वजन",
                     "truckNo": "गाड़ी नंबर",
-                    "truckRst": "RST No.",
+                    "truckRst": "RST नंबर",
                     "truckWeight": "गाड़ी वजन",
                     "gunnyWeight": "बारदाना वजन",
-                    "netWeight": "नेट वजन (बारदाना घटा कर)"
+                    "netWeight": "नेट वजन (बारदाना घटा कर)",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन"
                 }
             }
         },
@@ -467,10 +485,14 @@
                     "gunnyPlastic": "बारदाना (प्लास्टिक)",
                     "plasticWeight": "प्लास्टिक बारदाना वजन",
                     "truckNumber": "गाड़ी नंबर",
-                    "rstNumber": "RST No.",
+                    "rstNumber": "RST नंबर",
                     "truckWeight": "गाड़ी वजन",
                     "gunnyWeight": "बारदाना वजन",
-                    "netWeight": "नेट वजन (बारदाना घटा कर)"
+                    "netWeight": "नेट वजन (बारदाना घटा कर)",
+                    "khandaSaleDealNumber": "सौदा क्रमांक",
+                    "plasticGunnyWeight": "प्लास्टिक बारदाना वजन",
+                    "truckNo": "गाड़ी नंबर",
+                    "truckRst": "RST नंबर"
                 }
             }
         },
@@ -483,7 +505,7 @@
                 "primaryButton": "नक्खी जावक जोड़ें",
                 "fields": {
                     "date": "दिनांक",
-                    "nakkhiSaleDealNumber": "नक्खी बिक्री सौदा क्रमांक",
+                    "nakkhiSaleDealNumber": "सौदा क्रमांक",
                     "partyName": "पार्टी का नाम",
                     "brokerName": "ब्रोकर का नाम",
                     "rate": "दर",
@@ -491,10 +513,12 @@
                     "gunnyPlastic": "बारदाना (प्लास्टिक)",
                     "plasticWeight": "प्लास्टिक बारदाना वजन",
                     "truckNumber": "गाड़ी नंबर",
-                    "rstNumber": "RST No.",
+                    "rstNumber": "RST नंबर",
                     "truckWeight": "गाड़ी वजन",
                     "gunnyWeight": "बारदाना वजन",
-                    "netWeight": "नेट वजन (बारदाना घटा कर)"
+                    "netWeight": "नेट वजन (बारदाना घटा कर)",
+                    "truckNo": "गाड़ी नंबर",
+                    "truckRst": "RST नंबर"
                 }
             }
         },
@@ -513,8 +537,11 @@
                     "rate": "दर",
                     "brokerage": "दलाली (प्रति टन)",
                     "truckNumber": "गाड़ी नंबर",
-                    "rstNumber": "RST No.",
-                    "truckWeight": "गाड़ी वजन"
+                    "rstNumber": "RST नंबर",
+                    "truckWeight": "गाड़ी वजन",
+                    "bhusaSaleDealNumber": "भूसा खरीदी सौदा क्रमांक",
+                    "truckNo": "गाड़ी नंबर",
+                    "truckRst": "RST नंबर"
                 }
             }
         },
@@ -536,7 +563,7 @@
                     "gunnyPlastic": "बारदाना (प्लास्टिक)",
                     "plasticWeight": "प्लास्टिक बारदाना वजन",
                     "truckNumber": "गाड़ी नंबर",
-                    "rstNumber": "RST No.",
+                    "rstNumber": "RST नंबर",
                     "truckWeight": "गाड़ी वजन",
                     "gunnyWeight": "बारदाना वजन",
                     "netWeight": "नेट वजन (बारदाना घटा कर)"
@@ -561,7 +588,7 @@
                     "gunnyPlastic": "बारदाना (प्लास्टिक)",
                     "plasticWeight": "प्लास्टिक बारदाना वजन",
                     "truckNumber": "गाड़ी नंबर",
-                    "rstNumber": "RST No.",
+                    "rstNumber": "RST नंबर",
                     "truckWeight": "गाड़ी वजन",
                     "gunnyWeight": "बारदाना वजन",
                     "netWeight": "नेट वजन (बारदाना घटा कर)"
@@ -577,7 +604,7 @@
                 "primaryButton": "अन्य जावक जोड़ें",
                 "fields": {
                     "date": "दिनांक",
-                    "otherSaleDealNumber": "अन्य बिक्री सौदा क्रमांक",
+                    "otherSaleDealNumber": "सौदा क्रमांक",
                     "itemName": "वस्तु का नाम",
                     "dealQuantity": "सौदे में मात्रा",
                     "quantityType": "मात्रा का प्रकार",
@@ -589,10 +616,13 @@
                     "juteWeight": "जुट बारदाना वजन",
                     "plasticWeight": "प्लास्टिक बारदाना वजन",
                     "truckNumber": "गाड़ी नंबर",
-                    "rstNumber": "RST No.",
+                    "rstNumber": "RST नंबर",
                     "truckWeight": "गाड़ी वजन",
                     "gunnyWeight": "बारदाना वजन",
-                    "netWeight": "नेट वजन (बारदाना घटा कर)"
+                    "netWeight": "नेट वजन (बारदाना घटा कर)",
+                    "quantity": "सौदे में मात्रा",
+                    "truckNo": "गाड़ी नंबर",
+                    "truckRst": "RST नंबर"
                 }
             }
         },
@@ -611,7 +641,8 @@
                     "oldGunnyQty": "पुराना बारदाना मात्रा",
                     "plasticGunnyQty": "प्लास्टिक बारदाना मात्रा",
                     "truckNo": "गाड़ी नंबर"
-                }
+                },
+                "title": "सरकारी बारदाना जावक जोड़ें"
             }
         }
     },
@@ -672,7 +703,7 @@
                     "plasticGunnyRate": "प्लास्टिक बारदाना दर",
                     "frkType": "FRK",
                     "frkRatePerQuintal": "FRK दर (प्रति क्विं.)",
-                    "lotNumber": "LOT No."
+                    "lotNumber": "LOT नंबर"
                 }
             }
         },
@@ -807,8 +838,8 @@
                     "plasticGunnyRate": "प्लास्टिक बारदाना दर",
                     "frk": "FRK",
                     "frkRate": "FRK दर (प्रति क्विं.)",
-                    "lotNo": "LOT No.",
-                    "lotNumber": "LOT No.",
+                    "lotNo": "LOT नंबर",
+                    "lotNumber": "LOT नंबर",
                     "riceArrival": "चावल आवक",
                     "riceArrivalBalance": "चावल आवक शेष"
                 }
@@ -964,7 +995,7 @@
                     "bhusaPercentage": "भूसा %",
                     "nakkhiQuantity": "नक्खी (क्विंटल में)",
                     "nakkhiPercentage": "नक्खी %",
-                    "wastagePercentage": "WASTAGE %"
+                    "wastagePercentage": "व्यर्थ %"
                 }
             }
         },
@@ -986,7 +1017,7 @@
                     "khandaPercentage": "खंडा %",
                     "silkyKodhaQuantity": "सिल्की कोढा (क्विंटल में)",
                     "silkyKodhaPercentage": "सिल्की कोढा %",
-                    "wastagePercentage": "WASTAGE %"
+                    "wastagePercentage": "व्यर्थ %"
                 }
             }
         }
@@ -1299,7 +1330,11 @@
             "supervisor": "पर्यवेक्षक",
             "operator": "ऑपरेटर",
             "accountant": "लेखाकार"
-        }
+        },
+        "staffMember": "????? ?????",
+        "activateSelected": "????? ?????? ????",
+        "deactivateSelected": "????? ????????? ????",
+        "deleteSelected": "????? ?????"
     },
     "dailyReports": {
         "sidebarTitle": "दैनिक रिपोर्ट",
@@ -1506,6 +1541,7 @@
             "paddy": {
                 "title": "बैलेंस लिफ्टिंग धान खरीदी रिपोर्ट",
                 "description": "बैलेंस लिफ्टिंग धान खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "primaryButton": "खरीदी जोड़ें",
                 "form": {
                     "title_add": "बैलेंस लिफ्टिंग धान खरीदी जोड़ें",
                     "title_edit": "बैलेंस लिफ्टिंग धान खरीदी संपादित करें",
@@ -1520,158 +1556,163 @@
                         "balanceLifting": "उठाव शेष"
                     }
                 }
-            },
-            "rice": {
-                "title": "चावल खरीद रिपोर्ट",
-                "description": "चावल खरीद लेनदेन और रिकॉर्ड प्रबंधित करें",
-                "form": {
-                    "title_add": "चावल खरीद जोड़ें",
-                    "title_edit": "चावल खरीद संपादित करें",
-                    "description_add": "नीचे खरीद विवरण दर्ज करें",
-                    "description_edit": "नीचे खरीद विवरण अपडेट करें",
-                    "fields": {
-                        "date": "दिनांक",
-                        "partyName": "पार्टी का नाम",
-                        "brokerName": "ब्रोकर का नाम",
-                        "deliveryType": "डिलीवरी का प्रकार",
-                        "lotOrOther": "लॉट / अन्य",
-                        "fciOrNAN": "FCI / NAN",
-                        "lotNumber": "लॉट नंबर",
-                        "frkType": "FRK",
-                        "frkRatePerQuintal": "FRK दर (प्रति क्विंटल)",
-                        "riceType": "चावल का प्रकार",
-                        "riceQty": "मात्रा (क्विंटल)",
-                        "riceRate": "चावल की दर",
-                        "discountPercent": "बटाव %",
-                        "brokeragePerQuintal": "दलाली (प्रति क्विंटल)",
-                        "gunnyType": "बारदाना शामिल / वापसी",
-                        "newGunnyRate": "नई बारदाना दर",
-                        "oldGunnyRate": "पुरानी बारदाना दर",
-                        "plasticGunnyRate": "प्लास्टिक बारदाना दर"
-                    }
-                }
-            },
-            "frk": {
-                "title": "FRK खरीद रिपोर्ट",
-                "description": "बैलेंस लिफ्टिंग FRK खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
-                "primaryButton": "खरीदी जोड़ें",
-                "form": {
-                    "title_add": "FRK खरीदी जोड़ें",
-                    "title_edit": "FRK खरीदी संपादित करें",
-                    "description_add": "खरीदी विवरण नीचे दर्ज करें",
-                    "description_edit": "खरीदी विवरण नीचे अपडेट करें",
-                    "fields": {
-                        "date": "दिनांक",
-                        "frkPurchaseDealNumber": "FRK खरीदी सौदा क्रमांक",
-                        "partyName": "पार्टी का नाम",
-                        "frkQty": "FRK की मात्रा",
-                        "frkRate": "FRK दर",
-                        "gst": "GST"
-                    }
-                }
-            },
-            "gunny": {
-                "title": "बारदाना खरीद रिपोर्ट",
-                "description": "बारदाना खरीद रिकॉर्ड देखें और प्रबंधित करें",
-                "form": {
-                    "title_add": "बारदाना खरीद जोड़ें",
-                    "title_edit": "बारदाना खरीद संपादित करें",
-                    "description_add": "नीचे खरीद विवरण दर्ज करें",
-                    "description_edit": "नीचे खरीद विवरण अपडेट करें",
-                    "fields": {
-                        "date": "दिनांक",
-                        "partyName": "पार्टी का नाम",
-                        "deliveryType": "डिलीवरी प्रकार",
-                        "newGunnyQty": "नए बारदाने की मात्रा",
-                        "newGunnyRate": "नए बारदाने की दर",
-                        "oldGunnyQty": "पुराने बारदाने की मात्रा",
-                        "oldGunnyRate": "पुराने बारदाने की दर",
-                        "plasticGunnyQty": "प्लास्टिक बारदाने की मात्रा",
-                        "plasticGunnyRate": "प्लास्टिक बारदाने की दर"
-                    }
+            }
+        },
+        "rice": {
+            "title": "चावल खरीद रिपोर्ट",
+            "description": "चावल खरीद लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title_add": "चावल खरीद जोड़ें",
+                "title_edit": "चावल खरीद संपादित करें",
+                "description_add": "नीचे खरीद विवरण दर्ज करें",
+                "description_edit": "नीचे खरीद विवरण अपडेट करें",
+                "fields": {
+                    "date": "दिनांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "deliveryType": "डिलीवरी का प्रकार",
+                    "lotOrOther": "लॉट / अन्य",
+                    "fciOrNAN": "FCI / NAN",
+                    "lotNumber": "लॉट नंबर",
+                    "frkType": "FRK",
+                    "frkRatePerQuintal": "FRK दर (प्रति क्विंटल)",
+                    "riceType": "चावल का प्रकार",
+                    "riceQty": "मात्रा (क्विंटल)",
+                    "riceRate": "चावल की दर",
+                    "discountPercent": "बटाव %",
+                    "brokeragePerQuintal": "दलाली (प्रति क्विंटल)",
+                    "gunnyType": "बारदाना शामिल / वापसी",
+                    "newGunnyRate": "नई बारदाना दर",
+                    "oldGunnyRate": "पुरानी बारदाना दर",
+                    "plasticGunnyRate": "प्लास्टिक बारदाना दर"
                 }
             }
         },
-        "sales": {
-            "paddy": {
-                "title": "बैलेंस लिफ्टिंग धान बिक्री रिपोर्ट",
-                "description": "बैलेंस लिफ्टिंग धान बिक्री लेनदेन और रिकॉर्ड प्रबंधित करें",
-                "form": {
-                    "title_add": "बैलेंस लिफ्टिंग धान बिक्री जोड़ें",
-                    "title_edit": "बैलेंस लिफ्टिंग धान बिक्री संपादित करें",
-                    "description_add": "बिक्री विवरण नीचे दर्ज करें",
-                    "description_edit": "बिक्री विवरण नीचे अपडेट करें",
-                    "fields": {
-                        "date": "दिनांक",
-                        "dealNumber": "धान बिक्री सौदा क्रमांक",
-                        "partyName": "पार्टी का नाम",
-                        "brokerName": "दलाल का नाम",
-                        "paddyQty": "धान की मात्रा",
-                        "lifting": "उठाव",
-                        "balance": "शेष",
-                        "balanceLifting": "उठाव शेष"
-                    }
-                },
-                "primaryButton": "बिक्री जोड़ें",
-                "actions": {
-                    "deleteSelected": "चयनित हटाएं",
-                    "deleteSelectedSales": "चयनित बिक्री हटाएं",
-                    "deleteSaleTitle": "बिक्री हटाएं?",
-                    "deleteSaleMessagePrefix": "क्या आप वाकई यह बिक्री रिकॉर्ड हटाना चाहते हैं",
-                    "cannotUndo": "यह क्रिया पूर्ववत नहीं की जा सकती।",
-                    "deleteCountTitle": "{{count}} {{entity}} हटाएं?",
-                    "sales": "बिक्री रिकॉर्ड",
-                    "sale": "बिक्री रिकॉर्ड",
-                    "deleteSelectedSalesConfirm": "क्या आप चयनित बिक्री रिकॉर्ड हटाना चाहते हैं?"
+        "frk": {
+            "title": "FRK खरीद रिपोर्ट",
+            "description": "बैलेंस लिफ्टिंग FRK खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "primaryButton": "खरीदी जोड़ें",
+            "form": {
+                "title_add": "FRK खरीदी जोड़ें",
+                "title_edit": "FRK खरीदी संपादित करें",
+                "description_add": "खरीदी विवरण नीचे दर्ज करें",
+                "description_edit": "खरीदी विवरण नीचे अपडेट करें",
+                "fields": {
+                    "date": "दिनांक",
+                    "frkPurchaseDealNumber": "FRK खरीदी सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "frkQty": "FRK की मात्रा",
+                    "frkRate": "FRK दर",
+                    "gst": "GST"
                 }
             }
         },
-        "outward": {
-            "rice": {
-                "title": "जावक बैलेंस लिफ्टिंग चावल रिपोर्ट",
-                "description": "जावक बैलेंस लिफ्टिंग चावल लेनदेन और रिकॉर्ड प्रबंधित करें",
-                "primaryButton": "जावक जोड़ें",
-                "form": {
-                    "title_add": "चावल जावक जोड़ें",
-                    "title_edit": "चावल जावक संपादित करें",
-                    "description_add": "जावक विवरण नीचे दर्ज करें",
-                    "description_edit": "जावक विवरण नीचे अपडेट करें",
-                    "fields": {
-                        "date": "दिनांक",
-                        "riceSalesDealNumber": "चावल बिक्री सौदा क्रमांक",
-                        "partyName": "पार्टी का नाम",
-                        "brokerName": "दलाल का नाम",
-                        "deliveryType": "डिलीवरी का प्रकार",
-                        "lotOrOther": "LOT/अन्य",
-                        "fciOrNAN": "FCI/NAN",
-                        "riceType": "चावल का प्रकार",
-                        "riceQty": "चावल की मात्रा",
-                        "riceRatePerQuintal": "चावल दर/क्विंटल",
-                        "discountPercent": "छूट %",
-                        "brokeragePerQuintal": "दलाली/क्विंटल",
-                        "gunnyType": "बारदाना का प्रकार",
-                        "newGunnyRate": "नया बारदाना दर",
-                        "oldGunnyRate": "पुराना बारदाना दर",
-                        "plasticGunnyRate": "प्लास्टिक बारदाना दर",
-                        "frkType": "FRK",
-                        "frkRatePerQuintal": "FRK दर/क्विंटल",
-                        "lotNumber": "लॉट नंबर",
-                        "outwardLotDeposit": "जावक / LOT जमा",
-                        "outwardBalance": "जावक शेष"
-                    }
-                },
-                "actions": {
-                    "deleteSelected": "चयनित हटाएं",
-                    "deleteSelectedEntries": "चयनित प्रविष्टियां हटाएं",
-                    "deleteEntryTitle": "प्रविष्टि हटाएं?",
-                    "deleteEntryMessagePrefix": "क्या आप वाकई यह जावक प्रविष्टि हटाना चाहते हैं",
-                    "cannotUndo": "यह क्रिया पूर्ववत नहीं की जा सकती।",
-                    "deleteCountTitle": "{{count}} {{entity}} हटाएं?",
-                    "entries": "प्रविष्टियां",
-                    "entry": "प्रविष्टि",
-                    "deleteSelectedEntriesConfirm": "क्या आप चयनित प्रविष्टियां हटाना चाहते हैं?"
+        "gunny": {
+            "title": "बारदाना खरीद रिपोर्ट",
+            "description": "बारदाना खरीद रिकॉर्ड देखें और प्रबंधित करें",
+            "form": {
+                "title_add": "बारदाना खरीद जोड़ें",
+                "title_edit": "बारदाना खरीद संपादित करें",
+                "description_add": "नीचे खरीद विवरण दर्ज करें",
+                "description_edit": "नीचे खरीद विवरण अपडेट करें",
+                "fields": {
+                    "date": "दिनांक",
+                    "partyName": "पार्टी का नाम",
+                    "deliveryType": "डिलीवरी प्रकार",
+                    "newGunnyQty": "नए बारदाने की मात्रा",
+                    "newGunnyRate": "नए बारदाने की दर",
+                    "oldGunnyQty": "पुराने बारदाने की मात्रा",
+                    "oldGunnyRate": "पुराने बारदाने की दर",
+                    "plasticGunnyQty": "प्लास्टिक बारदाने की मात्रा",
+                    "plasticGunnyRate": "प्लास्टिक बारदाने की दर"
                 }
             }
         }
+    },
+    "sales": {
+        "paddy": {
+            "title": "बैलेंस लिफ्टिंग धान बिक्री रिपोर्ट",
+            "description": "बैलेंस लिफ्टिंग धान बिक्री लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title_add": "बैलेंस लिफ्टिंग धान बिक्री जोड़ें",
+                "title_edit": "बैलेंस लिफ्टिंग धान बिक्री संपादित करें",
+                "description_add": "बिक्री विवरण नीचे दर्ज करें",
+                "description_edit": "बिक्री विवरण नीचे अपडेट करें",
+                "fields": {
+                    "date": "दिनांक",
+                    "dealNumber": "धान बिक्री सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "दलाल का नाम",
+                    "paddyQty": "धान की मात्रा",
+                    "lifting": "उठाव",
+                    "balance": "शेष",
+                    "balanceLifting": "उठाव शेष"
+                }
+            },
+            "primaryButton": "बिक्री जोड़ें",
+            "actions": {
+                "deleteSelected": "चयनित हटाएं",
+                "deleteSelectedSales": "चयनित बिक्री हटाएं",
+                "deleteSaleTitle": "बिक्री हटाएं?",
+                "deleteSaleMessagePrefix": "क्या आप वाकई यह बिक्री रिकॉर्ड हटाना चाहते हैं",
+                "cannotUndo": "यह क्रिया पूर्ववत नहीं की जा सकती।",
+                "deleteCountTitle": "{{count}} {{entity}} हटाएं?",
+                "sales": "बिक्री रिकॉर्ड",
+                "sale": "बिक्री रिकॉर्ड",
+                "deleteSelectedSalesConfirm": "क्या आप चयनित बिक्री रिकॉर्ड हटाना चाहते हैं?"
+            }
+        }
+    },
+    "outward": {
+        "rice": {
+            "title": "जावक बैलेंस लिफ्टिंग चावल रिपोर्ट",
+            "description": "जावक बैलेंस लिफ्टिंग चावल लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "primaryButton": "जावक जोड़ें",
+            "form": {
+                "title_add": "चावल जावक जोड़ें",
+                "title_edit": "चावल जावक संपादित करें",
+                "description_add": "जावक विवरण नीचे दर्ज करें",
+                "description_edit": "जावक विवरण नीचे अपडेट करें",
+                "fields": {
+                    "date": "दिनांक",
+                    "riceSalesDealNumber": "चावल बिक्री सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "दलाल का नाम",
+                    "deliveryType": "डिलीवरी का प्रकार",
+                    "lotOrOther": "LOT/अन्य",
+                    "fciOrNAN": "FCI/NAN",
+                    "riceType": "चावल का प्रकार",
+                    "riceQty": "चावल की मात्रा",
+                    "riceRatePerQuintal": "चावल दर/क्विंटल",
+                    "discountPercent": "छूट %",
+                    "brokeragePerQuintal": "दलाली/क्विंटल",
+                    "gunnyType": "बारदाना का प्रकार",
+                    "newGunnyRate": "नया बारदाना दर",
+                    "oldGunnyRate": "पुराना बारदाना दर",
+                    "plasticGunnyRate": "प्लास्टिक बारदाना दर",
+                    "frkType": "FRK",
+                    "frkRatePerQuintal": "FRK दर/क्विंटल",
+                    "lotNumber": "लॉट नंबर",
+                    "outwardLotDeposit": "जावक / LOT जमा",
+                    "outwardBalance": "जावक शेष"
+                }
+            },
+            "actions": {
+                "deleteSelected": "चयनित हटाएं",
+                "deleteSelectedEntries": "चयनित प्रविष्टियां हटाएं",
+                "deleteEntryTitle": "प्रविष्टि हटाएं?",
+                "deleteEntryMessagePrefix": "क्या आप वाकई यह जावक प्रविष्टि हटाना चाहते हैं",
+                "cannotUndo": "यह क्रिया पूर्ववत नहीं की जा सकती।",
+                "deleteCountTitle": "{{count}} {{entity}} हटाएं?",
+                "entries": "प्रविष्टियां",
+                "entry": "प्रविष्टि",
+                "deleteSelectedEntriesConfirm": "क्या आप चयनित प्रविष्टियां हटाना चाहते हैं?"
+            }
+        }
+    },
+    "attendance": {
+        "present": "उपस्थित",
+        "absent": "अनुपस्थित",
+        "halfDay": "अर्ध दिवस"
     }
 }
