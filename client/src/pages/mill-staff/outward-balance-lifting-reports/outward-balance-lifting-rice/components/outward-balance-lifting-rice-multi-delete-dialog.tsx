@@ -9,6 +9,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useTranslation } from 'react-i18next'
 import { useBulkDeletePrivateRiceOutward } from '../data/hooks'
 import { type PrivateRiceOutward } from '../data/schema'
 import { useOutwardBalanceLiftingRice } from './outward-balance-lifting-rice-provider'
@@ -24,6 +25,7 @@ export function OutwardBalanceLiftingRiceMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: OutwardBalanceLiftingRiceMultiDeleteDialogProps<TData>) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useOutwardBalanceLiftingRice()
     const { mutateAsync: bulkDelete, isPending: isDeleting } =
         useBulkDeletePrivateRiceOutward(millId)
@@ -50,25 +52,32 @@ export function OutwardBalanceLiftingRiceMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Delete {selectedRows.length}{' '}
-                        {selectedRows.length > 1 ? 'entries' : 'entry'}?
+                        {t('balanceLifting.outward.rice.actions.deleteCountTitle', {
+                            count: selectedRows.length,
+                            entity:
+                                selectedRows.length > 1
+                                    ? t('balanceLifting.outward.rice.actions.entries')
+                                    : t('balanceLifting.outward.rice.actions.entry'),
+                        })}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the selected entries?{' '}
+                        {t(
+                            'balanceLifting.outward.rice.actions.deleteSelectedEntriesConfirm'
+                        )}{' '}
                         <br />
-                        This action cannot be undone.
+                        {t('balanceLifting.outward.rice.actions.cannotUndo')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={isDeleting}>
-                        Cancel
+                        {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
                         disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {isDeleting ? 'Deleting...' : 'Delete'}
+                        {isDeleting ? t('common.deleting') : t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

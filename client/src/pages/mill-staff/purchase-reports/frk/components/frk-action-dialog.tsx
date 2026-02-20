@@ -334,9 +334,7 @@ export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
-                            >
-                                Cancel
-                            </Button>
+                            >{t('common.cancel')}</Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing

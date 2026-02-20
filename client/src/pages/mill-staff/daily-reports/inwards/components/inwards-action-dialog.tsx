@@ -38,6 +38,7 @@ import {
 } from '@/components/ui/select'
 import { inwardSchema, type InwardEntry } from '../data/schema'
 
+import { useTranslation } from 'react-i18next'
 type InwardsActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -49,6 +50,7 @@ export function InwardsActionDialog({
     onOpenChange,
     currentRow,
 }: InwardsActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -351,9 +353,7 @@ export function InwardsActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
-                            >
-                                Cancel
-                            </Button>
+                            >{t('common.cancel')}</Button>
                             <Button type='submit'>
                                 {isEditing ? 'Update' : 'Add'} Entry
                             </Button>

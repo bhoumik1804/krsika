@@ -1,11 +1,14 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table/column-header'
 import { type PrivateRiceOutward } from '../data/types'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
-    [
+export function useOutwardBalanceLiftingRiceColumns(): ColumnDef<PrivateRiceOutward>[] {
+    const { t } = useTranslation('mill-staff')
+
+    return [
         {
             id: 'select',
             header: ({ table }) => (
@@ -37,7 +40,7 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title='Rice Sales Deal Number'
+                    title={t('balanceLifting.outward.rice.form.fields.riceSalesDealNumber')}
                 />
             ),
             cell: ({ row }) => {
@@ -51,7 +54,10 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
         {
             accessorKey: 'date',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='Date' />
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.outward.rice.form.fields.date')}
+                />
             ),
             cell: ({ row }) => {
                 const dateVal = row.getValue('date')
@@ -65,7 +71,10 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
         {
             accessorKey: 'partyName',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='Party Name' />
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.outward.rice.form.fields.partyName')}
+                />
             ),
             cell: ({ row }) => {
                 return (
@@ -80,7 +89,10 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
         {
             accessorKey: 'brokerName',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='Broker Name' />
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.outward.rice.form.fields.brokerName')}
+                />
             ),
             cell: ({ row }) => {
                 return (
@@ -95,7 +107,10 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
         {
             accessorKey: 'deliveryType',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='Delivery' />
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.outward.rice.form.fields.deliveryType')}
+                />
             ),
             cell: ({ row }) => {
                 return (
@@ -108,7 +123,10 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
         {
             accessorKey: 'lotOrOther',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='LOT/Other' />
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.outward.rice.form.fields.lotOrOther')}
+                />
             ),
             cell: ({ row }) => {
                 return (
@@ -121,7 +139,10 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
         {
             accessorKey: 'fciOrNAN',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='FCI/NAN' />
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.outward.rice.form.fields.fciOrNAN')}
+                />
             ),
             cell: ({ row }) => {
                 return (
@@ -134,7 +155,10 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
         {
             accessorKey: 'riceType',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='Rice Type' />
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.outward.rice.form.fields.riceType')}
+                />
             ),
             cell: ({ row }) => {
                 return (
@@ -147,7 +171,10 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
         {
             accessorKey: 'riceQty',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title='RiceQuantity' />
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.outward.rice.form.fields.riceQty')}
+                />
             ),
             cell: ({ row }) => {
                 const val = (row.getValue('riceQty') as number) || 0
@@ -159,7 +186,7 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title='Outward / LOT Deposit'
+                    title={t('balanceLifting.outward.rice.form.fields.outwardLotDeposit')}
                 />
             ),
             cell: ({ row }) => {
@@ -176,7 +203,7 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
             header: ({ column }) => (
                 <DataTableColumnHeader
                     column={column}
-                    title='Outward Balance'
+                    title={t('balanceLifting.outward.rice.form.fields.outwardBalance')}
                 />
             ),
             cell: ({ row }) => {
@@ -195,3 +222,4 @@ export const outwardBalanceLiftingRiceColumns: ColumnDef<PrivateRiceOutward>[] =
             cell: ({ row }) => <DataTableRowActions row={row} />,
         },
     ]
+}

@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/popover'
 import { partyTransactionSchema, type PartyTransaction } from '../data/schema'
 
+import { useTranslation } from 'react-i18next'
 type PartyTransactionActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -42,6 +43,7 @@ export function PartyTransactionActionDialog({
     onOpenChange,
     currentRow,
 }: PartyTransactionActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -433,9 +435,7 @@ export function PartyTransactionActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
-                            >
-                                Cancel
-                            </Button>
+                            >{t('common.cancel')}</Button>
                             <Button type='submit'>
                                 {isEditing ? 'Update' : 'Add'} Transaction
                             </Button>
