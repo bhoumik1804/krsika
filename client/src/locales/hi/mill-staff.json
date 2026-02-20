@@ -1536,12 +1536,11 @@
         "outwardBalanceLiftingReportRiceSales": "जावक बैलेंस लिफ्टिंग चावल बिक्री रिपोर्ट",
         "signOut": "साइन आउट"
     },
-    "balanceLifting": {
+   "balanceLifting": {
         "purchase": {
             "paddy": {
                 "title": "बैलेंस लिफ्टिंग धान खरीदी रिपोर्ट",
                 "description": "बैलेंस लिफ्टिंग धान खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
-                "primaryButton": "खरीदी जोड़ें",
                 "form": {
                     "title_add": "बैलेंस लिफ्टिंग धान खरीदी जोड़ें",
                     "title_edit": "बैलेंस लिफ्टिंग धान खरीदी संपादित करें",
@@ -1556,157 +1555,157 @@
                         "balanceLifting": "उठाव शेष"
                     }
                 }
-            }
-        },
-        "rice": {
-            "title": "चावल खरीद रिपोर्ट",
-            "description": "चावल खरीद लेनदेन और रिकॉर्ड प्रबंधित करें",
-            "form": {
-                "title_add": "चावल खरीद जोड़ें",
-                "title_edit": "चावल खरीद संपादित करें",
-                "description_add": "नीचे खरीद विवरण दर्ज करें",
-                "description_edit": "नीचे खरीद विवरण अपडेट करें",
-                "fields": {
-                    "date": "दिनांक",
-                    "partyName": "पार्टी का नाम",
-                    "brokerName": "ब्रोकर का नाम",
-                    "deliveryType": "डिलीवरी का प्रकार",
-                    "lotOrOther": "लॉट / अन्य",
-                    "fciOrNAN": "FCI / NAN",
-                    "lotNumber": "लॉट नंबर",
-                    "frkType": "FRK",
-                    "frkRatePerQuintal": "FRK दर (प्रति क्विंटल)",
-                    "riceType": "चावल का प्रकार",
-                    "riceQty": "मात्रा (क्विंटल)",
-                    "riceRate": "चावल की दर",
-                    "discountPercent": "बटाव %",
-                    "brokeragePerQuintal": "दलाली (प्रति क्विंटल)",
-                    "gunnyType": "बारदाना शामिल / वापसी",
-                    "newGunnyRate": "नई बारदाना दर",
-                    "oldGunnyRate": "पुरानी बारदाना दर",
-                    "plasticGunnyRate": "प्लास्टिक बारदाना दर"
-                }
-            }
-        },
-        "frk": {
-            "title": "FRK खरीद रिपोर्ट",
-            "description": "बैलेंस लिफ्टिंग FRK खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
-            "primaryButton": "खरीदी जोड़ें",
-            "form": {
-                "title_add": "FRK खरीदी जोड़ें",
-                "title_edit": "FRK खरीदी संपादित करें",
-                "description_add": "खरीदी विवरण नीचे दर्ज करें",
-                "description_edit": "खरीदी विवरण नीचे अपडेट करें",
-                "fields": {
-                    "date": "दिनांक",
-                    "frkPurchaseDealNumber": "FRK खरीदी सौदा क्रमांक",
-                    "partyName": "पार्टी का नाम",
-                    "frkQty": "FRK की मात्रा",
-                    "frkRate": "FRK दर",
-                    "gst": "GST"
-                }
-            }
-        },
-        "gunny": {
-            "title": "बारदाना खरीद रिपोर्ट",
-            "description": "बारदाना खरीद रिकॉर्ड देखें और प्रबंधित करें",
-            "form": {
-                "title_add": "बारदाना खरीद जोड़ें",
-                "title_edit": "बारदाना खरीद संपादित करें",
-                "description_add": "नीचे खरीद विवरण दर्ज करें",
-                "description_edit": "नीचे खरीद विवरण अपडेट करें",
-                "fields": {
-                    "date": "दिनांक",
-                    "partyName": "पार्टी का नाम",
-                    "deliveryType": "डिलीवरी प्रकार",
-                    "newGunnyQty": "नए बारदाने की मात्रा",
-                    "newGunnyRate": "नए बारदाने की दर",
-                    "oldGunnyQty": "पुराने बारदाने की मात्रा",
-                    "oldGunnyRate": "पुराने बारदाने की दर",
-                    "plasticGunnyQty": "प्लास्टिक बारदाने की मात्रा",
-                    "plasticGunnyRate": "प्लास्टिक बारदाने की दर"
-                }
-            }
-        }
-    },
-    "sales": {
-        "paddy": {
-            "title": "बैलेंस लिफ्टिंग धान बिक्री रिपोर्ट",
-            "description": "बैलेंस लिफ्टिंग धान बिक्री लेनदेन और रिकॉर्ड प्रबंधित करें",
-            "form": {
-                "title_add": "बैलेंस लिफ्टिंग धान बिक्री जोड़ें",
-                "title_edit": "बैलेंस लिफ्टिंग धान बिक्री संपादित करें",
-                "description_add": "बिक्री विवरण नीचे दर्ज करें",
-                "description_edit": "बिक्री विवरण नीचे अपडेट करें",
-                "fields": {
-                    "date": "दिनांक",
-                    "dealNumber": "धान बिक्री सौदा क्रमांक",
-                    "partyName": "पार्टी का नाम",
-                    "brokerName": "दलाल का नाम",
-                    "paddyQty": "धान की मात्रा",
-                    "lifting": "उठाव",
-                    "balance": "शेष",
-                    "balanceLifting": "उठाव शेष"
+            },
+            "rice": {
+                "title": "चावल खरीद रिपोर्ट",
+                "description": "चावल खरीद लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "form": {
+                    "title_add": "चावल खरीद जोड़ें",
+                    "title_edit": "चावल खरीद संपादित करें",
+                    "description_add": "नीचे खरीद विवरण दर्ज करें",
+                    "description_edit": "नीचे खरीद विवरण अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "partyName": "पार्टी का नाम",
+                        "brokerName": "ब्रोकर का नाम",
+                        "deliveryType": "डिलीवरी का प्रकार",
+                        "lotOrOther": "लॉट / अन्य",
+                        "fciOrNAN": "FCI / NAN",
+                        "lotNumber": "लॉट नंबर",
+                        "frkType": "FRK",
+                        "frkRatePerQuintal": "FRK दर (प्रति क्विंटल)",
+                        "riceType": "चावल का प्रकार",
+                        "riceQty": "मात्रा (क्विंटल)",
+                        "riceRate": "चावल की दर",
+                        "discountPercent": "बटाव %",
+                        "brokeragePerQuintal": "दलाली (प्रति क्विंटल)",
+                        "gunnyType": "बारदाना शामिल / वापसी",
+                        "newGunnyRate": "नई बारदाना दर",
+                        "oldGunnyRate": "पुरानी बारदाना दर",
+                        "plasticGunnyRate": "प्लास्टिक बारदाना दर"
+                    }
                 }
             },
-            "primaryButton": "बिक्री जोड़ें",
-            "actions": {
-                "deleteSelected": "चयनित हटाएं",
-                "deleteSelectedSales": "चयनित बिक्री हटाएं",
-                "deleteSaleTitle": "बिक्री हटाएं?",
-                "deleteSaleMessagePrefix": "क्या आप वाकई यह बिक्री रिकॉर्ड हटाना चाहते हैं",
-                "cannotUndo": "यह क्रिया पूर्ववत नहीं की जा सकती।",
-                "deleteCountTitle": "{{count}} {{entity}} हटाएं?",
-                "sales": "बिक्री रिकॉर्ड",
-                "sale": "बिक्री रिकॉर्ड",
-                "deleteSelectedSalesConfirm": "क्या आप चयनित बिक्री रिकॉर्ड हटाना चाहते हैं?"
-            }
-        }
-    },
-    "outward": {
-        "rice": {
-            "title": "जावक बैलेंस लिफ्टिंग चावल रिपोर्ट",
-            "description": "जावक बैलेंस लिफ्टिंग चावल लेनदेन और रिकॉर्ड प्रबंधित करें",
-            "primaryButton": "जावक जोड़ें",
-            "form": {
-                "title_add": "चावल जावक जोड़ें",
-                "title_edit": "चावल जावक संपादित करें",
-                "description_add": "जावक विवरण नीचे दर्ज करें",
-                "description_edit": "जावक विवरण नीचे अपडेट करें",
-                "fields": {
-                    "date": "दिनांक",
-                    "riceSalesDealNumber": "चावल बिक्री सौदा क्रमांक",
-                    "partyName": "पार्टी का नाम",
-                    "brokerName": "दलाल का नाम",
-                    "deliveryType": "डिलीवरी का प्रकार",
-                    "lotOrOther": "LOT/अन्य",
-                    "fciOrNAN": "FCI/NAN",
-                    "riceType": "चावल का प्रकार",
-                    "riceQty": "चावल की मात्रा",
-                    "riceRatePerQuintal": "चावल दर/क्विंटल",
-                    "discountPercent": "छूट %",
-                    "brokeragePerQuintal": "दलाली/क्विंटल",
-                    "gunnyType": "बारदाना का प्रकार",
-                    "newGunnyRate": "नया बारदाना दर",
-                    "oldGunnyRate": "पुराना बारदाना दर",
-                    "plasticGunnyRate": "प्लास्टिक बारदाना दर",
-                    "frkType": "FRK",
-                    "frkRatePerQuintal": "FRK दर/क्विंटल",
-                    "lotNumber": "लॉट नंबर",
-                    "outwardLotDeposit": "जावक / LOT जमा",
-                    "outwardBalance": "जावक शेष"
+            "frk": {
+                "title": "FRK खरीद रिपोर्ट",
+                "description": "बैलेंस लिफ्टिंग FRK खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "primaryButton": "खरीदी जोड़ें",
+                "form": {
+                    "title_add": "FRK खरीदी जोड़ें",
+                    "title_edit": "FRK खरीदी संपादित करें",
+                    "description_add": "खरीदी विवरण नीचे दर्ज करें",
+                    "description_edit": "खरीदी विवरण नीचे अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "frkPurchaseDealNumber": "FRK खरीदी सौदा क्रमांक",
+                        "partyName": "पार्टी का नाम",
+                        "frkQty": "FRK की मात्रा",
+                        "frkRate": "FRK दर",
+                        "gst": "GST"
+                    }
                 }
             },
-            "actions": {
-                "deleteSelected": "चयनित हटाएं",
-                "deleteSelectedEntries": "चयनित प्रविष्टियां हटाएं",
-                "deleteEntryTitle": "प्रविष्टि हटाएं?",
-                "deleteEntryMessagePrefix": "क्या आप वाकई यह जावक प्रविष्टि हटाना चाहते हैं",
-                "cannotUndo": "यह क्रिया पूर्ववत नहीं की जा सकती।",
-                "deleteCountTitle": "{{count}} {{entity}} हटाएं?",
-                "entries": "प्रविष्टियां",
-                "entry": "प्रविष्टि",
-                "deleteSelectedEntriesConfirm": "क्या आप चयनित प्रविष्टियां हटाना चाहते हैं?"
+            "gunny": {
+                "title": "बारदाना खरीद रिपोर्ट",
+                "description": "बारदाना खरीद रिकॉर्ड देखें और प्रबंधित करें",
+                "form": {
+                    "title_add": "बारदाना खरीद जोड़ें",
+                    "title_edit": "बारदाना खरीद संपादित करें",
+                    "description_add": "नीचे खरीद विवरण दर्ज करें",
+                    "description_edit": "नीचे खरीद विवरण अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "partyName": "पार्टी का नाम",
+                        "deliveryType": "डिलीवरी प्रकार",
+                        "newGunnyQty": "नए बारदाने की मात्रा",
+                        "newGunnyRate": "नए बारदाने की दर",
+                        "oldGunnyQty": "पुराने बारदाने की मात्रा",
+                        "oldGunnyRate": "पुराने बारदाने की दर",
+                        "plasticGunnyQty": "प्लास्टिक बारदाने की मात्रा",
+                        "plasticGunnyRate": "प्लास्टिक बारदाने की दर"
+                    }
+                }
+            }
+        },
+        "sales": {
+            "paddy": {
+                "title": "बैलेंस लिफ्टिंग धान बिक्री रिपोर्ट",
+                "description": "बैलेंस लिफ्टिंग धान बिक्री लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "form": {
+                    "title_add": "बैलेंस लिफ्टिंग धान बिक्री जोड़ें",
+                    "title_edit": "बैलेंस लिफ्टिंग धान बिक्री संपादित करें",
+                    "description_add": "बिक्री विवरण नीचे दर्ज करें",
+                    "description_edit": "बिक्री विवरण नीचे अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "dealNumber": "धान बिक्री सौदा क्रमांक",
+                        "partyName": "पार्टी का नाम",
+                        "brokerName": "दलाल का नाम",
+                        "paddyQty": "धान की मात्रा",
+                        "lifting": "उठाव",
+                        "balance": "शेष",
+                        "balanceLifting": "उठाव शेष"
+                    }
+                },
+                "primaryButton": "बिक्री जोड़ें",
+                "actions": {
+                    "deleteSelected": "चयनित हटाएं",
+                    "deleteSelectedSales": "चयनित बिक्री हटाएं",
+                    "deleteSaleTitle": "बिक्री हटाएं?",
+                    "deleteSaleMessagePrefix": "क्या आप वाकई यह बिक्री रिकॉर्ड हटाना चाहते हैं",
+                    "cannotUndo": "यह क्रिया पूर्ववत नहीं की जा सकती।",
+                    "deleteCountTitle": "{{count}} {{entity}} हटाएं?",
+                    "sales": "बिक्री रिकॉर्ड",
+                    "sale": "बिक्री रिकॉर्ड",
+                    "deleteSelectedSalesConfirm": "क्या आप चयनित बिक्री रिकॉर्ड हटाना चाहते हैं?"
+                }
+            }
+        },
+        "outward": {
+            "rice": {
+                "title": "जावक बैलेंस लिफ्टिंग चावल रिपोर्ट",
+                "description": "जावक बैलेंस लिफ्टिंग चावल लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "primaryButton": "जावक जोड़ें",
+                "form": {
+                    "title_add": "चावल जावक जोड़ें",
+                    "title_edit": "चावल जावक संपादित करें",
+                    "description_add": "जावक विवरण नीचे दर्ज करें",
+                    "description_edit": "जावक विवरण नीचे अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "riceSalesDealNumber": "चावल बिक्री सौदा क्रमांक",
+                        "partyName": "पार्टी का नाम",
+                        "brokerName": "दलाल का नाम",
+                        "deliveryType": "डिलीवरी का प्रकार",
+                        "lotOrOther": "LOT/अन्य",
+                        "fciOrNAN": "FCI/NAN",
+                        "riceType": "चावल का प्रकार",
+                        "riceQty": "चावल की मात्रा",
+                        "riceRatePerQuintal": "चावल दर/क्विंटल",
+                        "discountPercent": "छूट %",
+                        "brokeragePerQuintal": "दलाली/क्विंटल",
+                        "gunnyType": "बारदाना का प्रकार",
+                        "newGunnyRate": "नया बारदाना दर",
+                        "oldGunnyRate": "पुराना बारदाना दर",
+                        "plasticGunnyRate": "प्लास्टिक बारदाना दर",
+                        "frkType": "FRK",
+                        "frkRatePerQuintal": "FRK दर/क्विंटल",
+                        "lotNumber": "लॉट नंबर",
+                        "outwardLotDeposit": "जावक / LOT जमा",
+                        "outwardBalance": "जावक शेष"
+                    }
+                },
+                "actions": {
+                    "deleteSelected": "चयनित हटाएं",
+                    "deleteSelectedEntries": "चयनित प्रविष्टियां हटाएं",
+                    "deleteEntryTitle": "प्रविष्टि हटाएं?",
+                    "deleteEntryMessagePrefix": "क्या आप वाकई यह जावक प्रविष्टि हटाना चाहते हैं",
+                    "cannotUndo": "यह क्रिया पूर्ववत नहीं की जा सकती।",
+                    "deleteCountTitle": "{{count}} {{entity}} हटाएं?",
+                    "entries": "प्रविष्टियां",
+                    "entry": "प्रविष्टि",
+                    "deleteSelectedEntriesConfirm": "क्या आप चयनित प्रविष्टियां हटाना चाहते हैं?"
+                }
             }
         }
     },
