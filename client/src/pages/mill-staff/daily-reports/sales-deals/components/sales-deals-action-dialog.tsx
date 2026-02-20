@@ -50,6 +50,7 @@ import {
 } from '@/components/ui/select'
 import { salesDealSchema, type SalesDeal } from '../data/schema'
 
+import { useTranslation } from 'react-i18next'
 type SalesDealsActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -61,6 +62,7 @@ export function SalesDealsActionDialog({
     onOpenChange,
     currentRow,
 }: SalesDealsActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [brokerPage, setBrokerPage] = useState(1)
     const [allBrokers, setAllBrokers] = useState<string[]>([])
@@ -451,9 +453,7 @@ export function SalesDealsActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
-                            >
-                                Cancel
-                            </Button>
+                            >{t('common.cancel')}</Button>
                             <Button type='submit'>
                                 {isEditing ? 'Update' : 'Add'} Deal
                             </Button>

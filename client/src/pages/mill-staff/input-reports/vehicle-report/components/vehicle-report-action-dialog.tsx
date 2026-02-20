@@ -115,9 +115,7 @@ export function VehicleReportActionDialog({
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder={t(
-                                                        'inputReports.vehicle.form.fields.truckNo'
-                                                    )}
+                                                    placeholder='Truck No'
                                                     {...field}
                                                 />
                                             </FormControl>

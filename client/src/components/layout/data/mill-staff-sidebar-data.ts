@@ -17,8 +17,8 @@ import { type SidebarData } from '../types'
 
 export const getMillStaffSidebarData = (millId: string): SidebarData => ({
     user: {
-        name: 'Staff Member',
-        email: 'staff@yourmill.com',
+        name: 'User',
+        email: '',
         avatar: '/avatars/staff.jpg',
         role: 'mill-staff',
     },

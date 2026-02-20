@@ -38,6 +38,7 @@ import {
 } from '@/components/ui/select'
 import { paymentSchema, type PaymentEntry } from '../data/schema'
 
+import { useTranslation } from 'react-i18next'
 type PaymentActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -49,6 +50,7 @@ export function PaymentActionDialog({
     onOpenChange,
     currentRow,
 }: PaymentActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -350,9 +352,7 @@ export function PaymentActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
-                            >
-                                Cancel
-                            </Button>
+                            >{t('common.cancel')}</Button>
                             <Button type='submit'>
                                 {isEditing ? 'Update' : 'Confirm'} Payment
                             </Button>

@@ -143,9 +143,7 @@ export function BrokerReportActionDialog({
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder={t(
-                                                        'inputReports.broker.form.fields.brokerName'
-                                                    )}
+                                                    placeholder='Broker Name'
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -165,9 +163,7 @@ export function BrokerReportActionDialog({
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder={t(
-                                                        'inputReports.broker.form.fields.phone'
-                                                    )}
+                                                    placeholder='Phone No.'
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -188,9 +184,7 @@ export function BrokerReportActionDialog({
                                             <FormControl>
                                                 <Input
                                                     type='email'
-                                                    placeholder={t(
-                                                        'inputReports.broker.form.fields.email'
-                                                    )}
+                                                    placeholder='Email'
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -210,9 +204,7 @@ export function BrokerReportActionDialog({
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder={t(
-                                                        'inputReports.broker.form.fields.address'
-                                                    )}
+                                                    placeholder='Address'
                                                     {...field}
                                                 />
                                             </FormControl>

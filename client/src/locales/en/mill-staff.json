@@ -20,7 +20,24 @@
         "updateDetails": "Update recorded details",
         "delete": "Delete",
         "openMenu": "Open menu",
-        "errorLoadingData": "Error loading data"
+        "errorLoadingData": "Error loading data",
+        "sortAsc": "Asc",
+        "sortDesc": "Desc",
+        "deleting": "Deleting...",
+        "addedSuccessfully": "Added successfully",
+        "failedToAdd": "Failed to add",
+        "failedToUpdate": "Failed to update",
+        "updatedSuccessfully": "Updated successfully",
+        "loadingMore": "Loading more...",
+        "noDealsFound": "No deals found",
+        "purchase": "Purchase",
+        "record": "record",
+        "records": "records",
+        "saving": "Saving...",
+        "select": "Select",
+        "uCannotUndo": "This action cannot be undone.",
+        "deleteConfirmation": "Are you sure you want to delete {{item}}?",
+        "deleteConfirmationMulti": "Are you sure you want to delete selected {{item}}?"
     },
     "dashboard": {
         "title": "Dashboard",
@@ -146,7 +163,8 @@
                     "doNo": "DO Number",
                     "dhanMota": "Paddy (Mota)",
                     "dhanPatla": "Paddy (Patla)",
-                    "dhanSarna": "Paddy (Sarna)"
+                    "dhanSarna": "Paddy (Sarna)",
+                    "total": "Total"
                 }
             }
         },
@@ -257,7 +275,8 @@
                     "rstNumber": "RST No.",
                     "truckLoadWeight": "Truck Weight",
                     "riceMotaNetWeight": "Rice (Mota) Net Weight",
-                    "ricePatlaNetWeight": "Rice (Patla) Net Weight"
+                    "ricePatlaNetWeight": "Rice (Patla) Net Weight",
+                    "frkStatus": "FRK/Non FRK"
                 }
             }
         },
@@ -419,14 +438,17 @@
                 "primaryButton": "Add FRK Outward",
                 "fields": {
                     "date": "Date",
-                    "partyName": "Party Name",
+                    "partyName": {
+                        "emptyText": "Search party..."
+                    },
                     "gunnyPlastic": "Gunny (Plastic)",
                     "plasticGunnyWeight": "Plastic Gunny Weight",
                     "truckNo": "Truck Number",
                     "truckRst": "RST No.",
                     "truckWeight": "Truck Weight",
                     "gunnyWeight": "Gunny Weight",
-                    "netWeight": "Net Weight (Minus Gunny)"
+                    "netWeight": "Net Weight (Minus Gunny)",
+                    "plasticWeight": "Plastic Gunny Weight"
                 }
             }
         },
@@ -448,7 +470,11 @@
                     "rstNumber": "RST No.",
                     "truckWeight": "Truck Weight",
                     "gunnyWeight": "Gunny Weight",
-                    "netWeight": "Net Weight (Minus Gunny)"
+                    "netWeight": "Net Weight (Minus Gunny)",
+                    "khandaSaleDealNumber": "Khanda Sale Deal Number",
+                    "plasticGunnyWeight": "Plastic Gunny Weight",
+                    "truckNo": "Truck Number",
+                    "truckRst": "RST No."
                 }
             }
         },
@@ -472,7 +498,9 @@
                     "rstNumber": "RST No.",
                     "truckWeight": "Truck Weight",
                     "gunnyWeight": "Gunny Weight",
-                    "netWeight": "Net Weight (Minus Gunny)"
+                    "netWeight": "Net Weight (Minus Gunny)",
+                    "truckNo": "Truck Number",
+                    "truckRst": "RST No."
                 }
             }
         },
@@ -492,7 +520,10 @@
                     "brokerage": "Brokerage (Per Ton)",
                     "truckNumber": "Truck Number",
                     "rstNumber": "RST No.",
-                    "truckWeight": "Truck Weight"
+                    "truckWeight": "Truck Weight",
+                    "bhusaSaleDealNumber": "Bhusa Purchase Deal Number",
+                    "truckNo": "Truck Number",
+                    "truckRst": "RST No."
                 }
             }
         },
@@ -555,7 +586,7 @@
                 "primaryButton": "Add Other Inward",
                 "fields": {
                     "date": "Date",
-                    "otherSaleDealNumber": "Other Sale Deal Number",
+                    "otherSaleDealNumber": "Deal Number",
                     "itemName": "Item Name",
                     "dealQuantity": "Deal Quantity",
                     "quantityType": "Quantity Type",
@@ -570,7 +601,10 @@
                     "rstNumber": "RST No.",
                     "truckWeight": "Truck Weight",
                     "gunnyWeight": "Gunny Weight",
-                    "netWeight": "Net Weight (Minus Gunny)"
+                    "netWeight": "Net Weight (Minus Gunny)",
+                    "quantity": "Deal Quantity",
+                    "truckNo": "Truck Number",
+                    "truckRst": "RST No."
                 }
             }
         },
@@ -589,7 +623,8 @@
                     "oldGunnyQty": "Old Gunny Quantity",
                     "plasticGunnyQty": "Plastic Gunny Quantity",
                     "truckNo": "Truck Number"
-                }
+                },
+                "title": "Add Govt Gunny Outward"
             }
         },
         "privateGunnyOutward": {
@@ -608,7 +643,8 @@
                     "oldGunnyQty": "Old Gunny Quantity",
                     "plasticGunnyQty": "Plastic Gunny Quantity",
                     "truckNo": "Truck Number"
-                }
+                },
+                "title": "Add Private Gunny Outward"
             }
         }
     },
@@ -646,7 +682,10 @@
             "description": "Manage rice purchase transactions and records",
             "form": {
                 "title": "Add Rice Purchase",
-                "description": "Enter rice purchase details",
+                "description": {
+                    "add": "Enter rice purchase details",
+                    "update": "Update recorded rice purchase details"
+                },
                 "primaryButton": "Add Rice Purchase",
                 "fields": {
                     "date": "Date",
@@ -675,7 +714,10 @@
             "description": "Manage gunny purchase transactions and records",
             "form": {
                 "title": "Add Gunny Purchase",
-                "description": "Enter gunny purchase details",
+                "description": {
+                    "add": "Enter gunny purchase details",
+                    "update": "Update recorded gunny purchase details"
+                },
                 "primaryButton": "Add Gunny Purchase",
                 "fields": {
                     "date": "Date",
@@ -695,7 +737,10 @@
             "description": "Manage FRK purchase transactions and records",
             "form": {
                 "title": "Add FRK Purchase",
-                "description": "Enter FRK purchase details",
+                "description": {
+                    "add": "Enter FRK purchase details",
+                    "update": "Update recorded FRK purchase details"
+                },
                 "primaryButton": "Add FRK Purchase",
                 "fields": {
                     "date": "Date",
@@ -712,7 +757,10 @@
             "description": "Manage other purchase transactions and records",
             "form": {
                 "title": "Add Other Purchase",
-                "description": "Enter other purchase details",
+                "description": {
+                    "add": "Enter other purchase details",
+                    "update": "Update recorded other purchase details"
+                },
                 "primaryButton": "Add Other Purchase",
                 "fields": {
                     "date": "Date",
@@ -1284,7 +1332,11 @@
             "supervisor": "Supervisor",
             "operator": "Operator",
             "accountant": "Accountant"
-        }
+        },
+        "staffMember": "staff member",
+        "activateSelected": "Activate selected",
+        "deactivateSelected": "Deactivate selected",
+        "deleteSelected": "Delete selected"
     },
     "dailyReports": {
         "sidebarTitle": "Daily Reports",
@@ -1491,6 +1543,7 @@
             "paddy": {
                 "title": "Paddy Purchase Report",
                 "description": "Manage paddy purchase transactions and records",
+                "primaryButton": "Add Purchase",
                 "form": {
                     "title_add": "Add Paddy Purchase",
                     "title_edit": "Edit Paddy Purchase",
@@ -1596,6 +1649,18 @@
                         "balance": "Balance",
                         "balanceLifting": "Balance Lifting"
                     }
+                },
+                "primaryButton": "Add Sale",
+                "actions": {
+                    "deleteSelected": "Delete selected",
+                    "deleteSelectedSales": "Delete selected sales",
+                    "deleteSaleTitle": "Delete Sale?",
+                    "deleteSaleMessagePrefix": "Are you sure you want to delete this sale record for",
+                    "cannotUndo": "This action cannot be undone.",
+                    "deleteCountTitle": "Delete {{count}} {{entity}}?",
+                    "sales": "sales",
+                    "sale": "sale",
+                    "deleteSelectedSalesConfirm": "Are you sure you want to delete the selected sales?"
                 }
             }
         },
@@ -1628,12 +1693,28 @@
                         "plasticGunnyRate": "Plastic Gunny Rate",
                         "frkType": "FRK",
                         "frkRatePerQuintal": "FRK Rate/Quintal",
-                        "lotNumber": "Lot No."
+                        "lotNumber": "Lot No.",
+                        "outwardLotDeposit": "Outward / LOT Deposit",
+                        "outwardBalance": "Outward Balance"
                     }
+                },
+                "actions": {
+                    "deleteSelected": "Delete selected",
+                    "deleteSelectedEntries": "Delete selected entries",
+                    "deleteEntryTitle": "Delete Entry?",
+                    "deleteEntryMessagePrefix": "Are you sure you want to delete this outward entry for",
+                    "cannotUndo": "This action cannot be undone.",
+                    "deleteCountTitle": "Delete {{count}} {{entity}}?",
+                    "entries": "entries",
+                    "entry": "entry",
+                    "deleteSelectedEntriesConfirm": "Are you sure you want to delete the selected entries?"
                 }
             }
         }
+    },
+    "attendance": {
+        "present": "Present",
+        "absent": "Absent",
+        "halfDay": "Half Day"
     }
-
 }
-

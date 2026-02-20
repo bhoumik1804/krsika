@@ -215,9 +215,7 @@ export function CommitteeReportActionDialog({
                                                     <FormControl>
                                                         <SelectTrigger className='w-full'>
                                                             <SelectValue
-                                                                placeholder={t(
-                                                                    'common.select'
-                                                                )}
+                                                                placeholder='Select'
                                                             />
                                                         </SelectTrigger>
                                                     </FormControl>
@@ -256,9 +254,7 @@ export function CommitteeReportActionDialog({
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
-                                                        placeholder={t(
-                                                            'inputReports.committee.form.fields.committeeName'
-                                                        )}
+                                                        placeholder='Committee Name'
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -328,7 +324,7 @@ export function CommitteeReportActionDialog({
 
                                             {parseStats?.errorDetails &&
                                                 parseStats.errorDetails.length >
-                                                    0 && (
+                                                0 && (
                                                     <div className='mt-3'>
                                                         <p className='mb-2 text-xs font-semibold text-gray-600'>
                                                             Error Details:
@@ -398,7 +394,7 @@ export function CommitteeReportActionDialog({
                                                                             >
                                                                                 {String(
                                                                                     value ||
-                                                                                        '-'
+                                                                                    '-'
                                                                                 )}
                                                                             </TableCell>
                                                                         )
@@ -425,17 +421,17 @@ export function CommitteeReportActionDialog({
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? activeTab === 'upload' &&
-                                      previewData.length > 0
+                                        previewData.length > 0
                                         ? t('common.uploading') + '...'
                                         : isEditing
-                                          ? t('common.update') + '...'
-                                          : t('common.add') + '...'
+                                            ? t('common.update') + '...'
+                                            : t('common.add') + '...'
                                     : activeTab === 'upload' &&
                                         previewData.length > 0
-                                      ? `${t('common.upload')} ${previewData.length} ${previewData.length > 1 ? t('inputReports.committee.title').replace(' Report', 's') : t('inputReports.committee.title').replace(' Report', '')}`
-                                      : isEditing
-                                        ? t('common.update')
-                                        : t('common.add')}{' '}
+                                        ? `${t('common.upload')} ${previewData.length} ${previewData.length > 1 ? t('inputReports.committee.title').replace(' Report', 's') : t('inputReports.committee.title').replace(' Report', '')}`
+                                        : isEditing
+                                            ? t('common.update')
+                                            : t('common.add')}{' '}
                                 {activeTab === 'manual' &&
                                     t('inputReports.committee.title').replace(
                                         ' Report',
