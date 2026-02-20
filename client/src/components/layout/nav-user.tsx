@@ -1,7 +1,8 @@
 import { ChevronsUpDown, LogOut } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
-import useDialogState from '@/hooks/use-dialog-state'
 import { useAuthStore } from '@/stores/auth-store'
+import useDialogState from '@/hooks/use-dialog-state'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
     DropdownMenu,
@@ -26,11 +27,10 @@ type NavUserProps = {
         name: string
         email: string
         avatar: string
+        role?: string
     }
     links?: NavItem[]
 }
-
-import { useTranslation } from 'react-i18next'
 
 export function NavUser({ user, links }: NavUserProps) {
     const { isMobile } = useSidebar()
@@ -59,15 +59,15 @@ export function NavUser({ user, links }: NavUserProps) {
                                 size='lg'
                                 className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
                             >
-                                    <Avatar className='h-8 w-8 rounded-lg'>
-                                        <AvatarImage
-                                            src={user.avatar}
-                                            alt={displayName}
-                                        />
-                                        <AvatarFallback className='rounded-lg'>
-                                            {initials}
-                                        </AvatarFallback>
-                                    </Avatar>
+                                <Avatar className='h-8 w-8 rounded-lg'>
+                                    <AvatarImage
+                                        src={user.avatar}
+                                        alt={displayName}
+                                    />
+                                    <AvatarFallback className='rounded-lg'>
+                                        {initials}
+                                    </AvatarFallback>
+                                </Avatar>
                                 <div className='grid flex-1 text-start text-sm leading-tight'>
                                     <span className='truncate font-semibold'>
                                         {displayName}
@@ -130,7 +130,9 @@ export function NavUser({ user, links }: NavUserProps) {
                                 onClick={() => setOpen(true)}
                             >
                                 <LogOut />
-                                {isMillStaff ? t('sidebar.signOut') : 'Sign out'}
+                                {isMillStaff
+                                    ? t('sidebar.signOut')
+                                    : 'Sign out'}
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
