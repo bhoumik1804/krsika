@@ -30,13 +30,15 @@ export function DataTableBulkActions<TData>({
             (row) => row.original as OutwardEntry
         )
         toast.promise(sleep(2000), {
-            loading: t('common.markingAs', { status: t('common.dispatched') }),
+            loading: t('common.markingAs', {
+                status: status === 'dispatched' ? t('common.dispatched') : status
+            }),
             success: () => {
                 table.resetRowSelection()
                 return t('common.markedAs', {
                     count: selectedEntries.length,
                     item: selectedEntries.length > 1 ? t('common.entries') : t('common.entry'),
-                    status: t('common.dispatched')
+                    status: status === 'dispatched' ? t('common.dispatched') : status
                 })
             },
             error: t('common.errorUpdating'),

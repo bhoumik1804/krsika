@@ -27,7 +27,7 @@ export function DataTableBulkActions<TData>({
 
     const handleBulkStatusChange = (status: 'completed' | 'cancelled') => {
         const selectedRecords = selectedRows.map(
-            (row) => row.original as PaddySalesResponse
+            (row) => row.original as PaddySales
         )
         toast.promise(sleep(2000), {
             loading: t('common.markingAs', {

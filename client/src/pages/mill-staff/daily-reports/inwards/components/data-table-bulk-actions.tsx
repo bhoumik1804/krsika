@@ -30,13 +30,15 @@ export function DataTableBulkActions<TData>({
             (row) => row.original as InwardEntry
         )
         toast.promise(sleep(2000), {
-            loading: t('common.markingAs', { status: t('common.verified') }),
+            loading: t('common.markingAs', {
+                status: status === 'verified' ? t('common.verified') : status
+            }),
             success: () => {
                 table.resetRowSelection()
                 return t('common.markedAs', {
                     count: selectedEntries.length,
                     item: selectedEntries.length > 1 ? t('common.entries') : t('common.entry'),
-                    status: t('common.verified')
+                    status: status === 'verified' ? t('common.verified') : status
                 })
             },
             error: t('common.errorUpdating'),
