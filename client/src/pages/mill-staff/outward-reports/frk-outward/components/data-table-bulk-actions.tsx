@@ -1,4 +1,5 @@
 import { type Table } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { Trash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useFrkOutward } from './frk-outward-provider'
@@ -10,6 +11,7 @@ interface DataTableBulkActionsProps<TData> {
 export function DataTableBulkActions<TData>({
     table,
 }: DataTableBulkActionsProps<TData>) {
+    const { t } = useTranslation('mill-staff')
     const { setOpen } = useFrkOutward()
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
@@ -26,7 +28,7 @@ export function DataTableBulkActions<TData>({
                 onClick={() => setOpen('delete-multi')}
             >
                 <Trash className='h-4 w-4' />
-                Delete {selectedRows.length} selected
+                {t('common.delete')} {selectedRows.length} {t('common.selected')}
             </Button>
         </div>
     )

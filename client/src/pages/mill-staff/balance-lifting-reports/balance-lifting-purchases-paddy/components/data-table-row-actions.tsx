@@ -1,4 +1,5 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { useTranslation } from 'react-i18next'
 import { Row } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,6 +16,7 @@ type DataTableRowActionsProps = {
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
+    const { t } = useTranslation('mill-staff')
     const { setOpen, setCurrentRow } = useBalanceLiftingPurchasesPaddy()
     return (
         <>
@@ -25,7 +27,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                         className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
                     >
                         <DotsHorizontalIcon className='h-4 w-4' />
-                        <span className='sr-only'>Open menu</span>
+                        <span className='sr-only'>{t('common.openMenu')}</span>
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align='end' className='w-[160px]'>
@@ -35,7 +37,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                             setOpen('view')
                         }}
                     >
-                        View Details
+                        {t('common.viewDetails')}
                     </DropdownMenuItem>
                     {/* <DropdownMenuItem
                         onClick={() => {

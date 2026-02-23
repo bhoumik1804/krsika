@@ -1,5 +1,6 @@
 import { type Row } from '@tanstack/react-table'
 import { MoreHorizontal, Trash2, Wrench } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
@@ -17,6 +18,7 @@ type DataTableRowActionsProps = {
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
+    const { t } = useTranslation('mill-staff')
     const { setOpen, setCurrentRow } = useOtherInward()
     return (
         <>
@@ -27,7 +29,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                         className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
                     >
                         <MoreHorizontal className='h-4 w-4' />
-                        <span className='sr-only'>Open menu</span>
+                        <span className='sr-only'>{t('common.openMenu')}</span>
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align='end' className='w-[160px]'>
@@ -37,7 +39,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                             setOpen('edit')
                         }}
                     >
-                        Edit
+                        {t('common.edit')}
                         <DropdownMenuShortcut>
                             <Wrench size={16} />
                         </DropdownMenuShortcut>
@@ -50,7 +52,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                         }}
                         className='text-red-500!'
                     >
-                        Delete
+                        {t('common.delete')}
                         <DropdownMenuShortcut>
                             <Trash2 size={16} />
                         </DropdownMenuShortcut>

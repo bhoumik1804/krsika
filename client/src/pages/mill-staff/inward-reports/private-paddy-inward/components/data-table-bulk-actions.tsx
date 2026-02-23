@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { type Table } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -17,6 +18,7 @@ type DataTableBulkActionsProps<TData> = {
 export function DataTableBulkActions<TData>({
     table,
 }: DataTableBulkActionsProps<TData>) {
+    const { t } = useTranslation('mill-staff')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
@@ -33,11 +35,11 @@ export function DataTableBulkActions<TData>({
                             disabled={!selectedRows.length}
                         >
                             <Trash2 />
-                            <span className='sr-only'>Delete selected</span>
+                            <span className='sr-only'>{t('common.deleteSelected')}</span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Delete selected records</p>
+                        <p>{t('common.deleteSelectedRecords')}</p>
                     </TooltipContent>
                 </Tooltip>
             </BulkActionsToolbar>

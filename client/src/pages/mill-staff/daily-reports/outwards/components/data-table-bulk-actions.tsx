@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { type Table } from '@tanstack/react-table'
 import { CheckCircle, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -20,6 +21,7 @@ type DataTableBulkActionsProps<TData> = {
 export function DataTableBulkActions<TData>({
     table,
 }: DataTableBulkActionsProps<TData>) {
+    const { t } = useTranslation('mill-staff')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
@@ -28,12 +30,16 @@ export function DataTableBulkActions<TData>({
             (row) => row.original as OutwardEntry
         )
         toast.promise(sleep(2000), {
-            loading: `Marking as ${status}...`,
+            loading: t('common.markingAs', { status: t('common.dispatched') }),
             success: () => {
                 table.resetRowSelection()
-                return `Marked ${selectedEntries.length} outward entr${selectedEntries.length > 1 ? ' ies' : 'y'} as ${status}`
+                return t('common.markedAs', {
+                    count: selectedEntries.length,
+                    item: selectedEntries.length > 1 ? t('common.entries') : t('common.entry'),
+                    status: t('common.dispatched')
+                })
             },
-            error: `Error updating outward entries`,
+            error: t('common.errorUpdating'),
         })
     }
 
@@ -49,11 +55,11 @@ export function DataTableBulkActions<TData>({
                             className='size-8'
                         >
                             <CheckCircle />
-                            <span className='sr-only'>Mark dispatched</span>
+                            <span className='sr-only'>{t('common.markDispatched')}</span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Mark selected as dispatched</p>
+                        <p>{t('common.markSelectedAsDispatched')}</p>
                     </TooltipContent>
                 </Tooltip>
 
@@ -66,11 +72,11 @@ export function DataTableBulkActions<TData>({
                             className='size-8'
                         >
                             <Trash2 />
-                            <span className='sr-only'>Delete selected</span>
+                            <span className='sr-only'>{t('common.deleteSelected')}</span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Delete selected outward entries</p>
+                        <p>{t('common.deleteSelectedRecords')}</p>
                     </TooltipContent>
                 </Tooltip>
             </BulkActionsToolbar>

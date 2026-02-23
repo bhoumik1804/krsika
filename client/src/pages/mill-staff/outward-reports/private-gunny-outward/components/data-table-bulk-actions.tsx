@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Table } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -15,6 +16,7 @@ interface DataTableBulkActionsProps {
 }
 
 export function DataTableBulkActions({ table }: DataTableBulkActionsProps) {
+    const { t } = useTranslation('mill-staff')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
     if (table.getFilteredSelectedRowModel().rows.length === 0) return null
@@ -31,11 +33,11 @@ export function DataTableBulkActions({ table }: DataTableBulkActionsProps) {
                             onClick={() => setShowDeleteConfirm(true)}
                         >
                             <Trash2 className='mr-2 h-4 w-4' />
-                            Delete (
+                            {t('common.delete')} (
                             {table.getFilteredSelectedRowModel().rows.length})
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent>Delete selected records</TooltipContent>
+                    <TooltipContent>{t('common.deleteSelectedRecords')}</TooltipContent>
                 </Tooltip>
             </div>
 

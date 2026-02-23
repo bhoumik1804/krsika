@@ -1,4 +1,5 @@
 import { type Table } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { Trash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,6 +17,7 @@ interface DataTableBulkActionsProps<TData> {
 export function DataTableBulkActions<TData>({
     table,
 }: DataTableBulkActionsProps<TData>) {
+    const { t } = useTranslation('mill-staff')
     const { setOpen } = silkyKodhaOutward()
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
@@ -32,7 +34,7 @@ export function DataTableBulkActions<TData>({
                         size='sm'
                         className='h-9 animate-in gap-2 shadow-lg zoom-in-95 slide-in-from-bottom-4'
                     >
-                        {selectedRows.length} selected
+                        {selectedRows.length} {t('common.selected')}
                     </Button>
                 </div>
             </DropdownMenuTrigger>
@@ -42,7 +44,7 @@ export function DataTableBulkActions<TData>({
                     className='text-red-600 focus:text-red-600'
                 >
                     <Trash className='mr-2 h-4 w-4' />
-                    Delete selected
+                    {t('common.deleteSelected')}
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
