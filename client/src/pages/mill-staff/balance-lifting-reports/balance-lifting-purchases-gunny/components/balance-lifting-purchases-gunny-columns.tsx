@@ -4,6 +4,9 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BalanceLiftingPurchasesGunny } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
+
+import { useTranslation } from 'react-i18next'
 
 export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
     {
@@ -37,11 +40,19 @@ export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
     },
     {
         accessorKey: 'date',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.purchase.gunny.form.fields.date')}
+                />
+            )
+        },
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -53,74 +64,146 @@ export const gunnyColumns: ColumnDef<BalanceLiftingPurchasesGunny>[] = [
     },
     {
         accessorKey: 'partyName',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.gunny.form.fields.partyName'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('partyName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('partyName') || '-'}
+            </div>
         ),
     },
     {
         accessorKey: 'deliveryType',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Delivery Type' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.gunny.form.fields.deliveryType'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('deliveryType') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('deliveryType') || '-'}
+            </div>
         ),
     },
     {
         accessorKey: 'newGunnyQty',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='New Gunny Qty' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.gunny.form.fields.newGunnyQty'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>{row.original.newGunnyQty || 0}</div>
         ),
     },
     {
         accessorKey: 'newGunnyRate',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='New Gunny Rate' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.gunny.form.fields.newGunnyRate'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>₹{row.original.newGunnyRate || 0}</div>
         ),
     },
     {
         accessorKey: 'oldGunnyQty',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Old Gunny Qty' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.gunny.form.fields.oldGunnyQty'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>{row.original.oldGunnyQty || 0}</div>
         ),
     },
     {
         accessorKey: 'oldGunnyRate',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Old Gunny Rate' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.gunny.form.fields.oldGunnyRate'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>₹{row.original.oldGunnyRate || 0}</div>
         ),
     },
     {
         accessorKey: 'plasticGunnyQty',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Gunny Qty' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.gunny.form.fields.plasticGunnyQty'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.plasticGunnyQty || 0}</div>
+            <div className='text-right'>
+                {row.original.plasticGunnyQty || 0}
+            </div>
         ),
     },
     {
         accessorKey: 'plasticGunnyRate',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Gunny Rate' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.gunny.form.fields.plasticGunnyRate'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.plasticGunnyRate || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.plasticGunnyRate || 0}
+            </div>
         ),
     },
     {

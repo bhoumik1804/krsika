@@ -6,9 +6,6 @@ import {
     getCoreRowModel,
     getFacetedRowModel,
     getFacetedUniqueValues,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
@@ -22,16 +19,16 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { type OtherInward } from '../data/schema'
 import { otherInwardColumns as columns } from './other-inward-columns'
+import { useOtherInward } from './other-inward-provider'
 
 type DataTableProps = {
-    data: OtherInward[]
     search: Record<string, unknown>
     navigate: NavigateFn
 }
 
-export function OtherInwardTable({ data, search, navigate }: DataTableProps) {
+export function OtherInwardTable({ search, navigate }: DataTableProps) {
+    const { data, pagination } = useOtherInward()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -41,9 +38,8 @@ export function OtherInwardTable({ data, search, navigate }: DataTableProps) {
     const {
         columnFilters,
         onColumnFiltersChange,
-        pagination,
+        pagination: tablePagination,
         onPaginationChange,
-        ensurePageInRange,
     } = useTableUrlState({
         search,
         navigate,
@@ -60,28 +56,28 @@ export function OtherInwardTable({ data, search, navigate }: DataTableProps) {
         columns,
         state: {
             sorting,
-            pagination,
+            pagination: tablePagination,
             rowSelection,
             columnFilters,
             columnVisibility,
         },
+        pageCount: pagination.totalPages,
+        manualPagination: true,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
 
+    // Reset row selection when data changes
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        setRowSelection({})
+    }, [data])
 
     return (
         <div

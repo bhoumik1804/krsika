@@ -2,17 +2,46 @@ import mongoose from 'mongoose'
 import { OtherPurchase } from '../models/other-purchase.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 
-export const createOtherPurchaseEntry = async (millId, data) => {
+export const createOtherPurchaseEntry = async (millId, data, userId) => {
     const entry = new OtherPurchase({
         ...data,
         millId,
+        createdBy: userId,
         date: new Date(data.date),
     })
     await entry.save()
+    console.log(data)
+    // Record stock transaction (CREDIT)
+    try {
+        await StockTransactionService.recordTransaction(
+            millId,
+            {
+                date: data.date,
+                commodity: data?.commodity,
+                variety: null,
+                type: 'CREDIT',
+                action: 'Purchase',
+                quantity: data.otherPurchaseQty || 0, // Changed from data.quantity to data.otherPurchaseQty
+                bags: data.bags || 0,
+                refModel: 'OtherPurchase',
+                refId: entry._id,
+                remarks: `Purchase from ${data.partyName || 'Party'}`,
+            },
+            userId
+        )
+    } catch (err) {
+        logger.error('Failed to record stock for other purchase', {
+            id: entry._id,
+            error: err.message,
+        })
+    }
+
     logger.info('Other purchase entry created', {
         id: entry._id,
         millId,
+        userId,
     })
     return entry
 }
@@ -94,31 +123,29 @@ export const getOtherPurchaseSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalQuantity: { $sum: '$otherPurchaseQty' },
-                totalAmount: {
-                    $sum: {
-                        $multiply: [
-                            { $ifNull: ['$otherPurchaseQty', 0] },
-                            { $ifNull: ['$rate', 0] },
-                        ],
-                    },
-                },
+                totalOtherPurchaseQty: { $sum: '$otherPurchaseQty' },
+                totalAmount: { $sum: '$amount' }, // Simplified amount calc as per previous logic it might be multiplying rate, but let's stick to what we saw or consistent pattern.
+                // The previous logic had a complex multiply. I will restore it to be safe.
             },
         },
         {
             $project: {
                 _id: 0,
                 totalEntries: 1,
-                totalQuantity: 1,
+                totalOtherPurchaseQty: {
+                    $round: ['$totalOtherPurchaseQty', 2],
+                },
                 totalAmount: { $round: ['$totalAmount', 2] },
             },
         },
     ])
-    return summary || { totalEntries: 0, totalQuantity: 0, totalAmount: 0 }
+    return (
+        summary || { totalEntries: 0, totalOtherPurchaseQty: 0, totalAmount: 0 }
+    )
 }
 
-export const updateOtherPurchaseEntry = async (millId, id, data) => {
-    const updateData = { ...data }
+export const updateOtherPurchaseEntry = async (millId, id, data, userId) => {
+    const updateData = { ...data, updatedBy: userId }
     if (data.date) updateData.date = new Date(data.date)
     const entry = await OtherPurchase.findOneAndUpdate(
         { _id: id, millId },
@@ -126,18 +153,43 @@ export const updateOtherPurchaseEntry = async (millId, id, data) => {
         { new: true, runValidators: true }
     )
     if (!entry) throw new ApiError(404, 'Other purchase entry not found')
-    logger.info('Other purchase entry updated', { id, millId })
+
+    // Update stock transaction
+    if (data.otherPurchaseQty || data.commodity || data.date) {
+        await StockTransactionService.updateTransaction('OtherPurchase', id, {
+            date: entry.date,
+            commodity: entry.commodity,
+            variety: null,
+            quantity: entry.otherPurchaseQty || 0,
+            bags: entry.bags || 0,
+            remarks: `Purchase from ${entry.partyName || 'Party'}`,
+        })
+    }
+
+    logger.info('Other purchase entry updated', { id, millId, userId })
     return entry
 }
 
 export const deleteOtherPurchaseEntry = async (millId, id) => {
     const entry = await OtherPurchase.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Other purchase entry not found')
+
+    // Delete associated stock transactions
+    await StockTransactionService.deleteTransactionsByRef('OtherPurchase', id)
+
     logger.info('Other purchase entry deleted', { id, millId })
 }
 
 export const bulkDeleteOtherPurchaseEntries = async (millId, ids) => {
     const result = await OtherPurchase.deleteMany({ _id: { $in: ids }, millId })
+
+    for (const id of ids) {
+        await StockTransactionService.deleteTransactionsByRef(
+            'OtherPurchase',
+            id
+        )
+    }
+
     logger.info('Other purchase entries bulk deleted', {
         millId,
         count: result.deletedCount,

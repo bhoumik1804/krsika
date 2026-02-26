@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { showSubmittedData } from '@/lib/show-submitted-data'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,6 +14,7 @@ import { type AttendanceStatus } from '../data/schema'
 import { useStaff } from './staff-provider'
 
 export function StaffMarkAttendanceDialog() {
+    const { t } = useTranslation('mill-staff')
     const { open, setOpen, currentRow } = useStaff()
     const isOpen = open === 'mark-attendance'
     const [selectedAttendance, setSelectedAttendance] =
@@ -38,8 +40,8 @@ export function StaffMarkAttendanceDialog() {
         if (!currentRow || !selectedAttendance) return
 
         const data = {
-            staffId: currentRow.id,
-            staffName: `${currentRow.firstName} ${currentRow.lastName}`,
+            staffId: currentRow._id,
+            staffName: currentRow.fullName,
             attendance: selectedAttendance,
             date: new Date().toLocaleDateString(),
         }
@@ -52,18 +54,24 @@ export function StaffMarkAttendanceDialog() {
         <Dialog open={isOpen} onOpenChange={() => setOpen(null)}>
             <DialogContent className='sm:max-w-md'>
                 <DialogHeader>
-                    <DialogTitle>Mark Attendance</DialogTitle>
+                    <DialogTitle>{t('staff.markAttendance')}</DialogTitle>
                     <DialogDescription>
-                        Mark attendance for{' '}
-                        <span className='font-semibold text-foreground'>
-                            {currentRow?.firstName} {currentRow?.lastName}
-                        </span>
+                        {t('staff.markAttendanceDescription', {
+                            name: currentRow?.fullName,
+                        }) || (
+                            <>
+                                Mark attendance for{' '}
+                                <span className='font-semibold text-foreground'>
+                                    {currentRow?.fullName}
+                                </span>
+                            </>
+                        )}
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className='flex flex-col gap-4 py-4'>
                     <p className='text-sm text-muted-foreground'>
-                        Select attendance status:
+                        {t('staff.selectAttendanceStatus')}
                     </p>
                     <div className='flex items-center justify-center gap-4'>
                         <Button
@@ -104,9 +112,9 @@ export function StaffMarkAttendanceDialog() {
                         </Button>
                     </div>
                     <div className='grid grid-cols-3 gap-2 text-center text-xs text-muted-foreground'>
-                        <span>Present</span>
-                        <span>Half-day</span>
-                        <span>Absent</span>
+                        <span>{t('staff.present')}</span>
+                        <span>{t('staff.halfDay')}</span>
+                        <span>{t('staff.absent')}</span>
                     </div>
                 </div>
 
@@ -116,14 +124,14 @@ export function StaffMarkAttendanceDialog() {
                         variant='outline'
                         onClick={() => setOpen(null)}
                     >
-                        Cancel
+                        {t('staff.cancel')}
                     </Button>
                     <Button
                         type='button'
                         onClick={handleSubmit}
                         disabled={!selectedAttendance}
                     >
-                        Save Attendance
+                        {t('staff.saveAttendance')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useLabourGroupList } from '@/pages/mill-admin/input-reports/labour-group-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router'
 import { outwardTypeOptions } from '@/constants/sale-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -25,6 +27,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -37,6 +40,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { useCreateLabourOutward, useUpdateLabourOutward } from '../data/hooks'
 import { labourOutwardSchema, type LabourOutward } from '../data/schema'
 
 type LabourOutwardActionDialogProps = {
@@ -50,13 +54,30 @@ export function LabourOutwardActionDialog({
     onOpenChange,
     currentRow,
 }: LabourOutwardActionDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    const createMutation = useCreateLabourOutward(millId || '')
+    const updateMutation = useUpdateLabourOutward(millId || '')
+
+    const labourGroupList = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: (params) => useLabourGroupList(params.millId, params),
+            extractItems: (data) =>
+                data.labourGroups?.map((lg) => lg.labourTeamName) || [],
+            hookParams: { sortBy: 'labourTeamName', sortOrder: 'asc' },
+        },
+        currentRow?.labourGroupName
+    )
 
     const form = useForm<LabourOutward>({
         resolver: zodResolver(labourOutwardSchema),
         defaultValues: {
-            date: '',
+            date: format(new Date(), 'yyyy-MM-dd'),
             outwardType: '',
             truckNumber: '',
             totalGunny: undefined,
@@ -71,22 +92,35 @@ export function LabourOutwardActionDialog({
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                outwardType: '',
+                // other defaults
+            })
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
     const outwardType = form.watch('outwardType')
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = (data: LabourOutward) => {
+        if (isEditing && currentRow?._id) {
+            updateMutation.mutate(
+                { id: currentRow._id, ...data },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        } else {
+            createMutation.mutate(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
+        }
     }
 
     return (
@@ -94,10 +128,14 @@ export function LabourOutwardActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('labourCostReports.outward.form.title')
+                            .split('आवक')[1]
+                            ?.trim() || 'Record'}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing ? t('common.update') : t('common.enter')}{' '}
+                        {t('common.updateDetails')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -111,7 +149,11 @@ export function LabourOutwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'labourCostReports.outward.form.fields.date'
+                                            )}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -130,7 +172,9 @@ export function LabourOutwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickDate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -172,14 +216,18 @@ export function LabourOutwardActionDialog({
                                 name='outwardType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Outward Type</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'labourCostReports.outward.form.fields.type'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
-                                                    <SelectValue placeholder='Select type' />
+                                                    <SelectValue placeholder='Select outward type' />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent className='w-full'>
@@ -204,7 +252,11 @@ export function LabourOutwardActionDialog({
                                 name='truckNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck Number</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'labourCostReports.outward.form.fields.truckNo'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder='XX-00-XX-0000'
@@ -220,7 +272,11 @@ export function LabourOutwardActionDialog({
                                 name='totalGunny'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Number of Gunny</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'labourCostReports.outward.form.fields.numberOfBags'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -250,7 +306,9 @@ export function LabourOutwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Number of Gunny Bundle
+                                                {t(
+                                                    'labourCostReports.outward.form.fields.gunnyBundleCount'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -281,7 +339,11 @@ export function LabourOutwardActionDialog({
                                 name='loadingRate'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Loading Rate</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'labourCostReports.outward.form.fields.loadingRate'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -310,7 +372,11 @@ export function LabourOutwardActionDialog({
                                 name='dhulaiRate'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Dhulai Rate</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'labourCostReports.outward.form.fields.transportationRate'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -339,11 +405,17 @@ export function LabourOutwardActionDialog({
                                 name='labourGroupName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Labour Group Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'labourCostReports.outward.form.fields.hamalRejaToliName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter labour group name'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value || ''}
+                                                onValueChange={field.onChange}
+                                                paginatedList={labourGroupList}
+                                                placeholder='Select a labour group'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -357,10 +429,12 @@ export function LabourOutwardActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {isEditing
+                                    ? t('common.update')
+                                    : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

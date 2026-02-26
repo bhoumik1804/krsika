@@ -1,52 +1,25 @@
-/**
- * Govt Gunny Outward Types
- * TypeScript type definitions for Govt Gunny Outward module
- */
+import type { GovtGunnyOutward } from './schema'
 
-// ==========================================
-// API Request Types
-// ==========================================
-
-export interface CreateGovtGunnyOutwardRequest {
-    date: string
-    gunnyDm?: string
+export type GovtGunnyOutwardQueryParams = {
+    page?: number
+    limit?: number
+    search?: string
+    gunnyDmNumber?: string
     samitiSangrahan?: string
-    oldGunnyQty?: number
-    plasticGunnyQty?: number
-    truckNo?: string
+    startDate?: string
+    endDate?: string
+    sortBy?:
+        | 'date'
+        | 'gunnyDmNumber'
+        | 'samitiSangrahan'
+        | 'oldGunnyQty'
+        | 'plasticGunnyQty'
+        | 'createdAt'
+    sortOrder?: 'asc' | 'desc'
 }
 
-export interface UpdateGovtGunnyOutwardRequest {
-    id: string
-    date?: string
-    gunnyDm?: string
-    samitiSangrahan?: string
-    oldGunnyQty?: number
-    plasticGunnyQty?: number
-    truckNo?: string
-}
-
-// ==========================================
-// API Response Types
-// ==========================================
-
-export interface GovtGunnyOutwardResponse {
-    _id: string
-    millId: string
-    date: string
-    gunnyDm?: string
-    samitiSangrahan?: string
-    oldGunnyQty?: number
-    plasticGunnyQty?: number
-    truckNo?: string
-    createdBy: string
-    updatedBy?: string
-    createdAt: string
-    updatedAt: string
-}
-
-export interface GovtGunnyOutwardListResponse {
-    data: GovtGunnyOutwardResponse[]
+export type GovtGunnyOutwardListResponse = {
+    entries: GovtGunnyOutward[]
     pagination: {
         page: number
         limit: number
@@ -59,37 +32,14 @@ export interface GovtGunnyOutwardListResponse {
     }
 }
 
-export interface GovtGunnyOutwardSummaryResponse {
-    totalEntries: number
-    totalOldGunnyQty: number
-    totalPlasticGunnyQty: number
+export type GovtGunnyOutwardSummaryResponse = {
+    summary: {
+        totalEntries: number
+        totalOldGunnyQty: number
+        totalPlasticGunnyQty: number
+    }
 }
 
-// ==========================================
-// Query Parameters
-// ==========================================
-
-export interface GovtGunnyOutwardQueryParams {
-    page?: number
-    limit?: number
-    search?: string
-    gunnyDm?: string
-    samitiSangrahan?: string
-    startDate?: string
-    endDate?: string
-    sortBy?: string
-    sortOrder?: 'asc' | 'desc'
-}
-
-// ==========================================
-// Form Types
-// ==========================================
-
-export interface GovtGunnyOutwardFormData {
-    date: string
-    gunnyDm?: string
-    samitiSangrahan?: string
-    oldGunnyQty?: number
-    plasticGunnyQty?: number
-    truckNo?: string
-}
+export type CreateGovtGunnyOutwardRequest = Omit<GovtGunnyOutward, '_id'>
+export type UpdateGovtGunnyOutwardRequest =
+    Partial<CreateGovtGunnyOutwardRequest>

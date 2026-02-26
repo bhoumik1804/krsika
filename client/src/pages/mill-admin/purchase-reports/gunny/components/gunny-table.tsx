@@ -32,14 +32,26 @@ type DataTableProps = {
     navigate: NavigateFn
 }
 
-export function GunnyTable({ data, search, navigate }: DataTableProps) {
+export function GunnyTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps & {
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+    }
+}) {
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
-    const { queryParams, setQueryParams, pagination } = useGunny()
+    const { queryParams, setQueryParams } = useGunny()
 
     // Pagination state from provider (server-side)
     const paginationState = {
@@ -86,6 +98,7 @@ export function GunnyTable({ data, search, navigate }: DataTableProps) {
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
         enableRowSelection: true,
         onPaginationChange: handlePaginationChange,
         onColumnFiltersChange,
@@ -97,8 +110,8 @@ export function GunnyTable({ data, search, navigate }: DataTableProps) {
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-        pageCount: pagination.totalPages,
-        manualPagination: true,
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
     })
 
     return (

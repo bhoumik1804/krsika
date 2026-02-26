@@ -1,11 +1,12 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
-import { callTypes, roles } from '../data/data'
-import { type Staff } from '../data/schema'
+import { callTypes, posts } from '../data/data'
+import { type Staff, type StaffStatus } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
 // Helper function to get today's attendance from history
@@ -31,7 +32,13 @@ const getMonthAttendanceCount = (staff: Staff) => {
     return count
 }
 
-export const staffColumns: ColumnDef<Staff>[] = [
+// Helper function to convert isActive to status string
+const getStatus = (isActive: boolean): StaffStatus =>
+    isActive ? 'active' : 'inactive'
+
+export const getStaffColumns = (
+    t: TFunction<'mill-staff', undefined>
+): ColumnDef<Staff>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -62,14 +69,15 @@ export const staffColumns: ColumnDef<Staff>[] = [
         enableHiding: false,
     },
     {
-        id: 'fullName',
-        accessorFn: (row) => `${row.firstName} ${row.lastName}`,
+        accessorKey: 'fullName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Full Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('staff.table.fullName')}
+            />
         ),
         cell: ({ row }) => {
-            const { firstName, lastName } = row.original
-            const fullName = `${firstName} ${lastName}`
+            const fullName = row.getValue('fullName') as string
             return <LongText className='max-w-36'>{fullName}</LongText>
         },
         meta: { className: 'w-36' },
@@ -77,7 +85,10 @@ export const staffColumns: ColumnDef<Staff>[] = [
     {
         accessorKey: 'email',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Email' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('staff.table.email')}
+            />
         ),
         cell: ({ row }) => (
             <div className='w-fit ps-2 text-nowrap'>
@@ -88,18 +99,25 @@ export const staffColumns: ColumnDef<Staff>[] = [
     {
         accessorKey: 'phoneNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Phone Number' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('staff.table.phoneNumber')}
+            />
         ),
-        cell: ({ row }) => <div>{row.getValue('phoneNumber')}</div>,
+        cell: ({ row }) => <div>{row.getValue('phoneNumber') || '-'}</div>,
         enableSorting: false,
     },
     {
-        accessorKey: 'status',
+        id: 'status',
+        accessorFn: (row) => getStatus(row.isActive),
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Status' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('staff.table.status')}
+            />
         ),
         cell: ({ row }) => {
-            const { status } = row.original
+            const status = row.getValue('status') as StaffStatus
             const badgeColor = callTypes.get(status)
             return (
                 <div className='flex space-x-2'>
@@ -107,7 +125,7 @@ export const staffColumns: ColumnDef<Staff>[] = [
                         variant='outline'
                         className={cn('capitalize', badgeColor)}
                     >
-                        {row.getValue('status')}
+                        {status}
                     </Badge>
                 </div>
             )
@@ -119,29 +137,26 @@ export const staffColumns: ColumnDef<Staff>[] = [
         enableSorting: false,
     },
     {
-        accessorKey: 'role',
+        accessorKey: 'post',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Role' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('staff.table.post')}
+            />
         ),
         cell: ({ row }) => {
-            const { role } = row.original
-            const staffRole = roles.find(({ value }) => value === role)
-
-            if (!staffRole) {
-                return null
-            }
+            const post = row.getValue('post') as string
+            const staffPost = posts.find(({ value }) => value === post)
 
             return (
                 <div className='flex items-center gap-x-2'>
-                    {staffRole.icon && (
-                        <staffRole.icon
+                    {staffPost?.icon && (
+                        <staffPost.icon
                             size={16}
                             className='text-muted-foreground'
                         />
                     )}
-                    <span className='text-sm capitalize'>
-                        {row.getValue('role')}
-                    </span>
+                    <span className='text-sm capitalize'>{post || '-'}</span>
                 </div>
             )
         },
@@ -154,7 +169,10 @@ export const staffColumns: ColumnDef<Staff>[] = [
     {
         id: 'todaysAttendance',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Today' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('staff.table.todaysAttendance')}
+            />
         ),
         cell: ({ row }) => {
             const todaysAttendance = getTodaysAttendance(row.original)
@@ -188,7 +206,10 @@ export const staffColumns: ColumnDef<Staff>[] = [
     {
         id: 'attendanceCount',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Month Count' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('staff.table.monthCount')}
+            />
         ),
         cell: ({ row }) => {
             const count = getMonthAttendanceCount(row.original)

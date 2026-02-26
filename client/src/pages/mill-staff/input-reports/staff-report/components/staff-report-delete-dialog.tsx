@@ -1,5 +1,4 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,49 +9,63 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteStaff } from '../data/hooks'
 import { type StaffReportData } from '../data/schema'
+import { useStaffReport } from './staff-report-provider'
 
 type StaffReportDeleteDialogProps = {
+    currentRow: StaffReportData
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: StaffReportData | null
 }
 
 export function StaffReportDeleteDialog({
+    currentRow,
     open,
     onOpenChange,
-    currentRow,
 }: StaffReportDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+    const { t } = useTranslation('mill-staff')
+    const { millId } = useStaffReport()
+    const { mutate: deleteStaff, isPending: isDeleting } =
+        useDeleteStaff(millId)
+
+    const handleDelete = (e: React.MouseEvent) => {
+        e.preventDefault()
+        const staffId = currentRow._id
+        if (staffId) {
+            deleteStaff(staffId, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                },
+            })
+        }
     }
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Record?</AlertDialogTitle>
+                    <AlertDialogTitle>{t('common.delete')}?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete this record for{' '}
-                        <strong>{currentRow?.fullName}</strong>?
+                        {t('common.deleteConfirmation', {
+                            name: currentRow.fullName,
+                        })}
                         <br />
-                        This action cannot be undone.
+                        {t('common.uCannotUndo')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        {t('common.cancel')}
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting
+                            ? t('common.deleting') + '...'
+                            : t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

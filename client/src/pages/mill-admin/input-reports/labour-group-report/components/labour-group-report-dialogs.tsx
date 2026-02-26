@@ -1,9 +1,9 @@
 import { LabourGroupReportActionDialog } from './labour-group-report-action-dialog'
 import { LabourGroupReportDeleteDialog } from './labour-group-report-delete-dialog'
-import { labourGroupReport } from './labour-group-report-provider'
+import { useLabourGroupReport } from './labour-group-report-provider'
 
 export function LabourGroupReportDialogs() {
-    const { open, setOpen, currentRow, setCurrentRow } = labourGroupReport()
+    const { open, setOpen, currentRow, setCurrentRow } = useLabourGroupReport()
 
     const handleDialogChange = (isOpen: boolean) => {
         if (!isOpen) {

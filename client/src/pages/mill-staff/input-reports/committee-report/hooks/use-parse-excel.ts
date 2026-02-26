@@ -38,9 +38,6 @@ export function useParseExcel() {
                             defval: ''
                         }) as unknown[][]
 
-                        console.log('All rows count:', allRows.length)
-                        console.log('First 3 rows:', allRows.slice(0, 3))
-
                         if (allRows.length < 2) {
                             toast.error('Excel file must have header and data rows')
                             setParseStats({
@@ -57,9 +54,6 @@ export function useParseExcel() {
 
                         // Extract header from first row
                         const headerRow = allRows[0]
-                        console.log('Header row:', headerRow)
-                        console.log('Header row type:', typeof headerRow, Array.isArray(headerRow))
-                        console.log('Header values:', headerRow?.map(h => String(h).toLowerCase().trim()))
                         if (!Array.isArray(headerRow)) {
                             toast.error('Invalid Excel format')
                             setParseStats({
@@ -153,13 +147,6 @@ export function useParseExcel() {
                             return
                         }
 
-                        console.log('Final validatedData length:', validatedData.length)
-                        console.log('Final validatedData[0]:', validatedData[0])
-                        console.log('validatedData[0] type:', typeof validatedData[0])
-                        console.log('validatedData[0] isArray?:', Array.isArray(validatedData[0]))
-                        console.log('Is object?', typeof validatedData[0] === 'object' && !Array.isArray(validatedData[0]))
-                        console.log('validatedData[0] keys:', Object.keys(validatedData[0]))
-
                         const stats: ParseStats = {
                             totalRows: allRows.length - 1,
                             successRows: successCount,
@@ -210,7 +197,7 @@ export function useParseExcel() {
                             ? error.message
                             : 'Unknown error',
                     ],
-                    hasHeaders: false,
+                    hasHeaders: true,
                 })
                 setIsLoading(false)
                 resolve(null)

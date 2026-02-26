@@ -1,90 +1,101 @@
-import React, { useState, useMemo, ReactNode } from 'react'
+import React, { useEffect, useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
-import { useTransporterList, type TransporterQueryParams } from '../data/hooks'
+import { useTransporterList } from '../data/hooks'
 import { type TransporterReportData } from '../data/schema'
 
 type TransporterReportDialogType = 'add' | 'edit' | 'delete'
 
-export interface TransporterReportContextType {
+interface QueryParams {
+    page: number
+    limit: number
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+}
+
+type TransporterReportContextType = {
     open: TransporterReportDialogType | null
     setOpen: (str: TransporterReportDialogType | null) => void
     currentRow: TransporterReportData | null
     setCurrentRow: React.Dispatch<
         React.SetStateAction<TransporterReportData | null>
     >
-    // Data fetching
     data: TransporterReportData[]
-    isLoading: boolean
-    isError: boolean
     pagination?: {
         page: number
         limit: number
         total: number
-        pages: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
     }
-    // Query params
-    queryParams?: TransporterQueryParams
-    setQueryParams: (params: TransporterQueryParams) => void
-    // Mill ID
+    isLoading: boolean
+    isError: boolean
     millId: string
+    queryParams: QueryParams
+    setQueryParams: React.Dispatch<React.SetStateAction<QueryParams>>
 }
 
 const TransporterReportContext =
     React.createContext<TransporterReportContextType | null>(null)
 
 interface TransporterReportProviderProps {
-    children: ReactNode
+    children: React.ReactNode
     millId: string
-    initialQueryParams?: TransporterQueryParams
+    initialQueryParams?: QueryParams
+}
+
+const defaultQueryParams: QueryParams = {
+    page: 1,
+    limit: 10,
+    search: undefined,
+    sortBy: 'createdAt',
+    sortOrder: 'desc',
 }
 
 export function TransporterReportProvider({
     children,
     millId,
-    initialQueryParams,
+    initialQueryParams = defaultQueryParams,
 }: TransporterReportProviderProps) {
     const [open, setOpen] = useDialogState<TransporterReportDialogType>(null)
     const [currentRow, setCurrentRow] = useState<TransporterReportData | null>(
         null
     )
-    const [queryParams, setQueryParams] = useState<TransporterQueryParams>(
-        initialQueryParams || { page: 1, limit: 10 }
-    )
+    const [queryParams, setQueryParams] =
+        useState<QueryParams>(initialQueryParams)
 
-    // Fetch transporters data
-    const {
-        data: transporterResponse,
-        isLoading,
-        isError,
-    } = useTransporterList(millId, queryParams)
+    useEffect(() => {
+        setQueryParams(initialQueryParams)
+    }, [initialQueryParams])
 
-    // Extract transporters data and pagination
-    const transportersData = useMemo(
-        () => transporterResponse?.transporters || [],
-        [transporterResponse?.transporters]
-    )
-
-    const pagination = useMemo(
-        () => transporterResponse?.pagination,
-        [transporterResponse?.pagination]
-    )
-
-    const contextValue: TransporterReportContextType = {
-        open,
-        setOpen,
-        currentRow,
-        setCurrentRow,
-        data: transportersData,
-        isLoading,
-        isError,
-        pagination,
-        queryParams,
-        setQueryParams,
+    const { data, isLoading, isError } = useTransporterList({
         millId,
-    }
+        page: queryParams.page,
+        limit: queryParams.limit,
+        search: queryParams.search,
+        sortBy: queryParams.sortBy,
+        sortOrder: queryParams.sortOrder,
+    })
 
     return (
-        <TransporterReportContext value={contextValue}>
+        <TransporterReportContext
+            value={{
+                open,
+                setOpen,
+                currentRow,
+                setCurrentRow,
+                data: data?.transporters ?? [],
+                pagination: data?.pagination,
+                isLoading,
+                isError,
+                millId,
+                queryParams,
+                setQueryParams,
+            }}
+        >
             {children}
         </TransporterReportContext>
     )

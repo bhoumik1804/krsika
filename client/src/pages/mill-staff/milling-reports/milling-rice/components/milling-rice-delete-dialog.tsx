@@ -1,5 +1,4 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useParams } from 'react-router'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,6 +9,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteMillingRice } from '../data/hooks'
 import { type MillingRice } from '../data/schema'
 
 type MillingRiceDeleteDialogProps = {
@@ -23,15 +23,17 @@ export function MillingRiceDeleteDialog({
     onOpenChange,
     currentRow,
 }: MillingRiceDeleteDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
+    const deleteMutation = useDeleteMillingRice(millId || '')
+
     const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+        if (currentRow?._id) {
+            deleteMutation.mutate(currentRow._id, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                },
+            })
+        }
     }
 
     return (

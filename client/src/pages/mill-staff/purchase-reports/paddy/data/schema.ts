@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for Paddy Purchase records
 export const paddyPurchaseSchema = z.object({
+    _id: z.string().optional(),
     date: z.string().min(1, 'Date is required'),
     partyName: z.string().optional(),
     brokerName: z.string().optional(),
@@ -13,12 +14,18 @@ export const paddyPurchaseSchema = z.object({
     paddyType: z.string().optional(),
     totalPaddyQty: z.number().optional(),
     paddyRatePerQuintal: z.number().optional(),
-    discountPercent: z.number().optional(),
+    discountPercent: z
+        .number()
+        .min(0, 'Discount percent must be greater than or equal to 0')
+        .max(100, 'Discount percent must be less than or equal to 100')
+        .optional(),
     brokerage: z.number().optional(),
     gunnyType: z.string().optional(),
     newGunnyRate: z.number().optional(),
     oldGunnyRate: z.number().optional(),
     plasticGunnyRate: z.number().optional(),
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional(),
 })
 
-export type PaddyPurchase = z.infer<typeof paddyPurchaseSchema>
+export type PaddyPurchaseData = z.infer<typeof paddyPurchaseSchema>

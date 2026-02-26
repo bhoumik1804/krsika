@@ -15,10 +15,10 @@ const gunnyInwardBaseSchema = {
         .trim()
         .min(1, 'Party name is required')
         .max(200, 'Party name is too long'),
-    purchaseDealId: z
+    gunnyPurchaseDealNumber: z
         .string()
         .trim()
-        .max(100, 'Purchase deal ID is too long')
+        .max(100, 'Gunny purchase deal number is too long')
         .optional(),
     delivery: z.string().trim().max(200, 'Delivery is too long').optional(),
     samitiSangrahan: z
@@ -50,7 +50,7 @@ export const updateGunnyInwardSchema = z.object({
             .trim()
             .max(200, 'Party name is too long')
             .optional(),
-        purchaseDealId: gunnyInwardBaseSchema.purchaseDealId,
+        gunnyPurchaseDealNumber: gunnyInwardBaseSchema.gunnyPurchaseDealNumber,
         delivery: gunnyInwardBaseSchema.delivery,
         samitiSangrahan: gunnyInwardBaseSchema.samitiSangrahan,
         gunnyNew: gunnyInwardBaseSchema.gunnyNew,

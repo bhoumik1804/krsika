@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for GovtPaddyInward records
 export const govtPaddyInwardSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
     doNumber: z.string().min(1, 'DO Number is required'),
     committeeName: z.string().min(1, 'Committee Name is required'),
@@ -13,9 +14,9 @@ export const govtPaddyInwardSchema = z.object({
     plasticWeight: z.number().optional(),
     gunnyWeight: z.number().optional(),
     truckNumber: z.string().min(1, 'Truck Number is required'),
-    rstNumber: z.string().optional(),
+    rstNumber: z.string().nullable().optional(),
     truckLoadWeight: z.number().optional(),
-    paddyType: z.string().optional(),
+    paddyType: z.string().nullable().optional(),
     paddyMota: z.number().optional(),
     paddyPatla: z.number().optional(),
     paddySarna: z.number().optional(),

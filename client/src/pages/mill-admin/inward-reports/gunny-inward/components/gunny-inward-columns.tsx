@@ -5,6 +5,7 @@ import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type GunnyInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const gunnyInwardColumns: ColumnDef<GunnyInward>[] = [
     {
@@ -42,7 +43,9 @@ export const gunnyInwardColumns: ColumnDef<GunnyInward>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -53,12 +56,17 @@ export const gunnyInwardColumns: ColumnDef<GunnyInward>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'purchaseDealId',
+        accessorKey: 'gunnyPurchaseDealNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Purchase Deal ID' />
+            <DataTableColumnHeader
+                column={column}
+                title='Gunny Purchase Deal Number'
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('purchaseDealId')}</div>
+            <div className='text-nowrap'>
+                {row.getValue('gunnyPurchaseDealNumber')}
+            </div>
         ),
     },
     {

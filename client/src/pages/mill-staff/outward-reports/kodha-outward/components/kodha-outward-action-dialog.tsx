@@ -1,12 +1,24 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    Combobox,
+    ComboboxContent,
+    ComboboxEmpty,
+    ComboboxInput,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -29,26 +41,58 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import { useCreateKodhaOutward, useUpdateKodhaOutward } from '../data/hooks'
 import { kodhaOutwardSchema, type KodhaOutward } from '../data/schema'
 
 type KodhaOutwardActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
     currentRow: KodhaOutward | null
+    millId: string
 }
 
 export function KodhaOutwardActionDialog({
     open,
     onOpenChange,
     currentRow,
+    millId,
 }: KodhaOutwardActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
+    const party = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName || undefined
+    )
+
+    const broker = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
+        currentRow?.brokerName || undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<KodhaOutward>({
-        resolver: zodResolver(kodhaOutwardSchema),
-        defaultValues: {
-            date: '',
+    const createMutation = useCreateKodhaOutward(millId)
+    const updateMutation = useUpdateKodhaOutward(millId)
+
+    const defaultValues = useMemo(
+        () => ({
+            date: format(new Date(), 'yyyy-MM-dd'),
             kodhaSaleDealNumber: '',
             partyName: '',
             brokerName: '',
@@ -56,48 +100,63 @@ export function KodhaOutwardActionDialog({
             oil: undefined,
             brokerage: undefined,
             gunnyPlastic: undefined,
-            plasticWeight: undefined,
+            plasticGunnyWeight: undefined,
             truckNo: '',
             truckRst: '',
             truckWeight: undefined,
             gunnyWeight: undefined,
             netWeight: undefined,
-        },
+        }),
+        []
+    )
+
+    const form = useForm<KodhaOutward>({
+        resolver: zodResolver(kodhaOutwardSchema),
+        defaultValues,
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset(defaultValues)
+            }
+        }
+    }, [currentRow, form, defaultValues, open])
+
+    const onSubmit = (values: KodhaOutward) => {
+        const submissionData = {
+            ...values,
+            partyName: values.partyName || undefined,
+            brokerName: values.brokerName || undefined,
+        }
+
+        if (isEditing && currentRow?._id) {
+            toast.promise(
+                updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data: submissionData,
+                }),
+                {
+                    loading: 'Updating...',
+                    success: () => {
+                        onOpenChange(false)
+                        return 'Updated successfully'
+                    },
+                    error: 'Failed to update',
+                }
+            )
         } else {
-            form.reset({
-                date: '',
-                kodhaSaleDealNumber: '',
-                partyName: '',
-                brokerName: '',
-                rate: undefined,
-                oil: undefined,
-                brokerage: undefined,
-                gunnyPlastic: undefined,
-                plasticWeight: undefined,
-                truckNo: '',
-                truckRst: '',
-                truckWeight: undefined,
-                gunnyWeight: undefined,
-                netWeight: undefined,
+            toast.promise(createMutation.mutateAsync(submissionData), {
+                loading: 'Adding...',
+                success: () => {
+                    onOpenChange(false)
+                    return 'Added successfully'
+                },
+                error: 'Failed to add',
             })
         }
-    }, [currentRow, form])
-
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
     }
 
     return (
@@ -105,10 +164,11 @@ export function KodhaOutwardActionDialog({
             <DialogContent className='max-h-[90vh] max-w-2xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('outward.kodhaOutward.form.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {t('outward.kodhaOutward.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -122,7 +182,11 @@ export function KodhaOutwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.kodhaOutward.form.fields.date'
+                                            )}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -141,7 +205,9 @@ export function KodhaOutwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickDate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -184,12 +250,17 @@ export function KodhaOutwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Kodha Sale Deal Number
+                                            {t(
+                                                'outward.kodhaOutward.form.fields.branSaleDealNumber'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter deal number'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -201,12 +272,49 @@ export function KodhaOutwardActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Party Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.kodhaOutward.form.fields.partyName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter party name'
-                                                {...field}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={party.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder={t(
+                                                        'common.enterValue'
+                                                    )}
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            party.onScroll
+                                                        }
+                                                    >
+                                                        <ComboboxCollection>
+                                                            {(p) => (
+                                                                <ComboboxItem
+                                                                    value={p}
+                                                                >
+                                                                    {p}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No parties found
+                                                        </ComboboxEmpty>
+                                                        {party.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -217,12 +325,49 @@ export function KodhaOutwardActionDialog({
                                 name='brokerName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Broker Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.kodhaOutward.form.fields.brokerName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter broker name'
-                                                {...field}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={broker.items}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder={t(
+                                                        'common.enterValue'
+                                                    )}
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            broker.onScroll
+                                                        }
+                                                    >
+                                                        <ComboboxCollection>
+                                                            {(b) => (
+                                                                <ComboboxItem
+                                                                    value={b}
+                                                                >
+                                                                    {b}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No brokers found
+                                                        </ComboboxEmpty>
+                                                        {broker.isLoadingMore && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -233,7 +378,11 @@ export function KodhaOutwardActionDialog({
                                 name='rate'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rate</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.kodhaOutward.form.fields.rate'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -257,7 +406,11 @@ export function KodhaOutwardActionDialog({
                                 name='oil'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>OIL %</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.kodhaOutward.form.fields.oilPercent'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -282,7 +435,11 @@ export function KodhaOutwardActionDialog({
                                 name='brokerage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Brokerage</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.kodhaOutward.form.fields.brokerage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -306,7 +463,11 @@ export function KodhaOutwardActionDialog({
                                 name='gunnyPlastic'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny (Plastic)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.kodhaOutward.form.fields.gunnyPlastic'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -327,11 +488,13 @@ export function KodhaOutwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='plasticWeight'
+                                name='plasticGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Plastic Gunny Weight
+                                            {t(
+                                                'outward.kodhaOutward.form.fields.plasticWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -357,11 +520,18 @@ export function KodhaOutwardActionDialog({
                                 name='truckNo'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck No</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.kodhaOutward.form.fields.truckNumber'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='XX-00-XX-0000'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -373,11 +543,18 @@ export function KodhaOutwardActionDialog({
                                 name='truckRst'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>RST No</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.kodhaOutward.form.fields.rstNumber'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='RST-000'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -389,7 +566,11 @@ export function KodhaOutwardActionDialog({
                                 name='truckWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.kodhaOutward.form.fields.truckWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -414,7 +595,11 @@ export function KodhaOutwardActionDialog({
                                 name='gunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.kodhaOutward.form.fields.gunnyWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -439,7 +624,11 @@ export function KodhaOutwardActionDialog({
                                 name='netWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Net Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.kodhaOutward.form.fields.netWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -466,10 +655,14 @@ export function KodhaOutwardActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {isEditing
+                                    ? t('common.update')
+                                    : t(
+                                          'outward.kodhaOutward.form.primaryButton'
+                                      )}
                             </Button>
                         </DialogFooter>
                     </form>

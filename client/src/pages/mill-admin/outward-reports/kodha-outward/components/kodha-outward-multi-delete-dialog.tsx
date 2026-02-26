@@ -1,6 +1,5 @@
 import { type Table } from '@tanstack/react-table'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,22 +10,32 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeleteKodhaOutward } from '../data/hooks'
+import { type KodhaOutward } from '../data/schema'
 
-type KodhaOutwardMultiDeleteDialogProps<TData> = {
-    table: Table<TData>
+type KodhaOutwardMultiDeleteDialogProps = {
+    table: Table<KodhaOutward>
     open: boolean
     onOpenChange: (open: boolean) => void
+    millId: string
 }
 
-export function KodhaOutwardMultiDeleteDialog<TData>({
+export function KodhaOutwardMultiDeleteDialog({
     table,
     open,
     onOpenChange,
-}: KodhaOutwardMultiDeleteDialogProps<TData>) {
+    millId,
+}: KodhaOutwardMultiDeleteDialogProps) {
     const selectedRows = table.getFilteredSelectedRowModel().rows
+    const bulkDeleteMutation = useBulkDeleteKodhaOutward(millId)
 
     const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
+        const ids = selectedRows
+            .map((row) => row.original._id)
+            .filter((id): id is string => id !== undefined)
+        if (ids.length === 0) return
+
+        toast.promise(bulkDeleteMutation.mutateAsync(ids), {
             loading: 'Deleting...',
             success: () => {
                 table.resetRowSelection()

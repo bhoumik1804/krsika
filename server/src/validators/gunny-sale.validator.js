@@ -7,30 +7,32 @@ import { z } from 'zod'
 
 // Common fields schema
 const gunnySaleBaseSchema = {
-    date: z
-        .string({
-            required_error: 'Date is required',
-        })
-        .datetime({ offset: true })
-        .or(
-            z
-                .string()
-                .regex(
-                    /^\d{4}-\d{2}-\d{2}$/,
-                    'Invalid date format (YYYY-MM-DD)'
-                )
-        ),
-    partyName: z
-        .string({
-            required_error: 'Party name is required',
-        })
-        .trim()
-        .min(1, 'Party name is required')
-        .max(200, 'Party name is too long'),
-    gunnyType: z.string().trim().max(100, 'Gunny type is too long').optional(),
-    totalGunny: z.number().min(0, 'Total gunny cannot be negative').optional(),
-    rate: z.number().min(0, 'Rate cannot be negative').optional(),
-    amount: z.number().min(0, 'Amount cannot be negative').optional(),
+    date: z.string().min(1, 'Date is required'),
+    partyName: z.string().min(1, 'Party name is required'),
+    newGunnyQty: z
+        .number()
+        .min(0, 'New gunny quantity cannot be negative')
+        .optional(),
+    newGunnyRate: z
+        .number()
+        .min(0, 'New gunny rate cannot be negative')
+        .optional(),
+    oldGunnyQty: z
+        .number()
+        .min(0, 'Old gunny quantity cannot be negative')
+        .optional(),
+    oldGunnyRate: z
+        .number()
+        .min(0, 'Old gunny rate cannot be negative')
+        .optional(),
+    plasticGunnyQty: z
+        .number()
+        .min(0, 'Plastic gunny quantity cannot be negative')
+        .optional(),
+    plasticGunnyRate: z
+        .number()
+        .min(0, 'Plastic gunny rate cannot be negative')
+        .optional(),
 }
 
 // Create gunny sale schema
@@ -46,16 +48,7 @@ export const createGunnySaleSchema = z.object({
 // Update gunny sale schema
 export const updateGunnySaleSchema = z.object({
     body: z.object({
-        date: gunnySaleBaseSchema.date.optional(),
-        partyName: z
-            .string()
-            .trim()
-            .max(200, 'Party name is too long')
-            .optional(),
-        gunnyType: gunnySaleBaseSchema.gunnyType,
-        totalGunny: gunnySaleBaseSchema.totalGunny,
-        rate: gunnySaleBaseSchema.rate,
-        amount: gunnySaleBaseSchema.amount,
+        ...gunnySaleBaseSchema,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),

@@ -1,8 +1,10 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -10,16 +12,39 @@ import { LabourMillingDialogs } from './components/labour-milling-dialogs'
 import { LabourMillingPrimaryButtons } from './components/labour-milling-primary-buttons'
 import { LabourMillingProvider } from './components/labour-milling-provider'
 import { LabourMillingTable } from './components/labour-milling-table'
-import { labourMillingEntries } from './data/labour-milling-entries'
+import { useLabourMillingList } from './data/hooks'
 
 export function LabourMillingReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            labourGroupName: search.labourGroupName as string | undefined,
+            sortBy: (search.sortBy as string) || 'date',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
-    const search = Object.fromEntries(searchParams.entries())
+    const { data, isLoading, isError } = useLabourMillingList(
+        millId || '',
+        queryParams
+    )
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
+        const search = Object.fromEntries(searchParams.entries())
         if (typeof opts.search === 'function') {
             const newSearch = opts.search(search)
             setSearchParams(newSearch as Record<string, string>)
@@ -28,6 +53,22 @@ export function LabourMillingReport() {
         } else {
             setSearchParams(opts.search as Record<string, string>)
         }
+    }
+
+    if (isLoading && !data) {
+        return (
+            <div className='flex h-screen items-center justify-center'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (isError) {
+        return (
+            <div className='flex h-screen items-center justify-center text-red-500'>
+                Failed to load data. Please try again later.
+            </div>
+        )
     }
 
     return (
@@ -57,9 +98,15 @@ export function LabourMillingReport() {
                     <LabourMillingPrimaryButtons />
                 </div>
                 <LabourMillingTable
-                    data={labourMillingEntries}
-                    search={search}
+                    data={data?.entries || []}
+                    search={Object.fromEntries(
+                        Object.entries(queryParams || {})
+                            .filter(([, value]) => value !== undefined)
+                            .map(([key, value]) => [key, String(value)])
+                    )}
                     navigate={navigate}
+                    pagination={data?.pagination}
+                    isLoading={isLoading}
                 />
             </Main>
 

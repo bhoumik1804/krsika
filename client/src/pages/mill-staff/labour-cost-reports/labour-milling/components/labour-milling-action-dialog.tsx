@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useLabourGroupList } from '@/pages/mill-admin/input-reports/labour-group-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -24,27 +26,14 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select'
+import { useCreateLabourMilling, useUpdateLabourMilling } from '../data/hooks'
 import { labourMillingSchema, type LabourMilling } from '../data/schema'
-
-const labourGroupOptions = [
-    { label: 'रामलाल टीम', value: 'रामलाल टीम' },
-    { label: 'श्यामलाल टीम', value: 'श्यामलाल टीम' },
-    { label: 'मोहन टीम', value: 'मोहन टीम' },
-    { label: 'सोहन टीम', value: 'सोहन टीम' },
-    { label: 'राधेश्याम टीम', value: 'राधेश्याम टीम' },
-]
 
 type LabourMillingActionDialogProps = {
     open: boolean
@@ -57,8 +46,25 @@ export function LabourMillingActionDialog({
     onOpenChange,
     currentRow,
 }: LabourMillingActionDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    const createMutation = useCreateLabourMilling(millId || '')
+    const updateMutation = useUpdateLabourMilling(millId || '')
+
+    const labourGroupList = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: (params) => useLabourGroupList(params.millId, params),
+            extractItems: (data) =>
+                data.labourGroups?.map((lg) => lg.labourTeamName) || [],
+            hookParams: { sortBy: 'labourTeamName', sortOrder: 'asc' },
+        },
+        currentRow?.labourGroupName
+    )
 
     const form = useForm<LabourMilling>({
         resolver: zodResolver(labourMillingSchema),
@@ -74,20 +80,32 @@ export function LabourMillingActionDialog({
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                // other defaults
+            })
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = (data: LabourMilling) => {
+        if (isEditing && currentRow?._id) {
+            updateMutation.mutate(
+                { id: currentRow._id, ...data },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        } else {
+            createMutation.mutate(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
+        }
     }
 
     return (
@@ -95,10 +113,14 @@ export function LabourMillingActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('labourCostReports.milling.form.title')
+                            .split('आवक')[1]
+                            ?.trim() || 'Record'}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing ? t('common.update') : t('common.enter')}{' '}
+                        {t('common.updateDetails')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -112,7 +134,11 @@ export function LabourMillingActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'labourCostReports.milling.form.fields.date'
+                                            )}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -131,7 +157,9 @@ export function LabourMillingActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickDate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -173,7 +201,11 @@ export function LabourMillingActionDialog({
                                 name='hopperInGunny'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Hopper (In Gunny)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'labourCostReports.milling.form.fields.hopperCutting'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -201,7 +233,11 @@ export function LabourMillingActionDialog({
                                 name='hopperRate'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Hopper Rate</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'labourCostReports.milling.form.fields.hopperCuttingRate'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -230,29 +266,19 @@ export function LabourMillingActionDialog({
                                 name='labourGroupName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Labour Group Name</FormLabel>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value || ''}
-                                        >
-                                            <FormControl>
-                                                <SelectTrigger className='w-full'>
-                                                    <SelectValue placeholder='Select a labour group' />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent className='w-full'>
-                                                {labourGroupOptions.map(
-                                                    (option) => (
-                                                        <SelectItem
-                                                            key={option.value}
-                                                            value={option.value}
-                                                        >
-                                                            {option.label}
-                                                        </SelectItem>
-                                                    )
-                                                )}
-                                            </SelectContent>
-                                        </Select>
+                                        <FormLabel>
+                                            {t(
+                                                'labourCostReports.milling.form.fields.hamalRejaToliName'
+                                            )}
+                                        </FormLabel>
+                                        <FormControl>
+                                            <PaginatedCombobox
+                                                value={field.value || ''}
+                                                onValueChange={field.onChange}
+                                                paginatedList={labourGroupList}
+                                                placeholder='Select a labour group'
+                                            />
+                                        </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -264,10 +290,12 @@ export function LabourMillingActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {isEditing
+                                    ? t('common.update')
+                                    : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

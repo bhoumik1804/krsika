@@ -35,6 +35,8 @@ export function PaddyPurchaseReport() {
         }
     }, [searchParams])
 
+    // Call GET API here -> Removed as logic is inside provider
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
@@ -110,6 +112,7 @@ function PaddyPurchaseContent({
     return (
         <PaddyTable
             data={context.data}
+            pagination={context.pagination}
             search={Object.fromEntries(
                 Object.entries(context.queryParams || {})
                     .filter(([, value]) => value !== undefined)

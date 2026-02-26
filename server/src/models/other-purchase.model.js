@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose'
 import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
+import { dealNumberPlugin } from '../utils/dealNumberPlugin.js'
 
 /**
  * Other Purchase Schema
@@ -65,6 +66,12 @@ OtherPurchaseSchema.virtual('formattedDate').get(function () {
 // Ensure virtuals are included in JSON output
 OtherPurchaseSchema.set('toJSON', { virtuals: true })
 OtherPurchaseSchema.set('toObject', { virtuals: true })
+
+// Apply deal number plugin (auto-generates otherPurchaseDealNumber)
+OtherPurchaseSchema.plugin(dealNumberPlugin, {
+    fieldName: 'otherPurchaseDealNumber',
+    prefix: 'OTP',
+})
 
 // Add aggregate paginate plugin
 OtherPurchaseSchema.plugin(aggregatePaginate)

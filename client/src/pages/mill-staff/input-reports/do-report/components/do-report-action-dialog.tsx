@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useCommitteeList } from '@/pages/mill-admin/input-reports/committee-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -22,6 +25,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -29,68 +33,172 @@ import {
 } from '@/components/ui/popover'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+    useCreateDoReport,
+    useUpdateDoReport,
+    useBulkCreateDoReport,
+} from '../data/hooks'
 import { doReportSchema, type DoReportData } from '../data/schema'
 import { useParseExcel } from '../hooks/use-parse-excel'
-import { useCreateDoReport, useUpdateDoReport } from '../data/hooks'
-import { useUser } from '@/pages/landing/hooks/use-auth'
+import { useDoReport } from './do-report-provider'
 
 type DoReportActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: DoReportData | null
+    currentRow?: DoReportData
 }
 
 export function DoReportActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: DoReportActionDialogProps) {
-    const { user } = useUser()
-    const millId = user?.millId as any
+    const { t } = useTranslation('mill-staff')
+    const { currentRow, millId, setCurrentRow } = useDoReport()
+    const isEditing = !!currentRow
+
+    // Paginated committee selection for samitiSangrahan
+    const committee = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useCommitteeList,
+            extractItems: (data) =>
+                data.committees
+                    .map((c) => c.committeeName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'committeeName', sortOrder: 'asc' },
+        },
+        currentRow?.samitiSangrahan
+    )
     const createMutation = useCreateDoReport(millId)
     const updateMutation = useUpdateDoReport(millId)
-    const isLoading = createMutation.isPending || updateMutation.isPending
-    const isEditing = !!currentRow?._id
+    const bulkCreateMutation = useBulkCreateDoReport(millId)
+    const isLoading =
+        createMutation.isPending ||
+        updateMutation.isPending ||
+        bulkCreateMutation.isPending
     const [uploadedFile, setUploadedFile] = useState<File | null>(null)
-    const [previewData, setPreviewData] = useState<unknown[]>([])
+    const [previewData, setPreviewData] = useState<DoReportData[]>([])
+    const [activeTab, setActiveTab] = useState<string>('manual')
     const { parseFile, parseStats } = useParseExcel()
 
     const form = useForm<DoReportData>({
         resolver: zodResolver(doReportSchema),
         defaultValues: {
-            date: '',
+            date: format(new Date(), 'yyyy-MM-dd'),
             samitiSangrahan: '',
             doNo: '',
-            dhanMota: 0,
-            dhanPatla: 0,
-            dhanSarna: 0,
+            dhanMota: '' as unknown as number,
+            dhanPatla: '' as unknown as number,
+            dhanSarna: '' as unknown as number,
+            total: 0,
         },
     })
 
+    const dhanMotaValue = form.watch('dhanMota')
+    const dhanPatlaValue = form.watch('dhanPatla')
+    const dhanSarnaValue = form.watch('dhanSarna')
+
+    useEffect(() => {
+        const mota = Number(dhanMotaValue || 0)
+        const patla = Number(dhanPatlaValue || 0)
+        const sarna = Number(dhanSarnaValue || 0)
+        const total = mota + patla + sarna
+        form.setValue('total', total, { shouldValidate: false })
+    }, [dhanMotaValue, dhanPatlaValue, dhanSarnaValue, form])
+
     useEffect(() => {
         if (currentRow) {
-            form.reset(currentRow)
+            form.reset({
+                date: currentRow.date || '',
+                samitiSangrahan: currentRow.samitiSangrahan || '',
+                doNo: currentRow.doNo || '',
+                dhanMota: currentRow.dhanMota || ('' as unknown as number),
+                dhanPatla: currentRow.dhanPatla || ('' as unknown as number),
+                dhanSarna: currentRow.dhanSarna || ('' as unknown as number),
+                total: currentRow.total ?? 0,
+            })
+            setActiveTab('manual')
         } else {
-            form.reset()
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                samitiSangrahan: '',
+                doNo: '',
+                dhanMota: '' as unknown as number,
+                dhanPatla: '' as unknown as number,
+                dhanSarna: '' as unknown as number,
+                total: 0,
+            })
+            setActiveTab('manual')
         }
     }, [currentRow, form])
 
-    const onSubmit = async (data: DoReportData) => {
+    const handleSuccess = () => {
+        onOpenChange(false)
+        form.reset({
+            date: format(new Date(), 'yyyy-MM-dd'),
+            samitiSangrahan: '',
+            doNo: '',
+            dhanMota: '' as unknown as number,
+            dhanPatla: '' as unknown as number,
+            dhanSarna: '' as unknown as number,
+            total: 0,
+        })
+        setUploadedFile(null)
+        setPreviewData([])
+        setCurrentRow(null)
+    }
+
+    const handleUpload = async () => {
+        if (previewData.length === 0) return
+
         try {
-            if (isEditing && currentRow?._id) {
+            await bulkCreateMutation.mutateAsync(previewData)
+            handleSuccess()
+        } catch (error) {
+            console.error('Error uploading file:', error)
+        }
+    }
+
+    const onSubmit = async (data: DoReportData) => {
+        const computedTotal =
+            (data.dhanMota ?? 0) + (data.dhanPatla ?? 0) + (data.dhanSarna ?? 0)
+        const payload = {
+            ...data,
+            total: computedTotal,
+        }
+
+        try {
+            if (currentRow?._id) {
                 await updateMutation.mutateAsync({
-                    id: currentRow._id,
-                    ...data,
+                    _id: currentRow._id,
+                    ...payload,
                 })
             } else {
-                await createMutation.mutateAsync(data)
+                await createMutation.mutateAsync(payload)
             }
-            onOpenChange(false)
-            form.reset()
-            setUploadedFile(null)
+            handleSuccess()
         } catch (error) {
             console.error('Error submitting form:', error)
         }
+    }
+
+    const handleDialogClose = (isOpen: boolean) => {
+        if (!isOpen) {
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                samitiSangrahan: '',
+                doNo: '',
+                dhanMota: 0,
+                dhanPatla: 0,
+                dhanSarna: 0,
+                total: 0,
+            })
+            setUploadedFile(null)
+            setPreviewData([])
+            setActiveTab('manual')
+        }
+        onOpenChange(isOpen)
     }
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,37 +208,72 @@ export function DoReportActionDialog({
         setUploadedFile(file)
 
         const result = await parseFile(file)
-        if (result) {
-            setPreviewData(result.data)
+        if (result && result.data) {
+            setPreviewData(result.data as DoReportData[])
         } else {
             setPreviewData([])
         }
     }
 
+    const formatPreviewCell = (value: unknown): string => {
+        if (value === null || value === undefined) return '-'
+        if (typeof value === 'string') {
+            return value.trim() === '' ? '-' : value
+        }
+        return String(value)
+    }
+
+    const fieldOrder = [
+        'samitiSangrahan',
+        'doNo',
+        'date',
+        'dhanMota',
+        'dhanPatla',
+        'dhanSarna',
+        'total',
+    ] as const
+
+    const fieldLabels: Record<string, string> = {
+        samitiSangrahan: 'समिती - उपार्जन केन्द्र',
+        doNo: 'डी.ओ.',
+        date: 'डी.ओ.दिनांक',
+        dhanMota: 'मोटा',
+        dhanPatla: 'पतला',
+        dhanSarna: 'सरना',
+        total: 'कुल',
+    }
+
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
+        <Dialog open={open} onOpenChange={handleDialogClose}>
+            <DialogContent className='max-h-[90vh] overflow-y-auto p-4 sm:max-w-4xl sm:p-6'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} DO Report
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('inputReports.do.title').replace(' Report', '')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the DO report details
-                        below
+                        {t('inputReports.do.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
-                        className='space-y-4'
+                        className='w-full max-w-full space-y-4'
                     >
-                        <Tabs defaultValue='manual' className='w-full'>
+                        <Tabs
+                            value={activeTab}
+                            onValueChange={setActiveTab}
+                            className='w-full'
+                        >
                             <TabsList className='grid w-full grid-cols-2'>
                                 <TabsTrigger value='manual'>
-                                    Manual Entry
+                                    {t('common.manualEntry')}
                                 </TabsTrigger>
-                                <TabsTrigger value='upload'>
-                                    Upload File
+                                <TabsTrigger
+                                    value='upload'
+                                    disabled={isEditing}
+                                >
+                                    {t('common.uploadFile')}
                                 </TabsTrigger>
                             </TabsList>
                             <TabsContent
@@ -143,7 +286,11 @@ export function DoReportActionDialog({
                                         name='date'
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Date</FormLabel>
+                                                <FormLabel>
+                                                    {t(
+                                                        'inputReports.do.form.fields.date'
+                                                    )}
+                                                </FormLabel>
                                                 <Popover>
                                                     <PopoverTrigger asChild>
                                                         <FormControl>
@@ -154,12 +301,12 @@ export function DoReportActionDialog({
                                                                 <CalendarIcon className='mr-2 h-4 w-4' />
                                                                 {field.value
                                                                     ? format(
-                                                                          new Date(
-                                                                              field.value
-                                                                          ),
-                                                                          'MMM dd, yyyy'
-                                                                      )
-                                                                    : 'Pick a date'}
+                                                                        new Date(
+                                                                            field.value
+                                                                        ),
+                                                                        'MMM dd, yyyy'
+                                                                    )
+                                                                    : t('common.pickDate')}
                                                             </Button>
                                                         </FormControl>
                                                     </PopoverTrigger>
@@ -172,8 +319,8 @@ export function DoReportActionDialog({
                                                             selected={
                                                                 field.value
                                                                     ? new Date(
-                                                                          field.value
-                                                                      )
+                                                                        field.value
+                                                                    )
                                                                     : undefined
                                                             }
                                                             onSelect={(
@@ -182,9 +329,9 @@ export function DoReportActionDialog({
                                                                 field.onChange(
                                                                     date
                                                                         ? format(
-                                                                              date,
-                                                                              'yyyy-MM-dd'
-                                                                          )
+                                                                            date,
+                                                                            'yyyy-MM-dd'
+                                                                        )
                                                                         : ''
                                                                 )
                                                             }}
@@ -201,12 +348,23 @@ export function DoReportActionDialog({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    Samiti Sangrahan
+                                                    {t(
+                                                        'inputReports.do.form.fields.samitiSangrahan'
+                                                    )}
                                                 </FormLabel>
                                                 <FormControl>
-                                                    <Input
-                                                        placeholder='Enter Samiti Sangrahan'
-                                                        {...field}
+                                                    <PaginatedCombobox
+                                                        value={field.value}
+                                                        onValueChange={
+                                                            field.onChange
+                                                        }
+                                                        paginatedList={
+                                                            committee
+                                                        }
+                                                        placeholder='Committee Collection'
+                                                        emptyText={t(
+                                                            'common.noResults'
+                                                        )}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -218,10 +376,14 @@ export function DoReportActionDialog({
                                         name='doNo'
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>DO Number</FormLabel>
+                                                <FormLabel>
+                                                    {t(
+                                                        'inputReports.do.form.fields.doNo'
+                                                    )}
+                                                </FormLabel>
                                                 <FormControl>
                                                     <Input
-                                                        placeholder='Enter DO number'
+                                                        placeholder='DO Number'
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -235,18 +397,33 @@ export function DoReportActionDialog({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    Dhan (Mota)
+                                                    {t(
+                                                        'inputReports.do.form.fields.dhanMota'
+                                                    )}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         type='number'
                                                         step='0.01'
                                                         {...field}
-                                                        onChange={(e) =>
-                                                            field.onChange(
-                                                                +e.target.value
-                                                            )
+                                                        value={
+                                                            field.value ?? ''
                                                         }
+                                                        onWheel={(e) =>
+                                                            e.currentTarget.blur()
+                                                        }
+                                                        onChange={(e) => {
+                                                            const value =
+                                                                e.target.value
+
+                                                            field.onChange(
+                                                                value === ''
+                                                                    ? ''
+                                                                    : Number(
+                                                                        value
+                                                                    )
+                                                            )
+                                                        }}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -259,18 +436,32 @@ export function DoReportActionDialog({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    Dhan (Patla)
+                                                    {t(
+                                                        'inputReports.do.form.fields.dhanPatla'
+                                                    )}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         type='number'
                                                         step='0.01'
                                                         {...field}
-                                                        onChange={(e) =>
-                                                            field.onChange(
-                                                                +e.target.value
-                                                            )
+                                                        value={
+                                                            field.value ?? ''
                                                         }
+                                                        onWheel={(e) =>
+                                                            e.currentTarget.blur()
+                                                        }
+                                                        onChange={(e) => {
+                                                            const value =
+                                                                e.target.value
+                                                            field.onChange(
+                                                                value === ''
+                                                                    ? ''
+                                                                    : Number(
+                                                                        value
+                                                                    )
+                                                            )
+                                                        }}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -283,18 +474,55 @@ export function DoReportActionDialog({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    Dhan (Sarna)
+                                                    {t(
+                                                        'inputReports.do.form.fields.dhanSarna'
+                                                    )}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         type='number'
                                                         step='0.01'
                                                         {...field}
-                                                        onChange={(e) =>
-                                                            field.onChange(
-                                                                +e.target.value
-                                                            )
+                                                        value={
+                                                            field.value ?? ''
                                                         }
+                                                        onWheel={(e) =>
+                                                            e.currentTarget.blur()
+                                                        }
+                                                        onChange={(e) => {
+                                                            const value =
+                                                                e.target.value
+                                                            field.onChange(
+                                                                value === ''
+                                                                    ? ''
+                                                                    : Number(
+                                                                        value
+                                                                    )
+                                                            )
+                                                        }}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name='total'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    {t(
+                                                        'inputReports.do.form.fields.total'
+                                                    )}
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type='number'
+                                                        step='0.01'
+                                                        readOnly
+                                                        {...field}
+                                                        value={field.value ?? 0}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -322,7 +550,7 @@ export function DoReportActionDialog({
                                         or CSV
                                     </p>
                                     {uploadedFile && (
-                                        <p className='mt-2 text-sm text-green-600'>
+                                        <p className='mt-2 text-sm break-all text-green-600'>
                                             File selected: {uploadedFile.name}
                                         </p>
                                     )}
@@ -334,7 +562,7 @@ export function DoReportActionDialog({
                                             <h3 className='mb-3 text-sm font-semibold'>
                                                 Parse Statistics
                                             </h3>
-                                            <div className='grid grid-cols-3 gap-3'>
+                                            <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
                                                 <div className='rounded-lg border bg-primary/10 p-3'>
                                                     <p className='text-xs text-muted-foreground'>
                                                         Total Rows
@@ -366,7 +594,7 @@ export function DoReportActionDialog({
 
                                             {parseStats?.errorDetails &&
                                                 parseStats.errorDetails.length >
-                                                    0 && (
+                                                0 && (
                                                     <div className='mt-3'>
                                                         <p className='mb-2 text-xs font-semibold text-gray-600'>
                                                             Error Details:
@@ -405,10 +633,31 @@ export function DoReportActionDialog({
                                             Preview - {previewData.length}{' '}
                                             records
                                         </h3>
-                                        <div className='w-full overflow-x-auto rounded-lg border'>
+                                        <div className='w-full max-w-[calc(100vw-5rem)] overflow-x-auto rounded-lg border sm:max-w-full'>
                                             <div className='h-80 overflow-y-auto'>
                                                 <Table>
                                                     <TableBody>
+                                                        <TableRow>
+                                                            <TableCell className='text-sm font-semibold text-muted-foreground'>
+                                                                #
+                                                            </TableCell>
+                                                            {fieldOrder.map(
+                                                                (field) => (
+                                                                    <TableCell
+                                                                        key={
+                                                                            field
+                                                                        }
+                                                                        className='text-sm font-semibold text-muted-foreground'
+                                                                    >
+                                                                        {
+                                                                            fieldLabels[
+                                                                            field
+                                                                            ]
+                                                                        }
+                                                                    </TableCell>
+                                                                )
+                                                            )}
+                                                        </TableRow>
                                                         {previewData.map(
                                                             (row, idx) => (
                                                                 <TableRow
@@ -418,25 +667,20 @@ export function DoReportActionDialog({
                                                                         {idx +
                                                                             1}
                                                                     </TableCell>
-                                                                    {Object.values(
-                                                                        row as Record<
-                                                                            string,
-                                                                            unknown
-                                                                        >
-                                                                    ).map(
+                                                                    {fieldOrder.map(
                                                                         (
-                                                                            value,
-                                                                            cellIdx
+                                                                            field
                                                                         ) => (
                                                                             <TableCell
                                                                                 key={
-                                                                                    cellIdx
+                                                                                    field
                                                                                 }
                                                                                 className='text-sm'
                                                                             >
-                                                                                {String(
-                                                                                    value ||
-                                                                                        '-'
+                                                                                {formatPreviewCell(
+                                                                                    row[
+                                                                                    field as keyof DoReportData
+                                                                                    ]
                                                                                 )}
                                                                             </TableCell>
                                                                         )
@@ -456,19 +700,39 @@ export function DoReportActionDialog({
                             <Button
                                 type='button'
                                 variant='outline'
-                                onClick={() => onOpenChange(false)}
+                                onClick={() => handleDialogClose(false)}
+                            >
+                                {t('common.cancel')}
+                            </Button>
+                            <Button
+                                type={
+                                    activeTab === 'upload' ? 'button' : 'submit'
+                                }
+                                onClick={
+                                    activeTab === 'upload'
+                                        ? handleUpload
+                                        : undefined
+                                }
                                 disabled={isLoading}
                             >
-                                Cancel
-                            </Button>
-                            <Button type='submit' disabled={isLoading}>
                                 {isLoading
-                                    ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
-                                    : isEditing
-                                      ? 'Update'
-                                      : 'Add'} DO Report
+                                    ? activeTab === 'upload' &&
+                                        previewData.length > 0
+                                        ? t('common.uploading') + '...'
+                                        : isEditing
+                                            ? t('common.update') + '...'
+                                            : t('common.add') + '...'
+                                    : activeTab === 'upload' &&
+                                        previewData.length > 0
+                                        ? `${t('common.upload')} ${previewData.length} ${previewData.length > 1 ? t('inputReports.do.title').replace(' Report', 's') : t('inputReports.do.title').replace(' Report', '')}`
+                                        : isEditing
+                                            ? t('common.update')
+                                            : t('common.add')}{' '}
+                                {activeTab === 'manual' &&
+                                    t('inputReports.do.title').replace(
+                                        ' Report',
+                                        ''
+                                    )}
                             </Button>
                         </DialogFooter>
                     </form>

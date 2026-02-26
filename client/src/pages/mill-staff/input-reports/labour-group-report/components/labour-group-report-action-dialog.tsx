@@ -1,6 +1,9 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -19,12 +22,11 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useCreateLabourGroup, useUpdateLabourGroup } from '../data/hooks'
 import {
     labourGroupReportSchema,
     type LabourGroupReportData,
 } from '../data/schema'
-import { useCreateLabourGroup, useUpdateLabourGroup } from '../data/hooks'
-import { useUser } from '@/pages/landing/hooks/use-auth'
 
 type LabourGroupReportActionDialogProps = {
     open: boolean
@@ -37,12 +39,12 @@ export function LabourGroupReportActionDialog({
     onOpenChange,
     currentRow,
 }: LabourGroupReportActionDialogProps) {
-    const { user } = useUser()
-    const millId = user?.millId as any
-    const createMutation = useCreateLabourGroup(millId)
-    const updateMutation = useUpdateLabourGroup(millId)
+    const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
+    const isEditing = !!currentRow
+    const createMutation = useCreateLabourGroup(millId || '')
+    const updateMutation = useUpdateLabourGroup(millId || '')
     const isLoading = createMutation.isPending || updateMutation.isPending
-    const isEditing = !!currentRow?._id
 
     const form = useForm<LabourGroupReportData>({
         resolver: zodResolver(labourGroupReportSchema),
@@ -55,37 +57,70 @@ export function LabourGroupReportActionDialog({
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                labourTeamName: '',
+            })
         }
     }, [currentRow, form])
 
     const onSubmit = async (data: LabourGroupReportData) => {
         try {
-            if (isEditing && currentRow?._id) {
+            if (!millId) {
+                toast.error('Mill ID not found')
+                return
+            }
+
+            const payload = {
+                labourTeamName: data.labourTeamName,
+            }
+
+            if (currentRow?._id) {
                 await updateMutation.mutateAsync({
-                    id: currentRow._id,
-                    ...data,
+                    _id: currentRow._id,
+                    ...payload,
                 })
             } else {
-                await createMutation.mutateAsync(data)
+                await createMutation.mutateAsync(payload)
             }
             onOpenChange(false)
-            form.reset()
-        } catch (error) {
+            form.reset({
+                labourTeamName: '',
+            })
+        } catch (error: any) {
+            const errorMessage =
+                error?.response?.data?.message ||
+                error?.message ||
+                'An error occurred'
+            toast.error(errorMessage)
             console.error('Error submitting form:', error)
         }
     }
 
+    const handleDialogClose = (isOpen: boolean) => {
+        if (!isOpen) {
+            form.reset({
+                labourTeamName: '',
+            })
+        }
+        onOpenChange(isOpen)
+    }
+
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={handleDialogClose}>
             <DialogContent className='max-w-md'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Labour Group
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('inputReports.labourGroup.title').replace(
+                            ' Report',
+                            ''
+                        )}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the labour group
-                        details below
+                        {t('common.enter')}{' '}
+                        {t(
+                            'inputReports.labourGroup.form.description'
+                        ).toLowerCase()}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -98,10 +133,15 @@ export function LabourGroupReportActionDialog({
                             name='labourTeamName'
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Labour Team Name</FormLabel>
+                                    <FormLabel>
+                                        {t(
+                                            'inputReports.labourGroup.form.fields.labourTeamName'
+                                        )}
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder='Enter labour team name'
+                                            placeholder='Labour Group Name'
+                                            disabled={isLoading}
                                             {...field}
                                         />
                                     </FormControl>
@@ -113,19 +153,17 @@ export function LabourGroupReportActionDialog({
                             <Button
                                 type='button'
                                 variant='outline'
-                                onClick={() => onOpenChange(false)}
+                                onClick={() => handleDialogClose(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
-                                    ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
-                                    : isEditing
-                                      ? 'Update'
-                                      : 'Add'} Labour Group
+                                    ? 'Loading...'
+                                    : t(
+                                        'inputReports.labourGroup.form.primaryButton'
+                                    )}
                             </Button>
                         </DialogFooter>
                     </form>

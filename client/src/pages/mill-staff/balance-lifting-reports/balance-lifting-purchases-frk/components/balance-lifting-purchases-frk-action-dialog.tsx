@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -24,25 +24,55 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-import { frkPurchaseSchema, type BalanceLiftingPurchasesFrk } from '../data/schema'
+import {
+    useCreateBalanceLiftingFrkPurchase,
+    useUpdateBalanceLiftingFrkPurchase,
+} from '../data/hooks'
+import {
+    frkPurchaseSchema,
+    type BalanceLiftingPurchasesFrk,
+} from '../data/schema'
+import { useBalanceLiftingPurchasesFrk } from './balance-lifting-purchases-frk-provider'
+import { useTranslation } from 'react-i18next'
 
 type BalanceLiftingPurchasesFrkActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: BalanceLiftingPurchasesFrk | null
 }
 
 export function BalanceLiftingPurchasesFrkActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: BalanceLiftingPurchasesFrkActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
+    const { currentRow, millId } = useBalanceLiftingPurchasesFrk()
+    const { mutateAsync: createPurchase, isPending: isCreating } =
+        useCreateBalanceLiftingFrkPurchase(millId)
+    const { mutateAsync: updatePurchase, isPending: isUpdating } =
+        useUpdateBalanceLiftingFrkPurchase(millId)
+
+    const party = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c: { partyName: string }) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName ?? undefined
+    )
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
     const form = useForm<BalanceLiftingPurchasesFrk>({
@@ -60,24 +90,31 @@ export function BalanceLiftingPurchasesFrkActionDialog({
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                partyName: '',
+                frkQty: undefined,
+                frkRate: undefined,
+                gst: undefined,
+            } as BalanceLiftingPurchasesFrk)
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Purchase updated successfully'
-                    : 'Purchase added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update purchase'
-                : 'Failed to add purchase',
-        })
+    const onSubmit = async (data: BalanceLiftingPurchasesFrk) => {
+        try {
+            if (isEditing) {
+                await updatePurchase({
+                    purchaseId: currentRow?._id || '',
+                    data,
+                })
+            } else {
+                await createPurchase(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            console.error('Error submitting form:', error)
+        }
     }
 
     return (
@@ -85,11 +122,18 @@ export function BalanceLiftingPurchasesFrkActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} FRK Purchase
+                        {isEditing
+                            ? t('balanceLifting.purchase.frk.form.title_edit')
+                            : t('balanceLifting.purchase.frk.form.title_add')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the purchase details
-                        below
+                        {isEditing
+                            ? t(
+                                'balanceLifting.purchase.frk.form.description_edit'
+                            )
+                            : t(
+                                'balanceLifting.purchase.frk.form.description_add'
+                            )}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -104,7 +148,11 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Date</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.frk.form.fields.date'
+                                                )}
+                                            </FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
                                                 onOpenChange={
@@ -120,11 +168,11 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
+                                                                    new Date(
+                                                                        field.value
+                                                                    ),
+                                                                    'MMM dd, yyyy'
+                                                                )
                                                                 : 'Pick a date'}
                                                         </Button>
                                                     </FormControl>
@@ -138,17 +186,17 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                      field.value
-                                                                  )
+                                                                    field.value
+                                                                )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -167,11 +215,26 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.frk.form.fields.partyName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={
+                                                        field.value ?? undefined
+                                                    }
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder={t(
+                                                        'common.search'
+                                                    )}
+                                                    emptyText={t(
+                                                        'common.noResults'
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -185,7 +248,9 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Quantity (Qtl)
+                                                {t(
+                                                    'balanceLifting.purchase.frk.form.fields.frkQty'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -218,7 +283,9 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Rate (per Qtl)
+                                                {t(
+                                                    'balanceLifting.purchase.frk.form.fields.frkRate'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -251,7 +318,11 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                     name='gst'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>GST (%)</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.frk.form.fields.gst'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -284,11 +355,18 @@ export function BalanceLiftingPurchasesFrkActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Purchase
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? t('common.updating')
+                                        : t('common.adding')
+                                    : isEditing
+                                        ? t('common.update')
+                                        : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

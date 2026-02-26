@@ -1,10 +1,10 @@
 import { type ColumnDef } from '@tanstack/react-table'
-// '
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type PartyTransaction } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const partyTransactionColumns: ColumnDef<PartyTransaction>[] = [
     {
@@ -23,7 +23,7 @@ export const partyTransactionColumns: ColumnDef<PartyTransaction>[] = [
             />
         ),
         meta: {
-            className: cn('sticky start-0 z-10 rounded-tl-[inherit]'),
+            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
         },
         cell: ({ row }) => (
             <Checkbox
@@ -33,6 +33,7 @@ export const partyTransactionColumns: ColumnDef<PartyTransaction>[] = [
                 className='translate-y-[2px]'
             />
         ),
+
         enableSorting: false,
         enableHiding: false,
     },
@@ -63,7 +64,9 @@ export const partyTransactionColumns: ColumnDef<PartyTransaction>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Date' />
         ),
-        cell: ({ row }) => <div>{row.getValue('date')}</div>,
+        cell: ({ row }) => (
+            <div>{format(new Date(row.getValue('date')), 'yyyy-MM-dd')}</div>
+        ),
     },
     {
         accessorKey: 'purchaseDeal',

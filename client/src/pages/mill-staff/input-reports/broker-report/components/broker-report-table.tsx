@@ -7,6 +7,7 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -22,31 +23,37 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type BrokerReportData } from '../data/schema'
-import { brokerReportColumns as columns } from './broker-report-columns'
+import { useBrokerReportColumns } from './broker-report-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
     data: BrokerReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    totalRows?: number
-    isLoading?: boolean
-    isError?: boolean
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
 export function BrokerReportTable({
     data,
     search,
     navigate,
-    totalRows,
-    // isLoading,
-    // isError,
+    pagination: serverPagination,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const columns = useBrokerReportColumns()
 
     const {
         columnFilters,
@@ -62,10 +69,11 @@ export function BrokerReportTable({
             pageSizeKey: 'limit',
             defaultPage: 1,
             defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
         },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
+            { columnId: 'brokerName', searchKey: 'brokerName', type: 'string' },
         ],
     })
 
@@ -80,33 +88,28 @@ export function BrokerReportTable({
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        // DO NOT use getPaginationRowModel() - pagination is handled server-side
+        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-        // Set manual pageCount for server-side pagination
-        pageCount:
-            totalRows !== undefined
-                ? Math.ceil(totalRows / (pagination.pageSize || 10))
-                : undefined,
-        manualPagination: true,
     })
 
     useEffect(() => {
-        if (totalRows !== undefined) {
-            ensurePageInRange(
-                Math.ceil(totalRows / (pagination.pageSize || 10))
-            )
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
         }
-    }, [totalRows, pagination.pageSize, ensurePageInRange])
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -118,8 +121,7 @@ export function BrokerReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='partyName'
-                filters={[]}
+                searchKey='brokerName'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

@@ -18,7 +18,7 @@ const RiceInwardSchema = new Schema(
             required: true,
             index: true,
         },
-        ricePurchaseNumber: {
+        ricePurchaseDealNumber: {
             type: String,
             trim: true,
         },

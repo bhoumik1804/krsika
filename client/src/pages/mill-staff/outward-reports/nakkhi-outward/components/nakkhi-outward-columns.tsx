@@ -1,5 +1,6 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
-// '
+import { t } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -40,10 +41,17 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.nakkhiOutward.form.fields.date', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -58,19 +66,25 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Nakkhi Sale Deal Number'
+                title={t(
+                    'outward.nakkhiOutward.form.fields.nakkhiSaleDealNumber',
+                    {
+                        ns: 'mill-staff',
+                    }
+                )}
             />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm'>
-                {row.getValue('nakkhiSaleDealNumber')}
-            </div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('nakkhiSaleDealNumber')}</div>,
     },
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.nakkhiOutward.form.fields.partyName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -82,7 +96,12 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.nakkhiOutward.form.fields.brokerName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -94,7 +113,12 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
     {
         accessorKey: 'rate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.nakkhiOutward.form.fields.rate', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('rate')}</div>
@@ -103,7 +127,12 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
     {
         accessorKey: 'brokerage',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Brokerage' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.nakkhiOutward.form.fields.brokerage', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('brokerage')}</div>
@@ -112,7 +141,12 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (Plastic)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.nakkhiOutward.form.fields.gunnyPlastic', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -123,7 +157,9 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Plastic Gunny Weight'
+                title={t('outward.nakkhiOutward.form.fields.plasticWeight', {
+                    ns: 'mill-staff',
+                })}
             />
         ),
         cell: ({ row }) => (
@@ -139,27 +175,36 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.nakkhiOutward.form.fields.truckNo', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm text-nowrap'>
-                {row.getValue('truckNo')}
-            </div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('truckNo')}</div>,
     },
     {
         accessorKey: 'truckRst',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.nakkhiOutward.form.fields.truckRst', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm'>{row.getValue('truckRst')}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('truckRst')}</div>,
     },
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.nakkhiOutward.form.fields.truckWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('truckWeight')}</div>
@@ -168,7 +213,12 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.nakkhiOutward.form.fields.gunnyWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyWeight')}</div>
@@ -177,12 +227,15 @@ export const nakkhiOutwardColumns: ColumnDef<NakkhiOutward>[] = [
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Net Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.nakkhiOutward.form.fields.netWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-right font-bold'>
-                {row.getValue('netWeight')}
-            </div>
+            <div className='text-right'>{row.getValue('netWeight')}</div>
         ),
     },
     {

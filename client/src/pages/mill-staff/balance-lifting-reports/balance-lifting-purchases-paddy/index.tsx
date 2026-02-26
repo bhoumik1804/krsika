@@ -4,50 +4,48 @@ import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { BalanceLiftingPurchasesPaddyDialogs } from './components/balance-lifting-purchases-paddy-dialogs'
 import { BalanceLiftingPurchasesPaddyPrimaryButtons } from './components/balance-lifting-purchases-paddy-primary-buttons'
-import { BalanceLiftingPurchasesPaddyProvider } from './components/balance-lifting-purchases-paddy-provider'
+import {
+    BalanceLiftingPurchasesPaddyProvider,
+    useBalanceLiftingPurchasesPaddy,
+} from './components/balance-lifting-purchases-paddy-provider'
 import { BalanceLiftingPurchasesPaddyTable } from './components/balance-lifting-purchases-paddy-table'
-import { useBalanceLiftingPurchasesPaddyList } from './data/hooks'
+
+import { useTranslation } from 'react-i18next'
+// ... imports
 
 export function BalanceLiftingPurchasesPaddyReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
-    const sidebarData = getMillAdminSidebarData(millId || '')
 
-    const search = Object.fromEntries(searchParams.entries())
+    // Extract query params from URL
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
 
-    const queryParams = useMemo(
-        () => ({
+        return {
             page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            limit,
             search: search.search as string | undefined,
             sortBy: (search.sortBy as string) || 'createdAt',
             sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
-
-    const { data: response } = useBalanceLiftingPurchasesPaddyList(
-        millId || '',
-        queryParams,
-        {
-            enabled: !!millId,
         }
-    )
+    }, [searchParams])
 
-    const balanceLiftingPurchasesPaddyData = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
-    }, [response])
+    const sidebarData = getMillAdminSidebarData(millId || '')
+
+    // Convert URLSearchParams to record
+    const search = Object.fromEntries(searchParams.entries())
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -61,7 +59,10 @@ export function BalanceLiftingPurchasesPaddyReport() {
     }
 
     return (
-        <BalanceLiftingPurchasesPaddyProvider>
+        <BalanceLiftingPurchasesPaddyProvider
+            millId={millId || ''}
+            initialQueryParams={queryParams}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -78,22 +79,56 @@ export function BalanceLiftingPurchasesPaddyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Paddy Purchase Report
+                            {t('balanceLifting.purchase.paddy.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage paddy purchase transactions and records
+                            {t('balanceLifting.purchase.paddy.description')}
                         </p>
                     </div>
                     <BalanceLiftingPurchasesPaddyPrimaryButtons />
                 </div>
-                <BalanceLiftingPurchasesPaddyTable
-                    data={balanceLiftingPurchasesPaddyData}
-                    search={search}
-                    navigate={navigate}
-                />
+                <BalanceLiftingPurchasesPaddyContent navigate={navigate} />
             </Main>
-
             <BalanceLiftingPurchasesPaddyDialogs />
         </BalanceLiftingPurchasesPaddyProvider>
+    )
+}
+
+// Separate component to use context hook
+function BalanceLiftingPurchasesPaddyContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const { t } = useTranslation('mill-staff')
+    const context = useBalanceLiftingPurchasesPaddy()
+
+    if (context.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (context.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                {t('common.errorLoadingData')}
+            </div>
+        )
+    }
+
+    return (
+        <BalanceLiftingPurchasesPaddyTable
+            data={context.data}
+            pagination={context.pagination}
+            search={Object.fromEntries(
+                Object.entries(context.queryParams || {})
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => [key, String(value)])
+            )}
+            navigate={navigate}
+        />
     )
 }

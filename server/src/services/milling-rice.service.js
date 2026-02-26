@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { MillingRice } from '../models/milling-rice.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockHelpers from './stock-helpers.service.js'
 
 export const createMillingRiceEntry = async (millId, data, userId) => {
     const entry = new MillingRice({
@@ -12,6 +13,17 @@ export const createMillingRiceEntry = async (millId, data, userId) => {
     })
     await entry.save()
     logger.info('Milling rice entry created', { id: entry._id, millId, userId })
+
+    // Record stock transaction (DEBIT rice, CREDIT outputs)
+    try {
+        await StockHelpers.recordMillingRiceStock(millId, entry, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for milling rice', {
+            id: entry._id,
+            error: err.message,
+        })
+    }
+
     return entry
 }
 
@@ -105,8 +117,8 @@ export const getMillingRiceSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalInput: { $sum: '$inputWeight' },
-                totalOutput: { $sum: '$outputWeight' },
+                totalInput: { $sum: '$hopperInQintal' },
+                totalOutput: { $sum: '$riceQuantity' },
             },
         },
         {
@@ -132,6 +144,23 @@ export const updateMillingRiceEntry = async (millId, id, data, userId) => {
         .populate('createdBy', 'fullName email')
         .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Milling rice entry not found')
+
+    // Update stock transaction
+    try {
+        await StockHelpers.updateMillingStock(
+            'MillingRice',
+            id,
+            millId,
+            entry,
+            userId
+        )
+    } catch (err) {
+        logger.error('Failed to update stock for milling rice', {
+            id,
+            error: err.message,
+        })
+    }
+
     logger.info('Milling rice entry updated', { id, millId, userId })
     return entry
 }
@@ -139,11 +168,20 @@ export const updateMillingRiceEntry = async (millId, id, data, userId) => {
 export const deleteMillingRiceEntry = async (millId, id) => {
     const entry = await MillingRice.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Milling rice entry not found')
+
+    // Delete associated stock transactions
+    await StockHelpers.deleteStockTransaction('MillingRice', id)
+
     logger.info('Milling rice entry deleted', { id, millId })
 }
 
 export const bulkDeleteMillingRiceEntries = async (millId, ids) => {
     const result = await MillingRice.deleteMany({ _id: { $in: ids }, millId })
+
+    for (const id of ids) {
+        await StockHelpers.deleteStockTransaction('MillingRice', id)
+    }
+
     logger.info('Milling rice entries bulk deleted', {
         millId,
         count: result.deletedCount,

@@ -4,64 +4,56 @@ import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { BalanceLiftingPurchasesRiceDialogs } from './components/balance-lifting-purchases-rice-dialogs'
 import { BalanceLiftingPurchasesRicePrimaryButtons } from './components/balance-lifting-purchases-rice-primary-buttons'
-import { BalanceLiftingPurchasesRiceProvider } from './components/balance-lifting-purchases-rice-provider'
+import {
+    BalanceLiftingPurchasesRiceProvider,
+    useBalanceLiftingPurchasesRice,
+} from './components/balance-lifting-purchases-rice-provider'
 import { BalanceLiftingPurchasesRiceTable } from './components/balance-lifting-purchases-rice-table'
-import { useBalanceLiftingPurchasesRiceList } from './data/hooks'
+
+import { useTranslation } from 'react-i18next'
+// ...
 
 export function BalanceLiftingPurchasesRiceReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
-    const sidebarData = getMillAdminSidebarData(millId || '')
 
-    const search = Object.fromEntries(searchParams.entries())
+    const queryParams = useMemo(() => {
+        const s = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = s.limit ? parseInt(s.limit as string, 10) : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
 
-    const queryParams = useMemo(
-        () => ({
-            page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
-            search: search.search as string | undefined,
-            sortBy: (search.sortBy as string) || 'createdAt',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
-
-    const { data: response } = useBalanceLiftingPurchasesRiceList(
-        millId || '',
-        queryParams,
-        {
-            enabled: !!millId,
+        return {
+            page: s.page ? parseInt(s.page as string, 10) : 1,
+            limit,
+            search: (s.partyName || s.search) as string | undefined,
         }
-    )
+    }, [searchParams])
 
-    const balanceLiftingPurchasesRiceData = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
-    }, [response])
+    const sidebarData = getMillAdminSidebarData(millId || '')
+    const search = Object.fromEntries(searchParams.entries())
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
-            const newSearch = opts.search(search)
+            const newSearch = (opts.search as (p: Record<string, string>) => Record<string, string>)(search)
             setSearchParams(newSearch as Record<string, string>)
-        } else if (opts.search === true) {
-            // Keep current params
-        } else {
-            setSearchParams(opts.search as Record<string, string>)
+        } else if (opts.search !== true) {
+            setSearchParams((opts.search as Record<string, string>) ?? {})
         }
     }
 
     return (
-        <BalanceLiftingPurchasesRiceProvider>
+        <BalanceLiftingPurchasesRiceProvider
+            millId={millId || ''}
+            initialQueryParams={queryParams}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -78,22 +70,57 @@ export function BalanceLiftingPurchasesRiceReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Rice Purchase Report
+                            {t('balanceLifting.purchase.rice.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage rice purchase transactions and records
+                            {t('balanceLifting.purchase.rice.description')}
                         </p>
                     </div>
                     <BalanceLiftingPurchasesRicePrimaryButtons />
                 </div>
-                <BalanceLiftingPurchasesRiceTable
-                    data={balanceLiftingPurchasesRiceData}
-                    search={search}
-                    navigate={navigate}
-                />
+                <BalanceLiftingPurchasesRiceContent navigate={navigate} />
             </Main>
 
             <BalanceLiftingPurchasesRiceDialogs />
         </BalanceLiftingPurchasesRiceProvider>
+    )
+}
+
+function BalanceLiftingPurchasesRiceContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const { t } = useTranslation('mill-staff')
+    const ctx = useBalanceLiftingPurchasesRice()
+
+    if (ctx.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (ctx.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                {t('common.errorLoadingData')}
+            </div>
+        )
+    }
+
+    const searchRecord: Record<string, string> = {}
+    if (ctx.queryParams?.page) searchRecord.page = String(ctx.queryParams.page)
+    if (ctx.queryParams?.limit) searchRecord.limit = String(ctx.queryParams.limit)
+    if (ctx.queryParams?.search) searchRecord.partyName = ctx.queryParams.search
+
+    return (
+        <BalanceLiftingPurchasesRiceTable
+            data={ctx.data}
+            pagination={ctx.pagination}
+            search={searchRecord}
+            navigate={navigate}
+        />
     )
 }

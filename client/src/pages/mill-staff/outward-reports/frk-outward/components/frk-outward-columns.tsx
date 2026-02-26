@@ -1,5 +1,6 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
-import { cn } from '@/lib/utils'
+import { t } from 'i18next'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
@@ -22,9 +23,6 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
                 className='translate-y-[2px]'
             />
         ),
-        meta: {
-            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
-        },
         cell: ({ row }) => (
             <Checkbox
                 checked={row.getIsSelected()}
@@ -39,23 +37,32 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.date', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
-        cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
-        ),
-        meta: {
-            className: cn(
-                'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-                'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
-            ),
+        cell: ({ row }) => {
+            const date = row.getValue('date')
+            return (
+                <div className='ps-3 text-nowrap'>
+                    {format(new Date(date as string), 'yyyy-MM-dd')}
+                </div>
+            )
         },
         enableHiding: false,
     },
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.partyName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -67,7 +74,12 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (Plastic)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.gunnyPlastic', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
@@ -78,19 +90,26 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Plastic Gunny Weight'
+                title={t('outward.frkOutward.form.fields.plasticWeight', {
+                    ns: 'mill-staff',
+                })}
             />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('plasticWeight') as number).toFixed(3)}
+                {(row.getValue('plasticWeight') as number)?.toFixed(3)}
             </div>
         ),
     },
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.truckNo', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -101,7 +120,12 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
     {
         accessorKey: 'truckRst',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.truckRst', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>{row.getValue('truckRst')}</div>
@@ -110,33 +134,48 @@ export const frkOutwardColumns: ColumnDef<FrkOutward>[] = [
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.truckWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('truckWeight') as number).toFixed(2)}
+                {(row.getValue('truckWeight') as number)?.toFixed(2)}
             </div>
         ),
     },
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.gunnyWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('gunnyWeight') as number).toFixed(2)}
+                {(row.getValue('gunnyWeight') as number)?.toFixed(2)}
             </div>
         ),
     },
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Net Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.frkOutward.form.fields.netWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-right font-bold'>
-                {(row.getValue('netWeight') as number).toFixed(2)}
+            <div className='text-right'>
+                {(row.getValue('netWeight') as number)?.toFixed(2)}
             </div>
         ),
     },

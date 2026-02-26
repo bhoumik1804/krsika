@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useMemo, useEffect, useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -22,18 +23,27 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { roles, statuses } from '../data/data'
+import { LoadingSpinner } from '@/components/loading-spinner'
+import { posts, statuses } from '../data/data'
 import { type Staff } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { staffColumns as columns } from './staff-columns'
+import { getStaffColumns } from './staff-columns'
 
 type DataTableProps = {
     data: Staff[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    isLoading?: boolean
 }
 
-export function StaffTable({ data, search, navigate }: DataTableProps) {
+export function StaffTable({
+    data,
+    search,
+    navigate,
+    isLoading,
+}: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
+    const columns = useMemo(() => getStaffColumns(t), [t])
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -58,8 +68,8 @@ export function StaffTable({ data, search, navigate }: DataTableProps) {
         },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'status', searchKey: 'status', type: 'array' },
-            { columnId: 'role', searchKey: 'role', type: 'array' },
+            { columnId: 'status', searchKey: 'isActive', type: 'array' },
+            { columnId: 'post', searchKey: 'post', type: 'array' },
         ],
     })
 
@@ -101,18 +111,18 @@ export function StaffTable({ data, search, navigate }: DataTableProps) {
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search by name...'
+                searchPlaceholder={t('staff.table.searchPlaceholder')}
                 searchKey='fullName'
                 filters={[
                     {
                         columnId: 'status',
-                        title: 'Status',
+                        title: t('staff.table.status'),
                         options: statuses,
                     },
                     {
-                        columnId: 'role',
-                        title: 'Role',
-                        options: roles.map((role) => ({ ...role })),
+                        columnId: 'post',
+                        title: t('staff.table.post'),
+                        options: posts.map((post) => ({ ...post })),
                     },
                 ]}
             />
@@ -151,7 +161,16 @@ export function StaffTable({ data, search, navigate }: DataTableProps) {
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className='h-24 text-center'
+                                >
+                                    <LoadingSpinner className='mx-auto' />
+                                </TableCell>
+                            </TableRow>
+                        ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
@@ -185,7 +204,7 @@ export function StaffTable({ data, search, navigate }: DataTableProps) {
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

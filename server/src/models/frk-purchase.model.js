@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose'
 import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
+import { dealNumberPlugin } from '../utils/dealNumberPlugin.js'
 
 /**
  * FRK Purchase Schema
@@ -50,6 +51,12 @@ FrkPurchaseSchema.virtual('formattedDate').get(function () {
 // Ensure virtuals are included in JSON output
 FrkPurchaseSchema.set('toJSON', { virtuals: true })
 FrkPurchaseSchema.set('toObject', { virtuals: true })
+
+// Apply deal number plugin (auto-generates frkPurchaseDealNumber)
+FrkPurchaseSchema.plugin(dealNumberPlugin, {
+    fieldName: 'frkPurchaseDealNumber',
+    prefix: 'FKP',
+})
 
 // Add aggregate paginate plugin
 FrkPurchaseSchema.plugin(aggregatePaginate)

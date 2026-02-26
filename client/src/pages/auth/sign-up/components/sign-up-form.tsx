@@ -67,7 +67,7 @@ export function SignUpForm({
             },
             {
                 onSuccess: () => {
-                    navigate('/', { replace: true })
+                    navigate('/auth-success', { replace: true })
                     toast.success('Account created successfully!')
                 },
                 onError: (err: any) => {

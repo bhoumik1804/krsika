@@ -1,5 +1,3 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,28 +8,31 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { type RicePurchase } from '../data/schema'
+import { useDeleteRicePurchase } from '../data/hooks'
+import { useRice } from './rice-provider'
 
 type RiceDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: RicePurchase | null
 }
 
 export function RiceDeleteDialog({
     open,
     onOpenChange,
-    currentRow,
 }: RiceDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting rice purchase...',
-            success: () => {
+    const { currentRow, millId } = useRice()
+    const { mutateAsync: deleteRicePurchase, isPending: isDeleting } =
+        useDeleteRicePurchase(millId)
+
+    const handleDelete = async () => {
+        if (currentRow?._id) {
+            try {
+                await deleteRicePurchase(currentRow._id)
                 onOpenChange(false)
-                return 'Rice purchase deleted successfully'
-            },
-            error: 'Failed to delete purchase record',
-        })
+            } catch (error) {
+                console.error('Error deleting purchase:', error)
+            }
+        }
     }
 
     return (
@@ -47,12 +48,15 @@ export function RiceDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

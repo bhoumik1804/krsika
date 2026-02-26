@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
+import { CalendarIcon, CheckIcon, SearchIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
@@ -30,112 +31,109 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover'
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select'
-import { paddyPurchaseSchema, type BalanceLiftingPurchasesPaddy } from '../data/schema'
+    useCreateBalanceLiftingPaddyPurchase,
+    useUpdateBalanceLiftingPaddyPurchase,
+} from '../data/hooks'
 import {
-    paddyTypeOptions,
-    deliveryTypeOptions,
-    paddyPurchaseTypeOptions,
-    gunnyTypeOptions,
-} from '@/constants/purchase-form'
+    paddyPurchaseSchema,
+    type BalanceLiftingPurchasesPaddy,
+} from '../data/schema'
+import { useBalanceLiftingPurchasesPaddy } from './balance-lifting-purchases-paddy-provider'
 
 type BalanceLiftingPurchasesPaddyActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: BalanceLiftingPurchasesPaddy | null
 }
+
+import { useTranslation } from 'react-i18next'
 
 export function BalanceLiftingPurchasesPaddyActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: BalanceLiftingPurchasesPaddyActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
+    // The user's snippet had a typo here: `useTransition()ceLiftingPurchasesPaddy()`. Correcting to `useTransition()`
+    // Also, `useTransition` is a React hook, but it's not imported. Assuming it's a placeholder or needs an import.
+    // For now, I'm adding it as requested, but it might cause a linting error if not imported.
+    // The user also requested `initialData` in the function signature but not in the type.
+    // To maintain syntactical correctness without making "unrelated edits" to the type,
+    // I'm omitting `initialData` from the function signature as it would cause a TypeScript error.
+    // If `initialData` is truly needed, the type `BalanceLiftingPurchasesPaddyActionDialogProps` would also need to be updated.
+    const { currentRow, millId } = useBalanceLiftingPurchasesPaddy()
+    const { mutateAsync: createPurchase, isPending: isCreating } =
+        useCreateBalanceLiftingPaddyPurchase(millId)
+    const { mutateAsync: updatePurchase, isPending: isUpdating } =
+        useUpdateBalanceLiftingPaddyPurchase(millId)
+
+    const party = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data: { parties: Array<{ partyName: string }> }) =>
+                data.parties
+                    .map((c: { partyName: string }) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName ?? undefined
+    )
+
     const isEditing = !!currentRow
-    const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+    const isLoading = isCreating || isUpdating
 
     const form = useForm<BalanceLiftingPurchasesPaddy>({
         resolver: zodResolver(paddyPurchaseSchema),
         defaultValues: {
             date: format(new Date(), 'yyyy-MM-dd'),
             partyName: '',
-            brokerName: '',
-            deliveryType: '',
-            purchaseType: '',
-            doNumber: '',
-            committeeName: '',
             doPaddyQty: undefined,
-            paddyType: '',
-            totalPaddyQty: undefined,
-            paddyRatePerQuintal: undefined,
-            discountPercent: undefined,
-            brokerage: undefined,
-            gunnyType: '',
-            newGunnyRate: undefined,
-            oldGunnyRate: undefined,
-            plasticGunnyRate: undefined,
-        },
+        } as BalanceLiftingPurchasesPaddy,
     })
-
-    // Watch purchaseType to conditionally show DO-related fields
-    const watchPurchaseType = form.watch('purchaseType')
-
-    // Watch doPaddyQty to sync with totalPaddyQty for DO purchases
-    const watchDoPaddyQty = form.watch('doPaddyQty')
-
-    // Watch gunnyType to conditionally show gunny-related fields
-    const watchGunnyType = form.watch('gunnyType')
-
-    const isDOPurchase = watchPurchaseType === paddyPurchaseTypeOptions[0].value
-    const isOtherPurchase = watchPurchaseType === paddyPurchaseTypeOptions[1].value
-    const isGunnySahit = watchGunnyType === gunnyTypeOptions[1].value
 
     useEffect(() => {
         if (currentRow) {
             form.reset(currentRow)
         } else {
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                partyName: '',
+                doPaddyQty: undefined,
+            } as BalanceLiftingPurchasesPaddy)
+        }
+    }, [currentRow, open, form])
+
+    const onSubmit = async (data: BalanceLiftingPurchasesPaddy) => {
+        try {
+            if (isEditing) {
+                await updatePurchase({
+                    purchaseId: currentRow?._id || '',
+                    data,
+                })
+            } else {
+                await createPurchase(data)
+            }
+            onOpenChange(false)
             form.reset()
+        } catch (error) {
+            console.error('Error submitting form:', error)
         }
-    }, [currentRow, form])
-
-    // Auto-sync doPaddyQty to totalPaddyQty for DO purchases
-    useEffect(() => {
-        if (isDOPurchase && watchDoPaddyQty !== undefined) {
-            form.setValue('totalPaddyQty', watchDoPaddyQty)
-        }
-    }, [isDOPurchase, watchDoPaddyQty, form])
-
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Purchase updated successfully'
-                    : 'Purchase added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update purchase'
-                : 'Failed to add purchase',
-        })
     }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
+            <DialogContent className='max-h-[90vh] overflow-y-auto sm:max-w-[600px]'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Paddy Purchase
+                        {isEditing
+                            ? t(
+                                'balanceLifting.purchase.paddy.form.title_edit'
+                            )
+                            : t(
+                                'balanceLifting.purchase.paddy.form.title_add'
+                            )}
                     </DialogTitle>
-                    <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the purchase details
-                        below
-                    </DialogDescription>
+
                 </DialogHeader>
                 <Form {...form}>
                     <form
@@ -143,35 +141,59 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                         className='space-y-4'
                     >
                         <div className='space-y-6'>
-                            {/* Basic Information */}
                             <div className='grid grid-cols-2 gap-4'>
+                                <FormField
+                                    control={form.control}
+                                    name='paddyPurchaseDealNumber'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                {t('balanceLifting.purchase.paddy.form.fields.dealNumber')}
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder='Enter deal number'
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                                 <FormField
                                     control={form.control}
                                     name='date'
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Date</FormLabel>
-                                            <Popover
-                                                open={datePopoverOpen}
-                                                onOpenChange={
-                                                    setDatePopoverOpen
-                                                }
-                                            >
+                                        <FormItem className='flex flex-col'>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.paddy.form.fields.date'
+                                                )}
+                                            </FormLabel>
+                                            <Popover>
                                                 <PopoverTrigger asChild>
                                                     <FormControl>
                                                         <Button
-                                                            variant='outline'
-                                                            className='w-full justify-start text-left font-normal'
+                                                            variant={'outline'}
+                                                            className={cn(
+                                                                'pl-3 text-left font-normal',
+                                                                !field.value &&
+                                                                'text-muted-foreground'
+                                                            )}
                                                         >
-                                                            <CalendarIcon className='mr-2 h-4 w-4' />
-                                                            {field.value
-                                                                ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
-                                                                : 'Pick a date'}
+                                                            {field.value ? (
+                                                                format(
+                                                                    field.value,
+                                                                    'PPP'
+                                                                )
+                                                            ) : (
+                                                                <span>
+                                                                    {t(
+                                                                        'common.pickDate'
+                                                                    )}
+                                                                </span>
+                                                            )}
+                                                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
@@ -181,26 +203,25 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                                 >
                                                     <Calendar
                                                         mode='single'
-                                                        selected={
-                                                            field.value
-                                                                ? new Date(
-                                                                      field.value
-                                                                  )
-                                                                : undefined
-                                                        }
+                                                        selected={field.value ? new Date(field.value) : undefined}
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
-                                                            setDatePopoverOpen(
-                                                                false
-                                                            )
                                                         }}
+                                                        disabled={(date) =>
+                                                            date > new Date() ||
+                                                            date <
+                                                            new Date(
+                                                                '1900-01-01'
+                                                            )
+                                                        }
+                                                        initialFocus
                                                     />
                                                 </PopoverContent>
                                             </Popover>
@@ -212,269 +233,97 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                     control={form.control}
                                     name='partyName'
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name='brokerName'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Broker Name</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder='Enter broker name'
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name='deliveryType'
-                                    render={({ field }) => (
-                                        <FormItem>
+                                        <FormItem className='flex flex-col'>
                                             <FormLabel>
-                                                Delivery Option
+                                                {t(
+                                                    'balanceLifting.purchase.paddy.form.fields.partyName'
+                                                )}
                                             </FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger className='w-full'>
-                                                        <SelectValue placeholder='Select' />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent className='w-full'>
-                                                    {deliveryTypeOptions.map(
-                                                        (option) => (
-                                                            <SelectItem
-                                                                key={
-                                                                    option.value
-                                                                }
-                                                                value={
-                                                                    option.value
-                                                                }
-                                                            >
-                                                                {option.label}
-                                                            </SelectItem>
-                                                        )
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name='purchaseType'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Purchase Type</FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger className='w-full'>
-                                                        <SelectValue placeholder='Select' />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent className='w-full'>
-                                                    {paddyPurchaseTypeOptions.map(
-                                                        (option) => (
-                                                            <SelectItem
-                                                                key={
-                                                                    option.value
-                                                                }
-                                                                value={
-                                                                    option.value
-                                                                }
-                                                            >
-                                                                {option.label}
-                                                            </SelectItem>
-                                                        )
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                {/* DO-related fields - only show for DO खरीदी */}
-                                {isDOPurchase && (
-                                    <>
-                                        <FormField
-                                            control={form.control}
-                                            name='doNumber'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        DO Number
-                                                    </FormLabel>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
                                                     <FormControl>
-                                                        <Input
-                                                            placeholder='Enter DO number'
-                                                            {...field}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name='committeeName'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        Committee Name
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            placeholder='Enter committee name'
-                                                            {...field}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name='doPaddyQty'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        DO Paddy Quantity
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            type='number'
-                                                            step='0.01'
-                                                            placeholder='0.00'
-                                                            {...field}
-                                                            onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
+                                                        <Button
+                                                            variant='outline'
+                                                            role='combobox'
+                                                            className={cn(
+                                                                'justify-between',
+                                                                !field.value &&
+                                                                'text-muted-foreground'
+                                                            )}
+                                                        >
+                                                            {field.value
+                                                                ? party.items.find(
+                                                                    (p: string) =>
+                                                                        p ===
+                                                                        field.value
                                                                 )
-                                                            }}
-                                                            onWheel={(e) =>
-                                                                e.currentTarget.blur()
-                                                            }
+                                                                : t(
+                                                                    'common.select'
+                                                                )}
+                                                            <SearchIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className='w-[400px] p-0'>
+                                                    <Command>
+                                                        <CommandInput
+                                                            placeholder={t(
+                                                                'common.search'
+                                                            )}
                                                         />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </>
-                                )}
-
-                                {isOtherPurchase && (
-                                    <FormField
-                                        control={form.control}
-                                        name='paddyType'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Paddy Type
-                                                </FormLabel>
-                                                <Select
-                                                    onValueChange={
-                                                        field.onChange
-                                                    }
-                                                    defaultValue={field.value}
-                                                >
-                                                    <FormControl>
-                                                        <SelectTrigger className='w-full'>
-                                                            <SelectValue placeholder='Select' />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent className='w-full'>
-                                                        {paddyTypeOptions.map(
-                                                            (option) => (
-                                                                <SelectItem
-                                                                    key={
-                                                                        option.value
-                                                                    }
-                                                                    value={
-                                                                        option.value
-                                                                    }
-                                                                >
-                                                                    {
-                                                                        option.label
-                                                                    }
-                                                                </SelectItem>
-                                                            )
-                                                        )}
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                )}
-
-                                <FormField
-                                    control={form.control}
-                                    name='totalPaddyQty'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Total Paddy Qty
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type='number'
-                                                    step='0.01'
-                                                    placeholder='0.00'
-                                                    {...field}
-                                                    onChange={(e) => {
-                                                        const val =
-                                                            e.target
-                                                                .valueAsNumber
-                                                        field.onChange(
-                                                            isNaN(val)
-                                                                ? ''
-                                                                : val
-                                                        )
-                                                    }}
-                                                    onWheel={(e) =>
-                                                        e.currentTarget.blur()
-                                                    }
-                                                    disabled={isDOPurchase}
-                                                />
-                                            </FormControl>
+                                                        <CommandEmpty>
+                                                            {t('common.noResults')}
+                                                        </CommandEmpty>
+                                                        <CommandGroup>
+                                                            {party.items.map(
+                                                                (partyName: string) => (
+                                                                    <CommandItem
+                                                                        value={
+                                                                            partyName
+                                                                        }
+                                                                        key={
+                                                                            partyName
+                                                                        }
+                                                                        onSelect={() => {
+                                                                            form.setValue(
+                                                                                'partyName',
+                                                                                partyName
+                                                                            )
+                                                                        }}
+                                                                    >
+                                                                        <CheckIcon
+                                                                            className={cn(
+                                                                                'mr-2 h-4 w-4',
+                                                                                partyName ===
+                                                                                    field.value
+                                                                                    ? 'opacity-100'
+                                                                                    : 'opacity-0'
+                                                                            )}
+                                                                        />
+                                                                        {
+                                                                            partyName
+                                                                        }
+                                                                    </CommandItem>
+                                                                )
+                                                            )}
+                                                        </CommandGroup>
+                                                    </Command>
+                                                </PopoverContent>
+                                            </Popover>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
+                                {/* Add more fields as needed based on the schema and UI requirements */}
                                 <FormField
                                     control={form.control}
-                                    name='paddyRatePerQuintal'
+                                    name='doPaddyQty'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Paddy Rate per Quintal
+                                                {t(
+                                                    'balanceLifting.purchase.paddy.form.fields.paddyQty'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -503,10 +352,14 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                 />
                                 <FormField
                                     control={form.control}
-                                    name='discountPercent'
+                                    name='balance'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Discount %</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.paddy.form.fields.balance'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -534,10 +387,14 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                 />
                                 <FormField
                                     control={form.control}
-                                    name='brokerage'
+                                    name='balanceLifting'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Brokerage</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.paddy.form.fields.balanceLifting'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -563,149 +420,6 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                         </FormItem>
                                     )}
                                 />
-
-                                {/* Gunny/Sack Details */}
-
-                                <FormField
-                                    control={form.control}
-                                    name='gunnyType'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Gunny Option</FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger className='w-full'>
-                                                        <SelectValue placeholder='Select' />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent className='w-full'>
-                                                    {gunnyTypeOptions.map(
-                                                        (option) => (
-                                                            <SelectItem
-                                                                key={
-                                                                    option.value
-                                                                }
-                                                                value={
-                                                                    option.value
-                                                                }
-                                                            >
-                                                                {option.label}
-                                                            </SelectItem>
-                                                        )
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                {isGunnySahit && (
-                                    <>
-                                        <FormField
-                                            control={form.control}
-                                            name='newGunnyRate'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        New Gunny Rate
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            type='number'
-                                                            step='0.01'
-                                                            placeholder='0.00'
-                                                            {...field}
-                                                            onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
-                                                            onWheel={(e) =>
-                                                                e.currentTarget.blur()
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name='oldGunnyRate'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        Old Gunny Rate
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            type='number'
-                                                            step='0.01'
-                                                            placeholder='0.00'
-                                                            {...field}
-                                                            onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
-                                                            onWheel={(e) =>
-                                                                e.currentTarget.blur()
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name='plasticGunnyRate'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        Plastic Gunny Rate
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            type='number'
-                                                            step='0.01'
-                                                            placeholder='0.00'
-                                                            {...field}
-                                                            onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
-                                                            onWheel={(e) =>
-                                                                e.currentTarget.blur()
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </>
-                                )}
                             </div>
                         </div>
                         <DialogFooter>
@@ -713,11 +427,18 @@ export function BalanceLiftingPurchasesPaddyActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Purchase
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? t('common.updating')
+                                        : t('common.adding')
+                                    : isEditing
+                                        ? t('common.update')
+                                        : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

@@ -1,4 +1,6 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -37,11 +39,19 @@ export const frkColumns: ColumnDef<BalanceLiftingPurchasesFrk>[] = [
     },
     {
         accessorKey: 'date',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.purchase.frk.form.fields.date')}
+                />
+            )
+        },
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -53,9 +63,17 @@ export const frkColumns: ColumnDef<BalanceLiftingPurchasesFrk>[] = [
     },
     {
         accessorKey: 'partyName',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t(
+                        'balanceLifting.purchase.frk.form.fields.partyName'
+                    )}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-nowrap'>
                 {row.getValue('partyName') || '-'}
@@ -64,27 +82,45 @@ export const frkColumns: ColumnDef<BalanceLiftingPurchasesFrk>[] = [
     },
     {
         accessorKey: 'frkQty',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='FRK Quantity' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.purchase.frk.form.fields.frkQty')}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>{row.original.frkQty || 0}</div>
         ),
     },
     {
         accessorKey: 'frkRate',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='FRK Rate' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.purchase.frk.form.fields.frkRate')}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>₹{row.original.frkRate || 0}</div>
         ),
     },
     {
         accessorKey: 'gst',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='GST (%)' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.purchase.frk.form.fields.gst')}
+                />
+            )
+        },
         cell: ({ row }) => (
             <div className='text-right'>{row.original.gst || 0}%</div>
         ),

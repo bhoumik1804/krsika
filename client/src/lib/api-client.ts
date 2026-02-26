@@ -106,7 +106,7 @@ const handleApiError = async (
             default:
                 defaultMsg = `An error occurred: ${status}`
         }
-        ;(error.response.data as any).message = defaultMsg
+        ; (error.response.data as any).message = defaultMsg
     }
 
     // 4. Return the rejected promise containing the FULL error object
@@ -158,7 +158,7 @@ apiClient.interceptors.response.use(
             !url.includes('/auth/refresh')
         ) {
             try {
-                ;(originalRequest as any)._retry = true
+                ; (originalRequest as any)._retry = true
                 await apiClient.post('/auth/refresh')
                 return apiClient(originalRequest)
             } catch (refreshError) {

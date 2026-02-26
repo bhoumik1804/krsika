@@ -27,6 +27,9 @@ import { SelectDropdown } from '@/components/select-dropdown'
 import { roles } from '../data/data'
 import { useCreateUser, useUpdateUser } from '../data/hooks'
 import { type User } from '../data/schema'
+import { handleFormError } from '@/lib/handle-form-error'
+import { handleServerError } from '@/lib/handle-server-error'
+import { toast } from 'sonner'
 
 const formSchema = z
     .object({
@@ -109,23 +112,23 @@ export function UsersActionDialog({
         resolver: zodResolver(formSchema),
         defaultValues: isEdit
             ? {
-                  fullName: currentRow.fullName || '',
-                  email: currentRow.email || '',
-                  role: currentRow.role || '',
-                  isActive: currentRow.status === 'active',
-                  password: '',
-                  confirmPassword: '',
-                  isEdit,
-              }
+                fullName: currentRow.fullName || '',
+                email: currentRow.email || '',
+                role: currentRow.role || '',
+                isActive: currentRow.status === 'active',
+                password: '',
+                confirmPassword: '',
+                isEdit,
+            }
             : {
-                  fullName: '',
-                  email: '',
-                  role: '',
-                  isActive: true,
-                  password: '',
-                  confirmPassword: '',
-                  isEdit,
-              },
+                fullName: '',
+                email: '',
+                role: '',
+                isActive: true,
+                password: '',
+                confirmPassword: '',
+                isEdit,
+            },
     })
 
     const onSubmit = async (values: UserForm) => {
@@ -156,10 +159,14 @@ export function UsersActionDialog({
                     password: values.password,
                 })
             }
+            toast.success(isEdit ? 'User updated successfully' : 'User created successfully')
             form.reset()
             onOpenChange(false)
         } catch (error) {
-            // Error handled by mutation hooks
+            const handled = handleFormError(error, form)
+            if (!handled) {
+                handleServerError(error)
+            }
         }
     }
 

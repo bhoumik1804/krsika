@@ -25,25 +25,29 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type MillingPaddy } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { millingPaddyColumns as columns } from './milling-paddy-columns'
+import { MillingPaddyColumns } from './milling-paddy-columns'
 
 type DataTableProps = {
     data: MillingPaddy[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading: boolean
-    isError: boolean
-    totalPages?: number
-    totalItems?: number
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
 export function MillingPaddyTable({
     data,
     search,
     navigate,
-    // isLoading,
-    // isError,
-    // totalPages,
+    pagination: serverPagination,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -60,17 +64,23 @@ export function MillingPaddyTable({
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'dhanType', searchKey: 'dhanType', type: 'string' },
+            { columnId: 'paddyType', searchKey: 'paddyType', type: 'string' },
         ],
     })
 
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
-        columns,
+        columns: MillingPaddyColumns(),
         state: {
             sorting,
             pagination,
@@ -78,6 +88,9 @@ export function MillingPaddyTable({
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
@@ -181,7 +194,7 @@ export function MillingPaddyTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -22,30 +23,19 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
-import { type GunnySales } from '../data/schema'
+import type { GunnySalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { gunnySalesColumns as columns } from './gunny-sales-columns'
+import { useGunnySalesColumns } from './gunny-sales-columns'
 
 type DataTableProps = {
-    data: GunnySales[]
+    data: GunnySalesResponse[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading: boolean
-    isError: boolean
-    totalPages?: number
-    totalItems?: number
 }
 
-export function GunnySalesTable({
-    data,
-    search,
-    navigate,
-    // isLoading,
-    // isError,
-    // totalPages,
-    // totalItems,
-}: DataTableProps) {
+export function GunnySalesTable({ data, search, navigate }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
+    const columns = useGunnySalesColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -65,7 +55,6 @@ export function GunnySalesTable({
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
         ],
     })
 
@@ -92,6 +81,7 @@ export function GunnySalesTable({
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        getRowId: (row) => row._id,
     })
 
     useEffect(() => {
@@ -107,15 +97,9 @@ export function GunnySalesTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
+                searchPlaceholder={t('common.search')}
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
+                filters={[]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>
@@ -186,7 +170,7 @@ export function GunnySalesTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

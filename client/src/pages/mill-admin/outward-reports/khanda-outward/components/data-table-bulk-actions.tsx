@@ -12,21 +12,19 @@ import {
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
 import { type KhandaOutward } from '../data/schema'
 import { KhandaOutwardMultiDeleteDialog } from './khanda-outward-multi-delete-dialog'
+import { khandaOutward } from './khanda-outward-provider'
 
-type DataTableBulkActionsProps<TData> = {
-    table: Table<TData>
+type DataTableBulkActionsProps = {
+    table: Table<KhandaOutward>
 }
 
-export function DataTableBulkActions<TData>({
-    table,
-}: DataTableBulkActionsProps<TData>) {
+export function DataTableBulkActions({ table }: DataTableBulkActionsProps) {
+    const { millId } = khandaOutward()
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleBulkStatusChange = (status: 'completed' | 'cancelled') => {
-        const selectedRecords = selectedRows.map(
-            (row) => row.original as KhandaOutward
-        )
+        const selectedRecords = selectedRows.map((row) => row.original)
         toast.promise(sleep(2000), {
             loading: `Marking as ${status}...`,
             success: () => {
@@ -79,6 +77,7 @@ export function DataTableBulkActions<TData>({
                 table={table}
                 open={showDeleteConfirm}
                 onOpenChange={setShowDeleteConfirm}
+                millId={millId}
             />
         </>
     )

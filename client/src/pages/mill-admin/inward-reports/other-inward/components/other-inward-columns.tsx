@@ -5,6 +5,7 @@ import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type OtherInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const otherInwardColumns: ColumnDef<OtherInward>[] = [
     {
@@ -42,7 +43,9 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -53,7 +56,7 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'purchaseDealId',
+        accessorKey: 'otherPurchaseDealNumber',
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
@@ -61,7 +64,9 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
             />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('purchaseDealId')}</div>
+            <div className='text-nowrap'>
+                {row.getValue('otherPurchaseDealNumber')}
+            </div>
         ),
     },
     {
@@ -131,24 +136,24 @@ export const otherInwardColumns: ColumnDef<OtherInward>[] = [
         ),
     },
     {
-        accessorKey: 'juteWeight',
+        accessorKey: 'juteGunnyWeight',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Jute Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('juteWeight') as number)?.toFixed(2)}
+                {(row.getValue('juteGunnyWeight') as number)?.toFixed(2)}
             </div>
         ),
     },
     {
-        accessorKey: 'plasticWeight',
+        accessorKey: 'plasticGunnyWeight',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Plastic Weight' />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('plasticWeight') as number)?.toFixed(2)}
+                {(row.getValue('plasticGunnyWeight') as number)?.toFixed(2)}
             </div>
         ),
     },

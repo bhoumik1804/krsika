@@ -5,6 +5,7 @@ import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type FrkInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const frkInwardColumns: ColumnDef<FrkInward>[] = [
     {
@@ -42,7 +43,9 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -53,7 +56,7 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'purchaseDealId',
+        accessorKey: 'frkPurchaseDealNumber',
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
@@ -61,7 +64,9 @@ export const frkInwardColumns: ColumnDef<FrkInward>[] = [
             />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('purchaseDealId')}</div>
+            <div className='text-nowrap'>
+                {row.getValue('frkPurchaseDealNumber')}
+            </div>
         ),
     },
     {

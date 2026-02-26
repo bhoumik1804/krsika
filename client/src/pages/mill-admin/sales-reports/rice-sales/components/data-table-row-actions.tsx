@@ -11,14 +11,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type RiceSales } from '../data/schema'
-import { riceSales } from './rice-sales-provider'
+import { useRiceSales } from './rice-sales-provider'
 
 type DataTableRowActionsProps = {
     row: Row<RiceSales>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = riceSales()
+    const { setOpen, setCurrentRow } = useRiceSales()
     return (
         <>
             <DropdownMenu modal={false}>

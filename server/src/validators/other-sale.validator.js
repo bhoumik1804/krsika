@@ -7,31 +7,15 @@ import { z } from 'zod'
 
 // Common fields schema
 const otherSaleBaseSchema = {
-    date: z
-        .string({
-            required_error: 'Date is required',
-        })
-        .datetime({ offset: true })
-        .or(
-            z
-                .string()
-                .regex(
-                    /^\d{4}-\d{2}-\d{2}$/,
-                    'Invalid date format (YYYY-MM-DD)'
-                )
-        ),
-    partyName: z
-        .string({
-            required_error: 'Party name is required',
-        })
-        .trim()
-        .min(1, 'Party name is required')
-        .max(200, 'Party name is too long'),
-    itemName: z.string().trim().max(200, 'Item name is too long').optional(),
-    quantity: z.number().min(0, 'Quantity cannot be negative').optional(),
-    unit: z.string().trim().max(50, 'Unit is too long').optional(),
-    rate: z.number().min(0, 'Rate cannot be negative').optional(),
-    amount: z.number().min(0, 'Amount cannot be negative').optional(),
+    date: z.string().min(1, 'Date is required'),
+    partyName: z.string().optional(),
+    brokerName: z.string().optional(),
+    otherSaleName: z.string().optional(),
+    otherSaleQty: z.number().optional(),
+    qtyType: z.string().optional(),
+    rate: z.number().optional(),
+    discountPercent: z.number().optional(),
+    gst: z.number().optional(),
 }
 
 // Create other sale schema
@@ -47,17 +31,7 @@ export const createOtherSaleSchema = z.object({
 // Update other sale schema
 export const updateOtherSaleSchema = z.object({
     body: z.object({
-        date: otherSaleBaseSchema.date.optional(),
-        partyName: z
-            .string()
-            .trim()
-            .max(200, 'Party name is too long')
-            .optional(),
-        itemName: otherSaleBaseSchema.itemName,
-        quantity: otherSaleBaseSchema.quantity,
-        unit: otherSaleBaseSchema.unit,
-        rate: otherSaleBaseSchema.rate,
-        amount: otherSaleBaseSchema.amount,
+        ...otherSaleBaseSchema,
     }),
     params: z.object({
         millId: z.string({ required_error: 'Mill ID is required' }),
@@ -100,7 +74,7 @@ export const getOtherSaleListSchema = z.object({
     }),
     query: z.object({
         page: z.coerce.number().int().min(1).default(1).optional(),
-        limit: z.coerce.number().int().min(1).max(100).default(10).optional(),
+        limit: z.coerce.number().int().min(1).max(1000).default(10).optional(),
         search: z.string().trim().optional(),
         startDate: z
             .string()
@@ -111,7 +85,7 @@ export const getOtherSaleListSchema = z.object({
             .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
             .optional(),
         sortBy: z
-            .enum(['date', 'partyName', 'itemName', 'createdAt'])
+            .enum(['date', 'partyName', 'createdAt'])
             .default('date')
             .optional(),
         sortOrder: z.enum(['asc', 'desc']).default('desc').optional(),

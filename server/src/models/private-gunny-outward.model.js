@@ -18,7 +18,7 @@ const PrivateGunnyOutwardSchema = new Schema(
             required: true,
             index: true,
         },
-        gunnyPurchaseDealNumber: {
+        gunnySaleDealNumber: {
             type: String,
             trim: true,
         },
@@ -51,7 +51,8 @@ const PrivateGunnyOutwardSchema = new Schema(
 // Compound indexes for common queries
 PrivateGunnyOutwardSchema.index({ millId: 1, date: -1 })
 PrivateGunnyOutwardSchema.index({ millId: 1, partyName: 1 })
-PrivateGunnyOutwardSchema.index({ millId: 1, gunnyPurchaseDealNumber: 1 })
+// Index on deal number (use purchase deal field name)
+PrivateGunnyOutwardSchema.index({ millId: 1, gunnySaleDealNumber: 1 })
 PrivateGunnyOutwardSchema.index({ millId: 1, truckNo: 1 })
 
 // Virtual for formatted date

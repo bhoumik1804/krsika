@@ -1,9 +1,23 @@
 import { type ColumnDef } from '@tanstack/react-table'
-// '
+import { cn } from '@/lib/utils'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type PartyTransaction } from '../data/schema'
+import { format } from 'date-fns'
 
 export const partyTransactionColumns: ColumnDef<PartyTransaction>[] = [
+    {
+        id: 'srNo',
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title='#' />
+        ),
+        cell: ({ row, table }) => {
+            const { pageIndex, pageSize } = table.getState().pagination
+            const sr = pageIndex * pageSize + row.index + 1
+            return <div className='text-center font-medium'>{sr}</div>
+        },
+        meta: { className: cn('w-12') },
+        enableSorting: false,
+    },
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
@@ -30,7 +44,9 @@ export const partyTransactionColumns: ColumnDef<PartyTransaction>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='w-[100px]'>{row.getValue('date')}</div>
+            <div className='w-[100px]'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
     },
     {

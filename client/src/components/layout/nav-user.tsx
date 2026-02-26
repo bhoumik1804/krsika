@@ -1,5 +1,7 @@
 import { ChevronsUpDown, LogOut } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
+import { useAuthStore } from '@/stores/auth-store'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -25,15 +27,23 @@ type NavUserProps = {
         name: string
         email: string
         avatar: string
+        role?: string
     }
     links?: NavItem[]
 }
 
 export function NavUser({ user, links }: NavUserProps) {
     const { isMobile } = useSidebar()
+    const { t } = useTranslation('mill-staff')
+    const storeUser = useAuthStore((state) => state.user)
     const [open, setOpen] = useDialogState()
+    const isMillStaff = user.role === 'mill-staff'
 
-    const initials = user.name
+    const getLabel = (label: string) => (isMillStaff ? t(label) : label)
+    const displayName = storeUser?.fullName || user.name
+    const displayEmail = storeUser?.email || user.email
+
+    const initials = displayName
         .split(' ')
         .map((n) => n[0])
         .join('')
@@ -52,7 +62,7 @@ export function NavUser({ user, links }: NavUserProps) {
                                 <Avatar className='h-8 w-8 rounded-lg'>
                                     <AvatarImage
                                         src={user.avatar}
-                                        alt={user.name}
+                                        alt={displayName}
                                     />
                                     <AvatarFallback className='rounded-lg'>
                                         {initials}
@@ -60,10 +70,10 @@ export function NavUser({ user, links }: NavUserProps) {
                                 </Avatar>
                                 <div className='grid flex-1 text-start text-sm leading-tight'>
                                     <span className='truncate font-semibold'>
-                                        {user.name}
+                                        {displayName}
                                     </span>
                                     <span className='truncate text-xs'>
-                                        {user.email}
+                                        {displayEmail}
                                     </span>
                                 </div>
                                 <ChevronsUpDown className='ms-auto size-4' />
@@ -80,7 +90,7 @@ export function NavUser({ user, links }: NavUserProps) {
                                     <Avatar className='h-8 w-8 rounded-lg'>
                                         <AvatarImage
                                             src={user.avatar}
-                                            alt={user.name}
+                                            alt={displayName}
                                         />
                                         <AvatarFallback className='rounded-lg'>
                                             {initials}
@@ -88,10 +98,10 @@ export function NavUser({ user, links }: NavUserProps) {
                                     </Avatar>
                                     <div className='grid flex-1 text-start text-sm leading-tight'>
                                         <span className='truncate font-semibold'>
-                                            {user.name}
+                                            {displayName}
                                         </span>
                                         <span className='truncate text-xs'>
-                                            {user.email}
+                                            {displayEmail}
                                         </span>
                                     </div>
                                 </div>
@@ -109,7 +119,7 @@ export function NavUser({ user, links }: NavUserProps) {
                                     <DropdownMenuItem key={link.title} asChild>
                                         <Link to={link.url || '#'}>
                                             {link.icon && <link.icon />}
-                                            {link.title}
+                                            {getLabel(link.title)}
                                         </Link>
                                     </DropdownMenuItem>
                                 ))}
@@ -120,7 +130,9 @@ export function NavUser({ user, links }: NavUserProps) {
                                 onClick={() => setOpen(true)}
                             >
                                 <LogOut />
-                                Sign out
+                                {isMillStaff
+                                    ? t('sidebar.signOut')
+                                    : 'Sign out'}
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

@@ -1,5 +1,7 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
-// '
+import '@/constants'
+import { t } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -40,10 +42,17 @@ export const bhusaOutwardColumns: ColumnDef<BhusaOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.bhusaOutward.form.fields.date', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -58,19 +67,25 @@ export const bhusaOutwardColumns: ColumnDef<BhusaOutward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Bhusa Sale Deal Number'
+                title={t(
+                    'outward.bhusaOutward.form.fields.bhusaSaleDealNumber',
+                    {
+                        ns: 'mill-staff',
+                    }
+                )}
             />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm'>
-                {row.getValue('bhusaSaleDealNumber')}
-            </div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('bhusaSaleDealNumber')}</div>,
     },
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.bhusaOutward.form.fields.partyName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -82,7 +97,12 @@ export const bhusaOutwardColumns: ColumnDef<BhusaOutward>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.bhusaOutward.form.fields.brokerName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -94,7 +114,12 @@ export const bhusaOutwardColumns: ColumnDef<BhusaOutward>[] = [
     {
         accessorKey: 'rate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rate' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.bhusaOutward.form.fields.rate', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('rate')}</div>
@@ -103,7 +128,12 @@ export const bhusaOutwardColumns: ColumnDef<BhusaOutward>[] = [
     {
         accessorKey: 'brokerage',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Brokerage' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.bhusaOutward.form.fields.brokerage', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('brokerage')}</div>
@@ -112,27 +142,36 @@ export const bhusaOutwardColumns: ColumnDef<BhusaOutward>[] = [
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.bhusaOutward.form.fields.truckNo', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm text-nowrap'>
-                {row.getValue('truckNo')}
-            </div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('truckNo')}</div>,
     },
     {
         accessorKey: 'truckRst',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.bhusaOutward.form.fields.truckRst', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm'>{row.getValue('truckRst')}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('truckRst')}</div>,
     },
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.bhusaOutward.form.fields.truckWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('truckWeight')}</div>

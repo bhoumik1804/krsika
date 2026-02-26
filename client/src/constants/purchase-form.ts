@@ -107,3 +107,17 @@ export const saleDealTypeOptions = [
     { label: 'FRK बिक्री', value: 'FRK बिक्री' },
     { label: 'अन्य बिक्री', value: 'अन्य बिक्री' },
 ]
+export const monthOptions = [
+    { label: 'जनवरी', value: 'जनवरी', days: 31 },
+    { label: 'फरवरी', value: 'फरवरी', days: 28 },
+    { label: 'मार्च', value: 'मार्च', days: 31 },
+    { label: 'अप्रैल', value: 'अप्रैल', days: 30 },
+    { label: 'मई', value: 'मई', days: 31 },
+    { label: 'जून', value: 'जून', days: 30 },
+    { label: 'जुलाई', value: 'जुलाई', days: 31 },
+    { label: 'अगस्त', value: 'अगस्त', days: 31 },
+    { label: 'सितंबर', value: 'सितंबर', days: 30 },
+    { label: 'अक्टूबर', value: 'अक्टूबर', days: 31 },
+    { label: 'नवंबर', value: 'नवंबर', days: 30 },
+    { label: 'दिसंबर', value: 'दिसंबर', days: 31 },
+]

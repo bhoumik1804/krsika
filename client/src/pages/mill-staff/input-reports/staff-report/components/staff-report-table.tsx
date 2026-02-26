@@ -7,6 +7,7 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -23,30 +24,36 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type StaffReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { staffReportColumns as columns } from './staff-report-columns'
+import { useStaffReportColumns } from './staff-report-columns'
 
 type DataTableProps = {
-    data: StaffReportData[] | any[]
+    data: StaffReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    totalRows?: number
-    isLoading?: boolean
-    isError?: boolean
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
 export function StaffReportTable({
     data,
     search,
     navigate,
-    totalRows,
-    // isLoading,
-    // isError,
+    pagination: serverPagination,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const columns = useStaffReportColumns()
 
     const {
         columnFilters,
@@ -62,9 +69,16 @@ export function StaffReportTable({
             pageSizeKey: 'limit',
             defaultPage: 1,
             defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
         },
         globalFilter: { enabled: false },
-        columnFilters: [],
+        columnFilters: [
+            {
+                columnId: 'fullName',
+                searchKey: 'fullName',
+                type: 'string',
+            },
+        ],
     })
 
     // eslint-disable-next-line react-hooks/incompatible-library
@@ -84,27 +98,23 @@ export function StaffReportTable({
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        // DO NOT use getPaginationRowModel() - pagination is handled server-side
+        getRowId: (row) => row._id || '',
+        // Use server-side pagination info when available
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
+        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-        // Set manual pageCount for server-side pagination
-        pageCount:
-            totalRows !== undefined
-                ? Math.ceil(totalRows / (pagination.pageSize || 10))
-                : undefined,
-        manualPagination: true,
     })
 
     useEffect(() => {
-        if (totalRows !== undefined) {
-            ensurePageInRange(
-                Math.ceil(totalRows / (pagination.pageSize || 10))
-            )
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
         }
-    }, [totalRows, pagination.pageSize, ensurePageInRange])
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -115,9 +125,8 @@ export function StaffReportTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
-                searchKey='partyName'
-                filters={[]}
+                searchPlaceholder='Search staff...'
+                searchKey='fullName'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

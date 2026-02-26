@@ -3,24 +3,40 @@ import { CommitteeReportDeleteDialog } from './committee-report-delete-dialog'
 import { useCommitteeReport } from './committee-report-provider'
 
 export function CommitteeReportDialogs() {
-    const { open, setOpen, currentRow } = useCommitteeReport()
+    const { open, setOpen, currentRow, setCurrentRow } = useCommitteeReport()
 
     return (
         <>
             <CommitteeReportActionDialog
-                open={open === 'add' || open === 'edit'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? open : null)
-                }
-                currentRow={currentRow}
+                key='committee-add'
+                open={open === 'add'}
+                onOpenChange={() => setOpen('add')}
             />
-            <CommitteeReportDeleteDialog
-                open={open === 'delete'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? 'delete' : null)
-                }
-                currentRow={currentRow}
-            />
+            {currentRow && (
+                <CommitteeReportActionDialog
+                    key={`committee-edit-${currentRow._id}`}
+                    open={open === 'edit'}
+                    onOpenChange={() => {
+                        setOpen('edit')
+                        setTimeout(() => {
+                            setCurrentRow(null)
+                        }, 500)
+                    }}
+                    currentRow={currentRow}
+                />
+            )}
+            {currentRow && (
+                <CommitteeReportDeleteDialog
+                    open={open === 'delete'}
+                    onOpenChange={() => {
+                        setOpen('delete')
+                        setTimeout(() => {
+                            setCurrentRow(null)
+                        }, 500)
+                    }}
+                    currentRow={currentRow}
+                />
+            )}
         </>
     )
 }

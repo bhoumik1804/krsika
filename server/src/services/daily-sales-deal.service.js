@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { DailySalesDeal } from '../models/daily-sales-deal.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 
 export const createDailySalesDealEntry = async (millId, data, userId) => {
     const entry = new DailySalesDeal({
@@ -11,6 +12,33 @@ export const createDailySalesDealEntry = async (millId, data, userId) => {
         date: new Date(data.date),
     })
     await entry.save()
+
+    // Record stock transaction (DEBIT = stock decrease)
+    // Removed conditional checks to ensure consistent logging
+    try {
+        await StockTransactionService.recordTransaction(
+            millId,
+            {
+                date: data.date,
+                commodity: data.commodity,
+                variety: data.commodityType || null,
+                type: 'DEBIT',
+                action: 'Sales Deal',
+                quantity: data.quantity,
+                bags: data.bags || 0,
+                refModel: 'DailySalesDeal',
+                refId: entry._id,
+                remarks: `Sales deal to ${data.buyerName || 'Buyer'}`,
+            },
+            userId
+        )
+    } catch (err) {
+        logger.error('Failed to record stock for daily sales deal', {
+            id: entry._id,
+            error: err.message,
+        })
+    }
+
     logger.info('Daily sales deal entry created', {
         id: entry._id,
         millId,
@@ -148,6 +176,18 @@ export const updateDailySalesDealEntry = async (millId, id, data, userId) => {
         .populate('createdBy', 'fullName email')
         .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Daily sales deal entry not found')
+
+    // Update stock transaction
+    // Removed conditional checks
+    await StockTransactionService.updateTransaction('DailySalesDeal', id, {
+        date: entry.date,
+        commodity: entry.commodity,
+        variety: entry.commodityType || null,
+        quantity: entry.quantity,
+        bags: entry.bags || 0,
+        remarks: `Sales deal to ${entry.buyerName || 'Buyer'}`,
+    })
+
     logger.info('Daily sales deal entry updated', { id, millId, userId })
     return entry
 }
@@ -155,6 +195,10 @@ export const updateDailySalesDealEntry = async (millId, id, data, userId) => {
 export const deleteDailySalesDealEntry = async (millId, id) => {
     const entry = await DailySalesDeal.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Daily sales deal entry not found')
+
+    // Delete associated stock transactions
+    await StockTransactionService.deleteTransactionsByRef('DailySalesDeal', id)
+
     logger.info('Daily sales deal entry deleted', { id, millId })
 }
 
@@ -163,6 +207,11 @@ export const bulkDeleteDailySalesDealEntries = async (millId, ids) => {
         _id: { $in: ids },
         millId,
     })
+    
+    for (const id of ids) {
+        await StockTransactionService.deleteTransactionsByRef('DailySalesDeal', id)
+    }
+
     logger.info('Daily sales deal entries bulk deleted', {
         millId,
         count: result.deletedCount,

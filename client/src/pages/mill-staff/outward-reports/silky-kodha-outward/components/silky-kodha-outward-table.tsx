@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -7,7 +7,6 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -23,8 +22,9 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type SilkyKodhaOutward } from '../data/schema'
+import type { SilkyKodhaOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { silkyKodhaOutwardColumns as columns } from './silky-kodha-outward-columns'
+import { SilkyKodhaOutwardColumns } from './silky-kodha-outward-columns'
 import { SilkyKodhaOutwardMultiDeleteDialog } from './silky-kodha-outward-multi-delete-dialog'
 import { silkyKodhaOutward } from './silky-kodha-outward-provider'
 
@@ -32,26 +32,22 @@ type DataTableProps = {
     data: SilkyKodhaOutward[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading?: boolean
-    isError?: boolean
-    totalPages?: number
-    totalItems?: number
+    pagination?: SilkyKodhaOutwardListResponse['pagination']
 }
 
 export function SilkyKodhaOutwardTable({
     data,
     search,
     navigate,
-    // isLoading,
-    // isError,
-    // totalPages,
-    // totalItems,
+    pagination: serverPagination,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+
+    const columns = SilkyKodhaOutwardColumns()
 
     const { open, setOpen } = silkyKodhaOutward()
 
@@ -60,7 +56,6 @@ export function SilkyKodhaOutwardTable({
         onColumnFiltersChange,
         pagination,
         onPaginationChange,
-        ensurePageInRange,
     } = useTableUrlState({
         search,
         navigate,
@@ -74,6 +69,7 @@ export function SilkyKodhaOutwardTable({
     const table = useReactTable({
         data,
         columns,
+        pageCount: serverPagination?.totalPages ?? -1,
         state: {
             sorting,
             pagination,
@@ -81,23 +77,19 @@ export function SilkyKodhaOutwardTable({
             columnFilters,
             columnVisibility,
         },
+        manualPagination: true,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
-
-    useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
 
     return (
         <div

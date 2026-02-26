@@ -10,15 +10,15 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { type BalanceLiftingSalesPaddy } from '../data/schema'
-import { balanceLiftingSalesPaddy } from './balance-lifting-sales-paddy-provider'
+import { type PaddySalesResponse } from '../data/types'
+import { useBalanceLiftingSalesPaddy } from './balance-lifting-sales-paddy-provider'
 
 type DataTableRowActionsProps = {
-    row: Row<BalanceLiftingSalesPaddy>
+    row: Row<PaddySalesResponse>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = balanceLiftingSalesPaddy()
+    const { setOpen, setCurrentRow } = useBalanceLiftingSalesPaddy()
     return (
         <>
             <DropdownMenu modal={false}>

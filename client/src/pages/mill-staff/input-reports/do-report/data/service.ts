@@ -10,7 +10,6 @@ import type {
     DoReportSummaryResponse,
     CreateDoReportRequest,
     UpdateDoReportRequest,
-    DoReportQueryParams,
 } from './types'
 
 // ==========================================
@@ -20,6 +19,19 @@ import type {
 const DO_REPORT_ENDPOINT = (millId: string) => `/mills/${millId}/do-reports`
 
 // ==========================================
+// Types
+// ==========================================
+
+interface FetchDoReportListParams {
+    millId: string
+    page?: number
+    limit?: number
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+}
+
+// ==========================================
 // DO Report API Functions
 // ==========================================
 
@@ -27,12 +39,17 @@ const DO_REPORT_ENDPOINT = (millId: string) => `/mills/${millId}/do-reports`
  * Fetch all DO reports with pagination and filters
  */
 export const fetchDoReportList = async (
-    millId: string,
-    params?: DoReportQueryParams
+    params: FetchDoReportListParams
 ): Promise<DoReportListResponse> => {
+    const queryParams = new URLSearchParams()
+    if (params.page) queryParams.append('page', params.page.toString())
+    if (params.limit) queryParams.append('limit', params.limit.toString())
+    if (params.search) queryParams.append('search', params.search)
+    if (params.sortBy) queryParams.append('sortBy', params.sortBy)
+    if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder)
+
     const response = await apiClient.get<ApiResponse<DoReportListResponse>>(
-        DO_REPORT_ENDPOINT(millId),
-        { params }
+        `${DO_REPORT_ENDPOINT(params.millId)}?${queryParams.toString()}`
     )
     return response.data.data
 }
@@ -77,14 +94,27 @@ export const createDoReport = async (
 }
 
 /**
+ * Bulk create DO reports
+ */
+export const bulkCreateDoReport = async (
+    millId: string,
+    data: CreateDoReportRequest[]
+): Promise<{ reports: DoReportResponse[]; count: number }> => {
+    const response = await apiClient.post<
+        ApiResponse<{ reports: DoReportResponse[]; count: number }>
+    >(`${DO_REPORT_ENDPOINT(millId)}/bulk`, data)
+    return response.data.data
+}
+
+/**
  * Update an existing DO report
  */
 export const updateDoReport = async (
     millId: string,
-    { id, ...data }: UpdateDoReportRequest
+    { _id, ...data }: UpdateDoReportRequest
 ): Promise<DoReportResponse> => {
     const response = await apiClient.put<ApiResponse<DoReportResponse>>(
-        `${DO_REPORT_ENDPOINT(millId)}/${id}`,
+        `${DO_REPORT_ENDPOINT(millId)}/${_id}`,
         data
     )
     return response.data.data
@@ -115,9 +145,17 @@ export const bulkDeleteDoReport = async (
 /**
  * Export DO reports to CSV/Excel
  */
+interface ExportDoReportParams {
+    page?: number
+    limit?: number
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+}
+
 export const exportDoReport = async (
     millId: string,
-    params?: DoReportQueryParams,
+    params?: ExportDoReportParams,
     format: 'csv' | 'xlsx' = 'csv'
 ): Promise<Blob> => {
     const response = await apiClient.get(

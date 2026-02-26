@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { DailyInward } from '../models/daily-inward.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockHelpers from './stock-helpers.service.js'
 
 export const createDailyInwardEntry = async (millId, data, userId) => {
     const dailyInward = new DailyInward({
@@ -12,6 +13,10 @@ export const createDailyInwardEntry = async (millId, data, userId) => {
     })
 
     await dailyInward.save()
+
+    // Record stock transaction
+    await StockHelpers.recordInwardTransaction(millId, dailyInward, userId)
+
     logger.info('Daily inward entry created', {
         id: dailyInward._id,
         millId,
@@ -187,6 +192,16 @@ export const updateDailyInwardEntry = async (millId, id, data, userId) => {
         .populate('updatedBy', 'fullName email')
 
     if (!dailyInward) throw new ApiError(404, 'Daily inward entry not found')
+
+    // Update stock transaction
+    if (data.item || data.weight || data.date) {
+        await StockHelpers.updateStockTransaction(
+            'DailyInward',
+            id,
+            dailyInward
+        )
+    }
+
     logger.info('Daily inward entry updated', { id, millId, userId })
     return dailyInward
 }
@@ -194,6 +209,10 @@ export const updateDailyInwardEntry = async (millId, id, data, userId) => {
 export const deleteDailyInwardEntry = async (millId, id) => {
     const dailyInward = await DailyInward.findOneAndDelete({ _id: id, millId })
     if (!dailyInward) throw new ApiError(404, 'Daily inward entry not found')
+
+    // Delete stock transaction
+    await StockHelpers.deleteStockTransaction('DailyInward', id)
+
     logger.info('Daily inward entry deleted', { id, millId })
 }
 

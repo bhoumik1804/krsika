@@ -1,10 +1,10 @@
 import { type ColumnDef } from '@tanstack/react-table'
-// '
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type BrokerTransaction } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
     {
@@ -23,7 +23,7 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
             />
         ),
         meta: {
-            className: cn('sticky start-0 z-10 rounded-tl-[inherit]'),
+            className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
         },
         cell: ({ row }) => (
             <Checkbox
@@ -33,6 +33,7 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
                 className='translate-y-[2px]'
             />
         ),
+
         enableSorting: false,
         enableHiding: false,
     },
@@ -45,7 +46,7 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
         meta: {
             className: cn(
                 'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-                'ps-0.5 sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+                'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
             ),
         },
         enableHiding: false,
@@ -63,7 +64,9 @@ export const brokerTransactionColumns: ColumnDef<BrokerTransaction>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='Date' />
         ),
-        cell: ({ row }) => <div>{row.getValue('date')}</div>,
+        cell: ({ row }) => (
+            <div>{format(new Date(row.getValue('date')), 'yyyy-MM-dd')}</div>
+        ),
     },
     {
         accessorKey: 'purchaseDeal',

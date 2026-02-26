@@ -24,22 +24,31 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FinancialPayment } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { FinancialPaymentColumns as columns } from './financial-payment-columns'
+import { FinancialPaymentColumns } from './financial-payment-columns'
 
 type DataTableProps = {
     data: FinancialPayment[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
     isLoading?: boolean
-    isError?: boolean
 }
 
 export function FinancialPaymentTable({
     data,
     search,
     navigate,
-    // isLoading,
-    // isError,
+    pagination: serverPagination,
+    isLoading,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -56,7 +65,10 @@ export function FinancialPaymentTable({
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            defaultPage: serverPagination ? serverPagination.page : 1,
+            defaultPageSize: serverPagination ? serverPagination.limit : 10,
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             {
@@ -70,7 +82,7 @@ export function FinancialPaymentTable({
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
-        columns,
+        columns: FinancialPaymentColumns(),
         state: {
             sorting,
             pagination,
@@ -78,6 +90,8 @@ export function FinancialPaymentTable({
             columnFilters,
             columnVisibility,
         },
+        pageCount: serverPagination ? serverPagination.totalPages : -1,
+        manualPagination: true,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
@@ -93,8 +107,10 @@ export function FinancialPaymentTable({
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (serverPagination) {
+            ensurePageInRange(serverPagination.totalPages)
+        }
+    }, [serverPagination, ensurePageInRange])
 
     return (
         <div
@@ -160,7 +176,12 @@ export function FinancialPaymentTable({
                             </TableRow>
                         ))}
                     </TableHeader>
-                    <TableBody>
+                    <TableBody
+                        className={cn(
+                            isLoading &&
+                                'pointer-events-none opacity-50 transition-opacity'
+                        )}
+                    >
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
@@ -192,7 +213,7 @@ export function FinancialPaymentTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

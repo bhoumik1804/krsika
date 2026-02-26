@@ -1,9 +1,10 @@
 import mongoose from 'mongoose'
 import { PrivatePaddyInward } from '../models/private-paddy-inward.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createPrivatePaddyInwardEntry = async (millId, data) => {
+export const createPrivatePaddyInwardEntry = async (millId, data, userId) => {
     const entry = new PrivatePaddyInward({
         ...data,
         millId,
@@ -14,6 +15,26 @@ export const createPrivatePaddyInwardEntry = async (millId, data) => {
         id: entry._id,
         millId,
     })
+
+    // Record stock transaction (CREDIT - incoming paddy)
+    try {
+        const totalQtl = (entry.paddyMota || 0) + (entry.paddyPatla || 0) + (entry.paddySarna || 0) + (entry.paddyMahamaya || 0) + (entry.paddyRbGold || 0)
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: 'Paddy',
+            variety: entry.paddyType || null,
+            type: 'CREDIT',
+            action: 'Inward',
+            quantity: totalQtl,
+            bags: 0,
+            refModel: 'PrivatePaddyInward',
+            refId: entry._id,
+            remarks: `Private Paddy Inward - ${entry.partyName || 'Party'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for private paddy inward', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 

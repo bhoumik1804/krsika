@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { gunnyDeliveryTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -23,6 +25,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -36,7 +39,11 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { useCreateGunnyPurchase, useUpdateGunnyPurchase } from '../data/hooks'
-import { gunnyPurchaseSchema, type GunnyPurchaseData } from '../data/schema'
+import {
+    gunnyPurchaseFormSchema,
+    type GunnyPurchaseFormData,
+    type GunnyPurchaseData,
+} from '../data/schema'
 import { useGunny } from './gunny-provider'
 
 type GunnyActionDialogProps = {
@@ -56,12 +63,24 @@ export function GunnyActionDialog({
     const { mutateAsync: updateGunnyPurchase, isPending: isUpdating } =
         useUpdateGunnyPurchase(millId)
 
+    const party = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties.map((p: { partyName: string }) => p.partyName),
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName
+    )
+
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<GunnyPurchaseData>({
-        resolver: zodResolver(gunnyPurchaseSchema),
+    const form = useForm<GunnyPurchaseFormData>({
+        resolver: zodResolver(gunnyPurchaseFormSchema),
         defaultValues: {
             date: format(new Date(), 'yyyy-MM-dd'),
             partyName: '',
@@ -72,13 +91,15 @@ export function GunnyActionDialog({
             oldGunnyRate: undefined,
             plasticGunnyQty: undefined,
             plasticGunnyRate: undefined,
-        } as GunnyPurchaseData,
+        },
     })
 
     useEffect(() => {
         if (open) {
             if (currentRow) {
-                form.reset(currentRow)
+                // Extract only form fields when editing
+                const { _id, ...formData } = currentRow
+                form.reset(formData)
             } else {
                 form.reset({
                     date: format(new Date(), 'yyyy-MM-dd'),
@@ -90,17 +111,17 @@ export function GunnyActionDialog({
                     oldGunnyRate: undefined,
                     plasticGunnyQty: undefined,
                     plasticGunnyRate: undefined,
-                } as GunnyPurchaseData)
+                })
             }
         }
     }, [currentRow, open, form])
 
-    const onSubmit = async (data: GunnyPurchaseData) => {
+    const onSubmit = async (data: GunnyPurchaseFormData) => {
         try {
             if (isEditing && currentRow?._id) {
                 await updateGunnyPurchase({
-                    purchaseId: currentRow._id,
-                    data,
+                    _id: currentRow._id,
+                    ...data,
                 })
             } else {
                 await createGunnyPurchase(data)
@@ -201,9 +222,14 @@ export function GunnyActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />

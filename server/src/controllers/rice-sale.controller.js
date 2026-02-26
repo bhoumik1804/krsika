@@ -11,11 +11,7 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 
 export const createRiceSale = async (req, res, next) => {
     try {
-        const sale = await createRiceSaleEntry(
-            req.params.millId,
-            req.body,
-            req.user._id
-        )
+        const sale = await createRiceSaleEntry(req.params.millId, req.body)
         res.status(201).json(
             new ApiResponse(201, { sale }, 'Rice sale created')
         )
@@ -59,7 +55,11 @@ export const getRiceSaleListHandler = async (req, res, next) => {
 
 export const getRiceSaleSummaryHandler = async (req, res, next) => {
     try {
-        const summary = await getRiceSaleSummary(req.params.millId)
+        const { startDate, endDate } = req.query
+        const summary = await getRiceSaleSummary(req.params.millId, {
+            startDate,
+            endDate,
+        })
         res.status(200).json(
             new ApiResponse(200, { summary }, 'Rice sale summary retrieved')
         )
@@ -73,8 +73,7 @@ export const updateRiceSaleHandler = async (req, res, next) => {
         const sale = await updateRiceSaleEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(200, { sale }, 'Rice sale updated')

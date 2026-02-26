@@ -13,8 +13,7 @@ export const createLabourGroup = async (req, res, next) => {
     try {
         const labourGroup = await createLabourGroupEntry(
             req.params.millId,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(201).json(
             new ApiResponse(
@@ -59,7 +58,7 @@ export const getLabourGroupListHandler = async (req, res, next) => {
         res.status(200).json(
             new ApiResponse(
                 200,
-                { labourGroups: result.data, pagination: result.pagination },
+                { labourGroups: result.reports, pagination: result.pagination },
                 'Labour group list retrieved'
             )
         )
@@ -84,8 +83,7 @@ export const updateLabourGroupHandler = async (req, res, next) => {
         const labourGroup = await updateLabourGroupEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(

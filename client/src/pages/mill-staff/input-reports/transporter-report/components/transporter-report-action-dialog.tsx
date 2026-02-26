@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -19,81 +19,93 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useCreateTransporter, useUpdateTransporter } from '../data/hooks'
 import {
     transporterReportSchema,
     type TransporterReportData,
 } from '../data/schema'
-import { useCreateTransporter, useUpdateTransporter } from '../data/hooks'
-import { useUser } from '@/pages/landing/hooks/use-auth'
+import { useTransporterReport } from './transporter-report-provider'
 
 type TransporterReportActionDialogProps = {
+    currentRow?: TransporterReportData
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: TransporterReportData | null
 }
 
 export function TransporterReportActionDialog({
+    currentRow,
     open,
     onOpenChange,
-    currentRow,
 }: TransporterReportActionDialogProps) {
-    const { user } = useUser()
-    const millId = user?.millId as any
-    const createMutation = useCreateTransporter(millId)
-    const updateMutation = useUpdateTransporter(millId)
-    const isLoading = createMutation.isPending || updateMutation.isPending
-    const isEditing = !!currentRow?._id
+    const { t } = useTranslation('mill-staff')
+    const { millId } = useTransporterReport()
+    const isEditing = !!currentRow
+    const { mutate: createTransporter, isPending: isCreating } =
+        useCreateTransporter(millId)
+    const { mutate: updateTransporter, isPending: isUpdating } =
+        useUpdateTransporter(millId)
+
+    const isLoading = isCreating || isUpdating
 
     const form = useForm<TransporterReportData>({
         resolver: zodResolver(transporterReportSchema),
-        defaultValues: {
-            transporterName: '',
-            gstn: '',
-            phone: '',
-            email: '',
-            address: '',
-        },
+        defaultValues: isEditing
+            ? { ...currentRow }
+            : {
+                  transporterName: '',
+                  gstn: '',
+                  phone: '',
+                  email: '',
+                  address: '',
+              },
     })
 
-    useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
+    const onSubmit = (data: TransporterReportData) => {
+        const transporterId = currentRow?._id
+        if (isEditing && transporterId) {
+            updateTransporter(
+                { transporterId, data },
+                {
+                    onSuccess: () => {
+                        form.reset()
+                        onOpenChange(false)
+                    },
+                }
+            )
         } else {
-            form.reset()
-        }
-    }, [currentRow, form])
-
-    const onSubmit = async (data: TransporterReportData) => {
-        try {
-            if (isEditing && currentRow?._id) {
-                await updateMutation.mutateAsync({
-                    id: currentRow._id,
-                    ...data,
-                })
-            } else {
-                await createMutation.mutateAsync(data)
-            }
-            onOpenChange(false)
-            form.reset()
-        } catch (error) {
-            console.error('Error submitting form:', error)
+            createTransporter(data, {
+                onSuccess: () => {
+                    form.reset()
+                    onOpenChange(false)
+                },
+            })
         }
     }
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog
+            open={open}
+            onOpenChange={(state) => {
+                form.reset()
+                onOpenChange(state)
+            }}
+        >
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Transporter
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('inputReports.transporter.form.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the transporter details
-                        below
+                        {t('common.enter')}{' '}
+                        {t(
+                            'inputReports.transporter.form.description'
+                        ).toLowerCase()}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
                     <form
+                        id='transporter-form'
                         onSubmit={form.handleSubmit(onSubmit)}
                         className='space-y-4'
                     >
@@ -105,11 +117,13 @@ export function TransporterReportActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Transporter Name
+                                                {t(
+                                                    'inputReports.transporter.form.fields.transporterName'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter transporter name'
+                                                    placeholder='Transporter Name'
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -122,10 +136,14 @@ export function TransporterReportActionDialog({
                                     name='gstn'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>GSTN</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.transporter.form.fields.gstn'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter GSTN'
+                                                    placeholder='GSTN'
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -139,11 +157,13 @@ export function TransporterReportActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Phone
+                                                {t(
+                                                    'inputReports.transporter.form.fields.phone'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter phone number'
+                                                    placeholder='Phone No.'
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -156,11 +176,15 @@ export function TransporterReportActionDialog({
                                     name='email'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Email</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.transporter.form.fields.email'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='email'
-                                                    placeholder='Enter email'
+                                                    placeholder='Email'
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -172,13 +196,15 @@ export function TransporterReportActionDialog({
                                     control={form.control}
                                     name='address'
                                     render={({ field }) => (
-                                        <FormItem className='col-span-2'>
+                                        <FormItem>
                                             <FormLabel>
-                                                Address
+                                                {t(
+                                                    'inputReports.transporter.form.fields.address'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter address'
+                                                    placeholder='Address'
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -195,16 +221,16 @@ export function TransporterReportActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.update') + '...'
+                                        : t('common.add') + '...'
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'} Transporter
+                                      ? t('common.update')
+                                      : t('common.add')}{' '}
                             </Button>
                         </DialogFooter>
                     </form>

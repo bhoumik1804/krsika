@@ -63,7 +63,7 @@ export const getDoReportListHandler = async (req, res, next) => {
         res.status(200).json(
             new ApiResponse(
                 200,
-                { reports: result.data, pagination: result.pagination },
+                { reports: result.reports, pagination: result.pagination },
                 'DO report list retrieved'
             )
         )

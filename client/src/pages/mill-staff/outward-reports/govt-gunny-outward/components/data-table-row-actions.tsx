@@ -1,5 +1,6 @@
 import { Row } from '@tanstack/react-table'
 import { MoreHorizontal, Pen, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
     DropdownMenu,
@@ -9,14 +10,15 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { GovtGunnyOutward } from '../data/schema'
-import { useGovtGunnyOutwardContext } from './govt-gunny-outward-provider'
+import { useGovtGunnyOutward } from './govt-gunny-outward-provider'
 
 interface DataTableRowActionsProps {
     row: Row<GovtGunnyOutward>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = useGovtGunnyOutwardContext()
+    const { t } = useTranslation('mill-staff')
+    const { setOpen, setCurrentRow } = useGovtGunnyOutward()
 
     return (
         <DropdownMenu>
@@ -26,7 +28,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                     className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
                 >
                     <MoreHorizontal className='h-4 w-4' />
-                    <span className='sr-only'>Open menu</span>
+                    <span className='sr-only'>{t('common.openMenu')}</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' className='w-[160px]'>
@@ -37,7 +39,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                     }}
                 >
                     <Pen className='mr-2 h-3.5 w-3.5 text-muted-foreground/70' />
-                    Edit
+                    {t('common.edit')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -47,7 +49,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                     }}
                 >
                     <Trash2 className='mr-2 h-3.5 w-3.5 text-muted-foreground/70' />
-                    Delete
+                    {t('common.delete')}
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

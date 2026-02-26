@@ -25,28 +25,31 @@ import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { inwardTypes } from '../data/data'
 import { type LabourInward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { labourInwardColumns as columns } from './labour-inward-columns'
+import { LabourInwardColumns } from './labour-inward-columns'
 
 type DataTableProps = {
     data: LabourInward[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
     isLoading?: boolean
-    isError?: boolean
-    totalPages?: number
-    totalItems?: number
-    totalRows?: number
 }
 
 export function LabourInwardTable({
     data,
     search,
     navigate,
-    // isLoading,
-    // isError,
-    // totalPages,
-    // totalItems,
-    // totalRows,
+    pagination: serverPagination,
+    isLoading,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -63,7 +66,13 @@ export function LabourInwardTable({
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             {
@@ -76,9 +85,10 @@ export function LabourInwardTable({
     })
 
     // eslint-disable-next-line react-hooks/incompatible-library
+    const columns = LabourInwardColumns()
     const table = useReactTable({
-        data,
         columns,
+        data,
         state: {
             sorting,
             pagination,
@@ -86,6 +96,9 @@ export function LabourInwardTable({
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
@@ -101,8 +114,10 @@ export function LabourInwardTable({
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -157,7 +172,12 @@ export function LabourInwardTable({
                             </TableRow>
                         ))}
                     </TableHeader>
-                    <TableBody>
+                    <TableBody
+                        className={cn(
+                            isLoading &&
+                                'pointer-events-none opacity-50 transition-opacity'
+                        )}
+                    >
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
@@ -189,7 +209,7 @@ export function LabourInwardTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

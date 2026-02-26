@@ -1,78 +1,60 @@
-import { useMemo } from 'react';
-import { useOtherInwardList } from '@/pages/mill-staff/inwards/other-inward/data/hooks';
-import { useParams, useSearchParams } from 'react-router';
-import { ConfigDrawer } from '@/components/config-drawer';
-import { getMillAdminSidebarData } from '@/components/layout/data';
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { LoadingSpinner } from '@/components/loading-spinner';
-import { ProfileDropdown } from '@/components/profile-dropdown';
-import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
-import { OtherInwardDialogs } from './components/other-inward-dialogs';
-import { OtherInwardPrimaryButtons } from './components/other-inward-primary-buttons';
-import { OtherInwardProvider } from './components/other-inward-provider';
-import { OtherInwardTable } from './components/other-inward-table';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useParams, useSearchParams } from 'react-router'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { getMillAdminSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { OtherInwardDialogs } from './components/other-inward-dialogs'
+import { OtherInwardPrimaryButtons } from './components/other-inward-primary-buttons'
+import { OtherInwardProvider } from './components/other-inward-provider'
+import { OtherInwardTable } from './components/other-inward-table'
+import { useOtherInwardList } from './data/hooks'
 
 export function OtherInwardReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
-    const sidebarData = getMillAdminSidebarData(millId || '')
-
-    const search = Object.fromEntries(searchParams.entries())
 
     // Extract query params from URL
-    const queryParams = useMemo(
-        () => ({
-            page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
-            search: search.search as string | undefined,
-            startDate: search.startDate as string | undefined,
-            endDate: search.endDate as string | undefined,
-            sortBy: (search.sortBy as string) || 'date',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
 
-    // Fetch other inward data using the hook
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
+
+    // Call GET API here
     const {
-        data: inwardResponse,
+        data: apiData,
+        pagination: apiPagination,
         isLoading,
         isError,
-    } = useOtherInwardList(millId || '', queryParams, { enabled: !!millId })
+    } = useOtherInwardList({
+        millId: millId || '',
+        page: queryParams.page,
+        pageSize: queryParams.limit,
+        search: queryParams.search,
+    })
 
-    // Transform API response to table format
-    const inwardData = useMemo(() => {
-        if (!inwardResponse?.data) return []
-        return inwardResponse.data.map((item) => ({
-            id: item._id,
-            date: item.date,
-            partyName: item.partyName ?? '',
-            itemName: item.itemName ?? '',
-            quantity: item.quantity ?? 0,
-            unit: item.unit ?? '',
-            rate: item.rate ?? 0,
-            amount: item.amount ?? 0,
-        }))
-    }, [inwardResponse])
+    const sidebarData = getMillAdminSidebarData(millId || '')
+
+    // Convert URLSearchParams to record
+    const search = Object.fromEntries(searchParams.entries())
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -85,8 +67,30 @@ export function OtherInwardReport() {
         }
     }
 
+    if (isError) {
+        return (
+            <Main className='flex flex-1 items-center justify-center'>
+                <div className='text-center'>
+                    <h2 className='text-lg font-semibold'>
+                        Error loading data
+                    </h2>
+                    <p className='text-muted-foreground'>
+                        Please try again later.
+                    </p>
+                </div>
+            </Main>
+        )
+    }
+
     return (
-        <OtherInwardProvider>
+        <OtherInwardProvider
+            millId={millId || ''}
+            initialQueryParams={queryParams}
+            apiData={apiData}
+            apiPagination={apiPagination}
+            isLoading={isLoading}
+            isError={isError}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -103,26 +107,20 @@ export function OtherInwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Other Inward Report
+                            {t('inward.otherInward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage your other inward records here.
+                            {t('inward.otherInward.description')}
                         </p>
                     </div>
                     <OtherInwardPrimaryButtons />
                 </div>
                 {isLoading ? (
-                    <LoadingSpinner className='h-full w-full' />
-                ) : isError ? (
-                    <div className='py-10 text-center text-destructive'>
-                        Failed to load other inward data
+                    <div className='flex flex-1 items-center justify-center'>
+                        <LoadingSpinner />
                     </div>
                 ) : (
-                    <OtherInwardTable
-                        data={inwardData}
-                        search={search}
-                        navigate={navigate}
-                    />
+                    <OtherInwardTable search={search} navigate={navigate} />
                 )}
             </Main>
 

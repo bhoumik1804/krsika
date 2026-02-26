@@ -30,12 +30,23 @@ type DataTableProps = {
     data: FinancialReceipt[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
 export function FinancialReceiptTable({
     data,
     search,
     navigate,
+    pagination: serverPagination,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -52,7 +63,10 @@ export function FinancialReceiptTable({
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            defaultPage: serverPagination ? serverPagination.page : 1,
+            defaultPageSize: serverPagination ? serverPagination.limit : 10,
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
@@ -75,6 +89,8 @@ export function FinancialReceiptTable({
             columnFilters,
             columnVisibility,
         },
+        pageCount: serverPagination ? serverPagination.totalPages : -1,
+        manualPagination: true,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
@@ -90,8 +106,10 @@ export function FinancialReceiptTable({
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (serverPagination) {
+            ensurePageInRange(serverPagination.totalPages)
+        }
+    }, [serverPagination, ensurePageInRange])
 
     return (
         <div
@@ -106,8 +124,8 @@ export function FinancialReceiptTable({
                 searchKey='partyName'
                 filters={[
                     {
-                        columnId: 'dealType',
-                        title: 'Deal Type',
+                        columnId: 'salesDealType',
+                        title: 'Sales Deal Type',
                         options: [
                             {
                                 label: 'खरीद (Purchase)',

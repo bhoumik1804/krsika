@@ -72,7 +72,11 @@ export function CommitteeReportTable({
         },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'committeeName', searchKey: 'search', type: 'string' },
+            {
+                columnId: 'committeeName',
+                searchKey: 'committeeName',
+                type: 'string',
+            },
         ],
     })
 
@@ -87,6 +91,7 @@ export function CommitteeReportTable({
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
         pageCount: serverPagination?.totalPages ?? -1,
         manualPagination: !!serverPagination,
         enableRowSelection: true,
@@ -119,7 +124,7 @@ export function CommitteeReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='search'
+                searchKey='committeeName'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

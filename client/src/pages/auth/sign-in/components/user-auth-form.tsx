@@ -59,8 +59,7 @@ export function UserAuthForm({
             { email: data.email, password: data.password },
             {
                 onSuccess: () => {
-                    const targetPath = redirectTo || '/'
-                    navigate(targetPath, { replace: true })
+                    navigate('/auth-success', { replace: true })
                     toast.success(`Welcome back!`)
                 },
                 onError: (err: any) => {

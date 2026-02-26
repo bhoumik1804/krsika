@@ -11,7 +11,7 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 
 export const createFrkOutward = async (req, res, next) => {
     try {
-        const entry = await createFrkOutwardEntry(req.params.millId, req.body)
+        const entry = await createFrkOutwardEntry(req.params.millId, req.body, req.user._id)
         res.status(201).json(
             new ApiResponse(201, { entry }, 'FRK outward created')
         )

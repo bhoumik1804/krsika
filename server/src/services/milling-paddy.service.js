@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { MillingPaddy } from '../models/milling-paddy.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockHelpers from './stock-helpers.service.js'
 
 export const createMillingPaddyEntry = async (millId, data, userId) => {
     const entry = new MillingPaddy({
@@ -16,6 +17,17 @@ export const createMillingPaddyEntry = async (millId, data, userId) => {
         millId,
         userId,
     })
+
+    // Record stock transaction (DEBIT paddy, CREDIT outputs)
+    try {
+        await StockHelpers.recordMillingPaddyStock(millId, entry, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for milling paddy', {
+            id: entry._id,
+            error: err.message,
+        })
+    }
+
     return entry
 }
 
@@ -136,6 +148,23 @@ export const updateMillingPaddyEntry = async (millId, id, data, userId) => {
         .populate('createdBy', 'fullName email')
         .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Milling paddy entry not found')
+
+    // Update stock transaction
+    try {
+        await StockHelpers.updateMillingStock(
+            'MillingPaddy',
+            id,
+            millId,
+            entry,
+            userId
+        )
+    } catch (err) {
+        logger.error('Failed to update stock for milling paddy', {
+            id,
+            error: err.message,
+        })
+    }
+
     logger.info('Milling paddy entry updated', { id, millId, userId })
     return entry
 }
@@ -143,11 +172,20 @@ export const updateMillingPaddyEntry = async (millId, id, data, userId) => {
 export const deleteMillingPaddyEntry = async (millId, id) => {
     const entry = await MillingPaddy.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Milling paddy entry not found')
+
+    // Delete associated stock transactions
+    await StockHelpers.deleteStockTransaction('MillingPaddy', id)
+
     logger.info('Milling paddy entry deleted', { id, millId })
 }
 
 export const bulkDeleteMillingPaddyEntries = async (millId, ids) => {
     const result = await MillingPaddy.deleteMany({ _id: { $in: ids }, millId })
+
+    for (const id of ids) {
+        await StockHelpers.deleteStockTransaction('MillingPaddy', id)
+    }
+
     logger.info('Milling paddy entries bulk deleted', {
         millId,
         count: result.deletedCount,

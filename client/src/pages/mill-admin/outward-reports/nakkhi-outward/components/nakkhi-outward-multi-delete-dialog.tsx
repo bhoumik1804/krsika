@@ -1,6 +1,5 @@
 import { type Table } from '@tanstack/react-table'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,27 +10,38 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeleteNakkhiOutward } from '../data/hooks'
+import { type NakkhiOutward } from '../data/schema'
 
-type NakkhiOutwardMultiDeleteDialogProps<TData> = {
-    table: Table<TData>
+type NakkhiOutwardMultiDeleteDialogProps = {
+    table: Table<NakkhiOutward>
     open: boolean
     onOpenChange: (open: boolean) => void
+    millId: string
 }
 
-export function NakkhiOutwardMultiDeleteDialog<TData>({
+export function NakkhiOutwardMultiDeleteDialog({
     table,
     open,
     onOpenChange,
-}: NakkhiOutwardMultiDeleteDialogProps<TData>) {
+    millId,
+}: NakkhiOutwardMultiDeleteDialogProps) {
     const selectedRows = table.getFilteredSelectedRowModel().rows
+    const bulkDeleteMutation = useBulkDeleteNakkhiOutward(millId)
 
     const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
+        const ids = selectedRows
+            .map((row) => row.original._id)
+            .filter((id): id is string => !!id)
+
+        if (ids.length === 0) return
+
+        toast.promise(bulkDeleteMutation.mutateAsync(ids), {
             loading: 'Deleting...',
             success: () => {
                 table.resetRowSelection()
                 onOpenChange(false)
-                return `Deleted ${selectedRows.length} record${selectedRows.length > 1 ? 's' : ''}`
+                return `Deleted ${ids.length} record${ids.length > 1 ? 's' : ''}`
             },
             error: 'Error deleting records',
         })

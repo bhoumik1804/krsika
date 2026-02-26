@@ -1,240 +1,150 @@
-/**
- * Committee Report Hooks
- * React Query hooks for Committee data management
- */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import {
-    fetchCommitteeList,
-    fetchCommitteeById,
-    fetchCommitteeSummary,
-    createCommittee,
-    bulkCreateCommittees,
-    updateCommittee,
-    deleteCommittee,
-    bulkDeleteCommittee,
-    exportCommittee,
-} from './service'
-import type {
-    CommitteeResponse,
-    CommitteeListResponse,
-    CommitteeSummaryResponse,
-    CreateCommitteeRequest,
-    UpdateCommitteeRequest,
-    CommitteeQueryParams,
-} from './types'
+import type { CommitteeReportData } from './schema'
+import { committeeService, type CommitteeListResponse } from './service'
 
-// ==========================================
-// Query Keys
-// ==========================================
-
-export const committeeKeys = {
-    all: ['committee'] as const,
-    lists: () => [...committeeKeys.all, 'list'] as const,
-    list: (millId: string, params?: CommitteeQueryParams) =>
-        [...committeeKeys.lists(), millId, params] as const,
-    details: () => [...committeeKeys.all, 'detail'] as const,
-    detail: (millId: string, id: string) =>
-        [...committeeKeys.details(), millId, id] as const,
-    summaries: () => [...committeeKeys.all, 'summary'] as const,
-    summary: (millId: string) =>
-        [...committeeKeys.summaries(), millId] as const,
+// Query key factory for committees
+const committeeQueryKeys = {
+    all: ['committees'] as const,
+    byMill: (millId: string) => [...committeeQueryKeys.all, millId] as const,
+    list: (millId: string, filters?: Record<string, unknown>) =>
+        [...committeeQueryKeys.byMill(millId), 'list', filters] as const,
 }
 
-// ==========================================
-// Query Hooks
-// ==========================================
+interface UseCommitteeListParams {
+    millId: string
+    page?: number
+    limit?: number
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+}
 
-/**
- * Hook to fetch committee list with pagination and filters
- */
-export const useCommitteeList = (
-    millId: string,
-    params?: CommitteeQueryParams,
-    options?: { enabled?: boolean }
-) => {
+export const useCommitteeList = (params: UseCommitteeListParams) => {
     return useQuery<CommitteeListResponse, Error>({
-        queryKey: committeeKeys.list(millId, params),
-        queryFn: () => fetchCommitteeList(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        queryKey: committeeQueryKeys.list(params.millId, {
+            page: params.page,
+            limit: params.limit,
+            search: params.search,
+            sortBy: params.sortBy,
+            sortOrder: params.sortOrder,
+        }),
+        queryFn: () => committeeService.fetchCommitteeList(params),
+        enabled: !!params.millId,
     })
 }
 
-/**
- * Hook to fetch a single committee
- */
-export const useCommitteeDetail = (
-    millId: string,
-    id: string,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<CommitteeResponse, Error>({
-        queryKey: committeeKeys.detail(millId, id),
-        queryFn: () => fetchCommitteeById(millId, id),
-        enabled: options?.enabled ?? (!!millId && !!id),
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    })
-}
-
-/**
- * Hook to fetch committee summary/statistics
- */
-export const useCommitteeSummary = (
-    millId: string,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<CommitteeSummaryResponse, Error>({
-        queryKey: committeeKeys.summary(millId),
-        queryFn: () => fetchCommitteeSummary(millId),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    })
-}
-
-// ==========================================
-// Mutation Hooks
-// ==========================================
-
-/**
- * Hook to create a new committee
- */
 export const useCreateCommittee = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<any, Error, any>({
-        mutationFn: (data) => createCommittee(millId, data),
+    return useMutation({
+        mutationFn: (data: Omit<CommitteeReportData, '_id'>) =>
+            committeeService.createCommittee(millId, data),
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: committeeKeys.lists(),
-            })
-            queryClient.invalidateQueries({
-                queryKey: committeeKeys.summaries(),
-            })
             toast.success('Committee created successfully')
+            queryClient.invalidateQueries({
+                queryKey: committeeQueryKeys.byMill(millId),
+            })
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to create committee')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to create committee'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to bulk create committees
- */
 export const useBulkCreateCommittees = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<
-        { created: number; committees: CommitteeResponse[] },
-        Error,
-        CreateCommitteeRequest[]
-    >({
-        mutationFn: (committees) => bulkCreateCommittees(millId, committees),
+    return useMutation({
+        mutationFn: (data: Omit<CommitteeReportData, '_id'>[]) =>
+            committeeService.bulkCreateCommittees(millId, data),
         onSuccess: (data) => {
+            toast.success(`${data.count} committees created successfully`)
             queryClient.invalidateQueries({
-                queryKey: committeeKeys.lists(),
+                queryKey: committeeQueryKeys.byMill(millId),
             })
-            queryClient.invalidateQueries({
-                queryKey: committeeKeys.summaries(),
-            })
-            toast.success(`${data.created} committee(s) created successfully`)
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to create committees')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to create committees'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to update an existing committee
- */
 export const useUpdateCommittee = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<CommitteeResponse, Error, UpdateCommitteeRequest>({
-        mutationFn: (data) => updateCommittee(millId, data),
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({
-                queryKey: committeeKeys.lists(),
-            })
-            queryClient.setQueryData(
-                committeeKeys.detail(millId, data._id),
-                data
-            )
-            queryClient.invalidateQueries({
-                queryKey: committeeKeys.summaries(),
-            })
+    return useMutation({
+        mutationFn: ({
+            committeeId,
+            data,
+        }: {
+            committeeId: string
+            data: Omit<CommitteeReportData, '_id'>
+        }) => committeeService.updateCommittee(millId, committeeId, data),
+        onSuccess: () => {
             toast.success('Committee updated successfully')
+            queryClient.invalidateQueries({
+                queryKey: committeeQueryKeys.byMill(millId),
+            })
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to update committee')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to update committee'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to delete a committee
- */
 export const useDeleteCommittee = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string>({
-        mutationFn: (id) => deleteCommittee(millId, id),
+    return useMutation({
+        mutationFn: (committeeId: string) =>
+            committeeService.deleteCommittee(millId, committeeId),
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: committeeKeys.lists(),
-            })
-            queryClient.invalidateQueries({
-                queryKey: committeeKeys.summaries(),
-            })
             toast.success('Committee deleted successfully')
+            queryClient.invalidateQueries({
+                queryKey: committeeQueryKeys.byMill(millId),
+            })
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to delete committee')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to delete committee'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to bulk delete committees
- */
-export const useBulkDeleteCommittee = (millId: string) => {
+export const useBulkDeleteCommittees = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string[]>({
-        mutationFn: (ids) => bulkDeleteCommittee(millId, ids),
-        onSuccess: (_, ids) => {
-            queryClient.invalidateQueries({
-                queryKey: committeeKeys.lists(),
-            })
-            queryClient.invalidateQueries({
-                queryKey: committeeKeys.summaries(),
-            })
-            toast.success(`${ids.length} committees deleted successfully`)
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to delete committees')
-        },
-    })
-}
-
-/**
- * Hook to export committees
- */
-export const useExportCommittee = (millId: string) => {
-    return useMutation<
-        Blob,
-        Error,
-        { params?: CommitteeQueryParams; format?: 'csv' | 'xlsx' }
-    >({
-        mutationFn: ({ params, format }) =>
-            exportCommittee(millId, params, format),
+    return useMutation({
+        mutationFn: (committeeIds: string[]) =>
+            committeeService.bulkDeleteCommittees(millId, committeeIds),
         onSuccess: () => {
-            toast.success('Export completed successfully')
+            toast.success('Committees deleted successfully')
+            queryClient.invalidateQueries({
+                queryKey: committeeQueryKeys.byMill(millId),
+            })
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to export data')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to delete committees'
+            toast.error(errorMessage)
         },
     })
 }

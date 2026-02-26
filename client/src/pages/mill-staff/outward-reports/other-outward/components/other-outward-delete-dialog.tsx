@@ -1,5 +1,4 @@
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,21 +9,27 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteOtherOutward } from '../data/hooks'
 import { type OtherOutward } from '../data/schema'
 
 type OtherOutwardDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
     currentRow: OtherOutward | null
+    millId: string
 }
 
 export function OtherOutwardDeleteDialog({
     open,
     onOpenChange,
     currentRow,
+    millId,
 }: OtherOutwardDeleteDialogProps) {
+    const deleteMutation = useDeleteOtherOutward(millId)
+
     const handleDelete = () => {
-        toast.promise(sleep(2000), {
+        if (!currentRow?._id) return
+        toast.promise(deleteMutation.mutateAsync(currentRow._id), {
             loading: 'Deleting...',
             success: () => {
                 onOpenChange(false)

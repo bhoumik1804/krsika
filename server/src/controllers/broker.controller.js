@@ -11,11 +11,7 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 
 export const createBroker = async (req, res, next) => {
     try {
-        const broker = await createBrokerEntry(
-            req.params.millId,
-            req.body,
-            req.user._id
-        )
+        const broker = await createBrokerEntry(req.params.millId, req.body)
         res.status(201).json(
             new ApiResponse(201, { broker }, 'Broker created successfully')
         )
@@ -73,8 +69,7 @@ export const updateBrokerHandler = async (req, res, next) => {
         const broker = await updateBrokerEntry(
             req.params.millId,
             req.params.id,
-            req.body,
-            req.user._id
+            req.body
         )
         res.status(200).json(
             new ApiResponse(200, { broker }, 'Broker updated successfully')

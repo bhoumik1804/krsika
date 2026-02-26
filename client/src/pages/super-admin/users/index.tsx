@@ -141,9 +141,7 @@ export function Users() {
                         <TabsTrigger value='guest'>Guest User</TabsTrigger>
                     </TabsList>
                     <TabsContent value='all' className='space-y-4'>
-                        {isLoading ? (
-                            <LoadingSpinner className='h-full w-full' />
-                        ) : isError ? (
+                        {isError ? (
                             <div className='py-10 text-center text-destructive'>
                                 Failed to load users data
                             </div>
@@ -153,20 +151,18 @@ export function Users() {
                                 search={search}
                                 navigate={navigate}
                                 pagination={usersResponse?.pagination}
+                                isLoading={isLoading}
                             />
                         )}
                     </TabsContent>
                     <TabsContent value='active' className='space-y-4'>
-                        {isLoading ? (
-                            <LoadingSpinner className='h-full w-full' />
-                        ) : (
-                            <UsersTable
-                                data={usersData}
-                                search={search}
-                                navigate={navigate}
-                                pagination={usersResponse?.pagination}
-                            />
-                        )}
+                        <UsersTable
+                            data={usersData}
+                            search={search}
+                            navigate={navigate}
+                            pagination={usersResponse?.pagination}
+                            isLoading={isLoading}
+                        />
                     </TabsContent>
                     <TabsContent value='guest' className='space-y-4'>
                         {isLoading ? (

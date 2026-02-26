@@ -2,10 +2,11 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { type KhandaSales } from '../data/schema'
+import type { KhandaSalesResponse } from '../data/types'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
-export const khandaSalesColumns: ColumnDef<KhandaSales>[] = [
+export const khandaSalesColumns: ColumnDef<KhandaSalesResponse>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -41,7 +42,9 @@ export const khandaSalesColumns: ColumnDef<KhandaSales>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -57,7 +60,9 @@ export const khandaSalesColumns: ColumnDef<KhandaSales>[] = [
             <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('partyName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('partyName') || '-'}
+            </div>
         ),
     },
     {
@@ -66,7 +71,9 @@ export const khandaSalesColumns: ColumnDef<KhandaSales>[] = [
             <DataTableColumnHeader column={column} title='Broker Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('brokerName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('brokerName') || '-'}
+            </div>
         ),
     },
     {
@@ -75,7 +82,9 @@ export const khandaSalesColumns: ColumnDef<KhandaSales>[] = [
             <DataTableColumnHeader column={column} title='Khanda Qty (Qtl)' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.khandaQty?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                {row.original.khandaQty?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -84,7 +93,9 @@ export const khandaSalesColumns: ColumnDef<KhandaSales>[] = [
             <DataTableColumnHeader column={column} title='Khanda Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.khandaRate?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.khandaRate?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -93,7 +104,9 @@ export const khandaSalesColumns: ColumnDef<KhandaSales>[] = [
             <DataTableColumnHeader column={column} title='Discount %' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.discountPercent?.toFixed(2) || 0}%</div>
+            <div className='text-right'>
+                {row.original.discountPercent?.toFixed(2) || 0}%
+            </div>
         ),
     },
     {
@@ -102,7 +115,9 @@ export const khandaSalesColumns: ColumnDef<KhandaSales>[] = [
             <DataTableColumnHeader column={column} title='Brokerage/Qtl' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.brokeragePerQuintal?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.brokeragePerQuintal?.toFixed(2) || 0}
+            </div>
         ),
     },
     {

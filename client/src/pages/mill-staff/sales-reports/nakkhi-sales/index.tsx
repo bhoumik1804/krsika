@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -14,37 +14,23 @@ import { NakkhiSalesTable } from './components/nakkhi-sales-table'
 import { useNakkhiSalesList } from './data/hooks'
 
 export function NakkhiSalesReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
 
-    const queryParams = useMemo(
-        () => ({
-            page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
-            search: search.search as string | undefined,
-            sortBy: (search.sortBy as string) || 'createdAt',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
-
+    // API Integration
     const {
-        data: response,
+        data: apiResponse,
         isLoading,
         isError,
-    } = useNakkhiSalesList(millId || '', queryParams, { enabled: !!millId })
-
-    const salesData = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
-    }, [response])
+    } = useNakkhiSalesList(millId || '', {
+        page: Number(search.page) || 1,
+        limit: Number(search.pageSize) || 10,
+        search: search.partyName as string,
+    })
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -58,7 +44,12 @@ export function NakkhiSalesReport() {
     }
 
     return (
-        <NakkhiSalesProvider>
+        <NakkhiSalesProvider
+            millId={millId || ''}
+            apiResponse={apiResponse}
+            isLoading={isLoading}
+            isError={isError}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -75,23 +66,31 @@ export function NakkhiSalesReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Nakkhi Sales Report
+                            {t('salesReports.nakkhi.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage nakkhi sales transactions and records
+                            {t('salesReports.nakkhi.description')}
                         </p>
                     </div>
                     <NakkhiSalesPrimaryButtons />
                 </div>
-                <NakkhiSalesTable
-                    data={salesData}
-                    search={search}
-                    navigate={navigate}
-                    isLoading={isLoading}
-                    isError={isError}
-                    totalPages={response?.pagination?.totalPages}
-                    totalItems={response?.pagination?.total}
-                />
+                {isLoading ? (
+                    <div className='flex items-center justify-center py-10'>
+                        <div className='text-muted-foreground'>Loading...</div>
+                    </div>
+                ) : isError ? (
+                    <div className='flex items-center justify-center py-10'>
+                        <div className='text-destructive'>
+                            Error loading data
+                        </div>
+                    </div>
+                ) : (
+                    <NakkhiSalesTable
+                        data={apiResponse?.sales || []}
+                        search={search}
+                        navigate={navigate}
+                    />
+                )}
             </Main>
 
             <NakkhiSalesDialogs />

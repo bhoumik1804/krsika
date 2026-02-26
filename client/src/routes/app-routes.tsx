@@ -853,13 +853,6 @@ const MillStaffPaymentReport = lazy(() =>
     }))
 )
 
-// Daily Reports Overview
-const MillStaffDailyReportsOverview = lazy(() =>
-    import('@/pages/mill-staff/daily-reports').then((m) => ({
-        default: m.DailyReportsOverview,
-    }))
-)
-
 // Root layout with Suspense wrapper for navigation
 function RootLayoutWithSuspense() {
     return (
@@ -869,11 +862,19 @@ function RootLayoutWithSuspense() {
     )
 }
 
-// Wrapper for lazy components with Suspense
-function LazyRoute({ Component }: { Component: React.ComponentType }) {
+// Wrapper for lazy components with Suspense and Permission check
+function LazyRoute({
+    Component,
+    moduleSlug,
+}: {
+    Component: React.ComponentType
+    moduleSlug?: string
+}) {
     return (
         <Suspense fallback={<LoadingSpinner />}>
-            <Component />
+            <ProtectedRoute moduleSlug={moduleSlug}>
+                <Component />
+            </ProtectedRoute>
         </Suspense>
     )
 }
@@ -962,40 +963,72 @@ export const router = createBrowserRouter([
                     {
                         path: 'transaction/broker',
                         element: (
-                            <LazyRoute Component={BrokerTransactionReport} />
+                            <LazyRoute
+                                Component={BrokerTransactionReport}
+                                moduleSlug='broker-transaction'
+                            />
                         ),
                     },
                     {
                         path: 'transaction/party',
                         element: (
-                            <LazyRoute Component={PartyTransactionReport} />
+                            <LazyRoute
+                                Component={PartyTransactionReport}
+                                moduleSlug='party-transaction'
+                            />
                         ),
                     },
                     {
                         path: 'purchases/paddy/report',
-                        element: <LazyRoute Component={PaddyPurchaseReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={PaddyPurchaseReport}
+                                moduleSlug='paddy-purchase-report'
+                            />
+                        ),
                     },
                     {
                         path: 'purchases/rice/report',
-                        element: <LazyRoute Component={RicePurchaseReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={RicePurchaseReport}
+                                moduleSlug='rice-purchase-report'
+                            />
+                        ),
                     },
                     {
                         path: 'purchases/gunny/report',
-                        element: <LazyRoute Component={GunnyPurchaseReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={GunnyPurchaseReport}
+                                moduleSlug='gunny-purchase-report'
+                            />
+                        ),
                     },
                     {
                         path: 'purchases/frk/report',
-                        element: <LazyRoute Component={FrkPurchaseReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={FrkPurchaseReport}
+                                moduleSlug='frk-purchase-report'
+                            />
+                        ),
                     },
                     {
                         path: 'purchases/other/report',
-                        element: <LazyRoute Component={OtherPurchaseReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={OtherPurchaseReport}
+                                moduleSlug='other-purchase-report'
+                            />
+                        ),
                     },
                     {
                         path: 'balance/lifting/report/purchases/paddy',
                         element: (
                             <LazyRoute
                                 Component={BalanceLiftingPurchasesPaddyReport}
+                                moduleSlug='balance-lifting-paddy-purchase'
                             />
                         ),
                     },
@@ -1004,6 +1037,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={BalanceLiftingPurchasesRiceReport}
+                                moduleSlug='balance-lifting-rice-purchase'
                             />
                         ),
                     },
@@ -1012,6 +1046,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={BalanceLiftingPurchasesGunnyReport}
+                                moduleSlug='balance-lifting-gunny-purchase'
                             />
                         ),
                     },
@@ -1020,6 +1055,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={BalanceLiftingPurchasesFrkReport}
+                                moduleSlug='balance-lifting-frk-purchase'
                             />
                         ),
                     },
@@ -1028,6 +1064,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={BalanceLiftingSalesPaddyReport}
+                                moduleSlug='balance-lifting-paddy-sales'
                             />
                         ),
                     },
@@ -1036,249 +1073,449 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={OutwardBalanceLiftingRiceReport}
+                                moduleSlug='outward-balance-lifting-rice-sales'
                             />
                         ),
                     },
                     {
                         path: 'sales/rice/report',
-                        element: <LazyRoute Component={RiceSalesReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={RiceSalesReport}
+                                moduleSlug='rice-sales-report'
+                            />
+                        ),
                     },
                     {
                         path: 'sales/paddy/report',
-                        element: <LazyRoute Component={PaddySalesReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={PaddySalesReport}
+                                moduleSlug='paddy-sales-report'
+                            />
+                        ),
                     },
                     {
                         path: 'sales/gunny/report',
-                        element: <LazyRoute Component={GunnySalesReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={GunnySalesReport}
+                                moduleSlug='gunny-sales-report'
+                            />
+                        ),
                     },
                     {
                         path: 'sales/khanda/report',
-                        element: <LazyRoute Component={KhandaSalesReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={KhandaSalesReport}
+                                moduleSlug='khanda-sales-report'
+                            />
+                        ),
                     },
                     {
                         path: 'sales/nakkhi/report',
-                        element: <LazyRoute Component={NakkhiSalesReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={NakkhiSalesReport}
+                                moduleSlug='nakkhi-sales-report'
+                            />
+                        ),
                     },
                     {
                         path: 'sales/other/report',
-                        element: <LazyRoute Component={OtherSalesReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={OtherSalesReport}
+                                moduleSlug='other-sales-report'
+                            />
+                        ),
                     },
-                    // {
-                    //     path: 'sales/do/report',
-                    //     element: <LazyRoute Component={DoSalesReport} />,
-                    // },
                     {
                         path: 'inward/govt/paddy/report',
                         element: (
-                            <LazyRoute Component={GovtPaddyInwardReport} />
+                            <LazyRoute
+                                Component={GovtPaddyInwardReport}
+                                moduleSlug='inward-govt-paddy'
+                            />
                         ),
                     },
                     {
                         path: 'inward/private/paddy/report',
                         element: (
-                            <LazyRoute Component={PrivatePaddyInwardReport} />
+                            <LazyRoute
+                                Component={PrivatePaddyInwardReport}
+                                moduleSlug='inward-private-paddy'
+                            />
                         ),
                     },
                     {
                         path: 'inward/rice/report',
-                        element: <LazyRoute Component={RiceInwardReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={RiceInwardReport}
+                                moduleSlug='inward-rice'
+                            />
+                        ),
                     },
                     {
                         path: 'inward/gunny/report',
-                        element: <LazyRoute Component={GunnyInwardReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={GunnyInwardReport}
+                                moduleSlug='inward-gunny'
+                            />
+                        ),
                     },
                     {
                         path: 'inward/other/report',
-                        element: <LazyRoute Component={OtherInwardReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={OtherInwardReport}
+                                moduleSlug='inward-other'
+                            />
+                        ),
                     },
                     {
                         path: 'inward/frk/report',
-                        element: <LazyRoute Component={FrkInwardReport} />,
-                    },
-                    {
-                        path: 'inward/other/report',
-                        element: <LazyRoute Component={OtherInwardReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={FrkInwardReport}
+                                moduleSlug='inward-frk'
+                            />
+                        ),
                     },
                     {
                         path: 'outward/private/paddy/report',
                         element: (
-                            <LazyRoute Component={PrivatePaddyOutwardReport} />
+                            <LazyRoute
+                                Component={PrivatePaddyOutwardReport}
+                                moduleSlug='outward-private-paddy'
+                            />
                         ),
                     },
                     {
                         path: 'outward/private/rice/report',
                         element: (
-                            <LazyRoute Component={PrivateRiceOutwardReport} />
+                            <LazyRoute
+                                Component={PrivateRiceOutwardReport}
+                                moduleSlug='outward-private-rice'
+                            />
                         ),
                     },
                     {
                         path: 'outward/govt/rice/report',
                         element: (
-                            <LazyRoute Component={GovtRiceOutwardReport} />
+                            <LazyRoute
+                                Component={GovtRiceOutwardReport}
+                                moduleSlug='outward-govt-rice'
+                            />
                         ),
                     },
                     {
                         path: 'outward/govt/gunny/report',
                         element: (
-                            <LazyRoute Component={GovtGunnyOutwardReport} />
+                            <LazyRoute
+                                Component={GovtGunnyOutwardReport}
+                                moduleSlug='outward-govt-gunny'
+                            />
                         ),
                     },
                     {
                         path: 'outward/private/gunny/report',
                         element: (
-                            <LazyRoute Component={PrivateGunnyOutwardReport} />
+                            <LazyRoute
+                                Component={PrivateGunnyOutwardReport}
+                                moduleSlug='outward-private-gunny'
+                            />
                         ),
                     },
                     {
                         path: 'outward/frk/report',
-                        element: <LazyRoute Component={FrkOutwardReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={FrkOutwardReport}
+                                moduleSlug='outward-frk'
+                            />
+                        ),
                     },
                     {
                         path: 'outward/khanda/report',
-                        element: <LazyRoute Component={KhandaOutwardReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={KhandaOutwardReport}
+                                moduleSlug='outward-khanda'
+                            />
+                        ),
                     },
                     {
                         path: 'outward/nakkhi/report',
-                        element: <LazyRoute Component={NakkhiOutwardReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={NakkhiOutwardReport}
+                                moduleSlug='outward-nakkhi'
+                            />
+                        ),
                     },
                     {
                         path: 'outward/bhusa/report',
-                        element: <LazyRoute Component={BhusaOutwardReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={BhusaOutwardReport}
+                                moduleSlug='outward-bhusa'
+                            />
+                        ),
                     },
                     {
                         path: 'outward/kodha/report',
-                        element: <LazyRoute Component={KodhaOutwardReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={KodhaOutwardReport}
+                                moduleSlug='outward-kodha'
+                            />
+                        ),
                     },
                     {
                         path: 'outward/silky-kodha/report',
                         element: (
-                            <LazyRoute Component={SilkyKodhaOutwardReport} />
+                            <LazyRoute
+                                Component={SilkyKodhaOutwardReport}
+                                moduleSlug='outward-silky-kodha'
+                            />
                         ),
                     },
                     {
                         path: 'outward/other/report',
-                        element: <LazyRoute Component={OtherOutwardReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={OtherOutwardReport}
+                                moduleSlug='outward-other'
+                            />
+                        ),
                     },
                     {
                         path: 'milling/paddy/report',
-                        element: <LazyRoute Component={MillingPaddyReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={MillingPaddyReport}
+                                moduleSlug='paddy-milling-report'
+                            />
+                        ),
                     },
                     {
                         path: 'milling/rice/report',
-                        element: <LazyRoute Component={MillingRiceReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={MillingRiceReport}
+                                moduleSlug='rice-milling-report'
+                            />
+                        ),
                     },
                     {
                         path: 'labour/inward/report',
-                        element: <LazyRoute Component={LabourInwardReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={LabourInwardReport}
+                                moduleSlug='inward-labour-cost-report'
+                            />
+                        ),
                     },
                     {
                         path: 'labour/outward/report',
-                        element: <LazyRoute Component={LabourOutwardReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={LabourOutwardReport}
+                                moduleSlug='outward-labour-cost-report'
+                            />
+                        ),
                     },
                     {
                         path: 'labour/milling/report',
-                        element: <LazyRoute Component={LabourMillingReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={LabourMillingReport}
+                                moduleSlug='milling-labour-cost-report'
+                            />
+                        ),
                     },
                     {
                         path: 'labour/other/report',
-                        element: <LazyRoute Component={LabourOtherReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={LabourOtherReport}
+                                moduleSlug='other-labour-cost-report'
+                            />
+                        ),
                     },
                     {
                         path: 'financial/transaction/receipt/report',
                         element: (
-                            <LazyRoute Component={FinancialReceiptReport} />
+                            <LazyRoute
+                                Component={FinancialReceiptReport}
+                                moduleSlug='financial-receipt-report'
+                            />
                         ),
                     },
                     {
                         path: 'financial/transaction/payment/report',
                         element: (
-                            <LazyRoute Component={FinancialPaymentReport} />
+                            <LazyRoute
+                                Component={FinancialPaymentReport}
+                                moduleSlug='financial-payment-report'
+                            />
                         ),
                     },
                     {
                         path: 'stock/overview/report',
-                        element: <LazyRoute Component={StockOverviewReport} />,
-                    },
-                    {
-                        path: 'daily/reports',
                         element: (
                             <LazyRoute
-                                Component={MillStaffDailyReportsOverview}
+                                Component={StockOverviewReport}
+                                moduleSlug='stock-overview'
                             />
                         ),
                     },
                     {
                         path: 'daily/reports/purchase',
-                        element: <LazyRoute Component={PurchaseDealsReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={PurchaseDealsReport}
+                                moduleSlug='daily-reports-overview'
+                            />
+                        ),
                     },
                     {
                         path: 'daily/reports/sales',
-                        element: <LazyRoute Component={SalesDealsReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={SalesDealsReport}
+                                moduleSlug='daily-reports-overview'
+                            />
+                        ),
                     },
                     {
                         path: 'daily/reports/inwards',
-                        element: <LazyRoute Component={InwardsReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={InwardsReport}
+                                moduleSlug='daily-reports-overview'
+                            />
+                        ),
                     },
                     {
                         path: 'daily/reports/outwards',
-                        element: <LazyRoute Component={OutwardsReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={OutwardsReport}
+                                moduleSlug='daily-reports-overview'
+                            />
+                        ),
                     },
                     {
                         path: 'daily/reports/milling',
-                        element: <LazyRoute Component={MillingReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={MillingReport}
+                                moduleSlug='daily-reports-overview'
+                            />
+                        ),
                     },
                     {
                         path: 'daily/reports/production',
-                        element: <LazyRoute Component={ProductionReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={ProductionReport}
+                                moduleSlug='daily-reports-overview'
+                            />
+                        ),
                     },
                     {
                         path: 'daily/reports/receipt',
-                        element: <LazyRoute Component={ReceiptReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={ReceiptReport}
+                                moduleSlug='daily-receipt'
+                            />
+                        ),
                     },
                     {
                         path: 'daily/reports/payment',
-                        element: <LazyRoute Component={PaymentReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={PaymentReport}
+                                moduleSlug='daily-payment'
+                            />
+                        ),
                     },
                     {
                         path: 'input/reports/party',
-                        element: <LazyRoute Component={MillAdminPartyReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={MillAdminPartyReport}
+                                moduleSlug='party-report'
+                            />
+                        ),
                     },
                     {
                         path: 'input/reports/transporter',
                         element: (
-                            <LazyRoute Component={MillAdminTransporterReport} />
+                            <LazyRoute
+                                Component={MillAdminTransporterReport}
+                                moduleSlug='transporter-report'
+                            />
                         ),
                     },
                     {
                         path: 'input/reports/broker',
                         element: (
-                            <LazyRoute Component={MillAdminBrokerReport} />
+                            <LazyRoute
+                                Component={MillAdminBrokerReport}
+                                moduleSlug='broker-report'
+                            />
                         ),
                     },
                     {
                         path: 'input/reports/committee',
                         element: (
-                            <LazyRoute Component={MillAdminCommitteeReport} />
+                            <LazyRoute
+                                Component={MillAdminCommitteeReport}
+                                moduleSlug='committee-report'
+                            />
                         ),
                     },
                     {
                         path: 'input/reports/do',
-                        element: <LazyRoute Component={MillAdminDoReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={MillAdminDoReport}
+                                moduleSlug='do-report'
+                            />
+                        ),
                     },
                     {
                         path: 'input/reports/vehicle',
                         element: (
-                            <LazyRoute Component={MillAdminVehicleReport} />
+                            <LazyRoute
+                                Component={MillAdminVehicleReport}
+                                moduleSlug='vehicle-report'
+                            />
                         ),
                     },
                     {
                         path: 'input/reports/staff',
-                        element: <LazyRoute Component={MillAdminStaffReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={MillAdminStaffReport}
+                                moduleSlug='staff-report'
+                            />
+                        ),
                     },
                     {
                         path: 'input/reports/labour-group',
                         element: (
-                            <LazyRoute Component={MillAdminLabourGroupReport} />
+                            <LazyRoute
+                                Component={MillAdminLabourGroupReport}
+                                moduleSlug='labour-group-report'
+                            />
                         ),
                     },
                 ],
@@ -1318,13 +1555,19 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: 'manage/staff',
-                        element: <LazyRoute Component={MillStaffStaff} />,
+                        element: (
+                            <LazyRoute
+                                Component={MillStaffStaff}
+                                moduleSlug='staff-directory'
+                            />
+                        ),
                     },
                     {
                         path: 'transaction/broker',
                         element: (
                             <LazyRoute
                                 Component={MillStaffBrokerTransactionReport}
+                                moduleSlug='broker-transaction'
                             />
                         ),
                     },
@@ -1333,6 +1576,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffPartyTransactionReport}
+                                moduleSlug='party-transaction'
                             />
                         ),
                     },
@@ -1343,6 +1587,7 @@ export const router = createBrowserRouter([
                                 Component={
                                     MillStaffBalanceLiftingPurchasesPaddyReport
                                 }
+                                moduleSlug='balance-lifting-paddy-purchase'
                             />
                         ),
                     },
@@ -1353,6 +1598,7 @@ export const router = createBrowserRouter([
                                 Component={
                                     MillStaffBalanceLiftingPurchasesRiceReport
                                 }
+                                moduleSlug='balance-lifting-rice-purchase'
                             />
                         ),
                     },
@@ -1363,6 +1609,7 @@ export const router = createBrowserRouter([
                                 Component={
                                     MillStaffBalanceLiftingPurchasesGunnyReport
                                 }
+                                moduleSlug='balance-lifting-gunny-purchase'
                             />
                         ),
                     },
@@ -1373,6 +1620,7 @@ export const router = createBrowserRouter([
                                 Component={
                                     MillStaffBalanceLiftingPurchasesFrkReport
                                 }
+                                moduleSlug='balance-lifting-frk-purchase'
                             />
                         ),
                     },
@@ -1383,6 +1631,7 @@ export const router = createBrowserRouter([
                                 Component={
                                     MillStaffBalanceLiftingSalesPaddyReport
                                 }
+                                moduleSlug='balance-lifting-paddy-sales'
                             />
                         ),
                     },
@@ -1393,6 +1642,7 @@ export const router = createBrowserRouter([
                                 Component={
                                     MillStaffOutwardBalanceLiftingRiceReport
                                 }
+                                moduleSlug='outward-balance-lifting-rice-sales'
                             />
                         ),
                     },
@@ -1401,6 +1651,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffGovtPaddyInwardReport}
+                                moduleSlug='inward-govt-paddy'
                             />
                         ),
                     },
@@ -1409,31 +1660,44 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffPrivatePaddyInwardReport}
+                                moduleSlug='inward-private-paddy'
                             />
                         ),
                     },
                     {
                         path: 'inward/rice/report',
                         element: (
-                            <LazyRoute Component={MillStaffRiceInwardReport} />
+                            <LazyRoute
+                                Component={MillStaffRiceInwardReport}
+                                moduleSlug='inward-rice'
+                            />
                         ),
                     },
                     {
                         path: 'inward/gunny/report',
                         element: (
-                            <LazyRoute Component={MillStaffGunnyInwardReport} />
+                            <LazyRoute
+                                Component={MillStaffGunnyInwardReport}
+                                moduleSlug='inward-gunny'
+                            />
                         ),
                     },
                     {
                         path: 'inward/other/report',
                         element: (
-                            <LazyRoute Component={MillStaffOtherInwardReport} />
+                            <LazyRoute
+                                Component={MillStaffOtherInwardReport}
+                                moduleSlug='inward-other'
+                            />
                         ),
                     },
                     {
                         path: 'inward/frk/report',
                         element: (
-                            <LazyRoute Component={MillStaffFrkInwardReport} />
+                            <LazyRoute
+                                Component={MillStaffFrkInwardReport}
+                                moduleSlug='inward-frk'
+                            />
                         ),
                     },
                     {
@@ -1441,6 +1705,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffPrivatePaddyOutwardReport}
+                                moduleSlug='outward-private-paddy'
                             />
                         ),
                     },
@@ -1449,6 +1714,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffPrivateRiceOutwardReport}
+                                moduleSlug='outward-private-rice'
                             />
                         ),
                     },
@@ -1457,6 +1723,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffGovtRiceOutwardReport}
+                                moduleSlug='outward-govt-rice'
                             />
                         ),
                     },
@@ -1465,6 +1732,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffGovtGunnyOutwardReport}
+                                moduleSlug='outward-govt-gunny'
                             />
                         ),
                     },
@@ -1473,13 +1741,17 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffPrivateGunnyOutwardReport}
+                                moduleSlug='outward-private-gunny'
                             />
                         ),
                     },
                     {
                         path: 'outward/frk/report',
                         element: (
-                            <LazyRoute Component={MillStaffFrkOutwardReport} />
+                            <LazyRoute
+                                Component={MillStaffFrkOutwardReport}
+                                moduleSlug='outward-frk'
+                            />
                         ),
                     },
                     {
@@ -1487,6 +1759,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffKhandaOutwardReport}
+                                moduleSlug='outward-khanda'
                             />
                         ),
                     },
@@ -1495,6 +1768,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffNakkhiOutwardReport}
+                                moduleSlug='outward-nakkhi'
                             />
                         ),
                     },
@@ -1503,6 +1777,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffBhusaOutwardReport}
+                                moduleSlug='outward-bhusa'
                             />
                         ),
                     },
@@ -1511,6 +1786,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffKodhaOutwardReport}
+                                moduleSlug='outward-kodha'
                             />
                         ),
                     },
@@ -1519,6 +1795,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffSilkyKodhaOutwardReport}
+                                moduleSlug='outward-silky-kodha'
                             />
                         ),
                     },
@@ -1527,6 +1804,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffOtherOutwardReport}
+                                moduleSlug='outward-other'
                             />
                         ),
                     },
@@ -1535,13 +1813,17 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffMillingPaddyReport}
+                                moduleSlug='paddy-milling-report'
                             />
                         ),
                     },
                     {
                         path: 'milling/rice/report',
                         element: (
-                            <LazyRoute Component={MillStaffMillingRiceReport} />
+                            <LazyRoute
+                                Component={MillStaffMillingRiceReport}
+                                moduleSlug='rice-milling-report'
+                            />
                         ),
                     },
                     {
@@ -1549,6 +1831,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffLabourInwardReport}
+                                moduleSlug='inward-labour-cost-report'
                             />
                         ),
                     },
@@ -1557,6 +1840,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffLabourOutwardReport}
+                                moduleSlug='outward-labour-cost-report'
                             />
                         ),
                     },
@@ -1565,13 +1849,17 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffLabourMillingReport}
+                                moduleSlug='milling-labour-cost-report'
                             />
                         ),
                     },
                     {
                         path: 'labour/other/report',
                         element: (
-                            <LazyRoute Component={MillStaffLabourOtherReport} />
+                            <LazyRoute
+                                Component={MillStaffLabourOtherReport}
+                                moduleSlug='other-labour-cost-report'
+                            />
                         ),
                     },
                     {
@@ -1579,6 +1867,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffFinancialReceiptReport}
+                                moduleSlug='financial-receipt-report'
                             />
                         ),
                     },
@@ -1587,6 +1876,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffFinancialPaymentReport}
+                                moduleSlug='financial-payment-report'
                             />
                         ),
                     },
@@ -1595,14 +1885,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffStockOverviewReport}
-                            />
-                        ),
-                    },
-                    {
-                        path: 'daily/reports',
-                        element: (
-                            <LazyRoute
-                                Component={MillStaffDailyReportsOverview}
+                                moduleSlug='stock-overview'
                             />
                         ),
                     },
@@ -1611,49 +1894,71 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffPurchaseDealsReport}
+                                moduleSlug='daily-receipt'
                             />
                         ),
                     },
                     {
                         path: 'daily/reports/sales',
                         element: (
-                            <LazyRoute Component={MillStaffSalesDealsReport} />
+                            <LazyRoute
+                                Component={MillStaffSalesDealsReport}
+                                moduleSlug='daily-payment'
+                            />
                         ),
                     },
                     {
                         path: 'daily/reports/inwards',
                         element: (
-                            <LazyRoute Component={MillStaffInwardsReport} />
+                            <LazyRoute
+                                Component={MillStaffInwardsReport}
+                                moduleSlug='daily-reports-overview'
+                            />
                         ),
                     },
                     {
                         path: 'daily/reports/outwards',
                         element: (
-                            <LazyRoute Component={MillStaffOutwardsReport} />
+                            <LazyRoute
+                                Component={MillStaffOutwardsReport}
+                                moduleSlug='daily-reports-overview'
+                            />
                         ),
                     },
                     {
                         path: 'daily/reports/milling',
                         element: (
-                            <LazyRoute Component={MillStaffMillingReport} />
+                            <LazyRoute
+                                Component={MillStaffMillingReport}
+                                moduleSlug='daily-reports-overview'
+                            />
                         ),
                     },
                     {
                         path: 'daily/reports/production',
                         element: (
-                            <LazyRoute Component={MillStaffProductionReport} />
+                            <LazyRoute
+                                Component={MillStaffProductionReport}
+                                moduleSlug='daily-reports-overview'
+                            />
                         ),
                     },
                     {
                         path: 'daily/reports/receipt',
                         element: (
-                            <LazyRoute Component={MillStaffReceiptReport} />
+                            <LazyRoute
+                                Component={MillStaffReceiptReport}
+                                moduleSlug='daily-receipt'
+                            />
                         ),
                     },
                     {
                         path: 'daily/reports/payment',
                         element: (
-                            <LazyRoute Component={MillStaffPaymentReport} />
+                            <LazyRoute
+                                Component={MillStaffPaymentReport}
+                                moduleSlug='daily-payment'
+                            />
                         ),
                     },
                     {
@@ -1661,6 +1966,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffPaddyPurchaseReport}
+                                moduleSlug='paddy-purchase-report'
                             />
                         ),
                     },
@@ -1669,6 +1975,7 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffRicePurchaseReport}
+                                moduleSlug='rice-purchase-report'
                             />
                         ),
                     },
@@ -1677,13 +1984,17 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffGunnyPurchaseReport}
+                                moduleSlug='gunny-purchase-report'
                             />
                         ),
                     },
                     {
                         path: 'purchases/frk/report',
                         element: (
-                            <LazyRoute Component={MillStaffFrkPurchaseReport} />
+                            <LazyRoute
+                                Component={MillStaffFrkPurchaseReport}
+                                moduleSlug='frk-purchase-report'
+                            />
                         ),
                     },
                     {
@@ -1691,76 +2002,135 @@ export const router = createBrowserRouter([
                         element: (
                             <LazyRoute
                                 Component={MillStaffOtherPurchaseReport}
+                                moduleSlug='other-purchase-report'
                             />
                         ),
                     },
                     {
                         path: 'sales/rice/report',
                         element: (
-                            <LazyRoute Component={MillStaffRiceSalesReport} />
+                            <LazyRoute
+                                Component={MillStaffRiceSalesReport}
+                                moduleSlug='rice-sales-report'
+                            />
                         ),
                     },
                     {
                         path: 'sales/paddy/report',
                         element: (
-                            <LazyRoute Component={MillStaffPaddySalesReport} />
+                            <LazyRoute
+                                Component={MillStaffPaddySalesReport}
+                                moduleSlug='paddy-sales-report'
+                            />
                         ),
                     },
                     {
                         path: 'sales/gunny/report',
                         element: (
-                            <LazyRoute Component={MillStaffGunnySalesReport} />
+                            <LazyRoute
+                                Component={MillStaffGunnySalesReport}
+                                moduleSlug='gunny-sales-report'
+                            />
                         ),
                     },
                     {
                         path: 'sales/khanda/report',
                         element: (
-                            <LazyRoute Component={MillStaffKhandaSalesReport} />
+                            <LazyRoute
+                                Component={MillStaffKhandaSalesReport}
+                                moduleSlug='khanda-sales-report'
+                            />
                         ),
                     },
                     {
                         path: 'sales/nakkhi/report',
                         element: (
-                            <LazyRoute Component={MillStaffNakkhiSalesReport} />
+                            <LazyRoute
+                                Component={MillStaffNakkhiSalesReport}
+                                moduleSlug='nakkhi-sales-report'
+                            />
                         ),
                     },
                     {
                         path: 'sales/other/report',
                         element: (
-                            <LazyRoute Component={MillStaffOtherSalesReport} />
+                            <LazyRoute
+                                Component={MillStaffOtherSalesReport}
+                                moduleSlug='other-sales-report'
+                            />
                         ),
                     },
                     {
                         path: 'input/reports/party',
-                        element: <LazyRoute Component={PartyReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={PartyReport}
+                                moduleSlug='party-report'
+                            />
+                        ),
                     },
                     {
                         path: 'input/reports/transporter',
-                        element: <LazyRoute Component={TransporterReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={TransporterReport}
+                                moduleSlug='transporter-report'
+                            />
+                        ),
                     },
                     {
                         path: 'input/reports/broker',
-                        element: <LazyRoute Component={BrokerReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={BrokerReport}
+                                moduleSlug='broker-report'
+                            />
+                        ),
                     },
                     {
                         path: 'input/reports/committee',
-                        element: <LazyRoute Component={CommitteeReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={CommitteeReport}
+                                moduleSlug='committee-report'
+                            />
+                        ),
                     },
                     {
                         path: 'input/reports/do',
-                        element: <LazyRoute Component={DoReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={DoReport}
+                                moduleSlug='do-report'
+                            />
+                        ),
                     },
                     {
                         path: 'input/reports/vehicle',
-                        element: <LazyRoute Component={VehicleReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={VehicleReport}
+                                moduleSlug='vehicle-report'
+                            />
+                        ),
                     },
                     {
                         path: 'input/reports/staff',
-                        element: <LazyRoute Component={StaffReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={StaffReport}
+                                moduleSlug='staff-report'
+                            />
+                        ),
                     },
                     {
                         path: 'input/reports/labour-group',
-                        element: <LazyRoute Component={LabourGroupReport} />,
+                        element: (
+                            <LazyRoute
+                                Component={LabourGroupReport}
+                                moduleSlug='labour-group-report'
+                            />
+                        ),
                     },
                 ],
             },

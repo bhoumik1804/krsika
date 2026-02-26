@@ -34,10 +34,33 @@ import {
     type NavGroup as NavGroupProps,
 } from './types'
 
+import { usePermission } from '@/hooks/use-permission'
+
+import { useTranslation } from 'react-i18next'
+
 export function NavGroup({ title, items }: NavGroupProps) {
     const { state, isMobile } = useSidebar()
+    const { can } = usePermission()
+    const { t } = useTranslation()
     const location = useLocation()
     const href = location.pathname
+
+    // Filter items based on permissions
+    const visibleItems = items.filter((item) => {
+        // If it's a collapsible with sub-items, check if any sub-item is visible
+        if (item.items) {
+            const hasVisibleSubItems = item.items.some((subItem) =>
+                can(subItem.moduleSlug, 'view')
+            )
+            return hasVisibleSubItems
+        }
+        // Otherwise check the item itself
+        return can(item.moduleSlug, 'view')
+    })
+
+    // If no items are visible, don't render the group
+    if (visibleItems.length === 0) return null
+
     return (
         <SidebarGroup>
             <SidebarGroupLabel>
@@ -45,11 +68,11 @@ export function NavGroup({ title, items }: NavGroupProps) {
                     className='max-w-40 text-sm'
                     contentClassName='truncate'
                 >
-                    {title}
+                    {t(title)}
                 </LongText>
             </SidebarGroupLabel>
             <SidebarMenu>
-                {items.map((item) => {
+                {visibleItems.map((item) => {
                     const key = `${item.title}-${item.url}`
 
                     if (!item.items)
@@ -89,6 +112,7 @@ function NavBadge({ children }: { children: ReactNode }) {
 
 function SidebarMenuLink({ item, href }: { item: NavLink; href: string }) {
     const { setOpenMobile } = useSidebar()
+    const { t } = useTranslation()
     return (
         <SidebarMenuItem>
             <SidebarMenuButton
@@ -99,7 +123,7 @@ function SidebarMenuLink({ item, href }: { item: NavLink; href: string }) {
                 <Link to={item.url} onClick={() => setOpenMobile(false)}>
                     {item.icon && <item.icon />}
                     <LongText className='max-w-40' contentClassName='truncate'>
-                        {item.title}
+                        {t(item.title)}
                     </LongText>
                     {item.badge && <NavBadge>{item.badge}</NavBadge>}
                 </Link>
@@ -116,6 +140,8 @@ function SidebarMenuCollapsible({
     href: string
 }) {
     const { setOpenMobile } = useSidebar()
+    const { can } = usePermission()
+    const { t } = useTranslation()
     return (
         <Collapsible
             asChild
@@ -130,7 +156,7 @@ function SidebarMenuCollapsible({
                             className='max-w-36'
                             contentClassName='truncate'
                         >
-                            {item.title}
+                            {t(item.title)}
                         </LongText>
                         {item.badge && <NavBadge>{item.badge}</NavBadge>}
                         <ChevronRight className='ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 rtl:rotate-180' />
@@ -138,30 +164,36 @@ function SidebarMenuCollapsible({
                 </CollapsibleTrigger>
                 <CollapsibleContent className='CollapsibleContent'>
                     <SidebarMenuSub>
-                        {item.items.map((subItem) => (
-                            <SidebarMenuSubItem key={subItem.title}>
-                                <SidebarMenuSubButton
-                                    asChild
-                                    isActive={checkIsActive(href, subItem)}
-                                >
-                                    <Link
-                                        to={subItem.url}
-                                        onClick={() => setOpenMobile(false)}
+                        {item.items
+                            .filter((subItem) =>
+                                can(subItem.moduleSlug, 'view')
+                            )
+                            .map((subItem) => (
+                                <SidebarMenuSubItem key={subItem.title}>
+                                    <SidebarMenuSubButton
+                                        asChild
+                                        isActive={checkIsActive(href, subItem)}
                                     >
-                                        {subItem.icon && <subItem.icon />}
-                                        <LongText
-                                            className='max-w-40'
-                                            contentClassName='truncate'
+                                        <Link
+                                            to={subItem.url}
+                                            onClick={() => setOpenMobile(false)}
                                         >
-                                            {subItem.title}
-                                        </LongText>
-                                        {subItem.badge && (
-                                            <NavBadge>{subItem.badge}</NavBadge>
-                                        )}
-                                    </Link>
-                                </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                        ))}
+                                            {subItem.icon && <subItem.icon />}
+                                            <LongText
+                                                className='max-w-40'
+                                                contentClassName='truncate'
+                                            >
+                                                {t(subItem.title)}
+                                            </LongText>
+                                            {subItem.badge && (
+                                                <NavBadge>
+                                                    {subItem.badge}
+                                                </NavBadge>
+                                            )}
+                                        </Link>
+                                    </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                            ))}
                     </SidebarMenuSub>
                 </CollapsibleContent>
             </SidebarMenuItem>
@@ -176,6 +208,8 @@ function SidebarMenuCollapsedDropdown({
     item: NavCollapsible
     href: string
 }) {
+    const { can } = usePermission()
+    const { t } = useTranslation()
     return (
         <SidebarMenuItem>
             <DropdownMenu>
@@ -189,7 +223,7 @@ function SidebarMenuCollapsedDropdown({
                             className='max-w-40'
                             contentClassName='truncate'
                         >
-                            {item.title}
+                            {t(item.title)}
                         </LongText>
                         {item.badge && <NavBadge>{item.badge}</NavBadge>}
                         <ChevronRight className='ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
@@ -197,33 +231,35 @@ function SidebarMenuCollapsedDropdown({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent side='right' align='start' sideOffset={4}>
                     <DropdownMenuLabel>
-                        {item.title} {item.badge ? `(${item.badge})` : ''}
+                        {t(item.title)} {item.badge ? `(${item.badge})` : ''}
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {item.items.map((sub) => (
-                        <DropdownMenuItem
-                            key={`${sub.title}-${sub.url}`}
-                            asChild
-                        >
-                            <Link
-                                to={sub.url}
-                                className={`${checkIsActive(href, sub) ? 'bg-secondary' : ''}`}
+                    {item.items
+                        .filter((sub) => can(sub.moduleSlug, 'view'))
+                        .map((sub) => (
+                            <DropdownMenuItem
+                                key={`${sub.title}-${sub.url}`}
+                                asChild
                             >
-                                {sub.icon && <sub.icon />}
-                                <LongText
-                                    className='max-w-48'
-                                    contentClassName='truncate'
+                                <Link
+                                    to={sub.url}
+                                    className={`${checkIsActive(href, sub) ? 'bg-secondary' : ''}`}
                                 >
-                                    {sub.title}
-                                </LongText>
-                                {sub.badge && (
-                                    <span className='ms-auto text-xs'>
-                                        {sub.badge}
-                                    </span>
-                                )}
-                            </Link>
-                        </DropdownMenuItem>
-                    ))}
+                                    {sub.icon && <sub.icon />}
+                                    <LongText
+                                        className='max-w-48'
+                                        contentClassName='truncate'
+                                    >
+                                        {t(sub.title)}
+                                    </LongText>
+                                    {sub.badge && (
+                                        <span className='ms-auto text-xs'>
+                                            {sub.badge}
+                                        </span>
+                                    )}
+                                </Link>
+                            </DropdownMenuItem>
+                        ))}
                 </DropdownMenuContent>
             </DropdownMenu>
         </SidebarMenuItem>

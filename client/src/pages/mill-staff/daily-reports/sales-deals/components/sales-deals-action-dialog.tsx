@@ -1,12 +1,24 @@
 import { useEffect, useState } from 'react'
+import * as React from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { useParams } from 'react-router'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+    Combobox,
+    ComboboxInput,
+    ComboboxContent,
+    ComboboxItem,
+    ComboboxList,
+    ComboboxEmpty,
+    ComboboxCollection,
+} from '@/components/ui/combobox'
 import {
     Dialog,
     DialogContent,
@@ -38,6 +50,7 @@ import {
 } from '@/components/ui/select'
 import { salesDealSchema, type SalesDeal } from '../data/schema'
 
+import { useTranslation } from 'react-i18next'
 type SalesDealsActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
@@ -49,6 +62,21 @@ export function SalesDealsActionDialog({
     onOpenChange,
     currentRow,
 }: SalesDealsActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
+    const { millId } = useParams<{ millId: string }>()
+    const [brokerPage, setBrokerPage] = useState(1)
+    const [allBrokers, setAllBrokers] = useState<string[]>([])
+    const [hasMoreBrokers, setHasMoreBrokers] = useState(true)
+    const [isLoadingMoreBrokers, setIsLoadingMoreBrokers] = useState(false)
+
+    const brokerLimit = brokerPage === 1 ? 10 : 5
+
+    const { data: brokerListData } = useBrokerList({
+        millId: open ? (millId ?? '') : '',
+        page: brokerPage,
+        limit: brokerLimit,
+    })
+
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -59,14 +87,50 @@ export function SalesDealsActionDialog({
             buyerName: '',
             brokerName: '',
             commodity: '',
-            quantity: 0,
-            rate: 0,
-            totalAmount: 0,
+            quantity: '' as unknown as number,
+            rate: '' as unknown as number,
+            totalAmount: '' as unknown as number,
             status: 'pending',
             paymentTerms: '',
             remarks: '',
         },
     })
+
+    // Extract broker names from API response and accumulate
+    React.useEffect(() => {
+        if (brokerListData?.brokers) {
+            const newBrokers = brokerListData.brokers.map(
+                (broker) => broker.brokerName
+            )
+            setAllBrokers((prev) => {
+                const combined = [...prev, ...newBrokers]
+                return Array.from(new Set(combined))
+            })
+            setHasMoreBrokers(brokerListData.brokers.length === brokerLimit)
+            setIsLoadingMoreBrokers(false)
+        }
+    }, [brokerListData, brokerLimit, brokerPage])
+
+    // Reset accumulated data when dialog opens
+    useEffect(() => {
+        if (open) {
+            setAllBrokers([])
+            setBrokerPage(1)
+            setHasMoreBrokers(true)
+            setIsLoadingMoreBrokers(false)
+        }
+    }, [open])
+
+    // Handle scroll for broker list
+    const handleBrokerScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const target = e.currentTarget
+        const bottom =
+            target.scrollHeight - target.scrollTop <= target.clientHeight + 5
+        if (bottom && hasMoreBrokers && !isLoadingMoreBrokers) {
+            setIsLoadingMoreBrokers(true)
+            setBrokerPage((prev) => prev + 1)
+        }
+    }
 
     useEffect(() => {
         if (currentRow) {
@@ -199,10 +263,43 @@ export function SalesDealsActionDialog({
                                     <FormItem>
                                         <FormLabel>Broker Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter broker name (optional)'
-                                                {...field}
-                                            />
+                                            <Combobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                items={allBrokers}
+                                            >
+                                                <ComboboxInput
+                                                    placeholder='Search broker...'
+                                                    showClear
+                                                />
+                                                <ComboboxContent>
+                                                    <ComboboxList
+                                                        onScroll={
+                                                            handleBrokerScroll
+                                                        }
+                                                    >
+                                                        <ComboboxCollection>
+                                                            {(broker) => (
+                                                                <ComboboxItem
+                                                                    value={
+                                                                        broker
+                                                                    }
+                                                                >
+                                                                    {broker}
+                                                                </ComboboxItem>
+                                                            )}
+                                                        </ComboboxCollection>
+                                                        <ComboboxEmpty>
+                                                            No brokers found
+                                                        </ComboboxEmpty>
+                                                        {isLoadingMoreBrokers && (
+                                                            <div className='py-2 text-center text-xs text-muted-foreground'>
+                                                                Loading more...
+                                                            </div>
+                                                        )}
+                                                    </ComboboxList>
+                                                </ComboboxContent>
+                                            </Combobox>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -356,9 +453,7 @@ export function SalesDealsActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
-                            >
-                                Cancel
-                            </Button>
+                            >{t('common.cancel')}</Button>
                             <Button type='submit'>
                                 {isEditing ? 'Update' : 'Add'} Deal
                             </Button>

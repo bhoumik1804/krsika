@@ -1,11 +1,8 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { usePaddyPurchaseList } from '../data/hooks'
 import { type PaddyPurchaseData } from '../data/schema'
-import type {
-    PaddyPurchaseQueryParams,
-    PaddyPurchaseResponse,
-} from '../data/types'
+import { PaddyPurchaseQueryParams } from '../data/types'
 
 type PaddyDialogType = 'add' | 'edit' | 'delete'
 
@@ -22,7 +19,7 @@ type PaddyContextType = {
     setCurrentRow: React.Dispatch<
         React.SetStateAction<PaddyPurchaseData | null>
     >
-    data: PaddyPurchaseResponse[]
+    data: PaddyPurchaseData[]
     isLoading: boolean
     isError: boolean
     millId: string
@@ -62,27 +59,20 @@ export function PaddyProvider({
     const [queryParams, setQueryParams] =
         useState<QueryParams>(initialQueryParams)
 
-    const queryParamsForAPI = useMemo(
-        () => ({
-            page: queryParams.page,
-            limit: queryParams.limit,
-            search: queryParams.search,
-            sortBy: queryParams.sortBy,
-            sortOrder: queryParams.sortOrder,
-        }),
-        [queryParams]
-    )
+    useEffect(() => {
+        setQueryParams(initialQueryParams)
+    }, [initialQueryParams])
 
     const {
         data: apiResponse,
         isLoading,
         isError,
-    } = usePaddyPurchaseList(millId, queryParamsForAPI, { enabled: !!millId })
+    } = usePaddyPurchaseList(millId, queryParams, { enabled: !!millId })
 
     const data = useMemo(() => {
-        const list = apiResponse?.purchases || []
+        const list = apiResponse?.data || []
         return Array.isArray(list) ? list : []
-    }, [apiResponse])
+    }, [apiResponse?.data])
 
     const pagination = useMemo(
         () => ({
@@ -91,28 +81,45 @@ export function PaddyProvider({
             total: apiResponse?.pagination?.total || 0,
             totalPages: apiResponse?.pagination?.totalPages || 1,
         }),
-        [apiResponse?.pagination]
+        [
+            apiResponse?.pagination?.page,
+            apiResponse?.pagination?.limit,
+            apiResponse?.pagination?.total,
+            apiResponse?.pagination?.totalPages,
+        ]
     )
 
-    return (
-        <PaddyContext
-            value={{
-                open,
-                setOpen,
-                currentRow,
-                setCurrentRow,
-                data,
-                isLoading,
-                isError,
-                millId,
-                queryParams,
-                setQueryParams,
-                pagination,
-            }}
-        >
-            {children}
-        </PaddyContext>
+    const contextValue = useMemo(
+        () => ({
+            open,
+            setOpen,
+            currentRow,
+            setCurrentRow,
+            data,
+            isLoading,
+            isError,
+            millId,
+            queryParams,
+            setQueryParams,
+            pagination,
+        }),
+        [
+            open,
+            currentRow,
+            data,
+            isLoading,
+            isError,
+            millId,
+            queryParams.page,
+            queryParams.limit,
+            queryParams.search,
+            queryParams.sortBy,
+            queryParams.sortOrder,
+            pagination,
+        ]
     )
+
+    return <PaddyContext value={contextValue}>{children}</PaddyContext>
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

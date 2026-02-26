@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 export const labourOtherSchema = z.object({
+    _id: z.string().optional(),
     date: z.string(),
     labourType: z.string().optional(),
     labourGroupName: z.string().optional(),

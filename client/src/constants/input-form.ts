@@ -1,3 +1,4 @@
 export const committeeTypeOptions = [
-   { value: 'समिति', label: 'समिति' },
-   { value: 'संग्रहण', label: 'संग्रहण' }, ]
+    { value: 'समिति-उपार्जन केंद्र', label: 'समिति-उपार्जन केंद्र' },
+    { value: 'समिति-संग्रहण केंद्र', label: 'समिति-संग्रहण केंद्र' },
+]

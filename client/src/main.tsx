@@ -9,6 +9,8 @@ import {
 import { RouterProvider } from 'react-router'
 import { toast } from 'sonner'
 import { handleServerError } from '@/lib/handle-server-error'
+// Initialize i18n for multi-language support
+import '@/lib/i18n'
 import { DirectionProvider } from './context/direction-provider'
 import { FontProvider } from './context/font-provider'
 import { ThemeProvider } from './context/theme-provider'

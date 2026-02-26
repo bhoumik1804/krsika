@@ -22,16 +22,14 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-// import { type BrokerTransaction } from '../data/schema'
+import { type BrokerTransaction } from '../data/schema'
 import { brokerTransactionColumns as columns } from './broker-transaction-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
-    data: any[]
+    data: BrokerTransaction[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading?: boolean
-    isError?: boolean
 }
 
 export function BrokerTransactionTable({

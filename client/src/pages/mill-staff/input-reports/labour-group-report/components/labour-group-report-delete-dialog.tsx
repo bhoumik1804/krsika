@@ -1,3 +1,4 @@
+import { useParams } from 'react-router'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -8,9 +9,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { type LabourGroupReportData } from '../data/schema'
 import { useDeleteLabourGroup } from '../data/hooks'
-import { useUser } from '@/pages/landing/hooks/use-auth'
+import { type LabourGroupReportData } from '../data/schema'
 
 type LabourGroupReportDeleteDialogProps = {
     open: boolean
@@ -23,18 +23,17 @@ export function LabourGroupReportDeleteDialog({
     onOpenChange,
     currentRow,
 }: LabourGroupReportDeleteDialogProps) {
-    const { user } = useUser()
-    const millId = user?.millId as any
-    const deleteMutation = useDeleteLabourGroup(millId)
+    const { millId } = useParams<{ millId: string }>()
+    const mutation = useDeleteLabourGroup(millId || '')
 
     const handleDelete = async () => {
         if (!currentRow?._id) return
-        
+
         try {
-            await deleteMutation.mutateAsync(currentRow._id)
+            await mutation.mutateAsync(currentRow._id)
             onOpenChange(false)
-        } catch (error: any) {
-            console.error('Delete error:', error)
+        } catch (error) {
+            // Error handling is managed by the mutation hook
         }
     }
 
@@ -51,13 +50,18 @@ export function LabourGroupReportDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel disabled={deleteMutation.isPending}>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={mutation.isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
-                        onClick={handleDelete}
-                        disabled={deleteMutation.isPending}
+                        onClick={(e) => {
+                            e.preventDefault()
+                            handleDelete()
+                        }}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
+                        disabled={mutation.isPending}
                     >
-                        {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                        {mutation.isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

@@ -13,7 +13,8 @@ export const createPrivateGunnyOutward = async (req, res, next) => {
     try {
         const entry = await createPrivateGunnyOutwardEntry(
             req.params.millId,
-            req.body
+            req.body,
+            req.user._id
         )
         res.status(201).json(
             new ApiResponse(201, { entry }, 'Private gunny outward created')
@@ -44,7 +45,7 @@ export const getPrivateGunnyOutwardListHandler = async (req, res, next) => {
             limit,
             search,
             partyName,
-            gunnyPurchaseDealNumber,
+            gunnySaleDealNumber,
             startDate,
             endDate,
             sortBy,
@@ -55,7 +56,7 @@ export const getPrivateGunnyOutwardListHandler = async (req, res, next) => {
             limit: limit ? parseInt(limit, 10) : undefined,
             search,
             partyName,
-            gunnyPurchaseDealNumber,
+            gunnySaleDealNumber,
             startDate,
             endDate,
             sortBy,

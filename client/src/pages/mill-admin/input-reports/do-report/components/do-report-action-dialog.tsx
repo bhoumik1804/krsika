@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useCommitteeList } from '@/pages/mill-admin/input-reports/committee-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { useParams } from 'react-router'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -23,6 +24,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -37,25 +39,38 @@ import {
 } from '../data/hooks'
 import { doReportSchema, type DoReportData } from '../data/schema'
 import { useParseExcel } from '../hooks/use-parse-excel'
-import { doReport } from './do-report-provider'
+import { useDoReport } from './do-report-provider'
 
 type DoReportActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: DoReportData | null
+    currentRow?: DoReportData
 }
 
 export function DoReportActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: DoReportActionDialogProps) {
+    const { currentRow, millId, setCurrentRow } = useDoReport()
     const isEditing = !!currentRow
-    const { setCurrentRow } = doReport()
-    const { millId } = useParams<{ millId: string }>()
-    const createMutation = useCreateDoReport(millId || '')
-    const updateMutation = useUpdateDoReport(millId || '')
-    const bulkCreateMutation = useBulkCreateDoReport(millId || '')
+
+    // Paginated committee selection for samitiSangrahan
+    const committee = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useCommitteeList,
+            extractItems: (data) =>
+                data.committees
+                    .map((c) => c.committeeName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'committeeName', sortOrder: 'asc' },
+        },
+        currentRow?.samitiSangrahan
+    )
+    const createMutation = useCreateDoReport(millId)
+    const updateMutation = useUpdateDoReport(millId)
+    const bulkCreateMutation = useBulkCreateDoReport(millId)
     const isLoading =
         createMutation.isPending ||
         updateMutation.isPending ||
@@ -71,9 +86,9 @@ export function DoReportActionDialog({
             date: format(new Date(), 'yyyy-MM-dd'),
             samitiSangrahan: '',
             doNo: '',
-            dhanMota: 0,
-            dhanPatla: 0,
-            dhanSarna: 0,
+            dhanMota: '' as unknown as number,
+            dhanPatla: '' as unknown as number,
+            dhanSarna: '' as unknown as number,
             total: 0,
         },
     })
@@ -96,10 +111,10 @@ export function DoReportActionDialog({
                 date: currentRow.date || '',
                 samitiSangrahan: currentRow.samitiSangrahan || '',
                 doNo: currentRow.doNo || '',
-                dhanMota: currentRow.dhanMota || undefined,
-                dhanPatla: currentRow.dhanPatla || undefined,
-                dhanSarna: currentRow.dhanSarna || undefined,
-                total: currentRow.total || undefined,
+                dhanMota: currentRow.dhanMota || ('' as unknown as number),
+                dhanPatla: currentRow.dhanPatla || ('' as unknown as number),
+                dhanSarna: currentRow.dhanSarna || ('' as unknown as number),
+                total: currentRow.total ?? 0,
             })
             setActiveTab('manual')
         } else {
@@ -107,14 +122,41 @@ export function DoReportActionDialog({
                 date: format(new Date(), 'yyyy-MM-dd'),
                 samitiSangrahan: '',
                 doNo: '',
-                dhanMota: 0,
-                dhanPatla: 0,
-                dhanSarna: 0,
+                dhanMota: '' as unknown as number,
+                dhanPatla: '' as unknown as number,
+                dhanSarna: '' as unknown as number,
                 total: 0,
             })
             setActiveTab('manual')
         }
     }, [currentRow, form])
+
+    const handleSuccess = () => {
+        onOpenChange(false)
+        form.reset({
+            date: format(new Date(), 'yyyy-MM-dd'),
+            samitiSangrahan: '',
+            doNo: '',
+            dhanMota: '' as unknown as number,
+            dhanPatla: '' as unknown as number,
+            dhanSarna: '' as unknown as number,
+            total: 0,
+        })
+        setUploadedFile(null)
+        setPreviewData([])
+        setCurrentRow(null)
+    }
+
+    const handleUpload = async () => {
+        if (previewData.length === 0) return
+
+        try {
+            await bulkCreateMutation.mutateAsync(previewData)
+            handleSuccess()
+        } catch (error) {
+            console.error('Error uploading file:', error)
+        }
+    }
 
     const onSubmit = async (data: DoReportData) => {
         const computedTotal =
@@ -125,29 +167,15 @@ export function DoReportActionDialog({
         }
 
         try {
-            if (activeTab === 'upload' && previewData.length > 0) {
-                await bulkCreateMutation.mutateAsync(previewData)
-            } else if (currentRow?._id) {
+            if (currentRow?._id) {
                 await updateMutation.mutateAsync({
-                    id: currentRow._id,
+                    _id: currentRow._id,
                     ...payload,
                 })
             } else {
                 await createMutation.mutateAsync(payload)
             }
-            onOpenChange(false)
-            form.reset({
-                date: format(new Date(), 'yyyy-MM-dd'),
-                samitiSangrahan: '',
-                doNo: '',
-                dhanMota: 0,
-                dhanPatla: 0,
-                dhanSarna: 0,
-                total: 0,
-            })
-            setUploadedFile(null)
-            setPreviewData([])
-            setCurrentRow(null)
+            handleSuccess()
         } catch (error) {
             console.error('Error submitting form:', error)
         }
@@ -155,7 +183,6 @@ export function DoReportActionDialog({
 
     const handleDialogClose = (isOpen: boolean) => {
         if (!isOpen) {
-            setCurrentRow(null)
             form.reset({
                 date: format(new Date(), 'yyyy-MM-dd'),
                 samitiSangrahan: '',
@@ -216,7 +243,7 @@ export function DoReportActionDialog({
 
     return (
         <Dialog open={open} onOpenChange={handleDialogClose}>
-            <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
+            <DialogContent className='max-h-[90vh] sm:max-w-4xl overflow-y-auto p-4 sm:p-6'>
                 <DialogHeader>
                     <DialogTitle>
                         {isEditing ? 'Edit' : 'Add'} DO Report
@@ -229,7 +256,7 @@ export function DoReportActionDialog({
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
-                        className='space-y-4'
+                        className='w-full max-w-full space-y-4'
                     >
                         <Tabs
                             value={activeTab}
@@ -268,11 +295,11 @@ export function DoReportActionDialog({
                                                                 <CalendarIcon className='mr-2 h-4 w-4' />
                                                                 {field.value
                                                                     ? format(
-                                                                          new Date(
-                                                                              field.value
-                                                                          ),
-                                                                          'MMM dd, yyyy'
-                                                                      )
+                                                                        new Date(
+                                                                            field.value
+                                                                        ),
+                                                                        'MMM dd, yyyy'
+                                                                    )
                                                                     : 'Pick a date'}
                                                             </Button>
                                                         </FormControl>
@@ -286,8 +313,8 @@ export function DoReportActionDialog({
                                                             selected={
                                                                 field.value
                                                                     ? new Date(
-                                                                          field.value
-                                                                      )
+                                                                        field.value
+                                                                    )
                                                                     : undefined
                                                             }
                                                             onSelect={(
@@ -296,9 +323,9 @@ export function DoReportActionDialog({
                                                                 field.onChange(
                                                                     date
                                                                         ? format(
-                                                                              date,
-                                                                              'yyyy-MM-dd'
-                                                                          )
+                                                                            date,
+                                                                            'yyyy-MM-dd'
+                                                                        )
                                                                         : ''
                                                                 )
                                                             }}
@@ -318,9 +345,16 @@ export function DoReportActionDialog({
                                                     Samiti Sangrahan
                                                 </FormLabel>
                                                 <FormControl>
-                                                    <Input
-                                                        placeholder='Enter Samiti Sangrahan'
-                                                        {...field}
+                                                    <PaginatedCombobox
+                                                        value={field.value}
+                                                        onValueChange={
+                                                            field.onChange
+                                                        }
+                                                        paginatedList={
+                                                            committee
+                                                        }
+                                                        placeholder='Search committee...'
+                                                        emptyText='No committees found'
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -356,6 +390,9 @@ export function DoReportActionDialog({
                                                         type='number'
                                                         step='0.01'
                                                         {...field}
+                                                        value={
+                                                            field.value ?? ''
+                                                        }
                                                         onWheel={(e) =>
                                                             e.currentTarget.blur()
                                                         }
@@ -367,8 +404,8 @@ export function DoReportActionDialog({
                                                                 value === ''
                                                                     ? ''
                                                                     : Number(
-                                                                          value
-                                                                      )
+                                                                        value
+                                                                    )
                                                             )
                                                         }}
                                                     />
@@ -390,6 +427,9 @@ export function DoReportActionDialog({
                                                         type='number'
                                                         step='0.01'
                                                         {...field}
+                                                        value={
+                                                            field.value ?? ''
+                                                        }
                                                         onWheel={(e) =>
                                                             e.currentTarget.blur()
                                                         }
@@ -400,8 +440,8 @@ export function DoReportActionDialog({
                                                                 value === ''
                                                                     ? ''
                                                                     : Number(
-                                                                          value
-                                                                      )
+                                                                        value
+                                                                    )
                                                             )
                                                         }}
                                                     />
@@ -423,6 +463,9 @@ export function DoReportActionDialog({
                                                         type='number'
                                                         step='0.01'
                                                         {...field}
+                                                        value={
+                                                            field.value ?? ''
+                                                        }
                                                         onWheel={(e) =>
                                                             e.currentTarget.blur()
                                                         }
@@ -433,8 +476,8 @@ export function DoReportActionDialog({
                                                                 value === ''
                                                                     ? ''
                                                                     : Number(
-                                                                          value
-                                                                      )
+                                                                        value
+                                                                    )
                                                             )
                                                         }}
                                                     />
@@ -483,7 +526,7 @@ export function DoReportActionDialog({
                                         or CSV
                                     </p>
                                     {uploadedFile && (
-                                        <p className='mt-2 text-sm text-green-600'>
+                                        <p className='mt-2 text-sm text-green-600 break-all'>
                                             File selected: {uploadedFile.name}
                                         </p>
                                     )}
@@ -495,7 +538,7 @@ export function DoReportActionDialog({
                                             <h3 className='mb-3 text-sm font-semibold'>
                                                 Parse Statistics
                                             </h3>
-                                            <div className='grid grid-cols-3 gap-3'>
+                                            <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
                                                 <div className='rounded-lg border bg-primary/10 p-3'>
                                                     <p className='text-xs text-muted-foreground'>
                                                         Total Rows
@@ -527,7 +570,7 @@ export function DoReportActionDialog({
 
                                             {parseStats?.errorDetails &&
                                                 parseStats.errorDetails.length >
-                                                    0 && (
+                                                0 && (
                                                     <div className='mt-3'>
                                                         <p className='mb-2 text-xs font-semibold text-gray-600'>
                                                             Error Details:
@@ -566,7 +609,7 @@ export function DoReportActionDialog({
                                             Preview - {previewData.length}{' '}
                                             records
                                         </h3>
-                                        <div className='w-full overflow-x-auto rounded-lg border'>
+                                        <div className='w-full max-w-[calc(100vw-5rem)] overflow-x-auto rounded-lg border sm:max-w-full'>
                                             <div className='h-80 overflow-y-auto'>
                                                 <Table>
                                                     <TableBody>
@@ -584,7 +627,7 @@ export function DoReportActionDialog({
                                                                     >
                                                                         {
                                                                             fieldLabels[
-                                                                                field
+                                                                            field
                                                                             ]
                                                                         }
                                                                     </TableCell>
@@ -612,7 +655,7 @@ export function DoReportActionDialog({
                                                                             >
                                                                                 {formatPreviewCell(
                                                                                     row[
-                                                                                        field as keyof DoReportData
+                                                                                    field as keyof DoReportData
                                                                                     ]
                                                                                 )}
                                                                             </TableCell>
@@ -637,20 +680,30 @@ export function DoReportActionDialog({
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit' disabled={isLoading}>
+                            <Button
+                                type={
+                                    activeTab === 'upload' ? 'button' : 'submit'
+                                }
+                                onClick={
+                                    activeTab === 'upload'
+                                        ? handleUpload
+                                        : undefined
+                                }
+                                disabled={isLoading}
+                            >
                                 {isLoading
                                     ? activeTab === 'upload' &&
-                                      previewData.length > 0
+                                        previewData.length > 0
                                         ? 'Uploading...'
                                         : isEditing
-                                          ? 'Updating...'
-                                          : 'Adding...'
+                                            ? 'Updating...'
+                                            : 'Adding...'
                                     : activeTab === 'upload' &&
                                         previewData.length > 0
-                                      ? `Upload ${previewData.length} Report${previewData.length > 1 ? 's' : ''}`
-                                      : isEditing
-                                        ? 'Update'
-                                        : 'Add'}{' '}
+                                        ? `Upload ${previewData.length} Report${previewData.length > 1 ? 's' : ''}`
+                                        : isEditing
+                                            ? 'Update'
+                                            : 'Add'}{' '}
                                 {activeTab === 'manual' && 'DO Report'}
                             </Button>
                         </DialogFooter>

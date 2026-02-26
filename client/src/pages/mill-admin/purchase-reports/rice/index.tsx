@@ -35,6 +35,8 @@ export function RicePurchaseReport() {
         }
     }, [searchParams])
 
+    // Call GET API here -> Removed as it is now inside the provider
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
@@ -110,6 +112,7 @@ function RicePurchaseContent({
     return (
         <RiceTable
             data={context.data}
+            pagination={context.pagination}
             search={Object.fromEntries(
                 Object.entries(context.queryParams || {})
                     .filter(([, value]) => value !== undefined)

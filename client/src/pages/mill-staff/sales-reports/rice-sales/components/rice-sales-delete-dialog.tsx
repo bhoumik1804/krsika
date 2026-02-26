@@ -1,5 +1,3 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,7 +8,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteRiceSales } from '../data/hooks'
 import { type RiceSales } from '../data/schema'
+import { useRiceSales } from './rice-sales-provider'
 
 type RiceSalesDeleteDialogProps = {
     open: boolean
@@ -23,15 +23,19 @@ export function RiceSalesDeleteDialog({
     onOpenChange,
     currentRow,
 }: RiceSalesDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
+    const { millId } = useRiceSales()
+    const { mutateAsync: deleteRiceSales, isPending: isDeleting } =
+        useDeleteRiceSales(millId)
+
+    const handleDelete = async () => {
+        if (currentRow?._id) {
+            try {
+                await deleteRiceSales(currentRow._id)
                 onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+            } catch (error) {
+                console.error('Error deleting sale:', error)
+            }
+        }
     }
 
     return (
@@ -47,12 +51,15 @@ export function RiceSalesDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

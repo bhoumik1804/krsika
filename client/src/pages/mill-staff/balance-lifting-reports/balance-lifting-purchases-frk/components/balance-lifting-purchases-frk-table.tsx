@@ -21,19 +21,30 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table'
+import { useTranslation } from 'react-i18next'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type BalanceLiftingPurchasesFrk } from '../data/schema'
-import { DataTableBulkActions } from './data-table-bulk-actions'
 import { frkColumns as columns } from './balance-lifting-purchases-frk-columns'
+import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
     data: BalanceLiftingPurchasesFrk[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: {
+        page: number
+        pageSize: number
+        total: number
+        totalPages: number
+    }
 }
 
-export function BalanceLiftingPurchasesFrkTable({ data, search, navigate }: DataTableProps) {
+export function BalanceLiftingPurchasesFrkTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     // Local UI-only states
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -41,7 +52,7 @@ export function BalanceLiftingPurchasesFrkTable({ data, search, navigate }: Data
     )
     const [sorting, setSorting] = useState<SortingState>([])
 
-    // Synced with URL states
+    // Only handle column filters (pagination is server-side)
     const {
         columnFilters,
         onColumnFiltersChange,
@@ -51,11 +62,16 @@ export function BalanceLiftingPurchasesFrkTable({ data, search, navigate }: Data
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            pageKey: 'page',
+            pageSizeKey: 'limit',
+            defaultPage: 1,
+            defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
         ],
     })
 
@@ -70,23 +86,30 @@ export function BalanceLiftingPurchasesFrkTable({ data, search, navigate }: Data
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        getPaginationRowModel: getPaginationRowModel(),
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
+        }
+    }, [table, ensurePageInRange, serverPagination])
+
+    const { t } = useTranslation('mill-staff')
 
     return (
         <div
@@ -97,44 +120,27 @@ export function BalanceLiftingPurchasesFrkTable({ data, search, navigate }: Data
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Filter purchases...'
+                searchPlaceholder={t('common.search')}
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
             />
-            <div className='overflow-hidden rounded-md border'>
+            <div className='relative flex-1 rounded-md border'>
                 <Table>
-                    <TableHeader>
+                    <TableHeader className='bg-muted/50 sticky top-0 z-10'>
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow
-                                key={headerGroup.id}
-                                className='group/row'
-                            >
+                            <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
                                         <TableHead
                                             key={header.id}
                                             colSpan={header.colSpan}
-                                            className={cn(
-                                                'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
-                                                header.column.columnDef.meta
-                                                    ?.className,
-                                                header.column.columnDef.meta
-                                                    ?.thClassName
-                                            )}
                                         >
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
                                         </TableHead>
                                     )
                                 })}
@@ -149,19 +155,9 @@ export function BalanceLiftingPurchasesFrkTable({ data, search, navigate }: Data
                                     data-state={
                                         row.getIsSelected() && 'selected'
                                     }
-                                    className='group/row'
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell
-                                            key={cell.id}
-                                            className={cn(
-                                                'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
-                                                cell.column.columnDef.meta
-                                                    ?.className,
-                                                cell.column.columnDef.meta
-                                                    ?.tdClassName
-                                            )}
-                                        >
+                                        <TableCell key={cell.id}>
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext()
@@ -176,7 +172,7 @@ export function BalanceLiftingPurchasesFrkTable({ data, search, navigate }: Data
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

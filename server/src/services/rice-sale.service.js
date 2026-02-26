@@ -2,23 +2,44 @@ import mongoose from 'mongoose'
 import { RiceSale } from '../models/rice-sale.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 
-export const createRiceSaleEntry = async (millId, data, userId) => {
+export const createRiceSaleEntry = async (millId, data) => {
     const entry = new RiceSale({
         ...data,
         millId,
-        createdBy: userId,
         date: new Date(data.date),
     })
     await entry.save()
-    logger.info('Rice sale entry created', { id: entry._id, millId, userId })
+
+    // Record stock transaction (DEBIT = stock decrease)
+    // Removed conditional check to ensure transaction is always attempted/logged
+    try {
+        await StockTransactionService.recordTransaction(millId, {
+            date: data.date,
+            commodity: 'Rice',
+            variety: data.riceType,
+            type: 'DEBIT',
+            action: 'Sale',
+            quantity: data.riceQty || 0,
+            bags: data.bags || 0,
+            refModel: 'RiceSale',
+            refId: entry._id,
+            remarks: `Sale to ${data.partyName || 'Party'}`,
+        })
+    } catch (err) {
+        logger.error('Failed to record stock for rice sale', {
+            id: entry._id,
+            error: err.message,
+        })
+    }
+
+    logger.info('Rice sale entry created', { id: entry._id, millId })
     return entry
 }
 
 export const getRiceSaleById = async (millId, id) => {
     const entry = await RiceSale.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Rice sale entry not found')
     return entry
 }
@@ -43,27 +64,22 @@ export const getRiceSaleList = async (millId, options = {}) => {
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
             { brokerName: { $regex: search, $options: 'i' } },
+            { riceType: { $regex: search, $options: 'i' } },
         ]
 
     const aggregate = RiceSale.aggregate([
         { $match: matchStage },
-        { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
         {
             $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
+                from: 'privatericeoutwards',
+                localField: 'riceSalesDealNumber',
+                foreignField: 'riceSaleDealNumber',
+                as: 'outwardData',
             },
         },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
+        { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
     ])
+
     const result = await RiceSale.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
         limit: parseInt(limit, 10),
@@ -96,7 +112,7 @@ export const getRiceSaleList = async (millId, options = {}) => {
 
 export const getRiceSaleSummary = async (millId, options = {}) => {
     const { startDate, endDate } = options
-    const match = { millId }
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     if (startDate || endDate) {
         match.date = {}
         if (startDate) match.date.$gte = new Date(startDate)
@@ -108,45 +124,62 @@ export const getRiceSaleSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalQuantity: { $sum: '$quantity' },
-                totalAmount: { $sum: '$amount' },
+                totalRiceQty: { $sum: '$riceQty' },
             },
         },
         {
             $project: {
                 _id: 0,
                 totalEntries: 1,
-                totalQuantity: 1,
-                totalAmount: { $round: ['$totalAmount', 2] },
+                totalRiceQty: { $round: ['$totalRiceQty', 2] },
             },
         },
     ])
-    return summary || { totalEntries: 0, totalQuantity: 0, totalAmount: 0 }
+    return summary || { totalEntries: 0, totalRiceQty: 0 }
 }
 
-export const updateRiceSaleEntry = async (millId, id, data, userId) => {
-    const updateData = { ...data, updatedBy: userId }
+export const updateRiceSaleEntry = async (millId, id, data) => {
+    const updateData = { ...data }
     if (data.date) updateData.date = new Date(data.date)
     const entry = await RiceSale.findOneAndUpdate(
         { _id: id, millId },
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Rice sale entry not found')
-    logger.info('Rice sale entry updated', { id, millId, userId })
+
+    // Update stock transaction
+    // Removed conditional check
+    await StockTransactionService.updateTransaction('RiceSale', id, {
+        date: entry.date,
+        commodity: 'Rice',
+        variety: entry.riceType,
+        quantity: entry.riceQty || 0,
+        bags: entry.bags || 0,
+        remarks: `Sale to ${entry.partyName || 'Party'}`,
+    })
+
+    logger.info('Rice sale entry updated', { id, millId })
     return entry
 }
 
 export const deleteRiceSaleEntry = async (millId, id) => {
     const entry = await RiceSale.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Rice sale entry not found')
+
+    // Delete associated stock transactions
+    await StockTransactionService.deleteTransactionsByRef('RiceSale', id)
+
     logger.info('Rice sale entry deleted', { id, millId })
 }
 
 export const bulkDeleteRiceSaleEntries = async (millId, ids) => {
     const result = await RiceSale.deleteMany({ _id: { $in: ids }, millId })
+    
+    for (const id of ids) {
+        await StockTransactionService.deleteTransactionsByRef('RiceSale', id)
+    }
+
     logger.info('Rice sale entries bulk deleted', {
         millId,
         count: result.deletedCount,

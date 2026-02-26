@@ -20,30 +20,91 @@ const FinancialPaymentSchema = new Schema(
         },
         partyName: {
             type: String,
-            required: true,
             trim: true,
         },
-        paymentMode: {
-            type: String,
-            enum: ['Cash', 'Bank', 'Cheque', 'UPI'],
-            trim: true,
-        },
-        bank: {
+        paymentType: {
             type: String,
             trim: true,
         },
-        amount: {
+        brokerName: {
+            type: String,
+            trim: true,
+        },
+        purchaseDealType: {
+            type: String,
+            trim: true,
+        },
+        purchaseDealNumber: {
+            type: String,
+            trim: true,
+        },
+        transporterName: {
+            type: String,
+            trim: true,
+        },
+        truckNumber: {
+            type: String,
+            trim: true,
+        },
+        diesel: {
             type: Number,
-            required: true,
-            min: 0,
+            default: 0,
         },
-        narration: {
+        bhatta: {
+            type: Number,
+            default: 0,
+        },
+        repairOrMaintenance: {
+            type: Number,
+            default: 0,
+        },
+        labourType: {
             type: String,
             trim: true,
         },
-        accountHead: {
+        labourGroupName: {
             type: String,
             trim: true,
+        },
+        staffName: {
+            type: String,
+            trim: true,
+        },
+        salary: {
+            type: Number,
+            default: 0,
+        },
+        month: {
+            type: String,
+            trim: true,
+        },
+        attendance: {
+            type: Number,
+            default: 0,
+        },
+        allowedLeave: {
+            type: Number,
+            default: 0,
+        },
+        payableSalary: {
+            type: Number,
+            default: 0,
+        },
+        salaryPayment: {
+            type: Number,
+            default: 0,
+        },
+        advancePayment: {
+            type: Number,
+            default: 0,
+        },
+        remarks: {
+            type: String,
+            trim: true,
+        },
+        paymentAmount: {
+            type: Number,
+            default: 0,
         },
         createdBy: {
             type: Schema.Types.ObjectId,
@@ -63,8 +124,6 @@ const FinancialPaymentSchema = new Schema(
 // Compound indexes for common queries
 FinancialPaymentSchema.index({ millId: 1, date: -1 })
 FinancialPaymentSchema.index({ millId: 1, partyName: 1 })
-FinancialPaymentSchema.index({ millId: 1, paymentMode: 1, date: -1 })
-FinancialPaymentSchema.index({ millId: 1, accountHead: 1 })
 
 // Virtual for formatted date
 FinancialPaymentSchema.virtual('formattedDate').get(function () {

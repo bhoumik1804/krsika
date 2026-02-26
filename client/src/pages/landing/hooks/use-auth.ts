@@ -54,7 +54,7 @@ export const useUser = (options: UseUserOptions = {}) => {
         enabled,
         refetchOnWindowFocus,
         retry,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 0, // Always consider data stale to force refetch on refresh/refocus
         gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
     })
 
@@ -62,7 +62,7 @@ export const useUser = (options: UseUserOptions = {}) => {
     useEffect(() => {
         if (query.data) {
             setUser(query.data)
-        } else if (query.isError) {
+        } else if (query.data === null || query.isError) {
             setUser(null)
         }
     }, [query.data, query.isError, setUser])

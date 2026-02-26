@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -24,28 +25,46 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-import { frkPurchaseSchema, type FrkPurchase } from '../data/schema'
+import { useCreateFrkPurchase, useUpdateFrkPurchase } from '../data/hooks'
+import { frkPurchaseSchema, type FrkPurchaseData } from '../data/schema'
+import { useFrk } from './frk-provider'
 
 type FrkActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: FrkPurchase | null
 }
 
-export function FrkActionDialog({
-    open,
-    onOpenChange,
-    currentRow,
-}: FrkActionDialogProps) {
+export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
+    const { currentRow, millId } = useFrk()
+    const { mutateAsync: createFrkPurchase, isPending: isCreating } =
+        useCreateFrkPurchase(millId)
+    const { mutateAsync: updateFrkPurchase, isPending: isUpdating } =
+        useUpdateFrkPurchase(millId)
+
+    const party = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties.map((p: { partyName: string }) => p.partyName),
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName
+    )
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<FrkPurchase>({
+    const form = useForm<FrkPurchaseData>({
         resolver: zodResolver(frkPurchaseSchema),
         defaultValues: {
             date: format(new Date(), 'yyyy-MM-dd'),
@@ -53,31 +72,38 @@ export function FrkActionDialog({
             frkQty: undefined,
             frkRate: undefined,
             gst: undefined,
-        } as FrkPurchase,
+        } as FrkPurchaseData,
     })
 
     useEffect(() => {
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                partyName: '',
+                frkQty: undefined,
+                frkRate: undefined,
+                gst: undefined,
+            } as FrkPurchaseData)
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Purchase updated successfully'
-                    : 'Purchase added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update purchase'
-                : 'Failed to add purchase',
-        })
+    const onSubmit = async (data: FrkPurchaseData) => {
+        try {
+            if (isEditing) {
+                await updateFrkPurchase({
+                    purchaseId: currentRow?._id || '',
+                    data,
+                })
+            } else {
+                await createFrkPurchase(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            console.error('Error submitting form:', error)
+        }
     }
 
     return (
@@ -85,11 +111,13 @@ export function FrkActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} FRK Purchase
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('purchaseReports.frk.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the purchase details
-                        below
+                        {isEditing
+                            ? t('purchaseReports.frk.form.description.update')
+                            : t('purchaseReports.frk.form.description.add')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -104,7 +132,11 @@ export function FrkActionDialog({
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Date</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'purchaseReports.frk.form.fields.date'
+                                                )}
+                                            </FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
                                                 onOpenChange={
@@ -167,11 +199,20 @@ export function FrkActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'purchaseReports.frk.form.fields.partyName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -185,7 +226,9 @@ export function FrkActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Quantity (Qtl)
+                                                {t(
+                                                    'purchaseReports.frk.form.fields.frkQty'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -218,7 +261,9 @@ export function FrkActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Rate (per Qtl)
+                                                {t(
+                                                    'purchaseReports.frk.form.fields.frkRate'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -251,7 +296,11 @@ export function FrkActionDialog({
                                     name='gst'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>GST (%)</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'purchaseReports.frk.form.fields.gst'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -284,11 +333,16 @@ export function FrkActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
-                            >
-                                Cancel
-                            </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Purchase
+                                disabled={isLoading}
+                            >{t('common.cancel')}</Button>
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? t('common.updating')
+                                        : t('common.adding')
+                                    : isEditing
+                                      ? t('common.update')
+                                      : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

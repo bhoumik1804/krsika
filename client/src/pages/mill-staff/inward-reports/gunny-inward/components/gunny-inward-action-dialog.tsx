@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useGunnyPurchaseList } from '@/pages/mill-admin/purchase-reports/gunny/data/hooks'
+import type { GunnyPurchaseResponse } from '@/pages/mill-admin/purchase-reports/gunny/data/types'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 import { gunnyDeliveryTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -25,68 +27,154 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import { useCreateGunnyInward, useUpdateGunnyInward } from '../data/hooks'
 import { gunnyInwardSchema, type GunnyInward } from '../data/schema'
+import { gunnyInward } from './gunny-inward-provider'
+
+const useGunnyPurchaseListCompat = (params: any) => {
+    return useGunnyPurchaseList(params)
+}
 
 type GunnyInwardActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: GunnyInward | null
 }
 
 export function GunnyInwardActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: GunnyInwardActionDialogProps) {
-    const isEditing = !!currentRow
+    const { millId, currentRow } = gunnyInward()
+    const { t } = useTranslation('mill-staff')
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<GunnyInward>({
-        resolver: zodResolver(gunnyInwardSchema),
-        defaultValues: {
+    const { mutate: createInward, isPending: isCreating } =
+        useCreateGunnyInward(millId)
+    const { mutate: updateInward, isPending: isUpdating } =
+        useUpdateGunnyInward(millId)
+
+    const purchaseDataRef = useRef<GunnyPurchaseResponse[]>([])
+
+    const gunnyDeal = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useGunnyPurchaseListCompat,
+            extractItems: (data: any) => {
+                purchaseDataRef.current = data.purchases || []
+                return data.purchases
+                    .map(
+                        (p: GunnyPurchaseResponse) => p.gunnyPurchaseDealNumber
+                    )
+                    .filter(Boolean) as string[]
+            },
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
+        },
+        currentRow?.gunnyPurchaseDealNumber || undefined
+    )
+
+    const handleDealSelect = (dealId: string) => {
+        form.setValue('gunnyPurchaseDealNumber', dealId)
+        const purchase = purchaseDataRef.current.find(
+            (p) => p.gunnyPurchaseDealNumber === dealId
+        )
+        if (purchase) {
+            if (purchase.partyName)
+                form.setValue('partyName', purchase.partyName)
+            if (purchase.deliveryType)
+                form.setValue('delivery', purchase.deliveryType)
+
+            // Map quantities correctly, checking for undefined/null to allow 0
+            if (
+                purchase.newGunnyQty !== undefined &&
+                purchase.newGunnyQty !== null
+            )
+                form.setValue('gunnyNew', purchase.newGunnyQty)
+            if (
+                purchase.oldGunnyQty !== undefined &&
+                purchase.oldGunnyQty !== null
+            )
+                form.setValue('gunnyOld', purchase.oldGunnyQty)
+            if (
+                purchase.plasticGunnyQty !== undefined &&
+                purchase.plasticGunnyQty !== null
+            )
+                form.setValue('gunnyPlastic', purchase.plasticGunnyQty)
+        }
+    }
+    const isLoading = isCreating || isUpdating
+    const isEditing = !!currentRow
+
+    const getDefaultValues = useMemo(() => {
+        if (currentRow) {
+            return {
+                ...currentRow,
+            } as any
+        }
+        return {
             date: format(new Date(), 'yyyy-MM-dd'),
-            purchaseDealId: '',
+            gunnyPurchaseDealNumber: '',
             partyName: '',
             delivery: '',
             samitiSangrahan: '',
             gunnyNew: undefined,
             gunnyOld: undefined,
             gunnyPlastic: undefined,
-        },
+        } as any
+    }, [currentRow])
+
+    const form = useForm<GunnyInward>({
+        resolver: zodResolver(gunnyInwardSchema),
+        defaultValues: getDefaultValues,
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
+        if (open) {
+            form.reset(getDefaultValues)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentRow, open, getDefaultValues])
+
+    const onSubmit = (data: GunnyInward) => {
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            gunnyPurchaseDealNumber: data.gunnyPurchaseDealNumber || undefined,
+            delivery: data.delivery || undefined,
+            samitiSangrahan: data.samitiSangrahan || undefined,
+        }
+        console.log('Submitting data:', submissionData)
+
+        if (isEditing && currentRow?._id) {
+            updateInward(
+                {
+                    id: currentRow._id,
+                    data: {
+                        ...submissionData,
+                        _id: currentRow._id,
+                    },
+                },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
         } else {
-            form.reset({
-                date: format(new Date(), 'yyyy-MM-dd'),
-                purchaseDealId: '',
-                partyName: '',
-                delivery: '',
-                samitiSangrahan: '',
-                gunnyNew: undefined,
-                gunnyOld: undefined,
-                gunnyPlastic: undefined,
+            createInward(submissionData, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
             })
         }
-    }, [currentRow, form])
-
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
     }
 
     return (
@@ -94,10 +182,14 @@ export function GunnyInwardActionDialog({
             <DialogContent className='max-h-[90vh] max-w-2xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing
+                            ? t('common.edit')
+                            : t('inward.gunnyInward.form.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing
+                            ? t('common.updateDetails')
+                            : t('inward.gunnyInward.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -111,7 +203,11 @@ export function GunnyInwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.gunnyInward.form.fields.date'
+                                            )}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -119,18 +215,19 @@ export function GunnyInwardActionDialog({
                                             <PopoverTrigger asChild>
                                                 <FormControl>
                                                     <Button
+                                                        id='date'
                                                         variant='outline'
                                                         className='w-full justify-start text-left font-normal'
                                                     >
                                                         <CalendarIcon className='mr-2 h-4 w-4' />
                                                         {field.value
                                                             ? format(
-                                                                  new Date(
-                                                                      field.value
-                                                                  ),
+                                                                  field.value,
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickDate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -169,14 +266,30 @@ export function GunnyInwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='purchaseDealId'
+                                name='gunnyPurchaseDealNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Purchase Deal ID</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.gunnyInward.form.fields.gunnyPurchaseDealNumber'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter Deal ID'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value || ''}
+                                                onValueChange={handleDealSelect}
+                                                paginatedList={gunnyDeal}
+                                                placeholder={t(
+                                                    'common.searchObject',
+                                                    {
+                                                        object: t(
+                                                            'inward.gunnyInward.form.fields.gunnyPurchaseDealNumber'
+                                                        ),
+                                                    }
+                                                )}
+                                                emptyText={t(
+                                                    'common.noResults'
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -188,11 +301,18 @@ export function GunnyInwardActionDialog({
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Party Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.gunnyInward.form.fields.partyName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter Party Name'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -204,11 +324,19 @@ export function GunnyInwardActionDialog({
                                 name='delivery'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Delivery</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.gunnyInward.form.fields.delivery'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter Delivery'
+                                                id='delivery'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -223,12 +351,18 @@ export function GunnyInwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Samiti Sangrahan
+                                                {t(
+                                                    'inward.gunnyInward.form.fields.samitiSangrahan'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter Samiti Name'
+                                                    id='samitiSangrahan'
+                                                    placeholder={t(
+                                                        'common.enterValue'
+                                                    )}
                                                     {...field}
+                                                    value={field.value || ''}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -242,16 +376,24 @@ export function GunnyInwardActionDialog({
                                 name='gunnyNew'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny New</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.gunnyInward.form.fields.gunnyNew'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='gunnyNew'
                                                 type='number'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -268,16 +410,24 @@ export function GunnyInwardActionDialog({
                                 name='gunnyOld'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny Old</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.gunnyInward.form.fields.gunnyOld'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='gunnyOld'
                                                 type='number'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -294,16 +444,24 @@ export function GunnyInwardActionDialog({
                                 name='gunnyPlastic'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny Plastic</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.gunnyInward.form.fields.gunnyPlastic'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='gunnyPlastic'
                                                 type='number'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -321,11 +479,18 @@ export function GunnyInwardActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? t('common.updating')
+                                        : t('common.adding')
+                                    : isEditing
+                                      ? t('common.update')
+                                      : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

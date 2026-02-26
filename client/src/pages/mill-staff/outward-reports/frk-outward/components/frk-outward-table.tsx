@@ -1,18 +1,16 @@
 import { useEffect, useState } from 'react'
 import {
-    type SortingState,
     type VisibilityState,
     flexRender,
     getCoreRowModel,
     getFacetedRowModel,
     getFacetedUniqueValues,
-    getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { cn } from '@/lib/utils'
-import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
+import type { NavigateFn } from '@/hooks/use-table-url-state'
+import { useTableUrlState } from '@/hooks/use-table-url-state'
 import {
     Table,
     TableBody,
@@ -26,33 +24,35 @@ import { type FrkOutward } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { frkOutwardColumns as columns } from './frk-outward-columns'
 import { FrkOutwardMultiDeleteDialog } from './frk-outward-multi-delete-dialog'
-import { frkOutward } from './frk-outward-provider'
+import { useFrkOutward } from './frk-outward-provider'
 
-type DataTableProps = {
+interface DataTableProps {
     data: FrkOutward[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading?: boolean
-    isError?: boolean
-    totalPages?: number
-    totalItems?: number
+    serverPagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
 export function FrkOutwardTable({
     data,
     search,
     navigate,
-    // isLoading,
-    // isError,
-    // totalItems,
+    serverPagination,
 }: DataTableProps) {
+    const { open, setOpen } = useFrkOutward()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
-    const [sorting, setSorting] = useState<SortingState>([])
-
-    const { open, setOpen } = frkOutward()
 
     const {
         columnFilters,
@@ -66,71 +66,68 @@ export function FrkOutwardTable({
         pagination: { defaultPage: 1, defaultPageSize: 10 },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
+            {
+                columnId: 'partyName',
+                searchKey: 'partyName',
+                type: 'string',
+            },
         ],
     })
 
-    // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
         columns,
         state: {
-            sorting,
             pagination,
             rowSelection,
             columnFilters,
             columnVisibility,
         },
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
-        onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: serverPagination
+            ? undefined
+            : getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
 
+    // Ensure page is within range when pagination changes
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (serverPagination) {
+            ensurePageInRange(serverPagination.totalPages)
+        }
+    }, [serverPagination, ensurePageInRange])
 
     return (
-        <div
-            className={cn(
-                'max-sm:has-[div[role="toolbar"]]:mb-16',
-                'flex flex-1 flex-col gap-4'
-            )}
-        >
+        <div className='space-y-4'>
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
+                searchPlaceholder='Search party name...'
                 searchKey='partyName'
             />
+            <DataTableBulkActions table={table} />
             <div className='overflow-hidden rounded-md border'>
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow
-                                key={headerGroup.id}
-                                className='group/row'
-                            >
+                            <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
                                         <TableHead
                                             key={header.id}
                                             colSpan={header.colSpan}
-                                            className={cn(
-                                                'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
+                                            className={
                                                 header.column.columnDef.meta
-                                                    ?.className,
-                                                header.column.columnDef.meta
-                                                    ?.thClassName
-                                            )}
+                                                    ?.className ?? ''
+                                            }
                                         >
                                             {header.isPlaceholder
                                                 ? null
@@ -153,18 +150,14 @@ export function FrkOutwardTable({
                                     data-state={
                                         row.getIsSelected() && 'selected'
                                     }
-                                    className='group/row'
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell
                                             key={cell.id}
-                                            className={cn(
-                                                'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
+                                            className={
                                                 cell.column.columnDef.meta
-                                                    ?.className,
-                                                cell.column.columnDef.meta
-                                                    ?.tdClassName
-                                            )}
+                                                    ?.className ?? ''
+                                            }
                                         >
                                             {flexRender(
                                                 cell.column.columnDef.cell,
@@ -187,14 +180,13 @@ export function FrkOutwardTable({
                     </TableBody>
                 </Table>
             </div>
-            <DataTablePagination table={table} className='mt-auto' />
-            <DataTableBulkActions table={table} />
+            <DataTablePagination table={table} />
             <FrkOutwardMultiDeleteDialog
+                table={table}
                 open={open === 'delete-multi'}
                 onOpenChange={(isOpen) =>
                     setOpen(isOpen ? 'delete-multi' : null)
                 }
-                table={table}
             />
         </div>
     )

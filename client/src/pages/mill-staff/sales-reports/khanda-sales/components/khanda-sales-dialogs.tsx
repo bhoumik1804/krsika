@@ -1,9 +1,9 @@
 import { KhandaSalesActionDialog } from './khanda-sales-action-dialog'
 import { KhandaSalesDeleteDialog } from './khanda-sales-delete-dialog'
-import { khandaSales } from './khanda-sales-provider'
+import { useKhandaSales } from './khanda-sales-provider'
 
 export function KhandaSalesDialogs() {
-    const { open, setOpen, currentRow } = khandaSales()
+    const { open, setOpen, currentRow } = useKhandaSales()
 
     return (
         <>

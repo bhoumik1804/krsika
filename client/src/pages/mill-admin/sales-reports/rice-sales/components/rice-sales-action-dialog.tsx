@@ -2,17 +2,19 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useParams } from 'react-router'
 import {
     riceTypeOptions,
     deliveryTypeOptions,
     fciOrNANOptions,
     frkTypeOptions,
     gunnyTypeOptions,
-    saleLotOrOtherOptions
+    saleLotOrOtherOptions,
 } from '@/constants/sale-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -32,6 +34,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -44,6 +47,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { useCreateRiceSales, useUpdateRiceSales } from '../data/hooks'
 import { riceSalesSchema, type RiceSales } from '../data/schema'
 
 type RiceSalesActionDialogProps = {
@@ -57,7 +61,40 @@ export function RiceSalesActionDialog({
     onOpenChange,
     currentRow,
 }: RiceSalesActionDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
+    const party = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName
+    )
+
+    const broker = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
+        currentRow?.brokerName
+    )
+    const { mutateAsync: createRiceSales, isPending: isCreating } =
+        useCreateRiceSales(millId || '')
+    const { mutateAsync: updateRiceSales, isPending: isUpdating } =
+        useUpdateRiceSales(millId || '')
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
     const form = useForm<RiceSales>({
@@ -80,7 +117,7 @@ export function RiceSalesActionDialog({
             plasticGunnyRate: undefined,
             frkType: '',
             frkRatePerQuintal: undefined,
-            lotNumber: ''
+            lotNumber: '',
         } as RiceSales,
     })
 
@@ -90,37 +127,64 @@ export function RiceSalesActionDialog({
     const watchFrkType = form.watch('frkType')
 
     // LOT Sale is the first option ("LOT बिक्री")
-    const isLotSale =
-        watchLotOrOther === saleLotOrOtherOptions[0]?.value
+    const isLotSale = watchLotOrOther === saleLotOrOtherOptions[0]?.value
 
     // Show gunny rates if "साहित (भाव में)" is selected (Index 1)
     const isGunnySahit = watchGunnyType === gunnyTypeOptions[1]?.value
-    
+
     // Show FRK Rate if "FRK साहित" is selected (Index 0)
     const isFrkSahit = watchFrkType === frkTypeOptions[0]?.value
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    partyName: '',
+                    brokerName: '',
+                    deliveryType: '',
+                    lotOrOther: '',
+                    fciOrNAN: '',
+                    riceType: '',
+                    riceQty: undefined,
+                    riceRatePerQuintal: undefined,
+                    discountPercent: undefined,
+                    brokeragePerQuintal: undefined,
+                    gunnyType: '',
+                    newGunnyRate: undefined,
+                    oldGunnyRate: undefined,
+                    plasticGunnyRate: undefined,
+                    frkType: '',
+                    frkRatePerQuintal: undefined,
+                    lotNumber: '',
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating sale...' : 'Adding sale...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Rice sale updated successfully'
-                    : 'Rice sale added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update sale'
-                : 'Failed to add sale',
-        })
+    const onSubmit = async (data: RiceSales) => {
+        try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+                brokerName: data.brokerName || undefined,
+            }
+
+            if (isEditing && currentRow?._id) {
+                await updateRiceSales({
+                    _id: currentRow._id,
+                    ...submissionData,
+                })
+            } else {
+                await createRiceSales(submissionData)
+            }
+            onOpenChange(false)
+        } catch (error) {
+            // Error handling is managed by mutation hooks (onSuccess/onError)
+            console.error('Form submission error:', error)
+        }
     }
 
     return (
@@ -212,9 +276,14 @@ export function RiceSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -228,9 +297,14 @@ export function RiceSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter broker name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={broker}
+                                                    placeholder='Search broker...'
+                                                    emptyText='No brokers found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -434,16 +508,20 @@ export function RiceSalesActionDialog({
                                                                 step='0.01'
                                                                 placeholder='0.00'
                                                                 {...field}
-                                                                onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                                onChange={(
+                                                                    e
+                                                                ) => {
+                                                                    const val =
+                                                                        e.target
+                                                                            .valueAsNumber
+                                                                    field.onChange(
+                                                                        isNaN(
+                                                                            val
+                                                                        )
+                                                                            ? ''
+                                                                            : val
+                                                                    )
+                                                                }}
                                                                 onWheel={(e) =>
                                                                     e.currentTarget.blur()
                                                                 }
@@ -464,9 +542,7 @@ export function RiceSalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Rice Type</FormLabel>
                                             <Select
-                                                onValueChange={
-                                                    field.onChange
-                                                }
+                                                onValueChange={field.onChange}
                                                 defaultValue={field.value}
                                             >
                                                 <FormControl>
@@ -485,9 +561,7 @@ export function RiceSalesActionDialog({
                                                                     option.value
                                                                 }
                                                             >
-                                                                {
-                                                                    option.label
-                                                                }
+                                                                {option.label}
                                                             </SelectItem>
                                                         )
                                                     )}
@@ -514,15 +588,15 @@ export function RiceSalesActionDialog({
                                                     placeholder='0.00'
                                                     {...field}
                                                     onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -547,15 +621,15 @@ export function RiceSalesActionDialog({
                                                     placeholder='0.00'
                                                     {...field}
                                                     onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -578,15 +652,15 @@ export function RiceSalesActionDialog({
                                                     placeholder='0.00'
                                                     {...field}
                                                     onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -601,7 +675,9 @@ export function RiceSalesActionDialog({
                                     name='brokeragePerQuintal'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Brokerage (per Qtl)</FormLabel>
+                                            <FormLabel>
+                                                Brokerage (per Qtl)
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -609,15 +685,15 @@ export function RiceSalesActionDialog({
                                                     placeholder='0.00'
                                                     {...field}
                                                     onChange={(e) => {
-                                                                const val =
-                                                                    e.target
-                                                                        .valueAsNumber
-                                                                field.onChange(
-                                                                    isNaN(val)
-                                                                        ? ''
-                                                                        : val
-                                                                )
-                                                            }}
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
+                                                        )
+                                                    }}
                                                     onWheel={(e) =>
                                                         e.currentTarget.blur()
                                                     }
@@ -776,11 +852,18 @@ export function RiceSalesActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Sale
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}
                             </Button>
                         </DialogFooter>
                     </form>

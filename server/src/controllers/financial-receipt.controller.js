@@ -51,7 +51,7 @@ export const getFinancialReceiptListHandler = async (req, res, next) => {
         res.status(200).json(
             new ApiResponse(
                 200,
-                { receipts: result.data, pagination: result.pagination },
+                { entries: result.data, pagination: result.pagination },
                 'Financial receipt list retrieved'
             )
         )

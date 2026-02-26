@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -22,13 +24,14 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-import { frkPurchaseSchema, type FrkPurchaseData } from '../data/schema'
 import { useCreateFrkPurchase, useUpdateFrkPurchase } from '../data/hooks'
+import { frkPurchaseSchema, type FrkPurchaseData } from '../data/schema'
 import { useFrk } from './frk-provider'
 
 type FrkActionDialogProps = {
@@ -36,15 +39,24 @@ type FrkActionDialogProps = {
     onOpenChange: (open: boolean) => void
 }
 
-export function FrkActionDialog({
-    open,
-    onOpenChange,
-}: FrkActionDialogProps) {
+export function FrkActionDialog({ open, onOpenChange }: FrkActionDialogProps) {
     const { currentRow, millId } = useFrk()
     const { mutateAsync: createFrkPurchase, isPending: isCreating } =
         useCreateFrkPurchase(millId)
     const { mutateAsync: updateFrkPurchase, isPending: isUpdating } =
         useUpdateFrkPurchase(millId)
+
+    const party = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties.map((p: { partyName: string }) => p.partyName),
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName
+    )
 
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
@@ -181,9 +193,14 @@ export function FrkActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -229,7 +246,9 @@ export function FrkActionDialog({
                                     name='frkRate'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>FRK Rate (per Qtl)</FormLabel>
+                                            <FormLabel>
+                                                FRK Rate (per Qtl)
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'

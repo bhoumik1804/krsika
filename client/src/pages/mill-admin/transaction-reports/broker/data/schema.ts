@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 // Schema for BrokerTransaction records
 export const brokerTransactionSchema = z.object({
+    _id: z.string(),
     brokerName: z.string(),
     partyName: z.string(),
     date: z.string(),

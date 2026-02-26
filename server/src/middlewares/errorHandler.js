@@ -9,7 +9,7 @@ export const errorHandler = (err, req, res, next) => {
     // Determine if this is an ApiError or a generic error
     let statusCode = err.statusCode || 500
     let message = err.message || 'Internal Server Error'
-    let errors = err.errors || []
+    let errors = err.errors || err.details || []
 
     // Handle Mongoose validation errors
     if (err.name === 'ValidationError') {

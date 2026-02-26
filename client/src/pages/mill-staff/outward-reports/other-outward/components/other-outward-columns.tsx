@@ -1,4 +1,6 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { t } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -39,10 +41,17 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.date', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -53,23 +62,29 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'itemSaleDealNumber',
+        accessorKey: 'otherSaleDealNumber',
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Item Sale Deal Number'
+                title={t(
+                    'outward.otherOutward.form.fields.otherSaleDealNumber',
+                    {
+                        ns: 'mill-staff',
+                    }
+                )}
             />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm'>
-                {row.getValue('itemSaleDealNumber')}
-            </div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('otherSaleDealNumber')}</div>,
     },
     {
         accessorKey: 'itemName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Item Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.itemName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>{row.getValue('itemName')}</LongText>
@@ -79,7 +94,12 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
     {
         accessorKey: 'quantity',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Quantity' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.quantity', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('quantity')}</div>
@@ -88,7 +108,12 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
     {
         accessorKey: 'quantityType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Qty Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.quantityType', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-center'>{row.getValue('quantityType')}</div>
@@ -97,7 +122,12 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.partyName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -109,7 +139,12 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
     {
         accessorKey: 'brokerName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Broker Name' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.brokerName', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -121,7 +156,12 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
     {
         accessorKey: 'gunnyNew',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (New)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.gunnyNew', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyNew')}</div>
@@ -130,7 +170,12 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
     {
         accessorKey: 'gunnyOld',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (Old)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.gunnyOld', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyOld')}</div>
@@ -139,54 +184,82 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
     {
         accessorKey: 'gunnyPlastic',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (Plastic)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.gunnyPlastic', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyPlastic')}</div>
         ),
     },
     {
-        accessorKey: 'juteWeight',
+        accessorKey: 'juteGunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Jute Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.juteWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.getValue('juteWeight')}</div>
+            <div className='text-right'>{row.getValue('juteGunnyWeight')}</div>
         ),
     },
     {
-        accessorKey: 'plasticWeight',
+        accessorKey: 'plasticGunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Plastic Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.plasticWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.getValue('plasticWeight')}</div>
+            <div className='text-right'>
+                {row.getValue('plasticGunnyWeight')}
+            </div>
         ),
     },
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.truckNo', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
-            <div className='font-mono text-sm text-nowrap'>
-                {row.getValue('truckNo')}
-            </div>
+            <div className='text-nowrap'>{row.getValue('truckNo')}</div>
         ),
     },
     {
         accessorKey: 'truckRst',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST No' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.truckRst', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm'>{row.getValue('truckRst')}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('truckRst')}</div>,
     },
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.truckWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('truckWeight')}</div>
@@ -195,7 +268,12 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.gunnyWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyWeight')}</div>
@@ -204,12 +282,15 @@ export const otherOutwardColumns: ColumnDef<OtherOutward>[] = [
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Net Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.otherOutward.form.fields.netWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
-            <div className='text-right font-bold'>
-                {row.getValue('netWeight')}
-            </div>
+            <div className='text-right'>{row.getValue('netWeight')}</div>
         ),
     },
     {

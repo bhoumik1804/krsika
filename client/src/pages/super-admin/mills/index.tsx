@@ -4,7 +4,6 @@ import { ConfigDrawer } from '@/components/config-drawer'
 import { superAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
-import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -102,9 +101,7 @@ export function Mills() {
                     </div>
                     <MillsPrimaryButtons />
                 </div>
-                {isLoading ? (
-                    <LoadingSpinner className='h-full w-full' />
-                ) : isError ? (
+                {isError ? (
                     <div className='py-10 text-center text-destructive'>
                         Failed to load mills data
                     </div>
@@ -114,6 +111,7 @@ export function Mills() {
                         search={search}
                         navigate={navigate}
                         pagination={millsResponse?.pagination}
+                        isLoading={isLoading}
                     />
                 )}
             </Main>

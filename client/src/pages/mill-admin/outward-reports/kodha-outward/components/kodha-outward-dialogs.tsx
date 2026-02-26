@@ -3,7 +3,7 @@ import { KodhaOutwardDeleteDialog } from './kodha-outward-delete-dialog'
 import { kodhaOutward } from './kodha-outward-provider'
 
 export function KodhaOutwardDialogs() {
-    const { open, setOpen, currentRow } = kodhaOutward()
+    const { open, setOpen, currentRow, millId } = kodhaOutward()
 
     return (
         <>
@@ -13,6 +13,7 @@ export function KodhaOutwardDialogs() {
                     setOpen(isOpen ? open : null)
                 }
                 currentRow={currentRow}
+                millId={millId}
             />
             <KodhaOutwardDeleteDialog
                 open={open === 'delete'}
@@ -20,6 +21,7 @@ export function KodhaOutwardDialogs() {
                     setOpen(isOpen ? 'delete' : null)
                 }
                 currentRow={currentRow}
+                millId={millId}
             />
         </>
     )

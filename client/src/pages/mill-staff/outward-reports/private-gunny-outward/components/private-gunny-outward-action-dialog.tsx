@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react'
+import { useRef } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useGunnySalesList } from '@/pages/mill-admin/sales-reports/gunny-sales/data/hooks'
+import { GunnySalesResponse } from '@/pages/mill-admin/sales-reports/gunny-sales/data/types'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -24,11 +28,16 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import {
+    useCreatePrivateGunnyOutward,
+    useUpdatePrivateGunnyOutward,
+} from '../data/hooks'
 import {
     PrivateGunnyOutwardSchema,
     type PrivateGunnyOutward,
@@ -45,14 +54,59 @@ export function PrivateGunnyOutwardActionDialog({
     onOpenChange,
     currentRow,
 }: PrivateGunnyOutwardActionDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
+    const gunnySaleDataRef = useRef<GunnySalesResponse[]>([])
+
+    const useGunnySalesListCompat = (params: any) => {
+        return useGunnySalesList(
+            millId || '',
+            { ...params, pageSize: params.limit },
+            { enabled: open }
+        )
+    }
+
+    const gunnySaleDeal = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: useGunnySalesListCompat,
+            extractItems: (data: any) => {
+                gunnySaleDataRef.current = data.sales || []
+                return data.sales
+                    .map((p: GunnySalesResponse) => p.gunnySalesDealNumber)
+                    .filter(Boolean) as string[]
+            },
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
+        },
+        currentRow?.gunnySaleDealNumber || undefined
+    )
+
+    const handleDealSelect = (dealId: string) => {
+        form.setValue('gunnySaleDealNumber', dealId)
+        const sale = gunnySaleDataRef.current.find(
+            (p) => p.gunnySalesDealNumber === dealId
+        )
+        if (sale) {
+            if (sale.partyName) form.setValue('partyName', sale.partyName)
+            if (sale.newGunnyQty) form.setValue('newGunnyQty', sale.newGunnyQty)
+            if (sale.oldGunnyQty) form.setValue('oldGunnyQty', sale.oldGunnyQty)
+            if (sale.plasticGunnyQty)
+                form.setValue('plasticGunnyQty', sale.plasticGunnyQty)
+        }
+    }
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    const createMutation = useCreatePrivateGunnyOutward(millId || '')
+    const updateMutation = useUpdatePrivateGunnyOutward(millId || '')
 
     const form = useForm<PrivateGunnyOutward>({
         resolver: zodResolver(PrivateGunnyOutwardSchema),
         defaultValues: {
+            _id: '',
             date: '',
-            gunnyPurchaseNumber: '',
+            gunnySaleDealNumber: '',
             partyName: '',
             newGunnyQty: undefined,
             oldGunnyQty: undefined,
@@ -62,31 +116,47 @@ export function PrivateGunnyOutwardActionDialog({
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset({
-                date: '',
-                gunnyPurchaseNumber: '',
-                partyName: '',
-                newGunnyQty: undefined,
-                oldGunnyQty: undefined,
-                plasticGunnyQty: undefined,
-                truckNo: '',
-            })
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    _id: '',
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    gunnySaleDealNumber: '',
+                    partyName: '',
+                    newGunnyQty: undefined,
+                    oldGunnyQty: undefined,
+                    plasticGunnyQty: undefined,
+                    truckNo: '',
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = async (data: PrivateGunnyOutward) => {
+        try {
+            const submissionData = {
+                ...data,
+                partyName: data.partyName || undefined,
+            }
+
+            if (isEditing && currentRow?._id) {
+                // Exclude _id from update payload (sent as separate id param)
+                const { _id, ...updatePayload } = submissionData
+                await updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    payload: updatePayload,
+                })
+            } else {
+                // Exclude _id when creating new entry
+                const { _id, ...createPayload } = submissionData
+                await createMutation.mutateAsync(createPayload)
+            }
+            onOpenChange(false)
+        } catch (error) {
+            // Error handling is done in the mutation hooks
+        }
     }
 
     return (
@@ -94,10 +164,16 @@ export function PrivateGunnyOutwardActionDialog({
             <DialogContent className='max-w-xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Private Gunny Outward
+                        {isEditing
+                            ? t('outward.privateGunnyOutward.form.title', {
+                                  context: 'edit',
+                              })
+                            : t('outward.privateGunnyOutward.form.title', {
+                                  context: 'add',
+                              })}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {t('outward.privateGunnyOutward.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -112,7 +188,11 @@ export function PrivateGunnyOutwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privateGunnyOutward.form.fields.date'
+                                            )}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -131,7 +211,7 @@ export function PrivateGunnyOutwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : 'Select Date'}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -169,17 +249,26 @@ export function PrivateGunnyOutwardActionDialog({
                                 )}
                             />
 
-                            {/* Buy Auto No */}
+                            {/* Gunny Sale Deal Number */}
                             <FormField
                                 control={form.control}
-                                name='gunnyPurchaseNumber'
+                                name='gunnySaleDealNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Buy Auto Number</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privateGunnyOutward.form.fields.gunnySaleDealNumber'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='GBA-1234'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value || ''}
+                                                onValueChange={handleDealSelect}
+                                                paginatedList={gunnySaleDeal}
+                                                placeholder='Select gunny sale deal'
+                                                emptyText={t(
+                                                    'common.noResults'
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -187,17 +276,21 @@ export function PrivateGunnyOutwardActionDialog({
                                 )}
                             />
 
-                            {/* Party Name */}
                             <FormField
                                 control={form.control}
                                 name='partyName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Party Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privateGunnyOutward.form.fields.partyName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder='Enter party name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -211,9 +304,14 @@ export function PrivateGunnyOutwardActionDialog({
                                 name='newGunnyQty'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>New Gunny Qty</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privateGunnyOutward.form.fields.newGunnyQty'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
+                                                placeholder='Enter quantity'
                                                 type='number'
                                                 {...field}
                                                 onChange={(e) =>
@@ -237,9 +335,14 @@ export function PrivateGunnyOutwardActionDialog({
                                 name='oldGunnyQty'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Old Gunny Qty</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privateGunnyOutward.form.fields.oldGunnyQty'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
+                                                placeholder='Enter quantity'
                                                 type='number'
                                                 {...field}
                                                 onChange={(e) =>
@@ -263,9 +366,14 @@ export function PrivateGunnyOutwardActionDialog({
                                 name='plasticGunnyQty'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Plastic Gunny Qty</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privateGunnyOutward.form.fields.plasticGunnyQty'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
+                                                placeholder='Enter quantity'
                                                 type='number'
                                                 {...field}
                                                 onChange={(e) =>
@@ -288,11 +396,16 @@ export function PrivateGunnyOutwardActionDialog({
                                 name='truckNo'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck No.</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'outward.privateGunnyOutward.form.fields.truckNo'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='XX-00-XX-0000'
+                                                placeholder='Enter truck number'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -306,11 +419,28 @@ export function PrivateGunnyOutwardActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={
+                                    createMutation.isPending ||
+                                    updateMutation.isPending
+                                }
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                            <Button
+                                type='submit'
+                                disabled={
+                                    createMutation.isPending ||
+                                    updateMutation.isPending
+                                }
+                            >
+                                {createMutation.isPending ||
+                                updateMutation.isPending
+                                    ? t('common.saving')
+                                    : isEditing
+                                      ? t('common.update')
+                                      : t(
+                                            'outward.privateGunnyOutward.form.primaryButton'
+                                        )}
                             </Button>
                         </DialogFooter>
                     </form>

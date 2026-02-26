@@ -7,7 +7,7 @@ import {
     BarChart3,
     Settings,
     Palette,
-    HelpCircle,
+    // HelpCircle,
     FileBarChart,
     ArrowLeftRight,
     ArrowLeftToLine,
@@ -18,8 +18,8 @@ import { type SidebarData } from '../types'
 
 export const getMillAdminSidebarData = (millId: string): SidebarData => ({
     user: {
-        name: 'Mill Admin',
-        email: 'admin@yourmill.com',
+        name: 'User',
+        email: '',
         avatar: '/avatars/mill-admin.jpg',
         role: 'mill-admin',
     },
@@ -198,10 +198,10 @@ export const getMillAdminSidebarData = (millId: string): SidebarData => ({
                     title: 'Sales Reports',
                     icon: Receipt,
                     items: [
-                        {
-                            title: 'DO Sales Report',
-                            url: `/mill/${millId}/sales/do/report`,
-                        },
+                        // {
+                        //     title: 'DO Sales Report',
+                        //     url: `/mill/${millId}/sales/do/report`,
+                        // },
                         {
                             title: 'Paddy Sales Report (from Mill)',
                             url: `/mill/${millId}/sales/paddy/report`,
@@ -424,11 +424,11 @@ export const getMillAdminSidebarData = (millId: string): SidebarData => ({
                         },
                     ],
                 },
-                {
-                    title: 'Help Center',
-                    url: `/mill/${millId}/help-center`,
-                    icon: HelpCircle,
-                },
+                // {
+                //     title: 'Help Center',
+                //     url: `/mill/${millId}/help-center`,
+                //     icon: HelpCircle,
+                // },
             ],
         },
     ],

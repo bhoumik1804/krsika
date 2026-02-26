@@ -1,14 +1,21 @@
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useRice } from './rice-provider'
 
 export function RicePrimaryButtons() {
-    const { setOpen } = useRice()
+    const { t } = useTranslation('mill-staff')
+    const { setOpen, setCurrentRow } = useRice()
 
     return (
-        <Button onClick={() => setOpen('add')}>
+        <Button
+            onClick={() => {
+                setCurrentRow(null)
+                setOpen('add')
+            }}
+        >
             <Plus className='mr-2 size-4' />
-            Add Rice Purchase
+            {t('purchaseReports.rice.form.primaryButton')}
         </Button>
     )
 }

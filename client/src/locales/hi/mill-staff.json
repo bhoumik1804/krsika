@@ -1,0 +1,1740 @@
+{
+    "common": {
+        "add": "जोड़ें",
+        "adding": "जोड़ा जा रहा है...",
+        "update": "अपडेट करें",
+        "updating": "अपडेट किया जा रहा है...",
+        "edit": "संपादित करें",
+        "cancel": "रद्द करें",
+        "enter": "दर्ज करें",
+        "enterValue": "Enter value",
+        "search": "Search...",
+        "searchObject": "Search...",
+        "manualEntry": "मैनुअल प्रविष्टि",
+        "uploadFile": "फ़ाइल अपलोड करें",
+        "uploading": "अपलोड हो रहा है",
+        "upload": "अपलोड",
+        "noResults": "कोई परिणाम नहीं मिला",
+        "pickDate": "तारीख चुनें",
+        "selectType": "Select type",
+        "updateDetails": "दर्ज विवरण अपडेट करें",
+        "errorLoadingData": "डेटा लोड करने में त्रुटि",
+        "cancelled": "रद्द",
+        "completed": "पूरा",
+        "deal": "सौदा",
+        "deals": "सौदे",
+        "delete": "हटाएं",
+        "deleteSelected": "चयनित हटाएं",
+        "deleteSelectedRecords": "चयनित रिकॉर्ड हटाएं",
+        "dispatched": "भेजा गया",
+        "entries": "प्रविष्टियाँ",
+        "entry": "प्रविष्टि",
+        "errorUpdating": "रिकॉर्ड अपडेट करने में त्रुटि",
+        "loadingMore": "और लोड हो रहा है...",
+        "markCompleted": "पूरा मार्क करें",
+        "markDispatched": "भेजा गया मार्क करें",
+        "markSelectedAsCompleted": "चयनित को पूरा मार्क करें",
+        "markSelectedAsDispatched": "चयनित को भेजा गया मार्क करें",
+        "markSelectedAsVerified": "चयनित को सत्यापित मार्क करें",
+        "markVerified": "सत्यापित मार्क करें",
+        "markedAs": "{{count}} {{item}} को {{status}} के रूप में चिह्नित किया गया",
+        "markingAs": "{{status}} के रूप में चिह्नित किया जा रहा है...",
+        "noDealsFound": "कोई सौदा नहीं मिला",
+        "openMenu": "मेनू खोलें",
+        "purchase": "खरीदी",
+        "purchases": "खरीद",
+        "record": "रिकॉर्ड",
+        "records": "रिकॉर्ड्स",
+        "saving": "सहेजा जा रहा है...",
+        "verified": "सत्यापित",
+        "viewDetails": "विवरण देखें",
+        "sortAsc": "आरोही",
+        "sortDesc": "अवरोही",
+        "deleting": "हटा रहे हैं...",
+        "addedSuccessfully": "सफलतापूर्वक जोड़ा गया",
+        "failedToAdd": "जोड़ने में विफल",
+        "failedToUpdate": "अपडेट करने में विफल",
+        "updatedSuccessfully": "सफलतापूर्वक अपडेट किया गया",
+        "select": "चुनें",
+        "uCannotUndo": "यह क्रिया को पूर्ववत नहीं किया जा सकता है",
+        "deleteConfirmation": "क्या आप {{item}} हटाना चाहते हैं?"
+    },
+    "dashboard": {
+        "title": "डैशबोर्ड",
+        "goodMorning": "सुप्रभात",
+        "overview": "यहां आपके मिल संचालन का अवलोकन है",
+        "markAttendance": "उपस्थिति दर्ज करें",
+        "attendanceHistory": "उपस्थिति इतिहास",
+        "attendanceMarkedAs": "उपस्थिति दर्ज की गई",
+        "present": "उपस्थित",
+        "absent": "अनुपस्थित",
+        "halfDay": "अर्ध दिवस",
+        "recentEntriesTitle": "हालिया प्रविष्टियां",
+        "yourLatestEntries": "आपकी नवीनतम लेनदेन प्रविष्टियां"
+    },
+    "recentEntries": {
+        "paddyFromRamesh": "रमेश से धान - {{val}}",
+        "riceToPatelStore": "पटेल स्टोर को चावल - {{val}}",
+        "paddyFromSuresh": "सुरेश से धान - {{val}}",
+        "paddyFromKumar": "कुमार से धान - {{val}}",
+        "riceToKrishnaTraders": "कृष्णा ट्रेडर्स को चावल - {{val}}"
+    },
+    "inputReports": {
+        "sidebarTitle": "प्रविष्टि रिपोर्ट",
+        "party": {
+            "title": "पार्टी रिपोर्ट",
+            "description": "पार्टी रिकॉर्ड दर्ज करें",
+            "form": {
+                "title": "पार्टी जोड़ें",
+                "description": "पार्टी रिकॉर्ड दर्ज करें",
+                "primaryButton": "पार्टी जोड़ें",
+                "fields": {
+                    "partyName": "पार्टी का नाम",
+                    "gstn": "GSTN",
+                    "phone": "फ़ोन न.",
+                    "email": "Email",
+                    "address": "पता"
+                }
+            }
+        },
+        "transporter": {
+            "title": "परिवहनकर्ता रिपोर्ट",
+            "description": "परिवहनकर्ता रिकॉर्ड दर्ज करें",
+            "form": {
+                "title": "परिवहनकर्ता जोड़ें",
+                "description": "परिवहनकर्ता रिकॉर्ड दर्ज करें",
+                "primaryButton": "परिवहनकर्ता जोड़ें",
+                "fields": {
+                    "transporterName": "परिवहनकर्ता का नाम",
+                    "gstn": "GSTN",
+                    "phone": "फ़ोन न.",
+                    "email": "Email",
+                    "address": "पता"
+                }
+            }
+        },
+        "broker": {
+            "title": "ब्रोकर रिपोर्ट",
+            "description": "ब्रोकर रिकॉर्ड दर्ज करें",
+            "form": {
+                "title": "ब्रोकर जोड़ें",
+                "description": "ब्रोकर रिकॉर्ड दर्ज करें",
+                "primaryButton": "ब्रोकर जोड़ें",
+                "fields": {
+                    "brokerName": "ब्रोकर का नाम",
+                    "phone": "फ़ोन न.",
+                    "email": "Email",
+                    "address": "पता"
+                }
+            }
+        },
+        "committee": {
+            "title": "समिति रिपोर्ट",
+            "description": "समिति संग्रह दर्ज करें",
+            "form": {
+                "title": "समिति संग्रहण जोड़ें",
+                "description": "समिति संग्रह दर्ज करें",
+                "primaryButton": "समिति संग्रहण जोड़ें",
+                "fields": {
+                    "committeeType": "चुनें",
+                    "committeeName": "समिति संग्रहण"
+                }
+            }
+        },
+        "vehicle": {
+            "title": "वाहन रिपोर्ट",
+            "description": "वाहन रिकॉर्ड दर्ज करें",
+            "form": {
+                "title": "स्वयं के वाहन जोड़ें",
+                "description": "वाहन रिकॉर्ड दर्ज करें",
+                "primaryButton": "स्वयं के वाहन जोड़ें",
+                "fields": {
+                    "truckNo": "ट्रक नं."
+                }
+            }
+        },
+        "staff": {
+            "title": "स्टाफ रिपोर्ट",
+            "description": "मिल स्टाफ रिकॉर्ड दर्ज करें",
+            "form": {
+                "title": "मिल स्टाफ जोड़ें",
+                "description": "मिल स्टाफ रिकॉर्ड दर्ज करें",
+                "primaryButton": "मिल स्टाफ जोड़ें",
+                "fields": {
+                    "fullName": "नाम",
+                    "post": "पदनाम",
+                    "salary": "वेतन",
+                    "phoneNumber": "फ़ोन न.",
+                    "email": "Email",
+                    "address": "पता"
+                }
+            }
+        },
+        "do": {
+            "title": "DO रिपोर्ट",
+            "description": "DO प्रविष्टियां दर्ज करें",
+            "form": {
+                "title": "DO प्रविष्टि जोड़ें",
+                "description": "DO प्रविष्टियां दर्ज करें",
+                "primaryButton": "DO प्रविष्टि",
+                "fields": {
+                    "date": "दिनांक",
+                    "samitiSangrahan": "समिति संग्रहण",
+                    "doNo": "DO क्रमांक",
+                    "dhanMota": "धान (मोटा)",
+                    "dhanPatla": "धान (पतला)",
+                    "dhanSarna": "धान (सरना)",
+                    "total": "कुल"
+                }
+            }
+        },
+        "labourGroup": {
+            "title": "हमाल/रेजा टोली प्रविष्टि",
+            "description": "हमाल/रेजा टोली प्रविष्टियां दर्ज करें",
+            "form": {
+                "title": "हमाल/रेजा टोली जोड़ें",
+                "description": "हमाल/रेजा टोली प्रविष्टियां दर्ज करें",
+                "primaryButton": "हमाल/रेजा टोली जोड़ें",
+                "fields": {
+                    "labourTeamName": "हमाल/रेजा टोली का नाम"
+                }
+            }
+        }
+    },
+    "inward": {
+        "govtPaddyInward": {
+            "title": "शासकीय धान आवक",
+            "description": "शासकीय धान आवक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "शासकीय धान आवक जोड़ें",
+                "description": "शासकीय धान आवक के लिए विवरण दर्ज करें",
+                "primaryButton": "शासकीय धान आवक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "doNumber": "DO क्रमांक",
+                    "committeeName": "समिति/संग्रहण का नाम",
+                    "balanceDo": "उठाव शेष",
+                    "gunnyNew": "बारदाना (नया)",
+                    "gunnyOld": "बारदाना (पुराना)",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "juteWeight": "जुट बारदाना वजन",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "gunnyWeight": "बारदाना वजन (क्विंटल में.)",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST नंबर",
+                    "truckLoadWeight": "गाड़ी वजन  (क्विंटल में.)",
+                    "paddyType": "आवक धान का प्रकार",
+                    "paddyMota": "धान(मोटा) नेट वजन",
+                    "paddyPatla": "धान(पतला) नेट वजन",
+                    "paddySarna": "धान(सरना) नेट वजन",
+                    "paddyMahamaya": "धान(महामाया) नेट वजन",
+                    "paddyRbGold": "धान(RB GOLD) नेट वजन"
+                }
+            }
+        },
+        "privatePaddyInward": {
+            "title": "निजी धान आवक",
+            "description": "निजी धान आवक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "निजी धान आवक जोड़ें",
+                "description": "निजी धान आवक के लिए विवरण दर्ज करें",
+                "primaryButton": "निजी धान आवक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "paddyPurchaseDealNumber": "धान खरीदी सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "balanceDo": "उठाव शेष",
+                    "purchaseType": "खरीदी प्रकार",
+                    "doNumber": "DO क्रमांक",
+                    "committeeName": "समिति/संग्रहण का नाम",
+                    "gunnyOption": "बारदाना सहित/वापसी",
+                    "gunnyNew": "बारदाना (नया)",
+                    "gunnyOld": "बारदाना (पुराना)",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "juteWeight": "जुट बारदाना वजन",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST नंबर",
+                    "truckLoadWeight": "गाड़ी वजन  (क्विंटल में.)",
+                    "paddyType": "धान का प्रकार",
+                    "paddyMota": "धान(मोटा) नेट वजन",
+                    "paddyPatla": "धान(पतला) नेट वजन",
+                    "paddySarna": "धान(सरना) नेट वजन",
+                    "paddyMahamaya": "धान(महामाया) नेट वजन",
+                    "paddyRbGold": "धान(RB GOLD) नेट वजन"
+                }
+            }
+        },
+        "riceInward": {
+            "title": "चावल आवक / LOT जमा",
+            "description": "चावल आवक और लॉट जमा प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "चावल आवक / LOT जमा जोड़ें",
+                "description": "चावल आवक या लॉट जमा के लिए विवरण दर्ज करें",
+                "primaryButton": "चावल आवक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "ricePurchaseDealNumber": "चावल खरीदी सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "riceType": "चावल का प्रकार",
+                    "balanceInward": "आवक शेष/ LOT जमा शेष",
+                    "inwardType": "आवक / LOT",
+                    "lotNumber": "LOT नंबर",
+                    "frkOrNAN": "FRK/NON FRK",
+                    "gunnyOption": "बारदाना",
+                    "gunnyNew": "बारदाना (नया)",
+                    "gunnyOld": "बारदाना (पुराना)",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "juteWeight": "जुट बारदाना वजन",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST नंबर",
+                    "truckLoadWeight": "गाड़ी वजन",
+                    "riceMotaNetWeight": "चावल(मोटा) नेट वजन",
+                    "ricePatlaNetWeight": "चावल(पतला) नेट वजन",
+                    "frkStatus": "FRK/NON FRK"
+                }
+            }
+        },
+        "gunnyInward": {
+            "title": "बारदाना आवक/ समिति-संग्रहण में जमा",
+            "description": "बारदाना आवक और समिति जमा प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "बारदाना आवक/ समिति-संग्रहण में जमा जोड़ें",
+                "description": "बारदाना आवक या समिति जमा के लिए विवरण दर्ज करें",
+                "primaryButton": "बारदाना आवक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "gunnyPurchaseDealNumber": "बारदाना खरीदी सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "delivery": "डिलीवरी",
+                    "samitiSangrahan": "समिति संग्रहण",
+                    "gunnyNew": "बारदाना (नया)",
+                    "gunnyOld": "बारदाना (पुराना)",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)"
+                }
+            }
+        },
+        "frkInward": {
+            "title": "FRK आवक",
+            "description": "FRK आवक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "FRK आवक जोड़ें",
+                "description": "FRK आवक के लिए विवरण दर्ज करें",
+                "primaryButton": "FRK आवक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "frkPurchaseDealNumber": "FRK खरीदी सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST नंबर",
+                    "truckWeight": "गाड़ी वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "netWeight": "नेट वजन (बारदाना घटा कर)"
+                }
+            }
+        },
+        "otherInward": {
+            "title": "अन्य आवक",
+            "description": "अन्य आवक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "अन्य आवक जोड़ें",
+                "description": "अन्य आवक के लिए विवरण दर्ज करें",
+                "primaryButton": "अन्य आवक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "otherPurchaseDealNumber": "अन्य खरीदी सौदा क्रमांक",
+                    "itemName": "वस्तु का नाम",
+                    "quantity": "मात्रा",
+                    "quantityType": "मात्रा का प्रकार",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "gunnyNew": "बारदाना (नया)",
+                    "gunnyOld": "बारदाना (पुराना)",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "juteGunnyWeight": "जुट बारदाना वजन",
+                    "plasticGunnyWeight": "प्लास्टिक बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST नंबर",
+                    "truckWeight": "गाड़ी वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "netWeight": "नेट वजन (बारदाना घटा कर)"
+                }
+            }
+        }
+    },
+    "outward": {
+        "privatePaddyOutward": {
+            "title": "निजी धान जावक",
+            "description": "निजी धान जावक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "निजी धान जावक जोड़ें",
+                "description": "निजी धान जावक के लिए विवरण दर्ज करें",
+                "primaryButton": "निजी धान जावक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "paddySaleDealNumber": "धान बिक्री सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "paddyType": "धान का प्रकार",
+                    "dealQuantity": "धान सौदे की मात्रा",
+                    "gunnyNew": "बारदाना (नया)",
+                    "gunnyOld": "बारदाना (पुराना)",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "juteWeight": "जुट बारदाना वजन",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST नंबर",
+                    "truckWeight": "गाड़ी वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "netWeight": "नेट वजन (बारदाना घटा कर)"
+                }
+            }
+        },
+        "govtRiceOutward": {
+            "title": "शासकीय चावल जावक",
+            "description": "शासकीय चावल जावक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "शासकीय चावल जावक जोड़ें",
+                "description": "शासकीय चावल जावक के लिए विवरण दर्ज करें",
+                "primaryButton": "शासकीय चावल जावक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "lotNo": "LOT नंबर",
+                    "fciNan": "FCI/NAN",
+                    "riceType": "चावल का प्रकार",
+                    "gunnyNew": "बारदाना (नया)",
+                    "gunnyOld": "बारदाना (पुराना)",
+                    "juteWeight": "जुट बारदाना वजन",
+                    "truckNo": "गाड़ी नंबर",
+                    "truckRst": "RST नंबर",
+                    "truckWeight": "गाड़ी वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "netWeight": "नेट वजन (बारदाना घटा कर)"
+                }
+            }
+        },
+        "privateRiceOutward": {
+            "title": "निजी चावल जावक",
+            "description": "निजी चावल जावक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "निजी चावल जावक जोड़ें",
+                "description": "निजी चावल जावक के लिए विवरण दर्ज करें",
+                "primaryButton": "निजी चावल जावक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "riceSaleDealNumber": "चावल बिक्री सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "lotNo": "LOT नंबर",
+                    "fciNan": "FCI/NAN",
+                    "riceType": "चावल का प्रकार",
+                    "riceQty": "चावल मात्रा",
+                    "gunnyNew": "बारदाना (नया)",
+                    "gunnyOld": "बारदाना (पुराना)",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "juteWeight": "जुट बारदाना वजन",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "truckRst": "RST नंबर",
+                    "truckWeight": "गाड़ी वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "netWeight": "नेट वजन (बारदाना घटा कर)"
+                }
+            }
+        },
+        "privateGunnyOutward": {
+            "title": "निजी बारदाना जावक",
+            "description": "निजी बारदाना जावक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "निजी बारदाना जावक जोड़ें",
+                "description": "निजी बारदाना जावक के लिए विवरण दर्ज करें",
+                "primaryButton": "निजी बारदाना जावक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "gunnySaleDealNumber": "बारदाना बिक्री सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "newGunnyQty": "नया बारदाना संख्या",
+                    "oldGunnyQty": "पुराना बारदाना संख्या",
+                    "plasticGunnyQty": "प्लास्टिक बारदाना संख्या",
+                    "truckNo": "गाड़ी नंबर"
+                }
+            }
+        },
+        "frkOutward": {
+            "title": "FRK जावक",
+            "description": "FRK जावक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "FRK जावक जोड़ें",
+                "description": "FRK जावक के लिए विवरण दर्ज करें",
+                "primaryButton": "FRK जावक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "partyName": {
+                        "emptyText": "Search party..."
+                    },
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "plasticGunnyWeight": "प्लास्टिक बारदाना वजन",
+                    "truckNo": "गाड़ी नंबर",
+                    "truckRst": "RST नंबर",
+                    "truckWeight": "गाड़ी वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "netWeight": "नेट वजन (बारदाना घटा कर)",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन"
+                }
+            }
+        },
+        "khandaOutward": {
+            "title": "खंडा जावक",
+            "description": "खंडा जावक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "खंडा जावक जोड़ें",
+                "description": "खंडा जावक के लिए विवरण दर्ज करें",
+                "primaryButton": "खंडा जावक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "brokenRiceSaleDealNumber": "खंडा बिक्री सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST नंबर",
+                    "truckWeight": "गाड़ी वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "netWeight": "नेट वजन (बारदाना घटा कर)",
+                    "khandaSaleDealNumber": "सौदा क्रमांक",
+                    "plasticGunnyWeight": "प्लास्टिक बारदाना वजन",
+                    "truckNo": "गाड़ी नंबर",
+                    "truckRst": "RST नंबर"
+                }
+            }
+        },
+        "nakkhiOutward": {
+            "title": "नक्खी जावक",
+            "description": "नक्खी जावक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "नक्खी जावक जोड़ें",
+                "description": "नक्खी जावक के लिए विवरण दर्ज करें",
+                "primaryButton": "नक्खी जावक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "nakkhiSaleDealNumber": "सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "rate": "दर",
+                    "brokerage": "दलाली (प्रति क्विंटल )",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST नंबर",
+                    "truckWeight": "गाड़ी वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "netWeight": "नेट वजन (बारदाना घटा कर)",
+                    "truckNo": "गाड़ी नंबर",
+                    "truckRst": "RST नंबर"
+                }
+            }
+        },
+        "bhusaOutward": {
+            "title": "भूसा जावक",
+            "description": "भूसा जावक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "भूसा जावक जोड़ें",
+                "description": "भूसा जावक के लिए विवरण दर्ज करें",
+                "primaryButton": "भूसा जावक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "bhusaPurchaseDealNumber": "भूसा खरीदी सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "rate": "दर",
+                    "brokerage": "दलाली (प्रति टन)",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST नंबर",
+                    "truckWeight": "गाड़ी वजन",
+                    "bhusaSaleDealNumber": "भूसा खरीदी सौदा क्रमांक",
+                    "truckNo": "गाड़ी नंबर",
+                    "truckRst": "RST नंबर"
+                }
+            }
+        },
+        "kodhaOutward": {
+            "title": "कोढ़ा जावक",
+            "description": "कोढ़ा जावक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "कोढ़ा जावक जोड़ें",
+                "description": "कोढ़ा जावक के लिए विवरण दर्ज करें",
+                "primaryButton": "कोढ़ा जावक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "branSaleDealNumber": "कोढ़ा खरीदी सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "rate": "दर",
+                    "oilPercent": "OIL %",
+                    "brokerage": "दलाली (प्रति क्विंटल )",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST नंबर",
+                    "truckWeight": "गाड़ी वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "netWeight": "नेट वजन (बारदाना घटा कर)"
+                }
+            }
+        },
+        "silkyKodhaOutward": {
+            "title": "सिल्की कोढ़ा जावक",
+            "description": "सिल्की कोढ़ा जावक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "सिल्की कोढ़ा जावक जोड़ें",
+                "description": "सिल्की कोढ़ा जावक के लिए विवरण दर्ज करें",
+                "primaryButton": "सिल्की कोढ़ा जावक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "silkyBranSaleDealNumber": "सिल्की कोढ़ा बिक्री सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "rate": "दर",
+                    "oilPercent": "OIL %",
+                    "brokerage": "दलाली (प्रति क्विंटल )",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST नंबर",
+                    "truckWeight": "गाड़ी वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "netWeight": "नेट वजन (बारदाना घटा कर)"
+                }
+            }
+        },
+        "otherOutward": {
+            "title": "अन्य जावक",
+            "description": "अन्य जावक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title": "अन्य जावक जोड़ें",
+                "description": "अन्य जावक के लिए विवरण दर्ज करें",
+                "primaryButton": "अन्य जावक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "otherSaleDealNumber": "सौदा क्रमांक",
+                    "itemName": "वस्तु का नाम",
+                    "dealQuantity": "सौदे में मात्रा",
+                    "quantityType": "मात्रा का प्रकार",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "gunnyNew": "बारदाना (नया)",
+                    "gunnyOld": "बारदाना (पुराना)",
+                    "gunnyPlastic": "बारदाना (प्लास्टिक)",
+                    "juteWeight": "जुट बारदाना वजन",
+                    "plasticWeight": "प्लास्टिक बारदाना वजन",
+                    "truckNumber": "गाड़ी नंबर",
+                    "rstNumber": "RST नंबर",
+                    "truckWeight": "गाड़ी वजन",
+                    "gunnyWeight": "बारदाना वजन",
+                    "netWeight": "नेट वजन (बारदाना घटा कर)",
+                    "quantity": "सौदे में मात्रा",
+                    "truckNo": "गाड़ी नंबर",
+                    "truckRst": "RST नंबर"
+                }
+            }
+        },
+        "govtGunnyOutward": {
+            "title": "सरकारी बारदाना जावक",
+            "description": "सरकारी बारदाना जावक प्रविष्टियां प्रबंधित करें",
+            "form": {
+                "title_add": "सरकारी बारदाना जावक जोड़ें",
+                "title_edit": "सरकारी बारदाना जावक अपडेट करें",
+                "description": "सरकारी बारदाना जावक विवरण दर्ज करें",
+                "primaryButton": "सरकारी बारदाना जावक जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "gunnyDmNumber": "बारदाना डीएम नंबर",
+                    "samitiSangrahan": "समिति/संग्रहण केंद्र",
+                    "oldGunnyQty": "पुराना बारदाना मात्रा",
+                    "plasticGunnyQty": "प्लास्टिक बारदाना मात्रा",
+                    "truckNo": "गाड़ी नंबर"
+                },
+                "title": "सरकारी बारदाना जावक जोड़ें"
+            }
+        }
+    },
+    "purchaseReports": {
+        "paddy": {
+            "title": "धान खरीदी",
+            "description": "धान खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "धान खरीदी जोड़ें",
+                "description": "धान खरीदी विवरण दर्ज करें",
+                "primaryButton": "धान खरीदी जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "deliveryType": "डिलीवरी",
+                    "purchaseType": "खरीदी प्रकार",
+                    "doNumber": "DO क्रमांक",
+                    "committeeName": "समिति/संग्रहण का नाम",
+                    "doPaddyQty": "DO में धान की मात्रा",
+                    "paddyType": "धान का प्रकार",
+                    "totalPaddyQty": "कुल धान की मात्रा",
+                    "paddyRatePerQuintal": "धान का भाव/दर",
+                    "discountPercent": "बटाव %",
+                    "brokerage": "दलाली",
+                    "gunnyType": "बारदाना सहित/वापसी",
+                    "newGunnyRate": "नया बारदाना दर",
+                    "oldGunnyRate": "पुराना बारदाना दर",
+                    "plasticGunnyRate": "प्लास्टिक बारदाना दर"
+                }
+            }
+        },
+        "rice": {
+            "title": "चावल खरीदी",
+            "description": "चावल खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "चावल खरीदी जोड़ें",
+                "description": {
+                    "add": "चावल खरीदी विवरण दर्ज करें",
+                    "update": "दर्ज चावल खरीदी विवरण अपडेट करें"
+                },
+                "primaryButton": "चावल खरीदी जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "deliveryType": "डिलीवरी",
+                    "lotOrOther": "LOT/अन्य",
+                    "fciOrNAN": "FCI/NAN",
+                    "riceType": "चावल का प्रकार",
+                    "riceQty": "मात्रा (क्विंटल में)",
+                    "riceRate": "चावल का भाव/दर",
+                    "discountPercent": "बटाव %",
+                    "brokeragePerQuintal": "दलाली (प्रति क्विंटल)",
+                    "gunnyType": "बारदाना सहित/वापसी",
+                    "newGunnyRate": "नया बारदाना दर",
+                    "oldGunnyRate": "पुराना बारदाना दर",
+                    "plasticGunnyRate": "प्लास्टिक बारदाना दर",
+                    "frkType": "FRK",
+                    "frkRatePerQuintal": "FRK दर (प्रति क्विं.)",
+                    "lotNumber": "LOT नंबर"
+                }
+            }
+        },
+        "gunny": {
+            "title": "बारदाना खरीदी",
+            "description": "बारदाना खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "बारदाना खरीदी जोड़ें",
+                "description": {
+                    "add": "बारदाना खरीदी विवरण दर्ज करें",
+                    "update": "दर्ज बारदाना खरीदी विवरण अपडेट करें"
+                },
+                "primaryButton": "बारदाना खरीदी जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "partyName": "पार्टी का नाम",
+                    "deliveryType": "डिलीवरी",
+                    "newGunnyQty": "नया बारदाना संख्या",
+                    "newGunnyRate": "नया बारदाना दर",
+                    "oldGunnyQty": "पुराना बारदाना संख्या",
+                    "oldGunnyRate": "पुराना बारदाना दर",
+                    "plasticGunnyQty": "प्लास्टिक बारदाना संख्या",
+                    "plasticGunnyRate": "प्लास्टिक बारदाना दर"
+                }
+            }
+        },
+        "frk": {
+            "title": "FRK खरीदी",
+            "description": "FRK खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "FRK खरीदी जोड़ें",
+                "description": {
+                    "add": "FRK खरीदी विवरण दर्ज करें",
+                    "update": "दर्ज FRK खरीदी विवरण अपडेट करें"
+                },
+                "primaryButton": "FRK खरीदी जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "frkPurchaseDealNumber": "FRK खरीदी सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "frkQty": "मात्रा (क्विंटल में)",
+                    "frkRate": "दर",
+                    "gst": "GST"
+                }
+            }
+        },
+        "other": {
+            "title": "अन्य खरीदी",
+            "description": "अन्य खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "अन्य खरीदी जोड़ें",
+                "description": {
+                    "add": "अन्य खरीदी विवरण दर्ज करें",
+                    "update": "दर्ज अन्य खरीदी विवरण अपडेट करें"
+                },
+                "primaryButton": "अन्य खरीदी जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "otherPurchaseDealNumber": "खरीदी सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "otherPurchaseName": "अन्य वस्तु प्रविष्ट करें",
+                    "otherPurchaseQty": "मात्रा",
+                    "qtyType": "मात्रा प्रकार",
+                    "rate": "दर",
+                    "discountPercent": "बटाव %",
+                    "gst": "GST"
+                }
+            }
+        }
+    },
+    "salesReports": {
+        "sidebarTitle": "बिक्री रिपोर्ट",
+        "paddy": {
+            "title": "धान बिक्री",
+            "description": "धान बिक्री लेनदेन प्रबंधित करें",
+            "form": {
+                "title": "धान बिक्री सौदा जोड़ें",
+                "description": "धान बिक्री सौदा विवरण दर्ज करें",
+                "primaryButton": "धान बिक्री सौदा जोड़ें",
+                "fields": {
+                    "paddySaleDealNumber": "धान बिक्री सौदा क्रमांक",
+                    "date": "दिनांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "type": "प्रकार",
+                    "enterDo": "DO प्रविष्ट करें",
+                    "doNumber": "DO क्रमांक",
+                    "paddyMota": "धान (मोटा)",
+                    "paddyPatla": "धान (पतला)",
+                    "paddySarna": "धान (सरना)",
+                    "paddyType": "धान का प्रकार",
+                    "quantity": "मात्रा (क्विंटल में.)",
+                    "delivery": "डिलीवरी",
+                    "paddyRate": "धान का भाव/दर",
+                    "batav": "बटाव %",
+                    "brokerage": "दलाली",
+                    "gunnyIncluded": "बारदाना सहित/वापसी",
+                    "newGunnyRate": "नया बारदाना दर",
+                    "oldGunnyRate": "पुराना बारदाना दर",
+                    "plasticGunnyRate": "प्लास्टिक बारदाना दर"
+                }
+            }
+        },
+        "rice": {
+            "title": "चावल बिक्री",
+            "description": "चावल बिक्री लेनदेन प्रबंधित करें",
+            "form": {
+                "title": "चावल बिक्री सौदा जोड़ें",
+                "description": "चावल बिक्री सौदा विवरण दर्ज करें",
+                "primaryButton": "चावल बिक्री सौदा जोड़ें",
+                "fields": {
+                    "riceSaleDealNumber": "चावल बिक्री सौदा क्रमांक",
+                    "date": "दिनांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "delivery": "डिलीवरी",
+                    "lotOther": "LOT/अन्य",
+                    "lotOrOther": "LOT/अन्य",
+                    "fciNan": "FCI/NAN",
+                    "fciOrNan": "FCI/NAN",
+                    "riceType": "चावल का प्रकार",
+                    "quantity": "मात्रा (क्विंटल में.)",
+                    "riceRate": "चावल का भाव/दर",
+                    "batav": "बटाव %",
+                    "discount": "बटाव %",
+                    "brokerage": "दलाली (प्रति क्विंटल)",
+                    "gunnyIncluded": "बारदाना सहित/वापसी",
+                    "gunnyOption": "बारदाना सहित/वापसी",
+                    "newGunnyRate": "नया बारदाना दर",
+                    "oldGunnyRate": "पुराना बारदाना दर",
+                    "plasticGunnyRate": "प्लास्टिक बारदाना दर",
+                    "frk": "FRK",
+                    "frkRate": "FRK दर (प्रति क्विं.)",
+                    "lotNo": "LOT नंबर",
+                    "lotNumber": "LOT नंबर",
+                    "riceArrival": "चावल आवक",
+                    "riceArrivalBalance": "चावल आवक शेष"
+                }
+            }
+        },
+        "gunny": {
+            "title": "बारदाना बिक्री",
+            "description": "बारदाना बिक्री लेनदेन प्रबंधित करें",
+            "form": {
+                "title": "बारदाना बिक्री सौदा जोड़ें",
+                "description": "बारदाना बिक्री सौदा विवरण दर्ज करें",
+                "primaryButton": "बारदाना बिक्री सौदा जोड़ें",
+                "fields": {
+                    "gunnySaleDealNumber": "बारदाना बिक्री सौदा क्रमांक",
+                    "date": "दिनांक",
+                    "partyName": "पार्टी का नाम",
+                    "newGunnyQty": "नया बारदाना संख्या",
+                    "newGunnyRate": "नया बारदाना दर",
+                    "oldGunnyQty": "पुराना बारदाना संख्या",
+                    "oldGunnyRate": "पुराना बारदाना दर",
+                    "plasticGunnyQty": "प्लास्टिक बारदाना संख्या",
+                    "plasticGunnyRate": "प्लास्टिक बारदाना दर"
+                }
+            }
+        },
+        "khanda": {
+            "title": "खंडा बिक्री",
+            "description": "खंडा बिक्री लेनदेन प्रबंधित करें",
+            "form": {
+                "title": "खंडा बिक्री सौदा जोड़ें",
+                "description": "खंडा बिक्री सौदा विवरण दर्ज करें",
+                "primaryButton": "खंडा बिक्री सौदा जोड़ें",
+                "fields": {
+                    "brokenRiceSaleDealNumber": "खंडा बिक्री सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "quantity": "खंडा (क्विंटल में)",
+                    "rate": "खंडा दर",
+                    "discountPercent": "छूट (%)",
+                    "date": "दिनांक",
+                    "brokerage": "दलाली (प्रति क्विंटल)"
+                }
+            }
+        },
+        "nakkhi": {
+            "title": "नक्खी बिक्री",
+            "description": "नक्खी बिक्री लेनदेन प्रबंधित करें",
+            "form": {
+                "title": "नक्खी बिक्री सौदा जोड़ें",
+                "description": "नक्खी बिक्री सौदा विवरण दर्ज करें",
+                "primaryButton": "नक्खी बिक्री सौदा जोड़ें",
+                "fields": {
+                    "nakkhiSaleDealNumber": "नक्खी बिक्री सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "quantity": "नक्खी (क्विंटल में)",
+                    "rate": "नक्खी दर",
+                    "discountPercent": "छूट (%)",
+                    "date": "दिनांक",
+                    "brokerage": "दलाली (प्रति क्विंटल)"
+                }
+            }
+        },
+        "bran": {
+            "title": "कोढ़ा बिक्री",
+            "description": "कोढ़ा बिक्री लेनदेन प्रबंधित करें",
+            "form": {
+                "title": "कोढ़ा बिक्री सौदा जोड़ें",
+                "description": "कोढ़ा बिक्री सौदा विवरण दर्ज करें",
+                "primaryButton": "कोढ़ा बिक्री सौदा जोड़ें",
+                "fields": {
+                    "branSaleDealNumber": "कोढ़ा बिक्री सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "quantity": "कोढा (क्विंटल में)",
+                    "rate": "कोढा दर",
+                    "amount": "कोढा राशी",
+                    "gst": "GST",
+                    "gstAmount": "GST की राशी",
+                    "totalAmount": "कुल राशी (WITH GST)",
+                    "brokerage": "दलाली (प्रति क्विंटल)",
+                    "brokerageAmount": "ब्रोकर को भुगतान योग्य राशी",
+                    "totalPayable": "कुल भुगतान योग्य राशी"
+                }
+            }
+        },
+        "silkyBran": {
+            "title": "सिल्की कोढ़ा बिक्री",
+            "description": "सिल्की कोढ़ा बिक्री लेनदेन प्रबंधित करें",
+            "form": {
+                "title": "सिल्की कोढ़ा बिक्री सौदा जोड़ें",
+                "description": "सिल्की कोढ़ा बिक्री सौदा विवरण दर्ज करें",
+                "primaryButton": "सिल्की कोढ़ा बिक्री सौदा जोड़ें",
+                "fields": {
+                    "silkyBranSaleDealNumber": "सिल्की कोढ़ा बिक्री सौदा क्रमांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "quantity": "सिल्की कोढ़ा(क्विंटल में)",
+                    "rate": "सिल्की कोढा दर",
+                    "amount": "सिल्की कोढा राशी",
+                    "gst": "GST%",
+                    "gstAmount": "GST की राशी",
+                    "totalAmount": "कुल राशी (WITH GST)",
+                    "brokerage": "दलाली (प्रति क्विंटल)",
+                    "brokerageAmount": "ब्रोकर को भुगतान योग्य राशी",
+                    "totalPayable": "कुल भुगतान योग्य राशी"
+                }
+            }
+        },
+        "other": {
+            "title": "अन्य बिक्री",
+            "description": "अन्य बिक्री लेनदेन प्रबंधित करें",
+            "form": {
+                "title": "अन्य बिक्री सौदा जोड़ें",
+                "description": "अन्य बिक्री सौदा विवरण दर्ज करें",
+                "primaryButton": "अन्य बिक्री सौदा जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "otherSaleName": "वस्तु का नाम",
+                    "otherSaleQty": "मात्रा",
+                    "qtyType": "मात्रा प्रकार",
+                    "rate": "दर",
+                    "discountPercent": "छूट (%)",
+                    "gst": "GST (%)"
+                }
+            }
+        }
+    },
+    "millingReports": {
+        "sidebarTitle": "मिलिंग रिपोर्ट",
+        "paddy": {
+            "title": "धान मिलिंग",
+            "description": "धान मिलिंग रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "धान मिलिंग रिकॉर्ड जोड़ें",
+                "description": "धान मिलिंग विवरण दर्ज करें",
+                "primaryButton": "रिकॉर्ड जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "paddyType": "धान का प्रकार",
+                    "hopperInGunny": "हॉपर कटाई (बारदाना)",
+                    "hopperInQintal": "हॉपर कटाई (क्विंटल में)",
+                    "riceType": "चावल का प्रकार",
+                    "riceQuantity": "चावल (क्विंटल में)",
+                    "ricePercentage": "चावल %",
+                    "khandaQuantity": "खंडा (क्विंटल में)",
+                    "khandaPercentage": "खंडा %",
+                    "kodhaQuantity": "कोढा (क्विंटल में)",
+                    "kodhaPercentage": "कोढा %",
+                    "bhusaTon": "भूसा (टन में)",
+                    "bhusaPercentage": "भूसा %",
+                    "nakkhiQuantity": "नक्खी (क्विंटल में)",
+                    "nakkhiPercentage": "नक्खी %",
+                    "wastagePercentage": "व्यर्थ %"
+                }
+            }
+        },
+        "rice": {
+            "title": "चावल मिलिंग",
+            "description": "चावल मिलिंग रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "चावल मिलिंग रिकॉर्ड जोड़ें",
+                "description": "चावल मिलिंग विवरण दर्ज करें",
+                "primaryButton": "रिकॉर्ड जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "riceType": "चावल का प्रकार",
+                    "hopperInGunny": "हॉपर कटाई (बारदाना)",
+                    "hopperInQintal": "हॉपर कटाई (क्विंटल में)",
+                    "riceQuantity": "चावल (क्विंटल में)",
+                    "ricePercentage": "चावल %",
+                    "khandaQuantity": "खंडा (क्विंटल में)",
+                    "khandaPercentage": "खंडा %",
+                    "silkyKodhaQuantity": "सिल्की कोढा (क्विंटल में)",
+                    "silkyKodhaPercentage": "सिल्की कोढा %",
+                    "wastagePercentage": "व्यर्थ %"
+                }
+            }
+        }
+    },
+    "labourCostReports": {
+        "sidebarTitle": "हमाली रिपोर्ट",
+        "inward": {
+            "title": "आवक हमाली",
+            "description": "आवक हमाली श्रम लागत रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "आवक हमाली रिकॉर्ड जोड़ें",
+                "description": "आवक हमाली विवरण दर्ज करें",
+                "primaryButton": "रिकॉर्ड जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "inwardType": "आवक प्रकार",
+                    "truckNo": "ट्रक नं.",
+                    "numberOfBags": "बारदाने की संख्या",
+                    "gunnyBundleCount": "बारदाना बंडल की संख्या",
+                    "unloadingRate": "अनलोडिंग दर",
+                    "stackingRate": "स्टेकिंग दर",
+                    "hamalRejaToliName": "हमाल/रेजा टोली"
+                }
+            }
+        },
+        "outward": {
+            "title": "जावक हमाली",
+            "description": "जावक हमाली श्रम लागत रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "जावक हमाली रिकॉर्ड जोड़ें",
+                "description": "जावक हमाली विवरण दर्ज करें",
+                "primaryButton": "रिकॉर्ड जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "type": "प्रकार",
+                    "truckNo": "ट्रक नं.",
+                    "numberOfBags": "बारदाने की संख्या",
+                    "gunnyBundleCount": "बारदाना बंडल की संख्या",
+                    "loadingRate": "लोडिंग दर",
+                    "transportationRate": "ढुलाई दर",
+                    "hamalRejaToliName": "हमाल/रेजा टोली"
+                }
+            }
+        },
+        "milling": {
+            "title": "मिलिंग हमाली",
+            "description": "मिलिंग हमाली श्रम लागत रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "मिलिंग हमाली रिकॉर्ड जोड़ें",
+                "description": "मिलिंग हमाली विवरण दर्ज करें",
+                "primaryButton": "रिकॉर्ड जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "hopperCutting": "हॉपर कटाई",
+                    "hopperCuttingRate": "हॉपर कटाई दर",
+                    "hamalRejaToliName": "हमाल/रेजा टोली"
+                }
+            }
+        },
+        "other": {
+            "title": "अन्य हमाली",
+            "description": "अन्य हमाली श्रम लागत रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "अन्य हमाली रिकॉर्ड जोड़ें",
+                "description": "अन्य हमाली विवरण दर्ज करें",
+                "primaryButton": "रिकॉर्ड जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "hamaliType": "हमाली प्रकार",
+                    "hamalRejaToliName": "हमाल/रेजा टोली",
+                    "gunnyCount": "बारदाना संख्या",
+                    "hamaliRate": "हमाली दर",
+                    "workDetail": "काम का विवरण",
+                    "totalAmount": "कुल राशि"
+                }
+            }
+        }
+    },
+    "transactionReports": {
+        "sidebarTitle": "लेनदेन रिपोर्ट",
+        "broker": {
+            "title": "ब्रोकर हिसाब",
+            "description": "ब्रोकर लेनदेन रिकॉर्ड प्रबंधित करें",
+            "columns": {
+                "brokerName": "ब्रोकर का नाम",
+                "partyName": "पार्टी का नाम",
+                "date": "दिनांक",
+                "purchaseDeal": "खरीदी सौदा",
+                "saleDeal": "बिक्री सौदा",
+                "inward": "आवक",
+                "outward": "जावक",
+                "accountReceipt": "हिसाब (प्राप्ति)",
+                "accountPayment": "हिसाब (भुगतान)",
+                "accountBrokerage": "हिसाब (दलाली)",
+                "receipt": "प्राप्ति",
+                "payment": "भुगतान",
+                "brokerage": "दलाली"
+            }
+        },
+        "party": {
+            "title": "पार्टी हिसाब",
+            "description": "पार्टी लेनदेन रिकॉर्ड प्रबंधित करें",
+            "columns": {
+                "partyName": "पार्टी का नाम",
+                "brokerName": "ब्रोकर का नाम",
+                "date": "दिनांक",
+                "purchaseDeal": "खरीदी सौदा",
+                "saleDeal": "बिक्री सौदा",
+                "inward": "आवक",
+                "outward": "जावक",
+                "accountReceipt": "हिसाब (प्राप्ति)",
+                "accountPayment": "हिसाब (भुगतान)",
+                "accountBrokerage": "हिसाब (दलाली)",
+                "receipt": "प्राप्ति",
+                "payment": "भुगतान",
+                "brokerage": "दलाली"
+            }
+        }
+    },
+    "financialTransactionReports": {
+        "sidebarTitle": "वित्तीय रिपोर्ट",
+        "payment": {
+            "title": "वित्तीय भुगतान",
+            "description": "वित्तीय भुगतान रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "भुगतान रिकॉर्ड जोड़ें",
+                "description": "भुगतान विवरण दर्ज करें",
+                "primaryButton": "भुगतान जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "paymentType": "भुगतान का प्रकार",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "purchaseDealType": "सौदा प्रकार",
+                    "purchaseDealNumber": "सौदा क्रमांक",
+                    "paymentAmount": "भुगतान राशि",
+                    "remarks": "रिमार्क",
+                    "transporterName": "परिवहनकर्ता का नाम",
+                    "truckNumber": "ट्रक न.",
+                    "diesel": "डीजल",
+                    "bhatta": "भत्ता",
+                    "repairOrMaintenance": "रिपेयर/मेंटेनेंस",
+                    "labourType": "हमाली प्रकार",
+                    "labourGroupName": "हमाल/रेजा टोली",
+                    "staffName": "कर्मचारी का नाम",
+                    "salary": "वेतन",
+                    "month": "माह",
+                    "attendance": "उपस्थिति",
+                    "allowedLeave": "अर्जित अवकाश",
+                    "payableSalary": "भुगतान योग्य वेतन",
+                    "salaryPayment": "वेतन भुगतान",
+                    "advancePayment": "एडवांस भुगतान"
+                }
+            }
+        },
+        "receipt": {
+            "title": "वित्तीय प्राप्ति",
+            "description": "वित्तीय प्राप्ति रिकॉर्ड प्रबंधित करें",
+            "form": {
+                "title": "प्राप्ति रिकॉर्ड जोड़ें",
+                "description": "प्राप्ति विवरण दर्ज करें",
+                "primaryButton": "प्राप्ति जोड़ें",
+                "fields": {
+                    "date": "दिनांक",
+                    "partyName": "पार्टी का नाम",
+                    "brokerName": "ब्रोकर का नाम",
+                    "salesDealType": "सौदा प्रकार",
+                    "salesDealNumber": "सौदा क्रमांक",
+                    "receivedAmount": "प्राप्ति राशि",
+                    "remarks": "रिमार्क"
+                }
+            }
+        }
+    },
+    "settings": {
+        "title": "सेटिंग्स",
+        "subtitle": "अपनी प्रोफाइल और ऐप की प्राथमिकताओं को प्रबंधित करें।",
+        "profile": "प्रोफाइल",
+        "profileDesc": "अपनी प्रोफाइल जानकारी और अकाउंट विवरण अपडेट करें।",
+        "appearance": "दिखावट",
+        "appearanceDesc": "ऐप की दिखावट को अनुकूलित करें। दिन और रात थीम के बीच स्वचालित रूप से बदलें।",
+        "language": "भाषा",
+        "selectLanguage": "भाषा चुनें",
+        "languageDesc": "इंटरफेस के लिए अपनी पसंदीदा भाषा चुनें।",
+        "font": "फ़ॉन्ट",
+        "fontDesc": "डैशबोर्ड में उपयोग के लिए फ़ॉन्ट चुनें।",
+        "theme": "थीम",
+        "themeDesc": "डैशबोर्ड के लिए थीम चुनें।",
+        "light": "लाइट",
+        "dark": "डार्क",
+        "updatePreferences": "प्राथमिकताएं अपडेट करें",
+        "form": {
+            "name": "नाम",
+            "namePlaceholder": "अपना नाम दर्ज करें",
+            "nameDesc": "आपका सार्वजनिक प्रदर्शन नाम।",
+            "email": "ईमेल",
+            "emailPlaceholder": "your@email.com",
+            "emailDesc": "आपका लॉगिन ईमेल पता।",
+            "post": "पद",
+            "changePassword": "पासवर्ड बदलें",
+            "currentPassword": "वर्तमान पासवर्ड",
+            "currentPasswordPlaceholder": "वर्तमान पासवर्ड",
+            "newPassword": "नया पासवर्ड",
+            "newPasswordPlaceholder": "नया पासवर्ड",
+            "confirmPassword": "पासवर्ड की पुष्टि करें",
+            "confirmPasswordPlaceholder": "नए पासवर्ड की पुष्टि करें",
+            "role": "भूमिका",
+            "roleDesc": "आपकी भूमिका आपके एक्सेस परमिशन निर्धारित करती है।",
+            "updating": "अपडेट हो रहा है...",
+            "updateProfile": "प्रोफाइल अपडेट करें",
+            "roles": {
+                "superAdmin": "सुपर एडमिन",
+                "millAdmin": "मिल एडमिन",
+                "millStaff": "मिल स्टाफ"
+            },
+            "validation": {
+                "nameMin": "नाम कम से कम 2 अक्षरों का होना चाहिए।",
+                "nameMax": "नाम 30 अक्षरों से अधिक नहीं होना चाहिए।",
+                "emailInvalid": "कृपया एक मान्य ईमेल दर्ज करें।",
+                "passwordMin": "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।",
+                "currentPasswordRequired": "पासवर्ड बदलने के लिए वर्तमान पासवर्ड आवश्यक है।",
+                "passwordMatch": "पासवर्ड मेल नहीं खा रहे हैं।"
+            },
+            "success": {
+                "profileAndPasswordUpdated": "प्रोफाइल और पासवर्ड सफलतापूर्वक अपडेट हो गए। आपको लॉग आउट कर दिया गया है।",
+                "profileUpdated": "प्रोफाइल सफलतापूर्वक अपडेट हो गई।"
+            },
+            "error": {
+                "failedToUpdateProfile": "प्रोफाइल अपडेट करने में विफल"
+            }
+        }
+    },
+    "staff": {
+        "title": "कर्मचारी प्रबंधन",
+        "subtitle": "सभी मिल कर्मचारियों को प्रबंधित और निगरानी करें",
+        "allStaff": "सभी कर्मचारी",
+        "activeStaff": "सक्रिय",
+        "inactiveStaff": "निष्क्रिय",
+        "addStaff": "कर्मचारी जोड़ें",
+        "editStaff": "कर्मचारी संपादित करें",
+        "deleteStaff": "कर्मचारी हटाएं",
+        "markAttendance": "उपस्थिति दर्ज करें",
+        "edit": "संपादित करें",
+        "delete": "हटाएं",
+        "markAttendanceDescription": "{{name}} के लिए उपस्थिति दर्ज करें",
+        "selectAttendanceStatus": "उपस्थिति स्थिति चुनें",
+        "present": "उपस्थित",
+        "halfDay": "आधा दिन",
+        "absent": "अनुपस्थित",
+        "cancel": "रद्द करें",
+        "saveAttendance": "उपस्थिति सहेजें",
+        "addStaffDescription": "यहां नए कर्मचारी बनाएं।",
+        "editStaffDescription": "यहां कर्मचारी को अपडेट करें।",
+        "clickSave": "जब आप पूरा कर लें तो सेव करें क्लिक करें।",
+        "saveChanges": "परिवर्तन सहेजें",
+        "failedToLoad": "कर्मचारी डेटा लोड करने में विफल।",
+        "deletedStaffInfo": "कर्मचारी सफलतापूर्वक हटा दिया गया",
+        "deleteDescription": "क्या आप वाकई {{name}} ({{post}}) को हटाना चाहते हैं? इस क्रिया को पूर्ववत नहीं किया जा सकता।",
+        "deleteConfirmLabel": "पुष्टि करने के लिए कर्मचारी का पूरा नाम टाइप करें:",
+        "deleteConfirmPlaceholder": "पूरा नाम दर्ज करें",
+        "warning": "चेतावनी",
+        "actionRollbackWarning": "इस क्रिया को पूर्ववत नहीं किया जा सकता।",
+        "multiDeleteTitle": "{{count}} कर्मचारी {{member}} हटाएं",
+        "multiDeleteDescription": "यह चयनित कर्मचारियों और सभी संबंधित डेटा को स्थायी रूप से हटा देगा।",
+        "multiDeleteConfirmLabel": "हटाने की पुष्टि करने के लिए {{word}} टाइप करें:",
+        "multiDeleteConfirmPlaceholder": "{{word}} टाइप करें",
+        "multiDeleteConfirmError": "कृपया पुष्टि करने के लिए \"{{word}}\" टाइप करें।",
+        "deletingStaff": "कर्मचारी हटाए जा रहे हैं...",
+        "deletedStaffSuccess": "{{count}} कर्मचारी {{member}} सफलतापूर्वक हटा दिए गए।",
+        "deleteSelectedError": "चयनित कर्मचारियों को हटाने में त्रुटि",
+        "form": {
+            "fullName": "पूरा नाम",
+            "fullNamePlaceholder": "पूरा नाम दर्ज करें",
+            "email": "ईमेल",
+            "emailPlaceholder": "ईमेल दर्ज करें",
+            "phoneNumber": "फोन नंबर",
+            "phoneNumberPlaceholder": "फोन नंबर दर्ज करें",
+            "post": "पद",
+            "postPlaceholder": "पद चुनें",
+            "salary": "वेतन",
+            "salaryPlaceholder": "वेतन दर्ज करें",
+            "address": "पता",
+            "addressPlaceholder": "पता दर्ज करें",
+            "password": "पासवर्ड",
+            "passwordPlaceholder": "पासवर्ड दर्ज करें",
+            "confirmPassword": "पासवर्ड की पुष्टि करें",
+            "confirmPasswordPlaceholder": "पासवर्ड फिर से दर्ज करें",
+            "validation": {
+                "nameMin": "नाम कम से कम 2 अक्षर लंबा होना चाहिए",
+                "emailInvalid": "अमान्य ईमेल पता",
+                "passwordRequired": "पासवर्ड आवश्यक है",
+                "passwordMin": "पासवर्ड कम से कम 8 अक्षर लंबा होना चाहिए",
+                "passwordLower": "पासवर्ड में कम से कम एक छोटा अक्षर होना चाहिए",
+                "passwordNumber": "पासवर्ड में कम से कम एक नंबर होना चाहिए",
+                "passwordMatch": "पासवर्ड मेल नहीं खाते"
+            }
+        },
+        "table": {
+            "fullName": "पूरा नाम",
+            "email": "ईमेल",
+            "phoneNumber": "फोन नंबर",
+            "status": "स्थिति",
+            "post": "पद",
+            "todaysAttendance": "आज की उपस्थिति",
+            "monthCount": "माह गणना",
+            "searchPlaceholder": "नाम से खोजें..."
+        },
+        "posts": {
+            "manager": "प्रबंधक",
+            "supervisor": "पर्यवेक्षक",
+            "operator": "ऑपरेटर",
+            "accountant": "लेखाकार"
+        },
+        "staffMember": "????? ?????",
+        "activateSelected": "????? ?????? ????",
+        "deactivateSelected": "????? ????????? ????",
+        "deleteSelected": "????? ?????"
+    },
+    "dailyReports": {
+        "sidebarTitle": "दैनिक रिपोर्ट",
+        "inwards": {
+            "title": "आवक",
+            "description": "वस्तु के अनुसार दैनिक आवक लेनदेन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई आवक डेटा नहीं मिला",
+            "statsCard": {
+                "entries": "प्रविष्टियाँ",
+                "bags": "बोरे"
+            }
+        },
+        "milling": {
+            "title": "मिलिंग",
+            "description": "वस्तु के अनुसार दैनिक मिलिंग संचालन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई मिलिंग डेटा नहीं मिला",
+            "statsCard": {
+                "entries": "प्रविष्टियाँ",
+                "bags": "बोरे"
+            }
+        },
+        "outwards": {
+            "title": "जावक",
+            "description": "वस्तु के अनुसार दैनिक जावक लेनदेन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई जावक डेटा नहीं मिला",
+            "statsCard": {
+                "entries": "प्रविष्टियाँ",
+                "bags": "बोरे"
+            }
+        },
+        "production": {
+            "title": "उत्पादन",
+            "description": "वस्तु के अनुसार दैनिक उत्पादन आउटपुट ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई उत्पादन डेटा नहीं मिला",
+            "statsCard": {
+                "entries": "प्रविष्टियाँ",
+                "bags": "बोरे"
+            }
+        },
+        "purchaseDeals": {
+            "title": "खरीद सौदे",
+            "description": "वस्तु के अनुसार दैनिक खरीद लेनदेन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई खरीद सौदे नहीं मिले",
+            "statsCard": {
+                "entries": "प्रविष्टियाँ",
+                "bags": "बोरे"
+            }
+        },
+        "salesDeals": {
+            "title": "बिक्री सौदे",
+            "description": "वस्तु के अनुसार दैनिक बिक्री लेनदेन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई बिक्री सौदे नहीं मिले",
+            "statsCard": {
+                "entries": "प्रविष्टियाँ",
+                "bags": "बोरे"
+            }
+        },
+        "payment": {
+            "title": "भुगतान",
+            "description": "दैनिक भुगतान लेनदेन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई भुगतान प्रविष्टि नहीं मिली",
+            "statsCard": {
+                "totalPayments": "कुल भुगतान",
+                "totalAmount": "कुल राशि",
+                "totalPaymentEntries": "कुल भुगतान प्रविष्टियाँ",
+                "totalPaymentAmount": "कुल भुगतान राशि",
+                "entries": "प्रविष्टियाँ"
+            }
+        },
+        "receipt": {
+            "title": "रसीद",
+            "description": "दैनिक रसीद लेनदेन ट्रैक करें",
+            "emptyMessage": "चयनित तिथि सीमा के लिए कोई रसीद प्रविष्टि नहीं मिली",
+            "statsCard": {
+                "totalReceipts": "कुल रसीदें",
+                "totalAmount": "कुल राशि",
+                "totalReceiptEntries": "कुल रसीद प्रविष्टियाँ",
+                "totalReceiptAmount": "कुल रसीद राशि",
+                "entries": "प्रविष्टियाँ"
+            }
+        },
+        "buttons": {
+            "exportSummary": "सारांश निर्यात करें",
+            "exportHistory": "इतिहास निर्यात करें",
+            "exportCsv": "CSV निर्यात करें"
+        },
+        "history": {
+            "title": "तिथि-वार इतिहास",
+            "transactions": "लेनदेन"
+        }
+    },
+    "stockOverview": {
+        "title": "स्टॉक अवलोकन",
+        "descriptionWithDate": "{{date}} तक स्टॉक बैलेंस",
+        "descriptionDefault": "वस्तु के अनुसार समूहीकृत वर्तमान स्टॉक स्थिति",
+        "emptyMessage": "कोई स्टॉक डेटा उपलब्ध नहीं है",
+        "sections": {
+            "paddyStock": "धान स्टॉक",
+            "riceStock": "चावल स्टॉक",
+            "otherStock": "अन्य स्टॉक",
+            "byProductStock": "उप-उत्पाद स्टॉक",
+            "gunnyStock": "गनी बोरी स्टॉक"
+        },
+        "statsCard": {
+            "totalBags": "कुल बोरे",
+            "currentStock": "वर्तमान स्टॉक",
+            "bags": "बोरे"
+        },
+        "buttons": {
+            "export": "निर्यात करें"
+        }
+    },
+    "sidebar": {
+        "dashboard": "डैशबोर्ड",
+        "overview": "अवलोकन",
+        "staff": "स्टाफ",
+        "staffDirectory": "कर्मचारी निर्देशिका",
+        "purchaseReports": "खरीदी रिपोर्ट",
+        "paddyPurchaseReport": "धान खरीदी रिपोर्ट",
+        "ricePurchaseReport": "चावल खरीदी रिपोर्ट",
+        "gunnyPurchaseReport": "बारदाना खरीदी रिपोर्ट",
+        "frkPurchaseReport": "FRK खरीदी रिपोर्ट",
+        "otherPurchaseReport": "अन्य खरीदी रिपोर्ट",
+        "salesReports": "बिक्री रिपोर्ट",
+        "riceSalesReport": "चावल बिक्री रिपोर्ट",
+        "paddySalesReport": "धान बिक्री रिपोर्ट",
+        "gunnySalesReport": "बारदाना बिक्री रिपोर्ट",
+        "khandaSalesReport": "खंडा बिक्री रिपोर्ट",
+        "nakkhiSalesReport": "नक्खी बिक्री रिपोर्ट",
+        "otherSalesReport": "अन्य बिक्री रिपोर्ट",
+        "inputReports": "इनपुट रिपोर्ट",
+        "partyReport": "पार्टी रिपोर्ट",
+        "transporterReport": "परिवहनकर्ता रिपोर्ट",
+        "brokerReport": "ब्रोकर रिपोर्ट",
+        "committeeReport": "समिति रिपोर्ट",
+        "doReport": "DO रिपोर्ट",
+        "vehicleReport": "वाहन रिपोर्ट",
+        "staffReport": "स्टाफ रिपोर्ट",
+        "labourGroupReport": "हमाल/रेजा टोली रिपोर्ट",
+        "dailyReports": "दैनिक रिपोर्ट",
+        "purchaseDeals": "खरीदी सौदे",
+        "salesDeals": "बिक्री सौदे",
+        "inwards": "आवक",
+        "outwards": "जावक",
+        "milling": "मिलिंग",
+        "production": "उत्पादन",
+        "receipt": "प्राप्ति",
+        "payment": "भुगतान",
+        "stockReports": "स्टॉक रिपोर्ट",
+        "stockOverview": "स्टॉक अवलोकन",
+        "transaction": "लेनदेन",
+        "brokerTransaction": "ब्रोकर का हिसाब",
+        "partyTransaction": "पार्टी का हिसाब",
+        "inwardAndOutward": "आवक और जावक",
+        "inward": "आवक",
+        "outward": "जावक",
+        "govtPaddyInwardReport": "शासकीय धान आवक रिपोर्ट",
+        "privatePaddyInwardReport": "निजी धान आवक रिपोर्ट",
+        "riceInwardReport": "चावल आवक रिपोर्ट",
+        "gunnyInwardReport": "बारदाना आवक रिपोर्ट",
+        "otherInwardReport": "अन्य आवक रिपोर्ट",
+        "frkInwardReport": "FRK आवक रिपोर्ट",
+        "privatePaddyOutwardReport": "निजी धान जावक रिपोर्ट",
+        "privateRiceOutwardReport": "निजी चावल जावक रिपोर्ट",
+        "govtRiceOutwardReport": "शासकीय चावल जावक रिपोर्ट",
+        "govtGunnyOutwardReport": "शासकीय बारदाना जावक रिपोर्ट",
+        "privateGunnyOutwardReport": "निजी बारदाना जावक रिपोर्ट",
+        "frkOutwardReport": "FRK जावक रिपोर्ट",
+        "khandaOutwardReport": "खंडा जावक रिपोर्ट",
+        "nakkhiOutwardReport": "नक्खी जावक रिपोर्ट",
+        "bhusaOutwardReport": "भूसा जावक रिपोर्ट",
+        "kodhaOutwardReport": "कोढा जावक रिपोर्ट",
+        "silkyKodhaOutwardReport": "सिल्की कोढा जावक रिपोर्ट",
+        "otherOutwardReport": "अन्य जावक रिपोर्ट",
+        "millingReports": "मिलिंग रिपोर्ट",
+        "paddyMillingReport": "धान मिलिंग रिपोर्ट",
+        "riceMillingReport": "चावल मिलिंग रिपोर्ट",
+        "labourCostReport": "हमाली रिपोर्ट",
+        "inwardLabourCostReport": "आवक हमाली रिपोर्ट",
+        "outwardLabourCostReport": "जावक हमाली रिपोर्ट",
+        "millingLabourCostReport": "मिलिंग हमाली रिपोर्ट",
+        "otherLabourCostReport": "अन्य हमाली रिपोर्ट",
+        "financialTransactionReports": "वित्तीय लेनदेन रिपोर्ट",
+        "financialReceiptReport": "वित्तीय प्राप्ति रिपोर्ट",
+        "financialPaymentReport": "वित्तीय भुगतान रिपोर्ट",
+        "other": "अन्य",
+        "settings": "सेटिंग्स",
+        "profile": "प्रोफ़ाइल",
+        "appearance": "दिखावट",
+        "myProfile": "मेरी प्रोफ़ाइल",
+        "balanceLiftingPurchases": "बैलेंस लिफ्टिंग खरीदी",
+        "reportBalanceLiftingPaddyPurchases": "बैलेंस लिफ्टिंग धान खरीदी रिपोर्ट",
+        "reportBalanceLiftingRicePurchases": "बैलेंस लिफ्टिंग चावल खरीदी रिपोर्ट",
+        "reportBalanceLiftingGunnyPurchases": "बैलेंस लिफ्टिंग बारदाना खरीदी रिपोर्ट",
+        "reportBalanceLiftingFrkPurchases": "बैलेंस लिफ्टिंग FRK खरीदी रिपोर्ट",
+        "balanceLiftingSales": "बैलेंस लिफ्टिंग बिक्री",
+        "reportBalanceLiftingPaddySales": "बैलेंस लिफ्टिंग धान बिक्री रिपोर्ट",
+        "outwardBalanceLiftingRiceSales": "जावक बैलेंस लिफ्टिंग चावल बिक्री",
+        "outwardBalanceLiftingReportRiceSales": "जावक बैलेंस लिफ्टिंग चावल बिक्री रिपोर्ट",
+        "signOut": "साइन आउट"
+    },
+    "balanceLifting": {
+        "purchase": {
+            "paddy": {
+                "title": "बैलेंस लिफ्टिंग धान खरीदी रिपोर्ट",
+                "description": "बैलेंस लिफ्टिंग धान खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "primaryButton": "खरीदी जोड़ें",
+                "form": {
+                    "title_add": "बैलेंस लिफ्टिंग धान खरीदी जोड़ें",
+                    "title_edit": "बैलेंस लिफ्टिंग धान खरीदी संपादित करें",
+                    "description_add": "खरीदी विवरण नीचे दर्ज करें",
+                    "description_edit": "खरीदी विवरण नीचे अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "dealNumber": "धान खरीदी सौदा क्रमांक",
+                        "partyName": "पार्टी का नाम",
+                        "paddyQty": "धान की मात्रा",
+                        "balance": "शेष",
+                        "balanceLifting": "उठाव शेष"
+                    }
+                }
+            },
+            "rice": {
+                "title": "चावल खरीद रिपोर्ट",
+                "description": "चावल खरीद लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "primaryButton": "खरीदी जोड़ें",
+                "form": {
+                    "title_add": "चावल खरीद जोड़ें",
+                    "title_edit": "चावल खरीद संपादित करें",
+                    "description_add": "नीचे खरीद विवरण दर्ज करें",
+                    "description_edit": "नीचे खरीद विवरण अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "partyName": "पार्टी का नाम",
+                        "brokerName": "ब्रोकर का नाम",
+                        "deliveryType": "डिलीवरी का प्रकार",
+                        "lotOrOther": "लॉट / अन्य",
+                        "fciOrNAN": "FCI / NAN",
+                        "lotNumber": "लॉट नंबर",
+                        "frkType": "FRK",
+                        "frkRatePerQuintal": "FRK दर (प्रति क्विंटल)",
+                        "riceType": "चावल का प्रकार",
+                        "riceQty": "मात्रा (क्विंटल)",
+                        "riceRate": "चावल की दर",
+                        "discountPercent": "बटाव %",
+                        "brokeragePerQuintal": "दलाली (प्रति क्विंटल)",
+                        "gunnyType": "बारदाना शामिल / वापसी",
+                        "newGunnyRate": "नई बारदाना दर",
+                        "oldGunnyRate": "पुरानी बारदाना दर",
+                        "plasticGunnyRate": "प्लास्टिक बारदाना दर"
+                    }
+                }
+            },
+            "frk": {
+                "title": "FRK खरीद रिपोर्ट",
+                "description": "बैलेंस लिफ्टिंग FRK खरीदी लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "primaryButton": "खरीदी जोड़ें",
+                "form": {
+                    "title_add": "FRK खरीदी जोड़ें",
+                    "title_edit": "FRK खरीदी संपादित करें",
+                    "description_add": "खरीदी विवरण नीचे दर्ज करें",
+                    "description_edit": "खरीदी विवरण नीचे अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "frkPurchaseDealNumber": "FRK खरीदी सौदा क्रमांक",
+                        "partyName": "पार्टी का नाम",
+                        "frkQty": "FRK की मात्रा",
+                        "frkRate": "FRK दर",
+                        "gst": "GST"
+                    }
+                }
+            },
+            "gunny": {
+                "title": "बारदाना खरीद रिपोर्ट",
+                "description": "बारदाना खरीद रिकॉर्ड देखें और प्रबंधित करें",
+                "primaryButton": "खरीदी जोड़ें",
+                "form": {
+                    "title_add": "बारदाना खरीद जोड़ें",
+                    "title_edit": "बारदाना खरीद संपादित करें",
+                    "description_add": "नीचे खरीद विवरण दर्ज करें",
+                    "description_edit": "नीचे खरीद विवरण अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "partyName": "पार्टी का नाम",
+                        "deliveryType": "डिलीवरी प्रकार",
+                        "newGunnyQty": "नए बारदाने की मात्रा",
+                        "newGunnyRate": "नए बारदाने की दर",
+                        "oldGunnyQty": "पुराने बारदाने की मात्रा",
+                        "oldGunnyRate": "पुराने बारदाने की दर",
+                        "plasticGunnyQty": "प्लास्टिक बारदाने की मात्रा",
+                        "plasticGunnyRate": "प्लास्टिक बारदाने की दर"
+                    }
+                }
+            }
+        },
+        "sales": {
+            "paddy": {
+                "title": "बैलेंस लिफ्टिंग धान बिक्री रिपोर्ट",
+                "description": "बैलेंस लिफ्टिंग धान बिक्री लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "form": {
+                    "title_add": "बैलेंस लिफ्टिंग धान बिक्री जोड़ें",
+                    "title_edit": "बैलेंस लिफ्टिंग धान बिक्री संपादित करें",
+                    "description_add": "बिक्री विवरण नीचे दर्ज करें",
+                    "description_edit": "बिक्री विवरण नीचे अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "dealNumber": "धान बिक्री सौदा क्रमांक",
+                        "partyName": "पार्टी का नाम",
+                        "brokerName": "दलाल का नाम",
+                        "paddyQty": "धान की मात्रा",
+                        "lifting": "उठाव",
+                        "balance": "शेष",
+                        "balanceLifting": "उठाव शेष"
+                    }
+                },
+                "primaryButton": "बिक्री जोड़ें",
+                "actions": {
+                    "deleteSelected": "चयनित हटाएं",
+                    "deleteSelectedSales": "चयनित बिक्री हटाएं",
+                    "deleteSaleTitle": "बिक्री हटाएं?",
+                    "deleteSaleMessagePrefix": "क्या आप वाकई यह बिक्री रिकॉर्ड हटाना चाहते हैं",
+                    "cannotUndo": "यह क्रिया पूर्ववत नहीं की जा सकती।",
+                    "deleteCountTitle": "{{count}} {{entity}} हटाएं?",
+                    "sales": "बिक्री रिकॉर्ड",
+                    "sale": "बिक्री रिकॉर्ड",
+                    "deleteSelectedSalesConfirm": "क्या आप चयनित बिक्री रिकॉर्ड हटाना चाहते हैं?"
+                }
+            }
+        },
+        "outward": {
+            "rice": {
+                "title": "जावक बैलेंस लिफ्टिंग चावल रिपोर्ट",
+                "description": "जावक बैलेंस लिफ्टिंग चावल लेनदेन और रिकॉर्ड प्रबंधित करें",
+                "primaryButton": "जावक जोड़ें",
+                "form": {
+                    "title_add": "चावल जावक जोड़ें",
+                    "title_edit": "चावल जावक संपादित करें",
+                    "description_add": "जावक विवरण नीचे दर्ज करें",
+                    "description_edit": "जावक विवरण नीचे अपडेट करें",
+                    "fields": {
+                        "date": "दिनांक",
+                        "riceSalesDealNumber": "चावल बिक्री सौदा क्रमांक",
+                        "partyName": "पार्टी का नाम",
+                        "brokerName": "दलाल का नाम",
+                        "deliveryType": "डिलीवरी का प्रकार",
+                        "lotOrOther": "LOT/अन्य",
+                        "fciOrNAN": "FCI/NAN",
+                        "riceType": "चावल का प्रकार",
+                        "riceQty": "चावल की मात्रा",
+                        "riceRatePerQuintal": "चावल दर/क्विंटल",
+                        "discountPercent": "छूट %",
+                        "brokeragePerQuintal": "दलाली/क्विंटल",
+                        "gunnyType": "बारदाना का प्रकार",
+                        "newGunnyRate": "नया बारदाना दर",
+                        "oldGunnyRate": "पुराना बारदाना दर",
+                        "plasticGunnyRate": "प्लास्टिक बारदाना दर",
+                        "frkType": "FRK",
+                        "frkRatePerQuintal": "FRK दर/क्विंटल",
+                        "lotNumber": "लॉट नंबर",
+                        "outwardLotDeposit": "जावक / LOT जमा",
+                        "outwardBalance": "जावक शेष"
+                    }
+                },
+                "actions": {
+                    "deleteSelected": "चयनित हटाएं",
+                    "deleteSelectedEntries": "चयनित प्रविष्टियां हटाएं",
+                    "deleteEntryTitle": "प्रविष्टि हटाएं?",
+                    "deleteEntryMessagePrefix": "क्या आप वाकई यह जावक प्रविष्टि हटाना चाहते हैं",
+                    "cannotUndo": "यह क्रिया पूर्ववत नहीं की जा सकती।",
+                    "deleteCountTitle": "{{count}} {{entity}} हटाएं?",
+                    "entries": "प्रविष्टियां",
+                    "entry": "प्रविष्टि",
+                    "deleteSelectedEntriesConfirm": "क्या आप चयनित प्रविष्टियां हटाना चाहते हैं?"
+                }
+            }
+        }
+    },
+    "attendance": {
+        "present": "उपस्थित",
+        "absent": "अनुपस्थित",
+        "halfDay": "अर्ध दिवस"
+    }
+}

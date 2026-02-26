@@ -1,13 +1,18 @@
 import { type ColumnDef } from '@tanstack/react-table'
-// '
+import { useTranslation } from 'react-i18next'
+import '@/constants'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type LabourInward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
-export const labourInwardColumns: ColumnDef<LabourInward>[] = [
+export function LabourInwardColumns(): ColumnDef<LabourInward>[] {
+    const { t } = useTranslation('mill-staff')
+    
+    return [
     {
         id: 'select',
         header: ({ table }) => (
@@ -40,10 +45,12 @@ export const labourInwardColumns: ColumnDef<LabourInward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader column={column} title={t('labourCostReports.inward.form.fields.date')} />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -56,7 +63,7 @@ export const labourInwardColumns: ColumnDef<LabourInward>[] = [
     {
         accessorKey: 'inwardType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Inward Type' />
+            <DataTableColumnHeader column={column} title={t('labourCostReports.inward.form.fields.inwardType')} />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('inwardType')}</div>
@@ -66,7 +73,7 @@ export const labourInwardColumns: ColumnDef<LabourInward>[] = [
     {
         accessorKey: 'truckNumber',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Number' />
+            <DataTableColumnHeader column={column} title={t('labourCostReports.inward.form.fields.truckNo')} />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -77,7 +84,7 @@ export const labourInwardColumns: ColumnDef<LabourInward>[] = [
     {
         accessorKey: 'totalGunny',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Number of Gunny' />
+            <DataTableColumnHeader column={column} title={t('labourCostReports.inward.form.fields.numberOfBags')} />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
@@ -90,7 +97,7 @@ export const labourInwardColumns: ColumnDef<LabourInward>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Number of Gunny Bundle'
+                title={t('labourCostReports.inward.form.fields.gunnyBundleCount')}
             />
         ),
         cell: ({ row }) => (
@@ -102,7 +109,7 @@ export const labourInwardColumns: ColumnDef<LabourInward>[] = [
     {
         accessorKey: 'unloadingRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Unloading Rate' />
+            <DataTableColumnHeader column={column} title={t('labourCostReports.inward.form.fields.unloadingRate')} />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('unloadingRate')}</div>
@@ -111,7 +118,7 @@ export const labourInwardColumns: ColumnDef<LabourInward>[] = [
     {
         accessorKey: 'stackingRate',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Stacking Rate' />
+            <DataTableColumnHeader column={column} title={t('labourCostReports.inward.form.fields.stackingRate')} />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('stackingRate')}</div>
@@ -120,7 +127,7 @@ export const labourInwardColumns: ColumnDef<LabourInward>[] = [
     {
         accessorKey: 'labourGroupName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Labour Group Name' />
+            <DataTableColumnHeader column={column} title={t('labourCostReports.inward.form.fields.hamalRejaToliName')} />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -133,4 +140,5 @@ export const labourInwardColumns: ColumnDef<LabourInward>[] = [
         id: 'actions',
         cell: DataTableRowActions,
     },
-]
+    ]
+}

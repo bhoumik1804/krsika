@@ -8,25 +8,24 @@
 // ==========================================
 
 export interface CreateDoReportRequest {
-    doNumber: string
     date: string
-    partyName?: string
-    itemType?: string
-    quantity?: number
-    validFrom?: string
-    validTo?: string
+    samitiSangrahan?: string
+    doNo?: string
+    dhanMota?: number
+    dhanPatla?: number
+    dhanSarna?: number
+    total?: number
 }
 
 export interface UpdateDoReportRequest {
-    id?: string
-    _id?: string
-    doNumber?: string
+    _id: string
     date?: string
-    partyName?: string
-    itemType?: string
-    quantity?: number
-    validFrom?: string
-    validTo?: string
+    samitiSangrahan?: string
+    doNo?: string
+    dhanMota?: number
+    dhanPatla?: number
+    dhanSarna?: number
+    total?: number
 }
 
 // ==========================================
@@ -36,20 +35,19 @@ export interface UpdateDoReportRequest {
 export interface DoReportResponse {
     _id: string
     millId: string
-    doNumber: string
     date: string
-    partyName?: string
-    itemType?: string
-    quantity?: number
-    validFrom?: string
-    validTo?: string
-    createdBy: string
+    samitiSangrahan?: string
+    doNo?: string
+    dhanMota?: number
+    dhanPatla?: number
+    dhanSarna?: number
+    total?: number
     createdAt: string
     updatedAt: string
 }
 
 export interface DoReportListResponse {
-    data: DoReportResponse[]
+    reports: DoReportResponse[]
     pagination: {
         page: number
         limit: number
@@ -63,8 +61,10 @@ export interface DoReportListResponse {
 }
 
 export interface DoReportSummaryResponse {
-    totalDoReports: number
-    totalQuantity: number
+    totalEntries: number
+    totalDhanMota: number
+    totalDhanPatla: number
+    totalDhanSarna: number
 }
 
 // ==========================================

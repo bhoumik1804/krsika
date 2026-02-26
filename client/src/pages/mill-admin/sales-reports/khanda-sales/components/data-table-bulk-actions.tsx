@@ -10,22 +10,20 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
-import { type KhandaSales } from '../data/schema'
+import type { KhandaSalesResponse } from '../data/types'
 import { KhandaSalesMultiDeleteDialog } from './khanda-sales-multi-delete-dialog'
 
-type DataTableBulkActionsProps<TData> = {
-    table: Table<TData>
+type DataTableBulkActionsProps = {
+    table: Table<KhandaSalesResponse>
 }
 
-export function DataTableBulkActions<TData>({
-    table,
-}: DataTableBulkActionsProps<TData>) {
+export function DataTableBulkActions({ table }: DataTableBulkActionsProps) {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleBulkStatusChange = (status: 'completed' | 'cancelled') => {
         const selectedRecords = selectedRows.map(
-            (row) => row.original as KhandaSales
+            (row) => row.original as KhandaSalesResponse
         )
         toast.promise(sleep(2000), {
             loading: `Marking as ${status}...`,

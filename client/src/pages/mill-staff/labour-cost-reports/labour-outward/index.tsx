@@ -1,73 +1,53 @@
-import { useMemo } from 'react';
-import { useParams, useSearchParams } from 'react-router';
-import { ConfigDrawer } from '@/components/config-drawer';
-import { getMillAdminSidebarData } from '@/components/layout/data';
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { LoadingSpinner } from '@/components/loading-spinner';
-import { ProfileDropdown } from '@/components/profile-dropdown';
-import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
-import { LabourOutwardDialogs } from './components/labour-outward-dialogs';
-import { LabourOutwardPrimaryButtons } from './components/labour-outward-primary-buttons';
-import { LabourOutwardProvider } from './components/labour-outward-provider';
-import { LabourOutwardTable } from './components/labour-outward-table';
-import { useLabourOutwardList } from './data/hooks';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useParams, useSearchParams } from 'react-router'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { getMillAdminSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { LabourOutwardDialogs } from './components/labour-outward-dialogs'
+import { LabourOutwardPrimaryButtons } from './components/labour-outward-primary-buttons'
+import { LabourOutwardProvider } from './components/labour-outward-provider'
+import { LabourOutwardTable } from './components/labour-outward-table'
+import { useLabourOutwardList } from './data/hooks'
 
 export function LabourOutwardReport() {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
+
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            labourGroupName: search.labourGroupName as string | undefined,
+            outwardType: search.outwardType as string | undefined,
+            sortBy: (search.sortBy as string) || 'date',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
-    const search = Object.fromEntries(searchParams.entries())
-
-    const queryParams = useMemo(
-        () => ({
-            page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
-            search: search.search as string | undefined,
-            sortBy: (search.sortBy as string) || 'createdAt',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
+    const { data, isLoading, isError } = useLabourOutwardList(
+        millId || '',
+        queryParams
     )
 
-    const {
-        data: response,
-        isLoading,
-        isError,
-    } = useLabourOutwardList(millId || '', queryParams, {
-        enabled: !!millId,
-    })
-
-    const labourOutwardData = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
-    }, [response])
-
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
+        const search = Object.fromEntries(searchParams.entries())
         if (typeof opts.search === 'function') {
             const newSearch = opts.search(search)
             setSearchParams(newSearch as Record<string, string>)
@@ -76,6 +56,22 @@ export function LabourOutwardReport() {
         } else {
             setSearchParams(opts.search as Record<string, string>)
         }
+    }
+
+    if (isLoading && !data) {
+        return (
+            <div className='flex h-screen items-center justify-center'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (isError) {
+        return (
+            <div className='flex h-screen items-center justify-center text-red-500'>
+                Failed to load data. Please try again later.
+            </div>
+        )
     }
 
     return (
@@ -96,27 +92,26 @@ export function LabourOutwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Labour Outward Report
+                            {t('labourCostReports.outward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage labour outward transactions and records
+                            {t('labourCostReports.outward.description')}
                         </p>
                     </div>
                     <LabourOutwardPrimaryButtons />
                 </div>
-                {isLoading ? (
-                    <LoadingSpinner className='h-full w-full' />
-                ) : isError ? (
-                    <div className='py-10 text-center text-destructive'>
-                        Failed to load labour outward data
-                    </div>
-                ) : (
-                    <LabourOutwardTable
-                        data={labourOutwardData}
-                        search={search}
-                        navigate={navigate}
-                    />
-                )}
+                <LabourOutwardTable
+                    data={data?.entries || []}
+                    search={Object.fromEntries(
+                        Object.entries(queryParams || {})
+                            .filter(([, value]) => value !== undefined)
+                            .map(([key, value]) => [key, String(value)])
+                    )}
+                    navigate={navigate}
+                    // Pagination data from API
+                    pagination={data?.pagination}
+                    isLoading={isLoading}
+                />
             </Main>
 
             <LabourOutwardDialogs />

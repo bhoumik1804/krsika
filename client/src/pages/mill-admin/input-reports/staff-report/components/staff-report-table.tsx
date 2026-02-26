@@ -26,32 +26,26 @@ import { type StaffReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { staffReportColumns as columns } from './staff-report-columns'
 
-type Pagination = {
-    page: number
-    limit: number
-    total: number
-    totalPages: number
-    hasPrevPage: boolean
-    hasNextPage: boolean
-    prevPage: number | null
-    nextPage: number | null
-}
-
 type DataTableProps = {
     data: StaffReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading?: boolean
-    isError?: boolean
-    pagination?: Pagination
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
 export function StaffReportTable({
     data,
     search,
     navigate,
-    isLoading,
-    isError,
     pagination: serverPagination,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
@@ -80,7 +74,7 @@ export function StaffReportTable({
         columnFilters: [
             {
                 columnId: 'fullName',
-                searchKey: 'search',
+                searchKey: 'fullName',
                 type: 'string',
             },
         ],
@@ -103,6 +97,7 @@ export function StaffReportTable({
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
+        getRowId: (row) => row._id || '',
         // Use server-side pagination info when available
         pageCount: serverPagination?.totalPages ?? -1,
         manualPagination: !!serverPagination,
@@ -167,25 +162,7 @@ export function StaffReportTable({
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {isLoading ? (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className='h-24 text-center'
-                                >
-                                    Loading...
-                                </TableCell>
-                            </TableRow>
-                        ) : isError ? (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className='h-24 text-center text-destructive'
-                                >
-                                    Error loading data
-                                </TableCell>
-                            </TableRow>
-                        ) : table.getRowModel().rows?.length ? (
+                        {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}

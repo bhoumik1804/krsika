@@ -2,10 +2,11 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { type GunnySales } from '../data/schema'
+import type { GunnySalesResponse } from '../data/types'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
-export const gunnySalesColumns: ColumnDef<GunnySales>[] = [
+export const gunnySalesColumns: ColumnDef<GunnySalesResponse>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -41,7 +42,9 @@ export const gunnySalesColumns: ColumnDef<GunnySales>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -57,7 +60,9 @@ export const gunnySalesColumns: ColumnDef<GunnySales>[] = [
             <DataTableColumnHeader column={column} title='Party Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('partyName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('partyName') || '-'}
+            </div>
         ),
     },
     {
@@ -66,7 +71,9 @@ export const gunnySalesColumns: ColumnDef<GunnySales>[] = [
             <DataTableColumnHeader column={column} title='New Gunny Qty' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.newGunnyQty?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                {row.original.newGunnyQty?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -75,7 +82,9 @@ export const gunnySalesColumns: ColumnDef<GunnySales>[] = [
             <DataTableColumnHeader column={column} title='New Gunny Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.newGunnyRate?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.newGunnyRate?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -84,7 +93,9 @@ export const gunnySalesColumns: ColumnDef<GunnySales>[] = [
             <DataTableColumnHeader column={column} title='Old Gunny Qty' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.oldGunnyQty?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                {row.original.oldGunnyQty?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -93,7 +104,9 @@ export const gunnySalesColumns: ColumnDef<GunnySales>[] = [
             <DataTableColumnHeader column={column} title='Old Gunny Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.oldGunnyRate?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.oldGunnyRate?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -102,7 +115,9 @@ export const gunnySalesColumns: ColumnDef<GunnySales>[] = [
             <DataTableColumnHeader column={column} title='Plastic Gunny Qty' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.plasticGunnyQty?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                {row.original.plasticGunnyQty?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -111,7 +126,9 @@ export const gunnySalesColumns: ColumnDef<GunnySales>[] = [
             <DataTableColumnHeader column={column} title='Plastic Gunny Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.plasticGunnyRate?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.plasticGunnyRate?.toFixed(2) || 0}
+            </div>
         ),
     },
     {

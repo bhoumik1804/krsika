@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { toast } from 'sonner'
+import { USER_ROLES } from '@/constants'
 import { Menu, X, Wheat } from 'lucide-react'
 import { Link, useNavigate } from 'react-router'
 import { getRedirectPath } from '@/lib/auth-utils'
@@ -38,10 +40,30 @@ export function Navbar() {
         })
     }
 
+
+
     const handleGoToDashboard = () => {
         if (user) {
+            // Check if user is inactive OR is a guest user (pending approval)
+            if (!user.isActive || user.role === USER_ROLES.GUEST_USER) {
+                toast.error('Your account is under review by the admin.', {
+                    description: 'Please wait for approval to access the dashboard.',
+                })
+                return
+            }
+
+            // Check if user has millId for roles that require it
+            if (
+                (user.role === USER_ROLES.MILL_ADMIN || user.role === USER_ROLES.MILL_STAFF) &&
+                !user.millId
+            ) {
+                toast.error('No mill assigned to your account.', {
+                    description: 'Please contact the admin to create or link a mill to your account.',
+                })
+                return
+            }
+
             const path = getRedirectPath(user)
-            alert(`Redirecting to ${path}...`) // Optional: Show a message before redirecting
             navigate(path)
         }
     }
@@ -90,7 +112,7 @@ export function Navbar() {
                                     <Link to='/sign-in'>Sign In</Link>
                                 </Button>
                                 <Button asChild>
-                                    <Link to='/sign-up'>Get Started</Link>
+                                    <Link to='/sign-up'>Register</Link>
                                 </Button>
                             </>
                         )}
@@ -194,7 +216,7 @@ export function Navbar() {
                                         </Button>
                                         <Button asChild>
                                             <Link to='/sign-up'>
-                                                Get Started
+                                                Register
                                             </Link>
                                         </Button>
                                     </>

@@ -22,10 +22,9 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-// import { statuses } from '../data/data'
-// import { type VehicleReportData } from '../data/schema'
+import { type VehicleReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { vehicleReportColumns as columns } from './vehicle-report-columns'
+import { useVehicleReportColumns } from './vehicle-report-columns'
 
 interface PaginationInfo {
     page: number
@@ -39,7 +38,7 @@ interface PaginationInfo {
 }
 
 type DataTableProps = {
-    data: any[]
+    data: VehicleReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
     pagination?: PaginationInfo
@@ -52,14 +51,13 @@ export function VehicleReportTable({
     search,
     navigate,
     pagination: serverPagination,
-    // isLoading,
-    // isError,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const columns = useVehicleReportColumns()
 
     const {
         columnFilters,
@@ -79,7 +77,11 @@ export function VehicleReportTable({
         },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'truckNo', searchKey: 'search', type: 'string' },
+            {
+                columnId: 'truckNo',
+                searchKey: 'truckNo',
+                type: 'string',
+            },
         ],
     })
 
@@ -100,15 +102,16 @@ export function VehicleReportTable({
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
+        getRowId: (row) => row._id || '',
         // Use server-side pagination info when available
         pageCount: serverPagination?.totalPages ?? -1,
         manualPagination: !!serverPagination,
+        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-        getPaginationRowModel: getPaginationRowModel(),
     })
 
     useEffect(() => {
@@ -127,8 +130,7 @@ export function VehicleReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='search'
-                filters={[]}
+                searchKey='truckNo'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

@@ -10,7 +10,7 @@ import { KhandaSalesDialogs } from './components/khanda-sales-dialogs'
 import { KhandaSalesPrimaryButtons } from './components/khanda-sales-primary-buttons'
 import { KhandaSalesProvider } from './components/khanda-sales-provider'
 import { KhandaSalesTable } from './components/khanda-sales-table'
-import { khandaSalesEntries } from './data/khanda-sales-entries'
+import { useKhandaSalesList } from './data/hooks'
 
 export function KhandaSalesReport() {
     const { millId } = useParams<{ millId: string }>()
@@ -18,6 +18,17 @@ export function KhandaSalesReport() {
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
+
+    // API Integration
+    const {
+        data: apiResponse,
+        isLoading,
+        isError,
+    } = useKhandaSalesList(millId || '', {
+        page: Number(search.page) || 1,
+        limit: Number(search.pageSize) || 10,
+        search: search.partyName as string,
+    })
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -31,7 +42,12 @@ export function KhandaSalesReport() {
     }
 
     return (
-        <KhandaSalesProvider>
+        <KhandaSalesProvider
+            millId={millId || ''}
+            apiResponse={apiResponse}
+            isLoading={isLoading}
+            isError={isError}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -56,11 +72,23 @@ export function KhandaSalesReport() {
                     </div>
                     <KhandaSalesPrimaryButtons />
                 </div>
-                <KhandaSalesTable
-                    data={khandaSalesEntries}
-                    search={search}
-                    navigate={navigate}
-                />
+                {isLoading ? (
+                    <div className='flex items-center justify-center py-10'>
+                        <div className='text-muted-foreground'>Loading...</div>
+                    </div>
+                ) : isError ? (
+                    <div className='flex items-center justify-center py-10'>
+                        <div className='text-destructive'>
+                            Error loading data
+                        </div>
+                    </div>
+                ) : (
+                    <KhandaSalesTable
+                        data={apiResponse?.sales || []}
+                        search={search}
+                        navigate={navigate}
+                    />
+                )}
             </Main>
 
             <KhandaSalesDialogs />

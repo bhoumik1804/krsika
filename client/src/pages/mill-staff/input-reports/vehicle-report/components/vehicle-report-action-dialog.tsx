@@ -1,7 +1,6 @@
-import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useUser } from '@/pages/landing/hooks/use-auth'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -22,72 +21,79 @@ import {
 import { Input } from '@/components/ui/input'
 import { useCreateVehicle, useUpdateVehicle } from '../data/hooks'
 import { vehicleReportSchema, type VehicleReportData } from '../data/schema'
+import { useVehicleReport } from './vehicle-report-provider'
 
 type VehicleReportActionDialogProps = {
+    currentRow?: VehicleReportData
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: VehicleReportData | null
 }
 
 export function VehicleReportActionDialog({
+    currentRow,
     open,
     onOpenChange,
-    currentRow,
 }: VehicleReportActionDialogProps) {
-    const { user } = useUser()
-    const millId = user?.millId as any
-    const createMutation = useCreateVehicle(millId)
-    const updateMutation = useUpdateVehicle(millId)
-    const isLoading = createMutation.isPending || updateMutation.isPending
-    const isEditing = !!currentRow?._id
+    const { t } = useTranslation('mill-staff')
+    const { millId } = useVehicleReport()
+    const isEditing = !!currentRow
+    const { mutate: createVehicle, isPending: isCreating } =
+        useCreateVehicle(millId)
+    const { mutate: updateVehicle, isPending: isUpdating } =
+        useUpdateVehicle(millId)
+
+    const isLoading = isCreating || isUpdating
 
     const form = useForm<VehicleReportData>({
         resolver: zodResolver(vehicleReportSchema),
-        defaultValues: {
-            truckNo: '',
-        },
+        defaultValues: isEditing
+            ? { ...currentRow }
+            : {
+                  truckNo: '',
+              },
     })
 
-    useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
+    const onSubmit = (data: VehicleReportData) => {
+        const vehicleId = currentRow?._id
+        if (isEditing && vehicleId) {
+            updateVehicle(
+                { vehicleId, data },
+                {
+                    onSuccess: () => {
+                        form.reset()
+                        onOpenChange(false)
+                    },
+                }
+            )
         } else {
-            form.reset()
-        }
-    }, [currentRow, form])
-
-    const onSubmit = async (data: VehicleReportData) => {
-        const payload = {
-            truckNo: data.truckNo,
-        }
-        try {
-            if (isEditing && currentRow?._id) {
-                await updateMutation.mutateAsync({
-                    id: currentRow._id,
-                    ...payload,
-                })
-            } else {
-                await createMutation.mutateAsync(payload)
-            }
-            onOpenChange(false)
-            form.reset({
-                truckNo: '',
+            createVehicle(data, {
+                onSuccess: () => {
+                    form.reset()
+                    onOpenChange(false)
+                },
             })
-        } catch (error) {
-            console.error('Error submitting form:', error)
         }
     }
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className='max-w-md'>
+        <Dialog
+            open={open}
+            onOpenChange={(state) => {
+                form.reset()
+                onOpenChange(state)
+            }}
+        >
+            <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Vehicle
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('inputReports.vehicle.form.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the vehicle details
-                        below
+                        {t('common.enter')}{' '}
+                        {t(
+                            'inputReports.vehicle.form.description'
+                        ).toLowerCase()}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -95,22 +101,30 @@ export function VehicleReportActionDialog({
                         onSubmit={form.handleSubmit(onSubmit)}
                         className='space-y-4'
                     >
-                        <FormField
-                            control={form.control}
-                            name='truckNo'
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Truck Number</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder='Enter truck number'
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className='space-y-6'>
+                            <div className='grid grid-cols-1 gap-4'>
+                                <FormField
+                                    control={form.control}
+                                    name='truckNo'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                {t(
+                                                    'inputReports.vehicle.form.fields.truckNo'
+                                                )}
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder='Truck No'
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        </div>
                         <DialogFooter>
                             <Button
                                 type='button'
@@ -118,17 +132,20 @@ export function VehicleReportActionDialog({
                                 onClick={() => onOpenChange(false)}
                                 disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit' disabled={isLoading}>
                                 {isLoading
                                     ? isEditing
-                                        ? 'Updating...'
-                                        : 'Adding...'
+                                        ? t('common.update') + '...'
+                                        : t('common.add') + '...'
                                     : isEditing
-                                      ? 'Update'
-                                      : 'Add'}{' '}
-                                Vehicle
+                                      ? t('common.update')
+                                      : t('common.add')}{' '}
+                                {t('inputReports.vehicle.title').replace(
+                                    ' Report',
+                                    ''
+                                )}
                             </Button>
                         </DialogFooter>
                     </form>

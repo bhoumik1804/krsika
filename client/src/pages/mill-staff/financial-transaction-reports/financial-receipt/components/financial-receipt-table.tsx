@@ -24,22 +24,29 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type FinancialReceipt } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { FinancialReceiptColumns as columns } from './financial-receipt-columns'
+import { FinancialReceiptColumns } from './financial-receipt-columns'
 
 type DataTableProps = {
     data: FinancialReceipt[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading?: boolean
-    isError?: boolean
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
 export function FinancialReceiptTable({
     data,
     search,
     navigate,
-    // isLoading,
-    // isError,
+    pagination: serverPagination,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -56,7 +63,10 @@ export function FinancialReceiptTable({
     } = useTableUrlState({
         search,
         navigate,
-        pagination: { defaultPage: 1, defaultPageSize: 10 },
+        pagination: {
+            defaultPage: serverPagination ? serverPagination.page : 1,
+            defaultPageSize: serverPagination ? serverPagination.limit : 10,
+        },
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
@@ -71,7 +81,7 @@ export function FinancialReceiptTable({
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
-        columns,
+        columns: FinancialReceiptColumns(),
         state: {
             sorting,
             pagination,
@@ -79,6 +89,8 @@ export function FinancialReceiptTable({
             columnFilters,
             columnVisibility,
         },
+        pageCount: serverPagination ? serverPagination.totalPages : -1,
+        manualPagination: true,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
@@ -94,8 +106,10 @@ export function FinancialReceiptTable({
     })
 
     useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
+        if (serverPagination) {
+            ensurePageInRange(serverPagination.totalPages)
+        }
+    }, [serverPagination, ensurePageInRange])
 
     return (
         <div
@@ -110,8 +124,8 @@ export function FinancialReceiptTable({
                 searchKey='partyName'
                 filters={[
                     {
-                        columnId: 'dealType',
-                        title: 'Deal Type',
+                        columnId: 'salesDealType',
+                        title: 'Sales Deal Type',
                         options: [
                             {
                                 label: 'खरीद (Purchase)',
@@ -188,7 +202,7 @@ export function FinancialReceiptTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No results.

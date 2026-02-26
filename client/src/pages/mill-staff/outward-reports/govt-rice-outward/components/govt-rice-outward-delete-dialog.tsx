@@ -1,5 +1,3 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,6 +9,8 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { type GovtRiceOutward } from '../data/schema'
+import { useDeleteGovtRiceOutward } from '../data/hooks'
+import { useGovtRiceOutward } from './govt-rice-outward-provider'
 
 type GovtRiceOutwardDeleteDialogProps = {
     open: boolean
@@ -23,15 +23,19 @@ export function GovtRiceOutwardDeleteDialog({
     onOpenChange,
     currentRow,
 }: GovtRiceOutwardDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+    const { millId, setOpen, setCurrentRow } = useGovtRiceOutward()
+    const deleteMutation = useDeleteGovtRiceOutward(millId)
+
+    const handleDelete = async () => {
+        if (!currentRow?._id) return
+        try {
+            await deleteMutation.mutateAsync(currentRow._id)
+            setCurrentRow(null)
+            setOpen(null)
+            onOpenChange(false)
+        } catch {
+            // Error is handled by mutation hook
+        }
     }
 
     return (

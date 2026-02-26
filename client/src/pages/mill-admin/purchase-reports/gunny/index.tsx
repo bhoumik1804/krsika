@@ -12,13 +12,14 @@ import { GunnyDialogs } from './components/gunny-dialogs'
 import { GunnyPrimaryButtons } from './components/gunny-primary-buttons'
 import { GunnyProvider, useGunny } from './components/gunny-provider'
 import { GunnyTable } from './components/gunny-table'
+import type { GunnyPurchaseQueryParams } from './data/types'
 
 export function GunnyPurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
 
     // Extract query params from URL
-    const queryParams = useMemo(() => {
+    const queryParams = useMemo((): GunnyPurchaseQueryParams => {
         const search = Object.fromEntries(searchParams.entries())
         const allowedPageSizes = [10, 20, 30, 40, 50]
         const rawLimit = search.limit
@@ -51,35 +52,8 @@ export function GunnyPurchaseReport() {
         }
     }
 
-    const handleQueryParamsChange = (params: {
-        page: number
-        limit: number
-        search?: string
-        sortBy?: string
-        sortOrder?: 'asc' | 'desc'
-    }) => {
-        const newParams: Record<string, string> = {
-            page: params.page.toString(),
-            limit: params.limit.toString(),
-        }
-        if (params.search) {
-            newParams.search = params.search
-        }
-        if (params.sortBy) {
-            newParams.sortBy = params.sortBy
-        }
-        if (params.sortOrder) {
-            newParams.sortOrder = params.sortOrder
-        }
-        setSearchParams(newParams, { replace: true })
-    }
-
     return (
-        <GunnyProvider
-            millId={millId || ''}
-            initialQueryParams={queryParams}
-            onQueryParamsChange={handleQueryParamsChange}
-        >
+        <GunnyProvider millId={millId || ''} initialQueryParams={queryParams}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -139,6 +113,7 @@ function GunnyPurchaseContent({
     return (
         <GunnyTable
             data={context.data}
+            pagination={context.pagination}
             search={Object.fromEntries(
                 Object.entries(context.queryParams || {})
                     .filter(([, value]) => value !== undefined)

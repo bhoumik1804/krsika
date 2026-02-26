@@ -1,6 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,30 +9,40 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useTranslation } from 'react-i18next'
+import { useDeleteBulkPaddySales } from '../data/hooks'
+import { type PaddySalesResponse } from '../data/types'
 
-type BalanceLiftingSalesPaddyMultiDeleteDialogProps<TData> = {
+type PaddySalesMultiDeleteDialogProps<TData> = {
     table: Table<TData>
     open: boolean
     onOpenChange: (open: boolean) => void
 }
 
-export function BalanceLiftingSalesPaddyMultiDeleteDialog<TData>({
+export function PaddySalesMultiDeleteDialog<TData>({
     table,
     open,
     onOpenChange,
-}: BalanceLiftingSalesPaddyMultiDeleteDialogProps<TData>) {
+}: PaddySalesMultiDeleteDialogProps<TData>) {
+    const { t } = useTranslation('mill-staff')
+    const { mutateAsync: bulkDelete, isPending: isDeleting } =
+        useDeleteBulkPaddySales()
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
-    const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
+    const handleDeleteSelected = async () => {
+        const saleIds = selectedRows
+            .map((row) => (row.original as PaddySalesResponse)._id)
+            .filter(Boolean) as string[]
+
+        if (saleIds.length > 0) {
+            try {
+                await bulkDelete(saleIds)
                 table.resetRowSelection()
                 onOpenChange(false)
-                return `Deleted ${selectedRows.length} record${selectedRows.length > 1 ? 's' : ''}`
-            },
-            error: 'Error deleting records',
-        })
+            } catch (error) {
+                console.error('Error deleting sales:', error)
+            }
+        }
     }
 
     return (
@@ -42,22 +50,32 @@ export function BalanceLiftingSalesPaddyMultiDeleteDialog<TData>({
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Delete {selectedRows.length}{' '}
-                        {selectedRows.length > 1 ? 'records' : 'record'}?
+                        {t('balanceLifting.sales.paddy.actions.deleteCountTitle', {
+                            count: selectedRows.length,
+                            entity:
+                                selectedRows.length > 1
+                                    ? t('balanceLifting.sales.paddy.actions.sales')
+                                    : t('balanceLifting.sales.paddy.actions.sale'),
+                        })}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to delete the selected records?{' '}
+                        {t(
+                            'balanceLifting.sales.paddy.actions.deleteSelectedSalesConfirm'
+                        )}{' '}
                         <br />
-                        This action cannot be undone.
+                        {t('balanceLifting.sales.paddy.actions.cannotUndo')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        {t('common.cancel')}
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting ? t('common.deleting') : t('common.delete')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

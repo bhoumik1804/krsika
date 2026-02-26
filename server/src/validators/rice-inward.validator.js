@@ -8,10 +8,10 @@ import { z } from 'zod'
 // Common fields schema - matches RiceInward model
 const riceInwardBaseSchema = {
     date: z.string(),
-    ricePurchaseNumber: z
+    ricePurchaseDealNumber: z
         .string()
         .trim()
-        .max(100, 'Rice purchase number is too long')
+        .max(100, 'Rice purchase deal number is too long')
         .optional(),
     partyName: z.string().trim().max(200, 'Party name is too long').optional(),
     brokerName: z
@@ -67,7 +67,7 @@ export const createRiceInwardSchema = z.object({
 export const updateRiceInwardSchema = z.object({
     body: z.object({
         date: riceInwardBaseSchema.date.optional(),
-        ricePurchaseNumber: riceInwardBaseSchema.ricePurchaseNumber,
+        ricePurchaseDealNumber: riceInwardBaseSchema.ricePurchaseDealNumber,
         partyName: riceInwardBaseSchema.partyName,
         brokerName: riceInwardBaseSchema.brokerName,
         riceType: riceInwardBaseSchema.riceType,

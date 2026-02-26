@@ -1,97 +1,53 @@
-import { useMemo } from 'react';
-import { useParams, useSearchParams } from 'react-router';
-import { ConfigDrawer } from '@/components/config-drawer';
-import { getMillAdminSidebarData } from '@/components/layout/data';
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { LoadingSpinner } from '@/components/loading-spinner';
-import { ProfileDropdown } from '@/components/profile-dropdown';
-import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
-import { PrivatePaddyInwardDialogs } from './components/private-paddy-inward-dialogs';
-import { PrivatePaddyInwardPrimaryButtons } from './components/private-paddy-inward-primary-buttons';
-import { PrivatePaddyInwardProvider } from './components/private-paddy-inward-provider';
-import { PrivatePaddyInwardTable } from './components/private-paddy-inward-table';
-import { usePrivatePaddyInwardList } from './data/hooks';
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useParams, useSearchParams } from 'react-router'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { getMillAdminSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { PrivatePaddyInwardDialogs } from './components/private-paddy-inward-dialogs'
+import { PrivatePaddyInwardPrimaryButtons } from './components/private-paddy-inward-primary-buttons'
+import { PrivatePaddyInwardProvider } from './components/private-paddy-inward-provider'
+import { PrivatePaddyInwardTable } from './components/private-paddy-inward-table'
+import { usePrivatePaddyInwardList } from './data/hooks'
+import type { PrivatePaddyInwardQueryParams } from './data/types'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export function PrivatePaddyInwardReport() {
-    const { millId } = useParams<{ millId: string }>()
+function PrivatePaddyInwardContent({ millId }: { millId: string }) {
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
-    const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
 
-    // Extract query params from URL
-    const queryParams = useMemo(
-        () => ({
+    const queryParams: PrivatePaddyInwardQueryParams = useMemo(() => {
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
             page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            limit,
             search: search.search as string | undefined,
             startDate: search.startDate as string | undefined,
             endDate: search.endDate as string | undefined,
-            sortBy: (search.sortBy as string) || 'date',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
+            sortBy: search.sortBy as string | undefined,
+            sortOrder: search.sortOrder as 'asc' | 'desc' | undefined,
+        }
+    }, [search])
 
-    // Fetch private paddy inward data using the hook
     const {
-        data: inwardResponse,
+        data: listData,
         isLoading,
-        isError,
-    } = usePrivatePaddyInwardList(millId || '', queryParams, {
-        enabled: !!millId,
-    })
+        error,
+    } = usePrivatePaddyInwardList(millId, queryParams)
 
-    // Transform API response to table format
-    const inwardData = useMemo(() => {
-        if (!inwardResponse?.data) return []
-        return inwardResponse.data.map((item) => ({
-            id: item._id,
-            date: item.date,
-            paddyPurchaseDealNumber: item.paddyPurchaseDealNumber ?? '',
-            partyName: item.partyName ?? '',
-            brokerName: item.brokerName ?? '',
-            balanceDo: item.balanceDo ?? 0,
-            purchaseType: item.purchaseType ?? '',
-            doNumber: item.doNumber ?? '',
-            committeeName: item.committeeName ?? '',
-            gunnyOption: item.gunnyOption ?? '',
-            gunnyNew: item.gunnyNew ?? 0,
-            gunnyOld: item.gunnyOld ?? 0,
-            gunnyPlastic: item.gunnyPlastic ?? 0,
-            juteWeight: item.juteWeight ?? 0,
-            plasticWeight: item.plasticWeight ?? 0,
-            gunnyWeight: item.gunnyWeight ?? 0,
-            truckNumber: item.truckNumber ?? '',
-            rstNumber: item.rstNumber ?? '',
-            truckLoadWeight: item.truckLoadWeight ?? 0,
-            paddyType: item.paddyType ?? '',
-            paddyMota: item.paddyMota ?? 0,
-            paddyPatla: item.paddyPatla ?? 0,
-            paddySarna: item.paddySarna ?? 0,
-            paddyMahamaya: item.paddyMahamaya ?? 0,
-            paddyRbGold: item.paddyRbGold ?? 0,
-        }))
-    }, [inwardResponse])
+    const data = listData?.entries ?? []
+    const pagination = listData?.pagination
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -104,8 +60,73 @@ export function PrivatePaddyInwardReport() {
         }
     }
 
+    if (error) {
+        return (
+            <Main className='flex flex-1 flex-col items-center justify-center'>
+                <div className='text-center'>
+                    <h2 className='text-2xl font-bold text-destructive'>
+                        Error loading data
+                    </h2>
+                    <p className='mt-2 text-muted-foreground'>
+                        {error.message ||
+                            'Failed to load private paddy inward records'}
+                    </p>
+                </div>
+            </Main>
+        )
+    }
+
     return (
-        <PrivatePaddyInwardProvider>
+        <>
+            <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
+                <div className='flex flex-wrap items-end justify-between gap-2'>
+                    <div>
+                        <h2 className='text-2xl font-bold tracking-tight'>
+                            {t('inward.privatePaddyInward.title')}
+                        </h2>
+                        <p className='text-muted-foreground'>
+                            {t('inward.privatePaddyInward.description')}
+                        </p>
+                    </div>
+                    <PrivatePaddyInwardPrimaryButtons />
+                </div>
+                {isLoading ? (
+                    <div className='flex items-center justify-center py-8'>
+                        <LoadingSpinner />
+                    </div>
+                ) : (
+                    <PrivatePaddyInwardTable
+                        data={data}
+                        search={search}
+                        navigate={navigate}
+                        pagination={pagination}
+                    />
+                )}
+            </Main>
+
+            <PrivatePaddyInwardDialogs />
+        </>
+    )
+}
+
+export function PrivatePaddyInwardReport() {
+    const { millId } = useParams<{ millId: string }>()
+    const sidebarData = getMillAdminSidebarData(millId || '')
+
+    if (!millId) {
+        return (
+            <Main className='flex flex-1 flex-col items-center justify-center'>
+                <div className='text-center'>
+                    <h2 className='text-2xl font-bold text-destructive'>
+                        Mill ID is required
+                    </h2>
+                </div>
+            </Main>
+        )
+    }
+
+    return (
+        <>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -118,34 +139,9 @@ export function PrivatePaddyInwardReport() {
                 </div>
             </Header>
 
-            <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
-                <div className='flex flex-wrap items-end justify-between gap-2'>
-                    <div>
-                        <h2 className='text-2xl font-bold tracking-tight'>
-                            Private Paddy Inward Report
-                        </h2>
-                        <p className='text-muted-foreground'>
-                            Manage paddy inward transactions and records
-                        </p>
-                    </div>
-                    <PrivatePaddyInwardPrimaryButtons />
-                </div>
-                {isLoading ? (
-                    <LoadingSpinner className='h-full w-full' />
-                ) : isError ? (
-                    <div className='py-10 text-center text-destructive'>
-                        Failed to load private paddy inward data
-                    </div>
-                ) : (
-                    <PrivatePaddyInwardTable
-                        data={inwardData}
-                        search={search}
-                        navigate={navigate}
-                    />
-                )}
-            </Main>
-
-            <PrivatePaddyInwardDialogs />
-        </PrivatePaddyInwardProvider>
+            <PrivatePaddyInwardProvider millId={millId}>
+                <PrivatePaddyInwardContent millId={millId} />
+            </PrivatePaddyInwardProvider>
+        </>
     )
 }

@@ -5,6 +5,7 @@ import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type GovtRiceOutward } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
@@ -42,7 +43,9 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -107,7 +110,9 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('juteWeight') as number).toFixed(2)}
+                {(row.getValue('juteWeight') as number | undefined)?.toFixed(
+                    2
+                ) ?? '-'}
             </div>
         ),
     },
@@ -138,7 +143,9 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('truckWeight') as number).toFixed(2)}
+                {(row.getValue('truckWeight') as number | undefined)?.toFixed(
+                    2
+                ) ?? '-'}
             </div>
         ),
     },
@@ -149,7 +156,9 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('gunnyWeight') as number).toFixed(2)}
+                {(row.getValue('gunnyWeight') as number | undefined)?.toFixed(
+                    2
+                ) ?? '-'}
             </div>
         ),
     },
@@ -160,7 +169,9 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
-                {(row.getValue('netWeight') as number).toFixed(2)}
+                {(row.getValue('netWeight') as number | undefined)?.toFixed(
+                    2
+                ) ?? '-'}
             </div>
         ),
     },

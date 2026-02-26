@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
-import { Trash2, CheckCircle } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
     Tooltip,
@@ -13,50 +11,16 @@ import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-ta
 import { type TransporterReportData } from '../data/schema'
 import { TransporterReportMultiDeleteDialog } from './transporter-report-multi-delete-dialog'
 
-type DataTableBulkActionsProps<TData> = {
-    table: Table<TData>
+type DataTableBulkActionsProps = {
+    table: Table<TransporterReportData>
 }
 
-export function DataTableBulkActions<TData>({
-    table,
-}: DataTableBulkActionsProps<TData>) {
+export function DataTableBulkActions({ table }: DataTableBulkActionsProps) {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-    const selectedRows = table.getFilteredSelectedRowModel().rows
-
-    const handleBulkStatusChange = (status: 'completed' | 'cancelled') => {
-        const selectedRecords = selectedRows.map(
-            (row) => row.original as TransporterReportData
-        )
-        toast.promise(sleep(2000), {
-            loading: `Marking as ${status}...`,
-            success: () => {
-                table.resetRowSelection()
-                return `Marked ${selectedRecords.length} record${selectedRecords.length > 1 ? 's' : ''} as ${status}`
-            },
-            error: `Error updating records`,
-        })
-    }
 
     return (
         <>
             <BulkActionsToolbar table={table} entityName='record'>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button
-                            variant='outline'
-                            size='icon'
-                            onClick={() => handleBulkStatusChange('completed')}
-                            className='size-8'
-                        >
-                            <CheckCircle />
-                            <span className='sr-only'>Mark completed</span>
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p>Mark selected as completed</p>
-                    </TooltipContent>
-                </Tooltip>
-
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <Button

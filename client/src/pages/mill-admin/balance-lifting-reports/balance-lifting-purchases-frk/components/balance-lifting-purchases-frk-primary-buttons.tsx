@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { balanceLiftingPurchasesFrk } from './balance-lifting-purchases-frk-provider'
+import { useBalanceLiftingPurchasesFrk } from './balance-lifting-purchases-frk-provider'
 
 export function BalanceLiftingPurchasesFrkPrimaryButtons() {
-    const { setOpen } = balanceLiftingPurchasesFrk()
+    const { setOpen } = useBalanceLiftingPurchasesFrk()
 
     return (
         <Button onClick={() => setOpen('add')}>

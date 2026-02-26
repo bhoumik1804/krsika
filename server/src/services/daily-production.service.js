@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { DailyProduction } from '../models/daily-production.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockHelpers from './stock-helpers.service.js'
 
 export const createDailyProductionEntry = async (millId, data, userId) => {
     const entry = new DailyProduction({
@@ -11,6 +12,10 @@ export const createDailyProductionEntry = async (millId, data, userId) => {
         date: new Date(data.date),
     })
     await entry.save()
+
+    // Record stock transaction
+    await StockHelpers.recordProductionTransaction(millId, entry, userId)
+
     logger.info('Daily production entry created', {
         id: entry._id,
         millId,
@@ -147,6 +152,12 @@ export const updateDailyProductionEntry = async (millId, id, data, userId) => {
         .populate('createdBy', 'fullName email')
         .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Daily production entry not found')
+
+    // Update stock transaction
+    if (data.itemName || data.weight || data.date) {
+        await StockHelpers.updateStockTransaction('DailyProduction', id, entry)
+    }
+
     logger.info('Daily production entry updated', { id, millId, userId })
     return entry
 }
@@ -154,6 +165,10 @@ export const updateDailyProductionEntry = async (millId, id, data, userId) => {
 export const deleteDailyProductionEntry = async (millId, id) => {
     const entry = await DailyProduction.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Daily production entry not found')
+
+    // Delete stock transaction
+    await StockHelpers.deleteStockTransaction('DailyProduction', id)
+
     logger.info('Daily production entry deleted', { id, millId })
 }
 

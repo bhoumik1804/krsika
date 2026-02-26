@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { otherPurchaseAndSalesQtyTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -23,6 +26,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -56,6 +60,29 @@ export function OtherActionDialog({
     const { mutateAsync: updateOtherPurchase, isPending: isUpdating } =
         useUpdateOtherPurchase(millId)
 
+    const party = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties.map((p: { partyName: string }) => p.partyName),
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName
+    )
+
+    const broker = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers.map((b: { brokerName: string }) => b.brokerName),
+        },
+        currentRow?.brokerName
+    )
+
     const isEditing = !!currentRow
     const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
@@ -67,11 +94,11 @@ export function OtherActionDialog({
             partyName: '',
             brokerName: '',
             otherPurchaseName: '',
-            otherPurchaseQty: 0,
+            otherPurchaseQty: '' as unknown as number,
             qtyType: '',
-            rate: 0,
-            discountPercent: 0,
-            gst: 0,
+            rate: '' as unknown as number,
+            discountPercent: '' as unknown as number,
+            gst: '' as unknown as number,
         } as OtherPurchase,
     })
 
@@ -85,11 +112,11 @@ export function OtherActionDialog({
                     partyName: '',
                     brokerName: '',
                     otherPurchaseName: '',
-                    otherPurchaseQty: 0,
+                    otherPurchaseQty: '' as unknown as number,
                     qtyType: '',
-                    rate: 0,
-                    discountPercent: 0,
-                    gst: 0,
+                    rate: '' as unknown as number,
+                    discountPercent: '' as unknown as number,
+                    gst: '' as unknown as number,
                 } as OtherPurchase)
             }
         }
@@ -201,10 +228,14 @@ export function OtherActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
-                                                    value={field.value || ''}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -218,10 +249,14 @@ export function OtherActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter broker name'
-                                                    {...field}
-                                                    value={field.value || ''}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={broker}
+                                                    placeholder='Search broker...'
+                                                    emptyText='No brokers found'
                                                 />
                                             </FormControl>
                                             <FormMessage />

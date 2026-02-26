@@ -59,16 +59,16 @@ export const PrivateGunnyOutwardColumns: ColumnDef<PrivateGunnyOutward>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: 'gunnyPurchaseDealNumber',
+        accessorKey: 'gunnySaleDealNumber',
         header: ({ column }) => (
             <DataTableColumnHeader
                 column={column}
-                title='Gunny Purchase Number'
+                title='Gunny Sale Deal Number'
             />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>
-                {row.getValue('gunnyPurchaseDealNumber')}
+                {row.getValue('gunnySaleDealNumber')}
             </div>
         ),
     },

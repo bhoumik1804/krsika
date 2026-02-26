@@ -78,7 +78,7 @@ export function VehicleReportTable({
         columnFilters: [
             {
                 columnId: 'truckNo',
-                searchKey: 'search',
+                searchKey: 'truckNo',
                 type: 'string',
             },
         ],
@@ -101,6 +101,7 @@ export function VehicleReportTable({
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
+        getRowId: (row) => row._id || '',
         // Use server-side pagination info when available
         pageCount: serverPagination?.totalPages ?? -1,
         manualPagination: !!serverPagination,
@@ -128,8 +129,7 @@ export function VehicleReportTable({
             <DataTableToolbar
                 table={table}
                 searchPlaceholder='Search...'
-                searchKey='search'
-                filters={[]}
+                searchKey='truckNo'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

@@ -1,5 +1,4 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useParams } from 'react-router'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,6 +9,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteLabourGroup } from '../data/hooks'
 import { type LabourGroupReportData } from '../data/schema'
 
 type LabourGroupReportDeleteDialogProps = {
@@ -23,15 +23,18 @@ export function LabourGroupReportDeleteDialog({
     onOpenChange,
     currentRow,
 }: LabourGroupReportDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+    const { millId } = useParams<{ millId: string }>()
+    const mutation = useDeleteLabourGroup(millId || '')
+
+    const handleDelete = async () => {
+        if (!currentRow?._id) return
+
+        try {
+            await mutation.mutateAsync(currentRow._id)
+            onOpenChange(false)
+        } catch (error) {
+            // Error handling is managed by the mutation hook
+        }
     }
 
     return (
@@ -47,12 +50,18 @@ export function LabourGroupReportDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={mutation.isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
-                        onClick={handleDelete}
+                        onClick={(e) => {
+                            e.preventDefault()
+                            handleDelete()
+                        }}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
+                        disabled={mutation.isPending}
                     >
-                        Delete
+                        {mutation.isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

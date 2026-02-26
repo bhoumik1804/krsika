@@ -1,5 +1,3 @@
-import { useUser } from '@/pages/landing/hooks/use-auth'
-import { useParams } from 'react-router'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -12,31 +10,32 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useDeleteVehicle } from '../data/hooks'
 import { type VehicleReportData } from '../data/schema'
+import { useVehicleReport } from './vehicle-report-provider'
 
 type VehicleReportDeleteDialogProps = {
+    currentRow: VehicleReportData
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: VehicleReportData | null
 }
 
 export function VehicleReportDeleteDialog({
+    currentRow,
     open,
     onOpenChange,
-    currentRow,
 }: VehicleReportDeleteDialogProps) {
-    const { user } = useUser()
-    const { millId: routeMillId } = useParams<{ millId: string }>()
-    const millId = user?.millId || routeMillId || ''
-    const deleteMutation = useDeleteVehicle(millId)
+    const { millId } = useVehicleReport()
+    const { mutate: deleteVehicle, isPending: isDeleting } =
+        useDeleteVehicle(millId)
 
-    const handleDelete = async () => {
-        if (!currentRow?._id || !millId) return
-
-        try {
-            await deleteMutation.mutateAsync(currentRow._id)
-            onOpenChange(false)
-        } catch (error: any) {
-            console.error('Delete error:', error)
+    const handleDelete = (e: React.MouseEvent) => {
+        e.preventDefault()
+        const vehicleId = currentRow._id
+        if (vehicleId) {
+            deleteVehicle(vehicleId, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                },
+            })
         }
     }
 
@@ -47,21 +46,21 @@ export function VehicleReportDeleteDialog({
                     <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
                         Are you sure you want to delete this record for{' '}
-                        <strong>{currentRow?.truckNo}</strong>?
+                        <strong>{currentRow.truckNo}</strong>?
                         <br />
                         This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel disabled={deleteMutation.isPending}>
+                    <AlertDialogCancel disabled={isDeleting}>
                         Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
-                        disabled={deleteMutation.isPending}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

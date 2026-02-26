@@ -1,6 +1,4 @@
 import { type Table } from '@tanstack/react-table'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,6 +9,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useBulkDeleteBalanceLiftingFrkPurchases } from '../data/hooks'
+import { type BalanceLiftingPurchasesFrk } from '../data/schema'
+import { useBalanceLiftingPurchasesFrk } from './balance-lifting-purchases-frk-provider'
 
 type FrkMultiDeleteDialogProps<TData> = {
     table: Table<TData>
@@ -23,18 +24,25 @@ export function FrkMultiDeleteDialog<TData>({
     open,
     onOpenChange,
 }: FrkMultiDeleteDialogProps<TData>) {
+    const { millId } = useBalanceLiftingPurchasesFrk()
+    const { mutateAsync: bulkDelete, isPending: isDeleting } =
+        useBulkDeleteBalanceLiftingFrkPurchases(millId)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
-    const handleDeleteSelected = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting purchases...',
-            success: () => {
+    const handleDeleteSelected = async () => {
+        const purchaseIds = selectedRows
+            .map((row) => (row.original as BalanceLiftingPurchasesFrk)._id)
+            .filter(Boolean) as string[]
+
+        if (purchaseIds.length > 0) {
+            try {
+                await bulkDelete(purchaseIds)
                 table.resetRowSelection()
                 onOpenChange(false)
-                return `Deleted ${selectedRows.length} purchase${selectedRows.length > 1 ? 's' : ''}`
-            },
-            error: 'Error deleting purchases',
-        })
+            } catch (error) {
+                console.error('Error deleting purchases:', error)
+            }
+        }
     }
 
     return (
@@ -52,12 +60,15 @@ export function FrkMultiDeleteDialog<TData>({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDeleteSelected}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

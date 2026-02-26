@@ -71,11 +71,7 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title='DO No' />
         ),
-        cell: ({ row }) => (
-            <div className='font-mono text-sm text-nowrap'>
-                {row.getValue('doNo')}
-            </div>
-        ),
+        cell: ({ row }) => <div>{row.getValue('doNo')}</div>,
     },
     {
         accessorKey: 'dhanMota',
@@ -114,7 +110,7 @@ export const doReportColumns: ColumnDef<DoReportData>[] = [
         ),
         cell: ({ row }) => {
             const total = row.getValue('total') as number | undefined
-            return <div className='text-right font-semibold'>{total}</div>
+            return <div className='text-right'>{total}</div>
         },
     },
     {

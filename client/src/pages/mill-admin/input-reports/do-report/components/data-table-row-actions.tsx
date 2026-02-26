@@ -11,14 +11,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type DoReportData } from '../data/schema'
-import { doReport } from './do-report-provider'
+import { useDoReport } from './do-report-provider'
 
 type DataTableRowActionsProps = {
     row: Row<DoReportData>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-    const { setOpen, setCurrentRow } = doReport()
+    const { setOpen, setCurrentRow } = useDoReport()
     return (
         <>
             <DropdownMenu modal={false}>

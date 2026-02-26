@@ -5,6 +5,7 @@ import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type RiceSales } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
 export const riceSalesColumns: ColumnDef<RiceSales>[] = [
     {
@@ -42,7 +43,9 @@ export const riceSalesColumns: ColumnDef<RiceSales>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -69,7 +72,9 @@ export const riceSalesColumns: ColumnDef<RiceSales>[] = [
             <DataTableColumnHeader column={column} title='Broker Name' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('brokerName') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('brokerName') || '-'}
+            </div>
         ),
     },
     {
@@ -78,7 +83,9 @@ export const riceSalesColumns: ColumnDef<RiceSales>[] = [
             <DataTableColumnHeader column={column} title='Delivery Type' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('deliveryType') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('deliveryType') || '-'}
+            </div>
         ),
     },
     {
@@ -87,7 +94,9 @@ export const riceSalesColumns: ColumnDef<RiceSales>[] = [
             <DataTableColumnHeader column={column} title='Lot / Other' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('lotOrOther') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('lotOrOther') || '-'}
+            </div>
         ),
     },
     {
@@ -114,7 +123,9 @@ export const riceSalesColumns: ColumnDef<RiceSales>[] = [
             <DataTableColumnHeader column={column} title='Qty (Qtl)' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.riceQty?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                {row.original.riceQty?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -123,7 +134,9 @@ export const riceSalesColumns: ColumnDef<RiceSales>[] = [
             <DataTableColumnHeader column={column} title='Rate/Qtl' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.riceRatePerQuintal?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.riceRatePerQuintal?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -132,7 +145,9 @@ export const riceSalesColumns: ColumnDef<RiceSales>[] = [
             <DataTableColumnHeader column={column} title='Discount %' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>{row.original.discountPercent?.toFixed(2) || 0}%</div>
+            <div className='text-right'>
+                {row.original.discountPercent?.toFixed(2) || 0}%
+            </div>
         ),
     },
     {
@@ -141,7 +156,9 @@ export const riceSalesColumns: ColumnDef<RiceSales>[] = [
             <DataTableColumnHeader column={column} title='Brokerage/Qtl' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.brokeragePerQuintal?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.brokeragePerQuintal?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -159,7 +176,9 @@ export const riceSalesColumns: ColumnDef<RiceSales>[] = [
             <DataTableColumnHeader column={column} title='FRK Rate/Qtl' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.frkRatePerQuintal?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.frkRatePerQuintal?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -168,7 +187,9 @@ export const riceSalesColumns: ColumnDef<RiceSales>[] = [
             <DataTableColumnHeader column={column} title='LOT No.' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('lotNumber') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('lotNumber') || '-'}
+            </div>
         ),
     },
     {
@@ -177,7 +198,9 @@ export const riceSalesColumns: ColumnDef<RiceSales>[] = [
             <DataTableColumnHeader column={column} title='Gunny Type' />
         ),
         cell: ({ row }) => (
-            <div className='text-nowrap'>{row.getValue('gunnyType') || '-'}</div>
+            <div className='text-nowrap'>
+                {row.getValue('gunnyType') || '-'}
+            </div>
         ),
     },
     {
@@ -186,7 +209,9 @@ export const riceSalesColumns: ColumnDef<RiceSales>[] = [
             <DataTableColumnHeader column={column} title='New Gunny Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.newGunnyRate?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.newGunnyRate?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -195,7 +220,9 @@ export const riceSalesColumns: ColumnDef<RiceSales>[] = [
             <DataTableColumnHeader column={column} title='Old Gunny Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.oldGunnyRate?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.oldGunnyRate?.toFixed(2) || 0}
+            </div>
         ),
     },
     {
@@ -204,7 +231,9 @@ export const riceSalesColumns: ColumnDef<RiceSales>[] = [
             <DataTableColumnHeader column={column} title='Plastic Gunny Rate' />
         ),
         cell: ({ row }) => (
-            <div className='text-right'>₹{row.original.plasticGunnyRate?.toFixed(2) || 0}</div>
+            <div className='text-right'>
+                ₹{row.original.plasticGunnyRate?.toFixed(2) || 0}
+            </div>
         ),
     },
     {

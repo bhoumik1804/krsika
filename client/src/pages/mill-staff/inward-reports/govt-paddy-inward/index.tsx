@@ -1,90 +1,51 @@
-import { useMemo } from 'react';
-import { useParams, useSearchParams } from 'react-router';
-import { ConfigDrawer } from '@/components/config-drawer';
-import { getMillAdminSidebarData } from '@/components/layout/data';
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { LoadingSpinner } from '@/components/loading-spinner';
-import { ProfileDropdown } from '@/components/profile-dropdown';
-import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
-import { GovtPaddyInwardDialogs } from './components/govt-paddy-inward-dialogs';
-import { GovtPaddyInwardPrimaryButtons } from './components/govt-paddy-inward-primary-buttons';
-import { GovtPaddyInwardProvider } from './components/govt-paddy-inward-provider';
-import { GovtPaddyInwardTable } from './components/govt-paddy-inward-table';
-import { useGovtPaddyInwardList } from './data/hooks';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useParams, useSearchParams } from 'react-router'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { getMillAdminSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { GovtPaddyInwardDialogs } from './components/govt-paddy-inward-dialogs'
+import { GovtPaddyInwardPrimaryButtons } from './components/govt-paddy-inward-primary-buttons'
+import { GovtPaddyInwardProvider } from './components/govt-paddy-inward-provider'
+import { GovtPaddyInwardTable } from './components/govt-paddy-inward-table'
+import { useGovtPaddyInwardList } from './data/hooks'
 
 export function GovtPaddyInwardReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
 
-    const search = Object.fromEntries(searchParams.entries())
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
 
-    // Extract query params from URL
-    const queryParams = useMemo(
-        () => ({
+        return {
             page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            limit,
             search: search.search as string | undefined,
             startDate: search.startDate as string | undefined,
             endDate: search.endDate as string | undefined,
-            sortBy: (search.sortBy as string) || 'date',
+            sortBy:
+                (search.sortBy as
+                    | 'date'
+                    | 'doNumber'
+                    | 'committeeName'
+                    | 'createdAt') || 'date',
             sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
+        }
+    }, [searchParams])
 
-    // Fetch govt paddy inward data using the hook
-    const {
-        data: inwardResponse,
-        isLoading,
-        isError,
-    } = useGovtPaddyInwardList(millId || '', queryParams, { enabled: !!millId })
-
-    // Transform API response to table format
-    const inwardData = useMemo(() => {
-        if (!inwardResponse?.data) return []
-        return inwardResponse.data.map((item) => ({
-            id: item._id,
-            date: item.date,
-            doNumber: item.doNumber,
-            committeeName: item.committeeName,
-            balanceDo: item.balanceDo ?? 0,
-            gunnyNew: item.gunnyNew ?? 0,
-            gunnyOld: item.gunnyOld ?? 0,
-            gunnyPlastic: item.gunnyPlastic ?? 0,
-            juteWeight: item.juteWeight ?? 0,
-            plasticWeight: item.plasticWeight ?? 0,
-            gunnyWeight: item.gunnyWeight ?? 0,
-            truckNumber: item.truckNumber,
-            rstNumber: item.rstNumber ?? '',
-            truckLoadWeight: item.truckLoadWeight ?? 0,
-            paddyType: item.paddyType ?? '',
-            paddyMota: item.paddyMota ?? 0,
-            paddyPatla: item.paddyPatla ?? 0,
-            paddySarna: item.paddySarna ?? 0,
-            paddyMahamaya: item.paddyMahamaya ?? 0,
-            paddyRbGold: item.paddyRbGold ?? 0,
-        }))
-    }, [inwardResponse])
+    const search = Object.fromEntries(searchParams.entries())
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -98,7 +59,7 @@ export function GovtPaddyInwardReport() {
     }
 
     return (
-        <GovtPaddyInwardProvider>
+        <GovtPaddyInwardProvider millId={millId || ''}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -115,30 +76,78 @@ export function GovtPaddyInwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Govt Paddy Inward Report
+                            {t('inward.govtPaddyInward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage paddy inward transactions and records
+                            {t('inward.govtPaddyInward.description')}
                         </p>
                     </div>
                     <GovtPaddyInwardPrimaryButtons />
                 </div>
-                {isLoading ? (
-                    <LoadingSpinner className='h-full w-full' />
-                ) : isError ? (
-                    <div className='py-10 text-center text-destructive'>
-                        Failed to load govt paddy inward data
-                    </div>
-                ) : (
-                    <GovtPaddyInwardTable
-                        data={inwardData}
-                        search={search}
-                        navigate={navigate}
-                    />
-                )}
+                <GovtPaddyInwardContent
+                    millId={millId || ''}
+                    queryParams={queryParams}
+                    search={search}
+                    navigate={navigate}
+                />
             </Main>
 
             <GovtPaddyInwardDialogs />
         </GovtPaddyInwardProvider>
+    )
+}
+
+function GovtPaddyInwardContent({
+    millId,
+    queryParams,
+    search,
+    navigate,
+}: {
+    millId: string
+    queryParams: {
+        page: number
+        limit: number
+        search?: string
+        startDate?: string
+        endDate?: string
+        sortBy?: 'date' | 'doNumber' | 'committeeName' | 'createdAt'
+        sortOrder?: 'asc' | 'desc'
+    }
+    search: Record<string, string>
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const {
+        data: listData,
+        isLoading,
+        error,
+    } = useGovtPaddyInwardList(millId, queryParams)
+
+    const data = listData?.data ?? []
+    const pagination = listData?.pagination
+
+    if (isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                {error.message ||
+                    'Failed to load govt paddy inward data. Please try again later.'}
+            </div>
+        )
+    }
+
+    return (
+        <GovtPaddyInwardTable
+            data={data}
+            search={search}
+            navigate={navigate}
+            pagination={pagination}
+        />
     )
 }

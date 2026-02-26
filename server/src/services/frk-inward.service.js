@@ -1,9 +1,10 @@
 import mongoose from 'mongoose'
 import { FrkInward } from '../models/frk-inward.model.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
 
-export const createFrkInwardEntry = async (millId, data) => {
+export const createFrkInwardEntry = async (millId, data, userId) => {
     const entry = new FrkInward({
         ...data,
         millId,
@@ -11,6 +12,26 @@ export const createFrkInwardEntry = async (millId, data) => {
     })
     await entry.save()
     logger.info('FRK inward entry created', { id: entry._id, millId })
+
+    // Record stock transaction (CREDIT - incoming FRK)
+    try {
+        const totalQtl = entry.netWeight || 0
+        await StockTransactionService.recordTransaction(millId, {
+            date: entry.date,
+            commodity: 'FRK',
+            variety: null,
+            type: 'CREDIT',
+            action: 'Inward',
+            quantity: totalQtl / 100, // Convert Kg to Qtl
+            bags: 0,
+            refModel: 'FrkInward',
+            refId: entry._id,
+            remarks: `FRK Inward - ${entry.partyName || 'Party'}`,
+        }, userId)
+    } catch (err) {
+        logger.error('Failed to record stock for FRK inward', { id: entry._id, error: err.message })
+    }
+
     return entry
 }
 
@@ -40,7 +61,7 @@ export const getFrkInwardList = async (millId, options = {}) => {
     if (search) {
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
-            { purchaseDealId: { $regex: search, $options: 'i' } },
+            { frkPurchaseDealNumber: { $regex: search, $options: 'i' } },
             { truckNumber: { $regex: search, $options: 'i' } },
             { rstNumber: { $regex: search, $options: 'i' } },
         ]

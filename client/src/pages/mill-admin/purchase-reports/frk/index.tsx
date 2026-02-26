@@ -35,6 +35,8 @@ export function FrkPurchaseReport() {
         }
     }, [searchParams])
 
+    // Call GET API here -> Removed as logic is inside provider
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     // Convert URLSearchParams to record
@@ -51,35 +53,8 @@ export function FrkPurchaseReport() {
         }
     }
 
-    const handleQueryParamsChange = (params: {
-        page: number
-        limit: number
-        search?: string
-        sortBy?: string
-        sortOrder?: 'asc' | 'desc'
-    }) => {
-        const newParams: Record<string, string> = {
-            page: params.page.toString(),
-            limit: params.limit.toString(),
-        }
-        if (params.search) {
-            newParams.search = params.search
-        }
-        if (params.sortBy) {
-            newParams.sortBy = params.sortBy
-        }
-        if (params.sortOrder) {
-            newParams.sortOrder = params.sortOrder
-        }
-        setSearchParams(newParams, { replace: true })
-    }
-
     return (
-        <FrkProvider
-            millId={millId || ''}
-            initialQueryParams={queryParams}
-            onQueryParamsChange={handleQueryParamsChange}
-        >
+        <FrkProvider millId={millId || ''} initialQueryParams={queryParams}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -139,6 +114,7 @@ function FrkPurchaseContent({
     return (
         <FrkTable
             data={context.data}
+            pagination={context.pagination}
             search={Object.fromEntries(
                 Object.entries(context.queryParams || {})
                     .filter(([, value]) => value !== undefined)

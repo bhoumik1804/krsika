@@ -9,6 +9,7 @@ type GovtRiceOutwardContextType = {
     setOpen: (str: GovtRiceOutwardDialogType | null) => void
     currentRow: GovtRiceOutward | null
     setCurrentRow: React.Dispatch<React.SetStateAction<GovtRiceOutward | null>>
+    millId: string
 }
 
 const GovtRiceOutwardContext =
@@ -16,15 +17,17 @@ const GovtRiceOutwardContext =
 
 export function GovtRiceOutwardProvider({
     children,
+    millId,
 }: {
     children: React.ReactNode
+    millId: string
 }) {
     const [open, setOpen] = useDialogState<GovtRiceOutwardDialogType>(null)
     const [currentRow, setCurrentRow] = useState<GovtRiceOutward | null>(null)
 
     return (
         <GovtRiceOutwardContext
-            value={{ open, setOpen, currentRow, setCurrentRow }}
+            value={{ open, setOpen, currentRow, setCurrentRow, millId }}
         >
             {children}
         </GovtRiceOutwardContext>

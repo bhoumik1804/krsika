@@ -1,9 +1,9 @@
 import { RiceSalesActionDialog } from './rice-sales-action-dialog'
 import { RiceSalesDeleteDialog } from './rice-sales-delete-dialog'
-import { riceSales } from './rice-sales-provider'
+import { useRiceSales } from './rice-sales-provider'
 
 export function RiceSalesDialogs() {
-    const { open, setOpen, currentRow } = riceSales()
+    const { open, setOpen, currentRow } = useRiceSales()
 
     return (
         <>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,13 +11,16 @@ import {
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
 import { RiceMultiDeleteDialog } from './balance-lifting-purchases-rice-multi-delete-dialog'
 
-type DataTableBulkActionsProps<TData> = {
-    table: Table<TData>
+import type { BalanceLiftingPurchasesRice } from '../data/schema'
+
+type DataTableBulkActionsProps = {
+    table: Table<BalanceLiftingPurchasesRice>
 }
 
-export function DataTableBulkActions<TData>({
+export function DataTableBulkActions({
     table,
-}: DataTableBulkActionsProps<TData>) {
+}: DataTableBulkActionsProps) {
+    const { t } = useTranslation('mill-staff')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
     return (
@@ -31,11 +35,11 @@ export function DataTableBulkActions<TData>({
                             className='size-8'
                         >
                             <Trash2 />
-                            <span className='sr-only'>Delete selected</span>
+                            <span className='sr-only'>{t('common.deleteSelected')}</span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Delete selected records</p>
+                        <p>{t('common.deleteSelectedRecords')}</p>
                     </TooltipContent>
                 </Tooltip>
             </BulkActionsToolbar>

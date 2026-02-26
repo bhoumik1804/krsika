@@ -1,91 +1,120 @@
-import { useMemo } from 'react';
-import { useGunnyInwardList } from '@/pages/mill-staff/inwards/gunny-inward/data/hooks';
-import { useParams, useSearchParams } from 'react-router';
-import { ConfigDrawer } from '@/components/config-drawer';
-import { getMillAdminSidebarData } from '@/components/layout/data';
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { LoadingSpinner } from '@/components/loading-spinner';
-import { ProfileDropdown } from '@/components/profile-dropdown';
-import { Search } from '@/components/search';
-import { ThemeSwitch } from '@/components/theme-switch';
-import { GunnyInwardDialogs } from './components/gunny-inward-dialogs';
-import { GunnyInwardPrimaryButtons } from './components/gunny-inward-primary-buttons';
-import { GunnyInwardProvider } from './components/gunny-inward-provider';
-import { GunnyInwardTable } from './components/gunny-inward-table';
+import { useTranslation } from 'react-i18next'
+import { useParams, useSearchParams } from 'react-router'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { getMillAdminSidebarData } from '@/components/layout/data'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
+import { GunnyInwardDialogs } from './components/gunny-inward-dialogs'
+import { GunnyInwardPrimaryButtons } from './components/gunny-inward-primary-buttons'
+import {
+    GunnyInwardProvider,
+    gunnyInward,
+} from './components/gunny-inward-provider'
+import { GunnyInwardTable } from './components/gunny-inward-table'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export function GunnyInwardReport() {
-    const { millId } = useParams<{ millId: string }>()
+function GunnyInwardContent() {
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
-    const sidebarData = getMillAdminSidebarData(millId || '')
+    const { data, isLoading, error, setQueryParams } = gunnyInward()
 
     const search = Object.fromEntries(searchParams.entries())
-
-    // Extract query params from URL
-    const queryParams = useMemo(
-        () => ({
-            page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
-            search: search.search as string | undefined,
-            startDate: search.startDate as string | undefined,
-            endDate: search.endDate as string | undefined,
-            sortBy: (search.sortBy as string) || 'date',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
-
-    // Fetch gunny inward data using the hook
-    const {
-        data: inwardResponse,
-        isLoading,
-        isError,
-    } = useGunnyInwardList(millId || '', queryParams, { enabled: !!millId })
-
-    // Transform API response to table format
-    const inwardData = useMemo(() => {
-        if (!inwardResponse?.data) return []
-        return inwardResponse.data.map((item) => ({
-            id: item._id,
-            date: item.date,
-            partyName: item.partyName ?? '',
-            gunnyType: item.gunnyType ?? '',
-            totalGunny: item.totalGunny ?? 0,
-            rate: item.rate ?? 0,
-            amount: item.amount ?? 0,
-        }))
-    }, [inwardResponse])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
             const newSearch = opts.search(search)
-            setSearchParams(newSearch as Record<string, string>)
+            const params = newSearch as Record<string, string>
+            setSearchParams(params)
+            setQueryParams((prev) => ({
+                ...prev,
+                page: params.page ? parseInt(params.page) : 1,
+                search: params.search,
+                sortBy: params.sortBy,
+                sortOrder: params.sortOrder as 'asc' | 'desc' | undefined,
+            }))
         } else if (opts.search === true) {
             // Keep current params
         } else {
-            setSearchParams(opts.search as Record<string, string>)
+            const params = opts.search as Record<string, string>
+            setSearchParams(params)
+            setQueryParams((prev) => ({
+                ...prev,
+                page: params.page ? parseInt(params.page) : 1,
+                search: params.search,
+                sortBy: params.sortBy,
+                sortOrder: params.sortOrder as 'asc' | 'desc' | undefined,
+            }))
         }
     }
 
+    if (error) {
+        return (
+            <Main className='flex flex-1 flex-col items-center justify-center'>
+                <div className='text-center'>
+                    <h2 className='text-2xl font-bold text-destructive'>
+                        Error loading data
+                    </h2>
+                    <p className='mt-2 text-muted-foreground'>
+                        {error.message || 'Failed to load gunny inward records'}
+                    </p>
+                </div>
+            </Main>
+        )
+    }
+
     return (
-        <GunnyInwardProvider>
+        <>
+            <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
+                <div className='flex flex-wrap items-end justify-between gap-2'>
+                    <div>
+                        <h2 className='text-2xl font-bold tracking-tight'>
+                            {t('inward.gunnyInward.title')}
+                        </h2>
+                        <p className='text-muted-foreground'>
+                            {t('inward.gunnyInward.description')}
+                        </p>
+                    </div>
+                    <GunnyInwardPrimaryButtons />
+                </div>
+                {isLoading ? (
+                    <div className='flex items-center justify-center py-8'>
+                        <LoadingSpinner />
+                    </div>
+                ) : (
+                    <GunnyInwardTable
+                        data={data}
+                        search={search}
+                        navigate={navigate}
+                    />
+                )}
+            </Main>
+
+            <GunnyInwardDialogs />
+        </>
+    )
+}
+
+export function GunnyInwardReport() {
+    const { millId } = useParams<{ millId: string }>()
+    const sidebarData = getMillAdminSidebarData(millId || '')
+
+    if (!millId) {
+        return (
+            <Main className='flex flex-1 flex-col items-center justify-center'>
+                <div className='text-center'>
+                    <h2 className='text-2xl font-bold text-destructive'>
+                        Mill ID is required
+                    </h2>
+                </div>
+            </Main>
+        )
+    }
+
+    return (
+        <GunnyInwardProvider millId={millId}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -98,34 +127,7 @@ export function GunnyInwardReport() {
                 </div>
             </Header>
 
-            <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
-                <div className='flex flex-wrap items-end justify-between gap-2'>
-                    <div>
-                        <h2 className='text-2xl font-bold tracking-tight'>
-                            Gunny Inward / Samiti-Sangrahan Report
-                        </h2>
-                        <p className='text-muted-foreground'>
-                            Manage gunny inward transactions and records
-                        </p>
-                    </div>
-                    <GunnyInwardPrimaryButtons />
-                </div>
-                {isLoading ? (
-                    <LoadingSpinner className='h-full w-full' />
-                ) : isError ? (
-                    <div className='py-10 text-center text-destructive'>
-                        Failed to load gunny inward data
-                    </div>
-                ) : (
-                    <GunnyInwardTable
-                        data={inwardData}
-                        search={search}
-                        navigate={navigate}
-                    />
-                )}
-            </Main>
-
-            <GunnyInwardDialogs />
+            <GunnyInwardContent />
         </GunnyInwardProvider>
     )
 }

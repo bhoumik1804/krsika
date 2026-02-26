@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose'
 import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
+import { dealNumberPlugin } from '../utils/dealNumberPlugin.js'
 
 /**
  * Other Sale Schema
@@ -20,18 +21,21 @@ const OtherSaleSchema = new Schema(
         },
         partyName: {
             type: String,
-            required: true,
             trim: true,
         },
-        itemName: {
+        brokerName: {
             type: String,
             trim: true,
         },
-        quantity: {
+        otherSaleName: {
+            type: String,
+            trim: true,
+        },
+        otherSaleQty: {
             type: Number,
             min: 0,
         },
-        unit: {
+        qtyType: {
             type: String,
             trim: true,
         },
@@ -39,18 +43,14 @@ const OtherSaleSchema = new Schema(
             type: Number,
             min: 0,
         },
-        amount: {
+        discountPercent: {
             type: Number,
             min: 0,
+            max: 100,
         },
-        createdBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        updatedBy: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
+        gst: {
+            type: Number,
+            min: 0,
         },
     },
     {
@@ -70,6 +70,12 @@ OtherSaleSchema.virtual('formattedDate').get(function () {
 // Ensure virtuals are included in JSON output
 OtherSaleSchema.set('toJSON', { virtuals: true })
 OtherSaleSchema.set('toObject', { virtuals: true })
+
+// Apply deal number plugin (auto-generates otherSalesDealNumber)
+OtherSaleSchema.plugin(dealNumberPlugin, {
+    fieldName: 'otherSalesDealNumber',
+    prefix: 'OTS',
+})
 
 // Add aggregate paginate plugin
 OtherSaleSchema.plugin(aggregatePaginate)

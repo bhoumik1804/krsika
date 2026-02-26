@@ -1,14 +1,21 @@
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
-import { govtPaddyInward } from './govt-paddy-inward-provider'
+import { useGovtPaddyInward } from './govt-paddy-inward-provider'
 
 export function GovtPaddyInwardPrimaryButtons() {
-    const { setOpen } = govtPaddyInward()
+    const { t } = useTranslation('mill-staff')
+    const { setOpen, setCurrentRow } = useGovtPaddyInward()
 
     return (
-        <Button onClick={() => setOpen('add')}>
+        <Button
+            onClick={() => {
+                setCurrentRow(null)
+                setOpen('add')
+            }}
+        >
             <Plus className='mr-2 size-4' />
-            Add Record
+            {t('inward.govtPaddyInward.form.primaryButton')}
         </Button>
     )
 }

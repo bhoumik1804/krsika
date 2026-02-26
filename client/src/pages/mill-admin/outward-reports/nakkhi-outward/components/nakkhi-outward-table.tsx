@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -7,7 +7,6 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -22,30 +21,39 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type NakkhiOutward } from '../data/schema'
+import type { NakkhiOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { nakkhiOutwardColumns as columns } from './nakkhi-outward-columns'
+import { NakkhiOutwardMultiDeleteDialog } from './nakkhi-outward-multi-delete-dialog'
+import { nakkhiOutward } from './nakkhi-outward-provider'
 
 type DataTableProps = {
     data: NakkhiOutward[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: NakkhiOutwardListResponse['pagination']
 }
 
-export function NakkhiOutwardTable({ data, search, navigate }: DataTableProps) {
+export function NakkhiOutwardTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
 
+    const { open, setOpen, millId } = nakkhiOutward()
+
     const {
         columnFilters,
         onColumnFiltersChange,
         pagination,
         onPaginationChange,
-        ensurePageInRange,
     } = useTableUrlState({
         search,
         navigate,
@@ -53,7 +61,6 @@ export function NakkhiOutwardTable({ data, search, navigate }: DataTableProps) {
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
         ],
     })
 
@@ -61,6 +68,7 @@ export function NakkhiOutwardTable({ data, search, navigate }: DataTableProps) {
     const table = useReactTable({
         data,
         columns,
+        pageCount: serverPagination?.totalPages ?? -1,
         state: {
             sorting,
             pagination,
@@ -68,23 +76,19 @@ export function NakkhiOutwardTable({ data, search, navigate }: DataTableProps) {
             columnFilters,
             columnVisibility,
         },
+        manualPagination: true,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
-
-    useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
 
     return (
         <div
@@ -97,13 +101,6 @@ export function NakkhiOutwardTable({ data, search, navigate }: DataTableProps) {
                 table={table}
                 searchPlaceholder='Search...'
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>
@@ -182,7 +179,15 @@ export function NakkhiOutwardTable({ data, search, navigate }: DataTableProps) {
                 </Table>
             </div>
             <DataTablePagination table={table} className='mt-auto' />
-            <DataTableBulkActions table={table} />
+            <DataTableBulkActions table={table} millId={millId} />
+            <NakkhiOutwardMultiDeleteDialog
+                open={open === 'delete-multi'}
+                onOpenChange={(isOpen) =>
+                    setOpen(isOpen ? 'delete-multi' : null)
+                }
+                table={table}
+                millId={millId}
+            />
         </div>
     )
 }

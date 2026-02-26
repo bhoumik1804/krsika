@@ -14,7 +14,11 @@ export const paddyPurchaseSchema = z.object({
     paddyType: z.string().optional(),
     totalPaddyQty: z.number().optional(),
     paddyRatePerQuintal: z.number().optional(),
-    discountPercent: z.number().optional(),
+    discountPercent: z
+        .number()
+        .min(0, 'Discount percent must be greater than or equal to 0')
+        .max(100, 'Discount percent must be less than or equal to 100')
+        .optional(),
     brokerage: z.number().optional(),
     gunnyType: z.string().optional(),
     newGunnyRate: z.number().optional(),

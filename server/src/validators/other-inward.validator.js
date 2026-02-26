@@ -8,10 +8,10 @@ import { z } from 'zod'
 // Common fields schema
 const otherInwardBaseSchema = {
     date: z.string(),
-    purchaseDealId: z
+    otherPurchaseDealNumber: z
         .string()
         .trim()
-        .max(100, 'Purchase deal ID is too long')
+        .max(100, 'Other purchase deal number is too long')
         .optional(),
     itemName: z.string().trim().max(200, 'Item name is too long').optional(),
     quantity: z.number().min(0, 'Quantity cannot be negative').optional(),
@@ -29,8 +29,8 @@ const otherInwardBaseSchema = {
     gunnyNew: z.number().min(0, 'Cannot be negative').optional(),
     gunnyOld: z.number().min(0, 'Cannot be negative').optional(),
     gunnyPlastic: z.number().min(0, 'Cannot be negative').optional(),
-    juteWeight: z.number().min(0, 'Cannot be negative').optional(),
-    plasticWeight: z.number().min(0, 'Cannot be negative').optional(),
+    juteGunnyWeight: z.number().min(0, 'Cannot be negative').optional(),
+    plasticGunnyWeight: z.number().min(0, 'Cannot be negative').optional(),
     truckNumber: z
         .string()
         .trim()
@@ -56,7 +56,7 @@ export const createOtherInwardSchema = z.object({
 export const updateOtherInwardSchema = z.object({
     body: z.object({
         date: otherInwardBaseSchema.date.optional(),
-        purchaseDealId: otherInwardBaseSchema.purchaseDealId,
+        otherPurchaseDealNumber: otherInwardBaseSchema.otherPurchaseDealNumber,
         itemName: otherInwardBaseSchema.itemName,
         quantity: otherInwardBaseSchema.quantity,
         quantityType: otherInwardBaseSchema.quantityType,
@@ -65,8 +65,8 @@ export const updateOtherInwardSchema = z.object({
         gunnyNew: otherInwardBaseSchema.gunnyNew,
         gunnyOld: otherInwardBaseSchema.gunnyOld,
         gunnyPlastic: otherInwardBaseSchema.gunnyPlastic,
-        juteWeight: otherInwardBaseSchema.juteWeight,
-        plasticWeight: otherInwardBaseSchema.plasticWeight,
+        juteGunnyWeight: otherInwardBaseSchema.juteGunnyWeight,
+        plasticGunnyWeight: otherInwardBaseSchema.plasticGunnyWeight,
         truckNumber: otherInwardBaseSchema.truckNumber,
         rstNumber: otherInwardBaseSchema.rstNumber,
         truckWeight: otherInwardBaseSchema.truckWeight,

@@ -21,8 +21,6 @@ export const createFinancialReceiptEntry = async (millId, data, userId) => {
 
 export const getFinancialReceiptById = async (millId, id) => {
     const entry = await FinancialReceipt.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Financial receipt entry not found')
     return entry
 }
@@ -32,7 +30,6 @@ export const getFinancialReceiptList = async (millId, options = {}) => {
         page = 1,
         limit = 10,
         search,
-        status,
         startDate,
         endDate,
         sortBy = 'date',
@@ -40,7 +37,6 @@ export const getFinancialReceiptList = async (millId, options = {}) => {
     } = options
     const matchStage = { millId: new mongoose.Types.ObjectId(millId) }
 
-    if (status) matchStage.status = status
     if (startDate || endDate) {
         matchStage.date = {}
         if (startDate) matchStage.date.$gte = new Date(startDate)
@@ -49,29 +45,16 @@ export const getFinancialReceiptList = async (millId, options = {}) => {
     if (search) {
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
-            { paymentMode: { $regex: search, $options: 'i' } },
-            { referenceNumber: { $regex: search, $options: 'i' } },
+            { salesDealType: { $regex: search, $options: 'i' } },
+            { salesDealNumber: { $regex: search, $options: 'i' } },
+            { brokerName: { $regex: search, $options: 'i' } },
+            { remarks: { $regex: search, $options: 'i' } },
         ]
     }
 
     const aggregate = FinancialReceipt.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
 
     const result = await FinancialReceipt.aggregatePaginate(aggregate, {
@@ -107,7 +90,7 @@ export const getFinancialReceiptList = async (millId, options = {}) => {
 
 export const getFinancialReceiptSummary = async (millId, options = {}) => {
     const { startDate, endDate } = options
-    const match = { millId }
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     if (startDate || endDate) {
         match.date = {}
         if (startDate) match.date.$gte = new Date(startDate)
@@ -120,7 +103,7 @@ export const getFinancialReceiptSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalAmount: { $sum: '$amount' },
+                totalAmount: { $sum: '$receivedAmount' },
             },
         },
         {
@@ -143,8 +126,6 @@ export const updateFinancialReceiptEntry = async (millId, id, data, userId) => {
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Financial receipt entry not found')
     logger.info('Financial receipt entry updated', { id, millId, userId })
     return entry

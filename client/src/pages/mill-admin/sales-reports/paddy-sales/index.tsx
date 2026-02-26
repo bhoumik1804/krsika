@@ -1,25 +1,47 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { PaddySalesDialogs } from './components/paddy-sales-dialogs'
 import { PaddySalesPrimaryButtons } from './components/paddy-sales-primary-buttons'
-import { PaddySalesProvider } from './components/paddy-sales-provider'
+import {
+    PaddySalesProvider,
+    usePaddySales,
+} from './components/paddy-sales-provider'
 import { PaddySalesTable } from './components/paddy-sales-table'
-import { paddySalesData } from './data/paddy-sales'
 
 export function PaddySalesReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+
+    // Extract query params from URL
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'date',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
-    const search = Object.fromEntries(searchParams.entries())
-
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
+        const search = Object.fromEntries(searchParams.entries())
         if (typeof opts.search === 'function') {
             const newSearch = opts.search(search)
             setSearchParams(newSearch as Record<string, string>)
@@ -31,7 +53,10 @@ export function PaddySalesReport() {
     }
 
     return (
-        <PaddySalesProvider>
+        <PaddySalesProvider
+            millId={millId || ''}
+            initialQueryParams={queryParams}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -56,14 +81,48 @@ export function PaddySalesReport() {
                     </div>
                     <PaddySalesPrimaryButtons />
                 </div>
-                <PaddySalesTable
-                    data={paddySalesData}
-                    search={search}
-                    navigate={navigate}
-                />
+                <PaddySalesContent navigate={navigate} />
             </Main>
 
             <PaddySalesDialogs />
         </PaddySalesProvider>
+    )
+}
+
+// Separate component to use context hook
+function PaddySalesContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const context = usePaddySales()
+
+    if (context.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (context.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                Failed to load paddy sales data. Please try again later.
+            </div>
+        )
+    }
+
+    return (
+        <PaddySalesTable
+            data={context.data}
+            pagination={context.pagination}
+            search={Object.fromEntries(
+                Object.entries(context.queryParams || {})
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => [key, String(value)])
+            )}
+            navigate={navigate}
+        />
     )
 }

@@ -24,7 +24,7 @@ export function FrkOutwardDeleteDialog({
     const deleteMutation = useDeleteFrkOutward()
 
     const handleDelete = async () => {
-        if (!currentRow) return
+        if (!currentRow || !currentRow._id) return
         try {
             await deleteMutation.mutateAsync({
                 millId,

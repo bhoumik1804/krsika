@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -22,30 +23,20 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type RiceSales } from '../data/schema'
+import { type RiceSalesResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { riceSalesColumns as columns } from './rice-sales-columns'
+import { useRiceSalesColumns } from './rice-sales-columns'
 
 type DataTableProps = {
-    data: RiceSales[]
+    data: RiceSales[] | RiceSalesResponse[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading?: boolean
-    isError?: boolean
-    totalPages?: number
-    totalItems?: number
 }
 
-export function RiceSalesTable({
-    data,
-    search,
-    navigate,
-    // isLoading,
-    // isError,
-    // totalPages,
-    // totalItems,
-}: DataTableProps) {
+export function RiceSalesTable({ data, search, navigate }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
+    const columns = useRiceSalesColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -65,7 +56,6 @@ export function RiceSalesTable({
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
         ],
     })
 
@@ -92,6 +82,7 @@ export function RiceSalesTable({
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        getRowId: (row) => row._id || '',
     })
 
     useEffect(() => {
@@ -107,15 +98,9 @@ export function RiceSalesTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
+                searchPlaceholder={t('common.search')}
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
+                filters={[]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>
@@ -186,7 +171,7 @@ export function RiceSalesTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

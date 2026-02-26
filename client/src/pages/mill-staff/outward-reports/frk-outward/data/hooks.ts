@@ -1,220 +1,153 @@
-/**
- * FRK Outward Hooks
- * React Query hooks for FRK Outward data management
- */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import {
-    fetchFrkOutwardList,
-    fetchFrkOutwardById,
-    fetchFrkOutwardSummary,
-    createFrkOutward,
-    updateFrkOutward,
-    deleteFrkOutward,
     bulkDeleteFrkOutward,
-    exportFrkOutward,
+    createFrkOutward,
+    deleteFrkOutward,
+    fetchFrkOutwardList,
+    fetchFrkOutwardSummary,
+    updateFrkOutward,
 } from './service'
 import type {
-    FrkOutwardResponse,
-    FrkOutwardListResponse,
-    FrkOutwardSummaryResponse,
     CreateFrkOutwardRequest,
-    UpdateFrkOutwardRequest,
     FrkOutwardQueryParams,
+    UpdateFrkOutwardRequest,
 } from './types'
 
-// ==========================================
-// Query Keys
-// ==========================================
-
+// Query Keys Factory
 export const frkOutwardKeys = {
     all: ['frk-outward'] as const,
     lists: () => [...frkOutwardKeys.all, 'list'] as const,
-    list: (millId: string, params?: FrkOutwardQueryParams) =>
+    list: (millId: string, params: FrkOutwardQueryParams) =>
         [...frkOutwardKeys.lists(), millId, params] as const,
-    details: () => [...frkOutwardKeys.all, 'detail'] as const,
-    detail: (millId: string, id: string) =>
-        [...frkOutwardKeys.details(), millId, id] as const,
     summaries: () => [...frkOutwardKeys.all, 'summary'] as const,
     summary: (
         millId: string,
-        params?: Pick<FrkOutwardQueryParams, 'startDate' | 'endDate'>
+        params: Pick<
+            FrkOutwardQueryParams,
+            'startDate' | 'endDate' | 'partyName'
+        >
     ) => [...frkOutwardKeys.summaries(), millId, params] as const,
 }
 
-// ==========================================
-// Query Hooks
-// ==========================================
-
-/**
- * Hook to fetch FRK outward list with pagination and filters
- */
+// Queries
 export const useFrkOutwardList = (
     millId: string,
-    params?: FrkOutwardQueryParams,
-    options?: { enabled?: boolean }
+    params: FrkOutwardQueryParams
 ) => {
-    return useQuery<FrkOutwardListResponse, Error>({
+    return useQuery({
         queryKey: frkOutwardKeys.list(millId, params),
         queryFn: () => fetchFrkOutwardList(millId, params),
-        enabled: options?.enabled ?? !!millId,
         staleTime: 5 * 60 * 1000, // 5 minutes
     })
 }
 
-/**
- * Hook to fetch a single FRK outward entry
- */
-export const useFrkOutwardDetail = (
-    millId: string,
-    id: string,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<FrkOutwardResponse, Error>({
-        queryKey: frkOutwardKeys.detail(millId, id),
-        queryFn: () => fetchFrkOutwardById(millId, id),
-        enabled: options?.enabled ?? (!!millId && !!id),
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    })
-}
-
-/**
- * Hook to fetch FRK outward summary/statistics
- */
 export const useFrkOutwardSummary = (
     millId: string,
-    params?: Pick<FrkOutwardQueryParams, 'startDate' | 'endDate'>,
-    options?: { enabled?: boolean }
+    params: Pick<FrkOutwardQueryParams, 'startDate' | 'endDate' | 'partyName'>
 ) => {
-    return useQuery<FrkOutwardSummaryResponse, Error>({
+    return useQuery({
         queryKey: frkOutwardKeys.summary(millId, params),
         queryFn: () => fetchFrkOutwardSummary(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 5 * 60 * 1000,
     })
 }
 
-// ==========================================
-// Mutation Hooks
-// ==========================================
-
-/**
- * Hook to create a new FRK outward entry
- */
-export const useCreateFrkOutward = (millId: string) => {
+// Mutations
+export const useCreateFrkOutward = () => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: (data: CreateFrkOutwardRequest) =>
-            createFrkOutward(millId, data),
-        onSuccess: () => {
+        mutationFn: async ({
+            millId,
+            payload,
+        }: {
+            millId: string
+            payload: CreateFrkOutwardRequest
+        }) => createFrkOutward(millId, payload),
+        onSuccess: (_data, _variables) => {
             queryClient.invalidateQueries({
                 queryKey: frkOutwardKeys.lists(),
             })
-            queryClient.invalidateQueries({
-                queryKey: frkOutwardKeys.summaries(),
-            })
-            toast.success('FRK outward entry created successfully')
+            toast.success('FRK outward created successfully')
         },
-        onError: (error: Error) => {
-            toast.error(error.message || 'Failed to create FRK outward entry')
-        },
-    })
-}
-
-/**
- * Hook to update an existing FRK outward entry
- */
-export const useUpdateFrkOutward = (millId: string) => {
-    const queryClient = useQueryClient()
-
-    return useMutation({
-        mutationFn: (data: UpdateFrkOutwardRequest) =>
-            updateFrkOutward(millId, data),
-        onSuccess: (_, variables) => {
-            queryClient.invalidateQueries({
-                queryKey: frkOutwardKeys.lists(),
-            })
-            queryClient.invalidateQueries({
-                queryKey: frkOutwardKeys.detail(millId, variables.id),
-            })
-            queryClient.invalidateQueries({
-                queryKey: frkOutwardKeys.summaries(),
-            })
-            toast.success('FRK outward entry updated successfully')
-        },
-        onError: (error: Error) => {
-            toast.error(error.message || 'Failed to update FRK outward entry')
+        onError: (error: any) => {
+            toast.error(
+                error.response?.data?.message || 'Failed to create FRK outward'
+            )
         },
     })
 }
 
-/**
- * Hook to delete a FRK outward entry
- */
-export const useDeleteFrkOutward = (millId: string) => {
+export const useUpdateFrkOutward = () => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: (id: string) => deleteFrkOutward(millId, id),
-        onSuccess: () => {
+        mutationFn: async ({
+            millId,
+            id,
+            payload,
+        }: {
+            millId: string
+            id: string
+            payload: UpdateFrkOutwardRequest
+        }) => updateFrkOutward(millId, id, payload),
+        onSuccess: (_data, _variables) => {
             queryClient.invalidateQueries({
                 queryKey: frkOutwardKeys.lists(),
             })
-            queryClient.invalidateQueries({
-                queryKey: frkOutwardKeys.summaries(),
-            })
-            toast.success('FRK outward entry deleted successfully')
+            toast.success('FRK outward updated successfully')
         },
-        onError: (error: Error) => {
-            toast.error(error.message || 'Failed to delete FRK outward entry')
+        onError: (error: any) => {
+            toast.error(
+                error.response?.data?.message || 'Failed to update FRK outward'
+            )
         },
     })
 }
 
-/**
- * Hook to bulk delete FRK outward entries
- */
-export const useBulkDeleteFrkOutward = (millId: string) => {
+export const useDeleteFrkOutward = () => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: (ids: string[]) => bulkDeleteFrkOutward(millId, ids),
-        onSuccess: () => {
+        mutationFn: async ({ millId, id }: { millId: string; id: string }) =>
+            deleteFrkOutward(millId, id),
+        onSuccess: (_data, _variables) => {
             queryClient.invalidateQueries({
                 queryKey: frkOutwardKeys.lists(),
             })
+            toast.success('FRK outward deleted successfully')
+        },
+        onError: (error: any) => {
+            toast.error(
+                error.response?.data?.message || 'Failed to delete FRK outward'
+            )
+        },
+    })
+}
+
+export const useBulkDeleteFrkOutward = () => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: async ({
+            millId,
+            ids,
+        }: {
+            millId: string
+            ids: string[]
+        }) => bulkDeleteFrkOutward(millId, ids),
+        onSuccess: (_data, _variables) => {
             queryClient.invalidateQueries({
-                queryKey: frkOutwardKeys.summaries(),
+                queryKey: frkOutwardKeys.lists(),
             })
             toast.success('FRK outward entries deleted successfully')
         },
-        onError: (error: Error) => {
-            toast.error(error.message || 'Failed to delete FRK outward entries')
-        },
-    })
-}
-
-/**
- * Hook to export FRK outward entries
- */
-export const useExportFrkOutward = (millId: string) => {
-    return useMutation({
-        mutationFn: (params?: FrkOutwardQueryParams) =>
-            exportFrkOutward(millId, params),
-        onSuccess: (blob) => {
-            const url = window.URL.createObjectURL(blob)
-            const a = document.createElement('a')
-            a.href = url
-            a.download = `frk-outward-export-${new Date().toISOString().split('T')[0]}.xlsx`
-            document.body.appendChild(a)
-            a.click()
-            window.URL.revokeObjectURL(url)
-            document.body.removeChild(a)
-            toast.success('Export completed successfully')
-        },
-        onError: (error: Error) => {
-            toast.error(error.message || 'Failed to export FRK outward entries')
+        onError: (error: any) => {
+            toast.error(
+                error.response?.data?.message ||
+                    'Failed to delete FRK outward entries'
+            )
         },
     })
 }

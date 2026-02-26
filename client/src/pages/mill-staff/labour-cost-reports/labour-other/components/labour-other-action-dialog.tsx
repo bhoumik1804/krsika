@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useLabourGroupList } from '@/pages/mill-admin/input-reports/labour-group-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useParams } from 'react-router'
 import { labourTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -25,6 +27,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -38,15 +41,8 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { useCreateLabourOther, useUpdateLabourOther } from '../data/hooks'
 import { labourOtherSchema, type LabourOther } from '../data/schema'
-
-const labourGroupOptions = [
-    { label: 'रामलाल टीम', value: 'रामलाल टीम' },
-    { label: 'श्यामलाल टीम', value: 'श्यामलाल टीम' },
-    { label: 'मोहन टीम', value: 'मोहन टीम' },
-    { label: 'सोहन टीम', value: 'सोहन टीम' },
-    { label: 'राधेश्याम टीम', value: 'राधेश्याम टीम' },
-]
 
 type LabourOtherActionDialogProps = {
     open: boolean
@@ -59,8 +55,25 @@ export function LabourOtherActionDialog({
     onOpenChange,
     currentRow,
 }: LabourOtherActionDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    const createMutation = useCreateLabourOther(millId || '')
+    const updateMutation = useUpdateLabourOther(millId || '')
+
+    const labourGroupList = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: (params) => useLabourGroupList(params.millId, params),
+            extractItems: (data) =>
+                data.labourGroups?.map((lg) => lg.labourTeamName) || [],
+            hookParams: { sortBy: 'labourTeamName', sortOrder: 'asc' },
+        },
+        currentRow?.labourGroupName
+    )
 
     const form = useForm<LabourOther>({
         resolver: zodResolver(labourOtherSchema),
@@ -79,23 +92,35 @@ export function LabourOtherActionDialog({
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                // other defaults
+            })
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
     const labourType = form.watch('labourType')
     const isOtherType = labourType === labourTypeOptions[3].value
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = (data: LabourOther) => {
+        if (isEditing && currentRow?._id) {
+            updateMutation.mutate(
+                { id: currentRow._id, ...data },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        } else {
+            createMutation.mutate(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
+        }
     }
 
     return (
@@ -103,10 +128,10 @@ export function LabourOtherActionDialog({
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing ? t('common.edit') : t('common.add')} {t('labourCostReports.other.form.title').split('आवक')[1]?.trim() || 'Record'}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing ? t('common.update') : t('common.enter')} {t('common.updateDetails')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -120,7 +145,7 @@ export function LabourOtherActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>{t('labourCostReports.other.form.fields.date')}</FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -139,7 +164,7 @@ export function LabourOtherActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t('common.pickDate')}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -181,14 +206,14 @@ export function LabourOtherActionDialog({
                                 name='labourType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Labour Type</FormLabel>
+                                        <FormLabel>{t('labourCostReports.other.form.fields.hamaliType')}</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value || ''}
                                         >
                                             <FormControl>
                                                 <SelectTrigger className='w-full'>
-                                                    <SelectValue placeholder='select labour type' />
+                                                    <SelectValue placeholder='Select labour type' />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -213,29 +238,15 @@ export function LabourOtherActionDialog({
                                 name='labourGroupName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Labour Group name</FormLabel>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value || ''}
-                                        >
-                                            <FormControl>
-                                                <SelectTrigger className='w-full'>
-                                                    <SelectValue placeholder='select labour group name' />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent className='w-full'>
-                                                {labourGroupOptions.map(
-                                                    (option) => (
-                                                        <SelectItem
-                                                            key={option.value}
-                                                            value={option.value}
-                                                        >
-                                                            {option.label}
-                                                        </SelectItem>
-                                                    )
-                                                )}
-                                            </SelectContent>
-                                        </Select>
+                                        <FormLabel>{t('labourCostReports.other.form.fields.hamalRejaToliName')}</FormLabel>
+                                        <FormControl>
+                                            <PaginatedCombobox
+                                                value={field.value || ''}
+                                                onValueChange={field.onChange}
+                                                paginatedList={labourGroupList}
+                                                placeholder='select labour group name'
+                                            />
+                                        </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -248,7 +259,7 @@ export function LabourOtherActionDialog({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    Number of Gunny
+                                                    {t('labourCostReports.other.form.fields.gunnyCount')}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
@@ -281,7 +292,7 @@ export function LabourOtherActionDialog({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    Labour Rate
+                                                    {t('labourCostReports.other.form.fields.hamaliRate')}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
@@ -319,7 +330,7 @@ export function LabourOtherActionDialog({
                                         render={({ field }) => (
                                             <FormItem className='col-span-2'>
                                                 <FormLabel>
-                                                    Work Detail
+                                                    {t('labourCostReports.other.form.fields.workDetail')}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Textarea
@@ -337,7 +348,7 @@ export function LabourOtherActionDialog({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    Total Price
+                                                    {t('labourCostReports.other.form.fields.totalAmount')}
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
@@ -374,10 +385,10 @@ export function LabourOtherActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {isEditing ? t('common.update') : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

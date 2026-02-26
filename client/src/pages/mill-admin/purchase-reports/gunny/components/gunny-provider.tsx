@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { useGunnyPurchaseList } from '../data/hooks'
-import { type GunnyPurchaseData } from '../data/schema'
+import type { GunnyPurchaseData } from '../data/schema'
+import type {
+    GunnyPurchaseQueryParams,
+    GunnyPurchaseListResponse,
+} from '../data/types'
 
 type GunnyDialogType = 'add' | 'edit' | 'delete'
-
-interface QueryParams {
-    page: number
-    limit: number
-    search?: string
-    sortBy?: string
-    sortOrder?: 'asc' | 'desc'
-}
 
 type GunnyContextType = {
     open: GunnyDialogType | null
@@ -24,13 +20,19 @@ type GunnyContextType = {
     isLoading: boolean
     isError: boolean
     millId: string
-    queryParams: QueryParams
-    setQueryParams: React.Dispatch<React.SetStateAction<QueryParams>>
+    queryParams: GunnyPurchaseQueryParams
+    setQueryParams: React.Dispatch<
+        React.SetStateAction<GunnyPurchaseQueryParams>
+    >
     pagination: {
         page: number
-        pageSize: number
+        limit: number
         total: number
         totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
     }
 }
 
@@ -39,11 +41,14 @@ const GunnyContext = React.createContext<GunnyContextType | null>(null)
 interface GunnyProviderProps {
     children: React.ReactNode
     millId: string
-    initialQueryParams?: QueryParams
-    onQueryParamsChange?: (params: QueryParams) => void
+    initialQueryParams?: GunnyPurchaseQueryParams
+    apiData?: GunnyPurchaseListResponse
+    isLoading?: boolean
+    isError?: boolean
+    onQueryParamsChange?: (params: GunnyPurchaseQueryParams) => void
 }
 
-const defaultQueryParams: QueryParams = {
+const defaultQueryParams: GunnyPurchaseQueryParams = {
     page: 1,
     limit: 10,
     search: undefined,
@@ -55,12 +60,14 @@ export function GunnyProvider({
     children,
     millId,
     initialQueryParams = defaultQueryParams,
-    onQueryParamsChange,
-}: GunnyProviderProps) {
+}: Omit<
+    GunnyProviderProps,
+    'apiData' | 'isLoading' | 'isError' | 'onQueryParamsChange'
+>) {
     const [open, setOpen] = useDialogState<GunnyDialogType>(null)
     const [currentRow, setCurrentRow] = useState<GunnyPurchaseData | null>(null)
     const [queryParams, setQueryParams] =
-        useState<QueryParams>(initialQueryParams)
+        useState<GunnyPurchaseQueryParams>(initialQueryParams)
 
     // Sync URL params with internal state
     useEffect(() => {
@@ -71,56 +78,90 @@ export function GunnyProvider({
         initialQueryParams.search,
     ])
 
-    // Notify parent when queryParams change
-    useEffect(() => {
-        onQueryParamsChange?.(queryParams)
-    }, [queryParams, onQueryParamsChange])
-
     const {
-        data = [],
-        pagination = { page: 1, pageSize: 10, total: 0, totalPages: 0 },
+        data: apiResponse,
         isLoading,
         isError,
     } = useGunnyPurchaseList({
         millId,
         page: queryParams.page,
-        pageSize: queryParams.limit,
+        limit: queryParams.limit,
         search: queryParams.search,
     })
 
-    return (
-        <GunnyContext
-            value={{
-                open,
-                setOpen,
-                currentRow,
-                setCurrentRow,
-                data,
-                isLoading,
-                isError,
-                millId,
-                queryParams,
-                setQueryParams,
-                pagination: {
-                    page: pagination.page || 1,
-                    pageSize: pagination.pageSize || 10,
-                    total: pagination.total || 0,
-                    totalPages: pagination.totalPages || 0,
-                },
-            }}
-        >
-            {children}
-        </GunnyContext>
+    // Transform API response to table format (memoized to prevent flickering)
+    const transformedData = useMemo(
+        () =>
+            (apiResponse?.purchases || []).map((item) => ({
+                _id: item._id,
+                date: item.date,
+                partyName: item.partyName,
+                deliveryType: item.deliveryType,
+                newGunnyQty: item.newGunnyQty,
+                newGunnyRate: item.newGunnyRate,
+                oldGunnyQty: item.oldGunnyQty,
+                oldGunnyRate: item.oldGunnyRate,
+                plasticGunnyQty: item.plasticGunnyQty,
+                plasticGunnyRate: item.plasticGunnyRate,
+            })),
+        [apiResponse?.purchases]
     )
+
+    const pagination = useMemo(
+        () =>
+            apiResponse?.pagination || {
+                page: queryParams.page || 1,
+                limit: queryParams.limit || 10,
+                total: 0,
+                totalPages: 0,
+                hasPrevPage: false,
+                hasNextPage: false,
+                prevPage: null,
+                nextPage: null,
+            },
+        [apiResponse?.pagination, queryParams.page, queryParams.limit]
+    )
+
+    const contextValue = useMemo(
+        () => ({
+            open,
+            setOpen,
+            currentRow,
+            setCurrentRow,
+            data: transformedData,
+            isLoading,
+            isError,
+            millId,
+            queryParams,
+            setQueryParams,
+            pagination,
+        }),
+        [
+            open,
+            currentRow,
+            transformedData,
+            isLoading,
+            isError,
+            millId,
+            queryParams.page,
+            queryParams.limit,
+            queryParams.search,
+            queryParams.sortBy,
+            queryParams.sortOrder,
+            pagination,
+        ]
+    )
+
+    return <GunnyContext value={contextValue}>{children}</GunnyContext>
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useGunny = () => {
-    const context = React.useContext(GunnyContext)
+    const gunnyContext = React.useContext(GunnyContext)
 
-    if (!context) {
+    if (!gunnyContext) {
         throw new Error('useGunny has to be used within <GunnyContext>')
     }
 
-    return context
+    return gunnyContext
 }

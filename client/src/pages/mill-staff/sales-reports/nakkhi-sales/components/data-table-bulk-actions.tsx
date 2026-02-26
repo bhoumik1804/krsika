@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { type Table } from '@tanstack/react-table'
 import { Trash2, CheckCircle } from 'lucide-react'
 import { toast } from 'sonner'
@@ -10,30 +11,35 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
-import { type NakkhiSales } from '../data/schema'
+import type { NakkhiSalesResponse } from '../data/types'
 import { NakkhiSalesMultiDeleteDialog } from './nakkhi-sales-multi-delete-dialog'
 
-type DataTableBulkActionsProps<TData> = {
-    table: Table<TData>
+type DataTableBulkActionsProps = {
+    table: Table<NakkhiSalesResponse>
 }
 
-export function DataTableBulkActions<TData>({
-    table,
-}: DataTableBulkActionsProps<TData>) {
+export function DataTableBulkActions({ table }: DataTableBulkActionsProps) {
+    const { t } = useTranslation('mill-staff')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const selectedRows = table.getFilteredSelectedRowModel().rows
 
     const handleBulkStatusChange = (status: 'completed' | 'cancelled') => {
         const selectedRecords = selectedRows.map(
-            (row) => row.original as NakkhiSales
+            (row) => row.original as NakkhiSalesResponse
         )
         toast.promise(sleep(2000), {
-            loading: `Marking as ${status}...`,
+            loading: t('common.markingAs', {
+                status: status === 'completed' ? t('common.completed') : t('common.cancelled')
+            }),
             success: () => {
                 table.resetRowSelection()
-                return `Marked ${selectedRecords.length} record${selectedRecords.length > 1 ? 's' : ''} as ${status}`
+                return t('common.markedAs', {
+                    count: selectedRecords.length,
+                    item: selectedRecords.length > 1 ? t('common.records') : t('common.record'),
+                    status: status === 'completed' ? t('common.completed') : t('common.cancelled')
+                })
             },
-            error: `Error updating records`,
+            error: t('common.errorUpdating'),
         })
     }
 
@@ -49,11 +55,11 @@ export function DataTableBulkActions<TData>({
                             className='size-8'
                         >
                             <CheckCircle />
-                            <span className='sr-only'>Mark completed</span>
+                            <span className='sr-only'>{t('common.markCompleted')}</span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Mark selected as completed</p>
+                        <p>{t('common.markSelectedAsCompleted')}</p>
                     </TooltipContent>
                 </Tooltip>
 
@@ -66,11 +72,11 @@ export function DataTableBulkActions<TData>({
                             className='size-8'
                         >
                             <Trash2 />
-                            <span className='sr-only'>Delete selected</span>
+                            <span className='sr-only'>{t('common.deleteSelected')}</span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Delete selected records</p>
+                        <p>{t('common.deleteSelectedRecords')}</p>
                     </TooltipContent>
                 </Tooltip>
             </BulkActionsToolbar>

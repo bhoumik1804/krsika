@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { useBrokerList } from '../data/hooks'
 import { type BrokerReportData } from '../data/schema'
@@ -19,6 +19,16 @@ type BrokerReportContextType = {
     currentRow: BrokerReportData | null
     setCurrentRow: React.Dispatch<React.SetStateAction<BrokerReportData | null>>
     data: BrokerReportData[]
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
     isLoading: boolean
     isError: boolean
     millId: string
@@ -54,18 +64,18 @@ export function BrokerReportProvider({
     const [queryParams, setQueryParams] =
         useState<QueryParams>(initialQueryParams)
 
-    const {
-        data,
-        isLoading,
-        isError,
-    } = useBrokerList({
+    useEffect(() => {
+        setQueryParams(initialQueryParams)
+    }, [initialQueryParams])
+
+    const { data, isLoading, isError } = useBrokerList({
         millId,
         page: queryParams.page,
-        pageSize: queryParams.limit,
+        limit: queryParams.limit,
         search: queryParams.search,
+        sortBy: queryParams.sortBy,
+        sortOrder: queryParams.sortOrder,
     })
-
-    const brokers = data?.brokers ?? []
 
     return (
         <BrokerReportContext
@@ -74,7 +84,8 @@ export function BrokerReportProvider({
                 setOpen,
                 currentRow,
                 setCurrentRow,
-                data: brokers,
+                data: data?.brokers ?? [],
+                pagination: data?.pagination,
                 isLoading,
                 isError,
                 millId,

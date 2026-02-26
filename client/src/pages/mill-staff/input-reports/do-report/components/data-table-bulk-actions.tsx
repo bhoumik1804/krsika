@@ -1,8 +1,7 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { type Table } from '@tanstack/react-table'
-import { Trash2, CheckCircle } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
     Tooltip,
@@ -10,7 +9,6 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
-import { type DoReportData } from '../data/schema'
 import { DoReportMultiDeleteDialog } from './do-report-multi-delete-dialog'
 
 type DataTableBulkActionsProps<TData> = {
@@ -20,43 +18,12 @@ type DataTableBulkActionsProps<TData> = {
 export function DataTableBulkActions<TData>({
     table,
 }: DataTableBulkActionsProps<TData>) {
+    const { t } = useTranslation('mill-staff')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-    const selectedRows = table.getFilteredSelectedRowModel().rows
-
-    const handleBulkStatusChange = (status: 'completed' | 'cancelled') => {
-        const selectedRecords = selectedRows.map(
-            (row) => row.original as DoReportData
-        )
-        toast.promise(sleep(2000), {
-            loading: `Marking as ${status}...`,
-            success: () => {
-                table.resetRowSelection()
-                return `Marked ${selectedRecords.length} record${selectedRecords.length > 1 ? 's' : ''} as ${status}`
-            },
-            error: `Error updating records`,
-        })
-    }
 
     return (
         <>
             <BulkActionsToolbar table={table} entityName='record'>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button
-                            variant='outline'
-                            size='icon'
-                            onClick={() => handleBulkStatusChange('completed')}
-                            className='size-8'
-                        >
-                            <CheckCircle />
-                            <span className='sr-only'>Mark completed</span>
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p>Mark selected as completed</p>
-                    </TooltipContent>
-                </Tooltip>
-
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <Button
@@ -66,11 +33,11 @@ export function DataTableBulkActions<TData>({
                             className='size-8'
                         >
                             <Trash2 />
-                            <span className='sr-only'>Delete selected</span>
+                            <span className='sr-only'>{t('common.deleteSelected')}</span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Delete selected records</p>
+                        <p>{t('common.deleteSelectedRecords')}</p>
                     </TooltipContent>
                 </Tooltip>
             </BulkActionsToolbar>

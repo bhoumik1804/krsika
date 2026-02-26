@@ -30,15 +30,16 @@ export const fetchStaffList = async (
     millId: string,
     params?: StaffQueryParams
 ): Promise<StaffListResponse> => {
-    const response = await apiClient.get<ApiResponse<StaffResponse[]>>(
-        STAFF_ENDPOINT(millId),
-        { params }
-    )
-    // API returns { success, data: [...], pagination: {...} }
-    // We need to reshape it to StaffListResponse format
+    const response = await apiClient.get<
+        ApiResponse<{
+            staffList: StaffResponse[]
+            pagination: StaffListResponse['pagination']
+        }>
+    >(STAFF_ENDPOINT(millId), { params })
+    // API returns { success, data: { staffList: [...], pagination: {...} } }
     return {
-        data: response.data.data,
-        pagination: response.data.pagination!,
+        data: response.data.data.staffList,
+        pagination: response.data.data.pagination,
     }
 }
 

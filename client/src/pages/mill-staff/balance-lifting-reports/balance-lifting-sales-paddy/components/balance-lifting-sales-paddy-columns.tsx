@@ -1,10 +1,12 @@
-import { ColumnDef } from '@tanstack/react-table'
-import { Checkbox } from '@/components/ui/checkbox'
 import { format } from 'date-fns'
-import { BalanceLiftingSalesPaddy } from '../data/schema'
+import { type ColumnDef } from '@tanstack/react-table'
+import { Checkbox } from '@/components/ui/checkbox'
+import { DataTableColumnHeader } from '@/components/data-table/column-header'
+import { type PaddySalesResponse } from '../data/types'
 import { DataTableRowActions } from './data-table-row-actions'
+import { useTranslation } from 'react-i18next'
 
-export const balanceLiftingSalesPaddyColumns: ColumnDef<BalanceLiftingSalesPaddy>[] = [
+export const paddySalesColumns: ColumnDef<PaddySalesResponse>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -17,6 +19,7 @@ export const balanceLiftingSalesPaddyColumns: ColumnDef<BalanceLiftingSalesPaddy
                     table.toggleAllPageRowsSelected(!!value)
                 }
                 aria-label='Select all'
+                className='translate-y-[2px]'
             />
         ),
         cell: ({ row }) => (
@@ -24,137 +27,134 @@ export const balanceLiftingSalesPaddyColumns: ColumnDef<BalanceLiftingSalesPaddy
                 checked={row.getIsSelected()}
                 onCheckedChange={(value) => row.toggleSelected(!!value)}
                 aria-label='Select row'
+                className='translate-y-[2px]'
             />
         ),
         enableSorting: false,
         enableHiding: false,
     },
     {
+        accessorKey: 'paddySalesDealNumber',
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.sales.paddy.form.fields.dealNumber')}
+                />
+            )
+        },
+        cell: ({ row }) => (
+            <div className='w-[100px] font-medium'>
+                {row.getValue('paddySalesDealNumber')}
+            </div>
+        ),
+    },
+    {
         accessorKey: 'date',
-        header: 'Date',
-        cell: ({ row }) =>
-            row.getValue('date')
-                ? format(new Date(row.getValue('date')), 'dd MMM yyyy')
-                : '-',
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.sales.paddy.form.fields.date')}
+                />
+            )
+        },
+        cell: ({ row }) => {
+            const date = new Date(row.getValue('date'))
+            return <div className='w-[100px]'>{format(date, 'dd-MM-yyyy')}</div>
+        },
     },
     {
         accessorKey: 'partyName',
-        header: 'Party Name',
-        cell: ({ row }) => row.getValue('partyName') || '-',
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.sales.paddy.form.fields.partyName')}
+                />
+            )
+        },
+        cell: ({ row }) => (
+            <div className='w-[150px]'>{row.getValue('partyName')}</div>
+        ),
     },
     {
         accessorKey: 'brokerName',
-        header: 'Broker Name',
-        cell: ({ row }) => row.getValue('brokerName') || '-',
-    },
-    {
-        accessorKey: 'saleType',
-        header: 'Sale Type',
-        cell: ({ row }) => row.getValue('saleType') || '-',
-    },
-    {
-        accessorKey: 'doNumber',
-        header: 'DO Number',
-        cell: ({ row }) => row.getValue('doNumber') || '-',
-    },
-    {
-        accessorKey: 'dhanMotaQty',
-        header: 'Dhan Mota Qty',
-        cell: ({ row }) => {
-            const value = row.getValue('dhanMotaQty')
-            return value ? parseFloat(String(value)).toFixed(2) : '-'
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.sales.paddy.form.fields.brokerName')}
+                />
+            )
         },
-    },
-    {
-        accessorKey: 'dhanPatlaQty',
-        header: 'Dhan Patla Qty',
-        cell: ({ row }) => {
-            const value = row.getValue('dhanPatlaQty')
-            return value ? parseFloat(String(value)).toFixed(2) : '-'
-        },
-    },
-    {
-        accessorKey: 'dhanSarnaQty',
-        header: 'Dhan Sarna Qty',
-        cell: ({ row }) => {
-            const value = row.getValue('dhanSarnaQty')
-            return value ? parseFloat(String(value)).toFixed(2) : '-'
-        },
-    },
-    {
-        accessorKey: 'dhanType',
-        header: 'Dhan Type',
-        cell: ({ row }) => row.getValue('dhanType') || '-',
+        cell: ({ row }) => (
+            <div className='w-[150px]'>{row.getValue('brokerName')}</div>
+        ),
     },
     {
         accessorKey: 'dhanQty',
-        header: 'Quantity',
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.sales.paddy.form.fields.paddyQty')}
+                />
+            )
+        },
+        cell: ({ row }) => (
+            <div className='w-[100px]'>{row.getValue('dhanQty')}</div>
+        ),
+    },
+    {
+        id: 'lifting',
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.sales.paddy.form.fields.lifting')}
+                />
+            )
+        },
         cell: ({ row }) => {
-            const value = row.getValue('dhanQty')
-            return value ? parseFloat(String(value)).toFixed(2) : '-'
+            const outwardData = row.original.outwardData || []
+            const totalLifting = outwardData.reduce(
+                (sum, entry) => sum + (entry.netWeight || 0),
+                0
+            )
+            return <div>{totalLifting.toFixed(2)}</div>
         },
     },
     {
-        accessorKey: 'paddyRatePerQuintal',
-        header: 'Rate',
-        cell: ({ row }) => {
-            const value = row.getValue('paddyRatePerQuintal')
-            return value ? parseFloat(String(value)).toFixed(2) : '-'
+        id: 'balance',
+        header: ({ column }) => {
+            const { t } = useTranslation('mill-staff')
+            return (
+                <DataTableColumnHeader
+                    column={column}
+                    title={t('balanceLifting.sales.paddy.form.fields.balanceLifting')}
+                />
+            )
         },
-    },
-    {
-        accessorKey: 'deliveryType',
-        header: 'Delivery Type',
-        cell: ({ row }) => row.getValue('deliveryType') || '-',
-    },
-    {
-        accessorKey: 'discountPercent',
-        header: 'Discount %',
         cell: ({ row }) => {
-            const value = row.getValue('discountPercent')
-            return value ? parseFloat(String(value)).toFixed(2) : '-'
-        },
-    },
-    {
-        accessorKey: 'brokerage',
-        header: 'Brokerage',
-        cell: ({ row }) => {
-            const value = row.getValue('brokerage')
-            return value ? parseFloat(String(value)).toFixed(2) : '-'
-        },
-    },
-    {
-        accessorKey: 'gunnyType',
-        header: 'Gunny Type',
-        cell: ({ row }) => row.getValue('gunnyType') || '-',
-    },
-    {
-        accessorKey: 'newGunnyRate',
-        header: 'New Gunny Rate',
-        cell: ({ row }) => {
-            const value = row.getValue('newGunnyRate')
-            return value ? parseFloat(String(value)).toFixed(2) : '-'
-        },
-    },
-    {
-        accessorKey: 'oldGunnyRate',
-        header: 'Old Gunny Rate',
-        cell: ({ row }) => {
-            const value = row.getValue('oldGunnyRate')
-            return value ? parseFloat(String(value)).toFixed(2) : '-'
-        },
-    },
-    {
-        accessorKey: 'plasticGunnyRate',
-        header: 'Plastic Gunny Rate',
-        cell: ({ row }) => {
-            const value = row.getValue('plasticGunnyRate')
-            return value ? parseFloat(String(value)).toFixed(2) : '-'
+            const qty = row.original.dhanQty || 0
+            const outwardData = row.original.outwardData || []
+            const totalLifting = outwardData.reduce(
+                (sum, entry) => sum + (entry.netWeight || 0),
+                0
+            )
+            const balance = qty - totalLifting
+            return <div>{balance.toFixed(2)}</div>
         },
     },
     {
         id: 'actions',
-        header: 'Actions',
         cell: ({ row }) => <DataTableRowActions row={row} />,
     },
 ]

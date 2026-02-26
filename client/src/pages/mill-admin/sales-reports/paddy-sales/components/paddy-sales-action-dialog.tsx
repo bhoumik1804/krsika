@@ -2,15 +2,17 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useParams } from 'react-router'
 import {
     paddySaleTypeOptions,
     dhanTypeOptions,
     deliveryTypeOptions,
     gunnyTypeOptions,
 } from '@/constants/sale-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -30,6 +32,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -42,12 +45,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { useCreatePaddySale, useUpdatePaddySale } from '../data/hooks'
 import { paddySalesSchema, type PaddySales } from '../data/schema'
 
 type PaddySalesActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: PaddySales | null
+    currentRow?: PaddySales | null
 }
 
 export function PaddySalesActionDialog({
@@ -55,6 +59,41 @@ export function PaddySalesActionDialog({
     onOpenChange,
     currentRow,
 }: PaddySalesActionDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
+    const { mutate: createPaddySale, isPending: isCreating } =
+        useCreatePaddySale()
+    const { mutate: updatePaddySale, isPending: isUpdating } =
+        useUpdatePaddySale()
+
+    const isLoading = isCreating || isUpdating
+
+    const party = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName
+    )
+
+    const broker = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
+        currentRow?.brokerName
+    )
+
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
@@ -66,20 +105,20 @@ export function PaddySalesActionDialog({
             brokerName: '',
             saleType: '',
             doNumber: '',
-            dhanMotaQty: undefined,
-            dhanPatlaQty: undefined,
-            dhanSarnaQty: undefined,
+            dhanMotaQty: 0,
+            dhanPatlaQty: 0,
+            dhanSarnaQty: 0,
             dhanType: '',
-            dhanQty: undefined,
-            paddyRatePerQuintal: undefined,
+            dhanQty: 0,
+            paddyRatePerQuintal: 0,
             deliveryType: '',
-            discountPercent: undefined,
-            brokerage: undefined,
+            discountPercent: 0,
+            brokerage: 0,
             gunnyOption: '',
-            newGunnyRate: undefined,
-            oldGunnyRate: undefined,
-            plasticGunnyRate: undefined,
-        } as PaddySales,
+            newGunnyRate: 0,
+            oldGunnyRate: 0,
+            plasticGunnyRate: 0,
+        },
     })
 
     const watchSaleType = form.watch('saleType')
@@ -89,25 +128,54 @@ export function PaddySalesActionDialog({
     const isGunnySahit = watchGunnyOption === gunnyTypeOptions[1]?.value
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset({
+                    date: format(new Date(), 'yyyy-MM-dd'),
+                    partyName: '',
+                    brokerName: '',
+                    saleType: '',
+                    doNumber: '',
+                    dhanMotaQty: 0,
+                    dhanPatlaQty: 0,
+                    dhanSarnaQty: 0,
+                    dhanType: '',
+                    dhanQty: 0,
+                    paddyRatePerQuintal: 0,
+                    deliveryType: '',
+                    discountPercent: 0,
+                    brokerage: 0,
+                    gunnyOption: '',
+                    newGunnyRate: 0,
+                    oldGunnyRate: 0,
+                    plasticGunnyRate: 0,
+                })
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating sale...' : 'Adding sale...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Sale updated successfully'
-                    : 'Sale added successfully'
-            },
-            error: isEditing ? 'Failed to update sale' : 'Failed to add sale',
-        })
+    const onSubmit = (data: PaddySales) => {
+        console.log('[PaddySales] onSubmit called with:', data)
+        if (isEditing && currentRow?._id) {
+            updatePaddySale(
+                { id: currentRow._id, data },
+                {
+                    onSuccess: () => {
+                        form.reset()
+                        onOpenChange(false)
+                    },
+                }
+            )
+        } else {
+            createPaddySale(data, {
+                onSuccess: () => {
+                    form.reset()
+                    onOpenChange(false)
+                },
+            })
+        }
     }
 
     return (
@@ -123,7 +191,12 @@ export function PaddySalesActionDialog({
                 </DialogHeader>
                 <Form {...form}>
                     <form
-                        onSubmit={form.handleSubmit(onSubmit)}
+                        onSubmit={form.handleSubmit(onSubmit, (errors) => {
+                            console.error(
+                                '[PaddySales] Validation errors:',
+                                errors
+                            )
+                        })}
                         className='space-y-4'
                     >
                         <div className='space-y-6'>
@@ -198,9 +271,14 @@ export function PaddySalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Party Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder='Search party...'
+                                                    emptyText='No parties found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -214,9 +292,14 @@ export function PaddySalesActionDialog({
                                         <FormItem>
                                             <FormLabel>Broker Name</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter broker name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={field.value}
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={broker}
+                                                    placeholder='Search broker...'
+                                                    emptyText='No brokers found'
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -375,7 +458,7 @@ export function PaddySalesActionDialog({
 
                                 <FormField
                                     control={form.control}
-                                    name='gunnyOption'
+                                    name='dhanType'
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Dhan Type</FormLabel>
@@ -692,11 +775,19 @@ export function PaddySalesActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Sale
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? 'Updating...'
+                                        : 'Adding...'
+                                    : isEditing
+                                      ? 'Update'
+                                      : 'Add'}{' '}
+                                Sale
                             </Button>
                         </DialogFooter>
                     </form>

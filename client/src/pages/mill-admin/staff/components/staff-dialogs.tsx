@@ -1,6 +1,6 @@
 import { StaffActionDialog } from './staff-action-dialog'
 import { StaffBulkAttendanceDialog } from './staff-bulk-attendance-dialog'
-// import { StaffDeleteDialog } from './staff-delete-dialog'
+import { StaffDeleteDialog } from './staff-delete-dialog'
 import { StaffMarkAttendanceDialog } from './staff-mark-attendance-dialog'
 import { useStaff } from './staff-provider'
 import { StaffViewAttendanceDialog } from './staff-view-attendance-dialog'
@@ -29,17 +29,19 @@ export function StaffDialogs() {
                         currentRow={currentRow}
                     />
 
-                    {/* <StaffDeleteDialog
+                    <StaffDeleteDialog
                         key={`staff-delete-${currentRow._id}`}
-                        // open={open === 'delete'}
-                        // onOpenChange={() => {
-                        //     setOpen('delete')
-                        //     setTimeout(() => {
-                        //         setCurrentRow(null)
-                        //     }, 500)
-                        // }}
-                        // currentRow={currentRow}
-                    /> */}
+                        open={open === 'delete'}
+                        onOpenChange={(isOpen) => {
+                            if (!isOpen) {
+                                setOpen(null)
+                                setTimeout(() => {
+                                    setCurrentRow(null)
+                                }, 500)
+                            }
+                        }}
+                        currentRow={currentRow}
+                    />
 
                     <StaffMarkAttendanceDialog
                         key={`staff-attendance-${currentRow._id}`}

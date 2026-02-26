@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -9,55 +11,36 @@ import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { OutwardBalanceLiftingRiceDialogs } from './components/outward-balance-lifting-rice-dialogs'
 import { OutwardBalanceLiftingRicePrimaryButtons } from './components/outward-balance-lifting-rice-primary-buttons'
-import { OutwardBalanceLiftingRiceProvider } from './components/outward-balance-lifting-rice-provider'
+import {
+    OutwardBalanceLiftingRiceProvider,
+    useOutwardBalanceLiftingRice,
+} from './components/outward-balance-lifting-rice-provider'
 import { OutwardBalanceLiftingRiceTable } from './components/outward-balance-lifting-rice-table'
-import { useOutwardBalanceLiftingRiceList } from './data/hooks'
-import type { OutwardBalanceLiftingRice } from './data/schema'
 
 export function OutwardBalanceLiftingRiceReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
+    const { t } = useTranslation('mill-staff')
+
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as any) || 'date',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
+
     const sidebarData = getMillAdminSidebarData(millId || '')
-
     const search = Object.fromEntries(searchParams.entries())
-
-    // Build query params from URL search params
-    const queryParams = {
-        page: search.page ? parseInt(search.page, 10) : 1,
-        limit: search.limit ? parseInt(search.limit, 10) : 10,
-        search: search.search || undefined,
-        sortBy: search.sortBy || undefined,
-        sortOrder: (search.sortOrder as 'asc' | 'desc') || undefined,
-        status:
-            (search.status as 'pending' | 'completed' | 'cancelled') ||
-            undefined,
-        startDate: search.startDate || undefined,
-        endDate: search.endDate || undefined,
-    }
-
-    // Fetch data using React Query hook
-    const {
-        data: response,
-        isLoading,
-        isError,
-        error,
-    } = useOutwardBalanceLiftingRiceList(millId || '', queryParams, {
-        enabled: !!millId,
-    })
-
-    // Transform API response to table format
-    const tableData: OutwardBalanceLiftingRice[] =
-        response?.data?.map((item) => ({
-            date: item.date,
-            partyName: item.partyName,
-            vehicleNumber: item.vehicleNumber,
-            bags: item.bags,
-            weight: item.weight,
-            rate: item.rate,
-            amount: item.amount,
-            status: item.status,
-            remarks: item.remarks,
-        })) || []
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -70,54 +53,11 @@ export function OutwardBalanceLiftingRiceReport() {
         }
     }
 
-    // Loading state
-    if (isLoading) {
-        return (
-            <OutwardBalanceLiftingRiceProvider>
-                <Header fixed>
-                    <Search />
-                    <div className='ms-auto flex items-center space-x-4'>
-                        <ThemeSwitch />
-                        <ConfigDrawer />
-                        <ProfileDropdown
-                            user={sidebarData.user}
-                            links={sidebarData.profileLinks}
-                        />
-                    </div>
-                </Header>
-                <Main className='flex flex-1 items-center justify-center'>
-                    <LoadingSpinner />
-                </Main>
-            </OutwardBalanceLiftingRiceProvider>
-        )
-    }
-
-    // Error state
-    if (isError) {
-        return (
-            <OutwardBalanceLiftingRiceProvider>
-                <Header fixed>
-                    <Search />
-                    <div className='ms-auto flex items-center space-x-4'>
-                        <ThemeSwitch />
-                        <ConfigDrawer />
-                        <ProfileDropdown
-                            user={sidebarData.user}
-                            links={sidebarData.profileLinks}
-                        />
-                    </div>
-                </Header>
-                <Main className='flex flex-1 flex-col items-center justify-center gap-2'>
-                    <p className='text-destructive'>
-                        Error loading data: {error?.message || 'Unknown error'}
-                    </p>
-                </Main>
-            </OutwardBalanceLiftingRiceProvider>
-        )
-    }
-
     return (
-        <OutwardBalanceLiftingRiceProvider>
+        <OutwardBalanceLiftingRiceProvider
+            millId={millId || ''}
+            initialQueryParams={queryParams}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -134,23 +74,55 @@ export function OutwardBalanceLiftingRiceReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Outward Balance Lifting Rice Report
+                            {t('balanceLifting.outward.rice.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage outward balance lifting rice transactions and
-                            records
+                            {t('balanceLifting.outward.rice.description')}
                         </p>
                     </div>
                     <OutwardBalanceLiftingRicePrimaryButtons />
                 </div>
-                <OutwardBalanceLiftingRiceTable
-                    data={tableData}
-                    search={search}
-                    navigate={navigate}
-                />
+                <OutwardBalanceLiftingRiceContent navigate={navigate} />
             </Main>
-
             <OutwardBalanceLiftingRiceDialogs />
         </OutwardBalanceLiftingRiceProvider>
+    )
+}
+
+function OutwardBalanceLiftingRiceContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const { t } = useTranslation('mill-staff')
+    const context = useOutwardBalanceLiftingRice()
+
+    if (context.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (context.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                {t('common.errorLoadingData')}
+            </div>
+        )
+    }
+
+    return (
+        <OutwardBalanceLiftingRiceTable
+            data={context.data}
+            pagination={context.pagination}
+            search={Object.fromEntries(
+                Object.entries(context.queryParams || {})
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => [key, String(value)])
+            )}
+            navigate={navigate}
+        />
     )
 }

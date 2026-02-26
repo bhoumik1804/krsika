@@ -1,148 +1,94 @@
-/**
- * Committee Report Service
- * API client for Committee CRUD operations
- * Uses centralized axios instance with cookie-based auth
- */
-import apiClient, { type ApiResponse } from '@/lib/api-client'
-import type {
-    CommitteeResponse,
-    CommitteeListResponse,
-    CommitteeSummaryResponse,
-    CreateCommitteeRequest,
-    UpdateCommitteeRequest,
-    CommitteeQueryParams,
-} from './types'
+import { apiClient } from '@/lib/api-client'
+import type { CommitteeReportData } from './schema'
 
-// ==========================================
-// API Endpoints
-// ==========================================
-
-const COMMITTEE_ENDPOINT = (millId: string) => `/mills/${millId}/committees`
-
-// ==========================================
-// Committee API Functions
-// ==========================================
-
-/**
- * Fetch all committees with pagination and filters
- */
-export const fetchCommitteeList = async (
-    millId: string,
-    params?: CommitteeQueryParams
-): Promise<CommitteeListResponse> => {
-    const response = await apiClient.get<ApiResponse<CommitteeListResponse>>(
-        COMMITTEE_ENDPOINT(millId),
-        { params }
-    )
-    return response.data.data
-}
-
-/**
- * Fetch a single committee by ID
- */
-export const fetchCommitteeById = async (
-    millId: string,
-    id: string
-): Promise<CommitteeResponse> => {
-    const response = await apiClient.get<ApiResponse<CommitteeResponse>>(
-        `${COMMITTEE_ENDPOINT(millId)}/${id}`
-    )
-    return response.data.data
-}
-
-/**
- * Fetch committee summary/statistics
- */
-export const fetchCommitteeSummary = async (
+interface FetchCommitteeListParams {
     millId: string
-): Promise<CommitteeSummaryResponse> => {
-    const response = await apiClient.get<ApiResponse<CommitteeSummaryResponse>>(
-        `${COMMITTEE_ENDPOINT(millId)}/summary`
-    )
-    return response.data.data
+    page?: number
+    limit?: number
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
 }
 
-/**
- * Create a new committee
- */
-export const createCommittee = async (
-    millId: string,
-    data: CreateCommitteeRequest
-): Promise<CommitteeResponse> => {
-    const response = await apiClient.post<ApiResponse<CommitteeResponse>>(
-        COMMITTEE_ENDPOINT(millId),
-        data
-    )
-    return response.data.data
+interface ApiResponse<T> {
+    data: T
 }
 
-/**
- * Bulk create committees
- */
-export const bulkCreateCommittees = async (
-    millId: string,
-    committees: CreateCommitteeRequest[]
-): Promise<{ created: number; committees: CommitteeResponse[] }> => {
-    console.log('Sending to server:', { committees })
-    console.log('First committee type:', typeof committees[0], Array.isArray(committees[0]))
-    
-    const response = await apiClient.post<ApiResponse<{ created: number; committees: CommitteeResponse[] }>>(
-        `${COMMITTEE_ENDPOINT(millId)}/bulk`,
-        { committees }
-    )
-    return response.data.data
+export interface CommitteeListResponse {
+    committees: CommitteeReportData[]
+    pagination: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasPrevPage: boolean
+        hasNextPage: boolean
+        prevPage: number | null
+        nextPage: number | null
+    }
 }
 
-/**
- * Update an existing committee
- */
-export const updateCommittee = async (
-    millId: string,
-    { id, ...data }: UpdateCommitteeRequest
-): Promise<CommitteeResponse> => {
-    const response = await apiClient.put<ApiResponse<CommitteeResponse>>(
-        `${COMMITTEE_ENDPOINT(millId)}/${id}`,
-        data
-    )
-    return response.data.data
-}
+export const committeeService = {
+    fetchCommitteeList: async (
+        params: FetchCommitteeListParams
+    ): Promise<CommitteeListResponse> => {
+        const queryParams = new URLSearchParams()
+        if (params.page) queryParams.append('page', params.page.toString())
+        if (params.limit) queryParams.append('limit', params.limit.toString())
+        if (params.search) queryParams.append('search', params.search)
+        if (params.sortBy) queryParams.append('sortBy', params.sortBy)
+        if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder)
 
-/**
- * Delete a committee
- */
-export const deleteCommittee = async (
-    millId: string,
-    id: string
-): Promise<void> => {
-    await apiClient.delete(`${COMMITTEE_ENDPOINT(millId)}/${id}`)
-}
+        const response = await apiClient.get<
+            ApiResponse<CommitteeListResponse>
+        >(`/mills/${params.millId}/committees?${queryParams.toString()}`)
+        return response.data.data
+    },
 
-/**
- * Bulk delete committees
- */
-export const bulkDeleteCommittee = async (
-    millId: string,
-    ids: string[]
-): Promise<void> => {
-    await apiClient.delete(`${COMMITTEE_ENDPOINT(millId)}/bulk`, {
-        data: { ids },
-    })
-}
+    createCommittee: async (
+        millId: string,
+        data: Omit<CommitteeReportData, '_id'>
+    ) => {
+        const response = await apiClient.post<
+            ApiResponse<{ committee: CommitteeReportData }>
+        >(`/mills/${millId}/committees`, data)
+        return response.data.data.committee
+    },
 
-/**
- * Export committees to CSV/Excel
- */
-export const exportCommittee = async (
-    millId: string,
-    params?: CommitteeQueryParams,
-    format: 'csv' | 'xlsx' = 'csv'
-): Promise<Blob> => {
-    const response = await apiClient.get(
-        `${COMMITTEE_ENDPOINT(millId)}/export`,
-        {
-            params: { ...params, format },
-            responseType: 'blob',
-        }
-    )
-    return response.data
+    bulkCreateCommittees: async (
+        millId: string,
+        data: Omit<CommitteeReportData, '_id'>[]
+    ) => {
+        const response = await apiClient.post<
+            ApiResponse<{ committees: CommitteeReportData[]; count: number }>
+        >(`/mills/${millId}/committees/bulk`, data)
+        return response.data.data
+    },
+
+    updateCommittee: async (
+        millId: string,
+        committeeId: string,
+        data: Omit<CommitteeReportData, '_id'>
+    ) => {
+        const response = await apiClient.put<
+            ApiResponse<{ committee: CommitteeReportData }>
+        >(`/mills/${millId}/committees/${committeeId}`, data)
+        return response.data.data.committee
+    },
+
+    deleteCommittee: async (millId: string, committeeId: string) => {
+        const response = await apiClient.delete<
+            ApiResponse<{ success: boolean }>
+        >(`/mills/${millId}/committees/${committeeId}`)
+        return response.data.data
+    },
+
+    bulkDeleteCommittees: async (millId: string, committeeIds: string[]) => {
+        const response = await apiClient.delete<
+            ApiResponse<{ success: boolean }>
+        >(`/mills/${millId}/committees/bulk`, {
+            data: { ids: committeeIds },
+        })
+        return response.data.data
+    },
 }

@@ -3,8 +3,8 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router'
 import { paddyTypeOptions, riceTypeOptions } from '@/constants/purchase-form'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -37,6 +37,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { useCreateMillingPaddy, useUpdateMillingPaddy } from '../data/hooks'
 import { millingPaddySchema, type MillingPaddy } from '../data/schema'
 
 type MillingPaddyActionDialogProps = {
@@ -50,13 +51,18 @@ export function MillingPaddyActionDialog({
     onOpenChange,
     currentRow,
 }: MillingPaddyActionDialogProps) {
+    const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+
+    const createMutation = useCreateMillingPaddy(millId || '')
+    const updateMutation = useUpdateMillingPaddy(millId || '')
 
     const form = useForm<MillingPaddy>({
         resolver: zodResolver(millingPaddySchema),
         defaultValues: {
-            date: '',
+            date: format(new Date(), 'yyyy-MM-dd'),
             paddyType: '',
             hopperInGunny: undefined,
             hopperInQintal: undefined,
@@ -79,20 +85,33 @@ export function MillingPaddyActionDialog({
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                paddyType: '',
+                // Reset other fields to undefined/defaults
+            })
         }
-    }, [currentRow, form])
+    }, [currentRow, form, open])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = (data: MillingPaddy) => {
+        if (isEditing && currentRow?._id) {
+            updateMutation.mutate(
+                { id: currentRow._id, ...data },
+                {
+                    onSuccess: () => {
+                        onOpenChange(false)
+                        form.reset()
+                    },
+                }
+            )
+        } else {
+            createMutation.mutate(data, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                    form.reset()
+                },
+            })
+        }
     }
 
     return (
@@ -100,10 +119,12 @@ export function MillingPaddyActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing ? t('common.edit') : t('common.add')}{' '}
+                        {t('millingReports.paddy.form.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing ? t('common.update') : t('common.enter')}{' '}
+                        {t('common.updateDetails')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -117,7 +138,11 @@ export function MillingPaddyActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.paddy.form.fields.date'
+                                            )}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -136,7 +161,9 @@ export function MillingPaddyActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickDate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -178,7 +205,11 @@ export function MillingPaddyActionDialog({
                                 name='paddyType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Paddy Type</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.paddy.form.fields.paddyType'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             value={field.value}
@@ -210,7 +241,11 @@ export function MillingPaddyActionDialog({
                                 name='hopperInGunny'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Hopper (Gunny)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.paddy.form.fields.hopperInGunny'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -237,7 +272,11 @@ export function MillingPaddyActionDialog({
                                 name='hopperInQintal'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Hopper (Quintal)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.paddy.form.fields.hopperInQintal'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -265,7 +304,11 @@ export function MillingPaddyActionDialog({
                                 name='riceType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rice Type</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.paddy.form.fields.riceType'
+                                            )}
+                                        </FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
                                             value={field.value}
@@ -296,7 +339,9 @@ export function MillingPaddyActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Rice Quantity (Quintal)
+                                            {t(
+                                                'millingReports.paddy.form.fields.riceQuantity'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -325,7 +370,11 @@ export function MillingPaddyActionDialog({
                                 name='ricePercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Rice (%)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.paddy.form.fields.ricePercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -354,7 +403,9 @@ export function MillingPaddyActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Khanda Quantity (Quintal)
+                                            {t(
+                                                'millingReports.paddy.form.fields.khandaQuantity'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -383,7 +434,11 @@ export function MillingPaddyActionDialog({
                                 name='khandaPercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Khanda (%)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.paddy.form.fields.khandaPercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -412,7 +467,9 @@ export function MillingPaddyActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Kodha Quantity (Quintal)
+                                            {t(
+                                                'millingReports.paddy.form.fields.kodhaQuantity'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -441,7 +498,11 @@ export function MillingPaddyActionDialog({
                                 name='kodhaPercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Kodha (%)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.paddy.form.fields.kodhaPercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -470,7 +531,9 @@ export function MillingPaddyActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Bhusa Quantity (Ton)
+                                            {t(
+                                                'millingReports.paddy.form.fields.bhusaTon'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -499,7 +562,11 @@ export function MillingPaddyActionDialog({
                                 name='bhusaPercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Bhusa (%)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.paddy.form.fields.bhusaPercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -528,7 +595,9 @@ export function MillingPaddyActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Nakkhi Quantity (Quintal)
+                                            {t(
+                                                'millingReports.paddy.form.fields.nakkhiQuantity'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -557,7 +626,11 @@ export function MillingPaddyActionDialog({
                                 name='nakkhiPercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Nakkhi (%)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.paddy.form.fields.nakkhiPercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -585,7 +658,11 @@ export function MillingPaddyActionDialog({
                                 name='wastagePercentage'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Wastage (%)</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'millingReports.paddy.form.fields.wastagePercentage'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
                                                 type='number'
@@ -615,10 +692,10 @@ export function MillingPaddyActionDialog({
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
                             <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                                {t(isEditing ? 'common.update' : 'common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

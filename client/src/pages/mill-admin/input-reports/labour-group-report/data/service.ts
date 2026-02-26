@@ -55,9 +55,9 @@ export const updateLabourGroup = async (
     millId: string,
     data: UpdateLabourGroupRequest
 ): Promise<LabourGroupResponse> => {
-    const { id, ...payload } = data
+    const { _id, ...payload } = data
     const response = await apiClient.put<ApiResponse<LabourGroupResponse>>(
-        `${BASE_PATH}/${millId}/labour-groups/${id}`,
+        `${BASE_PATH}/${millId}/labour-groups/${_id}`,
         payload
     )
     return response.data.data
@@ -74,7 +74,7 @@ export const bulkDeleteLabourGroup = async (
     millId: string,
     ids: string[]
 ): Promise<void> => {
-    await apiClient.delete(`${BASE_PATH}/${millId}/labour-groups`, {
+    await apiClient.delete(`${BASE_PATH}/${millId}/labour-groups/bulk`, {
         data: { ids },
     })
 }

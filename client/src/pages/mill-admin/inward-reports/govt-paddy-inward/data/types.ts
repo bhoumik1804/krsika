@@ -1,7 +1,7 @@
 import type { GovtPaddyInward } from './schema'
 
 export interface GovtPaddyInwardListResponse {
-    entries: GovtPaddyInward[]
+    data: GovtPaddyInward[]
     pagination: {
         page: number
         limit: number

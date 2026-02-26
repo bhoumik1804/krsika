@@ -13,7 +13,8 @@ export const createGovtRiceOutward = async (req, res, next) => {
     try {
         const entry = await createGovtRiceOutwardEntry(
             req.params.millId,
-            req.body
+            req.body,
+            req.user._id
         )
         res.status(201).json(
             new ApiResponse(201, { entry }, 'Govt rice outward created')
@@ -64,7 +65,7 @@ export const getGovtRiceOutwardListHandler = async (req, res, next) => {
         res.status(200).json(
             new ApiResponse(
                 200,
-                { entries: result.data, pagination: result.pagination },
+                { data: result.data, pagination: result.pagination },
                 'Govt rice outward list retrieved'
             )
         )

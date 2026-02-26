@@ -1,22 +1,43 @@
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { OutwardBalanceLiftingRiceDialogs } from './components/outward-balance-lifting-rice-dialogs'
 import { OutwardBalanceLiftingRicePrimaryButtons } from './components/outward-balance-lifting-rice-primary-buttons'
-import { OutwardBalanceLiftingRiceProvider } from './components/outward-balance-lifting-rice-provider'
+import {
+    OutwardBalanceLiftingRiceProvider,
+    useOutwardBalanceLiftingRice,
+} from './components/outward-balance-lifting-rice-provider'
 import { OutwardBalanceLiftingRiceTable } from './components/outward-balance-lifting-rice-table'
-import { outwardBalanceLiftingRiceEntries } from './data/outward-balance-lifting-rice-entries'
 
 export function OutwardBalanceLiftingRiceReport() {
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
-    const sidebarData = getMillAdminSidebarData(millId || '')
 
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as any) || 'date',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
+
+    const sidebarData = getMillAdminSidebarData(millId || '')
     const search = Object.fromEntries(searchParams.entries())
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
@@ -31,7 +52,10 @@ export function OutwardBalanceLiftingRiceReport() {
     }
 
     return (
-        <OutwardBalanceLiftingRiceProvider>
+        <OutwardBalanceLiftingRiceProvider
+            millId={millId || ''}
+            initialQueryParams={queryParams}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -48,22 +72,55 @@ export function OutwardBalanceLiftingRiceReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Outward Balance Lifting Rice Report
+                            Private Rice Outward Report
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage outward balance lifting rice transactions and records
+                            Manage private rice outward transactions and records
                         </p>
                     </div>
                     <OutwardBalanceLiftingRicePrimaryButtons />
                 </div>
-                <OutwardBalanceLiftingRiceTable
-                    data={outwardBalanceLiftingRiceEntries}
-                    search={search}
-                    navigate={navigate}
-                />
+                <OutwardBalanceLiftingRiceContent navigate={navigate} />
             </Main>
-
             <OutwardBalanceLiftingRiceDialogs />
         </OutwardBalanceLiftingRiceProvider>
+    )
+}
+
+function OutwardBalanceLiftingRiceContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const context = useOutwardBalanceLiftingRice()
+
+    if (context.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (context.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                Failed to load Private Rice Outward data. Please try again
+                later.
+            </div>
+        )
+    }
+
+    return (
+        <OutwardBalanceLiftingRiceTable
+            data={context.data}
+            pagination={context.pagination}
+            search={Object.fromEntries(
+                Object.entries(context.queryParams || {})
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => [key, String(value)])
+            )}
+            navigate={navigate}
+        />
     )
 }

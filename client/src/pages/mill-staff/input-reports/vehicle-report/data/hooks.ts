@@ -1,208 +1,128 @@
-/**
- * Vehicle Report Hooks
- * React Query hooks for Vehicle data management
- */
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import {
-    fetchVehicleList,
-    fetchVehicleById,
-    fetchVehicleSummary,
-    createVehicle,
-    updateVehicle,
-    deleteVehicle,
-    bulkDeleteVehicle,
-    exportVehicle,
-} from './service'
-import type {
-    VehicleResponse,
-    VehicleListResponse,
-    VehicleSummaryResponse,
-    CreateVehicleRequest,
-    UpdateVehicleRequest,
-    VehicleQueryParams,
-} from './types'
+import type { VehicleReportData } from './schema'
+import { vehicleService, type VehicleListResponse } from './service'
 
-// ==========================================
-// Query Keys
-// ==========================================
-
-export const vehicleKeys = {
-    all: ['vehicle'] as const,
-    lists: () => [...vehicleKeys.all, 'list'] as const,
-    list: (millId: string, params?: VehicleQueryParams) =>
-        [...vehicleKeys.lists(), millId, params] as const,
-    details: () => [...vehicleKeys.all, 'detail'] as const,
-    detail: (millId: string, id: string) =>
-        [...vehicleKeys.details(), millId, id] as const,
-    summaries: () => [...vehicleKeys.all, 'summary'] as const,
-    summary: (millId: string) => [...vehicleKeys.summaries(), millId] as const,
+// Query key factory for vehicles
+const vehicleQueryKeys = {
+    all: ['vehicles'] as const,
+    byMill: (millId: string) => [...vehicleQueryKeys.all, millId] as const,
+    list: (millId: string, filters?: Record<string, unknown>) =>
+        [...vehicleQueryKeys.byMill(millId), 'list', filters] as const,
 }
 
-// ==========================================
-// Query Hooks
-// ==========================================
+interface UseVehicleListParams {
+    millId: string
+    page?: number
+    limit?: number
+    search?: string
+    sortBy?: string
+    sortOrder?: 'asc' | 'desc'
+}
 
-/**
- * Hook to fetch vehicle list with pagination and filters
- */
-export const useVehicleList = (
-    millId: string,
-    params?: VehicleQueryParams,
-    options?: { enabled?: boolean }
-) => {
+export const useVehicleList = (params: UseVehicleListParams) => {
     return useQuery<VehicleListResponse, Error>({
-        queryKey: vehicleKeys.list(millId, params),
-        queryFn: () => fetchVehicleList(millId, params),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        queryKey: vehicleQueryKeys.list(params.millId, {
+            page: params.page,
+            limit: params.limit,
+            search: params.search,
+            sortBy: params.sortBy,
+            sortOrder: params.sortOrder,
+        }),
+        queryFn: () => vehicleService.fetchVehicleList(params),
+        enabled: !!params.millId,
     })
 }
 
-/**
- * Hook to fetch a single vehicle
- */
-export const useVehicleDetail = (
-    millId: string,
-    id: string,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<VehicleResponse, Error>({
-        queryKey: vehicleKeys.detail(millId, id),
-        queryFn: () => fetchVehicleById(millId, id),
-        enabled: options?.enabled ?? (!!millId && !!id),
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    })
-}
-
-/**
- * Hook to fetch vehicle summary/statistics
- */
-export const useVehicleSummary = (
-    millId: string,
-    options?: { enabled?: boolean }
-) => {
-    return useQuery<VehicleSummaryResponse, Error>({
-        queryKey: vehicleKeys.summary(millId),
-        queryFn: () => fetchVehicleSummary(millId),
-        enabled: options?.enabled ?? !!millId,
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    })
-}
-
-// ==========================================
-// Mutation Hooks
-// ==========================================
-
-/**
- * Hook to create a new vehicle
- */
 export const useCreateVehicle = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<VehicleResponse, Error, CreateVehicleRequest>({
-        mutationFn: (data) => createVehicle(millId, data),
+    return useMutation({
+        mutationFn: (data: Partial<VehicleReportData>) =>
+            vehicleService.createVehicle(millId, data),
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: vehicleKeys.lists(),
-            })
-            queryClient.invalidateQueries({
-                queryKey: vehicleKeys.summaries(),
-            })
             toast.success('Vehicle created successfully')
+            queryClient.invalidateQueries({
+                queryKey: vehicleQueryKeys.byMill(millId),
+            })
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to create vehicle')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to create vehicle'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to update an existing vehicle
- */
 export const useUpdateVehicle = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<VehicleResponse, Error, UpdateVehicleRequest>({
-        mutationFn: (data) => updateVehicle(millId, data),
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({
-                queryKey: vehicleKeys.lists(),
-            })
-            queryClient.setQueryData(vehicleKeys.detail(millId, data._id), data)
-            queryClient.invalidateQueries({
-                queryKey: vehicleKeys.summaries(),
-            })
+    return useMutation({
+        mutationFn: ({
+            vehicleId,
+            data,
+        }: {
+            vehicleId: string
+            data: Partial<VehicleReportData>
+        }) => vehicleService.updateVehicle(millId, vehicleId, data),
+        onSuccess: () => {
             toast.success('Vehicle updated successfully')
+            queryClient.invalidateQueries({
+                queryKey: vehicleQueryKeys.byMill(millId),
+            })
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to update vehicle')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to update vehicle'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to delete a vehicle
- */
 export const useDeleteVehicle = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string>({
-        mutationFn: (id) => deleteVehicle(millId, id),
+    return useMutation({
+        mutationFn: (vehicleId: string) =>
+            vehicleService.deleteVehicle(millId, vehicleId),
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: vehicleKeys.lists(),
-            })
-            queryClient.invalidateQueries({
-                queryKey: vehicleKeys.summaries(),
-            })
             toast.success('Vehicle deleted successfully')
+            queryClient.invalidateQueries({
+                queryKey: vehicleQueryKeys.byMill(millId),
+            })
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to delete vehicle')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to delete vehicle'
+            toast.error(errorMessage)
         },
     })
 }
 
-/**
- * Hook to bulk delete vehicles
- */
-export const useBulkDeleteVehicle = (millId: string) => {
+export const useBulkDeleteVehicles = (millId: string) => {
     const queryClient = useQueryClient()
 
-    return useMutation<void, Error, string[]>({
-        mutationFn: (ids) => bulkDeleteVehicle(millId, ids),
-        onSuccess: (_, ids) => {
-            queryClient.invalidateQueries({
-                queryKey: vehicleKeys.lists(),
-            })
-            queryClient.invalidateQueries({
-                queryKey: vehicleKeys.summaries(),
-            })
-            toast.success(`${ids.length} vehicles deleted successfully`)
-        },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to delete vehicles')
-        },
-    })
-}
-
-/**
- * Hook to export vehicles
- */
-export const useExportVehicle = (millId: string) => {
-    return useMutation<
-        Blob,
-        Error,
-        { params?: VehicleQueryParams; format?: 'csv' | 'xlsx' }
-    >({
-        mutationFn: ({ params, format }) =>
-            exportVehicle(millId, params, format),
+    return useMutation({
+        mutationFn: (vehicleIds: string[]) =>
+            vehicleService.bulkDeleteVehicles(millId, vehicleIds),
         onSuccess: () => {
-            toast.success('Export completed successfully')
+            toast.success('Vehicles deleted successfully')
+            queryClient.invalidateQueries({
+                queryKey: vehicleQueryKeys.byMill(millId),
+            })
         },
-        onError: (error) => {
-            toast.error(error.message || 'Failed to export data')
+        onError: (error: unknown) => {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to delete vehicles'
+            toast.error(errorMessage)
         },
     })
 }

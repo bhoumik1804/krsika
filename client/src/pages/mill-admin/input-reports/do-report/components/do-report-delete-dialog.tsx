@@ -1,4 +1,3 @@
-import { useParams } from 'react-router'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,12 +10,12 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useDeleteDoReport } from '../data/hooks'
 import { type DoReportData } from '../data/schema'
-import { doReport } from './do-report-provider'
+import { useDoReport } from './do-report-provider'
 
 type DoReportDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: DoReportData | null
+    currentRow: DoReportData
 }
 
 export function DoReportDeleteDialog({
@@ -24,39 +23,31 @@ export function DoReportDeleteDialog({
     onOpenChange,
     currentRow,
 }: DoReportDeleteDialogProps) {
-    const { setCurrentRow } = doReport()
-    const { millId } = useParams<{ millId: string }>()
+    const { millId } = useDoReport()
     const { mutate: deleteDoReport, isPending: isDeleting } = useDeleteDoReport(
         millId || ''
     )
 
-    const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleDelete = (e: React.MouseEvent) => {
         e.preventDefault()
-        if (currentRow?._id) {
+        if (currentRow._id) {
             deleteDoReport(currentRow._id, {
                 onSuccess: () => {
                     onOpenChange(false)
-                    setCurrentRow(null)
                 },
             })
         }
     }
 
-    const handleDialogClose = (isOpen: boolean) => {
-        if (!isOpen) {
-            setCurrentRow(null)
-        }
-        onOpenChange(isOpen)
-    }
-
     return (
-        <AlertDialog open={open} onOpenChange={handleDialogClose}>
+        <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
                         Are you sure you want to delete this record for{' '}
-                        <strong>{currentRow?.doNo}</strong> on <br />
+                        <strong>{currentRow.doNo}</strong>?
+                        <br />
                         This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>

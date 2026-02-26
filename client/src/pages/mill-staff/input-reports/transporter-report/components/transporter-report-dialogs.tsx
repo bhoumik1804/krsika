@@ -1,26 +1,45 @@
 import { TransporterReportActionDialog } from './transporter-report-action-dialog'
 import { TransporterReportDeleteDialog } from './transporter-report-delete-dialog'
-import { transporterReport } from './transporter-report-provider'
+import { useTransporterReport } from './transporter-report-provider'
 
 export function TransporterReportDialogs() {
-    const { open, setOpen, currentRow } = transporterReport()
+    const { open, setOpen, currentRow, setCurrentRow } = useTransporterReport()
 
     return (
         <>
             <TransporterReportActionDialog
-                open={open === 'add' || open === 'edit'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? open : null)
-                }
-                currentRow={currentRow}
+                key='transporter-add'
+                open={open === 'add'}
+                onOpenChange={() => setOpen('add')}
             />
-            <TransporterReportDeleteDialog
-                open={open === 'delete'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? 'delete' : null)
-                }
-                currentRow={currentRow}
-            />
+
+            {currentRow && (
+                <>
+                    <TransporterReportActionDialog
+                        key={`transporter-edit-${currentRow._id}`}
+                        open={open === 'edit'}
+                        onOpenChange={() => {
+                            setOpen('edit')
+                            setTimeout(() => {
+                                setCurrentRow(null)
+                            }, 500)
+                        }}
+                        currentRow={currentRow}
+                    />
+
+                    <TransporterReportDeleteDialog
+                        key={`transporter-delete-${currentRow._id}`}
+                        open={open === 'delete'}
+                        onOpenChange={() => {
+                            setOpen('delete')
+                            setTimeout(() => {
+                                setCurrentRow(null)
+                            }, 500)
+                        }}
+                        currentRow={currentRow}
+                    />
+                </>
+            )}
         </>
     )
 }

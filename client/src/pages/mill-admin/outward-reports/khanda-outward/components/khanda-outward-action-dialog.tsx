@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useKhandaSalesList } from '@/pages/mill-admin/sales-reports/khanda-sales/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -24,74 +25,138 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import { useCreateKhandaOutward, useUpdateKhandaOutward } from '../data/hooks'
 import { khandaOutwardSchema, type KhandaOutward } from '../data/schema'
+
+const useKhandaSalesListWrapper = (params: any) => {
+    return useKhandaSalesList(params.millId, params, {
+        enabled: !!params.millId,
+    })
+}
 
 type KhandaOutwardActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
     currentRow: KhandaOutward | null
+    millId: string
 }
 
 export function KhandaOutwardActionDialog({
     open,
     onOpenChange,
     currentRow,
+    millId,
 }: KhandaOutwardActionDialogProps) {
+    const salesDeals = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useKhandaSalesListWrapper,
+            extractItems: (data) =>
+                data.sales
+                    ?.map((s) => s.khandaSalesDealNumber)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
+        },
+        currentRow?.khandaSaleDealNumber || undefined
+    )
+
+    const { data: salesList } = useKhandaSalesList(
+        millId,
+        { limit: 1000 },
+        { enabled: open }
+    )
+
+    const handleDealSelect = (dealNumber: string) => {
+        form.setValue('khandaSaleDealNumber', dealNumber)
+        const selectedDeal = salesList?.sales?.find(
+            (sale) => sale.khandaSalesDealNumber === dealNumber
+        )
+        if (selectedDeal) {
+            if (selectedDeal.partyName) {
+                form.setValue('partyName', selectedDeal.partyName)
+            }
+            if (selectedDeal.brokerName) {
+                form.setValue('brokerName', selectedDeal.brokerName)
+            }
+        }
+    }
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<KhandaOutward>({
-        resolver: zodResolver(khandaOutwardSchema),
-        defaultValues: {
-            date: '',
+    const createMutation = useCreateKhandaOutward(millId)
+    const updateMutation = useUpdateKhandaOutward(millId)
+
+    const defaultValues = useMemo(
+        () => ({
+            date: format(new Date(), 'yyyy-MM-dd'),
             khandaSaleDealNumber: '',
             partyName: '',
             brokerName: '',
             gunnyPlastic: undefined,
-            plasticWeight: undefined,
+            plasticGunnyWeight: undefined,
             truckNo: '',
             truckRst: '',
             truckWeight: undefined,
             gunnyWeight: undefined,
             netWeight: undefined,
-        },
+        }),
+        []
+    )
+
+    const form = useForm<KhandaOutward>({
+        resolver: zodResolver(khandaOutwardSchema),
+        defaultValues,
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset(defaultValues)
+            }
+        }
+    }, [currentRow, form, open, defaultValues])
+
+    const onSubmit = (data: KhandaOutward) => {
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+        }
+
+        if (isEditing && currentRow?._id) {
+            toast.promise(
+                updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data: submissionData,
+                }),
+                {
+                    loading: 'Updating...',
+                    success: () => {
+                        onOpenChange(false)
+                        return 'Updated successfully'
+                    },
+                    error: 'Failed to update',
+                }
+            )
         } else {
-            form.reset({
-                date: '',
-                khandaSaleDealNumber: '',
-                partyName: '',
-                brokerName: '',
-                gunnyPlastic: undefined,
-                plasticWeight: undefined,
-                truckNo: '',
-                truckRst: '',
-                truckWeight: undefined,
-                gunnyWeight: undefined,
-                netWeight: undefined,
+            toast.promise(createMutation.mutateAsync(submissionData), {
+                loading: 'Adding...',
+                success: () => {
+                    onOpenChange(false)
+                    return 'Added successfully'
+                },
+                error: 'Failed to add',
             })
         }
-    }, [currentRow, form])
-
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
     }
 
     return (
@@ -181,9 +246,14 @@ export function KhandaOutwardActionDialog({
                                             Khanda Sale Deal Number
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter khanda sale deal number'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value || undefined}
+                                                onValueChange={(value) =>
+                                                    handleDealSelect(value)
+                                                }
+                                                paginatedList={salesDeals}
+                                                placeholder='Select deal number'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -200,6 +270,7 @@ export function KhandaOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter party name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -216,6 +287,7 @@ export function KhandaOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter broker name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -248,7 +320,7 @@ export function KhandaOutwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='plasticWeight'
+                                name='plasticGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Plastic Weight</FormLabel>
@@ -281,6 +353,7 @@ export function KhandaOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -297,6 +370,7 @@ export function KhandaOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

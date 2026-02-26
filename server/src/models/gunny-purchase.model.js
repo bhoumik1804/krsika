@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose'
 import aggregatePaginate from 'mongoose-aggregate-paginate-v2'
+import { dealNumberPlugin } from '../utils/dealNumberPlugin.js'
 
 /**
  * Gunny Purchase Schema
@@ -64,6 +65,12 @@ GunnyPurchaseSchema.virtual('formattedDate').get(function () {
 // Ensure virtuals are included in JSON output
 GunnyPurchaseSchema.set('toJSON', { virtuals: true })
 GunnyPurchaseSchema.set('toObject', { virtuals: true })
+
+// Apply deal number plugin (auto-generates gunnyPurchaseDealNumber)
+GunnyPurchaseSchema.plugin(dealNumberPlugin, {
+    fieldName: 'gunnyPurchaseDealNumber',
+    prefix: 'GNP',
+})
 
 // Add aggregate paginate plugin
 GunnyPurchaseSchema.plugin(aggregatePaginate)

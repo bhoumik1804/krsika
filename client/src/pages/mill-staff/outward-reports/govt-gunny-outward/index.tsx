@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
@@ -12,11 +13,12 @@ import { GovtGunnyOutwardPrimaryButtons } from './components/govt-gunny-outward-
 import { GovtGunnyOutwardProvider } from './components/govt-gunny-outward-provider'
 import { GovtGunnyOutwardTable } from './components/govt-gunny-outward-table'
 import { useGovtGunnyOutwardList } from './data/hooks'
+import type { GovtGunnyOutwardQueryParams } from './data/types'
 
-export function GovtGunnyOutwardReport() {
+function GovtGunnyOutwardContent() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
-    const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
 
@@ -24,33 +26,26 @@ export function GovtGunnyOutwardReport() {
         () => ({
             page: search.page ? parseInt(search.page as string, 10) : 1,
             limit: search.limit ? parseInt(search.limit as string, 10) : 10,
-            search: search.search as string | undefined,
-            sortBy: (search.sortBy as string) || 'createdAt',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+            search: search.search ? (search.search as string) : undefined,
+            startDate: search.startDate
+                ? (search.startDate as string)
+                : undefined,
+            endDate: search.endDate ? (search.endDate as string) : undefined,
+            sortBy:
+                (search.sortBy as GovtGunnyOutwardQueryParams['sortBy']) ||
+                'date',
+            sortOrder:
+                (search.sortOrder as GovtGunnyOutwardQueryParams['sortOrder']) ||
+                'desc',
         }),
         [search]
     )
 
     const {
-        data: response,
+        data: listData,
         isLoading,
-        isError,
-    } = useGovtGunnyOutwardList(millId || '', queryParams, {
-        enabled: !!millId,
-    })
-
-    const data = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            date: item.date,
-            gunnyDm: item.gunnyDm || '',
-            samitiSangrahan: item.samitiSangrahan || '',
-            oldGunnyQty: item.oldGunnyQty || 0,
-            plasticGunnyQty: item.plasticGunnyQty || 0,
-            truckNo: item.truckNo || '',
-        }))
-    }, [response])
+        error,
+    } = useGovtGunnyOutwardList(millId || '', queryParams)
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -63,8 +58,80 @@ export function GovtGunnyOutwardReport() {
         }
     }
 
+    const data = listData?.entries ?? []
+    const serverPagination = listData?.pagination
+
+    if (isLoading) {
+        return (
+            <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
+                <div className='flex flex-wrap items-end justify-between gap-2'>
+                    <div>
+                        <h2 className='text-2xl font-bold tracking-tight'>
+                            Govt Gunny Outward Report
+                        </h2>
+                        <p className='text-muted-foreground'>
+                            Manage government gunny outward transactions
+                        </p>
+                    </div>
+                </div>
+                <div className='flex items-center justify-center rounded-md border border-dashed p-8'>
+                    <p className='text-muted-foreground'>Loading...</p>
+                </div>
+            </Main>
+        )
+    }
+
+    if (error) {
+        return (
+            <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
+                <div className='flex flex-wrap items-end justify-between gap-2'>
+                    <div>
+                        <h2 className='text-2xl font-bold tracking-tight'>
+                            Govt Gunny Outward Report
+                        </h2>
+                        <p className='text-muted-foreground'>
+                            Manage government gunny outward transactions
+                        </p>
+                    </div>
+                </div>
+                <div className='flex items-center justify-center rounded-md border border-dashed border-destructive p-8'>
+                    <p className='text-destructive'>
+                        Error loading data: {error.message}
+                    </p>
+                </div>
+            </Main>
+        )
+    }
+
     return (
-        <GovtGunnyOutwardProvider>
+        <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
+            <div className='flex flex-wrap items-end justify-between gap-2'>
+                <div>
+                    <h2 className='text-2xl font-bold tracking-tight'>
+                        {t('outward.govtGunnyOutward.title')}
+                    </h2>
+                    <p className='text-muted-foreground'>
+                        {t('outward.govtGunnyOutward.description')}
+                    </p>
+                </div>
+                <GovtGunnyOutwardPrimaryButtons />
+            </div>
+            <GovtGunnyOutwardTable
+                data={data}
+                search={search}
+                navigate={navigate}
+                pagination={serverPagination}
+            />
+        </Main>
+    )
+}
+
+export function GovtGunnyOutwardReport() {
+    const { millId } = useParams<{ millId: string }>()
+    const sidebarData = getMillAdminSidebarData(millId || '')
+
+    return (
+        <GovtGunnyOutwardProvider millId={millId || ''}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -77,28 +144,7 @@ export function GovtGunnyOutwardReport() {
                 </div>
             </Header>
 
-            <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
-                <div className='flex flex-wrap items-end justify-between gap-2'>
-                    <div>
-                        <h2 className='text-2xl font-bold tracking-tight'>
-                            Govt Gunny Outward Report
-                        </h2>
-                        <p className='text-muted-foreground'>
-                            Manage government gunny outward transactions
-                        </p>
-                    </div>
-                    <GovtGunnyOutwardPrimaryButtons />
-                </div>
-                <GovtGunnyOutwardTable
-                    data={data}
-                    search={search}
-                    navigate={navigate}
-                    isLoading={isLoading}
-                    isError={isError}
-                    totalPages={response?.pagination?.totalPages}
-                    totalItems={response?.pagination?.total}
-                />
-            </Main>
+            <GovtGunnyOutwardContent />
 
             <GovtGunnyOutwardDialogs />
         </GovtGunnyOutwardProvider>

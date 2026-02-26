@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNakkhiSalesList } from '@/pages/mill-admin/sales-reports/nakkhi-sales/data/hooks'
 import { CalendarIcon } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -24,78 +25,140 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
+import { useCreateNakkhiOutward, useUpdateNakkhiOutward } from '../data/hooks'
 import { nakkhiOutwardSchema, type NakkhiOutward } from '../data/schema'
+
+const useNakkhiSalesWrapper = (params: any) => {
+    return useNakkhiSalesList(params.millId, params, {
+        enabled: !!params.millId,
+    })
+}
 
 type NakkhiOutwardActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
     currentRow: NakkhiOutward | null
+    millId: string
 }
 
 export function NakkhiOutwardActionDialog({
     open,
     onOpenChange,
     currentRow,
+    millId,
 }: NakkhiOutwardActionDialogProps) {
+    const salesDeals = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useNakkhiSalesWrapper,
+            extractItems: (data) =>
+                data.sales
+                    ?.map((s) => s.nakkhiSalesDealNumber)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'date', sortOrder: 'desc' },
+        },
+        currentRow?.nakkhiSaleDealNumber || undefined
+    )
+
+    const { data: salesList } = useNakkhiSalesList(
+        millId,
+        { limit: 1000 },
+        { enabled: open }
+    )
+
+    const handleDealSelect = (dealNumber: string) => {
+        form.setValue('nakkhiSaleDealNumber', dealNumber)
+        const selectedDeal = salesList?.sales?.find(
+            (sale) => sale.nakkhiSalesDealNumber === dealNumber
+        )
+        if (selectedDeal) {
+            if (selectedDeal.partyName) {
+                form.setValue('partyName', selectedDeal.partyName)
+            }
+            if (selectedDeal.brokerName) {
+                form.setValue('brokerName', selectedDeal.brokerName)
+            }
+        }
+    }
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
+    const createMutation = useCreateNakkhiOutward(millId)
+    const updateMutation = useUpdateNakkhiOutward(millId)
+
+    const defaultValues = useMemo(
+        () => ({
+            date: currentRow?.date || format(new Date(), 'yyyy-MM-dd'),
+            nakkhiSaleDealNumber: currentRow?.nakkhiSaleDealNumber || '',
+            partyName: currentRow?.partyName || '',
+            brokerName: currentRow?.brokerName || '',
+            rate: currentRow?.rate,
+            brokerage: currentRow?.brokerage,
+            gunnyPlastic: currentRow?.gunnyPlastic,
+            plasticGunnyWeight: currentRow?.plasticGunnyWeight,
+            truckNo: currentRow?.truckNo || '',
+            truckRst: currentRow?.truckRst || '',
+            truckWeight: currentRow?.truckWeight,
+            gunnyWeight: currentRow?.gunnyWeight,
+            netWeight: currentRow?.netWeight,
+        }),
+        [currentRow]
+    )
+
     const form = useForm<NakkhiOutward>({
         resolver: zodResolver(nakkhiOutwardSchema),
-        defaultValues: {
-            date: '',
-            nakkhiSaleDealNumber: '',
-            partyName: '',
-            brokerName: '',
-            rate: undefined,
-            brokerage: undefined,
-            gunnyPlastic: undefined,
-            plasticWeight: undefined,
-            truckNo: '',
-            truckRst: '',
-            truckWeight: undefined,
-            gunnyWeight: undefined,
-            netWeight: undefined,
-        },
+        defaultValues,
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset(defaultValues)
+            }
+        }
+    }, [currentRow, form, open, defaultValues])
+
+    const onSubmit = (data: NakkhiOutward) => {
+        const submissionData = {
+            ...data,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+        }
+
+        if (isEditing && currentRow?._id) {
+            toast.promise(
+                updateMutation.mutateAsync({
+                    id: currentRow._id,
+                    data: submissionData,
+                }),
+                {
+                    loading: 'Updating...',
+                    success: () => {
+                        onOpenChange(false)
+                        return 'Updated successfully'
+                    },
+                    error: 'Failed to update',
+                }
+            )
         } else {
-            form.reset({
-                date: '',
-                nakkhiSaleDealNumber: '',
-                partyName: '',
-                brokerName: '',
-                rate: undefined,
-                brokerage: undefined,
-                gunnyPlastic: undefined,
-                plasticWeight: undefined,
-                truckNo: '',
-                truckRst: '',
-                truckWeight: undefined,
-                gunnyWeight: undefined,
-                netWeight: undefined,
+            toast.promise(createMutation.mutateAsync(submissionData), {
+                loading: 'Adding...',
+                success: () => {
+                    onOpenChange(false)
+                    return 'Added successfully'
+                },
+                error: 'Failed to add',
             })
         }
-    }, [currentRow, form])
-
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
     }
 
     return (
@@ -185,9 +248,14 @@ export function NakkhiOutwardActionDialog({
                                             Nakkhi Sale Deal Number
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter deal number'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value || undefined}
+                                                onValueChange={(value) =>
+                                                    handleDealSelect(value)
+                                                }
+                                                paginatedList={salesDeals}
+                                                placeholder='Select deal number'
+                                                emptyText='No deals found'
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -204,6 +272,7 @@ export function NakkhiOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter party name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -220,6 +289,7 @@ export function NakkhiOutwardActionDialog({
                                             <Input
                                                 placeholder='Enter broker name'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -300,7 +370,7 @@ export function NakkhiOutwardActionDialog({
                             />
                             <FormField
                                 control={form.control}
-                                name='plasticWeight'
+                                name='plasticGunnyWeight'
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
@@ -335,6 +405,7 @@ export function NakkhiOutwardActionDialog({
                                             <Input
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -351,6 +422,7 @@ export function NakkhiOutwardActionDialog({
                                             <Input
                                                 placeholder='RST-000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />

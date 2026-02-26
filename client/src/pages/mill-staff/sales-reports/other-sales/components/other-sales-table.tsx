@@ -11,6 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -22,30 +23,30 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { statuses } from '../data/data'
 import { type OtherSales } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { otherSalesColumns as columns } from './other-sales-columns'
+import { useOtherSalesColumns } from './other-sales-columns'
 
 type DataTableProps = {
     data: OtherSales[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    isLoading?: boolean
-    isError?: boolean
-    totalPages?: number
-    totalItems?: number
+    pagination?: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+    }
 }
 
 export function OtherSalesTable({
     data,
     search,
     navigate,
-    // isLoading,
-    // isError,
-    // totalItems,
-    // totalPages,
+    pagination: serverPagination,
 }: DataTableProps) {
+    const { t } = useTranslation('mill-staff')
+    const columns = useOtherSalesColumns()
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
@@ -65,7 +66,6 @@ export function OtherSalesTable({
         globalFilter: { enabled: false },
         columnFilters: [
             { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
-            { columnId: 'status', searchKey: 'status', type: 'array' },
         ],
     })
 
@@ -92,6 +92,9 @@ export function OtherSalesTable({
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
+        getRowId: (row) => row._id || '',
+        manualPagination: !!serverPagination,
+        pageCount: serverPagination?.totalPages ?? -1,
     })
 
     useEffect(() => {
@@ -107,15 +110,9 @@ export function OtherSalesTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
+                searchPlaceholder={t('common.search')}
                 searchKey='partyName'
-                filters={[
-                    {
-                        columnId: 'status',
-                        title: 'Status',
-                        options: statuses,
-                    },
-                ]}
+                filters={[]}
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>
@@ -186,7 +183,7 @@ export function OtherSalesTable({
                                     colSpan={columns.length}
                                     className='h-24 text-center'
                                 >
-                                    No results.
+                                    {t('common.noResults')}
                                 </TableCell>
                             </TableRow>
                         )}

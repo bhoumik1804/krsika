@@ -5,6 +5,7 @@ import { type PrivatePaddyInward } from '../data/schema'
 type PrivatePaddyInwardDialogType = 'add' | 'edit' | 'delete'
 
 type PrivatePaddyInwardContextType = {
+    millId: string
     open: PrivatePaddyInwardDialogType | null
     setOpen: (str: PrivatePaddyInwardDialogType | null) => void
     currentRow: PrivatePaddyInward | null
@@ -13,12 +14,20 @@ type PrivatePaddyInwardContextType = {
 
 const PrivatePaddyInwardContext = React.createContext<PrivatePaddyInwardContextType | null>(null)
 
-export function PrivatePaddyInwardProvider({ children }: { children: React.ReactNode }) {
+export function PrivatePaddyInwardProvider({
+    millId,
+    children,
+}: {
+    millId: string
+    children: React.ReactNode
+}) {
     const [open, setOpen] = useDialogState<PrivatePaddyInwardDialogType>(null)
     const [currentRow, setCurrentRow] = useState<PrivatePaddyInward | null>(null)
 
     return (
-        <PrivatePaddyInwardContext value={ { open, setOpen, currentRow, setCurrentRow } }>
+        <PrivatePaddyInwardContext
+            value={{ millId, open, setOpen, currentRow, setCurrentRow }}
+        >
             {children}
         </PrivatePaddyInwardContext>
     )

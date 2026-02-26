@@ -8,33 +8,33 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { type TransporterReportData } from '../data/schema'
 import { useDeleteTransporter } from '../data/hooks'
-import { useUser } from '@/pages/landing/hooks/use-auth'
+import { type TransporterReportData } from '../data/schema'
+import { useTransporterReport } from './transporter-report-provider'
 
 type TransporterReportDeleteDialogProps = {
+    currentRow: TransporterReportData
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: TransporterReportData | null
 }
 
 export function TransporterReportDeleteDialog({
+    currentRow,
     open,
     onOpenChange,
-    currentRow,
 }: TransporterReportDeleteDialogProps) {
-    const { user } = useUser()
-    const millId = user?.millId as any
-    const deleteMutation = useDeleteTransporter(millId)
+    const { millId } = useTransporterReport()
+    const { mutate: deleteTransporter, isPending: isDeleting } =
+        useDeleteTransporter(millId)
 
-    const handleDelete = async () => {
-        if (!currentRow?._id) return
-        
-        try {
-            await deleteMutation.mutateAsync(currentRow._id)
-            onOpenChange(false)
-        } catch (error: any) {
-            console.error('Delete error:', error)
+    const handleDelete = (e: React.MouseEvent) => {
+        e.preventDefault()
+        if (currentRow._id) {
+            deleteTransporter(currentRow._id, {
+                onSuccess: () => {
+                    onOpenChange(false)
+                },
+            })
         }
     }
 
@@ -45,19 +45,21 @@ export function TransporterReportDeleteDialog({
                     <AlertDialogTitle>Delete Record?</AlertDialogTitle>
                     <AlertDialogDescription>
                         Are you sure you want to delete this record for{' '}
-                        <strong>{currentRow?.transporterName}</strong>?
+                        <strong>{currentRow.transporterName}</strong>?
                         <br />
                         This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel disabled={deleteMutation.isPending}>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isDeleting}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
-                        disabled={deleteMutation.isPending}
+                        disabled={isDeleting}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                        {isDeleting ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

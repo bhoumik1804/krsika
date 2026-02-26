@@ -1,12 +1,16 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type FinancialPayment } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
-export const FinancialPaymentColumns: ColumnDef<FinancialPayment>[] = [
+export function FinancialPaymentColumns(): ColumnDef<FinancialPayment>[] {
+    const { t } = useTranslation('mill-staff')
+    return [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,10 +43,12 @@ export const FinancialPaymentColumns: ColumnDef<FinancialPayment>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader column={column} title={t('financialTransactionReports.payment.form.fields.date')} />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -55,7 +61,7 @@ export const FinancialPaymentColumns: ColumnDef<FinancialPayment>[] = [
     {
         accessorKey: 'paymentType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Payment Type' />
+            <DataTableColumnHeader column={column} title={t('financialTransactionReports.payment.form.fields.paymentType')} />
         ),
         cell: ({ row }) => (
             <div className='text-nowrap'>{row.getValue('paymentType')}</div>
@@ -64,7 +70,7 @@ export const FinancialPaymentColumns: ColumnDef<FinancialPayment>[] = [
     {
         accessorKey: 'partyName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Party Name' />
+            <DataTableColumnHeader column={column} title={t('financialTransactionReports.payment.form.fields.partyName')} />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -76,28 +82,28 @@ export const FinancialPaymentColumns: ColumnDef<FinancialPayment>[] = [
     {
         accessorKey: 'transporterName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Transporter Name' />
+            <DataTableColumnHeader column={column} title={t('financialTransactionReports.payment.form.fields.transporterName')} />
         ),
         cell: ({ row }) => <div>{row.getValue('transporterName') ?? '-'}</div>,
     },
     {
         accessorKey: 'labourGroupName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Labour Group Name' />
+            <DataTableColumnHeader column={column} title={t('financialTransactionReports.payment.form.fields.labourGroupName')} />
         ),
         cell: ({ row }) => <div>{row.getValue('labourGroupName') ?? '-'}</div>,
     },
     {
         accessorKey: 'staffName',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Staff Name' />
+            <DataTableColumnHeader column={column} title={t('financialTransactionReports.payment.form.fields.staffName')} />
         ),
         cell: ({ row }) => <div>{row.getValue('staffName') ?? '-'}</div>,
     },
     {
         accessorKey: 'paymentAmount',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Payment Amount' />
+            <DataTableColumnHeader column={column} title={t('financialTransactionReports.payment.form.fields.paymentAmount')} />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
@@ -110,7 +116,7 @@ export const FinancialPaymentColumns: ColumnDef<FinancialPayment>[] = [
     {
         accessorKey: 'remarks',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Remarks' />
+            <DataTableColumnHeader column={column} title={t('financialTransactionReports.payment.form.fields.remarks')} />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-36'>
@@ -123,4 +129,5 @@ export const FinancialPaymentColumns: ColumnDef<FinancialPayment>[] = [
         id: 'actions',
         cell: DataTableRowActions,
     },
-]
+    ]
+}

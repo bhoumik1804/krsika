@@ -1,91 +1,7 @@
-/**
- * Govt Paddy Inward Types
- * TypeScript type definitions for Govt Paddy Inward module
- */
-
-// ==========================================
-// API Request Types
-// ==========================================
-
-export interface CreateGovtPaddyInwardRequest {
-    date: string
-    doNumber: string
-    committeeName: string
-    balanceDo?: number
-    gunnyNew?: number
-    gunnyOld?: number
-    gunnyPlastic?: number
-    juteWeight?: number
-    plasticWeight?: number
-    gunnyWeight?: number
-    truckNumber: string
-    rstNumber?: string
-    truckLoadWeight?: number
-    paddyType?: string
-    paddyMota?: number
-    paddyPatla?: number
-    paddySarna?: number
-    paddyMahamaya?: number
-    paddyRbGold?: number
-}
-
-export interface UpdateGovtPaddyInwardRequest {
-    id: string
-    date?: string
-    doNumber?: string
-    committeeName?: string
-    balanceDo?: number
-    gunnyNew?: number
-    gunnyOld?: number
-    gunnyPlastic?: number
-    juteWeight?: number
-    plasticWeight?: number
-    gunnyWeight?: number
-    truckNumber?: string
-    rstNumber?: string
-    truckLoadWeight?: number
-    paddyType?: string
-    paddyMota?: number
-    paddyPatla?: number
-    paddySarna?: number
-    paddyMahamaya?: number
-    paddyRbGold?: number
-}
-
-// ==========================================
-// API Response Types
-// ==========================================
-
-export interface GovtPaddyInwardResponse {
-    _id: string
-    millId: string
-    date: string
-    doNumber: string
-    committeeName: string
-    balanceDo?: number
-    gunnyNew?: number
-    gunnyOld?: number
-    gunnyPlastic?: number
-    juteWeight?: number
-    plasticWeight?: number
-    gunnyWeight?: number
-    truckNumber: string
-    rstNumber?: string
-    truckLoadWeight?: number
-    paddyType?: string
-    paddyMota?: number
-    paddyPatla?: number
-    paddySarna?: number
-    paddyMahamaya?: number
-    paddyRbGold?: number
-    createdBy: string
-    updatedBy?: string
-    createdAt: string
-    updatedAt: string
-}
+import type { GovtPaddyInward } from './schema'
 
 export interface GovtPaddyInwardListResponse {
-    data: GovtPaddyInwardResponse[]
+    data: GovtPaddyInward[]
     pagination: {
         page: number
         limit: number
@@ -100,14 +16,6 @@ export interface GovtPaddyInwardListResponse {
 
 export interface GovtPaddyInwardSummaryResponse {
     totalEntries: number
-    totalBalanceDo: number
-    totalGunnyNew: number
-    totalGunnyOld: number
-    totalGunnyPlastic: number
-    totalJuteWeight: number
-    totalPlasticWeight: number
-    totalGunnyWeight: number
-    totalTruckLoadWeight: number
     totalPaddyMota: number
     totalPaddyPatla: number
     totalPaddySarna: number
@@ -115,54 +23,21 @@ export interface GovtPaddyInwardSummaryResponse {
     totalPaddyRbGold: number
 }
 
-// ==========================================
-// Query Parameters
-// ==========================================
-
 export interface GovtPaddyInwardQueryParams {
     page?: number
     limit?: number
     search?: string
-    paddyType?: string
-    committeeName?: string
     startDate?: string
     endDate?: string
-    sortBy?: string
+    sortBy?: 'date' | 'doNumber' | 'committeeName' | 'createdAt'
     sortOrder?: 'asc' | 'desc'
 }
 
-// ==========================================
-// Form Types
-// ==========================================
+export type CreateGovtPaddyInwardRequest = Omit<
+    GovtPaddyInward,
+    '_id' | 'createdAt' | 'updatedAt'
+>
 
-export interface GovtPaddyInwardFormData {
-    date: string
-    doNumber: string
-    committeeName: string
-    balanceDo?: number
-    gunnyNew?: number
-    gunnyOld?: number
-    gunnyPlastic?: number
-    juteWeight?: number
-    plasticWeight?: number
-    gunnyWeight?: number
-    truckNumber: string
-    rstNumber?: string
-    truckLoadWeight?: number
-    paddyType?: string
-    paddyMota?: number
-    paddyPatla?: number
-    paddySarna?: number
-    paddyMahamaya?: number
-    paddyRbGold?: number
-}
-
-// ==========================================
-// Dialog State Types
-// ==========================================
-
-export interface GovtPaddyInwardDialogState {
-    open: 'create' | 'edit' | 'delete' | 'bulk-delete' | null
-    selectedEntry?: GovtPaddyInwardResponse
-    selectedIds?: string[]
-}
+export type UpdateGovtPaddyInwardRequest = Partial<
+    Omit<GovtPaddyInward, '_id' | 'createdAt' | 'updatedAt'>
+>

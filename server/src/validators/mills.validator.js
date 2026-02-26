@@ -19,12 +19,13 @@ const millInfoSchema = z.object({
         .min(10, 'PAN number must be 10 characters')
         .max(10, 'PAN number must be 10 characters'),
     mnmNumber: z
-        .string({ required_error: 'MNM number is required' })
-        .trim()
-        .regex(
-            /^[A-Z]{2}\d{6}$/,
-            'MNM number must start with 2 uppercase letters followed by 6 digits (e.g., MA123456)'
-        ),
+  .string({ required_error: 'MNM number is required' })
+  .trim()
+  .length(8, 'MNM number must be exactly 8 characters')
+  .regex(
+    /^[A-Z]{2}\d{6}$/,
+    'MNM number must contain 2 uppercase letters followed by 6 digits (e.g., MA432447)'
+  ),
 })
 
 // Mill contact schema

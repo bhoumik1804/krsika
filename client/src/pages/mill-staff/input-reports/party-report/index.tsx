@@ -1,54 +1,49 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { PartyReportDialogs } from './components/party-report-dialogs'
 import { PartyReportPrimaryButtons } from './components/party-report-primary-buttons'
-import { PartyReportProvider } from './components/party-report-provider'
+import {
+    PartyReportProvider,
+    usePartyReport,
+} from './components/party-report-provider'
 import { PartyReportTable } from './components/party-report-table'
-import { usePartyList } from './data/hooks'
 
 export function PartyReport() {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
-    const sidebarData = getMillAdminSidebarData(millId || '')
 
-    const search = Object.fromEntries(searchParams.entries())
+    // Extract query params from URL
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
 
-    const queryParams = useMemo(
-        () => ({
+        return {
             page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            limit,
             search: search.search as string | undefined,
             sortBy: (search.sortBy as string) || 'createdAt',
             sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
+        }
+    }, [searchParams])
 
-    const {
-        data: response,
-        isLoading,
-        isError,
-    } = usePartyList(millId || '', queryParams, { enabled: !!millId })
-
-    const partyReportData = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item: any) => ({
-            _id: item._id,
-            id: item._id, // Keep for backward compatibility
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
-    }, [response])
+    const sidebarData = getMillAdminSidebarData(millId || '')
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
+        const search = Object.fromEntries(searchParams.entries())
         if (typeof opts.search === 'function') {
             const newSearch = opts.search(search)
             setSearchParams(newSearch as Record<string, string>)
@@ -60,7 +55,10 @@ export function PartyReport() {
     }
 
     return (
-        <PartyReportProvider>
+        <PartyReportProvider
+            millId={millId || ''}
+            initialQueryParams={queryParams}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -77,25 +75,56 @@ export function PartyReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Party Report
+                            {t('inputReports.party.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage party details and information
+                            {t('inputReports.party.description')}
                         </p>
                     </div>
                     <PartyReportPrimaryButtons />
                 </div>
-                <PartyReportTable
-                    data={partyReportData}
-                    search={search}
-                    navigate={navigate}
-                    isLoading={isLoading}
-                    isError={isError}
-                    totalRows={response?.pagination?.total}
-                />
+                <PartyReportContent navigate={navigate} />
             </Main>
 
             <PartyReportDialogs />
         </PartyReportProvider>
+    )
+}
+
+// Separate component to use context hook
+function PartyReportContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const context = usePartyReport()
+
+    if (context.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (context.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                Failed to load party data. Please try again later.
+            </div>
+        )
+    }
+
+    return (
+        <PartyReportTable
+            data={context.data}
+            pagination={context.pagination}
+            search={Object.fromEntries(
+                Object.entries(context.queryParams || {})
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => [key, String(value)])
+            )}
+            navigate={navigate}
+        />
     )
 }

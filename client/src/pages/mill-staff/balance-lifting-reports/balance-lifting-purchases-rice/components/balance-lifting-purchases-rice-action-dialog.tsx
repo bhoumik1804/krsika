@@ -2,9 +2,14 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useBrokerList } from '@/pages/mill-admin/input-reports/broker-report/data/hooks'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
+import {
+    useCreateRicePurchase,
+    useUpdateRicePurchase,
+} from '@/pages/mill-admin/purchase-reports/rice/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useParams } from 'react-router'
 import {
     riceTypeOptions,
     deliveryTypeOptions,
@@ -13,6 +18,7 @@ import {
     frkTypeOptions,
     gunnyTypeOptions,
 } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -32,6 +38,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -44,7 +51,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import { ricePurchaseSchema, type BalanceLiftingPurchasesRice } from '../data/schema'
+import {
+    ricePurchaseSchema,
+    type BalanceLiftingPurchasesRice,
+} from '../data/schema'
+import { useTranslation } from 'react-i18next'
 
 type BalanceLiftingPurchasesRiceActionDialogProps = {
     open: boolean
@@ -57,8 +68,39 @@ export function BalanceLiftingPurchasesRiceActionDialog({
     onOpenChange,
     currentRow,
 }: BalanceLiftingPurchasesRiceActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
+    const { millId } = useParams<{ millId: string }>()
+    const party = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName ?? undefined
+    )
+
+    const broker = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: useBrokerList,
+            extractItems: (data) =>
+                data.brokers
+                    .map((c) => c.brokerName)
+                    .filter(Boolean) as string[],
+        },
+        currentRow?.brokerName ?? undefined
+    )
     const isEditing = !!currentRow
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
+    const createMutation = useCreateRicePurchase(millId || '')
+    const updateMutation = useUpdateRicePurchase(millId || '')
+    const isLoading = createMutation.isPending || updateMutation.isPending
 
     const form = useForm<BalanceLiftingPurchasesRice>({
         resolver: zodResolver(ricePurchaseSchema),
@@ -106,20 +148,41 @@ export function BalanceLiftingPurchasesRiceActionDialog({
         }
     }, [currentRow, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating purchase...' : 'Adding purchase...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Rice purchase updated successfully'
-                    : 'Rice purchase added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update purchase'
-                : 'Failed to add purchase',
-        })
+    const onSubmit = async (data: BalanceLiftingPurchasesRice) => {
+        const submissionData = {
+            date: data.date,
+            partyName: data.partyName || undefined,
+            brokerName: data.brokerName || undefined,
+            deliveryType: data.deliveryType || undefined,
+            lotOrOther: data.lotOrOther || undefined,
+            fciOrNAN: data.fciOrNAN || undefined,
+            riceType: data.riceType || undefined,
+            riceQty: data.riceQty,
+            riceRate: data.riceRate,
+            discountPercent: data.discountPercent,
+            brokeragePerQuintal: data.brokeragePerQuintal,
+            gunnyType: data.gunnyType || undefined,
+            newGunnyRate: data.newGunnyRate,
+            oldGunnyRate: data.oldGunnyRate,
+            plasticGunnyRate: data.plasticGunnyRate,
+            frkType: data.frkType || undefined,
+            frkRatePerQuintal: data.frkRatePerQuintal,
+            lotNumber: data.lotNumber || undefined,
+        }
+        try {
+            if (isEditing && currentRow?._id) {
+                await updateMutation.mutateAsync({
+                    purchaseId: currentRow._id,
+                    data: submissionData,
+                })
+            } else {
+                await createMutation.mutateAsync(submissionData)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch {
+            // Error handled by mutation onError
+        }
     }
 
     return (
@@ -127,11 +190,18 @@ export function BalanceLiftingPurchasesRiceActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Rice Purchase
+                        {isEditing
+                            ? t('balanceLifting.purchase.rice.form.title_edit')
+                            : t('balanceLifting.purchase.rice.form.title_add')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} rice purchase details
-                        below.
+                        {isEditing
+                            ? t(
+                                'balanceLifting.purchase.rice.form.description_edit'
+                            )
+                            : t(
+                                'balanceLifting.purchase.rice.form.description_add'
+                            )}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -146,7 +216,11 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Date</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.rice.form.fields.date'
+                                                )}
+                                            </FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
                                                 onOpenChange={
@@ -162,12 +236,14 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
-                                                                : 'Pick a date'}
+                                                                    new Date(
+                                                                        field.value
+                                                                    ),
+                                                                    'MMM dd, yyyy'
+                                                                )
+                                                                : t(
+                                                                    'common.pickDate'
+                                                                )}
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
@@ -180,17 +256,17 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                      field.value
-                                                                  )
+                                                                    field.value
+                                                                )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -209,11 +285,31 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.rice.form.fields.partyName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={
+                                                        field.value ?? undefined
+                                                    }
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder={t(
+                                                        'common.searchObject',
+                                                        {
+                                                            object: t(
+                                                                'balanceLifting.purchase.rice.form.fields.partyName'
+                                                            ),
+                                                        }
+                                                    )}
+                                                    emptyText={t(
+                                                        'common.noResults'
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -225,11 +321,31 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                     name='brokerName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Broker Name</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.rice.form.fields.brokerName'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter broker name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={
+                                                        field.value ?? undefined
+                                                    }
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={broker}
+                                                    placeholder={t(
+                                                        'common.searchObject',
+                                                        {
+                                                            object: t(
+                                                                'balanceLifting.purchase.rice.form.fields.brokerName'
+                                                            ),
+                                                        }
+                                                    )}
+                                                    emptyText={t(
+                                                        'common.noResults'
+                                                    )}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -241,14 +357,24 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                     name='deliveryType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Delivery Type</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.rice.form.fields.deliveryType'
+                                                )}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
-                                                        <SelectValue placeholder='Select' />
+                                                        <SelectValue
+                                                            placeholder={t(
+                                                                'common.selectType'
+                                                            )}
+                                                        />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent className='w-full'>
@@ -277,14 +403,24 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                     name='lotOrOther'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>LOT/Other</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.rice.form.fields.lotOrOther'
+                                                )}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
-                                                        <SelectValue placeholder='Select' />
+                                                        <SelectValue
+                                                            placeholder={t(
+                                                                'common.selectType'
+                                                            )}
+                                                        />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent className='w-full'>
@@ -318,19 +454,26 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        FCI/NAN
+                                                        {t(
+                                                            'balanceLifting.purchase.rice.form.fields.fciOrNAN'
+                                                        )}
                                                     </FormLabel>
                                                     <Select
                                                         onValueChange={
                                                             field.onChange
                                                         }
                                                         defaultValue={
-                                                            field.value
+                                                            field.value ||
+                                                            undefined
                                                         }
                                                     >
                                                         <FormControl>
                                                             <SelectTrigger className='w-full'>
-                                                                <SelectValue placeholder='Select' />
+                                                                <SelectValue
+                                                                    placeholder={t(
+                                                                        'common.selectType'
+                                                                    )}
+                                                                />
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent className='w-full'>
@@ -362,12 +505,20 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        LOT No.
+                                                        {t(
+                                                            'balanceLifting.purchase.rice.form.fields.lotNumber'
+                                                        )}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
-                                                            placeholder='Enter LOT No.'
+                                                            placeholder={t(
+                                                                'common.enterValue'
+                                                            )}
                                                             {...field}
+                                                            value={
+                                                                field.value ||
+                                                                ''
+                                                            }
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -379,18 +530,27 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                             name='frkType'
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>FRK</FormLabel>
+                                                    <FormLabel>
+                                                        {t(
+                                                            'balanceLifting.purchase.rice.form.fields.frkType'
+                                                        )}
+                                                    </FormLabel>
                                                     <Select
                                                         onValueChange={
                                                             field.onChange
                                                         }
                                                         defaultValue={
-                                                            field.value
+                                                            field.value ||
+                                                            undefined
                                                         }
                                                     >
                                                         <FormControl>
                                                             <SelectTrigger className='w-full'>
-                                                                <SelectValue placeholder='Select' />
+                                                                <SelectValue
+                                                                    placeholder={t(
+                                                                        'common.selectType'
+                                                                    )}
+                                                                />
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent className='w-full'>
@@ -423,7 +583,9 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                                 render={({ field }) => (
                                                     <FormItem>
                                                         <FormLabel>
-                                                            FRK Rate (per Qtl)
+                                                            {t(
+                                                                'balanceLifting.purchase.rice.form.fields.frkRatePerQuintal'
+                                                            )}
                                                         </FormLabel>
                                                         <FormControl>
                                                             <Input
@@ -463,14 +625,24 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                     name='riceType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Rice Type</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.rice.form.fields.riceType'
+                                                )}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
-                                                        <SelectValue placeholder='Select' />
+                                                        <SelectValue
+                                                            placeholder={t(
+                                                                'common.selectType'
+                                                            )}
+                                                        />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent className='w-full'>
@@ -535,7 +707,9 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Rice Rate (per Qtl)
+                                                {t(
+                                                    'balanceLifting.purchase.rice.form.fields.riceRate'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -567,7 +741,11 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                     name='discountPercent'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Discount (%)</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.rice.form.fields.discountPercent'
+                                                )}
+                                            </FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type='number'
@@ -599,7 +777,9 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Brokerage (per Qtl)
+                                                {t(
+                                                    'balanceLifting.purchase.rice.form.fields.brokeragePerQuintal'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -633,14 +813,24 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                     name='gunnyType'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Gunny Option</FormLabel>
+                                            <FormLabel>
+                                                {t(
+                                                    'balanceLifting.purchase.rice.form.fields.gunnyType'
+                                                )}
+                                            </FormLabel>
                                             <Select
                                                 onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                                                defaultValue={
+                                                    field.value || undefined
+                                                }
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className='w-full'>
-                                                        <SelectValue placeholder='Select' />
+                                                        <SelectValue
+                                                            placeholder={t(
+                                                                'common.selectType'
+                                                            )}
+                                                        />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent className='w-full'>
@@ -673,7 +863,9 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        New Gunny Rate
+                                                        {t(
+                                                            'balanceLifting.purchase.rice.form.fields.newGunnyRate'
+                                                        )}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -706,7 +898,9 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        Old Gunny Rate
+                                                        {t(
+                                                            'balanceLifting.purchase.rice.form.fields.oldGunnyRate'
+                                                        )}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -739,7 +933,9 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel>
-                                                        Plastic Gunny Rate
+                                                        {t(
+                                                            'balanceLifting.purchase.rice.form.fields.plasticGunnyRate'
+                                                        )}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input
@@ -775,11 +971,18 @@ export function BalanceLiftingPurchasesRiceActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Purchase
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? t('common.updating')
+                                        : t('common.adding')
+                                    : isEditing
+                                        ? t('common.update')
+                                        : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

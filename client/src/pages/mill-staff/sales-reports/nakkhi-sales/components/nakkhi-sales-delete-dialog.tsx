@@ -1,5 +1,3 @@
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,12 +8,14 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { type NakkhiSales } from '../data/schema'
+import { useDeleteNakkhiSales } from '../data/hooks'
+import type { NakkhiSalesResponse } from '../data/types'
+import { useNakkhiSales } from './nakkhi-sales-provider'
 
 type NakkhiSalesDeleteDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: NakkhiSales | null
+    currentRow: NakkhiSalesResponse | null
 }
 
 export function NakkhiSalesDeleteDialog({
@@ -23,15 +23,19 @@ export function NakkhiSalesDeleteDialog({
     onOpenChange,
     currentRow,
 }: NakkhiSalesDeleteDialogProps) {
-    const handleDelete = () => {
-        toast.promise(sleep(2000), {
-            loading: 'Deleting...',
-            success: () => {
-                onOpenChange(false)
-                return 'Deleted successfully'
-            },
-            error: 'Failed to delete',
-        })
+    const { millId } = useNakkhiSales()
+    const { mutateAsync: deleteNakkhiSales, isPending } =
+        useDeleteNakkhiSales(millId)
+
+    const handleDelete = async () => {
+        if (!currentRow?._id) return
+        try {
+            await deleteNakkhiSales(currentRow._id)
+            onOpenChange(false)
+        } catch (error) {
+            // Error handling is managed by mutation hook
+            console.error('Delete error:', error)
+        }
     }
 
     return (
@@ -47,12 +51,15 @@ export function NakkhiSalesDeleteDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel disabled={isPending}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
+                        disabled={isPending}
                         className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
                     >
-                        Delete
+                        {isPending ? 'Deleting...' : 'Delete'}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

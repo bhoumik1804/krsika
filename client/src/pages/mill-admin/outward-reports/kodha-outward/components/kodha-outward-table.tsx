@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
     type SortingState,
     type VisibilityState,
@@ -7,7 +7,6 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -23,6 +22,7 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type KodhaOutward } from '../data/schema'
+import type { KodhaOutwardListResponse } from '../data/types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { kodhaOutwardColumns as columns } from './kodha-outward-columns'
 import { KodhaOutwardMultiDeleteDialog } from './kodha-outward-multi-delete-dialog'
@@ -32,23 +32,28 @@ type DataTableProps = {
     data: KodhaOutward[]
     search: Record<string, unknown>
     navigate: NavigateFn
+    pagination?: KodhaOutwardListResponse['pagination']
 }
 
-export function KodhaOutwardTable({ data, search, navigate }: DataTableProps) {
+export function KodhaOutwardTable({
+    data,
+    search,
+    navigate,
+    pagination: serverPagination,
+}: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
 
-    const { open, setOpen } = kodhaOutward()
+    const { open, setOpen, millId } = kodhaOutward()
 
     const {
         columnFilters,
         onColumnFiltersChange,
         pagination,
         onPaginationChange,
-        ensurePageInRange,
     } = useTableUrlState({
         search,
         navigate,
@@ -62,6 +67,7 @@ export function KodhaOutwardTable({ data, search, navigate }: DataTableProps) {
     const table = useReactTable({
         data,
         columns,
+        pageCount: serverPagination?.totalPages ?? -1,
         state: {
             sorting,
             pagination,
@@ -69,23 +75,19 @@ export function KodhaOutwardTable({ data, search, navigate }: DataTableProps) {
             columnFilters,
             columnVisibility,
         },
+        manualPagination: true,
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
-
-    useEffect(() => {
-        ensurePageInRange(table.getPageCount())
-    }, [table, ensurePageInRange])
 
     return (
         <div
@@ -181,6 +183,7 @@ export function KodhaOutwardTable({ data, search, navigate }: DataTableProps) {
                     setOpen(isOpen ? 'delete-multi' : null)
                 }
                 table={table}
+                millId={millId}
             />
         </div>
     )

@@ -13,7 +13,8 @@ export const createPrivatePaddyOutward = async (req, res, next) => {
     try {
         const entry = await createPrivatePaddyOutwardEntry(
             req.params.millId,
-            req.body
+            req.body,
+            req.user._id
         )
         res.status(201).json(
             new ApiResponse(201, { entry }, 'Private paddy outward created')

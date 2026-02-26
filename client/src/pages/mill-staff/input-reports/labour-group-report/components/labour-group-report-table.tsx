@@ -7,6 +7,7 @@ import {
     getFacetedRowModel,
     getFacetedUniqueValues,
     getFilteredRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table'
@@ -21,16 +22,26 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-// import { statuses } from '../data/data'
 import { type LabourGroupReportData } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { labourGroupReportColumns as columns } from './labour-group-report-columns'
+import { useLabourGroupReportColumns } from './labour-group-report-columns'
+
+type Pagination = {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasPrevPage: boolean
+    hasNextPage: boolean
+    prevPage: number | null
+    nextPage: number | null
+}
 
 type DataTableProps = {
-    data: LabourGroupReportData[] | any[]
+    data: LabourGroupReportData[]
     search: Record<string, unknown>
     navigate: NavigateFn
-    totalRows?: number
+    pagination?: Pagination
     isLoading?: boolean
     isError?: boolean
 }
@@ -39,7 +50,7 @@ export function LabourGroupReportTable({
     data,
     search,
     navigate,
-    totalRows,
+    pagination: serverPagination,
     // isLoading,
     // isError,
 }: DataTableProps) {
@@ -48,6 +59,7 @@ export function LabourGroupReportTable({
         {}
     )
     const [sorting, setSorting] = useState<SortingState>([])
+    const columns = useLabourGroupReportColumns()
 
     const {
         columnFilters,
@@ -63,10 +75,15 @@ export function LabourGroupReportTable({
             pageSizeKey: 'limit',
             defaultPage: 1,
             defaultPageSize: 10,
+            allowedPageSizes: [10, 20, 30, 40, 50],
         },
         globalFilter: { enabled: false },
         columnFilters: [
-            { columnId: 'partyName', searchKey: 'partyName', type: 'string' },
+            {
+                columnId: 'labourTeamName',
+                searchKey: 'labourTeamName',
+                type: 'string',
+            },
         ],
     })
 
@@ -81,33 +98,29 @@ export function LabourGroupReportTable({
             columnFilters,
             columnVisibility,
         },
+        getRowId: (row) => row._id || '',
         enableRowSelection: true,
         onPaginationChange,
         onColumnFiltersChange,
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnVisibilityChange: setColumnVisibility,
-        // DO NOT use getPaginationRowModel() - pagination is handled server-side
+        // Use server-side pagination info when available
+        pageCount: serverPagination?.totalPages ?? -1,
+        manualPagination: !!serverPagination,
+        getPaginationRowModel: getPaginationRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-        // Set manual pageCount for server-side pagination
-        pageCount:
-            totalRows !== undefined
-                ? Math.ceil(totalRows / (pagination.pageSize || 10))
-                : undefined,
-        manualPagination: true,
     })
 
     useEffect(() => {
-        if (totalRows !== undefined) {
-            ensurePageInRange(
-                Math.ceil(totalRows / (pagination.pageSize || 10))
-            )
+        if (!serverPagination) {
+            ensurePageInRange(table.getPageCount())
         }
-    }, [totalRows, pagination.pageSize, ensurePageInRange])
+    }, [table, ensurePageInRange, serverPagination])
 
     return (
         <div
@@ -118,9 +131,8 @@ export function LabourGroupReportTable({
         >
             <DataTableToolbar
                 table={table}
-                searchPlaceholder='Search...'
-                searchKey='partyName'
-                filters={[]}
+                searchPlaceholder='Search labour team...'
+                searchKey='labourTeamName'
             />
             <div className='overflow-hidden rounded-md border'>
                 <Table>

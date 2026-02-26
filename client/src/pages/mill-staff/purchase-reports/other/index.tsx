@@ -1,52 +1,48 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { useOtherPurchaseList } from '../../purchases/other-purchase/data/hooks'
 import { OtherDialogs } from './components/other-dialogs'
 import { OtherPrimaryButtons } from './components/other-primary-buttons'
-import { OtherProvider } from './components/other-provider'
+import { OtherProvider, useOther } from './components/other-provider'
 import { OtherTable } from './components/other-table'
 
 export function OtherPurchaseReport() {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
+
+    // Extract query params from URL
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
+
+        return {
+            page: search.page ? parseInt(search.page as string, 10) : 1,
+            limit,
+            search: search.search as string | undefined,
+            sortBy: (search.sortBy as string) || 'createdAt',
+            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
+        }
+    }, [searchParams])
+
+    // Call GET API here -> Removed as logic is inside provider
+
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     // Convert URLSearchParams to record
     const search = Object.fromEntries(searchParams.entries())
-
-    const queryParams = useMemo(
-        () => ({
-            page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
-            search: search.search as string | undefined,
-            sortBy: (search.sortBy as string) || 'createdAt',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
-
-    const {
-        data: response,
-        isLoading,
-        isError,
-    } = useOtherPurchaseList(millId || '', queryParams, { enabled: !!millId })
-
-    const purchaseData = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
-    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -59,26 +55,8 @@ export function OtherPurchaseReport() {
         }
     }
 
-    if (isLoading) {
-        return (
-            <Main className='flex flex-1 items-center justify-center'>
-                <div className='text-muted-foreground'>Loading...</div>
-            </Main>
-        )
-    }
-
-    if (isError) {
-        return (
-            <Main className='flex flex-1 items-center justify-center'>
-                <div className='text-destructive'>
-                    Error loading other purchase data
-                </div>
-            </Main>
-        )
-    }
-
     return (
-        <OtherProvider>
+        <OtherProvider millId={millId || ''} initialQueryParams={queryParams}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -95,22 +73,56 @@ export function OtherPurchaseReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Other Purchase Report
+                            {t('purchaseReports.other.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage other purchase transactions and records
+                            {t('purchaseReports.other.description')}
                         </p>
                     </div>
                     <OtherPrimaryButtons />
                 </div>
-                <OtherTable
-                    data={purchaseData}
-                    search={search}
-                    navigate={navigate}
-                />
+                <OtherPurchaseContent navigate={navigate} />
             </Main>
 
             <OtherDialogs />
         </OtherProvider>
+    )
+}
+
+// Separate component to use context hook
+function OtherPurchaseContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const context = useOther()
+
+    if (context.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (context.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                Failed to load other purchase data. Please try again later.
+            </div>
+        )
+    }
+
+    return (
+        <OtherTable
+            data={context.data}
+            pagination={context.pagination}
+            search={Object.fromEntries(
+                Object.entries(context.queryParams || {})
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => [key, String(value)])
+            )}
+            navigate={navigate}
+        />
     )
 }

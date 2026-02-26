@@ -1,9 +1,10 @@
-import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -12,40 +13,15 @@ import { OtherOutwardPrimaryButtons } from './components/other-outward-primary-b
 import { OtherOutwardProvider } from './components/other-outward-provider'
 import { OtherOutwardTable } from './components/other-outward-table'
 import { useOtherOutwardList } from './data/hooks'
+import { type OtherOutwardQueryParams } from './data/types'
 
 export function OtherOutwardReport() {
+    const { t } = useTranslation('mill-staff')
     const { millId } = useParams<{ millId: string }>()
     const [searchParams, setSearchParams] = useSearchParams()
     const sidebarData = getMillAdminSidebarData(millId || '')
 
     const search = Object.fromEntries(searchParams.entries())
-
-    const queryParams = useMemo(
-        () => ({
-            page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
-            search: search.search as string | undefined,
-            sortBy: (search.sortBy as string) || 'createdAt',
-            sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
-
-    const {
-        data: response,
-        isLoading,
-        isError,
-    } = useOtherOutwardList(millId || '', queryParams, { enabled: !!millId })
-
-    const data = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
-    }, [response])
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
         if (typeof opts.search === 'function') {
@@ -58,8 +34,75 @@ export function OtherOutwardReport() {
         }
     }
 
+    // Build query params from URL search params
+    const queryParams: OtherOutwardQueryParams = {
+        page: search.page ? parseInt(search.page, 10) : 1,
+        limit: search.limit ? parseInt(search.limit, 10) : 10,
+        search: search.search,
+        partyName: search.partyName,
+        brokerName: search.brokerName,
+        itemName: search.itemName,
+        startDate: search.startDate,
+        endDate: search.endDate,
+        sortBy: search.sortBy as OtherOutwardQueryParams['sortBy'],
+        sortOrder: search.sortOrder as 'asc' | 'desc',
+    }
+
+    const {
+        data: apiData,
+        isLoading,
+        error,
+    } = useOtherOutwardList(millId || '', queryParams)
+
+    if (isLoading) {
+        return (
+            <>
+                <Header fixed>
+                    <Search />
+                    <div className='ms-auto flex items-center space-x-4'>
+                        <ThemeSwitch />
+                        <ConfigDrawer />
+                        <ProfileDropdown
+                            user={sidebarData.user}
+                            links={sidebarData.profileLinks}
+                        />
+                    </div>
+                </Header>
+                <Main className='flex flex-1 items-center justify-center'>
+                    <LoadingSpinner />
+                </Main>
+            </>
+        )
+    }
+
+    if (error) {
+        return (
+            <>
+                <Header fixed>
+                    <Search />
+                    <div className='ms-auto flex items-center space-x-4'>
+                        <ThemeSwitch />
+                        <ConfigDrawer />
+                        <ProfileDropdown
+                            user={sidebarData.user}
+                            links={sidebarData.profileLinks}
+                        />
+                    </div>
+                </Header>
+                <Main className='flex flex-1 items-center justify-center'>
+                    <p className='text-destructive'>
+                        Error loading data: {error.message}
+                    </p>
+                </Main>
+            </>
+        )
+    }
+
+    const entries = apiData?.entries || []
+    const pagination = apiData?.pagination
+
     return (
-        <OtherOutwardProvider>
+        <OtherOutwardProvider millId={millId || ''} apiData={apiData}>
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -76,22 +119,19 @@ export function OtherOutwardReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Other Outward Report
+                            {t('outward.otherOutward.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage other outward transactions and records
+                            {t('outward.otherOutward.description')}
                         </p>
                     </div>
                     <OtherOutwardPrimaryButtons />
                 </div>
                 <OtherOutwardTable
-                    data={data}
+                    data={entries}
                     search={search}
                     navigate={navigate}
-                    isLoading={isLoading}
-                    isError={isError}
-                    totalPages={response?.pagination?.totalPages}
-                    totalItems={response?.pagination?.total}
+                    pagination={pagination}
                 />
             </Main>
 

@@ -2,10 +2,11 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { type NakkhiSales } from '../data/schema'
+import type { NakkhiSalesResponse } from '../data/types'
 import { DataTableRowActions } from './data-table-row-actions'
+import { format } from 'date-fns'
 
-export const nakkhiSalesColumns: ColumnDef<NakkhiSales>[] = [
+export const nakkhiSalesColumns: ColumnDef<NakkhiSalesResponse>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -41,7 +42,9 @@ export const nakkhiSalesColumns: ColumnDef<NakkhiSales>[] = [
             <DataTableColumnHeader column={column} title='Date' />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(

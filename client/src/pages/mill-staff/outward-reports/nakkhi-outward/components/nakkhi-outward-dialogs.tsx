@@ -2,7 +2,11 @@ import { NakkhiOutwardActionDialog } from './nakkhi-outward-action-dialog'
 import { NakkhiOutwardDeleteDialog } from './nakkhi-outward-delete-dialog'
 import { nakkhiOutward } from './nakkhi-outward-provider'
 
-export function NakkhiOutwardDialogs() {
+type NakkhiOutwardDialogsProps = {
+    millId: string
+}
+
+export function NakkhiOutwardDialogs({ millId }: NakkhiOutwardDialogsProps) {
     const { open, setOpen, currentRow } = nakkhiOutward()
 
     return (
@@ -13,6 +17,7 @@ export function NakkhiOutwardDialogs() {
                     setOpen(isOpen ? open : null)
                 }
                 currentRow={currentRow}
+                millId={millId}
             />
             <NakkhiOutwardDeleteDialog
                 open={open === 'delete'}
@@ -20,6 +25,7 @@ export function NakkhiOutwardDialogs() {
                     setOpen(isOpen ? 'delete' : null)
                 }
                 currentRow={currentRow}
+                millId={millId}
             />
         </>
     )

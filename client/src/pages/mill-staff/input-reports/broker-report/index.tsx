@@ -1,53 +1,49 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useSearchParams } from 'react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { getMillAdminSidebarData } from '@/components/layout/data'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
+import { LoadingSpinner } from '@/components/loading-spinner'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { BrokerReportDialogs } from './components/broker-report-dialogs'
 import { BrokerReportPrimaryButtons } from './components/broker-report-primary-buttons'
-import { BrokerReportProvider } from './components/broker-report-provider'
+import {
+    BrokerReportProvider,
+    useBrokerReport,
+} from './components/broker-report-provider'
 import { BrokerReportTable } from './components/broker-report-table'
-import { useBrokerList } from './data/hooks'
 
 export function BrokerReport() {
     const { millId } = useParams<{ millId: string }>()
+    const { t } = useTranslation('mill-staff')
     const [searchParams, setSearchParams] = useSearchParams()
-    const sidebarData = getMillAdminSidebarData(millId || '')
 
-    const search = Object.fromEntries(searchParams.entries())
+    // Extract query params from URL
+    const queryParams = useMemo(() => {
+        const search = Object.fromEntries(searchParams.entries())
+        const allowedPageSizes = [10, 20, 30, 40, 50]
+        const rawLimit = search.limit
+            ? parseInt(search.limit as string, 10)
+            : 10
+        const limit = allowedPageSizes.includes(rawLimit) ? rawLimit : 10
 
-    const queryParams = useMemo(
-        () => ({
+        return {
             page: search.page ? parseInt(search.page as string, 10) : 1,
-            limit: search.limit ? parseInt(search.limit as string, 10) : 10,
+            limit,
             search: search.search as string | undefined,
             sortBy: (search.sortBy as string) || 'createdAt',
             sortOrder: (search.sortOrder as 'asc' | 'desc') || 'desc',
-        }),
-        [search]
-    )
+        }
+    }, [searchParams])
 
-    const {
-        data: response,
-        isLoading,
-        isError,
-    } = useBrokerList(millId || '', queryParams, { enabled: !!millId })
-
-    const brokerReportData = useMemo(() => {
-        if (!response?.data) return []
-        return response.data.map((item) => ({
-            id: item._id,
-            ...item,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-        }))
-    }, [response])
+    const sidebarData = getMillAdminSidebarData(millId || '')
 
     const navigate = (opts: { search: unknown; replace?: boolean }) => {
+        const search = Object.fromEntries(searchParams.entries())
         if (typeof opts.search === 'function') {
             const newSearch = opts.search(search)
             setSearchParams(newSearch as Record<string, string>)
@@ -59,7 +55,10 @@ export function BrokerReport() {
     }
 
     return (
-        <BrokerReportProvider>
+        <BrokerReportProvider
+            millId={millId || ''}
+            initialQueryParams={queryParams}
+        >
             <Header fixed>
                 <Search />
                 <div className='ms-auto flex items-center space-x-4'>
@@ -76,25 +75,56 @@ export function BrokerReport() {
                 <div className='flex flex-wrap items-end justify-between gap-2'>
                     <div>
                         <h2 className='text-2xl font-bold tracking-tight'>
-                            Broker Report Report
+                            {t('inputReports.broker.title')}
                         </h2>
                         <p className='text-muted-foreground'>
-                            Manage broker report transactions and records
+                            {t('inputReports.broker.description')}
                         </p>
                     </div>
                     <BrokerReportPrimaryButtons />
                 </div>
-                <BrokerReportTable
-                    data={brokerReportData}
-                    search={search}
-                    navigate={navigate}
-                    isLoading={isLoading}
-                    isError={isError}
-                    totalRows={response?.pagination?.total}
-                />
+                <BrokerReportContent navigate={navigate} />
             </Main>
 
             <BrokerReportDialogs />
         </BrokerReportProvider>
+    )
+}
+
+// Separate component to use context hook
+function BrokerReportContent({
+    navigate,
+}: {
+    navigate: (opts: { search: unknown; replace?: boolean }) => void
+}) {
+    const context = useBrokerReport()
+
+    if (context.isLoading) {
+        return (
+            <div className='flex items-center justify-center py-10'>
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (context.isError) {
+        return (
+            <div className='py-10 text-center text-red-500'>
+                Failed to load broker data. Please try again later.
+            </div>
+        )
+    }
+
+    return (
+        <BrokerReportTable
+            data={context.data}
+            pagination={context.pagination}
+            search={Object.fromEntries(
+                Object.entries(context.queryParams || {})
+                    .filter(([, value]) => value !== undefined)
+                    .map(([key, value]) => [key, String(value)])
+            )}
+            navigate={navigate}
+        />
     )
 }

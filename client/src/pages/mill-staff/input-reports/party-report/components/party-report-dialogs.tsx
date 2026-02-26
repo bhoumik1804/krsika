@@ -1,26 +1,45 @@
 import { PartyReportActionDialog } from './party-report-action-dialog'
 import { PartyReportDeleteDialog } from './party-report-delete-dialog'
-import { partyReport } from './party-report-provider'
+import { usePartyReport } from './party-report-provider'
 
 export function PartyReportDialogs() {
-    const { open, setOpen, currentRow } = partyReport()
+    const { open, setOpen, currentRow, setCurrentRow } = usePartyReport()
 
     return (
         <>
             <PartyReportActionDialog
-                open={open === 'add' || open === 'edit'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? open : null)
-                }
-                currentRow={currentRow}
+                key='party-add'
+                open={open === 'add'}
+                onOpenChange={() => setOpen('add')}
             />
-            <PartyReportDeleteDialog
-                open={open === 'delete'}
-                onOpenChange={(isOpen: boolean) =>
-                    setOpen(isOpen ? 'delete' : null)
-                }
-                currentRow={currentRow}
-            />
+
+            {currentRow && (
+                <>
+                    <PartyReportActionDialog
+                        key={`party-edit-${currentRow._id}`}
+                        open={open === 'edit'}
+                        onOpenChange={() => {
+                            setOpen('edit')
+                            setTimeout(() => {
+                                setCurrentRow(null)
+                            }, 500)
+                        }}
+                        currentRow={currentRow}
+                    />
+
+                    <PartyReportDeleteDialog
+                        key={`party-delete-${currentRow._id}`}
+                        open={open === 'delete'}
+                        onOpenChange={() => {
+                            setOpen('delete')
+                            setTimeout(() => {
+                                setCurrentRow(null)
+                            }, 500)
+                        }}
+                        currentRow={currentRow}
+                    />
+                </>
+            )}
         </>
     )
 }

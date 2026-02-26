@@ -1,4 +1,6 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { t } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -39,10 +41,17 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'date',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Date' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.govtRiceOutward.form.fields.date', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
-            <div className='ps-3 text-nowrap'>{row.getValue('date')}</div>
+            <div className='ps-3 text-nowrap'>
+                {format(new Date(row.getValue('date')), 'yyyy-MM-dd')}
+            </div>
         ),
         meta: {
             className: cn(
@@ -55,7 +64,12 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'lotNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='LOT No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.govtRiceOutward.form.fields.lotNo', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>{row.getValue('lotNo')}</div>
@@ -64,7 +78,12 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'fciNan',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='FCI/NAN' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.govtRiceOutward.form.fields.fciNan', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>{row.getValue('fciNan')}</div>
@@ -76,7 +95,12 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'riceType',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Rice Type' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.govtRiceOutward.form.fields.riceType', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <LongText className='max-w-32'>{row.getValue('riceType')}</LongText>
@@ -85,7 +109,12 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'gunnyNew',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (New)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.govtRiceOutward.form.fields.gunnyNew', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyNew')}</div>
@@ -94,7 +123,12 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'gunnyOld',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny (Old)' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.govtRiceOutward.form.fields.gunnyOld', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>{row.getValue('gunnyOld')}</div>
@@ -103,18 +137,30 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'juteWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Jute Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.govtRiceOutward.form.fields.juteWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('juteWeight') as number).toFixed(2)}
+                {(row.getValue('juteWeight') as number | undefined)?.toFixed(
+                    2
+                ) ?? '-'}
             </div>
         ),
     },
     {
         accessorKey: 'truckNo',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.govtRiceOutward.form.fields.truckNo', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm text-nowrap'>
@@ -125,7 +171,12 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'truckRst',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='RST No.' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.govtRiceOutward.form.fields.truckRst', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='font-mono text-sm'>{row.getValue('truckRst')}</div>
@@ -134,33 +185,54 @@ export const GovtRiceOutwardColumns: ColumnDef<GovtRiceOutward>[] = [
     {
         accessorKey: 'truckWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Truck Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.govtRiceOutward.form.fields.truckWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('truckWeight') as number).toFixed(2)}
+                {(row.getValue('truckWeight') as number | undefined)?.toFixed(
+                    2
+                ) ?? '-'}
             </div>
         ),
     },
     {
         accessorKey: 'gunnyWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Gunny Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.govtRiceOutward.form.fields.gunnyWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right'>
-                {(row.getValue('gunnyWeight') as number).toFixed(2)}
+                {(row.getValue('gunnyWeight') as number | undefined)?.toFixed(
+                    2
+                ) ?? '-'}
             </div>
         ),
     },
     {
         accessorKey: 'netWeight',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title='Net Weight' />
+            <DataTableColumnHeader
+                column={column}
+                title={t('outward.govtRiceOutward.form.fields.netWeight', {
+                    ns: 'mill-staff',
+                })}
+            />
         ),
         cell: ({ row }) => (
             <div className='text-right font-medium'>
-                {(row.getValue('netWeight') as number).toFixed(2)}
+                {(row.getValue('netWeight') as number | undefined)?.toFixed(
+                    2
+                ) ?? '-'}
             </div>
         ),
     },

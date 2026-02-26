@@ -2,23 +2,43 @@ import mongoose from 'mongoose'
 import { OtherSale } from '../models/other-sale.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 
-export const createOtherSaleEntry = async (millId, data, userId) => {
+export const createOtherSaleEntry = async (millId, data) => {
     const entry = new OtherSale({
         ...data,
         millId,
-        createdBy: userId,
         date: new Date(data.date),
     })
     await entry.save()
-    logger.info('Other sale entry created', { id: entry._id, millId, userId })
+
+    // Record stock transaction (DEBIT)
+    try {
+        await StockTransactionService.recordTransaction(millId, {
+            date: data.date,
+            commodity: data.otherSaleName, // Using item name as commodity
+            variety: null,
+            type: 'DEBIT',
+            action: 'Sale',
+            quantity: data.otherSaleQty,
+            bags: data.bags || 0,
+            refModel: 'OtherSale',
+            refId: entry._id,
+            remarks: `Sale to ${data.partyName || 'Party'}`,
+        })
+    } catch (err) {
+        logger.error('Failed to record stock for other sale', {
+            id: entry._id,
+            error: err.message,
+        })
+    }
+
+    logger.info('Other sale entry created', { id: entry._id, millId })
     return entry
 }
 
 export const getOtherSaleById = async (millId, id) => {
     const entry = await OtherSale.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Other sale entry not found')
     return entry
 }
@@ -42,27 +62,13 @@ export const getOtherSaleList = async (millId, options = {}) => {
     if (search)
         matchStage.$or = [
             { partyName: { $regex: search, $options: 'i' } },
-            { itemName: { $regex: search, $options: 'i' } },
+            { brokerName: { $regex: search, $options: 'i' } },
+            { otherSaleName: { $regex: search, $options: 'i' } },
         ]
 
     const aggregate = OtherSale.aggregate([
         { $match: matchStage },
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
-            },
-        },
     ])
     const result = await OtherSale.aggregatePaginate(aggregate, {
         page: parseInt(page, 10),
@@ -96,7 +102,7 @@ export const getOtherSaleList = async (millId, options = {}) => {
 
 export const getOtherSaleSummary = async (millId, options = {}) => {
     const { startDate, endDate } = options
-    const match = { millId }
+    const match = { millId: new mongoose.Types.ObjectId(millId) }
     if (startDate || endDate) {
         match.date = {}
         if (startDate) match.date.$gte = new Date(startDate)
@@ -108,45 +114,71 @@ export const getOtherSaleSummary = async (millId, options = {}) => {
             $group: {
                 _id: null,
                 totalEntries: { $sum: 1 },
-                totalQuantity: { $sum: '$quantity' },
-                totalAmount: { $sum: '$amount' },
+                totalOtherSaleQty: { $sum: '$otherSaleQty' },
             },
         },
         {
             $project: {
                 _id: 0,
                 totalEntries: 1,
-                totalQuantity: 1,
-                totalAmount: { $round: ['$totalAmount', 2] },
+                totalOtherSaleQty: { $round: ['$totalOtherSaleQty', 2] },
             },
         },
     ])
-    return summary || { totalEntries: 0, totalQuantity: 0, totalAmount: 0 }
+    return summary || { totalEntries: 0, totalOtherSaleQty: 0 }
 }
 
-export const updateOtherSaleEntry = async (millId, id, data, userId) => {
-    const updateData = { ...data, updatedBy: userId }
+export const updateOtherSaleEntry = async (millId, id, data) => {
+    const updateData = { ...data }
     if (data.date) updateData.date = new Date(data.date)
     const entry = await OtherSale.findOneAndUpdate(
         { _id: id, millId },
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Other sale entry not found')
-    logger.info('Other sale entry updated', { id, millId, userId })
+
+    // Update stock transaction
+    const stockData = {
+        date: entry.date,
+        commodity: entry.otherSaleName,
+        variety: null,
+        type: 'DEBIT',
+        action: 'Sale',
+        quantity: entry.otherSaleQty || 0,
+        bags: entry.bags || 0,
+        remarks: `Sale to ${entry.partyName || 'Party'}`,
+    }
+
+    if (entry.otherSaleName) {
+        const updatedStock = await StockTransactionService.updateTransaction(
+            'OtherSale',
+            id,
+            stockData
+        )
+    }
+
+    logger.info('Other sale entry updated', { id, millId })
     return entry
 }
 
 export const deleteOtherSaleEntry = async (millId, id) => {
     const entry = await OtherSale.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Other sale entry not found')
+
+    // Delete associated stock transactions
+    await StockTransactionService.deleteTransactionsByRef('OtherSale', id)
+
     logger.info('Other sale entry deleted', { id, millId })
 }
 
 export const bulkDeleteOtherSaleEntries = async (millId, ids) => {
     const result = await OtherSale.deleteMany({ _id: { $in: ids }, millId })
+
+    for (const id of ids) {
+        await StockTransactionService.deleteTransactionsByRef('OtherSale', id)
+    }
+
     logger.info('Other sale entries bulk deleted', {
         millId,
         count: result.deletedCount,

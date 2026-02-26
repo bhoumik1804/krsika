@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
-import { useForm } from 'react-hook-form'
+import { useForm, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { usePartyList } from '@/pages/mill-admin/input-reports/party-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -24,88 +24,117 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover'
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select'
-import { balanceLiftingSalesPaddySchema, type BalanceLiftingSalesPaddy } from '../data/schema'
-import { paddySaleTypeOptions, dhanTypeOptions, deliveryTypeOptions,
-    gunnyTypeOptions, } from '@/constants/sale-form'
+import { useCreatePaddySale, useUpdatePaddySale } from '../data/hooks'
+import { paddySalesSchema, type PaddySales } from '../data/schema'
+import { useBalanceLiftingSalesPaddy } from './balance-lifting-sales-paddy-provider'
+import { useTranslation } from 'react-i18next'
 
 type BalanceLiftingSalesPaddyActionDialogProps = {
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: BalanceLiftingSalesPaddy | null
 }
 
 export function BalanceLiftingSalesPaddyActionDialog({
     open,
     onOpenChange,
-    currentRow,
 }: BalanceLiftingSalesPaddyActionDialogProps) {
+    const { t } = useTranslation('mill-staff')
+    const { currentRow, millId } = useBalanceLiftingSalesPaddy()
+    const { mutateAsync: createSale, isPending: isCreating } =
+        useCreatePaddySale()
+    const { mutateAsync: updateSale, isPending: isUpdating } =
+        useUpdatePaddySale()
+
+    const party = usePaginatedList(
+        millId || '',
+        open,
+        {
+            useListHook: usePartyList,
+            extractItems: (data) =>
+                data.parties
+                    .map((c: { partyName: string }) => c.partyName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'partyName', sortOrder: 'asc' },
+        },
+        currentRow?.partyName ?? undefined
+    )
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<BalanceLiftingSalesPaddy>({
-        resolver: zodResolver(balanceLiftingSalesPaddySchema),
+    const form = useForm<PaddySales>({
+        resolver: zodResolver(paddySalesSchema) as Resolver<PaddySales>,
         defaultValues: {
             date: format(new Date(), 'yyyy-MM-dd'),
             partyName: '',
+            dhanQty: 0,
+            saleType: 'अन्य (मिल से बिक्री)',
             brokerName: '',
-            saleType: '',
             doNumber: '',
-            dhanMotaQty: undefined,
-            dhanPatlaQty: undefined,
-            dhanSarnaQty: undefined,
-            dhanType: '',
-            dhanQty: undefined,
-            paddyRatePerQuintal: undefined,
-            deliveryType: '',
-            discountPercent: undefined,
-            brokerage: undefined,
-            gunnyType: '',
-            newGunnyRate: undefined,
-            oldGunnyRate: undefined,
-            plasticGunnyRate: undefined,
-        } as BalanceLiftingSalesPaddy,
+            dhanMotaQty: 0,
+            dhanPatlaQty: 0,
+            dhanSarnaQty: 0,
+            dhanType: 'Mota',
+            paddyRatePerQuintal: 0,
+            deliveryType: 'Mill to Mill',
+            discountPercent: 0,
+            brokerage: 0,
+            gunnyOption: 'New',
+            newGunnyRate: 0,
+            oldGunnyRate: 0,
+            plasticGunnyRate: 0,
+        },
     })
-
-    const watchSaleType = form.watch('saleType')
-    const watchGunnyType = form.watch('gunnyType')
-
-    const isDOSale = watchSaleType === paddySaleTypeOptions[0]?.value
-    const isGunnySahit = watchGunnyType === gunnyTypeOptions[1]?.value
 
     useEffect(() => {
         if (currentRow) {
             form.reset(currentRow)
         } else {
-            form.reset()
+            form.reset({
+                date: format(new Date(), 'yyyy-MM-dd'),
+                partyName: '',
+                dhanQty: 0,
+                saleType: 'अन्य (मिल से बिक्री)',
+                brokerName: '',
+                doNumber: '',
+                dhanMotaQty: 0,
+                dhanPatlaQty: 0,
+                dhanSarnaQty: 0,
+                dhanType: 'Mota',
+                paddyRatePerQuintal: 0,
+                deliveryType: 'Mill to Mill',
+                discountPercent: 0,
+                brokerage: 0,
+                gunnyOption: 'New',
+                newGunnyRate: 0,
+                oldGunnyRate: 0,
+                plasticGunnyRate: 0,
+            })
         }
-    }, [currentRow, form])
+    }, [currentRow, open, form])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating sale...' : 'Adding sale...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing
-                    ? 'Sale updated successfully'
-                    : 'Sale added successfully'
-            },
-            error: isEditing
-                ? 'Failed to update sale'
-                : 'Failed to add sale',
-        })
+    const onSubmit = async (data: PaddySales) => {
+        try {
+            if (isEditing) {
+                await updateSale({
+                    id: currentRow?._id || '',
+                    data,
+                })
+            } else {
+                await createSale(data)
+            }
+            onOpenChange(false)
+            form.reset()
+        } catch (error) {
+            console.error('Error submitting form:', error)
+        }
     }
 
     return (
@@ -113,11 +142,14 @@ export function BalanceLiftingSalesPaddyActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Paddy Sale
+                        {isEditing
+                            ? t('balanceLifting.sales.paddy.form.title_edit')
+                            : t('balanceLifting.sales.paddy.form.title_add')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the sale details
-                        below
+                        {isEditing
+                            ? t('balanceLifting.sales.paddy.form.description_edit')
+                            : t('balanceLifting.sales.paddy.form.description_add')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -132,10 +164,12 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                     name='date'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Date</FormLabel>
+                                            <FormLabel>{t('balanceLifting.sales.paddy.form.fields.date')}</FormLabel>
                                             <Popover
                                                 open={datePopoverOpen}
-                                                onOpenChange={setDatePopoverOpen}
+                                                onOpenChange={
+                                                    setDatePopoverOpen
+                                                }
                                             >
                                                 <PopoverTrigger asChild>
                                                     <FormControl>
@@ -146,12 +180,12 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                                             <CalendarIcon className='mr-2 h-4 w-4' />
                                                             {field.value
                                                                 ? format(
-                                                                      new Date(
-                                                                          field.value
-                                                                      ),
-                                                                      'MMM dd, yyyy'
-                                                                  )
-                                                                : 'Pick a date'}
+                                                                    new Date(
+                                                                        field.value
+                                                                    ),
+                                                                    'MMM dd, yyyy'
+                                                                )
+                                                                : t('common.pickDate')}
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
@@ -164,17 +198,17 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                                         selected={
                                                             field.value
                                                                 ? new Date(
-                                                                      field.value
-                                                                  )
+                                                                    field.value
+                                                                )
                                                                 : undefined
                                                         }
                                                         onSelect={(date) => {
                                                             field.onChange(
                                                                 date
                                                                     ? format(
-                                                                          date,
-                                                                          'yyyy-MM-dd'
-                                                                      )
+                                                                        date,
+                                                                        'yyyy-MM-dd'
+                                                                    )
                                                                     : ''
                                                             )
                                                             setDatePopoverOpen(
@@ -193,11 +227,18 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                     name='partyName'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Party Name</FormLabel>
+                                            <FormLabel>{t('balanceLifting.sales.paddy.form.fields.partyName')}</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder='Enter party name'
-                                                    {...field}
+                                                <PaginatedCombobox
+                                                    value={
+                                                        field.value ?? undefined
+                                                    }
+                                                    onValueChange={
+                                                        field.onChange
+                                                    }
+                                                    paginatedList={party}
+                                                    placeholder={t('common.searchObject', { object: t('balanceLifting.sales.paddy.form.fields.partyName') })}
+                                                    emptyText={t('common.noResults')}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -206,519 +247,54 @@ export function BalanceLiftingSalesPaddyActionDialog({
                                 />
                                 <FormField
                                     control={form.control}
-                                    name='brokerName'
+                                    name='dhanQty'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Broker Name</FormLabel>
+                                            <FormLabel>{t('balanceLifting.sales.paddy.form.fields.paddyQty')}</FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder='Enter broker name'
+                                                    type='number'
+                                                    step='0.01'
+                                                    placeholder='0.00'
                                                     {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name='saleType'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Sale Type</FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger className='w-full'>
-                                                        <SelectValue placeholder='Select' />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent className='w-full'>
-                                                    {paddySaleTypeOptions.map(
-                                                        (option) => (
-                                                            <SelectItem
-                                                                key={
-                                                                    option.value
-                                                                }
-                                                                value={
-                                                                    option.value
-                                                                }
-                                                            >
-                                                                {option.label}
-                                                            </SelectItem>
+                                                    onChange={(e) => {
+                                                        const val =
+                                                            e.target
+                                                                .valueAsNumber
+                                                        field.onChange(
+                                                            isNaN(val)
+                                                                ? ''
+                                                                : val
                                                         )
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
+                                                    }}
+                                                    onWheel={(e) =>
+                                                        e.currentTarget.blur()
+                                                    }
+                                                />
+                                            </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-                            
-
-                            {/* DO बिक्री specific fields */}
-                            {isDOSale && (
-                                <>
-                                        <FormField
-                                            control={form.control}
-                                            name='doNumber'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        DO Number 
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            placeholder='Enter DO number'
-                                                            {...field}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name='dhanMotaQty'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        Dhan Mota Qty 
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            type='number'
-                                                            step='0.01'
-                                                            placeholder='0.00'
-                                                            {...field}
-                                                            onChange={(e) =>
-                                                                field.onChange(
-                                                                    +e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            onWheel={(e) =>
-                                                                e.currentTarget.blur()
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name='dhanPatlaQty'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        Dhan Patla Qty
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            type='number'
-                                                            step='0.01'
-                                                            placeholder='0.00'
-                                                            {...field}
-                                                            onChange={(e) =>
-                                                                field.onChange(
-                                                                    +e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            onWheel={(e) =>
-                                                                e.currentTarget.blur()
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name='dhanSarnaQty'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        Dhan Sarna Qty 
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            type='number'
-                                                            step='0.01'
-                                                            placeholder='0.00'
-                                                            {...field}
-                                                            onChange={(e) =>
-                                                                field.onChange(
-                                                                    +e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            onWheel={(e) =>
-                                                                e.currentTarget.blur()
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                  </>
-                            )}
-
-                            {/* Common Paddy fields */}
-                           
-                                    <FormField
-                                        control={form.control}
-                                        name='dhanType'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Dhan Type 
-                                                </FormLabel>
-                                                <Select
-                                                    onValueChange={
-                                                        field.onChange
-                                                    }
-                                                    defaultValue={field.value}
-                                                >
-                                                    <FormControl>
-                                                        <SelectTrigger className='w-full'>
-                                                            <SelectValue placeholder='Select' />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent className='w-full'>
-                                                        {dhanTypeOptions.map(
-                                                            (option) => (
-                                                                <SelectItem
-                                                                    key={
-                                                                        option.value
-                                                                    }
-                                                                    value={
-                                                                        option.value
-                                                                    }
-                                                                >
-                                                                    {
-                                                                        option.label
-                                                                    }
-                                                                </SelectItem>
-                                                            )
-                                                        )}
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name='dhanQty'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Quantity (Qtl)
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        placeholder='0.00'
-                                                        {...field}
-                                                        onChange={(e) =>
-                                                            field.onChange(
-                                                                +e.target.value
-                                                            )
-                                                        }
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name='paddyRatePerQuintal'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Rate (per Quintal)
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        placeholder='0.00'
-                                                        {...field}
-                                                        onChange={(e) =>
-                                                            field.onChange(
-                                                                +e.target.value
-                                                            )
-                                                        }
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name='deliveryType'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Delivery Type
-                                                </FormLabel>
-                                                <Select
-                                                    onValueChange={
-                                                        field.onChange
-                                                    }
-                                                    defaultValue={field.value}
-                                                >
-                                                    <FormControl>
-                                                        <SelectTrigger className='w-full'>
-                                                            <SelectValue placeholder='Select' />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent className='w-full'>
-                                                        {deliveryTypeOptions.map(
-                                                            (option) => (
-                                                                <SelectItem
-                                                                    key={
-                                                                        option.value
-                                                                    }
-                                                                    value={
-                                                                        option.value
-                                                                    }
-                                                                >
-                                                                    {
-                                                                        option.label
-                                                                    }
-                                                                </SelectItem>
-                                                            )
-                                                        )}
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name='discountPercent'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Discount (%)
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        placeholder='0.00'
-                                                        {...field}
-                                                        onChange={(e) =>
-                                                            field.onChange(
-                                                                +e.target.value
-                                                            )
-                                                        }
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name='brokerage'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Brokerage
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type='number'
-                                                        step='0.01'
-                                                        placeholder='0.00'
-                                                        {...field}
-                                                        onChange={(e) =>
-                                                            field.onChange(
-                                                                +e.target.value
-                                                            )
-                                                        }
-                                                        onWheel={(e) =>
-                                                            e.currentTarget.blur()
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                             
-
-                            {/* Gunny fields */}
-                            
-                                    <FormField
-                                        control={form.control}
-                                        name='gunnyType'
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Gunny Type
-                                                </FormLabel>
-                                                <Select
-                                                    onValueChange={
-                                                        field.onChange
-                                                    }
-                                                    defaultValue={field.value}
-                                                >
-                                                    <FormControl>
-                                                        <SelectTrigger className='w-full'>
-                                                            <SelectValue placeholder='Select' />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent className='w-full'>
-                                                        {gunnyTypeOptions.map(
-                                                            (option) => (
-                                                                <SelectItem
-                                                                    key={
-                                                                        option.value
-                                                                    }
-                                                                    value={
-                                                                        option.value
-                                                                    }
-                                                                >
-                                                                    {
-                                                                        option.label
-                                                                    }
-                                                                </SelectItem>
-                                                            )
-                                                        )}
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                
-
-                                {isGunnySahit && (
-                                    <>
-                                        <FormField
-                                            control={form.control}
-                                            name='newGunnyRate'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        New Gunny Rate
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            type='number'
-                                                            step='0.01'
-                                                            placeholder='0.00'
-                                                            {...field}
-                                                            onChange={(e) =>
-                                                                field.onChange(
-                                                                    +e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            onWheel={(e) =>
-                                                                e.currentTarget.blur()
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name='oldGunnyRate'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        Old Gunny Rate
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            type='number'
-                                                            step='0.01'
-                                                            placeholder='0.00'
-                                                            {...field}
-                                                            onChange={(e) =>
-                                                                field.onChange(
-                                                                    +e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            onWheel={(e) =>
-                                                                e.currentTarget.blur()
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name='plasticGunnyRate'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        Plastic Gunny Rate
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            type='number'
-                                                            step='0.01'
-                                                            placeholder='0.00'
-                                                            {...field}
-                                                            onChange={(e) =>
-                                                                field.onChange(
-                                                                    +e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            onWheel={(e) =>
-                                                                e.currentTarget.blur()
-                                                            }
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </>
-                                )}
                             </div>
                         </div>
-
                         <DialogFooter>
                             <Button
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'} Sale
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? t('common.updating')
+                                        : t('common.adding')
+                                    : isEditing
+                                        ? t('common.update')
+                                        : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

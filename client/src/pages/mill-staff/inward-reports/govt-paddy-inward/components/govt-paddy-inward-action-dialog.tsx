@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useCommitteeList } from '@/pages/mill-admin/input-reports/committee-report/data/hooks'
 import { CalendarIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 import { paddyTypeOptions } from '@/constants/purchase-form'
+import { usePaginatedList } from '@/hooks/use-paginated-list'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -25,6 +26,7 @@ import {
     FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PaginatedCombobox } from '@/components/ui/paginated-combobox'
 import {
     Popover,
     PopoverContent,
@@ -37,7 +39,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import {
+    useCreateGovtPaddyInward,
+    useUpdateGovtPaddyInward,
+} from '../data/hooks'
 import { govtPaddyInwardSchema, type GovtPaddyInward } from '../data/schema'
+import { useGovtPaddyInward } from './govt-paddy-inward-provider'
 
 type GovtPaddyInwardActionDialogProps = {
     open: boolean
@@ -50,12 +57,34 @@ export function GovtPaddyInwardActionDialog({
     onOpenChange,
     currentRow,
 }: GovtPaddyInwardActionDialogProps) {
+    const { millId } = useGovtPaddyInward()
+    const { t } = useTranslation('mill-staff')
+    const { mutateAsync: createGovtPaddyInward, isPending: isCreating } =
+        useCreateGovtPaddyInward(millId)
+    const { mutateAsync: updateGovtPaddyInward, isPending: isUpdating } =
+        useUpdateGovtPaddyInward(millId)
+
     const isEditing = !!currentRow
+    const isLoading = isCreating || isUpdating
     const [datePopoverOpen, setDatePopoverOpen] = useState(false)
 
-    const form = useForm<GovtPaddyInward>({
-        resolver: zodResolver(govtPaddyInwardSchema),
-        defaultValues: {
+    // Paginated committee selection for committeeName
+    const committee = usePaginatedList(
+        millId,
+        open,
+        {
+            useListHook: useCommitteeList,
+            extractItems: (data) =>
+                data.committees
+                    .map((c) => c.committeeName)
+                    .filter(Boolean) as string[],
+            hookParams: { sortBy: 'committeeName', sortOrder: 'asc' },
+        },
+        currentRow?.committeeName
+    )
+
+    const getDefaultValues = useMemo(
+        (): GovtPaddyInward => ({
             date: format(new Date(), 'yyyy-MM-dd'),
             doNumber: '',
             committeeName: '',
@@ -67,35 +96,49 @@ export function GovtPaddyInwardActionDialog({
             juteWeight: undefined,
             plasticWeight: undefined,
             gunnyWeight: undefined,
-            rstNumber: undefined,
+            rstNumber: '',
             truckLoadWeight: undefined,
-            paddyType: undefined,
+            paddyType: '',
             paddyMota: undefined,
             paddyPatla: undefined,
             paddySarna: undefined,
             paddyMahamaya: undefined,
             paddyRbGold: undefined,
-        },
+        }),
+        []
+    )
+
+    const form = useForm<GovtPaddyInward>({
+        resolver: zodResolver(govtPaddyInwardSchema),
+        defaultValues: getDefaultValues,
     })
 
     useEffect(() => {
-        if (currentRow) {
-            form.reset(currentRow)
-        } else {
-            form.reset()
+        if (open) {
+            if (currentRow) {
+                form.reset(currentRow)
+            } else {
+                form.reset(getDefaultValues)
+            }
         }
-    }, [currentRow, form])
+    }, [currentRow, open, getDefaultValues])
 
-    const onSubmit = () => {
-        toast.promise(sleep(2000), {
-            loading: isEditing ? 'Updating...' : 'Adding...',
-            success: () => {
-                onOpenChange(false)
-                form.reset()
-                return isEditing ? 'Updated successfully' : 'Added successfully'
-            },
-            error: isEditing ? 'Failed to update' : 'Failed to add',
-        })
+    const onSubmit = async (data: GovtPaddyInward) => {
+        try {
+            const { _id, ...payload } = data
+            if (isEditing && currentRow?._id) {
+                await updateGovtPaddyInward({
+                    id: currentRow._id,
+                    data: payload,
+                })
+            } else {
+                await createGovtPaddyInward(payload)
+            }
+            onOpenChange(false)
+            form.reset(getDefaultValues)
+        } catch (error) {
+            console.error('Govt paddy inward form submission error:', error)
+        }
     }
 
     return (
@@ -103,10 +146,14 @@ export function GovtPaddyInwardActionDialog({
             <DialogContent className='max-h-[90vh] max-w-4xl overflow-y-auto'>
                 <DialogHeader>
                     <DialogTitle>
-                        {isEditing ? 'Edit' : 'Add'} Record
+                        {isEditing
+                            ? t('common.edit')
+                            : t('inward.govtPaddyInward.form.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {isEditing ? 'Update' : 'Enter'} the details below
+                        {isEditing
+                            ? t('common.updateDetails')
+                            : t('inward.govtPaddyInward.form.description')}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -121,7 +168,11 @@ export function GovtPaddyInwardActionDialog({
                                 name='date'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Date</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.govtPaddyInward.form.fields.date'
+                                            )}
+                                        </FormLabel>
                                         <Popover
                                             open={datePopoverOpen}
                                             onOpenChange={setDatePopoverOpen}
@@ -140,7 +191,9 @@ export function GovtPaddyInwardActionDialog({
                                                                   ),
                                                                   'MMM dd, yyyy'
                                                               )
-                                                            : 'Pick a date'}
+                                                            : t(
+                                                                  'common.pickDate'
+                                                              )}
                                                     </Button>
                                                 </FormControl>
                                             </PopoverTrigger>
@@ -182,11 +235,19 @@ export function GovtPaddyInwardActionDialog({
                                 name='doNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>DO Number</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.govtPaddyInward.form.fields.doNumber'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter DO Number'
+                                                id='doNumber'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -198,11 +259,27 @@ export function GovtPaddyInwardActionDialog({
                                 name='committeeName'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Committee Name</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.govtPaddyInward.form.fields.committeeName'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                placeholder='Enter Committee Name'
-                                                {...field}
+                                            <PaginatedCombobox
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                paginatedList={committee}
+                                                placeholder={t(
+                                                    'common.searchObject',
+                                                    {
+                                                        object: t(
+                                                            'inward.govtPaddyInward.form.fields.committeeName'
+                                                        ),
+                                                    }
+                                                )}
+                                                emptyText={t(
+                                                    'common.noResults'
+                                                )}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -214,17 +291,25 @@ export function GovtPaddyInwardActionDialog({
                                 name='balanceDo'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Balance DO</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.govtPaddyInward.form.fields.balanceDo'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='balanceDo'
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -243,16 +328,24 @@ export function GovtPaddyInwardActionDialog({
                                 name='gunnyNew'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny New</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.govtPaddyInward.form.fields.gunnyNew'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='gunnyNew'
                                                 type='number'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -269,16 +362,24 @@ export function GovtPaddyInwardActionDialog({
                                 name='gunnyOld'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny Old</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.govtPaddyInward.form.fields.gunnyOld'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='gunnyOld'
                                                 type='number'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -295,16 +396,24 @@ export function GovtPaddyInwardActionDialog({
                                 name='gunnyPlastic'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Gunny Plastic</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.govtPaddyInward.form.fields.gunnyPlastic'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='gunnyPlastic'
                                                 type='number'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -323,17 +432,25 @@ export function GovtPaddyInwardActionDialog({
                                 name='juteWeight'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Jute Gunny Weight</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.govtPaddyInward.form.fields.juteWeight'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='juteWeight'
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -351,18 +468,24 @@ export function GovtPaddyInwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Plastic Gunny Weight (kg.)
+                                            {t(
+                                                'inward.govtPaddyInward.form.fields.plasticWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='plasticWeight'
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -380,18 +503,24 @@ export function GovtPaddyInwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Gunny Weight (kg.)
+                                            {t(
+                                                'inward.govtPaddyInward.form.fields.gunnyWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='gunnyWeight'
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -410,11 +539,17 @@ export function GovtPaddyInwardActionDialog({
                                 name='truckNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Truck Number</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.govtPaddyInward.form.fields.truckNumber'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='truckNumber'
                                                 placeholder='XX-00-XX-0000'
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -426,11 +561,19 @@ export function GovtPaddyInwardActionDialog({
                                 name='rstNumber'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>RST Number</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.govtPaddyInward.form.fields.rstNumber'
+                                            )}
+                                        </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder='Enter RST Number'
+                                                id='rstNumber'
+                                                placeholder={t(
+                                                    'common.enterValue'
+                                                )}
                                                 {...field}
+                                                value={field.value || ''}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -443,18 +586,24 @@ export function GovtPaddyInwardActionDialog({
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
-                                            Truck Load Weight (Qtl.)
+                                            {t(
+                                                'inward.govtPaddyInward.form.fields.truckLoadWeight'
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
+                                                id='truckLoadWeight'
                                                 type='number'
                                                 step='0.01'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -473,14 +622,26 @@ export function GovtPaddyInwardActionDialog({
                                 name='paddyType'
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Paddy Type</FormLabel>
+                                        <FormLabel>
+                                            {t(
+                                                'inward.govtPaddyInward.form.fields.paddyType'
+                                            )}
+                                        </FormLabel>
                                         <Select
+                                            name='paddyType'
                                             onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                                            value={field.value || ''}
                                         >
                                             <FormControl>
-                                                <SelectTrigger className='w-full'>
-                                                    <SelectValue placeholder='Select Type' />
+                                                <SelectTrigger
+                                                    id='paddyType'
+                                                    className='w-full'
+                                                >
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'common.selectType'
+                                                        )}
+                                                    />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent className='w-full'>
@@ -508,20 +669,24 @@ export function GovtPaddyInwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Paddy Mota (Qtl.)
+                                                {t(
+                                                    'inward.govtPaddyInward.form.fields.paddyMota'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
+                                                    id='paddyMota'
                                                     type='number'
                                                     step='0.01'
                                                     {...field}
+                                                    value={field.value ?? ''}
                                                     onChange={(e) => {
                                                         const val =
                                                             e.target
                                                                 .valueAsNumber
                                                         field.onChange(
                                                             isNaN(val)
-                                                                ? ''
+                                                                ? undefined
                                                                 : val
                                                         )
                                                     }}
@@ -543,20 +708,24 @@ export function GovtPaddyInwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Paddy Patla (Qtl.)
+                                                {t(
+                                                    'inward.govtPaddyInward.form.fields.paddyPatla'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
+                                                    id='paddyPatla'
                                                     type='number'
                                                     step='0.01'
                                                     {...field}
+                                                    value={field.value ?? ''}
                                                     onChange={(e) => {
                                                         const val =
                                                             e.target
                                                                 .valueAsNumber
                                                         field.onChange(
                                                             isNaN(val)
-                                                                ? ''
+                                                                ? undefined
                                                                 : val
                                                         )
                                                     }}
@@ -578,20 +747,24 @@ export function GovtPaddyInwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Paddy Sarna (Qtl.)
+                                                {t(
+                                                    'inward.govtPaddyInward.form.fields.paddySarna'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
+                                                    id='paddySarna'
                                                     type='number'
                                                     step='0.01'
                                                     {...field}
+                                                    value={field.value ?? ''}
                                                     onChange={(e) => {
                                                         const val =
                                                             e.target
                                                                 .valueAsNumber
                                                         field.onChange(
                                                             isNaN(val)
-                                                                ? ''
+                                                                ? undefined
                                                                 : val
                                                         )
                                                     }}
@@ -613,20 +786,24 @@ export function GovtPaddyInwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Paddy Mahamaya (Qtl.)
+                                                {t(
+                                                    'inward.govtPaddyInward.form.fields.paddyMahamaya'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
+                                                    id='paddyMahamaya'
                                                     type='number'
                                                     step='0.01'
                                                     {...field}
+                                                    value={field.value ?? ''}
                                                     onChange={(e) => {
                                                         const val =
                                                             e.target
                                                                 .valueAsNumber
                                                         field.onChange(
                                                             isNaN(val)
-                                                                ? ''
+                                                                ? undefined
                                                                 : val
                                                         )
                                                     }}
@@ -648,20 +825,24 @@ export function GovtPaddyInwardActionDialog({
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Paddy RB Gold (Qtl.)
+                                                {t(
+                                                    'inward.govtPaddyInward.form.fields.paddyRbGold'
+                                                )}
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
+                                                    id='paddyRbGold'
                                                     type='number'
                                                     step='0.01'
                                                     {...field}
+                                                    value={field.value ?? ''}
                                                     onChange={(e) => {
                                                         const val =
                                                             e.target
                                                                 .valueAsNumber
                                                         field.onChange(
                                                             isNaN(val)
-                                                                ? ''
+                                                                ? undefined
                                                                 : val
                                                         )
                                                     }}
@@ -681,11 +862,18 @@ export function GovtPaddyInwardActionDialog({
                                 type='button'
                                 variant='outline'
                                 onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </Button>
-                            <Button type='submit'>
-                                {isEditing ? 'Update' : 'Add'}
+                            <Button type='submit' disabled={isLoading}>
+                                {isLoading
+                                    ? isEditing
+                                        ? t('common.updating')
+                                        : t('common.adding')
+                                    : isEditing
+                                      ? t('common.update')
+                                      : t('common.add')}
                             </Button>
                         </DialogFooter>
                     </form>

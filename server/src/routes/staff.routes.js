@@ -24,9 +24,9 @@ import {
 
 const router = express.Router({ mergeParams: true })
 
-// All routes require authentication and mill-admin role
+// All routes require authentication and either mill-admin or mill-staff role
 router.use(authenticate)
-router.use(requireRole(ROLES.MILL_ADMIN))
+router.use(requireRole(ROLES.MILL_ADMIN, ROLES.MILL_STAFF))
 
 /**
  * Staff Routes (Mill Admin)

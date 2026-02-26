@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { PaddyPurchase } from '../models/paddy-purchase.model.js'
 import { ApiError } from '../utils/ApiError.js'
 import logger from '../utils/logger.js'
+import * as StockTransactionService from './stock-transaction.service.js'
 
 export const createPaddyPurchaseEntry = async (millId, data, userId) => {
     const entry = new PaddyPurchase({
@@ -11,6 +12,32 @@ export const createPaddyPurchaseEntry = async (millId, data, userId) => {
         date: new Date(data.date),
     })
     await entry.save()
+    console.log(data)
+    // Record stock transaction (CREDIT = stock increase)
+    try {
+        await StockTransactionService.recordTransaction(
+            millId,
+            {
+                date: data.date,
+                commodity: 'Paddy',
+                variety: data.paddyType,
+                type: 'CREDIT',
+                action: 'Purchase',
+                quantity: data.totalPaddyQty || 0,
+                bags: data.bags || 0,
+                refModel: 'PaddyPurchase',
+                refId: entry._id,
+                remarks: `Purchase from ${data.partyName || 'Party'}`,
+            },
+            userId
+        )
+    } catch (err) {
+        logger.error('Failed to record stock for paddy purchase', {
+            id: entry._id,
+            error: err.message,
+        })
+    }
+
     logger.info('Paddy purchase entry created', {
         id: entry._id,
         millId,
@@ -21,8 +48,6 @@ export const createPaddyPurchaseEntry = async (millId, data, userId) => {
 
 export const getPaddyPurchaseById = async (millId, id) => {
     const entry = await PaddyPurchase.findOne({ _id: id, millId })
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Paddy purchase entry not found')
     return entry
 }
@@ -54,17 +79,10 @@ export const getPaddyPurchaseList = async (millId, options = {}) => {
         { $sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 } },
         {
             $lookup: {
-                from: 'users',
-                localField: 'createdBy',
-                foreignField: '_id',
-                as: 'createdByUser',
-                pipeline: [{ $project: { fullName: 1, email: 1 } }],
-            },
-        },
-        {
-            $unwind: {
-                path: '$createdByUser',
-                preserveNullAndEmptyArrays: true,
+                from: 'privatepaddyinwards',
+                localField: 'paddyPurchaseDealNumber',
+                foreignField: 'paddyPurchaseDealNumber',
+                as: 'inwardData',
             },
         },
     ])
@@ -136,9 +154,20 @@ export const updatePaddyPurchaseEntry = async (millId, id, data, userId) => {
         updateData,
         { new: true, runValidators: true }
     )
-        .populate('createdBy', 'fullName email')
-        .populate('updatedBy', 'fullName email')
     if (!entry) throw new ApiError(404, 'Paddy purchase entry not found')
+
+    // Update stock transaction if quantity or type changed
+    if (data.totalPaddyQty || data.paddyType || data.date) {
+        await StockTransactionService.updateTransaction('PaddyPurchase', id, {
+            date: entry.date,
+            commodity: 'Paddy',
+            variety: entry.paddyType,
+            quantity: entry.totalPaddyQty || 0,
+            bags: entry.bags || 0,
+            remarks: `Purchase from ${entry.partyName || 'Party'}`,
+        })
+    }
+
     logger.info('Paddy purchase entry updated', { id, millId, userId })
     return entry
 }
@@ -146,11 +175,23 @@ export const updatePaddyPurchaseEntry = async (millId, id, data, userId) => {
 export const deletePaddyPurchaseEntry = async (millId, id) => {
     const entry = await PaddyPurchase.findOneAndDelete({ _id: id, millId })
     if (!entry) throw new ApiError(404, 'Paddy purchase entry not found')
+
+    // Delete associated stock transactions
+    await StockTransactionService.deleteTransactionsByRef('PaddyPurchase', id)
+
     logger.info('Paddy purchase entry deleted', { id, millId })
 }
 
 export const bulkDeletePaddyPurchaseEntries = async (millId, ids) => {
     const result = await PaddyPurchase.deleteMany({ _id: { $in: ids }, millId })
+
+    for (const id of ids) {
+        await StockTransactionService.deleteTransactionsByRef(
+            'PaddyPurchase',
+            id
+        )
+    }
+
     logger.info('Paddy purchase entries bulk deleted', {
         millId,
         count: result.deletedCount,

@@ -1,7 +1,5 @@
-import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useParams } from 'react-router'
 import { Button } from '@/components/ui/button'
 import {
     Dialog,
@@ -22,111 +20,73 @@ import {
 import { Input } from '@/components/ui/input'
 import { useCreateStaff, useUpdateStaff } from '../data/hooks'
 import { staffReportSchema, type StaffReportData } from '../data/schema'
-import { staffReport } from './staff-report-provider'
+import { useStaffReport } from './staff-report-provider'
 
 type StaffReportActionDialogProps = {
+    currentRow?: StaffReportData
     open: boolean
     onOpenChange: (open: boolean) => void
-    currentRow: StaffReportData | null
 }
 
 export function StaffReportActionDialog({
+    currentRow,
     open,
     onOpenChange,
-    currentRow,
 }: StaffReportActionDialogProps) {
+    const { millId } = useStaffReport()
     const isEditing = !!currentRow
-    const { setCurrentRow } = staffReport()
-    const { millId } = useParams<{ millId: string }>()
-    const createMutation = useCreateStaff(millId || '')
-    const updateMutation = useUpdateStaff(millId || '')
-    const isLoading = createMutation.isPending || updateMutation.isPending
+    const { mutate: createStaff, isPending: isCreating } =
+        useCreateStaff(millId)
+    const { mutate: updateStaff, isPending: isUpdating } =
+        useUpdateStaff(millId)
+
+    const isLoading = isCreating || isUpdating
 
     const form = useForm<StaffReportData>({
         resolver: zodResolver(staffReportSchema),
-        defaultValues: {
-            fullName: '',
-            post: '',
-            salary: undefined,
-            phoneNumber: '',
-            email: '',
-            address: '',
-        },
+        defaultValues: isEditing
+            ? { ...currentRow }
+            : {
+                  fullName: '',
+                  post: '',
+                  salary: '' as unknown as number,
+                  phoneNumber: '',
+                  email: '',
+                  address: '',
+              },
     })
 
-    useEffect(() => {
-        if (currentRow) {
-            form.reset({
-                _id: currentRow._id || '',
-                fullName: currentRow.fullName || '',
-                post: currentRow.post || '',
-                salary: currentRow.salary,
-                phoneNumber: currentRow.phoneNumber || '',
-                email: currentRow.email || '',
-                address: currentRow.address || '',
-            })
+    const onSubmit = (formData: StaffReportData) => {
+        const { _id, ...data } = formData
+        const staffId = currentRow?._id
+        if (isEditing && staffId) {
+            updateStaff(
+                { staffId, data },
+                {
+                    onSuccess: () => {
+                        form.reset()
+                        onOpenChange(false)
+                    },
+                }
+            )
         } else {
-            form.reset({
-                fullName: '',
-                post: '',
-                salary: undefined,
-                phoneNumber: '',
-                email: '',
-                address: '',
+            createStaff(data, {
+                onSuccess: () => {
+                    form.reset()
+                    onOpenChange(false)
+                },
             })
         }
-    }, [currentRow, form])
-
-    const onSubmit = async (data: StaffReportData) => {
-        const payload = {
-            fullName: data.fullName,
-            post: data.post,
-            salary: data.salary,
-            phoneNumber: data.phoneNumber,
-            email: data.email,
-            address: data.address,
-        }
-        try {
-            if (currentRow?._id) {
-                await updateMutation.mutateAsync({
-                    id: currentRow._id,
-                    ...payload,
-                })
-            } else {
-                await createMutation.mutateAsync(payload)
-            }
-            onOpenChange(false)
-            form.reset({
-                fullName: '',
-                post: '',
-                salary: undefined,
-                phoneNumber: '',
-                email: '',
-                address: '',
-            })
-            setCurrentRow(null)
-        } catch (error) {
-            console.error('Error submitting form:', error)
-        }
-    }
-
-    const handleDialogClose = (isOpen: boolean) => {
-        if (!isOpen) {
-            setCurrentRow(null)
-            form.reset({
-                fullName: '',
-                post: '',
-                salary: undefined,
-                phoneNumber: '',
-                email: '',
-                address: '',
-            })
-        }
-        onOpenChange(isOpen)
     }
 
     return (
-        <Dialog open={open} onOpenChange={handleDialogClose}>
+        <Dialog
+            open={open}
+            onOpenChange={(state) => {
+                form.reset()
+                onOpenChange(state)
+            }}
+        >
             <DialogContent className='max-w-2xl'>
                 <DialogHeader>
                     <DialogTitle>
@@ -186,11 +146,14 @@ export function StaffReportActionDialog({
                                                 step='0.01'
                                                 placeholder='Enter salary'
                                                 {...field}
+                                                value={field.value ?? ''}
                                                 onChange={(e) => {
                                                     const val =
                                                         e.target.valueAsNumber
                                                     field.onChange(
-                                                        isNaN(val) ? '' : val
+                                                        isNaN(val)
+                                                            ? undefined
+                                                            : val
                                                     )
                                                 }}
                                                 onWheel={(e) =>
@@ -258,7 +221,8 @@ export function StaffReportActionDialog({
                             <Button
                                 type='button'
                                 variant='outline'
-                                onClick={() => handleDialogClose(false)}
+                                onClick={() => onOpenChange(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </Button>
